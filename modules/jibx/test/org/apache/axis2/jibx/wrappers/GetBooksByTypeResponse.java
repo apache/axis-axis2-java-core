@@ -18,14 +18,13 @@ package org.apache.axis2.jibx.wrappers;
 
 import org.apache.axis2.jibx.beans.Book;
 
-public class GetBooksByTypeResponse
-{
+public class GetBooksByTypeResponse {
     private Book[] m_books;
-    
+
     public GetBooksByTypeResponse(Book[] books) {
         m_books = books;
     }
-    
+
     public Book[] getBooks() {
         return m_books;
     }

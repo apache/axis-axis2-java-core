@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import javax.xml.transform.URIResolver;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.URIResolver;
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class CStubHeaderWriter extends ClassWriter {
 
-     public CStubHeaderWriter(String outputFileLocation) {
+    public CStubHeaderWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
@@ -37,16 +37,16 @@ public class CStubHeaderWriter extends ClassWriter {
 
     public void createOutFile(String packageName, String fileName) throws Exception {
         outputFile = FileWriter.createClassFile(outputFileLocation,
-                "",
-                fileName,
-                ".h");
+                                                "",
+                                                fileName,
+                                                ".h");
         //set the existing flag
         fileExists = outputFile.exists();
         if (!fileExists) {
             this.stream = new FileOutputStream(outputFile);
         }
     }
-    
+
     /**
      * Writes the output file.
      *
@@ -56,9 +56,9 @@ public class CStubHeaderWriter extends ClassWriter {
     public void parse(Document doc, URIResolver resolver) throws Exception {
         if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
-                    doc,
-                    this.xsltStream,
-                    resolver);
+                                        doc,
+                                        this.xsltStream,
+                                        resolver);
             this.stream.write('\n');
             this.stream.write('\n');
             this.stream.flush();

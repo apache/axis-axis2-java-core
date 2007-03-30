@@ -16,7 +16,7 @@ package org.apache.axis2.rpc;
 *
 */
 
-public class Employee extends Person{
+public class Employee extends Person {
 
     protected Person emplyer;
     protected AddressBean address;
@@ -37,7 +37,7 @@ public class Employee extends Person{
         this.address = address;
     }
 
-    public String toString(){
+    public String toString() {
         String str = "Name:" + getName() + " Age: " + getAge();
         return str;
     }

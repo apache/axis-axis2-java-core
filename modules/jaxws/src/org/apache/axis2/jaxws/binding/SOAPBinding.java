@@ -16,38 +16,36 @@
  */
 package org.apache.axis2.jaxws.binding;
 
-import java.net.URI;
-import java.util.Set;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
-
-import org.apache.axis2.jaxws.utility.SAAJFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.net.URI;
+import java.util.Set;
 
 /**
- * An implementation of the <link>javax.xml.ws.soap.SOAPBinding</link>
- * interface.  This is the default binding for JAX-WS, and will exist
- * for all Dispatch and Dynamic Proxy instances unless the XML/HTTP
- * Binding is explicitly specificied.
+ * An implementation of the <link>javax.xml.ws.soap.SOAPBinding</link> interface.  This is the
+ * default binding for JAX-WS, and will exist for all Dispatch and Dynamic Proxy instances unless
+ * the XML/HTTP Binding is explicitly specificied.
  */
-public class SOAPBinding extends BindingImpl 
-    implements javax.xml.ws.soap.SOAPBinding {
+public class SOAPBinding extends BindingImpl
+        implements javax.xml.ws.soap.SOAPBinding {
 
     private boolean mtomEnabled = false;
     private static Log log = LogFactory.getLog(SOAPBinding.class);
-    
+
     public SOAPBinding(String bindingId) {
         super(bindingId);
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.soap.SOAPBinding#getMessageFactory()
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.soap.SOAPBinding#getMessageFactory()
+    */
     public MessageFactory getMessageFactory() {
         String bindingNamespace = null;
         try {
@@ -70,13 +68,15 @@ public class SOAPBinding extends BindingImpl
             return SAAJFactory.createMessageFactory(bindingNamespace);
         } catch (WebServiceException e) {
             // TODO log it and then what?
-            if(log.isDebugEnabled()){
-                log.debug("WebServiceException calling SAAJFactory.createMessageFactory(\""+bindingNamespace+"\")");
+            if (log.isDebugEnabled()) {
+                log.debug("WebServiceException calling SAAJFactory.createMessageFactory(\"" +
+                        bindingNamespace + "\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?
-            if(log.isDebugEnabled()){
-                log.debug("SOAPException calling SAAJFactory.createMessageFactory(\""+bindingNamespace+"\")");
+            if (log.isDebugEnabled()) {
+                log.debug("SOAPException calling SAAJFactory.createMessageFactory(\"" +
+                        bindingNamespace + "\")");
             }
         }
         return null;
@@ -116,13 +116,15 @@ public class SOAPBinding extends BindingImpl
             return SAAJFactory.createSOAPFactory(bindingNamespace);
         } catch (WebServiceException e) {
             // TODO log it and then what?
-            if(log.isDebugEnabled()){
-                log.debug("WebServiceException calling SAAJFactory.createSOAPFactory(\""+bindingNamespace+"\")");
+            if (log.isDebugEnabled()) {
+                log.debug("WebServiceException calling SAAJFactory.createSOAPFactory(\"" +
+                        bindingNamespace + "\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?
-            if(log.isDebugEnabled()){
-                log.debug("SOAPException calling SAAJFactory.createSOAPFactory(\""+bindingNamespace+"\")");
+            if (log.isDebugEnabled()) {
+                log.debug("SOAPException calling SAAJFactory.createSOAPFactory(\"" +
+                        bindingNamespace + "\")");
             }
         }
         return null;
@@ -141,7 +143,7 @@ public class SOAPBinding extends BindingImpl
      * @see javax.xml.ws.soap.SOAPBinding#setMTOMEnabled(boolean)
      */
     public void setMTOMEnabled(boolean flag) {
-        mtomEnabled = flag;        
+        mtomEnabled = flag;
     }
 
     /*

@@ -35,9 +35,11 @@ public class R2MSaxms2DStringArrayUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("input2DStringArray", "", null);
         part.addAttribute("xsi:type", "SOAP-ENC:Array", null);

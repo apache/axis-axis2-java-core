@@ -16,16 +16,15 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-
 /**
- * Code generation data binding extension for JiBX support. JiBX currently
- * requires a predefined binding definition to be supplied in order to be used
- * with Axis2.
+ * Code generation data binding extension for JiBX support. JiBX currently requires a predefined
+ * binding definition to be supplied in order to be used with Axis2.
  */
 public class JiBXExtension extends AbstractDBProcessingExtension {
 
@@ -62,15 +61,16 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JiBX binding extension not in classpath");
             }
-            
+
             // create an instance of the class
             Object inst = null;
-            Constructor constructor = clazz.getConstructor(new Class[] { CodeGenConfiguration.class });
+            Constructor constructor =
+                    clazz.getConstructor(new Class[] { CodeGenConfiguration.class });
             inst = constructor.newInstance(new Object[] { configuration });
-            
+
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(JIBX_UTILITY_METHOD,
-                new Class[] { String.class });
+                                            new Class[] { String.class });
             method.invoke(inst, new Object[] { path });
 
         } catch (Exception e) {

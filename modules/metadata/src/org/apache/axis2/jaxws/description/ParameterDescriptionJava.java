@@ -21,9 +21,14 @@ import javax.jws.WebParam;
 
 public interface ParameterDescriptionJava {
     public WebParam getAnnoWebParam();
+
     public boolean getAnnoWebParamHeader();
+
     public WebParam.Mode getAnnoWebParamMode();
+
     public String getAnnoWebParamName();
+
     public String getAnnoWebParamPartName();
+
     public String getAnnoWebParamTargetNamespace();
 }

@@ -18,21 +18,21 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
 /**
  * 
  */
 class DescriptionBuilderUtils {
-    
+
     private static final Log log = LogFactory.getLog(DescriptionBuilderUtils.class);
-            
+
     static String JAXWS_HOLDER_CLASS = "javax.xml.ws.Holder";
 
     private static final String INT_PRIMITIVE = "int";
@@ -57,11 +57,12 @@ class DescriptionBuilderUtils {
 
     /**
      * Returns a string representing the outermost generic raw type class, or null if the argument
-     * is not a generic.  For example if the string "javax.xml.ws.Holder<my.package.MyObject>"
-     * is passed in, the string "javax.xml.ws.Holder" will be returned.
-     * 
-     * Note that generic arrays are supported.  For example, for "Holder<List<String>[][]", the returned
-     * value will be "List[][]".
+     * is not a generic.  For example if the string "javax.xml.ws.Holder<my.package.MyObject>" is
+     * passed in, the string "javax.xml.ws.Holder" will be returned.
+     * <p/>
+     * Note that generic arrays are supported.  For example, for "Holder<List<String>[][]", the
+     * returned value will be "List[][]".
+     *
      * @param inputType
      * @return A string representing the generic raw type or null if there is no generic.
      */
@@ -74,8 +75,7 @@ class DescriptionBuilderUtils {
             if ((rightBracket + 1) == inputType.length()) {
                 // There is nothing after the closing ">" we need to append to the raw type
                 returnRawType = part1;
-            }
-            else {
+            } else {
                 // Skip over the closing ">" then append the rest of the string to the raw type
                 // This would be an array declaration for example.
                 String part2 = inputType.substring(rightBracket + 1).trim();
@@ -86,23 +86,23 @@ class DescriptionBuilderUtils {
     }
 
     /**
-     * Return the actual type in a JAX-WS holder declaration.  For example, for the 
-     * argument "javax.xml.ws.Holder<my.package.MyObject>", return "my.package.MyObject".
-     * If the actual type itself is a generic, then that raw type will be returned.  For 
-     * example, "javax.xml.ws.Holder<java.util.List<my.package.MyObject>>" will return 
-     * "java.util.List".
-     * 
-     * Note that Holders of Arrays and of Generic Arrays are also supported.  For example,
-     * for "javax.xml.ws.Holder<String[]>", return "String[]".  For an array of a generic,
-     * the array of the raw type is returned.  For example, for
-     * "javax.xml.ws.Holder<List<String>[][]>", return "List[][]".
-     * 
-     * Important note!  The JAX-WS Holder generic only supports a single actual type, i.e. 
-     * the generic is javax.xml.ws.Holder<T>.  This method is not general purpose; it does not support 
+     * Return the actual type in a JAX-WS holder declaration.  For example, for the argument
+     * "javax.xml.ws.Holder<my.package.MyObject>", return "my.package.MyObject". If the actual type
+     * itself is a generic, then that raw type will be returned.  For example,
+     * "javax.xml.ws.Holder<java.util.List<my.package.MyObject>>" will return "java.util.List".
+     * <p/>
+     * Note that Holders of Arrays and of Generic Arrays are also supported.  For example, for
+     * "javax.xml.ws.Holder<String[]>", return "String[]".  For an array of a generic, the array of
+     * the raw type is returned.  For example, for "javax.xml.ws.Holder<List<String>[][]>", return
+     * "List[][]".
+     * <p/>
+     * Important note!  The JAX-WS Holder generic only supports a single actual type, i.e. the
+     * generic is javax.xml.ws.Holder<T>.  This method is not general purpose; it does not support
      * generics with multiple types such as Generic<K,V> at the outermost level.
+     *
      * @param holderInputString
-     * @return return the actual argument class name for a JAX-WS Holder; returns null
-     *         if the argument is not a JAX-WS Holder
+     * @return return the actual argument class name for a JAX-WS Holder; returns null if the
+     *         argument is not a JAX-WS Holder
      */
     static String getHolderActualType(String holderInputString) {
         String returnString = null;
@@ -111,14 +111,14 @@ class DescriptionBuilderUtils {
             int rightBracket = holderInputString.lastIndexOf(">");
             if (leftBracket > 0 && rightBracket > leftBracket + 1) {
                 // Get everything between the outermost "<" and ">"
-                String actualType = holderInputString.substring(leftBracket + 1, rightBracket).trim();
+                String actualType =
+                        holderInputString.substring(leftBracket + 1, rightBracket).trim();
                 // If the holder contained a generic, then get the generic raw type (e.g. "List" for
                 // Holder<List<String>>).
                 String rawType = getRawType(actualType);
                 if (rawType != null) {
                     returnString = rawType;
-                }
-                else {
+                } else {
                     return returnString = actualType;
                 }
             }
@@ -128,8 +128,8 @@ class DescriptionBuilderUtils {
 
 
     /**
-     * Check if the input String is a JAX-WS Holder.  For example 
-     * "javax.xml.ws.Holder<my.package.MyObject>".
+     * Check if the input String is a JAX-WS Holder.  For example "javax.xml.ws.Holder<my.package.MyObject>".
+     *
      * @param checkType
      * @return true if it is a JAX-WS Holder type; false otherwise.
      */
@@ -145,24 +145,25 @@ class DescriptionBuilderUtils {
     }
 
     /**
-     * Answers if the String representing the class contains an array declaration.
-     * For example "Foo[][]" would return true, as would "int[]".
+     * Answers if the String representing the class contains an array declaration. For example
+     * "Foo[][]" would return true, as would "int[]".
+     *
      * @param className
      * @return
      */
     static boolean isClassAnArray(String className) {
         if (className != null && className.indexOf("[") > 0) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
-    /** 
-     * For an class name that is an array, return the non-array declaration portion.
-     * For example "my.package.Foo[][]" would return "my.package.Foo". Returns null if
-     * the argument does not contain an array declaration.
+    /**
+     * For an class name that is an array, return the non-array declaration portion. For example
+     * "my.package.Foo[][]" would return "my.package.Foo". Returns null if the argument does not
+     * contain an array declaration.
+     *
      * @param fullClassName
      * @return
      */
@@ -178,14 +179,15 @@ class DescriptionBuilderUtils {
     }
 
     /**
-     * Return a prefix suitable for passing to Class.forName(String) for an array.  Each array dimension
-     * represented by "[]" will be represented by a single "[".
+     * Return a prefix suitable for passing to Class.forName(String) for an array.  Each array
+     * dimension represented by "[]" will be represented by a single "[".
+     *
      * @param arrayClassName
      * @return
      */
     static String getArrayDimensionPrefix(String arrayClassName) {
         StringBuffer arrayDimPrefix = new StringBuffer();
-        
+
         if (arrayClassName != null) {
             int arrayDimIndex = arrayClassName.indexOf("[]");
             while (arrayDimIndex > 0) {
@@ -195,7 +197,7 @@ class DescriptionBuilderUtils {
                 arrayDimIndex = arrayClassName.indexOf("[]", startNext);
             }
         }
-        
+
         if (arrayDimPrefix.length() > 0)
             return arrayDimPrefix.toString();
         else
@@ -207,212 +209,214 @@ class DescriptionBuilderUtils {
      * handled differently, like arrays of objects.  Only non-array primitives are processed by this
      * method.  This method understands both the typical primitive declaration (e.g. "int") and the
      * encoding used as for arrays (e.g. "I").
+     *
      * @param classType
      * @return
      */
     static Class getPrimitiveClass(String classType) {
-    	
-    	Class paramClass = null;
-    
-    	if (INT_PRIMITIVE.equals(classType) || INT_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = int.class;
-    	} else if (BYTE_PRIMITIVE.equals(classType)|| BYTE_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = byte.class;
-    	} else if (CHAR_PRIMITIVE.equals(classType)|| CHAR_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = char.class;
-    	} else if (SHORT_PRIMITIVE.equals(classType)|| SHORT_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = short.class;
-    	} else if (BOOLEAN_PRIMITIVE.equals(classType)|| BOOLEAN_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = boolean.class;
-    	} else if (LONG_PRIMITIVE.equals(classType) || LONG_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = long.class;
-    	} else if (FLOAT_PRIMITIVE.equals(classType)|| FLOAT_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = float.class;
-    	} else if (DOUBLE_PRIMITIVE.equals(classType)|| DOUBLE_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = double.class;
-    	} else if (VOID_PRIMITIVE.equals(classType)|| VOID_PRIMITIVE_ENCODING.equals(classType)) {
-    		paramClass = void.class;
-    	}
-    	return paramClass;
+
+        Class paramClass = null;
+
+        if (INT_PRIMITIVE.equals(classType) || INT_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = int.class;
+        } else if (BYTE_PRIMITIVE.equals(classType) || BYTE_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = byte.class;
+        } else if (CHAR_PRIMITIVE.equals(classType) || CHAR_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = char.class;
+        } else
+        if (SHORT_PRIMITIVE.equals(classType) || SHORT_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = short.class;
+        } else
+        if (BOOLEAN_PRIMITIVE.equals(classType) || BOOLEAN_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = boolean.class;
+        } else if (LONG_PRIMITIVE.equals(classType) || LONG_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = long.class;
+        } else
+        if (FLOAT_PRIMITIVE.equals(classType) || FLOAT_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = float.class;
+        } else
+        if (DOUBLE_PRIMITIVE.equals(classType) || DOUBLE_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = double.class;
+        } else if (VOID_PRIMITIVE.equals(classType) || VOID_PRIMITIVE_ENCODING.equals(classType)) {
+            paramClass = void.class;
+        }
+        return paramClass;
     }
 
     /**
-     * Returns the encoding used to represent a Class for an array of 
-     * a primitive type.  For example, an array of boolean is represented by "Z".  
-     * This is as described in the javadoc for Class.getName().  If the argument is
-     * not a primitive type, a null will be returned.
-     * 
+     * Returns the encoding used to represent a Class for an array of a primitive type.  For
+     * example, an array of boolean is represented by "Z". This is as described in the javadoc for
+     * Class.getName().  If the argument is not a primitive type, a null will be returned.
+     * <p/>
      * Note that arrays of voids are not allowed; a null will be returned.
+     *
      * @param primitiveType
      * @return
      */
     static String getPrimitiveTypeArrayEncoding(String primitiveType) {
         String encoding = null;
-        
+
         if (BOOLEAN_PRIMITIVE.equals(primitiveType)) {
             encoding = BOOLEAN_PRIMITIVE_ENCODING;
-        }
-        else if (BYTE_PRIMITIVE.equals(primitiveType)) {
+        } else if (BYTE_PRIMITIVE.equals(primitiveType)) {
             encoding = BYTE_PRIMITIVE_ENCODING;
-        }
-        else if (CHAR_PRIMITIVE.equals(primitiveType)) {
+        } else if (CHAR_PRIMITIVE.equals(primitiveType)) {
             encoding = CHAR_PRIMITIVE_ENCODING;
-        }
-        else if (DOUBLE_PRIMITIVE.equals(primitiveType)) {
+        } else if (DOUBLE_PRIMITIVE.equals(primitiveType)) {
             encoding = DOUBLE_PRIMITIVE_ENCODING;
-        }
-        else if (FLOAT_PRIMITIVE.equals(primitiveType)) {
+        } else if (FLOAT_PRIMITIVE.equals(primitiveType)) {
             encoding = FLOAT_PRIMITIVE_ENCODING;
-        }
-        else if (INT_PRIMITIVE.equals(primitiveType)) {
+        } else if (INT_PRIMITIVE.equals(primitiveType)) {
             encoding = INT_PRIMITIVE_ENCODING;
-        }
-        else if (LONG_PRIMITIVE.equals(primitiveType)) {
+        } else if (LONG_PRIMITIVE.equals(primitiveType)) {
             encoding = LONG_PRIMITIVE_ENCODING;
-        }
-        else if (SHORT_PRIMITIVE.equals(primitiveType)) {
+        } else if (SHORT_PRIMITIVE.equals(primitiveType)) {
             encoding = SHORT_PRIMITIVE_ENCODING;
         }
         return encoding;
     }
 
     /**
-     * If the parameter represents and array, then the returned string is in a format that
-     * a Class.forName(String) can be done on it.  This format is described by Class.getName().
-     * If the parameter does not represent an array, the parememter is returned unmodified.
-     * 
+     * If the parameter represents and array, then the returned string is in a format that a
+     * Class.forName(String) can be done on it.  This format is described by Class.getName(). If the
+     * parameter does not represent an array, the parememter is returned unmodified.
+     * <p/>
      * Note that arrays of primitives are processed as well as arrays of objects.
+     *
      * @param classToLoad
      * @return
      */
     static String reparseIfArray(String classToLoad) {
-        
+
         String reparsedClassName = classToLoad;
         if (isClassAnArray(classToLoad)) {
             String baseType = getBaseArrayClassName(classToLoad);
             String dimensionPrefix = getArrayDimensionPrefix(classToLoad);
             if (getPrimitiveTypeArrayEncoding(baseType) != null) {
                 reparsedClassName = dimensionPrefix + getPrimitiveTypeArrayEncoding(baseType);
-            }
-            else {
-                reparsedClassName = dimensionPrefix + "L" + baseType + ";";  
+            } else {
+                reparsedClassName = dimensionPrefix + "L" + baseType + ";";
             }
         }
         return reparsedClassName;
     }
 
     /**
-     * Load a class represented in a Description Builder Composite.  If a classloader
-     * is specified, it will be used; otherwise the default classloader is used.
+     * Load a class represented in a Description Builder Composite.  If a classloader is specified,
+     * it will be used; otherwise the default classloader is used.
+     *
      * @param classToLoad
      * @param classLoader
      * @return
      */
     static Class loadClassFromComposite(String classToLoad, ClassLoader classLoader) {
         Class returnClass = null;
-        
+
         // If this is an array, then create a string version as described by Class.getName.
         // For example, "Foo[][]" becomes "[[LFoo".  Note that arrays of primitives must also be parsed.
         classToLoad = DescriptionBuilderUtils.reparseIfArray(classToLoad);
-        
+
         if (classLoader != null) {
             // Use the specified classloader to load the class.
             try {
                 returnClass = forName(classToLoad, false, classLoader);
             }
-	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-	        //does not extend Exception, so lets catch everything that extends Throwable
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
             catch (Throwable ex) {
-                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " 
-                        + classToLoad + " using classloader: " + classLoader);
+                throw ExceptionFactory.makeWebServiceException(
+                        "DescriptionBuilderUtils: Class not found for parameter: "
+                                + classToLoad + " using classloader: " + classLoader);
             }
-        } 
-        else {
+        } else {
             //Use the default classloader to load the class.
             try {
                 returnClass = forName(classToLoad);
-            } 
-	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-	        //does not extend Exception
+            }
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception
             catch (Throwable ex) {
-                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found using default classloader for parameter: " +classToLoad);
+                throw ExceptionFactory.makeWebServiceException(
+                        "DescriptionBuilderUtils: Class not found using default classloader for parameter: " +
+                                classToLoad);
             }
         }
         return returnClass;
     }
-    
-    /**
-     * @return ClassLoader
-     */
+
+    /** @return ClassLoader */
     private static ClassLoader getContextClassLoader() {
         // NOTE: This method must remain private because it uses AccessController
         ClassLoader cl = null;
         try {
-            cl = (ClassLoader) AccessController.doPrivileged(
+            cl = (ClassLoader)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();      
+                            return Thread.currentThread().getContextClassLoader();
                         }
                     }
-                  );  
+            );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
             throw ExceptionFactory.makeWebServiceException(e.getException());
         }
-        
+
         return cl;
     }
-    
+
     /**
      * Return the class for this name
+     *
      * @return Class
      */
-    private static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+    private static Class forName(final String className, final boolean initialize,
+                                 final ClassLoader classloader) throws ClassNotFoundException {
         // NOTE: This method must remain private because it uses AccessController
         Class cl = null;
         try {
-            cl = (Class) AccessController.doPrivileged(
+            cl = (Class)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);    
+                            return Class.forName(className, initialize, classloader);
                         }
                     }
-                  );  
+            );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
-            throw (ClassNotFoundException) e.getException();
-        } 
-        
+            throw (ClassNotFoundException)e.getException();
+        }
+
         return cl;
     }
-    
+
     /**
      * Return the class for this name
+     *
      * @return Class
      */
     private static Class forName(final String className) throws ClassNotFoundException {
         // NOTE: This method must remain private because it uses AccessController
         Class cl = null;
         try {
-            cl = (Class) AccessController.doPrivileged(
+            cl = (Class)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className);    
+                            return Class.forName(className);
                         }
                     }
-                  );  
+            );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
-            throw (ClassNotFoundException) e.getException();
-        } 
-        
+            throw (ClassNotFoundException)e.getException();
+        }
+
         return cl;
     }
 }

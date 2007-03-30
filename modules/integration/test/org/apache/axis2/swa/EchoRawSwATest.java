@@ -16,12 +16,8 @@
 
 package org.apache.axis2.swa;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -46,10 +42,13 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
 public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConstants {
 
 
-	private static final Log log = LogFactory.getLog(EchoRawSwATest.class);
+    private static final Log log = LogFactory.getLog(EchoRawSwATest.class);
 
     private AxisService service;
 
@@ -64,12 +63,13 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawSwATest.class),Constants.TESTING_PATH + "SwA-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawSwATest.class),
+                             Constants.TESTING_PATH + "SwA-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, EchoSwA.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -79,16 +79,16 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
     }
 
     protected SOAPEnvelope createEnvelope() throws Exception {
-    	SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = fac.getDefaultEnvelope();
-        
+
         OMNamespace omNs = fac.createOMNamespace("htp://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
         OMText textData = fac.createOMText("Apache Axis2 Rocks !!!");
         data.addChild(textData);
         rpcWrapEle.addChild(data);
-        
+
         env.getBody().addChild(rpcWrapEle);
         return env;
     }
@@ -102,33 +102,34 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTimeOutInMilliSeconds(100000);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         options.setTo(targetEPR);
-        
+
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        
-        ServiceClient sender = new ServiceClient(configContext,null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
+
+        ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OperationClient mepClient = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
-        
-        MessageContext mc = new MessageContext();   
+
+        MessageContext mc = new MessageContext();
         mc.setEnvelope(createEnvelope());
         FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
         DataHandler dataHandler = new DataHandler(fileDataSource);
-        mc.addAttachment("FirstAttachment",dataHandler);
-       
+        mc.addAttachment("FirstAttachment", dataHandler);
+
         mepClient.addMessageContext(mc);
         mepClient.execute(true);
         MessageContext response = mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         DataHandler dataHandler2 = response.getAttachment("FirstAttachment");
         assertNotNull(dataHandler);
-        compareDataHandlers(dataHandler,dataHandler2);
+        compareDataHandlers(dataHandler, dataHandler2);
     }
 
     protected void compareDataHandlers(DataHandler dataHandler, DataHandler dataHandler2) {
-        String originalTextValue = new OMTextImpl(dataHandler,true,null).getText();
-        String returnedTextValue = new OMTextImpl(dataHandler2,true,null).getText();
+        String originalTextValue = new OMTextImpl(dataHandler, true, null).getText();
+        String returnedTextValue = new OMTextImpl(dataHandler2, true, null).getText();
         assertEquals(returnedTextValue, originalTextValue);
     }
 }

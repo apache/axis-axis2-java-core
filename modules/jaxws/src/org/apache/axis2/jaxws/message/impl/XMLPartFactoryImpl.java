@@ -16,10 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
@@ -27,46 +23,50 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
 
-/**
- * MessageFactoryImpl
- */
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
+
+/** MessageFactoryImpl */
 public class XMLPartFactoryImpl implements XMLPartFactory {
 
-	/**
-	 * Default Constructor required for Factory 
-	 */
-	public XMLPartFactoryImpl() {
-		super();
-	}
+    /** Default Constructor required for Factory */
+    public XMLPartFactoryImpl() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.stream.XMLStreamReader)
-	 */
-	public XMLPart createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException {
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
-		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
-		return createFrom(omEnvelope, protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.stream.XMLStreamReader)
+      */
+    public XMLPart createFrom(XMLStreamReader reader, Protocol protocol)
+            throws XMLStreamException, WebServiceException {
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader,
+                                                                null);  // Pass null has the version to trigger autodetection
+        SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
+        return createFrom(omEnvelope, protocol);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
-	 */
-	public XMLPart createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException {
-		return new XMLPartImpl(omElement, protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
+      */
+    public XMLPart createFrom(OMElement omElement, Protocol protocol)
+            throws XMLStreamException, WebServiceException {
+        return new XMLPartImpl(omElement, protocol);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
-	 */
-	public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException {
-		return new XMLPartImpl(protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
+      */
+    public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException {
+        return new XMLPartImpl(protocol);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.soap.SOAPEnvelope)
-	 */
-	public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope) throws XMLStreamException, WebServiceException {
-		return new XMLPartImpl(soapEnvelope);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.soap.SOAPEnvelope)
+      */
+    public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope)
+            throws XMLStreamException, WebServiceException {
+        return new XMLPartImpl(soapEnvelope);
+    }
 
 }

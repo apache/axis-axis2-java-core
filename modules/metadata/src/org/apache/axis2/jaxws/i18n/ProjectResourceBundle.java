@@ -16,6 +16,9 @@
 
 package org.apache.axis2.jaxws.i18n;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -24,29 +27,22 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * <p>Wrapper class for resource bundles. Property files are used to store
- * resource strings, which are the only types of resources available.
- * Property files can inherit properties from other files so that
- * a base property file can be used and a small number of properties
- * can be over-ridden by another property file. For example you may
- * create an english version of a resource file named "resource.properties".
- * You then decide that the British English version of all of the properties
- * except one are the same, so there is no need to redefine all of the
- * properties in "resource_en_GB", just the one that is different.</p>
- * <p>The basename is the name of the property file without the ".properties"
- * extension.</p>
- * <p>Properties will be cached for performance.<p>
- * <p>Property values stored in the property files can also contain dynamic
- * variables. Any dynamic variable defined in PropertiesUtil.getVariableValue()
- * can be used (such as {date}), as well as arguments in the form {0}, {1}, etc.
- * Argument values are specified in the various overloaded getString() methods.</p>
+ * <p>Wrapper class for resource bundles. Property files are used to store resource strings, which
+ * are the only types of resources available. Property files can inherit properties from other files
+ * so that a base property file can be used and a small number of properties can be over-ridden by
+ * another property file. For example you may create an english version of a resource file named
+ * "resource.properties". You then decide that the British English version of all of the properties
+ * except one are the same, so there is no need to redefine all of the properties in
+ * "resource_en_GB", just the one that is different.</p> <p>The basename is the name of the property
+ * file without the ".properties" extension.</p> <p>Properties will be cached for performance.<p>
+ * <p>Property values stored in the property files can also contain dynamic variables. Any dynamic
+ * variable defined in PropertiesUtil.getVariableValue() can be used (such as {date}), as well as
+ * arguments in the form {0}, {1}, etc. Argument values are specified in the various overloaded
+ * getString() methods.</p>
  */
 public class ProjectResourceBundle extends ResourceBundle {
-	private static final Log log = LogFactory.getLog(ProjectResourceBundle.class);
+    private static final Log log = LogFactory.getLog(ProjectResourceBundle.class);
 
 
     // The static cache of ResourceBundles.
@@ -111,15 +107,12 @@ public class ProjectResourceBundle extends ResourceBundle {
     /**
      * Construct a new ProjectResourceBundle
      *
-     * @param projectName  The name of the project to which the class belongs.
-     *                     It must be a proper prefix of the caller's package.
-     * @param packageName  The package name to further construct
-     *                     the basename.
-     * @param resourceName The name of the resource without the
-     *                     ".properties" extension
-     * @throws MissingResourceException if projectName is not a prefix of
-     *                                  the caller's package name, or if the resource could not be
-     *                                  found/loaded.
+     * @param projectName  The name of the project to which the class belongs. It must be a proper
+     *                     prefix of the caller's package.
+     * @param packageName  The package name to further construct the basename.
+     * @param resourceName The name of the resource without the ".properties" extension
+     * @throws MissingResourceException if projectName is not a prefix of the caller's package name,
+     *                                  or if the resource could not be found/loaded.
      */
     public static ProjectResourceBundle getBundle(String projectName,
                                                   String packageName,
@@ -131,15 +124,12 @@ public class ProjectResourceBundle extends ResourceBundle {
     /**
      * Construct a new ProjectResourceBundle
      *
-     * @param projectName  The name of the project to which the class belongs.
-     *                     It must be a proper prefix of the caller's package.
+     * @param projectName  The name of the project to which the class belongs. It must be a proper
+     *                     prefix of the caller's package.
      * @param caller       The calling class.
-     *                
-     * @param resourceName The name of the resource without the
-     *                     ".properties" extension
-     * @throws MissingResourceException if projectName is not a prefix of
-     *                                  the caller's package name, or if the resource could not be
-     *                                  found/loaded.
+     * @param resourceName The name of the resource without the ".properties" extension
+     * @throws MissingResourceException if projectName is not a prefix of the caller's package name,
+     *                                  or if the resource could not be found/loaded.
      */
     public static ProjectResourceBundle getBundle(String projectName,
                                                   Class caller,
@@ -147,25 +137,22 @@ public class ProjectResourceBundle extends ResourceBundle {
                                                   Locale locale)
             throws MissingResourceException {
         return getBundle(projectName,
-                caller,
-                resourceName,
-                locale,
-                null);
+                         caller,
+                         resourceName,
+                         locale,
+                         null);
     }
 
     /**
      * Construct a new ProjectResourceBundle
      *
-     * @param projectName  The name of the project to which the class belongs.
-     *                     It must be a proper prefix of the caller's package.
+     * @param projectName  The name of the project to which the class belongs. It must be a proper
+     *                     prefix of the caller's package.
      * @param packageName  The package name to construct base name.
-     *                     
-     * @param resourceName The name of the resource without the
-     *                     ".properties" extension
+     * @param resourceName The name of the resource without the ".properties" extension
      * @param locale       The locale
-     * @throws MissingResourceException if projectName is not a prefix of
-     *                                  the caller's package name, or if the resource could not be
-     *                                  found/loaded.
+     * @throws MissingResourceException if projectName is not a prefix of the caller's package name,
+     *                                  or if the resource could not be found/loaded.
      */
     public static ProjectResourceBundle getBundle(String projectName,
                                                   String packageName,
@@ -179,19 +166,15 @@ public class ProjectResourceBundle extends ResourceBundle {
     /**
      * Construct a new ProjectResourceBundle
      *
-     * @param projectName   The name of the project to which the class belongs.
-     *                      It must be a proper prefix of the caller's package.
-     * @param caller        The calling class.
-     *                      This is used to get the package name to further construct
-     *                      the basename as well as to get the proper ClassLoader.
-     * @param resourceName  The name of the resource without the
-     *                      ".properties" extension
+     * @param projectName   The name of the project to which the class belongs. It must be a proper
+     *                      prefix of the caller's package.
+     * @param caller        The calling class. This is used to get the package name to further
+     *                      construct the basename as well as to get the proper ClassLoader.
+     * @param resourceName  The name of the resource without the ".properties" extension
      * @param locale        The locale
-     * @param extendsBundle If non-null, then this ExtendMessages will
-     *                      default to extendsBundle.
-     * @throws MissingResourceException if projectName is not a prefix of
-     *                                  the caller's package name, or if the resource could not be
-     *                                  found/loaded.
+     * @param extendsBundle If non-null, then this ExtendMessages will default to extendsBundle.
+     * @throws MissingResourceException if projectName is not a prefix of the caller's package name,
+     *                                  or if the resource could not be found/loaded.
      */
     public static ProjectResourceBundle getBundle(String projectName,
                                                   Class caller,
@@ -200,28 +183,24 @@ public class ProjectResourceBundle extends ResourceBundle {
                                                   ResourceBundle extendsBundle)
             throws MissingResourceException {
         return getBundle(projectName,
-                getPackage(caller.getClass().getName()),
-                resourceName,
-                locale,
-                caller.getClass().getClassLoader(),
-                extendsBundle);
+                         getPackage(caller.getClass().getName()),
+                         resourceName,
+                         locale,
+                         caller.getClass().getClassLoader(),
+                         extendsBundle);
     }
 
     /**
      * Construct a new ProjectResourceBundle
      *
-     * @param projectName   The name of the project to which the class belongs.
-     *                      It must be a proper prefix of the caller's package.
-     * @param packageName  The package name to further construct
-     *                     the basename.
-     * @param resourceName  The name of the resource without the
-     *                      ".properties" extension
+     * @param projectName   The name of the project to which the class belongs. It must be a proper
+     *                      prefix of the caller's package.
+     * @param packageName   The package name to further construct the basename.
+     * @param resourceName  The name of the resource without the ".properties" extension
      * @param locale        The locale
-     * @param extendsBundle If non-null, then this ExtendMessages will
-     *                      default to extendsBundle.
-     * @throws MissingResourceException if projectName is not a prefix of
-     *                                  the caller's package name, or if the resource could not be
-     *                                  found/loaded.
+     * @param extendsBundle If non-null, then this ExtendMessages will default to extendsBundle.
+     * @throws MissingResourceException if projectName is not a prefix of the caller's package name,
+     *                                  or if the resource could not be found/loaded.
      */
     public static ProjectResourceBundle getBundle(String projectName,
                                                   String packageName,
@@ -257,23 +236,21 @@ public class ProjectResourceBundle extends ResourceBundle {
         if (bundle == null) {
             throw new MissingResourceException("Cannot find resource '" +
                     packageName + '.' + resourceName + "'",
-                    resourceName, "");
+                                               resourceName, "");
         }
 
         return bundle;
     }
 
     /**
-     * get bundle...
-     * - check cache
-     * - try up hierarchy
-     * - if at top of hierarchy, use (link to) context.getParentBundle()
+     * get bundle... - check cache - try up hierarchy - if at top of hierarchy, use (link to)
+     * context.getParentBundle()
      */
     private static synchronized ProjectResourceBundle getBundle(Context context, String packageName)
             throws MissingResourceException {
         String cacheKey = context.getCacheKey(packageName);
 
-        ProjectResourceBundle prb = (ProjectResourceBundle) bundleCache.get(cacheKey);
+        ProjectResourceBundle prb = (ProjectResourceBundle)bundleCache.get(cacheKey);
 
         if (prb == null) {
             String name = packageName + '.' + context.getResourceName();
@@ -289,7 +266,7 @@ public class ProjectResourceBundle extends ResourceBundle {
             } else {
                 if (parent != null) {
                     if (parent instanceof ProjectResourceBundle) {
-                        prb = (ProjectResourceBundle) parent;
+                        prb = (ProjectResourceBundle)parent;
                     } else {
                         prb = new ProjectResourceBundle(name, parent);
                     }
@@ -312,9 +289,7 @@ public class ProjectResourceBundle extends ResourceBundle {
         return name.substring(0, name.lastIndexOf('.')).intern();
     }
 
-    /**
-     * Construct a new ProjectResourceBundle
-     */
+    /** Construct a new ProjectResourceBundle */
     private ProjectResourceBundle(String name, ResourceBundle bundle)
             throws MissingResourceException {
         this.resourceBundle = bundle;
@@ -325,13 +300,10 @@ public class ProjectResourceBundle extends ResourceBundle {
         return resourceName;
     }
 
-    /**
-     * Clears the internal cache
-     */
+    /** Clears the internal cache */
 //    public static void clearCache() {
 //        bundleCache.clear();
 //    }
-
     public String toString() {
         return resourceName;
     }
@@ -397,14 +369,15 @@ public class ProjectResourceBundle extends ResourceBundle {
 
         String getCacheKey(String packageName) {
             String loaderName = (_loader == null) ? "" : (":" + _loader.hashCode());
-            return packageName + "." + _resourceName + ":" + _locale + ":" + defaultLocale + loaderName;
+            return packageName + "." + _resourceName + ":" + _locale + ":" + defaultLocale +
+                    loaderName;
         }
 
         ResourceBundle loadBundle(String packageName) {
             try {
                 return ResourceBundle.getBundle(packageName + '.' + _resourceName,
-                        _locale,
-                        _loader);
+                                                _locale,
+                                                _loader);
             } catch (MissingResourceException e) {
                 // Deliberately surpressing print stack.. just the string for info.
                 log.debug("loadBundle: Ignoring MissingResourceException: " + e.getMessage());
@@ -428,25 +401,25 @@ public class ProjectResourceBundle extends ResourceBundle {
             if (_projectName == null || _projectName.length() == 0) {
                 log.debug("Project name not specified");
                 throw new MissingResourceException("Project name not specified",
-                        "", "");
+                                                   "", "");
             }
 
             if (packageName == null || packageName.length() == 0) {
                 log.debug("Package name not specified");
                 throw new MissingResourceException("Package not specified",
-                        packageName, "");
+                                                   packageName, "");
             }
             packageName = packageName.intern();
-    
+
             /* Ensure that project is a proper prefix of class.
-             * Terminate project name with '.' to ensure proper match.
-             */
+            * Terminate project name with '.' to ensure proper match.
+            */
             if (!packageName.equals(_projectName) && !packageName.startsWith(_projectName + '.')) {
                 log.debug("Project not a prefix of Package");
                 throw new MissingResourceException("Project '" + _projectName
                         + "' must be a prefix of Package '"
                         + packageName + "'",
-                        packageName + '.' + _resourceName, "");
+                                                   packageName + '.' + _resourceName, "");
             }
 
             return packageName;

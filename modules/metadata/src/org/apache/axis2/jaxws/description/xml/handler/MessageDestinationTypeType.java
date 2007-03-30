@@ -14,25 +14,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 	
- * 
- * 	  The message-destination-typeType specifies the type of
- * 	  the destination. The type is specified by the Java interface
- * 	  expected to be implemented by the destination.
- * 
- * 	  Example:
- * 
- * 	    <message-destination-type>javax.jms.Queue
- * 	    </message-destination-type>
- * 
- * 	  
- *       
- * 
+ * The message-destination-typeType specifies the type of the destination. The type is specified by
+ * the Java interface expected to be implemented by the destination.
+ * <p/>
+ * Example:
+ * <p/>
+ * <message-destination-type>javax.jms.Queue </message-destination-type>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for message-destination-typeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destination-typeType">
  *   &lt;simpleContent>
@@ -41,14 +36,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-typeType")
 public class MessageDestinationTypeType
-    extends FullyQualifiedClassType
-{
+        extends FullyQualifiedClassType {
 
 
 }

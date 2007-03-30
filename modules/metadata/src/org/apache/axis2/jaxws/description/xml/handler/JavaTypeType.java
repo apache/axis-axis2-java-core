@@ -14,18 +14,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	This is a generic type that designates a Java primitive
- * 	type or a fully qualified name of a Java interface/type,
- * 	or an array of such types.
- * 
- *       
- * 
+ * This is a generic type that designates a Java primitive type or a fully qualified name of a Java
+ * interface/type, or an array of such types.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for java-typeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="java-typeType">
  *   &lt;simpleContent>
@@ -34,14 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "java-typeType")
 public class JavaTypeType
-    extends String
-{
+        extends String {
 
 
 }

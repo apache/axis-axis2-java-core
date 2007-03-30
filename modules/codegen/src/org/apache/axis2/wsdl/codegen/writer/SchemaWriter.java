@@ -1,7 +1,7 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.axis2.util.FileWriter;
+import org.apache.ws.commons.schema.XmlSchema;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,10 +21,7 @@ import java.io.FileOutputStream;
  * limitations under the License.
  */
 
-/**
- * A convenient class to write out the schemas into a file in the
- * output location
- */
+/** A convenient class to write out the schemas into a file in the output location */
 public class SchemaWriter {
 
     private File baseFolder = null;
@@ -33,14 +30,16 @@ public class SchemaWriter {
         this.baseFolder = baseFolder;
     }
 
-    public void writeSchema(XmlSchema schema,String schemaFileName){
+    public void writeSchema(XmlSchema schema, String schemaFileName) {
         try {
-            if (schema!= null){
+            if (schema != null) {
                 //create a output file
                 File outputFile = FileWriter.createClassFile(baseFolder,
-                        null,
-                        schemaFileName.substring(0,schemaFileName.lastIndexOf(".")),
-                        ".xsd");
+                                                             null,
+                                                             schemaFileName.substring(0,
+                                                                                      schemaFileName.lastIndexOf(
+                                                                                              ".")),
+                                                             ".xsd");
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 schema.write(fos);
                 fos.flush();

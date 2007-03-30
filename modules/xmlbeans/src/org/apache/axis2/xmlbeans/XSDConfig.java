@@ -5,16 +5,16 @@
 
 package org.apache.axis2.xmlbeans;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.ErrorHandler;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
@@ -25,29 +25,17 @@ public class XSDConfig {
     private static final String XMLBEANS_QNAME_NODE = "qname";
     private static final String XMLBEANS_NS_NODE = "namespace";
 
-    /**
-     * The parsed xsdconfig file
-     */
+    /** The parsed xsdconfig file */
     private Document xsdConfigDoc = null;
-    /**
-     * The list of prefixes on the document root
-     */
+    /** The list of prefixes on the document root */
     private HashMap prefixesToURIMappings = null;
-    /**
-     * The list of schema tyes to Java class names
-     */
+    /** The list of schema tyes to Java class names */
     private HashMap qnamesToJavaNamesMappings = null;
-    /**
-     * The list of namespaces to Java package names
-     */
+    /** The list of namespaces to Java package names */
     private HashMap nsToJavaPackagesMap = null;
-    /**
-     * Indicates whether we have any QName to Java class name mappings
-     */
+    /** Indicates whether we have any QName to Java class name mappings */
     public boolean hasQNameToJavaNameMappings = false;
-    /**
-     * Indicates whether we have any namespace to Java package mappings
-     */
+    /** Indicates whether we have any namespace to Java package mappings */
     public boolean hasNamespaceToJavaPackageMappings = false;
 
     public XSDConfig(String xsdConfigFile) {
@@ -101,8 +89,8 @@ public class XSDConfig {
     /**
      * Returns the pre loaded schema types to Java class names mappings.
      *
-     * @return HashMap of schema types to Java class names mappings as
-     *         as specified in the xsdconfig file.
+     * @return HashMap of schema types to Java class names mappings as as specified in the xsdconfig
+     *         file.
      */
     public HashMap getSchemaTypesToJavaNames() {
         return qnamesToJavaNamesMappings;
@@ -111,8 +99,7 @@ public class XSDConfig {
     /**
      * Returns the pre loaded namespace to Java package mappings.
      *
-     * @return HashMap of namespace to Java package mappings as
-     *         as specified in the xsdconfig file.
+     * @return HashMap of namespace to Java package mappings as as specified in the xsdconfig file.
      */
     public HashMap getNamespacesToJavaPackages() {
         return nsToJavaPackagesMap;
@@ -121,9 +108,8 @@ public class XSDConfig {
     /**
      * Loads the schema types to Java class name mappings
      *
-     * @return HashMap containing the schema types to Java class name mappings
-     *         as specified in the xsdconfig file. If there are no mappings, the
-     *         returned HashMap will be empty.
+     * @return HashMap containing the schema types to Java class name mappings as specified in the
+     *         xsdconfig file. If there are no mappings, the returned HashMap will be empty.
      */
     private HashMap getQNamesToJavaNames() {
         HashMap qnamesToJavaNamesMap = new HashMap();
@@ -154,10 +140,11 @@ public class XSDConfig {
 
                 if (prefixesToURIMappings.containsKey(prefix)) {
                     // Store as urn:weegietech:minerva:moduleType
-                    String key = (String) prefixesToURIMappings.get(prefix) + ":" + localName;
+                    String key = (String)prefixesToURIMappings.get(prefix) + ":" + localName;
 
                     // Direct mapping now from schema types to Java class names
-                    qnamesToJavaNamesMap.put(key, qnameNode.getAttributes().getNamedItem("javaname").getNodeValue());
+                    qnamesToJavaNamesMap.put(key, qnameNode.getAttributes()
+                            .getNamedItem("javaname").getNodeValue());
                 }
             }
         }
@@ -168,9 +155,8 @@ public class XSDConfig {
     /**
      * Loads the namespace to Java package mappings
      *
-     * @return HashMap containing the namespace to Java package mappings
-     *         as specified in the xsdconfig file. If there are no mappings, the
-     *         returned HashMap will be empty.
+     * @return HashMap containing the namespace to Java package mappings as specified in the
+     *         xsdconfig file. If there are no mappings, the returned HashMap will be empty.
      */
     private HashMap getNamespacesToPackages() {
         HashMap nsToJavaPackagesMap = new HashMap();
@@ -190,7 +176,8 @@ public class XSDConfig {
             // Get the package name for the current namespace uri
             String packageName = null;
             NodeList childNodes = nsNode.getChildNodes();
-            for (int childNodesCount = 0; childNodesCount < childNodes.getLength(); childNodesCount++) {
+            for (int childNodesCount = 0; childNodesCount < childNodes.getLength();
+                 childNodesCount++) {
                 Node childNode = childNodes.item(childNodesCount);
                 if (childNode.getLocalName() != null) {
                     if (childNode.getLocalName().equals("package")) {

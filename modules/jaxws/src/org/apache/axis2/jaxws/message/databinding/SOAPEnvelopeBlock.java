@@ -19,10 +19,9 @@ package org.apache.axis2.jaxws.message.databinding;
 import org.apache.axis2.jaxws.message.Block;
 
 /**
- * SOAPEnvelopeBlock
- * Block represented by an SAAJ SOAPEnvelope. This kind of block is useful
- * for building the initial Message
+ * SOAPEnvelopeBlock Block represented by an SAAJ SOAPEnvelope. This kind of block is useful for
+ * building the initial Message
  */
 public interface SOAPEnvelopeBlock extends Block {
-	
+
 }

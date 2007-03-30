@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
@@ -41,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(CommonsHTTPEchoRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(CommonsHTTPEchoRawXMLTest.class);
 
     private AxisService service;
 
@@ -63,8 +62,8 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -94,7 +93,8 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
         };
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 
@@ -121,7 +121,8 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "commons-http-enabledRepository", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

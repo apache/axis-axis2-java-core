@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -40,23 +33,30 @@ import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeD
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceException;
+import java.util.List;
+import java.util.TreeSet;
+
 public class RPCLitMethodMarshaller implements MethodMarshaller {
 
     private static Log log = LogFactory.getLog(RPCLitMethodMarshaller.class);
-    
+
     public RPCLitMethodMarshaller() {
         super();
     }
 
-    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc) throws WebServiceException {
-        
+    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc)
+            throws WebServiceException {
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        
+        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            
+
             // Sample RPC message
             // ..
             // <soapenv:body>
@@ -76,76 +76,81 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      JAXB type rendering.  Since we are using JAXB to marshal the data, 
             //      we always generate an xsi:type attribute.  This is an implemenation detail
             //      and is not defined by any spec.
-            
-            
+
             // Get the operation information
-            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            ParameterDescription[] pds = operationDesc.getParameterDescriptions();
+            MarshalServiceRuntimeDescription marshalDesc =
+                    MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
-            
+
             // TODO This needs more work.  We need to check inside holders of input params.  We also
             // may want to exclude header params from this check
             //Validate input parameters for operation and make sure no input parameters are null.
             //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
             //to a method then an implementation MUST throw WebServiceException.
-            if(pds.length > 0){
-            	if(signatureArguments == null){
-            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "rpc/lit"));
-            	}
-            	if(signatureArguments !=null){
-            		for(Object argument:signatureArguments){
-            			if(argument == null){
-                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "rpc/lit"));
-            			}
-            		}
-            	}
+            if (pds.length > 0) {
+                if (signatureArguments == null) {
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                            "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
+                            "rpc/lit"));
+                }
+                if (signatureArguments != null) {
+                    for (Object argument : signatureArguments) {
+                        if (argument == null) {
+                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                                    "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
+                                    "rpc/lit"));
+                        }
+                    }
+                }
             }
-            
+
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
-            
+
             // Indicate the style and operation element name.  This triggers the message to
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
             m.setOperationElement(getRPCOperationQName(operationDesc));
-            
+
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
             // Convert the signature into a list of JAXB objects for marshalling
-            List<PDElement> pdeList = 
-                MethodMarshallerUtils.getPDElements(marshalDesc,
-                        pds,
-                        signatureArguments,
-                        true,  // input
-                        false, true); // use partName since this is rpc/lit
-                        
+            List<PDElement> pdeList =
+                    MethodMarshallerUtils.getPDElements(marshalDesc,
+                                                        pds,
+                                                        signatureArguments,
+                                                        true,  // input
+                                                        false,
+                                                        true); // use partName since this is rpc/lit
+
             // We want to use "by Java Type" marshalling for 
             // all body elements and all non-JAXB objects
-            for (PDElement pde:pdeList) {
+            for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (!pd.isHeader() || 
-                     MethodMarshallerUtils.isJAXBBasicType(type)) {
-                    pde.setByJavaTypeClass(type);                    
+                if (!pd.isHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    pde.setByJavaTypeClass(type);
                 }
             }
-            
+
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
-            
+
             return m;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
-    
+
     public Object[] demarshalRequest(Message message, OperationDescription operationDesc)
-        throws WebServiceException {
-        
+            throws WebServiceException {
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -167,63 +172,64 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      JAXB type rendering.  
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
-            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            ParameterDescription[] pds = operationDesc.getParameterDescriptions();
+            MarshalServiceRuntimeDescription marshalDesc =
+                    MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
-            
+
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
             message.setStyle(Style.RPC);
-            
+
             // We want to use "by Java Type" unmarshalling for 
             // all body elements and all non-JAXB objects
             Class[] javaTypes = new Class[pds.length];
-            for (int i=0; i < pds.length; i++) {
+            for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                if (!pd.isHeader() || 
-                     MethodMarshallerUtils.isJAXBBasicType(type)) {
-                    javaTypes[i] = type;                    
+                if (!pd.isHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    javaTypes[i] = type;
                 }
             }
-            
+
             // Unmarshal the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
-                    message, 
-                    packages, 
-                    true, // input
-                    javaTypes); // unmarshal by type
-            
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds,
+                                                                         message,
+                                                                         packages,
+                                                                         true, // input
+                                                                         javaTypes); // unmarshal by type
+
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
-            
-            
+
             // TODO This needs more work.  We need to check inside holders of input params.  We also
             // may want to exclude header params from this check
             //Validate input parameters for operation and make sure no input parameters are null.
             //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
             //to a method then an implementation MUST throw WebServiceException.
-            if(sigArguments !=null){
-                for(Object argument:sigArguments){
-                    if(argument == null){
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "rpc/lit"));
+            if (sigArguments != null) {
+                for (Object argument : sigArguments) {
+                    if (argument == null) {
+                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
+                                "rpc/lit"));
 
                     }
                 }
             }
             return sigArguments;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-   
 
-    public Message marshalResponse(Object returnObject, Object[] signatureArgs, 
-            OperationDescription operationDesc, Protocol protocol)
+    public Message marshalResponse(Object returnObject, Object[] signatureArgs,
+                                   OperationDescription operationDesc, Protocol protocol)
             throws WebServiceException {
-        
-        
+
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         // We want to respond with the same protocol as the request,
@@ -231,7 +237,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         if (protocol == null) {
             protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
-        
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -253,26 +259,28 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      JAXB type rendering.  Since we are using JAXB to marshal the data, 
             //      we always generate an xsi:type attribute.  This is an implemenation detail
             //      and is not defined by any spec.
-            
+
             // Get the operation information
-            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            ParameterDescription[] pds = operationDesc.getParameterDescriptions();
+            MarshalServiceRuntimeDescription marshalDesc =
+                    MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
-            
+
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
-            
+
             // Indicate the style and operation element name.  This triggers the message to
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
-            
-      
+
+
             QName rpcOpQName = getRPCOperationQName(operationDesc);
             String localPart = rpcOpQName.getLocalPart() + "Response";
-            QName responseOp = new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
+            QName responseOp =
+                    new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
             m.setOperationElement(responseOp);
-            
+
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
             String returnNS = null;
@@ -284,15 +292,17 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 returnNS = "";  // According to WSI BP the body part is unqualified
                 returnLocalPart = operationDesc.getResultPartName();
             }
-            
+
             if (returnType != void.class) {
-                
+
                 // TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
-                if(returnObject == null){
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Return", operationDesc.getJavaMethodName(), "rpc/lit"));
+                if (returnObject == null) {
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
+                            "rpc/lit"));
 
                 }
                 Element returnElement = null;
@@ -302,55 +312,58 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 } else {
                     returnElement = new Element(returnObject, returnQName, returnType);
                 }
-                
+
                 // Use marshalling by java type if necessary
                 Class byJavaType = null;
-                if (!operationDesc.isResultHeader() || MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                if (!operationDesc.isResultHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(returnType)) {
                     byJavaType = returnType;
                 }
-                MethodMarshallerUtils.toMessage(returnElement, 
-                        returnType, 
-                        marshalDesc, 
-                        m,
-                        byJavaType, 
-                        operationDesc.isResultHeader()); 
+                MethodMarshallerUtils.toMessage(returnElement,
+                                                returnType,
+                                                marshalDesc,
+                                                m,
+                                                byJavaType,
+                                                operationDesc.isResultHeader());
             }
-            
+
             // Convert the holder objects into a list of JAXB objects for marshalling
-            List<PDElement> pdeList = 
-                MethodMarshallerUtils.getPDElements(marshalDesc,
-                        pds, 
-                        signatureArgs, 
-                        false,  // output
-                        false, true);   // use partName since this is rpc/lit
-            
+            List<PDElement> pdeList =
+                    MethodMarshallerUtils.getPDElements(marshalDesc,
+                                                        pds,
+                                                        signatureArgs,
+                                                        false,  // output
+                                                        false,
+                                                        true);   // use partName since this is rpc/lit
+
             // We want to use "by Java Type" marshalling for 
             // all body elements and all non-JAXB objects
-            for (PDElement pde:pdeList) {
+            for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (!pd.isHeader() || 
-                     MethodMarshallerUtils.isJAXBBasicType(type)) {
-                    pde.setByJavaTypeClass(type);                    
+                if (!pd.isHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    pde.setByJavaTypeClass(type);
                 }
             }
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
-            
+
             return m;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    
-    public Object demarshalResponse(Message message, Object[] signatureArgs, OperationDescription operationDesc)
-          throws WebServiceException {
-        
+
+    public Object demarshalResponse(Message message, Object[] signatureArgs,
+                                    OperationDescription operationDesc)
+            throws WebServiceException {
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -372,14 +385,15 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      JAXB type rendering.  
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
-            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            ParameterDescription[] pds = operationDesc.getParameterDescriptions();
+            MarshalServiceRuntimeDescription marshalDesc =
+                    MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
-            
+
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
             message.setStyle(Style.RPC);
-            
+
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
@@ -393,112 +407,121 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                     byJavaType = returnType;
                 }
                 if (operationDesc.isResultHeader()) {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, byJavaType, true,
-                            operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
+                    returnElement = MethodMarshallerUtils
+                            .getReturnElement(packages, message, byJavaType, true,
+                                              operationDesc.getResultTargetNamespace(),
+                                              operationDesc.getResultPartName());
                 } else {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, byJavaType, false, null, null);
+                    returnElement = MethodMarshallerUtils
+                            .getReturnElement(packages, message, byJavaType, false, null, null);
                 }
                 returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
-                if (returnValue == null){
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Return", operationDesc.getJavaMethodName(), "rpc/lit"));
+                if (returnValue == null) {
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
+                            "rpc/lit"));
                 }
             }
-            
+
             // We want to use "by Java Type" unmarshalling for 
             // all body elements and all non-JAXB objects
             Class[] javaTypes = new Class[pds.length];
-            for (int i=0; i < pds.length; i++) {
+            for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                if (!pd.isHeader() || 
-                     MethodMarshallerUtils.isJAXBBasicType(type)) {
-                    javaTypes[i] = type;                    
+                if (!pd.isHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    javaTypes[i] = type;
                 }
             }
-            
+
             // Unmarshall the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
-                    message, 
-                    packages, 
-                    false, // output
-                    javaTypes); // unmarshal by type
-            
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds,
+                                                                         message,
+                                                                         packages,
+                                                                         false, // output
+                                                                         javaTypes); // unmarshal by type
+
             // TODO Should we check for null output body values?  Should we check for null output header values ?
-            
+
             // Populate the response Holders
             MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
-            
+
             return returnValue;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    public Message marshalFaultResponse(Throwable throwable, 
-            OperationDescription operationDesc, Protocol protocol) throws WebServiceException {
-        
+    public Message marshalFaultResponse(Throwable throwable,
+                                        OperationDescription operationDesc, Protocol protocol)
+            throws WebServiceException {
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        MarshalServiceRuntimeDescription marshalDesc =
+                MethodMarshallerUtils.getMarshalDesc(endpointDesc);
         TreeSet<String> packages = marshalDesc.getPackages();
-        
+
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
             protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
-        
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
-            
+
             // Put the fault onto the message
-            MethodMarshallerUtils.marshalFaultResponse(throwable, 
-                    marshalDesc,
-                    operationDesc, 
-                    m);
+            MethodMarshallerUtils.marshalFaultResponse(throwable,
+                                                       marshalDesc,
+                                                       operationDesc,
+                                                       m);
             return m;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    public Throwable demarshalFaultResponse(Message message, OperationDescription operationDesc) throws WebServiceException {
-        
+    public Throwable demarshalFaultResponse(Message message, OperationDescription operationDesc)
+            throws WebServiceException {
+
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
-        
+        MarshalServiceRuntimeDescription marshalDesc =
+                MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message); 
+            Throwable t = MethodMarshallerUtils
+                    .demarshalFaultResponse(operationDesc, marshalDesc, message);
             return t;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
-    
+
     /**
      * @param opDesc
-     * @return qualified qname to use in the rpc message to represent the operation
-     * (per WSI BP)
+     * @return qualified qname to use in the rpc message to represent the operation (per WSI BP)
      */
     private static QName getRPCOperationQName(OperationDescription opDesc) {
         QName qName = opDesc.getName();
-        
+
         String localPart = qName.getLocalPart();
-        String uri = (qName.getNamespaceURI().length() == 0) ? 
-                      opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
-                      qName.getNamespaceURI();
+        String uri = (qName.getNamespaceURI().length() == 0) ?
+                opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
+                qName.getNamespaceURI();
         String prefix = "rpcOp";  // Prefer using an actual prefix
-                
-        
+
+
         qName = new QName(uri, localPart, prefix);
         return qName;
     }

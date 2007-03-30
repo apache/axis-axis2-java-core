@@ -18,19 +18,17 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-/**
- * Tests the parsing of Generics that are used in the DescriptionBuilderComposite
- * processing.
- */
+/** Tests the parsing of Generics that are used in the DescriptionBuilderComposite processing. */
 public class ReturnTypeParsingTests extends TestCase {
-    
+
     public void testNonHolderGenric() {
-        String inputString = "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>";
+        String inputString =
+                "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>";
         MethodDescriptionComposite mdc = new MethodDescriptionComposite();
         mdc.setReturnType(inputString);
         assertEquals(
@@ -133,26 +131,29 @@ public class ReturnTypeParsingTests extends TestCase {
 
     public void testListOfMyObjectArray() {
         MethodDescriptionComposite mdc = new MethodDescriptionComposite();
-        mdc.setReturnType("java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject[][]>");
+        mdc.setReturnType(
+                "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject[][]>");
         assertEquals(
                 "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject[][]>",
                 mdc.getReturnType());
 
         assertEquals(List.class, mdc.getReturnTypeClass());
     }
-    
+
     public void testGenericArray() {
         MethodDescriptionComposite mdc = new MethodDescriptionComposite();
         mdc.setReturnType("java.util.List<java.lang.String[]>[]");
         assertEquals("java.util.List<java.lang.String[]>[]",
-                mdc.getReturnType());
+                     mdc.getReturnType());
         assertEquals(List[].class, mdc.getReturnTypeClass());
     }
 
     public void testGenericArrayMultiDimension() {
         MethodDescriptionComposite mdc = new MethodDescriptionComposite();
-        mdc.setReturnType("java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]");
-        assertEquals("java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]",
+        mdc.setReturnType(
+                "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]");
+        assertEquals(
+                "java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]",
                 mdc.getReturnType());
         assertEquals(List[][].class, mdc.getReturnTypeClass());
     }
@@ -161,10 +162,10 @@ public class ReturnTypeParsingTests extends TestCase {
         MethodDescriptionComposite mdc = new MethodDescriptionComposite();
         mdc.setReturnType("java.util.List<?>[]");
         assertEquals("java.util.List<?>[]",
-                mdc.getReturnType());
+                     mdc.getReturnType());
         assertEquals(List[].class, mdc.getReturnTypeClass());
     }
-    
+
 }
 
 class MyReturnTestObject {

@@ -16,14 +16,8 @@
 
 package org.apache.axis2.mtom;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -42,6 +36,10 @@ import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+import javax.xml.namespace.QName;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
     private QName serviceName = new QName("EchoService");
@@ -57,7 +55,8 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class), Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class),
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
 
@@ -65,7 +64,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(Constants.SERVICE_CLASS,
-                EchoService.class.getName()));
+                                           EchoService.class.getName()));
 
         AxisOperation axisOp = new OutInAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
@@ -103,19 +102,19 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
             }
         };
         httppost.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                myretryhandler);
+                                          myretryhandler);
         httppost.setRequestEntity(new InputStreamRequestEntity(
                 new FileInputStream("test-resources/mtom/wmtom.bin")));
 
         httppost.setRequestHeader("Content-Type",
-                "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
+                                  "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
         try {
             client.executeMethod(httppost);
 
             if (httppost.getStatusCode() ==
                     HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 assertEquals("HTTP/1.1 500 Internal server error",
-                        httppost.getStatusLine().toString());
+                             httppost.getStatusLine().toString());
             }
         } catch (NoHttpResponseException e) {
         } finally {

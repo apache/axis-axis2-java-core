@@ -16,9 +16,8 @@
 
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -41,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(EchoRawXMLOnTwoChannelsTest.class);
+    private static final Log log = LogFactory.getLog(EchoRawXMLOnTwoChannelsTest.class);
 
 
     private boolean finish = false;
@@ -61,8 +60,8 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
     protected void setUp() throws Exception {
         AxisService service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
 
     }
@@ -75,8 +74,8 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
     public void testEchoXMLCompleteASync() throws Exception {
         AxisService service =
                 Utils.createSimpleServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                                   Echo.class.getName(),
+                                                   operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
@@ -87,7 +86,7 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
-        ServiceClient sender =null;
+        ServiceClient sender = null;
 
         try {
             Options options = new Options();

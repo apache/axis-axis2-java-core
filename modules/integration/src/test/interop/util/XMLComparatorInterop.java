@@ -25,8 +25,9 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Iterator;
 import java.util.Vector;
+
 public class XMLComparatorInterop {
-	private static final Log log = LogFactory.getLog(XMLComparatorInterop.class);
+    private static final Log log = LogFactory.getLog(XMLComparatorInterop.class);
 
     String failureNotice = "";
 
@@ -69,13 +70,13 @@ public class XMLComparatorInterop {
                 "=============================");
 
         log.info("Comparing Element Names .......");
-        status = compare(elementOne.getLocalName(),elementTwo.getLocalName());
+        status = compare(elementOne.getLocalName(), elementTwo.getLocalName());
         if (!status)
             return false;
 
         log.info("Comparing Namespaces .........");
         status = compare(elementOne.getNamespace(),
-                elementTwo.getNamespace());
+                         elementTwo.getNamespace());
         if (!status)
             return false;
 
@@ -145,19 +146,20 @@ public class XMLComparatorInterop {
         }
         Iterator elementOneChildren = elementOne.getChildren();
         while (elementOneChildren.hasNext()) {
-            OMNode omNode = (OMNode) elementOneChildren.next();
+            OMNode omNode = (OMNode)elementOneChildren.next();
             if (omNode instanceof OMElement) {
-                OMElement elementOneChild = (OMElement) omNode;
+                OMElement elementOneChild = (OMElement)omNode;
                 OMElement elementTwoChild = null;
                 //Do the comparison only if the element is not ignorable
                 if (!isIgnorable(elementOneChild)) {
                     Iterator elementTwoChildren = elementTwo.getChildren();
-                    while (elementTwoChildren.hasNext() ) {
+                    while (elementTwoChildren.hasNext()) {
                         status = false;
-                        OMNode node = (OMNode) elementTwoChildren.next();
+                        OMNode node = (OMNode)elementTwoChildren.next();
                         if (node.getType() == OMNode.ELEMENT_NODE) {
-                            elementTwoChild = (OMElement) node;
-                            if (elementTwoChild.getLocalName().equals(elementOneChild.getLocalName())) {
+                            elementTwoChild = (OMElement)node;
+                            if (elementTwoChild.getLocalName()
+                                    .equals(elementOneChild.getLocalName())) {
                                 //Do the comparison only if the element is not ignorable
                                 if (!isIgnorable(elementTwoChild)) {
                                     if (elementTwoChild == null) {
@@ -169,7 +171,7 @@ public class XMLComparatorInterop {
 
                             }
                         }
-                        if(status){
+                        if (status) {
                             break;
                         }
                     }
@@ -189,7 +191,7 @@ public class XMLComparatorInterop {
         int elementTwoAtribCount = 0;
         Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
-            OMAttribute omAttribute = (OMAttribute) attributes.next();
+            OMAttribute omAttribute = (OMAttribute)attributes.next();
             OMAttribute attr = elementTwo.getAttribute(omAttribute.getQName());
             if (attr == null) {
                 return false;
@@ -211,7 +213,7 @@ public class XMLComparatorInterop {
         return one.equals(two);
     }
 
-    private boolean compare(OMNamespace one,OMNamespace two) {
+    private boolean compare(OMNamespace one, OMNamespace two) {
         if (one == null && two == null) {
             return true;
         } else if (one != null && two == null) {

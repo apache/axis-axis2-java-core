@@ -14,18 +14,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	This type defines four different values which can designate
- * 	boolean values. This includes values yes and no which are
- * 	not designated by xsd:boolean
- * 
- *       
- * 
+ * This type defines four different values which can designate boolean values. This includes values
+ * yes and no which are not designated by xsd:boolean
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for generic-booleanType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="generic-booleanType">
  *   &lt;simpleContent>
@@ -34,14 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "generic-booleanType")
 public class GenericBooleanType
-    extends String
-{
+        extends String {
 
 
 }

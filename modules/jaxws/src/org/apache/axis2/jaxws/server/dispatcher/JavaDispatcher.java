@@ -24,38 +24,38 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * JavaDispatcher is an abstract class that can be extended to implement
- * an EndpointDispatcher to a Java object.  
+ * JavaDispatcher is an abstract class that can be extended to implement an EndpointDispatcher to a
+ * Java object.
  */
 public abstract class JavaDispatcher implements EndpointDispatcher {
 
     private static final Log log = LogFactory.getLog(JavaDispatcher.class);
-    
+
     protected Class serviceImplClass;
     protected Object serviceInstance;
-    
-    protected JavaDispatcher(Class impl, Object serviceInstance){
-    	this.serviceImplClass = impl;
-    	this.serviceInstance = serviceInstance;
+
+    protected JavaDispatcher(Class impl, Object serviceInstance) {
+        this.serviceImplClass = impl;
+        this.serviceInstance = serviceInstance;
     }
-    
+
     public abstract MessageContext invoke(MessageContext mc)
-        throws Exception;
-    
+            throws Exception;
+
     public Class getServiceImplementationClass() {
         return serviceImplClass;
     }
-    
+
     protected Object createServiceInstance() {
         if (log.isDebugEnabled()) {
             log.debug("Creating new instance of service endpoint");
         }
-        
+
         if (serviceImplClass == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                     "JavaDispErr1"));
         }
-        
+
         Object instance = null;
         try {
             instance = serviceImplClass.newInstance();
@@ -66,7 +66,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                     "JavaDispErr2", serviceImplClass.getName()));
         }
-        
+
         return instance;
     }
 

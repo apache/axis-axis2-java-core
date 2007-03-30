@@ -22,5 +22,5 @@ import javax.xml.ws.WebFault;
 
 public interface FaultDescriptionJava {
     public WebFault getAnnoWebFault();
-    
+
 }

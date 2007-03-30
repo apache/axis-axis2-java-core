@@ -15,28 +15,32 @@
  */
 package org.apache.axis2.wsdl.codegen.emitter;
 
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.writer.*;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.databinding.CUtils;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.writer.CServiceXMLWriter;
+import org.apache.axis2.wsdl.codegen.writer.CSkelHeaderWriter;
+import org.apache.axis2.wsdl.codegen.writer.CSkelSourceWriter;
+import org.apache.axis2.wsdl.codegen.writer.CStubHeaderWriter;
+import org.apache.axis2.wsdl.codegen.writer.CStubSourceWriter;
+import org.apache.axis2.wsdl.codegen.writer.CSvcSkeletonWriter;
+import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.neethi.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
@@ -51,6 +55,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     protected static final String C_OUR_TYPE_PREFIX = "axis2_";
     protected static final String C_OUR_TYPE_SUFFIX = "_t*";
+
     /**
      * Emit the stub
      *
@@ -59,8 +64,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     public void emitStub() throws CodeGenerationException {
 
         try {
-                // write interface implementations
-                writeCStub();
+            // write interface implementations
+            writeCStub();
 
         } catch (Exception e) {
             //log the error here
@@ -75,16 +80,15 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      */
     public void emitSkeleton() throws CodeGenerationException {
         try {
-                        // write skeleton
-                writeCSkel();
+            // write skeleton
+            writeCSkel();
 
-                // write a Service Skeleton for this particular service.
-                writeCServiceSkeleton();
+            // write a Service Skeleton for this particular service.
+            writeCServiceSkeleton();
 
-                writeServiceXml();
+            writeServiceXml();
         }
-        catch( Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -101,16 +105,16 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         CStubHeaderWriter writerHStub =
                 new CStubHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
-                        codeGenConfiguration.getSourceLocation()),
-                        codeGenConfiguration.getOutputLanguage());
+                                                         codeGenConfiguration.getSourceLocation()),
+                                      codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerHStub);
 
 
         CStubSourceWriter writerCStub =
                 new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
-                        codeGenConfiguration.getSourceLocation()),
-                        codeGenConfiguration.getOutputLanguage());
+                                                         codeGenConfiguration.getSourceLocation()),
+                                      codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerCStub);
     }
@@ -123,29 +127,33 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      */
     protected void writeCSkel() throws Exception {
 
-        Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
+        Document skeletonModel =
+                createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
 
 
-        CSkelHeaderWriter skeletonWriter = new CSkelHeaderWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                codeGenConfiguration.getSourceLocation()), this.codeGenConfiguration.getOutputLanguage());
+        CSkelHeaderWriter skeletonWriter = new CSkelHeaderWriter(
+                getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                                   codeGenConfiguration.getSourceLocation()),
+                this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
 
-        CSkelSourceWriter skeletonWriterStub = new CSkelSourceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                codeGenConfiguration.getSourceLocation()), this.codeGenConfiguration.getOutputLanguage());
+        CSkelSourceWriter skeletonWriterStub = new CSkelSourceWriter(
+                getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                                   codeGenConfiguration.getSourceLocation()),
+                this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriterStub);
     }
 
-    /**
-     * @throws Exception
-     */
+    /** @throws Exception  */
     protected void writeCServiceSkeleton() throws Exception {
 
         Document skeletonModel = createDOMDocumentForServiceSkeletonXML();
-        CSvcSkeletonWriter writer = new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
-                codeGenConfiguration.getSourceLocation()),
-                                    codeGenConfiguration.getOutputLanguage());
+        CSvcSkeletonWriter writer =
+                new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                                          codeGenConfiguration.getSourceLocation()),
+                                       codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, writer);
 
@@ -162,16 +170,16 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             // Write the service xml in a folder with the
             Document serviceXMLModel = createDOMDocumentForServiceXML();
             ClassWriter serviceXmlWriter =
-                    new CServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                            codeGenConfiguration.getResourceLocation()),
+                    new CServiceXMLWriter(
+                            getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                                               codeGenConfiguration.getResourceLocation()),
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);
         }
     }
-    /**
-     * Creates the DOM tree for implementations.
-     */
+
+    /** Creates the DOM tree for implementations. */
     protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
 
         String serviceName = axisService.getName();
@@ -182,7 +190,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "name", stubName, rootElement);
-        addAttribute( doc,"prefix", stubName, rootElement); //prefix to be used by the functions
+        addAttribute(doc, "prefix", stubName, rootElement); //prefix to be used by the functions
         addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
         addAttribute(doc, "servicename", serviceCName, rootElement);
         addAttribute(doc, "package", "", rootElement);
@@ -228,14 +236,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         // add the databind supporters. Now the databind supporters are completly contained inside
         // the stubs implementation and not visible outside
-        rootElement.appendChild(createDOMElementforDatabinders(doc,false));
+        rootElement.appendChild(createDOMElementforDatabinders(doc, false));
 
         Object stubMethods;
 
         //if some extension has added the stub methods property, add them to the
         //main document
         if ((stubMethods = codeGenConfiguration.getProperty("stubMethods")) != null) {
-            rootElement.appendChild(doc.importNode((Element) stubMethods, true));
+            rootElement.appendChild(doc.importNode((Element)stubMethods, true));
         }
 
         //add another element to have the unique list of faults
@@ -258,11 +266,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         String skelName = C_SKEL_PREFIX + serviceCName + C_SKEL_SUFFIX;
 
         // only the name is used
-        addAttribute(doc, "name", skelName , rootElement);
+        addAttribute(doc, "name", skelName, rootElement);
         addAttribute(doc, "package", "", rootElement);
         String serviceName = axisService.getName();
         String serviceTns = axisService.getTargetNamespace();
-        addAttribute( doc,"prefix", skelName, rootElement); //prefix to be used by the functions
+        addAttribute(doc, "prefix", skelName, rootElement); //prefix to be used by the functions
         addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
 
 
@@ -286,14 +294,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         String skelName = C_SKEL_PREFIX + localPart + C_SKEL_SUFFIX;
 
         // only the name is used
-        addAttribute(doc, "name", svcSkelName , rootElement);
-        addAttribute(doc, "prefix", svcSkelName , rootElement); //prefix to be used by the functions
+        addAttribute(doc, "name", svcSkelName, rootElement);
+        addAttribute(doc, "prefix", svcSkelName, rootElement); //prefix to be used by the functions
         String serviceName = axisService.getName();
         String serviceTns = axisService.getTargetNamespace();
         addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
 
-        addAttribute(doc, "svcname", skelName , rootElement);
-        addAttribute(doc, "svcop_prefix", skelName , rootElement);
+        addAttribute(doc, "svcname", skelName, rootElement);
+        addAttribute(doc, "svcop_prefix", skelName, rootElement);
         addAttribute(doc, "package", "", rootElement);
 
         fillSyncAttributes(doc, rootElement);
@@ -321,12 +329,13 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             return CUtils.makeNonCKeyword(word);
         }
         String outWord = word.replace('.', '_');
-        return outWord.replace('-','_') ;
+        return outWord.replace('-', '_');
     }
 
 
     /**
      * Loads the operations
+     *
      * @param doc
      * @param rootElement
      * @param mep
@@ -339,7 +348,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Iterator operations = axisService.getOperations();
         boolean opsFound = false;
         while (operations.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation) operations.next();
+            AxisOperation axisOperation = (AxisOperation)operations.next();
 
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
@@ -364,17 +373,20 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                 addAttribute(doc, "name", opCName, methodElement);
                 addAttribute(doc, "localpart", localPart, methodElement);
-                addAttribute(doc, "qname", localPart+ "|"+ opNS, methodElement);
+                addAttribute(doc, "qname", localPart + "|" + opNS, methodElement);
 
                 addAttribute(doc, "namespace", opNS, methodElement);
                 String style = axisOperation.getStyle();
                 addAttribute(doc, "style", style, methodElement);
-                addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                        methodElement);
+                addAttribute(doc, "dbsupportname",
+                             portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                             methodElement);
 
 
-                addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
-                addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+                addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(
+                        axisOperation.getMessageExchangePattern()) + "", methodElement);
+                addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(),
+                             methodElement);
 
 
                 addSOAPAction(doc, methodElement, axisOperation.getName());
@@ -387,14 +399,17 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 Policy policy = policyInclude.getPolicy();
                 if (policy != null) {
                     try {
-                        addAttribute(doc, "policy", PolicyUtil.policyComponentToString(policy), methodElement);
+                        addAttribute(doc, "policy", PolicyUtil.policyComponentToString(policy),
+                                     methodElement);
                     } catch (Exception ex) {
-                        throw new RuntimeException("can't serialize the policy to a String " , ex);
+                        throw new RuntimeException("can't serialize the policy to a String ", ex);
                     }
                 }
 
-                methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
-                methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                methodElement.appendChild(
+                        getInputElement(doc, axisOperation, soapHeaderInputParameterList));
+                methodElement.appendChild(
+                        getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
                 methodElement.appendChild(getFaultElement(doc, axisOperation));
 
                 rootElement.appendChild(methodElement);
@@ -414,15 +429,19 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                     addAttribute(doc, "name", opCName, methodElement);
                     addAttribute(doc, "localpart", localPart, methodElement);
-                    addAttribute(doc, "qname", localPart+ "|"+ opNS, methodElement);
+                    addAttribute(doc, "qname", localPart + "|" + opNS, methodElement);
 
-                    addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
+                    addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(),
+                                 methodElement);
                     addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
-                    addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                            methodElement);
+                    addAttribute(doc, "dbsupportname",
+                                 portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                                 methodElement);
 
-                    addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
-                    addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+                    addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(
+                            axisOperation.getMessageExchangePattern()) + "", methodElement);
+                    addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(),
+                                 methodElement);
 
 
                     addSOAPAction(doc, methodElement, axisOperation.getName());
@@ -436,21 +455,24 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     Policy policy = axisOperation.getPolicyInclude().getPolicy();
                     if (policy != null) {
                         try {
-                        addAttribute(doc, "policy",
-                                PolicyUtil.policyComponentToString(policy),
-                                methodElement);
+                            addAttribute(doc, "policy",
+                                         PolicyUtil.policyComponentToString(policy),
+                                         methodElement);
                         } catch (Exception ex) {
-                            throw new RuntimeException("can't serialize the policy to a String", ex);
+                            throw new RuntimeException("can't serialize the policy to a String",
+                                                       ex);
                         }
                     }
 
 
                     methodElement.appendChild(getInputElement(doc,
-                            axisOperation, soapHeaderInputParameterList));
+                                                              axisOperation,
+                                                              soapHeaderInputParameterList));
                     methodElement.appendChild(getOutputElement(doc,
-                            axisOperation, soapHeaderOutputParameterList));
+                                                               axisOperation,
+                                                               soapHeaderOutputParameterList));
                     methodElement.appendChild(getFaultElement(doc,
-                            axisOperation));
+                                                              axisOperation));
                     rootElement.appendChild(methodElement);
                     //////////////////////
                 }
@@ -464,8 +486,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
     /**
-     * A convenient method for the generating the parameter
-     * element
+     * A convenient method for the generating the parameter element
      *
      * @param doc
      * @param paramName
@@ -483,15 +504,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Element paramElement = doc.createElement("param");
         //return paramElement;/*
         addAttribute(doc, "name",
-                paramName, paramElement);
+                     paramName, paramElement);
 
         String typeMappingStr = (paramType == null)
                 ? ""
                 : paramType;
 
 
-        if (JAVA_DEFAULT_TYPE.equals(typeMappingStr))
-        {
+        if (JAVA_DEFAULT_TYPE.equals(typeMappingStr)) {
             typeMappingStr = C_DEFAULT_TYPE;
         }
 
@@ -499,7 +519,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
 
         //adds the short type
-        addShortType(paramElement,paramType);
+        addShortType(paramElement, paramType);
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(paramType)) {
@@ -510,42 +530,39 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         addAttribute(doc, "location", "body", paramElement);
 
         //if the opName and partName are present , add them
-        if (opName!=null){
-            addAttribute(doc,"opname",opName.getLocalPart(),paramElement);
+        if (opName != null) {
+            addAttribute(doc, "opname", opName.getLocalPart(), paramElement);
 
         }
-        if (partName!= null){
-            addAttribute(doc,"partname",
-                    JavaUtils.capitalizeFirstChar(partName),
-                    paramElement);
+        if (partName != null) {
+            addAttribute(doc, "partname",
+                         JavaUtils.capitalizeFirstChar(partName),
+                         paramElement);
         }
 
-        if (isPrimitive){
-            addAttribute(doc,"primitive","yes",paramElement);
+        if (isPrimitive) {
+            addAttribute(doc, "primitive", "yes", paramElement);
         }
 
         // the following methods are moved from addOurs functioin
-        Map typeMap =  CTypeInfo.getTypeMap();
-        Iterator it= typeMap.keySet().iterator();
+        Map typeMap = CTypeInfo.getTypeMap();
+        Iterator it = typeMap.keySet().iterator();
         boolean isOurs = true;
-        while (it.hasNext()){
-            if (it.next().equals(typeMappingStr)){
+        while (it.hasNext()) {
+            if (it.next().equals(typeMappingStr)) {
                 isOurs = false;
                 break;
             }
         }
 
-        if ( isOurs && typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
-                !typeMappingStr.equals(C_DEFAULT_TYPE) ){
+        if (isOurs && typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
+                !typeMappingStr.equals(C_DEFAULT_TYPE)) {
             addAttribute(doc, "ours", "yes", paramElement);
-        }
-        else
-        {
+        } else {
             isOurs = false;
         }
 
-        if ( isOurs)
-        {
+        if (isOurs) {
             typeMappingStr = C_OUR_TYPE_PREFIX + typeMappingStr + C_OUR_TYPE_SUFFIX;
         }
 
@@ -554,12 +571,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         return paramElement;  //*/
     }
+
     /**
      * @param doc
      * @param operation
      * @param param
      */
-    protected void addCSpecifcAttributes(Document doc, AxisOperation operation, Element param, String messageType) {
+    protected void addCSpecifcAttributes(Document doc, AxisOperation operation, Element param,
+                                         String messageType) {
         String typeMappingStr;
         Map typeMap = CTypeInfo.getTypeMap();
         Iterator typeMapIterator = typeMap.keySet().iterator();

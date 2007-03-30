@@ -19,7 +19,7 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension{
+public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
 
 
     public JavaPrettyPrinterExtension() {
@@ -32,12 +32,13 @@ public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension{
 
     /**
      * Overridden to call the java pretty printer
+     *
      * @param file
      */
     protected void prettifyFile(File file) {
         // Special case jaxbri generated package-info.java 
         // as jalopy corrupts the package level annotations
-        if(file.getName().equals("package-info.java")) {
+        if (file.getName().equals("package-info.java")) {
             return;
         }
         PrettyPrinter.prettify(file);

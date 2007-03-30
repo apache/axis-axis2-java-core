@@ -18,13 +18,9 @@ package org.apache.axis2.engine;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -45,7 +41,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
 
     private static final Log log = LogFactory.getLog(EchoRawXMLMultipleSyncTest.class);
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -69,8 +65,8 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -105,7 +101,8 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
         options.setUseSeparateListener(true);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo",
                         "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());

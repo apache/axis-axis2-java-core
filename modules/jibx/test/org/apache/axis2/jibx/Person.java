@@ -20,21 +20,22 @@ public class Person {
     public int customerNumber;
     public String firstName;
     public String lastName;
-    
-    public Person() {}
-    
+
+    public Person() {
+    }
+
     public Person(int number, String name, String name2) {
         customerNumber = number;
         firstName = name;
         lastName = name2;
     }
-    
+
     public boolean equals(Object obj) {
         if (obj instanceof Person) {
             Person person = (Person)obj;
             return customerNumber == person.customerNumber &&
-                firstName.equals(person.firstName) &&
-                lastName.equals(person.lastName);
+                    firstName.equals(person.firstName) &&
+                    lastName.equals(person.lastName);
         } else {
             return false;
         }

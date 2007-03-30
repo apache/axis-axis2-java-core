@@ -20,11 +20,9 @@ import org.apache.axiom.om.impl.dom.ElementImpl;
 import javax.xml.soap.SOAPFaultElement;
 
 public class SOAPFaultElementImpl extends SOAPElementImpl implements
-                                                          SOAPFaultElement {
+        SOAPFaultElement {
 
-    /**
-     * @param element
-     */
+    /** @param element  */
     public SOAPFaultElementImpl(ElementImpl element) {
         super(element);
     }

@@ -32,8 +32,10 @@ public class GroupcEchoStringUtil implements SunClientUtil {
 
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
@@ -70,7 +72,8 @@ public class GroupcEchoStringUtil implements SunClientUtil {
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
 
         SOAPBody body = omfactory.createSOAPBody(reqEnv);
         body.addChild(operation);

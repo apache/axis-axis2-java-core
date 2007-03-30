@@ -26,14 +26,14 @@ public class EchoService {
     public OMElement mtomSample(OMElement element) throws Exception {
         if (element.getLocalName().equalsIgnoreCase("Data")
                 && element.getNamespace().getNamespaceURI().equalsIgnoreCase(
-                        "http://example.org/mtom/data")) {
-                OMText binaryNode = (OMText)element.getFirstOMChild();
-                binaryNode.setOptimize(!binaryNode.isOptimized());
-            }
-         else if (element.getLocalName().equalsIgnoreCase("EchoTest") && element.getNamespace().getNamespaceURI().equalsIgnoreCase("http://example.org/mtom/data")) {
+                "http://example.org/mtom/data")) {
+            OMText binaryNode = (OMText)element.getFirstOMChild();
+            binaryNode.setOptimize(!binaryNode.isOptimized());
+        } else if (element.getLocalName().equalsIgnoreCase("EchoTest") && element.getNamespace()
+                .getNamespaceURI().equalsIgnoreCase("http://example.org/mtom/data")) {
             Iterator childrenIterator = element.getChildren();
             while (childrenIterator.hasNext()) {
-                OMElement dataElement = (OMElement) childrenIterator.next();
+                OMElement dataElement = (OMElement)childrenIterator.next();
                 OMText binaryNode = (OMText)dataElement.getFirstOMChild();
                 binaryNode.setOptimize(!binaryNode.isOptimized());
             }

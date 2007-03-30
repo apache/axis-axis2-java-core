@@ -16,9 +16,9 @@
 
 package javax.xml.soap;
 
-import javax.xml.transform.dom.DOMResult;
-
 import org.w3c.dom.NodeList;
+
+import javax.xml.transform.dom.DOMResult;
 
 public class SAAJResult extends DOMResult {
 
@@ -27,11 +27,11 @@ public class SAAJResult extends DOMResult {
         this(MessageFactory.newInstance().createMessage());
         org.w3c.dom.Node node = this.getNode();
         NodeList nodeList = node.getChildNodes();
-        if(nodeList != null){
-        	int size = nodeList.getLength();
-        	for(int a = 0;a < size;a++){
-                node.removeChild(nodeList.item(a));        		
-        	}
+        if (nodeList != null) {
+            int size = nodeList.getLength();
+            for (int a = 0; a < size; a++) {
+                node.removeChild(nodeList.item(a));
+            }
         }
         this.setNode(null);
     }
@@ -52,16 +52,16 @@ public class SAAJResult extends DOMResult {
     public javax.xml.soap.Node getResult() {
         org.w3c.dom.Node node = super.getNode();
         //When using SAAJResult saajResult = new SAAJResult();
-        if (node == null){
-        	return null;
+        if (node == null) {
+            return null;
         }
-        if(node instanceof SOAPPart){
+        if (node instanceof SOAPPart) {
             try {
                 return ((SOAPPart)node).getEnvelope();
             } catch (SOAPException e) {
                 throw new RuntimeException(e);
             }
         }
-        return (javax.xml.soap.Node) node.getFirstChild();
+        return (javax.xml.soap.Node)node.getFirstChild();
     }
 }

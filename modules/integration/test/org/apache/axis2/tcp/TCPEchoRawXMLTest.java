@@ -23,23 +23,15 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
@@ -48,7 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class TCPEchoRawXMLTest extends TestCase {
@@ -64,7 +55,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     private ConfigurationContext configContext;
 
     private boolean finish = false;
-	private static final Log log = LogFactory.getLog(TCPEchoRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(TCPEchoRawXMLTest.class);
 
     public TCPEchoRawXMLTest() {
         super(TCPEchoRawXMLTest.class.getName());
@@ -80,12 +71,12 @@ public class TCPEchoRawXMLTest extends TestCase {
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilsTCPServer.deployService(service);
         clientService = Utils.createSimpleServiceforClient(serviceName,
-                Echo.class.getName(),
-                operationName);
+                                                           Echo.class.getName(),
+                                                           operationName);
         configContext = UtilServer.createClientConfigurationContext();
     }
 
@@ -110,7 +101,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {

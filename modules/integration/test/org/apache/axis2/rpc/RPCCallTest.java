@@ -64,7 +64,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
     protected QName transportName = new QName("http://org.apache.axis2/xsd",
-            "NullTransport");
+                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -129,7 +129,8 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add("159");
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement(), new DefaultObjectSupplier(), null);
+        MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class, response.getFirstElement(),
+                                                      new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -172,8 +173,9 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class,
-                response.getFirstElement(), new DefaultObjectSupplier(), null);
+        MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class,
+                                                      response.getFirstElement(),
+                                                      new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
@@ -204,8 +206,8 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        Mail resBean = (Mail) BeanUtil.deserialize(Mail.class, response.getFirstElement(),
-                new DefaultObjectSupplier(), null);
+        Mail resBean = (Mail)BeanUtil.deserialize(Mail.class, response.getFirstElement(),
+                                                  new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getBody(), "My Body");
@@ -475,9 +477,10 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         resobj.add(Company.class);
         resobj.add(Company.class);
         resobj.add(Company.class);
-        Object [] value = sender.invokeBlocking(operationName, req.toArray(), (Class[])resobj.toArray(new Class[resobj.size()]));
+        Object [] value = sender.invokeBlocking(operationName, req.toArray(),
+                                                (Class[])resobj.toArray(new Class[resobj.size()]));
         assertEquals(4, value.length);
-        assertEquals(((Company) value[0]).getName(), "MyCompany");
+        assertEquals(((Company)value[0]).getName(), "MyCompany");
     }
 
 
@@ -548,8 +551,9 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         ArrayList ret = new ArrayList();
         ret.add(MyBean.class);
 
-        Object [] response = sender.invokeBlocking(operationName, args.toArray(), (Class[])ret.toArray(new Class[ret.size()]));
-        MyBean resBean = (MyBean) response[0];
+        Object [] response = sender.invokeBlocking(operationName, args.toArray(),
+                                                   (Class[])ret.toArray(new Class[ret.size()]));
+        MyBean resBean = (MyBean)response[0];
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
     }
@@ -572,8 +576,9 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
 
-        Object [] response = sender.invokeBlocking(operationName, args.toArray(), (Class[])ret.toArray(new Class[ret.size()]));
-        assertEquals(((Integer) response[0]).intValue(), 100);
+        Object [] response = sender.invokeBlocking(operationName, args.toArray(),
+                                                   (Class[])ret.toArray(new Class[ret.size()]));
+        assertEquals(((Integer)response[0]).intValue(), 100);
     }
 
 //    public void testmultireturn() throws AxisFault {
@@ -613,12 +618,12 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         sender.setOptions(options);
 
         ArrayList args = new ArrayList();
-        String [] values = new String[]{"abc", "cde", "efg"};
+        String [] values = new String[] { "abc", "cde", "efg" };
         args.add(values);
         ArrayList ret = new ArrayList();
         ret.add(Boolean.class);
         Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
-                (Class[])ret.toArray(new Class[ret.size()]));
+                                               (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(Boolean.TRUE, Boolean.valueOf(objs[0].toString()));
     }
@@ -636,19 +641,19 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         sender.setOptions(options);
 
         ArrayList args = new ArrayList();
-        String [] values = new String[]{"abc", "cde", "efg"};
+        String [] values = new String[] { "abc", "cde", "efg" };
         args.add(values);
 
-        String [] values2 = new String[]{"abc", "cde", "efg"};
+        String [] values2 = new String[] { "abc", "cde", "efg" };
         args.add(values2);
-        String [] values3 = new String[]{"abc", "cde", "efg"};
+        String [] values3 = new String[] { "abc", "cde", "efg" };
         args.add(values3);
         args.add("10");
 
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
         Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
-                (Class[])ret.toArray(new Class[ret.size()]));
+                                               (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(19, Integer.parseInt(objs[0].toString()));
     }

@@ -18,10 +18,7 @@ package org.apache.axis2.jaxws.message.databinding;
 
 import org.apache.axis2.jaxws.message.Block;
 
-/**
- * SourceBlock
- * Block with a business object that is a javax.xml.transform.Source
- */
+/** SourceBlock Block with a business object that is a javax.xml.transform.Source */
 public interface SourceBlock extends Block {
-	
+
 }

@@ -17,11 +17,8 @@
 */
 package org.apache.axis2.addressing;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -44,21 +41,24 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 
+import javax.xml.namespace.QName;
+
 /**
  * This tests that it is possible to use the more advanced function allowed by the WS-Addressing
  * specification to redirect responses. This test sets up 2 services, MultiHopRedirectService1 and
- * MultiHopRedirectService2.
- * MultiHopRedirectService1 echos the XML it receives to MultiHopRedirectService2, adding the
- * original ReplyTo.
- * MultiHopRedirectService2 then echos the XML to the orignal ReplyTo, setting the RelatesTo to
- * the messageID of the original request message to allow the client to correlate the message.
- * 
- * The clearly only works if the client is using a separate listener (which the client in the test does)
+ * MultiHopRedirectService2. MultiHopRedirectService1 echos the XML it receives to
+ * MultiHopRedirectService2, adding the original ReplyTo. MultiHopRedirectService2 then echos the
+ * XML to the orignal ReplyTo, setting the RelatesTo to the messageID of the original request
+ * message to allow the client to correlate the message.
+ * <p/>
+ * The clearly only works if the client is using a separate listener (which the client in the test
+ * does)
  */
 public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
     EndpointReference targetEPR = new EndpointReference(
-            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/MultiHopRedirectService1/echoRedirect");
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+                    "/axis2/services/MultiHopRedirectService1/echoRedirect");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -81,7 +81,8 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
         AxisService service = new AxisService("MultiHopRedirectService1");
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService1.class.getName()));
+        service.addParameter(
+                new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService1.class.getName()));
 
         AxisOperation axisOp = new InOutAxisOperation(new QName("echoRedirect"));
 
@@ -91,12 +92,13 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
 
         return service;
     }
-    
+
     AxisService createMultiHopRedirectService2() throws AxisFault {
         AxisService service = new AxisService("MultiHopRedirectService2");
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService2.class.getName()));
+        service.addParameter(
+                new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService2.class.getName()));
 
         AxisOperation axisOp = new InOutAxisOperation(new QName("echoRedirect"));
 
@@ -130,7 +132,8 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
     private OMElement createElement(String text) {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI+"/addressing", "axis2addressing");
+        OMNamespace omNs = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI + "/addressing",
+                                                 "axis2addressing");
         OMElement value = fac.createOMElement("element", omNs);
         value.setText(text);
 
@@ -141,7 +144,8 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
         AxisService service = new AxisService("MultiHopRedirectService1");
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService1.class.getName()));
+        service.addParameter(
+                new Parameter(Constants.SERVICE_CLASS, MultiHopRedirectService1.class.getName()));
 
         AxisOperation axisOp = new OutInAxisOperation(new QName("echoRedirect"));
 

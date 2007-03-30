@@ -51,7 +51,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("mail:foo@127.0.0.1"
             + "/axis2/services/EchoXMLService/echoOMElement");
 
-	private static final Log log = LogFactory.getLog(MailRequestResponseRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(MailRequestResponseRawXMLTest.class);
 
     private QName serviceName = new QName("EchoXMLService");
 
@@ -62,7 +62,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     private SOAPEnvelope envelope;
 
     private ConfigurationContext serverConfigContext;
-    
+
     public MailRequestResponseRawXMLTest() {
         super(MailRequestResponseRawXMLTest.class.getName());
     }
@@ -95,7 +95,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(fac.createOMText(value,
-                "Isaac Asimov, The Foundation Trilogy"));
+                                        "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 
         return method;
@@ -114,7 +114,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             }
         });
         service.addOperation(axisOperation);
- //       configContext.getAxisConfiguration().addService(service);
+        //       configContext.getAxisConfiguration().addService(service);
 
         Options options = new Options();
         options.setTo(targetEPR);

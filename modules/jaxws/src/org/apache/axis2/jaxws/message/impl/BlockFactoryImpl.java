@@ -16,59 +16,53 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
-/**
- * BlockFactoryImpl
- * Abstract Base Class for the Block Factories
- */
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
+
+/** BlockFactoryImpl Abstract Base Class for the Block Factories */
 public abstract class BlockFactoryImpl implements BlockFactory {
-	
-	public BlockFactoryImpl() {
-		super();
-	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
-	 */
-	public Block createFrom(Block other, Object context) throws XMLStreamException, WebServiceException {
-		// This is the default behavior.  Derived Factories may
-		// provide a more performant implementation.
-		if (other.getBlockFactory().equals(this)) {
-            if (other.getBusinessContext() == null && 
-                context == null) {
+    public BlockFactoryImpl() {
+        super();
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
+      */
+    public Block createFrom(Block other, Object context)
+            throws XMLStreamException, WebServiceException {
+        // This is the default behavior.  Derived Factories may
+        // provide a more performant implementation.
+        if (other.getBlockFactory().equals(this)) {
+            if (other.getBusinessContext() == null &&
+                    context == null) {
+                return other;
+            } else if (other.getBusinessContext() != null &&
+                    other.getBusinessContext().equals(context)) {
                 return other;
             }
-            else if (other.getBusinessContext() != null &&
-                     other.getBusinessContext().equals(context)) {
-                return other;
-            }
-		}
-		QName qName= null;
-		if (other.isQNameAvailable()) {
-			qName = other.getQName();
-		}
-		Block newBlock = createFrom(other.getXMLStreamReader(true), context, qName);
+        }
+        QName qName = null;
+        if (other.isQNameAvailable()) {
+            qName = other.getQName();
+        }
+        Block newBlock = createFrom(other.getXMLStreamReader(true), context, qName);
         return newBlock;
-	}
+    }
 
-	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException, WebServiceException {
-		StAXOMBuilder builder = new StAXOMBuilder(reader); 
-		OMElement omElement = builder.getDocumentElement();
-		return createFrom(omElement, context, omElement.getQName());
-	}
+    public Block createFrom(XMLStreamReader reader, Object context, QName qName)
+            throws XMLStreamException, WebServiceException {
+        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMElement omElement = builder.getDocumentElement();
+        return createFrom(omElement, context, omElement.getQName());
+    }
 
-	
-
-	
-	
 
 }

@@ -20,26 +20,23 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 
 /**
- * SAAJConverterFactoryImpl
- * Get the default SAAJConverter implementation.
- * Obtain this factory from the FactoryRegistry
+ * SAAJConverterFactoryImpl Get the default SAAJConverter implementation. Obtain this factory from
+ * the FactoryRegistry
  */
 public class SAAJConverterFactoryImpl implements SAAJConverterFactory {
 
-	SAAJConverterImpl converter = new SAAJConverterImpl();
-	
-	/**
-	 * Required for Factory instantiation
-	 */
-	public SAAJConverterFactoryImpl() {
-		super();
-	}
+    SAAJConverterImpl converter = new SAAJConverterImpl();
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.SAAJConverterFactory#getSAAJConverter()
-	 */
-	public SAAJConverter getSAAJConverter() {
-		return converter;
-	}
+    /** Required for Factory instantiation */
+    public SAAJConverterFactoryImpl() {
+        super();
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.SAAJConverterFactory#getSAAJConverter()
+      */
+    public SAAJConverter getSAAJConverter() {
+        return converter;
+    }
 
 }

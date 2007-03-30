@@ -16,18 +16,9 @@
 
 package org.apache.axis2.mtom;
 
-import java.awt.Image;
-import java.io.InputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.imageio.ImageIO;
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -54,10 +45,16 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
+import java.io.InputStream;
+
 public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestConstants {
 
 
-	private static final Log log = LogFactory.getLog(EchoRawMTOMTest.class);
+    private static final Log log = LogFactory.getLog(EchoRawMTOMTest.class);
 
     private AxisService service;
 
@@ -74,12 +71,13 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMTest.class),
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -115,8 +113,8 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
             public void onComplete(AsyncResult result) {
                 SOAPEnvelope envelope = result.getResponseEnvelope();
 
-                OMElement ele = (OMElement) envelope.getBody().getFirstElement().getFirstOMChild();
-                OMText binaryNode = (OMText) ele.getFirstOMChild();
+                OMElement ele = (OMElement)envelope.getBody().getFirstElement().getFirstOMChild();
+                OMText binaryNode = (OMText)ele.getFirstOMChild();
 
                 // to the assert equal
                 compareWithCreatedOMText(binaryNode);
@@ -129,9 +127,10 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
             }
         };
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         sender.setOptions(options);
 
         sender.sendReceiveNonBlocking(payload, callback);
@@ -155,27 +154,28 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        
-        ServiceClient sender = new ServiceClient(configContext,null);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
+
+        ServiceClient sender = new ServiceClient(configContext, null);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         sender.setOptions(options);
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);
 
-        OMElement ele = (OMElement) result.getFirstOMChild();
-        OMText binaryNode = (OMText) ele.getFirstOMChild();
+        OMElement ele = (OMElement)result.getFirstOMChild();
+        OMText binaryNode = (OMText)ele.getFirstOMChild();
 
         // to the assert equal
         compareWithCreatedOMText(binaryNode);
 
         // Save the image
         DataHandler actualDH;
-        actualDH = (DataHandler) binaryNode.getDataHandler();
-       ImageIO.read(actualDH.getDataSource()
+        actualDH = (DataHandler)binaryNode.getDataHandler();
+        ImageIO.read(actualDH.getDataSource()
                 .getInputStream());
     }
-    
+
     public void testEchoXMLSyncSeperateListener() throws Exception {
         OMElement payload = createEnvelope();
         Options options = new Options();
@@ -184,18 +184,19 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
-        
-        ServiceClient sender = new ServiceClient(configContext,null);
-        sender.engageModule( new QName("addressing"));
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
+
+        ServiceClient sender = new ServiceClient(configContext, null);
+        sender.engageModule(new QName("addressing"));
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         sender.setOptions(options);
         options.setUseSeparateListener(true);
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);
 
-        OMElement ele = (OMElement) result.getFirstOMChild();
-        OMText binaryNode = (OMText) ele.getFirstOMChild();
+        OMElement ele = (OMElement)result.getFirstOMChild();
+        OMText binaryNode = (OMText)ele.getFirstOMChild();
         // to the assert equal
         compareWithCreatedOMText(binaryNode);
     }

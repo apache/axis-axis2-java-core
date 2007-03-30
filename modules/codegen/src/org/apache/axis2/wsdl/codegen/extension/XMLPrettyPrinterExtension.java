@@ -19,7 +19,7 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class XMLPrettyPrinterExtension extends AbstractPrettyPrinterExtension{
+public class XMLPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
 
 
     public XMLPrettyPrinterExtension() {
@@ -28,6 +28,7 @@ public class XMLPrettyPrinterExtension extends AbstractPrettyPrinterExtension{
 
     /**
      * calls the xml pretty printers
+     *
      * @param file
      */
     protected void prettifyFile(File file) {

@@ -17,60 +17,52 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
+import javax.xml.ws.Service;
 import java.lang.annotation.Annotation;
 
-import javax.xml.ws.Service;
+public class ServiceModeAnnot implements javax.xml.ws.ServiceMode {
 
-public class ServiceModeAnnot implements javax.xml.ws.ServiceMode{
-	
-	private Service.Mode value = Service.Mode.PAYLOAD;
+    private Service.Mode value = Service.Mode.PAYLOAD;
 
-	/**
-     * A ServiceModeAnnot cannot be instantiated.
-     */
-	private  ServiceModeAnnot(){
-		
-	}
-	
-	private  ServiceModeAnnot( Service.Mode value)
-	{
-		this.value = value;
-	}
+    /** A ServiceModeAnnot cannot be instantiated. */
+    private ServiceModeAnnot() {
+
+    }
+
+    private ServiceModeAnnot(Service.Mode value) {
+        this.value = value;
+    }
 
     public static ServiceModeAnnot createWebServiceAnnotImpl() {
         return new ServiceModeAnnot();
     }
 
-    public static ServiceModeAnnot createWebServiceAnnotImpl( Service.Mode value) 
-    {
-        return new ServiceModeAnnot( value );
+    public static ServiceModeAnnot createWebServiceAnnotImpl(Service.Mode value) {
+        return new ServiceModeAnnot(value);
     }
 
-	public Service.Mode value(){
-		return this.value;
-	}
-	
-	//hmm, should we really do this
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	//Setters
-	public void setValue(Service.Mode value){
-		this.value = value;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@ServiceMode.value= " + value.toString());
-		sb.append(newLine);
-		return sb.toString();
-	}
+    public Service.Mode value() {
+        return this.value;
+    }
+
+    //hmm, should we really do this
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    //Setters
+    public void setValue(Service.Mode value) {
+        this.value = value;
+    }
+
+    /** Convenience method for unit testing. We will print all of the data members here. */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@ServiceMode.value= " + value.toString());
+        sb.append(newLine);
+        return sb.toString();
+    }
 	
 }

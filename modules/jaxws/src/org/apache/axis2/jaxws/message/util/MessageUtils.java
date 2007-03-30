@@ -16,21 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDocument;
@@ -57,39 +42,52 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Miscellaneous Utilities that may be useful inside and outside the Message
- * subcomponent.
- */
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/** Miscellaneous Utilities that may be useful inside and outside the Message subcomponent. */
 public class MessageUtils {
-    
+
     private static final Log log = LogFactory.getLog(MessageUtils.class);
+
     /**
      * Get an axiom SOAPFactory for the specified element
+     *
      * @param e OMElement
      * @return SOAPFactory
      */
     public static SOAPFactory getSOAPFactory(OMElement e) {
         // Getting a factory from a SOAPEnvelope is not straight-forward.
         // Please change this code if an easier mechanism is discovered.
-        
+
         OMXMLParserWrapper builder = e.getBuilder();
         if (builder instanceof StAXBuilder) {
-            StAXBuilder staxBuilder = (StAXBuilder) builder;
+            StAXBuilder staxBuilder = (StAXBuilder)builder;
             OMDocument document = staxBuilder.getDocument();
             if (document != null) {
                 OMFactory factory = document.getOMFactory();
                 if (factory instanceof SOAPFactory) {
-                    return (SOAPFactory) factory;
+                    return (SOAPFactory)factory;
                 }
             }
         }
         // Flow to here indicates that the envelope does not have
         // an accessible factory.  Create a new factory based on the 
         // protocol.
-        
+
         while (e != null && !(e instanceof SOAPEnvelope)) {
-            e = (OMElement) e.getParent();
+            e = (OMElement)e.getParent();
         }
         if (e instanceof SOAPEnvelope) {
             if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.
@@ -101,114 +99,119 @@ public class MessageUtils {
         }
         return null;
     }
-    
+
     /**
      * Create a JAXWS Message Attachment object from an SAAJ AttachmentPart
-     * @param ap AttachmentPart
+     *
+     * @param ap      AttachmentPart
      * @param message Message
      * @return Attachment
      * @throws SOAPException
      */
-    public static Attachment createAttachment(AttachmentPart ap, Message message) throws SOAPException {
+    public static Attachment createAttachment(AttachmentPart ap, Message message)
+            throws SOAPException {
         // Create the attachment
         Attachment a = message.createAttachment(ap.getDataHandler(), ap.getContentId());
-        
+
         // Copy over all of the headers
         MimeHeaders mhs = new MimeHeaders();
-        Iterator it =ap.getAllMimeHeaders();
+        Iterator it = ap.getAllMimeHeaders();
         while (it.hasNext()) {
-            MimeHeader mh = (MimeHeader) it.next();
+            MimeHeader mh = (MimeHeader)it.next();
             mhs.addHeader(mh.getName(), mh.getValue());
         }
         a.setMimeHeaders(mhs);
-        
+
         // Make sure content id is preserved
         String contentID = ap.getContentId();
         a.setContentID(contentID);
         return a;
     }
-    
+
     /**
      * Create an SAAJ AttachmentPart from a JAXWS Attachment
-     * @param a Attachment
+     *
+     * @param a       Attachment
      * @param message SOAPMessage
      * @return AttachmentPart
      */
     public static AttachmentPart createAttachmentPart(Attachment a, SOAPMessage message) {
         // Create the Attachment Part
         AttachmentPart ap = message.createAttachmentPart(a.getDataHandler());
-        
+
         // Copy over all of the Headers
         Iterator it = a.getMimeHeaders().getAllHeaders();
         while (it.hasNext()) {
-            MimeHeader mh = (MimeHeader) it.next();
+            MimeHeader mh = (MimeHeader)it.next();
             ap.addMimeHeader(mh.getName(), mh.getValue());
         }
-        
+
         // Preserve the original content id
         String contentID = a.getContentID();
         ap.setContentId(contentID);
         return ap;
     }
-    
+
     /**
-     * Create a JAX-WS Message from the
-     * information on an Axis 2 Message Context
+     * Create a JAX-WS Message from the information on an Axis 2 Message Context
+     *
      * @param msgContext
      * @return Message
      */
-    public static Message getMessageFromMessageContext(MessageContext msgContext) throws WebServiceException {
+    public static Message getMessageFromMessageContext(MessageContext msgContext)
+            throws WebServiceException {
         if (log.isDebugEnabled()) {
             log.debug("Start getMessageFromMessageContext");
         }
-        
+
         Message message = null;
         // If the Axis2 MessageContext that was passed in has a SOAPEnvelope
         // set on it, grab that and create a JAX-WS Message out of it.
         SOAPEnvelope soapEnv = msgContext.getEnvelope();
         if (soapEnv != null) {
-            MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+            MessageFactory msgFactory =
+                    (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             try {
                 Protocol protocol = msgContext.isDoingREST() ? Protocol.rest : null;
                 message = msgFactory.createFrom(soapEnv, protocol);
             } catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException("Could not create new Message");
             }
-            
+
             // Add all the MimeHeaders from the Axis2 MessageContext
             MimeHeaders mhs = message.getMimeHeaders();
-            Map headerMap = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            Map headerMap = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headerMap != null) {
                 Iterator it = headerMap.keySet().iterator();
                 while (it.hasNext()) {
-                    String key = (String) it.next();
-                    String value = (String) headerMap.get(key);
+                    String key = (String)it.next();
+                    String value = (String)headerMap.get(key);
                     mhs.addHeader(key, value);
                 }
             }
-            
-            
+
             // FIXME: This should be revisited when we re-work the MTOM support.
             //This destroys performance by forcing a double pass through the message.
             //If attachments are found on the MessageContext, then that means
             //the inbound message has more than just the normal XML payload
-            Attachments as = (Attachments) msgContext.getProperty(MTOMConstants.ATTACHMENTS); 
-            if (as != null) { 
+            Attachments as = (Attachments)msgContext.getProperty(MTOMConstants.ATTACHMENTS);
+            if (as != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Found Axis MTOM Attachments");
                 }
-                
+
                 //Walk the tree and find all of the optimized binary nodes.
-                ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes((SOAPEnvelope) message.getAsOMElement());
-                if (binaryNodes != null  && binaryNodes.size() > 0) {
-                    
+                ArrayList<OMText> binaryNodes =
+                        AttachmentUtils.findBinaryNodes((SOAPEnvelope)message.getAsOMElement());
+                if (binaryNodes != null && binaryNodes.size() > 0) {
+
                     if (log.isDebugEnabled()) {
-                        log.debug("Found " + binaryNodes.size() +"MTOM Binary Nodes");
+                        log.debug("Found " + binaryNodes.size() + "MTOM Binary Nodes");
                     }
-                    
+
                     // Mark the JAX-WS Message as MTOM enabled
                     message.setMTOMEnabled(true);
-                    
+
                     //Replace each of the nodes with it's corresponding <xop:include>
                     //element, so JAXB can process it correctly.
                     Iterator<OMText> itr = binaryNodes.iterator();
@@ -217,20 +220,20 @@ public class MessageUtils {
                         OMElement xop = AttachmentUtils.makeXopElement(node);
                         node.getParent().addChild(xop);
                         node.detach();
-                        
+
                         //We have to add the individual attachments in their raw
                         //binary form, so we can access them later.
                         if (log.isDebugEnabled()) {
                             log.debug("Create MTOM Message Attachment for " + node.getContentID());
                         }
                         Attachment a = message.createAttachment(
-                                (DataHandler) node.getDataHandler(), 
+                                (DataHandler)node.getDataHandler(),
                                 node.getContentID());
                         message.addAttachment(a);
                     }
                 }
-            } 
-            
+            }
+
             // Get SWA Attachments from the Axis2 MessageContext
             Attachments attachments = msgContext.getAttachmentMap();
             if (attachments != null) {
@@ -238,47 +241,50 @@ public class MessageUtils {
                 if (ids != null) {
                     // Axis2 stores the SOAP Part as one of the Attachments.
                     // For now we will assume that the SOAPPart is the first attachment, and skip it.
-                    for (int i = 1; i<ids.length; i++) {
+                    for (int i = 1; i < ids.length; i++) {
                         // The Attachment may already be added as an MTOM attachment (by the processing above)
                         if (message.getAttachment(ids[i]) == null) {
                             DataHandler dh = attachments.getDataHandler(ids[i]);
                             Attachment a = message.createAttachment(dh, ids[i]);
                             message.addAttachment(a);
                             if (log.isDebugEnabled()) {
-                                log.debug("Create JAXWS Attachment for SWA Attachment:" + a.getContentID() + " " + a.getContentType());
+                                log.debug("Create JAXWS Attachment for SWA Attachment:" +
+                                        a.getContentID() + " " + a.getContentType());
                             }
                         }
                     }
                 }
             }
-            
+
         }
         return message;
     }
-    
+
     /**
      * Put the JAX-WS Message onto the Axis2 MessageContext
-     * @param message JAX-WS Message
+     *
+     * @param message    JAX-WS Message
      * @param msgContext Axis2MessageContext
      */
-    public static void putMessageOnMessageContext(Message message, MessageContext msgContext) throws AxisFault, WebServiceException {
+    public static void putMessageOnMessageContext(Message message, MessageContext msgContext)
+            throws AxisFault, WebServiceException {
         // Put the XML message on the Axis 2 Message Context
-        SOAPEnvelope envelope = (SOAPEnvelope) message.getAsOMElement();
+        SOAPEnvelope envelope = (SOAPEnvelope)message.getAsOMElement();
         msgContext.setEnvelope(envelope);
-        
+
         // Put the Headers onto the MessageContext
         // TODO: Merge with latest TransportHeaders impl.
         Map headerMap = new HashMap();
         for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
-            MimeHeader mh = (MimeHeader) it.next();
+            MimeHeader mh = (MimeHeader)it.next();
             headerMap.put(mh.getName(), mh.getValue());
         }
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
-        
+
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);
         }
-        
+
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {
             if (log.isDebugEnabled()) {
@@ -286,10 +292,10 @@ public class MessageUtils {
             }
             // If we have MTOM attachments, we need to replace the <xop:include>
             // elements with OMText binary nodes.
-            
+
             // First find all of the <xop:include> elements
             ArrayList<OMElement> xops = AttachmentUtils.findXopElements(envelope);
-            
+
             if (xops != null && xops.size() > 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Found XOP:Include Elements");
@@ -297,22 +303,22 @@ public class MessageUtils {
                 // Enable MTOM on the Axis2 MessageContext
                 Options opts = msgContext.getOptions();
                 opts.setProperty(Configuration.ENABLE_MTOM, "true");
-                
-                QName href = new QName("","href");
+
+                QName href = new QName("", "href");
                 Iterator<OMElement> itr = xops.iterator();
-                
-                
+
+
                 while (itr.hasNext()) {
                     OMElement xop = itr.next();
                     String cid = xop.getAttributeValue(href);
-                    
+
                     // Find and remove the Attachment from the JAX-WS Message
                     // (It is removed so that it is not considered a SWA Attachment ...see below)
                     Attachment a = message.removeAttachment(cid);
                     if (log.isDebugEnabled()) {
                         log.debug("Create Binary OMNode for attachment:" + cid);
                     }
-                    
+
                     // Convert the <xop:include> OMElement into an OMText
                     // binary node and replace it in the tree.                    
                     OMText binaryNode = AttachmentUtils.makeBinaryOMNode(xop, a);
@@ -320,21 +326,22 @@ public class MessageUtils {
                     xop.detach();
                 }
             }
-            
+
         }
-        
+
         // Any remaining attachments must be SWA attachments
         List attachments = message.getAttachments();
         if (attachments != null && attachments.size() > 0) {
             // Indicate SWA Attachments are present
             Options opts = msgContext.getOptions();
             opts.setProperty(Configuration.ENABLE_SWA, "true");
-            
-            for (int i=0; i<attachments.size(); i++) {
-                Attachment a = (Attachment) attachments.get(i);
+
+            for (int i = 0; i < attachments.size(); i++) {
+                Attachment a = (Attachment)attachments.get(i);
                 msgContext.addAttachment(a.getContentID(), a.getDataHandler());
                 if (log.isDebugEnabled()) {
-                    log.debug("Add SWA Attachment for:" + a.getContentID() + " " + a.getContentType());
+                    log.debug("Add SWA Attachment for:" + a.getContentID() + " " +
+                            a.getContentType());
                 }
             }
         }

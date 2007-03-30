@@ -22,11 +22,9 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -36,12 +34,7 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.ClientUtils;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
@@ -51,8 +44,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 
-public class UsingTransportTest extends UtilServerBasedTestCase implements TestConstants
-{
+public class UsingTransportTest extends UtilServerBasedTestCase implements TestConstants {
 
     QName assumedServiceName = new QName("AnonymousService");
 
@@ -60,48 +52,47 @@ public class UsingTransportTest extends UtilServerBasedTestCase implements TestC
     private AxisService service = null;
 
 
-    public static Test suite()
-    {
+    public static Test suite() {
         return getTestSetup(new TestSuite(UsingTransportTest.class));
     }
 
-    protected void setUp() throws Exception 
-    {
-        service = Utils.createSimpleService(TestConstants.serviceName, Echo.class.getName(), TestConstants.operationName); 
+    protected void setUp() throws Exception {
+        service = Utils.createSimpleService(TestConstants.serviceName, Echo.class.getName(),
+                                            TestConstants.operationName);
         UtilServer.deployService(service);
     }
 
-    protected void tearDown() throws Exception 
-    {
+    protected void tearDown() throws Exception {
         UtilServer.unDeployService(TestConstants.serviceName);
         UtilServer.unDeployClientService();
     }
 
 
-    public void testValidTransport() throws AxisFault 
-    {
+    public void testValidTransport() throws AxisFault {
         String title = "testValidTransport(): ";
 
         OMElement payload = createEnvelope();
 
-        ConfigurationContext configCtx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null); 
+        ConfigurationContext configCtx =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
 
         ServiceClient servClient = new ServiceClient(configCtx, null);
 
         Options options = new Options();
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI); 
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         servClient.setOptions(options);
 
         OperationClient opClinet = servClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         String ocType = opClinet.getClass().getName();
-        System.out.println("\n"+title+"Using OperationClient ["+ocType+"]");
+        System.out.println("\n" + title + "Using OperationClient [" + ocType + "]");
         opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
-        System.out.println(title+"Invoking OperationClient ["+ocType+"] execute()");
+        System.out.println(title + "Invoking OperationClient [" + ocType + "] execute()");
         opClinet.execute(true);
 
-        SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
+        SOAPEnvelope result =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
 
         assertEquals("SOAP Version received is not compatible",
                      SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
@@ -109,59 +100,60 @@ public class UsingTransportTest extends UtilServerBasedTestCase implements TestC
     }
 
 
-    public void testInvalidTransport() throws AxisFault 
-    {
+    public void testInvalidTransport() throws AxisFault {
         String title = "testInvalidTransport(): ";
         OMElement payload = createEnvelope();
 
-        ConfigurationContext configCtx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null); 
+        ConfigurationContext configCtx =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
 
         ServiceClient servClient = new ServiceClient(configCtx, null);
 
         Options options = new Options();
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI); 
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         // set the endpoint with "htp" instead of "http" 
-        EndpointReference invalidTargetEPR = new EndpointReference("htp://127.0.0.1:5556/axis2/services/EchoXMLService/echoOMElement");
+        EndpointReference invalidTargetEPR = new EndpointReference(
+                "htp://127.0.0.1:5556/axis2/services/EchoXMLService/echoOMElement");
         options.setTo(invalidTargetEPR);
 
         servClient.setOptions(options);
 
         OperationClient opClinet = servClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         String ocType = opClinet.getClass().getName();
-        System.out.println(title+"Using OperationClient ["+ocType+"]");
+        System.out.println(title + "Using OperationClient [" + ocType + "]");
 
         MessageContext msgCtx = prepareTheSOAPEnvelope(payload, options);
 
         opClinet.addMessageContext(msgCtx);
 
-        try
-        {
-            System.out.println(title+"Invoking OperationClient ["+ocType+"] execute()");
+        try {
+            System.out.println(title + "Invoking OperationClient [" + ocType + "] execute()");
             opClinet.execute(true);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             String exName = ex.getClass().getName();
 
-            System.out.println(title+"Expecting an exception of type [org.apache.axis2.AxisFault].   Caught exception  ["+exName+"]    error ["+ex.getMessage()+"]"); 
+            System.out.println(title +
+                    "Expecting an exception of type [org.apache.axis2.AxisFault].   Caught exception  [" +
+                    exName + "]    error [" + ex.getMessage() + "]");
             ex.printStackTrace();
 
-            assertTrue("Expecting an exception of type [org.apache.axis2.AxisFault]",(ex instanceof org.apache.axis2.AxisFault));
+            assertTrue("Expecting an exception of type [org.apache.axis2.AxisFault]",
+                       (ex instanceof org.apache.axis2.AxisFault));
         }
 
     }
 
 
-    private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options) throws AxisFault 
-    {
+    private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options)
+            throws AxisFault {
         MessageContext msgctx = new MessageContext();
 
         SOAPFactory sf = getSOAPFactory(options);
         SOAPEnvelope se = sf.getDefaultEnvelope();
 
-        if (toSend != null)
-        {
+        if (toSend != null) {
             se.getBody().addChild(toSend);
         }
 
@@ -170,31 +162,26 @@ public class UsingTransportTest extends UtilServerBasedTestCase implements TestC
     }
 
 
-    private SOAPFactory getSOAPFactory(Options options)
-    {
+    private SOAPFactory getSOAPFactory(Options options) {
         String soapVersionURI = options.getSoapVersionURI();
 
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI))
-        {
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory();
-        }
-        else
-        {
+        } else {
             // if its not SOAP 1.2 just assume SOAP 1.1
             return OMAbstractFactory.getSOAP11Factory();
         }
     }
 
 
-    private OMElement createEnvelope()
-    {
+    private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
 
         OMElement method = fac.createOMElement("echoOMElement", omNs);
 
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy")); 
+        value.addChild(fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
 
         method.addChild(value);
 

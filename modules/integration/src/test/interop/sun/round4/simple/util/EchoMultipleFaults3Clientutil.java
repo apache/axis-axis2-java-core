@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 
-public class EchoMultipleFaults3Clientutil implements SunGroupHClientUtil{
+public class EchoMultipleFaults3Clientutil implements SunGroupHClientUtil {
     public OMElement getEchoOMElement() {
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -31,12 +31,13 @@ public class EchoMultipleFaults3Clientutil implements SunGroupHClientUtil{
 
         OMElement method = fac.createOMElement("echoMultipleFaults3", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
+                                                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNS);
 
-        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        method.declareNamespace("http://soapinterop.org/types","ns2");
-        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/","wsdl");
+        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        method.declareNamespace("http://soapinterop.org/types", "ns2");
+        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
 
         OMElement value = fac.createOMElement("whichFault", null);
         method.addChild(value);
@@ -44,13 +45,9 @@ public class EchoMultipleFaults3Clientutil implements SunGroupHClientUtil{
         OMElement value2 = fac.createOMElement("param2", null);
 
 
-
         value.addChild(fac.createOMText(value, "3"));
         value1.addChild(fac.createOMText(value1, "param 1"));
         value2.addChild(fac.createOMText(value2, "Param 2"));
-
-
-
 
 
         method.addChild(value1);

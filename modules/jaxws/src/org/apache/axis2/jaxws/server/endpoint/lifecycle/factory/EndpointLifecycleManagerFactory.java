@@ -26,21 +26,23 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleMa
 
 public class EndpointLifecycleManagerFactory {
 
-	
-	public EndpointLifecycleManagerFactory() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	public EndpointLifecycleManager createEndpointLifecycleManager(Object endpointInstance) throws EndpointLifecycleException{
-		if(endpointInstance == null){
-			throw new EndpointLifecycleException(Messages.getMessage("EndpointLifecycleManagerImplErr1"));
-		}
-		return new EndpointLifecycleManagerImpl(endpointInstance);
-	}
-	
-	public EndpointLifecycleManager createEndpointLifecycleManager(){
-		
-		return new EndpointLifecycleManagerImpl();
-	}
+
+    public EndpointLifecycleManagerFactory() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    public EndpointLifecycleManager createEndpointLifecycleManager(Object endpointInstance)
+            throws EndpointLifecycleException {
+        if (endpointInstance == null) {
+            throw new EndpointLifecycleException(
+                    Messages.getMessage("EndpointLifecycleManagerImplErr1"));
+        }
+        return new EndpointLifecycleManagerImpl(endpointInstance);
+    }
+
+    public EndpointLifecycleManager createEndpointLifecycleManager() {
+
+        return new EndpointLifecycleManagerImpl();
+    }
 }

@@ -14,22 +14,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The persistence-context-typeType specifies the transactional
- * 	nature of a persistence context reference.
- * 
- * 	The value of the persistence-context-type element must be
- * 	one of the following:
- * 	    Transaction
- *             Extended
- * 
- *       
- * 
+ * The persistence-context-typeType specifies the transactional nature of a persistence context
+ * reference.
+ * <p/>
+ * The value of the persistence-context-type element must be one of the following: Transaction
+ * Extended
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for persistence-context-typeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-context-typeType">
  *   &lt;simpleContent>
@@ -38,14 +34,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-typeType")
 public class PersistenceContextTypeType
-    extends String
-{
+        extends String {
 
 
 }

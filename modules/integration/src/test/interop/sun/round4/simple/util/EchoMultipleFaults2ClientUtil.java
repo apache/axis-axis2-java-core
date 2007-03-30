@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 
-public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
+public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil {
 
     public OMElement getEchoOMElement() {
 
@@ -32,12 +32,13 @@ public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
 
         OMElement method = fac.createOMElement("echoMultipleFaults2", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
+                                                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNS);
 
-        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        method.declareNamespace("http://soapinterop.org/types","ns2");
-        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/","wsdl");
+        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        method.declareNamespace("http://soapinterop.org/types", "ns2");
+        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
 
         OMElement value = fac.createOMElement("whichFault", null);
         method.addChild(value);
@@ -48,10 +49,10 @@ public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
         OMElement value5 = fac.createOMElement("Item", null);
         OMElement value6 = fac.createOMElement("Item", null);
 
-        value3.addAttribute("soapenc:arrayType","nsa:string[3]",null);
-        value3.addAttribute("soapenc:offset","[0]",null);
-        value3.addAttribute("xmlns:soapenc","http://schemas.xmlsoap.org/soap/encoding/",null);
-        value3.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
+        value3.addAttribute("soapenc:arrayType", "nsa:string[3]", null);
+        value3.addAttribute("soapenc:offset", "[0]", null);
+        value3.addAttribute("xmlns:soapenc", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        value3.addAttribute("xmlns:nsa", "http://www.w3.org/2001/XMLSchema", null);
 
 
         value.addChild(fac.createOMText(value, "2"));

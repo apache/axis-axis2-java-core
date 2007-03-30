@@ -16,10 +16,9 @@
 
 package org.apache.axis2.jibx.wrappers;
 
-public class GetBookRequest
-{
+public class GetBookRequest {
     private String m_isbn;
-    
+
     public GetBookRequest(String isbn) {
         m_isbn = isbn;
     }

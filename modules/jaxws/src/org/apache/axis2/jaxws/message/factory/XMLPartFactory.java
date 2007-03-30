@@ -16,54 +16,60 @@
  */
 package org.apache.axis2.jaxws.message.factory;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLPart;
+
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.message.XMLPart;
-
 /**
  * XMLPartFactory
- * 
- * Creates an XMLPart object.  The two common patterns are:
- *   - Create an empty message for a specific protocol
- *   - Create a xmlPart sourced from OM (XMLStreamReader)
- *   
+ * <p/>
+ * Creates an XMLPart object.  The two common patterns are: - Create an empty message for a specific
+ * protocol - Create a xmlPart sourced from OM (XMLStreamReader)
+ * <p/>
  * The FactoryRegistry should be used to get access to the Factory
+ *
  * @see org.apache.axis2.jaxws.registry.FactoryRegistry
  */
 public interface XMLPartFactory {
-	/**
-	 * create XMLPart from XMLStreamReader
-	 * @param reader XMLStreamReader
+    /**
+     * create XMLPart from XMLStreamReader
+     *
+     * @param reader   XMLStreamReader
      * @param protocol (if null, the soap protocol is inferred from the namespace)
-	 * @throws MessageStreamException
-	 */
-	public XMLPart createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException;
-	
-	/**
-	 * create XMLPart from OMElement
-	 * @param omElement OMElement
-     * @param protocol (if null, the soap protocol is inferred from the namespace)
-	 * @throws WebServiceException
-	 */
-	public XMLPart createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException;
-	
-	/**
-	 * create XMLPart from SOAPEnvelope
-	 * @param soapEnvelope SOAPEnvelope
-	 * @throws WebServiceException
-	 */
-	public XMLPart createFrom(SOAPEnvelope soapEnvelope) throws XMLStreamException, WebServiceException;
+     * @throws MessageStreamException
+     */
+    public XMLPart createFrom(XMLStreamReader reader, Protocol protocol)
+            throws XMLStreamException, WebServiceException;
 
-	/**
-	 * create empty XMLPart of the specified protocol
-	 * @param protocol
-	 * @throws WebServiceException
-	 */
-	public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException;
+    /**
+     * create XMLPart from OMElement
+     *
+     * @param omElement OMElement
+     * @param protocol  (if null, the soap protocol is inferred from the namespace)
+     * @throws WebServiceException
+     */
+    public XMLPart createFrom(OMElement omElement, Protocol protocol)
+            throws XMLStreamException, WebServiceException;
+
+    /**
+     * create XMLPart from SOAPEnvelope
+     *
+     * @param soapEnvelope SOAPEnvelope
+     * @throws WebServiceException
+     */
+    public XMLPart createFrom(SOAPEnvelope soapEnvelope)
+            throws XMLStreamException, WebServiceException;
+
+    /**
+     * create empty XMLPart of the specified protocol
+     * @param protocol
+     * @throws WebServiceException
+     */
+    public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 }

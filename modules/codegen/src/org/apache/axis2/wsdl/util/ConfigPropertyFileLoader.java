@@ -23,19 +23,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.List;
-import java.util.Arrays;
 
-/**
- * Loads the properties from the config properties.
- */
+/** Loads the properties from the config properties. */
 public class ConfigPropertyFileLoader {
-
 
 
     private static Map dbSupporterTemplateNameMap;
@@ -65,13 +62,18 @@ public class ConfigPropertyFileLoader {
     private static final String DEFAULT_LANGUAGE_TYPE_KEY = "codegen.languages.default";
     private static final String EMITTER_CLASS_KEY = "codegen.emitters";
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
-    private static final String DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY = "codegen.databinding.unwrap.supported";
-    private static final String DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY = "codegen.databinding.unwrap.direct";
-    private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
-    private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
+    private static final String DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY =
+            "codegen.databinding.unwrap.supported";
+    private static final String DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY =
+            "codegen.databinding.unwrap.direct";
+    private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY =
+            "codegen.databinding.frameworks.default";
+    private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY =
+            "codegen.databinding.extensions";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX = "codegen.databinding.";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX = "template";
-    private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY = "codegen.databinding.testobject.template";
+    private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY =
+            "codegen.databinding.testobject.template";
     private static final String SOURCE_FOLDER_NAME_KEY = "codegen.general.src.name";
     private static final String RESOURCE_FOLDER_NAME_KEY = "codegen.general.resource.name";
 
@@ -84,11 +86,13 @@ public class ConfigPropertyFileLoader {
 
     /**
      * Loads a stream from the given
+     *
      * @param propertiesReference
      * @throws FileNotFoundException
      */
     private static InputStream getStream(String propertiesReference) throws FileNotFoundException {
-        InputStream stream = ConfigPropertyFileLoader.class.getResourceAsStream(propertiesReference);
+        InputStream stream =
+                ConfigPropertyFileLoader.class.getResourceAsStream(propertiesReference);
         if (stream == null) {
             URL url = ConfigPropertyFileLoader.class.getResource(propertiesReference);
             stream = new FileInputStream(url.toString());
@@ -100,12 +104,12 @@ public class ConfigPropertyFileLoader {
         loadAllProperties();
     }
 
-    public static void reload(){
+    public static void reload() {
         reset();
         loadAllProperties();
     }
 
-    private static void reset(){
+    private static void reset() {
         dbSupporterTemplateNameMap = new HashMap();
         testObjectTemplateName = null;
         extensionClassNames = null;
@@ -121,6 +125,7 @@ public class ConfigPropertyFileLoader {
         resourceFolderName = null;
 
     }
+
     private static void loadAllProperties() {
         try {
             //look for the system property "org.apache.axis2.codegen.config" to for a property
@@ -128,14 +133,15 @@ public class ConfigPropertyFileLoader {
             String property = System.getProperty("org.apache.axis2.codegen.config");
             InputStream stream;
 
-            if (property!=null){
+            if (property != null) {
                 stream = getStream(property);
-            }else{
+            } else {
                 stream = getStream(DEFAULT_CODEGEN_CONFIG_PROPERTIES);
             }
 
-            if (stream==null){
-                throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"));
+            if (stream == null) {
+                throw new RuntimeException(
+                        CodegenMessages.getMessage("propfileload.generalException"));
             }
 
             Properties props = new Properties();
@@ -166,12 +172,12 @@ public class ConfigPropertyFileLoader {
                 databindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
 
-              //load the unwrap supported data binding framework names
+            //load the unwrap supported data binding framework names
             tempString = props.getProperty(DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
                 unwrapSuppoerteddatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
-            
+
             //load the unwrap supported data binding framework names
             tempString = props.getProperty(DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
@@ -197,10 +203,12 @@ public class ConfigPropertyFileLoader {
 
                 try {
                     for (int i = 0; i < frameworkExtensionNames.length; i++) {
-                        databindingFrameworkNameToExtensionMap.put(databindingFrameworkNames[i], frameworkExtensionNames[i]);
+                        databindingFrameworkNameToExtensionMap
+                                .put(databindingFrameworkNames[i], frameworkExtensionNames[i]);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new Exception(CodegenMessages.getMessage("propfileload.frameworkMismatch"));
+                    throw new Exception(
+                            CodegenMessages.getMessage("propfileload.frameworkMismatch"));
                 }
 
             }
@@ -208,7 +216,8 @@ public class ConfigPropertyFileLoader {
             //load the default framework name
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY);
 
-            if (tempString == null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
+            if (tempString == null ||
+                    !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
                 throw new Exception(CodegenMessages.getMessage("propfileload.unknownFramework"));
             }
             defaultDBFrameworkName = tempString;
@@ -223,19 +232,17 @@ public class ConfigPropertyFileLoader {
             dbSupporterTemplateNameMap = new HashMap();
             String key;
             for (Iterator allProperties = props.keySet().iterator();
-                 allProperties.hasNext();){
+                 allProperties.hasNext();) {
                 key = (String)allProperties.next();
                 if (key.startsWith(DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX) &&
-                        key.endsWith(DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX)){
+                        key.endsWith(DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX)) {
                     dbSupporterTemplateNameMap.put(key,
-                            props.getProperty(key));
+                                                   props.getProperty(key));
                 }
 
             }
 
             testObjectTemplateName = props.getProperty(DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY);
-
-
 
             //load the language names
             tempString = props.getProperty(LANGUAGE_TYPE_KEY_PREFIX);
@@ -288,30 +295,25 @@ public class ConfigPropertyFileLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"), e);
+            throw new RuntimeException(CodegenMessages.getMessage("propfileload.generalException"),
+                                       e);
         }
     }
 
-    /**
-     *
-     * @return the source folder name
-     */
+    /** @return the source folder name */
     public static String getResourceFolderName() {
         return resourceFolderName;
     }
 
 
-    /**
-     *
-     * @return the resource folder name
-     */
+    /** @return the resource folder name */
     public static String getSrcFolderName() {
         return srcFolderName;
     }
 
     /**
-     * Gets the test object support template. This is used in the
-     * generated test class.
+     * Gets the test object support template. This is used in the generated test class.
+     *
      * @return Returns String.
      */
     public static String getTestObjectTemplateName() {
@@ -319,15 +321,18 @@ public class ConfigPropertyFileLoader {
     }
 
     /**
-     * Gets the databinder template names. This is the template that has the
-     * logic for creating the databind supporters.
+     * Gets the databinder template names. This is the template that has the logic for creating the
+     * databind supporters.
+     *
      * @return Returns String.
      */
     public static Map getDbSupporterTemplatesMap() {
         return dbSupporterTemplateNameMap;
     }
+
     /**
      * Gets the extension class names.
+     *
      * @return Returns String[].
      */
     public static String[] getExtensionClassNames() {
@@ -336,11 +341,13 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the post extension class names
+     *
      * @return Returns String[].
      */
-     public static String[] getPostExtensionClassNames() {
+    public static String[] getPostExtensionClassNames() {
         return postExtensionClassNames;
     }
+
     /**
      * Gets the third party schema names list.
      *
@@ -370,21 +377,22 @@ public class ConfigPropertyFileLoader {
 
     /**
      * Get the list of unwrap supported data binding frameworks
+     *
      * @return list
      */
-    public static List getUnwrapSupportedFrameworkNames(){
+    public static List getUnwrapSupportedFrameworkNames() {
         return Arrays.asList(unwrapSuppoerteddatabindingFrameworkNames);
     }
 
     /**
      * Get the list of data binding frameworks that handle unwrapping directly.
-     * 
+     *
      * @return names
      */
-    public static List getUnwrapDirectFrameworkNames(){
+    public static List getUnwrapDirectFrameworkNames() {
         return Arrays.asList(unwrapDirectdatabindingFrameworkNames);
     }
-    
+
     /**
      * Gets the default language name.
      *
@@ -413,8 +421,8 @@ public class ConfigPropertyFileLoader {
     }
 
     /**
-     * Gets the extensions map for the databinding frameworks.
-     * The entries are keys by the framework name.
+     * Gets the extensions map for the databinding frameworks. The entries are keys by the framework
+     * name.
      *
      * @return Returns Map.
      */

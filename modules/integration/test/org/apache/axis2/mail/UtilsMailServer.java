@@ -20,8 +20,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.mail.server.MailServer;
 import org.apache.axis2.transport.mail.Constants;
+import org.apache.axis2.transport.mail.server.MailServer;
 
 import java.io.File;
 
@@ -50,34 +50,37 @@ public class UtilsMailServer {
         runningServerCount++;
         return SERVER_CONFIG_CONTEXT;
     }
+
     public static ConfigurationContext createServerConfigurationContext() throws Exception {
-        if(SERVER_CONFIG_CONTEXT == null){
+        if (SERVER_CONFIG_CONTEXT == null) {
             File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
             TestCase.assertTrue(
                     "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                     file.exists());
             SERVER_CONFIG_CONTEXT =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
         }
         return SERVER_CONFIG_CONTEXT;
     }
 
 
     public static ConfigurationContext createClientConfigurationContext() throws Exception {
-        if(CLIENT_CONFIG_CONTEXT == null){
-        File file = new File(MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH);
-        TestCase.assertTrue(
-                "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
-                file.exists());
-        CLIENT_CONFIG_CONTEXT =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
+        if (CLIENT_CONFIG_CONTEXT == null) {
+            File file = new File(MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH);
+            TestCase.assertTrue(
+                    "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
+                    file.exists());
+            CLIENT_CONFIG_CONTEXT =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
         }
         return CLIENT_CONFIG_CONTEXT;
     }
 
-    public static synchronized void stop() throws AxisFault{
+    public static synchronized void stop() throws AxisFault {
         runningServerCount--;
-        if(runningServerCount == 0){
+        if (runningServerCount == 0) {
             server.stop();
         }
     }

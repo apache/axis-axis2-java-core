@@ -17,7 +17,7 @@ package org.apache.axis2.xmlbeans;
 
 public class WSDL2Java6Test extends WSDL2JavaSuccessTestBase {
 
-     protected void setUp() throws Exception {
+    protected void setUp() throws Exception {
         this.wsdlFileName = "mime-doc.wsdl";
         super.setUp();
     }

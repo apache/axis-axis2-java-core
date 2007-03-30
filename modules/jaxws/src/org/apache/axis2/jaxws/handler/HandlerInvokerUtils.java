@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.util.ArrayList;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
@@ -36,18 +29,26 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.util.ArrayList;
+
 public class HandlerInvokerUtils {
-	
+
     /**
      * Invoke Inbound Handlers
+     *
      * @param requestMsgCtx
      */
     public static boolean invokeInboundHandlers(MessageContext msgCtx,
-            EndpointDescription endpointDesc, HandlerChainProcessor.MEP mep, boolean isOneWay) {
-   
+                                                EndpointDescription endpointDesc,
+                                                HandlerChainProcessor.MEP mep, boolean isOneWay) {
+
         HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
         ArrayList<Handler> handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
-        
+
         int numHandlers = handlers.size();
 
         javax.xml.ws.handler.MessageContext handlerMessageContext = null;
@@ -65,33 +66,34 @@ public class HandlerInvokerUtils {
                 handlers);
         // if not one-way, expect a response
         try {
-        	if (msgCtx.getMessage().isFault()) {
-        		processor.processFault(handlerMessageContext,
-        				HandlerChainProcessor.Direction.IN);
-        	} else {
-        		handlerMessageContext = processor.processChain(handlerMessageContext,
-        				HandlerChainProcessor.Direction.IN,
-        				mep,
-        				!isOneWay);
-        	}
+            if (msgCtx.getMessage().isFault()) {
+                processor.processFault(handlerMessageContext,
+                                       HandlerChainProcessor.Direction.IN);
+            } else {
+                handlerMessageContext = processor.processChain(handlerMessageContext,
+                                                               HandlerChainProcessor.Direction.IN,
+                                                               mep,
+                                                               !isOneWay);
+            }
         } catch (RuntimeException re) {
-        	/*
-        	 * handler framework should only throw an exception here if
-        	 * we are in the client inbound case.  Make sure the message
-        	 * context and message are transformed.
-        	 */
-        	HandlerChainProcessor.convertToFaultMessage(handlerMessageContext, re);
-        	addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
-        	return false;
+            /*
+                * handler framework should only throw an exception here if
+                * we are in the client inbound case.  Make sure the message
+                * context and message are transformed.
+                */
+            HandlerChainProcessor.convertToFaultMessage(handlerMessageContext, re);
+            addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
+            return false;
         }
-        
-        if (handlerMessageContext.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY).equals(true)
-        		&& mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
-        	// uh-oh.  We've changed directions on the server inbound handler processing,
-        	// This means we're now on an outbound flow, and the endpoint will not
-        	// be called.  Be sure to mark the context and message as such.
-        	addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
-        	return false;
+
+        if (handlerMessageContext.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)
+                .equals(true)
+                && mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
+            // uh-oh.  We've changed directions on the server inbound handler processing,
+            // This means we're now on an outbound flow, and the endpoint will not
+            // be called.  Be sure to mark the context and message as such.
+            addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
+            return false;
         }
         return true;
 
@@ -99,20 +101,21 @@ public class HandlerInvokerUtils {
 
     /**
      * Invoke OutboundHandlers
-     * 
+     *
      * @param msgCtx
      */
     public static boolean invokeOutboundHandlers(MessageContext msgCtx,
-            EndpointDescription endpointDesc, HandlerChainProcessor.MEP mep, boolean isOneWay) {
+                                                 EndpointDescription endpointDesc,
+                                                 HandlerChainProcessor.MEP mep, boolean isOneWay) {
 
         //ArrayList<String> handlers = endpointDesc.getHandlerList();
-        
+
         // TODO you may need to hard-code add some handlers until we
         // actually have useful code under EndpointDescription.getHandlerList()
-        
+
         HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
         ArrayList<Handler> handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
-        
+
         int numHandlers = handlers.size();
 
         javax.xml.ws.handler.MessageContext handlerMessageContext = null;
@@ -131,77 +134,84 @@ public class HandlerInvokerUtils {
                 handlers);
         // if not one-way, expect a response
         try {
-        	if (msgCtx.getMessage().isFault()) {
-        		processor.processFault(handlerMessageContext,
-        				HandlerChainProcessor.Direction.OUT);
-        	} else {
-        		handlerMessageContext = processor.processChain(handlerMessageContext,
-        				HandlerChainProcessor.Direction.OUT,
-        				mep, !isOneWay);
-        	}
+            if (msgCtx.getMessage().isFault()) {
+                processor.processFault(handlerMessageContext,
+                                       HandlerChainProcessor.Direction.OUT);
+            } else {
+                handlerMessageContext = processor.processChain(handlerMessageContext,
+                                                               HandlerChainProcessor.Direction.OUT,
+                                                               mep, !isOneWay);
+            }
         } catch (RuntimeException re) {
-        	/*
-        	 * handler framework should only throw an exception here if
-        	 * we are in the server outbound case.  Make sure the message
-        	 * context and message are transformed.
-        	 */
-        	HandlerChainProcessor.convertToFaultMessage(handlerMessageContext, re);
-        	addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
-        	return false;
+            /*
+                * handler framework should only throw an exception here if
+                * we are in the server outbound case.  Make sure the message
+                * context and message are transformed.
+                */
+            HandlerChainProcessor.convertToFaultMessage(handlerMessageContext, re);
+            addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
+            return false;
         }
 
-        if (handlerMessageContext.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY).equals(false)
-        		&& mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
-        	// uh-oh.  We've changed directions on the client outbound handler processing,
-        	// This means we're now on an inbound flow, and the service will not
-        	// be called.  Be sure to mark the context and message as such.
-        	addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
-        	return false;
+        if (handlerMessageContext.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)
+                .equals(false)
+                && mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
+            // uh-oh.  We've changed directions on the client outbound handler processing,
+            // This means we're now on an inbound flow, and the service will not
+            // be called.  Be sure to mark the context and message as such.
+            addConvertedFaultMsgToCtx(msgCtx, handlerMessageContext);
+            return false;
         }
         return true;
-        
+
     }
-    
+
     /**
      * Find or Create Handler Message Context
+     *
      * @param mc
      * @return javax.xml.ws.handler.MessageContext
      */
-    private static javax.xml.ws.handler.MessageContext findOrCreateMessageContext(MessageContext mc) {
+    private static javax.xml.ws.handler.MessageContext findOrCreateMessageContext(
+            MessageContext mc) {
         // See if a soap message context is already present on the WebServiceContext
         javax.xml.ws.handler.MessageContext handlerMessageContext = null;
         ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
-        WebServiceContext ws = (WebServiceContext)serviceContext.getProperty(EndpointLifecycleManagerImpl.WEBSERVICE_MESSAGE_CONTEXT);
+        WebServiceContext ws = (WebServiceContext)serviceContext
+                .getProperty(EndpointLifecycleManagerImpl.WEBSERVICE_MESSAGE_CONTEXT);
         if (ws != null) {
             handlerMessageContext = ws.getMessageContext();
         }
         if (handlerMessageContext == null) {
             handlerMessageContext = createSOAPMessageContext(mc);
         }
-        return handlerMessageContext; 
+        return handlerMessageContext;
     }
-    
+
     /**
      * @param mc
      * @return new SOAPMessageContext
      */
-    private static javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc){
-        SoapMessageContext soapMessageContext = (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
+    private static javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc) {
+        SoapMessageContext soapMessageContext =
+                (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
         ContextUtils.addProperties(soapMessageContext, mc);
         return soapMessageContext;
-     }
-    
-
-    private static void addConvertedFaultMsgToCtx(MessageContext msgCtx, javax.xml.ws.handler.MessageContext handlerMsgCtx) {
-    	try {
-    		Message msg = ((MessageFactory)FactoryRegistry.getFactory(MessageFactory.class)).createFrom(((SOAPMessageContext)handlerMsgCtx).getMessage());
-    		msgCtx.setMessage(msg);
-    	} catch (XMLStreamException e) {
-    		// TODO log it
-    		throw ExceptionFactory.makeWebServiceException(e);
-    	}
     }
-    
+
+
+    private static void addConvertedFaultMsgToCtx(MessageContext msgCtx,
+                                                  javax.xml.ws.handler.MessageContext handlerMsgCtx) {
+        try {
+            Message msg = ((MessageFactory)FactoryRegistry.getFactory(MessageFactory.class))
+                    .createFrom(((SOAPMessageContext)handlerMsgCtx).getMessage());
+            msgCtx.setMessage(msg);
+        } catch (XMLStreamException e) {
+            // TODO log it
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
     // TODO method is for TEST only.  instances will be created elsewhere
     /*
     private static ArrayList<Handler> createHandlerInstances(EndpointDescription ed) {
@@ -223,5 +233,5 @@ public class HandlerInvokerUtils {
         return handlerInstances;
     }
     */
-    
+
 }

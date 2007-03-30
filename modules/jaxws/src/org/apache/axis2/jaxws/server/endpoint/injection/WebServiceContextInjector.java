@@ -27,16 +27,18 @@ import javax.xml.ws.handler.MessageContext;
  * WebServiceContext methods should be invoked when one of the webservice methods is invoked.
  * Invocation of WebServiceContext method outside of invocation of its webservice method is illigal as per jaxws spec section 5.3.
  */
-	public interface WebServiceContextInjector extends ResourceInjector {
-	
-	/**
-	 * MessageContext is made availble to the endpoint instance via the WebServiceContext.
-	 * This method will add MessageContext to WebServiceContext that is injected in
-	 * WebService. MessageContext represents the context of Inbound message following the
-	 * Handler Execution. Only properties with Application scope will be exposed.
-	 * @param wc
-	 * @param mc
-	 */
-	public void addMessageContext(WebServiceContext wc, MessageContext mc);
+
+public interface WebServiceContextInjector extends ResourceInjector {
+
+    /**
+     * MessageContext is made availble to the endpoint instance via the WebServiceContext. This method
+     * will add MessageContext to WebServiceContext that is injected in WebService. MessageContext
+     * represents the context of Inbound message following the Handler Execution. Only properties with
+     * Application scope will be exposed.
+     *
+     * @param wc
+     * @param mc
+     */
+    public void addMessageContext(WebServiceContext wc, MessageContext mc);
 	
 }

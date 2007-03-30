@@ -36,7 +36,7 @@ public class GroupcSoap12VoidUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://soapinterop.org/", "m");
-        OMNamespace ns1 =reqEnv.declareNamespace("http://soapinterop.org", "m1");
+        OMNamespace ns1 = reqEnv.declareNamespace("http://soapinterop.org", "m1");
 
         SOAPHeader header = omfactory.createSOAPHeader(reqEnv);
         reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns");
@@ -60,9 +60,11 @@ public class GroupcSoap12VoidUtil implements SunClientUtil {
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding",
+                               null);
 
         return reqEnv;
 

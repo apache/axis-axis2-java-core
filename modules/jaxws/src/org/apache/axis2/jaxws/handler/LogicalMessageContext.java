@@ -18,31 +18,30 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import javax.xml.ws.LogicalMessage;
-
 import org.apache.axis2.jaxws.core.MessageContext;
 
+import javax.xml.ws.LogicalMessage;
+
 /**
- * The LogicalMessageContext is a JAX-WS interface that is given
- * to Logical handlers to provide access to the message and
- * its associated properties.
+ * The LogicalMessageContext is a JAX-WS interface that is given to Logical handlers to provide
+ * access to the message and its associated properties.
  */
 public class LogicalMessageContext extends ProtectedMessageContext
-    implements javax.xml.ws.handler.LogicalMessageContext {
-    
+        implements javax.xml.ws.handler.LogicalMessageContext {
+
     public LogicalMessageContext() {
-		super();
-	}
+        super();
+    }
 
-	public LogicalMessageContext(MessageContext mc) {
-		super(mc);
-	}
+    public LogicalMessageContext(MessageContext mc) {
+        super(mc);
+    }
 
-	public LogicalMessage getMessage() {
-           return null;
-        }
+    public LogicalMessage getMessage() {
+        return null;
+    }
 
-        public LogicalMessage getSource(){
-           return null;
-        }
+    public LogicalMessage getSource() {
+        return null;
+    }
 }

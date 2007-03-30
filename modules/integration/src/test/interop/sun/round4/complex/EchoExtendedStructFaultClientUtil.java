@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 
-public class EchoExtendedStructFaultClientUtil implements SunGroupHClientUtil{
+public class EchoExtendedStructFaultClientUtil implements SunGroupHClientUtil {
 
     public OMElement getEchoOMElement() {
 
@@ -32,9 +32,9 @@ public class EchoExtendedStructFaultClientUtil implements SunGroupHClientUtil{
 
         OMElement method = fac.createOMElement("echoExtendedStructFault", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
-
+                                                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNS);
 
 
         OMElement value1 = fac.createOMElement("param", null);
@@ -61,10 +61,8 @@ public class EchoExtendedStructFaultClientUtil implements SunGroupHClientUtil{
         value6.addChild(fac.createOMText(value6, "56"));
 
 
-
         return method;
     }
-
 
 
 }

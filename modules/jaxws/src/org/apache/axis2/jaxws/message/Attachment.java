@@ -21,67 +21,72 @@ import javax.xml.soap.MimeHeaders;
 
 /**
  * Attachment
- * 
- * This class is very similar to the SAAJ concept of Attachment.
- * An Attachment has a content and mimeheaders.
- * 
- * The most important mimeheaders are the ContentType and ContentId.
- * The content is stored with a DataHandler
- * 
+ * <p/>
+ * This class is very similar to the SAAJ concept of Attachment. An Attachment has a content and
+ * mimeheaders.
+ * <p/>
+ * The most important mimeheaders are the ContentType and ContentId. The content is stored with a
+ * DataHandler
+ *
  * @see javax.xml.soap.AttachmentPart
  */
 public interface Attachment {
-    
+
     /**
      * Gets the MIME content type of the attachment.
+     *
      * @return contentType
      */
     public String getContentType();
-    
+
     /**
      * Set the MIME content type of the attachment
+     *
      * @param contentType
      */
     public void setContentType(String contentType);
-    
+
     /**
      * Gets the MIME content id that identifies this attachment.
+     *
      * @return contentID
      */
     public String getContentID();
-    
+
     /**
      * Set the MIME content id that identifies this attachment
+     *
      * @param contentID
      */
     public void setContentID(String contentID);
-    
+
     /**
      * Gets the DataHandler of the attachment in a DataHandler form.
+     *
      * @return DataHandler
      */
     public DataHandler getDataHandler();
-    
+
     /**
      * Sets the DataHandler of the attachment
+     *
      * @param DataHandler
      */
     public void setDataHandler(DataHandler dh);
-    
-    /**
-     * @return get the MimeHeaders
-     */
+
+    /** @return get the MimeHeaders */
     public MimeHeaders getMimeHeaders();
-    
+
     /**
      * Set the MimeHeaders
+     *
      * @param mh MimeHeaders
      */
     public void setMimeHeaders(MimeHeaders mhs);
-    
+
     // Common Header keys
-    public final static String CONTENT_ID         = "Content-Id";
-    public final static String CONTENT_TYPE       = "Content-Type";
-    public final static String CONTENT_LOCATION   = "Content-Location";
-    public final static String CONTENT_LENGTH     = "Content-Length";
+    public final static String CONTENT_ID = "Content-Id";
+    public final static String CONTENT_TYPE = "Content-Type";
+    public final static String CONTENT_LOCATION = "Content-Location";
+    public final static String CONTENT_LENGTH = "Content-Length";
 }

@@ -18,110 +18,89 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebResultAnnot implements javax.jws.WebResult{
+public class WebResultAnnot implements javax.jws.WebResult {
 
-	private String name = "return";
-	private String targetNamespace = "";
-	private boolean header = false;
-	private String partName = "";
-	
-	/**
-     * A WebResultAnnot cannot be instantiated.
-     */
-	private  WebResultAnnot(){
-		
-	}
-	
-	/**
-	 * @return Returns an instance of WebResultAnnot.
-	 */	
+    private String name = "return";
+    private String targetNamespace = "";
+    private boolean header = false;
+    private String partName = "";
+
+    /** A WebResultAnnot cannot be instantiated. */
+    private WebResultAnnot() {
+
+    }
+
+    /** @return Returns an instance of WebResultAnnot. */
     public static WebResultAnnot createWebResultAnnotImpl() {
         return new WebResultAnnot();
     }
-    
-	/**
-	 * @return Returns the header.
-	 */
-	public boolean header() {
-		return header;
-	}
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String name() {
-		return name;
-	}
+    /** @return Returns the header. */
+    public boolean header() {
+        return header;
+    }
 
-	/**
-	 * @return Returns the partName.
-	 */
-	public String partName() {
-		return partName;
-	}
+    /** @return Returns the name. */
+    public String name() {
+        return name;
+    }
 
-	/**
-	 * @return Returns the targetNamespace.
-	 */
-	public String targetNamespace() {
-		return targetNamespace;
-	}
+    /** @return Returns the partName. */
+    public String partName() {
+        return partName;
+    }
 
-	/**
-	 * @param header The header to set.
-	 */
-	public void setHeader(boolean header) {
-		this.header = header;
-	}
+    /** @return Returns the targetNamespace. */
+    public String targetNamespace() {
+        return targetNamespace;
+    }
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /** @param header The header to set. */
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
 
-	/**
-	 * @param partName The partName to set.
-	 */
-	public void setPartName(String partName) {
-		this.partName = partName;
-	}
+    /** @param name The name to set. */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param targetNamespace The targetNamespace to set.
-	 */
-	public void setTargetNamespace(String targetNamespace) {
-		this.targetNamespace = targetNamespace;
-	}
+    /** @param partName The partName to set. */
+    public void setPartName(String partName) {
+        this.partName = partName;
+    }
 
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@WebResult.name= " + name);
-		sb.append(newLine);
-		sb.append("@WebResult.partName= " + partName);
-		sb.append(newLine);
-		sb.append("@WebResult.targetNamespace= " + targetNamespace);
-		sb.append(newLine);
-		sb.append("@WebResult.header= ");
-		if(header) {
-			sb.append("true");
-		}
-		else {
-			sb.append("false");
-		}
-		sb.append(newLine);
-		return sb.toString();
+    /** @param targetNamespace The targetNamespace to set. */
+    public void setTargetNamespace(String targetNamespace) {
+        this.targetNamespace = targetNamespace;
+    }
+
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@WebResult.name= " + name);
+        sb.append(newLine);
+        sb.append("@WebResult.partName= " + partName);
+        sb.append(newLine);
+        sb.append("@WebResult.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        sb.append("@WebResult.header= ");
+        if (header) {
+            sb.append("true");
+        } else {
+            sb.append("false");
+        }
+        sb.append(newLine);
+        return sb.toString();
 	}
 
 }

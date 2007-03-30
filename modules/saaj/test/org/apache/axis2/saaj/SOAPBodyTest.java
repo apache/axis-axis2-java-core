@@ -15,8 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
-import java.io.File;
-import java.util.Iterator;
+import junit.framework.TestCase;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -34,11 +35,8 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-
-import junit.framework.TestCase;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.util.Iterator;
 
 public class SOAPBodyTest extends TestCase {
 
@@ -71,7 +69,7 @@ public class SOAPBodyTest extends TestCase {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
         SOAPPart soapPart = message.getSOAPPart();
-        SOAPEnvelopeImpl env = (SOAPEnvelopeImpl) soapPart.getEnvelope();
+        SOAPEnvelopeImpl env = (SOAPEnvelopeImpl)soapPart.getEnvelope();
         SOAPHeader header = env.getHeader();
         Name hns = env.createName("Hello",
                                   "shw",
@@ -103,12 +101,12 @@ public class SOAPBodyTest extends TestCase {
         while (it.hasNext()) {
             Object o = it.next();
             assertTrue(o instanceof SOAPBodyElement);
-            SOAPBodyElement bodyElement = (SOAPBodyElement) o;
+            SOAPBodyElement bodyElement = (SOAPBodyElement)o;
             assertEquals("http://www.jcommerce.net/soap/ns/SOAPHelloWorld",
                          bodyElement.getNamespaceURI());
             assertEquals("shw", bodyElement.getPrefix());
             assertTrue(bodyElement.getLocalName().equals("City") ||
-                       bodyElement.getLocalName().equals("Address"));
+                    bodyElement.getLocalName().equals("Address"));
             count++;
         }
         assertEquals(2, count);
@@ -121,7 +119,8 @@ public class SOAPBodyTest extends TestCase {
             factory.setNamespaceAware(true);
 
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(new File(System.getProperty("basedir",".")+"/"+"test-resources" + File.separator + "soap-body.xml"));
+            document = builder.parse(new File(System.getProperty("basedir", ".") + "/" +
+                    "test-resources" + File.separator + "soap-body.xml"));
             MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
 
@@ -144,12 +143,12 @@ public class SOAPBodyTest extends TestCase {
 
     private void getContents(Iterator iterator, String indent) {
         while (iterator.hasNext()) {
-            Node node = (Node) iterator.next();
+            Node node = (Node)iterator.next();
             SOAPElement element = null;
             Text text = null;
 
             if (node instanceof SOAPElement) {
-                element = (SOAPElement) node;
+                element = (SOAPElement)node;
                 Name name = element.getElementName();
                 Iterator attrs = element.getAllAttributes();
 
@@ -166,41 +165,40 @@ public class SOAPBodyTest extends TestCase {
                 Iterator iter2 = element.getChildElements();
                 getContents(iter2, indent + " ");
             } else {
-                text = (Text) node;
+                text = (Text)node;
                 assertNotNull(text);
             }
         }
     }
 
     //TODO : fix
-    public void testExtractContentAsDocument(){
-    	try
-    	{
-    		MessageFactory fact = MessageFactory.newInstance();
+    public void testExtractContentAsDocument() {
+        try {
+            MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
             SOAPBody soapBody = message.getSOAPBody();
 
-        	QName qname1 = new QName("http://wombat.ztrade.com", 
-        				"GetLastTradePrice", "ztrade");
-        	SOAPElement child1 = soapBody.addChildElement(qname1);
-      	    Document document = soapBody.extractContentAsDocument();
+            QName qname1 = new QName("http://wombat.ztrade.com",
+                                     "GetLastTradePrice", "ztrade");
+            SOAPElement child1 = soapBody.addChildElement(qname1);
+            Document document = soapBody.extractContentAsDocument();
 
-       	    assertNotNull(document);
-       	    assertTrue(document instanceof Document);
-       		Element element = document.getDocumentElement();
-       		String elementName = element.getTagName();
+            assertNotNull(document);
+            assertTrue(document instanceof Document);
+            Element element = document.getDocumentElement();
+            String elementName = element.getTagName();
 
-       		//Retreive the children of the SOAPBody (should be none)
-        	Iterator childElements = soapBody.getChildElements();
-        	int childCount = 0;
-        	while(childElements.hasNext()){
-        	  	Object object = childElements.next();
-        	   	childCount++;
-        	}
-        	assertEquals(childCount, 0);
-    	} 
-    	catch (Exception e) {
-                fail("Unexpected Exception : " + e);
+            //Retreive the children of the SOAPBody (should be none)
+            Iterator childElements = soapBody.getChildElements();
+            int childCount = 0;
+            while (childElements.hasNext()) {
+                Object object = childElements.next();
+                childCount++;
+            }
+            assertEquals(childCount, 0);
+        }
+        catch (Exception e) {
+            fail("Unexpected Exception : " + e);
         }
     }
 
@@ -212,7 +210,7 @@ public class SOAPBodyTest extends TestCase {
             MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
             SOAPBody soapBody = message.getSOAPBody();
-            QName qname = new QName("http://test.apache.org/","Child1","ch");
+            QName qname = new QName("http://test.apache.org/", "Child1", "ch");
             String value = "MyValue1";
             soapBody.addAttribute(qname, value);
             message.saveChanges();
@@ -230,7 +228,7 @@ public class SOAPBodyTest extends TestCase {
             MessageFactory fact = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
             SOAPMessage message = fact.createMessage();
             SOAPBody soapBody = message.getSOAPBody();
-            QName qname = new QName("http://test.apache.org/","Child1","ch");
+            QName qname = new QName("http://test.apache.org/", "Child1", "ch");
             String value = "MyValue1";
             soapBody.addAttribute(qname, value);
             message.saveChanges();
@@ -238,10 +236,10 @@ public class SOAPBodyTest extends TestCase {
             fail("Unexpected Exception : " + e);
         }
     }
-    
+
     /*
-     * For SOAP 1.2 message 
-     */
+    * For SOAP 1.2 message
+    */
     public void testAddFault() {
         try {
             MessageFactory fact = MessageFactory.newInstance();
@@ -249,8 +247,8 @@ public class SOAPBodyTest extends TestCase {
             SOAPPart soapPart = message.getSOAPPart();
             SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
             SOAPBody soapBody = soapEnvelope.getBody();
-            
-            QName qname = new QName("http://test.apache.org/","Child1","ch");
+
+            QName qname = new QName("http://test.apache.org/", "Child1", "ch");
             String value = "MyFault";
             SOAPFault soapFault = soapBody.addFault(qname, value);
             message.saveChanges();
@@ -260,6 +258,6 @@ public class SOAPBodyTest extends TestCase {
             fail("Unexpected Exception : " + e);
         }
     }
-    
-    
+
+
 }

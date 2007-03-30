@@ -18,10 +18,6 @@
  */
 package org.apache.axis2.jaxws.server.dispatcher;
 
-import java.lang.reflect.Method;
-
-import javax.xml.ws.soap.SOAPBinding;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -37,43 +33,49 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.ws.soap.SOAPBinding;
+import java.lang.reflect.Method;
+
 /**
- * The JavaBeanDispatcher is used to manage creating an instance of a 
- * JAX-WS service implementation bean and dispatching the inbound 
- * request to that instance.
+ * The JavaBeanDispatcher is used to manage creating an instance of a JAX-WS service implementation
+ * bean and dispatching the inbound request to that instance.
  */
 public class JavaBeanDispatcher extends JavaDispatcher {
 
     private static final Log log = LogFactory.getLog(JavaBeanDispatcher.class);
-    
+
     private EndpointDescription endpointDesc = null;
-    
+
     public JavaBeanDispatcher(Class implClass, Object serviceInstance) {
         super(implClass, serviceInstance);
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see org.apache.axis2.jaxws.server.EndpointDispatcher#invoke(org.apache.axis2.jaxws.core.MessageContext)
-     */
+    * (non-Javadoc)
+    * @see org.apache.axis2.jaxws.server.EndpointDispatcher#invoke(org.apache.axis2.jaxws.core.MessageContext)
+    */
     public MessageContext invoke(MessageContext mc) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Preparing to invoke service endpoint implementation " +
                     "class: " + serviceImplClass.getName());
         }
-        
+
         initialize(mc);
-        OperationDescription operationDesc = getOperationDescription(mc); //mc.getOperationDescription();
+        OperationDescription operationDesc =
+                getOperationDescription(mc); //mc.getOperationDescription();
         //Set SOAP Operation Related properties in SOAPMessageContext.
         ContextUtils.addWSDLProperties(mc);
         Protocol requestProtocol = mc.getMessage().getProtocol();
-        MethodMarshaller methodMarshaller = getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
-        Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());
+        MethodMarshaller methodMarshaller =
+                getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
+        Object[] methodInputParams =
+                methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());
         Method target = getJavaMethod(mc, serviceImplClass);
         if (log.isDebugEnabled()) {
             // At this point, the OpDesc includes everything we know, including the actual method
             // on the service impl we will delegate to; it was set by getJavaMethod(...) above.
-            log.debug("JavaBeanDispatcher about to invoke using OperationDesc: " + operationDesc.toString());
+            log.debug("JavaBeanDispatcher about to invoke using OperationDesc: " +
+                    operationDesc.toString());
         }
 
         //At this point, we have the method that is going to be invoked and
@@ -84,70 +86,69 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         Throwable fault = null;
         Object response = null;
         try {
-        	response = target.invoke(serviceInstance, methodInputParams);
+            response = target.invoke(serviceInstance, methodInputParams);
         } catch (Exception e) {
-        	faultThrown = true;
+            faultThrown = true;
             fault = e;
             if (log.isDebugEnabled()) {
-                log.debug("Exception invoking a method of " + 
+                log.debug("Exception invoking a method of " +
                         serviceImplClass.toString() + " of instance " +
                         serviceInstance.toString());
                 log.debug("Exception type thrown: " + e.getClass().getName());
                 log.debug("Method = " + target.toGenericString());
-                for (int i=0; i<methodInputParams.length; i++) {
+                for (int i = 0; i < methodInputParams.length; i++) {
                     String value = (methodInputParams[i] == null) ? "null" :
-                        methodInputParams[i].getClass().toString();
-                    log.debug(" Argument[" + i +"] is " + value);
+                            methodInputParams[i].getClass().toString();
+                    log.debug(" Argument[" + i + "] is " + value);
                 }
             }
         }
-        
+
         Message message = null;
-        if(operationDesc.isOneWay()){
+        if (operationDesc.isOneWay()) {
             // If the operation is one-way, then we can just return null because
             // we cannot create a MessageContext for one-way responses.
             return null;
+        } else if (faultThrown) {
+            message = methodMarshaller.marshalFaultResponse(fault, mc.getOperationDescription(),
+                                                            requestProtocol); // Send the response using the same protocol as the request
+        } else if (target.getReturnType().getName().equals("void")) {
+            message = methodMarshaller
+                    .marshalResponse(null, methodInputParams, mc.getOperationDescription(),
+                                     requestProtocol); // Send the response using the same protocol as the request
+        } else {
+            message = methodMarshaller
+                    .marshalResponse(response, methodInputParams, mc.getOperationDescription(),
+                                     requestProtocol); // Send the response using the same protocol as the request
         }
-        else if (faultThrown) {
-        	message = methodMarshaller.marshalFaultResponse(fault, mc.getOperationDescription(), 
-                        requestProtocol); // Send the response using the same protocol as the request
-        }
-        else if(target.getReturnType().getName().equals("void")){
-        	message = methodMarshaller.marshalResponse(null, methodInputParams, mc.getOperationDescription(), 
-                        requestProtocol); // Send the response using the same protocol as the request
-        }
-        else{
-        	message = methodMarshaller.marshalResponse(response, methodInputParams, mc.getOperationDescription(), 
-                    requestProtocol); // Send the response using the same protocol as the request
-        }
-        
+
         MessageContext responseMsgCtx = null;
         if (faultThrown) {
             responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
             responseMsgCtx.setMessage(message);
-        }
-        else {
+        } else {
             responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);
-            responseMsgCtx.setMessage(message);            
+            responseMsgCtx.setMessage(message);
         }
-        
+
         //Enable MTOM if necessary
-        EndpointInterfaceDescription epInterfaceDesc = operationDesc.getEndpointInterfaceDescription();
+        EndpointInterfaceDescription epInterfaceDesc =
+                operationDesc.getEndpointInterfaceDescription();
         EndpointDescription epDesc = epInterfaceDesc.getEndpointDescription();
-        
+
         String bindingType = epDesc.getBindingType();
         if (bindingType != null) {
             if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                    bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
                 message.setMTOMEnabled(true);
             }
         }
-         
+
         return responseMsgCtx;
     }
-    
-    private void initialize(MessageContext mc){
-    	mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
+
+    private void initialize(MessageContext mc) {
+        mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         endpointDesc = mc.getEndpointDescription();
         mc.setOperationDescription(getOperationDescription(mc));
         //methodMarshaller = null;
@@ -161,67 +162,73 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      *  to Endpoint-based implementation (i.e. not to Proxy-based ones)s
      */
     private OperationDescription getOperationDescription(MessageContext mc) {
-    	EndpointDescription ed = mc.getEndpointDescription();
+        EndpointDescription ed = mc.getEndpointDescription();
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
-        
+
         OperationDescription[] ops = eid.getDispatchableOperation(mc.getOperationName());
         // TODO: Implement signature matching.  Currently only matching on the wsdl:OperationName is supported.
         //       That means that overloading of wsdl operations is not supported (although that's not supported in 
         //       WSDL 1.1 anyway).
         if (ops == null || ops.length == 0) {
             // TODO: RAS & NLS
-            throw ExceptionFactory.makeWebServiceException("No operation found.  WSDL Operation name: " + mc.getOperationName());
+            throw ExceptionFactory.makeWebServiceException(
+                    "No operation found.  WSDL Operation name: " + mc.getOperationName());
         }
         if (ops.length > 1) {
             // TODO: RAS & NLS
-            throw ExceptionFactory.makeWebServiceException("More than one operation found. Overloaded WSDL operations are not supported.  WSDL Operation name: " + mc.getOperationName());
+            throw ExceptionFactory.makeWebServiceException(
+                    "More than one operation found. Overloaded WSDL operations are not supported.  WSDL Operation name: " +
+                            mc.getOperationName());
         }
         OperationDescription op = ops[0];
         if (log.isDebugEnabled()) {
             log.debug("wsdl operation: " + op.getName());
             log.debug("   java method: " + op.getJavaMethodName());
         }
-        
-        return op;        
+
+        return op;
     }
-    
+
     /*
     private ServiceDescription getServiceDescription(MessageContext mc){
-    	return mc.getServiceDescription();
+        return mc.getServiceDescription();
     }
-    
+
     private EndpointDescription getEndpointDescription(MessageContext mc){
-    	ServiceDescription sd = mc.getServiceDescription();
-    	EndpointDescription[] eds = sd.getEndpointDescriptions();
+        ServiceDescription sd = mc.getServiceDescription();
+        EndpointDescription[] eds = sd.getEndpointDescriptions();
         EndpointDescription ed = eds[0];
         return ed;
     }
     */
-    
-    private MethodMarshaller getMethodMarshaller(Protocol protocol, OperationDescription operationDesc){
-    	javax.jws.soap.SOAPBinding.Style styleOnSEI = endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
-		javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
-		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
-		}
+
+    private MethodMarshaller getMethodMarshaller(Protocol protocol,
+                                                 OperationDescription operationDesc) {
+        javax.jws.soap.SOAPBinding.Style styleOnSEI =
+                endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
+        javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
+        if (styleOnMethod != null && styleOnSEI != styleOnMethod) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
+        }
         return MethodMarshallerFactory.getMarshaller(operationDesc, false);
     }
-    
+
     private Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
-        
+
         OperationDescription opDesc = mc.getOperationDescription();
         if (opDesc == null) {
             // TODO: NLS
             throw ExceptionFactory.makeWebServiceException("Operation Description was not set");
         }
-        
+
         Method returnMethod = opDesc.getMethodFromServiceImpl(serviceImplClass);
         if (returnMethod == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("JavaBeanDispatcherErr1"));
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("JavaBeanDispatcherErr1"));
         }
-        
+
         return returnMethod;
-	}
+    }
     /*
     protected boolean isDocLitBare(EndpointDescription endpointDesc, OperationDescription operationDesc){
 		javax.jws.soap.SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
@@ -245,5 +252,5 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		}
 	}
     */
-    
+
 }

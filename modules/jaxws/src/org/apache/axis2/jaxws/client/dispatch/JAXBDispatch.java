@@ -18,10 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service.Mode;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -38,34 +34,40 @@ import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service.Mode;
+
 public class JAXBDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(JAXBDispatch.class);
     private JAXBContext jaxbContext;
-    
+
     public JAXBDispatch(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
         super(svcDelegate, epDesc);
     }
-    
+
     public JAXBContext getJAXBContext() {
         return jaxbContext;
     }
-    
+
     public void setJAXBContext(JAXBContext jbc) {
         jaxbContext = jbc;
     }
-    
+
     public AsyncResponse createAsyncResponseListener() {
-        JAXBDispatchAsyncListener listener = new JAXBDispatchAsyncListener(getEndpointDescription());
+        JAXBDispatchAsyncListener listener =
+                new JAXBDispatchAsyncListener(getEndpointDescription());
         listener.setJAXBContext(jaxbContext);
         listener.setMode(mode);
         return listener;
     }
-    
+
     public Message createMessageFromValue(Object value) {
         Message message = null;
         try {
-            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            
+            JAXBBlockFactory factory =
+                    (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+
             Class clazz = value.getClass();
             JAXBBlockContext context = null;
             if (jaxbContext != null) {
@@ -80,33 +82,34 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             // Create a block from the value
             QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(value);
             Block block = factory.createFrom(value, context, qName);
-            MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-            
+            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+
             if (mode.equals(Mode.PAYLOAD)) {
                 // Normal case
-                
+
                 message = mf.create(proto);
                 message.setBodyBlock(block);
             } else {
                 // Message mode..rare case
-                
+
                 // Create Message from block
                 message = mf.createFrom(block, null, proto);
             }
-            
+
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        
+
         return message;
     }
 
     public Object getValueFromMessage(Message message) {
         return getValue(message, mode, jaxbContext);
     }
-    
+
     /**
      * Common code to get the value for JAXBDispatch and JAXBDispatchAsyncListener
+     *
      * @param message
      * @param mode
      * @param jaxbContext
@@ -117,34 +120,38 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
         try {
             if (mode.equals(Mode.PAYLOAD)) {
                 // Normal Case
-                JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+                JAXBBlockFactory factory =
+                        (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
                 JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
                 Block block = message.getBodyBlock(context, factory);
-                
+
                 if (block != null) {
                     value = block.getBusinessObject(true);
                 } else {
                     // REVIEW This seems like the correct behavior.  If the body is empty, return a null
                     // Any changes here should also be made to XMLDispatch.getValue
                     if (log.isDebugEnabled()) {
-                        log.debug("There are no elements in the body to unmarshal.  JAXBDispatch returns a null value");
+                        log.debug(
+                                "There are no elements in the body to unmarshal.  JAXBDispatch returns a null value");
                     }
                     value = null;
                 }
             } else {
-                BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+                BlockFactory factory =
+                        (BlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
                 JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
                 value = message.getValue(context, factory);
                 if (value == null) {
                     if (log.isDebugEnabled()) {
-                        log.debug("There are no elements to unmarshal.  JAXBDispatch returns a null value");
+                        log.debug(
+                                "There are no elements to unmarshal.  JAXBDispatch returns a null value");
                     }
                 }
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        
+
         return value;
     }
 }

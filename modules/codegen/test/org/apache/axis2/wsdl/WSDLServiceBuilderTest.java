@@ -36,7 +36,8 @@ public class WSDLServiceBuilderTest extends TestCase {
     ListenerManager lm;
 
     protected void setUp() throws Exception {
-        configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+        configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         lm = new ListenerManager();
         lm.init(configContext);
         lm.start();
@@ -62,12 +63,14 @@ public class WSDLServiceBuilderTest extends TestCase {
                         continue;
                     }
                     try {
-                        WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(new FileInputStream(file1), null, null);
+                        WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(
+                                new FileInputStream(file1), null, null);
                         AxisService service = builder.populateService();
                         System.out.println("Testinf file: " + file1.getName());
                         configContext.getAxisConfiguration().addService(service);
-                        OutputStream out = new FileOutputStream(new File(outLocation, file1.getName()));
-                        service.printWSDL(out, "http://google.com/axis2/services" ,"services");
+                        OutputStream out =
+                                new FileOutputStream(new File(outLocation, file1.getName()));
+                        service.printWSDL(out, "http://google.com/axis2/services", "services");
                         out.flush();
                         out.close();
 //                        URL wsdlURL = new URL("http://localhost:" + 6060 +

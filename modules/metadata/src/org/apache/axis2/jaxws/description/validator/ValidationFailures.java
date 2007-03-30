@@ -19,7 +19,6 @@
 package org.apache.axis2.jaxws.description.validator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -28,32 +27,32 @@ import java.util.List;
  */
 public class ValidationFailures {
 
-    ArrayList <ValidationFailure> validationFailures = new ArrayList<ValidationFailure>();
-    
+    ArrayList<ValidationFailure> validationFailures = new ArrayList<ValidationFailure>();
+
     public void add(Validator failingValidator, String message) {
         validationFailures.add(new ValidationFailure(failingValidator, message));
     }
-    
+
     public List<ValidationFailure> getValidationFailures() {
-    	return validationFailures;
+        return validationFailures;
     }
-    
+
 }
 
 class ValidationFailure {
     Validator validator;
     String message;
-    
+
     ValidationFailure(Validator validator, String message) {
         this.validator = validator;
         this.message = message;
     }
-    
+
     public String getMessage() {
-    	return message;
+        return message;
     }
-    
+
     public Validator getValidator() {
-    	return validator;
+        return validator;
     }
 }

@@ -18,39 +18,38 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.ws.Service.Mode;
-
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.ws.Service.Mode;
+
 /**
- * The JAXBDispatchAsyncListener is an extension of the  
- * {@link org.apache.axis2.jaxws.client.async.AsyncResponse} class to provide JAX-B
- * specific function when processing an async response.
+ * The JAXBDispatchAsyncListener is an extension of the {@link org.apache.axis2.jaxws.client.async.AsyncResponse}
+ * class to provide JAX-B specific function when processing an async response.
  */
 public class JAXBDispatchAsyncListener extends AsyncResponse {
-    
+
     private Mode mode;
     private JAXBContext jaxbContext;
-    
+
     public JAXBDispatchAsyncListener(EndpointDescription ed) {
         super(ed);
     }
-    
+
     public void setMode(Mode m) {
         mode = m;
     }
-    
+
     public void setJAXBContext(JAXBContext jbc) {
         jaxbContext = jbc;
     }
-    
+
     public Object getResponseValueObject(MessageContext mc) {
         return JAXBDispatch.getValue(mc.getMessage(), mode, jaxbContext);
     }
-    
+
     public Throwable getFaultResponse(MessageContext mc) {
         return BaseDispatch.getFaultResponse(mc);
     }

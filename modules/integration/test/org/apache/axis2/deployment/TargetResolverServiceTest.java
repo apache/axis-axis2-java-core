@@ -52,11 +52,12 @@ import javax.xml.namespace.QName;
 public class TargetResolverServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
 
     // 2 special urls that the TestTargetResolver will modify into ones that can be targeted
     EndpointReference targetEPR = new EndpointReference(
-            "trtest://" + (UtilServer.TESTING_PORT) + "/axis2/services/EchoXMLService/echoOMElement");
+            "trtest://" + (UtilServer.TESTING_PORT) +
+                    "/axis2/services/EchoXMLService/echoOMElement");
 
     EndpointReference replyTo = new EndpointReference(
             "http://ws.apache.org/new/anonymous/address");
@@ -68,14 +69,15 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
     protected AxisService rrService;
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(TargetResolverServiceTest.class), Constants.TESTING_PATH + "deployment_repo");
+        return getTestSetup2(new TestSuite(TargetResolverServiceTest.class),
+                             Constants.TESTING_PATH + "deployment_repo");
     }
 
     protected void setUp() throws Exception {
         echoService = Utils.createSimpleService(serviceName,
-                new RawXMLINOutMessageReceiver(),
-                Echo.class.getName(),
-                operationName);
+                                                new RawXMLINOutMessageReceiver(),
+                                                Echo.class.getName(),
+                                                operationName);
         UtilServer.deployService(echoService);
     }
 
@@ -130,11 +132,12 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
     private ServiceClient createServiceClient() throws AxisFault {
         AxisService service =
                 createSimpleServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                             Echo.class.getName(),
+                                             operationName);
 
-        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext(Constants.TESTING_PATH + "deployment_repo");
-        ServiceClient sender ;
+        ConfigurationContext configcontext = UtilServer
+                .createClientConfigurationContext(Constants.TESTING_PATH + "deployment_repo");
+        ServiceClient sender;
 
         Options options = new Options();
         options.setTo(targetEPR);

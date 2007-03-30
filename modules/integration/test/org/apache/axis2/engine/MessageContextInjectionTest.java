@@ -29,17 +29,21 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
-
-import javax.xml.namespace.QName;
 
 public class MessageContextInjectionTest extends TestCase implements TestConstants {
     private TransportOutDescription tOut;
@@ -101,11 +105,12 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
             public void stop() {
             }
 
-            public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+            public EndpointReference getEPRForService(String serviceName, String ip)
+                    throws AxisFault {
                 return null;
             }
 
-            public EndpointReference[] getEPRsForService(String serviceName, String ip){
+            public EndpointReference[] getEPRsForService(String serviceName, String ip) {
                 return null;
             }
 
@@ -128,7 +133,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.addParameter(
                 new Parameter(Constants.SERVICE_CLASS,
-                        MessageContextEnabledEcho.class.getName()));
+                              MessageContextEnabledEcho.class.getName()));
         AxisOperation axisOperation = new InOnlyAxisOperation(
                 operationName);
         axisOperation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -157,7 +162,8 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         OMElement payload = createEnvelope();
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         Options options = new Options();
         sender.setOptions(options);

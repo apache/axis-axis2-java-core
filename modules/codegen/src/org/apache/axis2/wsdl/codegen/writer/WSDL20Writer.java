@@ -29,14 +29,14 @@ public class WSDL20Writer {
         this.baseFolder = baseFolder;
     }
 
-    public void writeWSDL(AxisService axisService){
+    public void writeWSDL(AxisService axisService) {
         try {
-            if (axisService!= null){
+            if (axisService != null) {
                 //create a output file
                 File outputFile = FileWriter.createClassFile(baseFolder,
-                        null,
-                        axisService.getName(),
-                        ".wsdl");
+                                                             null,
+                                                             axisService.getName(),
+                                                             ".wsdl");
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 axisService.printWSDL2(fos);
                 fos.flush();

@@ -38,7 +38,8 @@ public class GDImport2EchoStructUtil implements SunClientUtil {
 
         OMElement operation = omfactory.createOMElement("echoStruct", "http://soapinterop/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputStruct", "", null);
         part.addAttribute("xsi:type", "s:SOAPStruct", null);

@@ -16,6 +16,9 @@
 
 package org.apache.axis2.mtom;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -46,9 +49,6 @@ import org.apache.axis2.util.Utils;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
-import javax.xml.namespace.QName;
-
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,41 +58,33 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 /**
- * This tests the saving and restoring of the Axis2 contexts from within a
- * handler when MTOM is used.  This is a more thorough test of the serialization
- * mechanisms than the other unit tests, as the contexts are populated from the
- * beginning of the Axis2 codepath.
+ * This tests the saving and restoring of the Axis2 contexts from within a handler when MTOM is
+ * used.  This is a more thorough test of the serialization mechanisms than the other unit tests, as
+ * the contexts are populated from the beginning of the Axis2 codepath.
  */
-public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase implements TestConstants 
-{
+public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
+        implements TestConstants {
     private OMTextImpl expectedTextData = null;
 
-    public MessageSaveAndRestoreWithMTOMTest()
-    {
+    public MessageSaveAndRestoreWithMTOMTest() {
         super(MessageSaveAndRestoreWithMTOMTest.class.getName());
 
         org.apache.log4j.BasicConfigurator.configure();
     }
 
-    public MessageSaveAndRestoreWithMTOMTest(String testName)
-    {
+    public MessageSaveAndRestoreWithMTOMTest(String testName) {
         super(testName);
 
         org.apache.log4j.BasicConfigurator.configure();
     }
 
-    public static Test suite()
-    {
-        return getTestSetup2(new TestSuite(MessageSaveAndRestoreWithMTOMTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(MessageSaveAndRestoreWithMTOMTest.class),
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
 
         AxisService service = Utils.createSimpleService(TestConstants.serviceName,
                                                         Echo.class.getName(),
@@ -105,11 +97,9 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
         phases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         operation.setRemainingPhasesInFlow(phases);
         ArrayList phase = operation.getRemainingPhasesInFlow();
-        for (int i = 0; i < phase.size(); i++)
-        {
+        for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase)phase.get(i);
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName()))
-            {
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(inboundHandler);
             }
         }
@@ -118,24 +108,20 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
         phases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         operation.setPhasesOutFlow(phases);
         phase = operation.getPhasesOutFlow();
-        for (int i = 0; i < phase.size(); i++)
-        {
+        for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase)phase.get(i);
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName()))
-            {
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(outboundHandler);
             }
         }
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         UtilServer.unDeployService(TestConstants.serviceName);
         UtilServer.unDeployClientService();
     }
 
-    public void testSaveAndRestoreOfMessage() throws Exception
-    {
+    public void testSaveAndRestoreOfMessage() throws Exception {
         OMElement payload = createEnvelope();
 
         Options options = new Options();
@@ -143,29 +129,31 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+TestConstants.operationName.getLocalPart());
+        options.setAction(
+                Constants.AXIS2_NAMESPACE_URI + "/" + TestConstants.operationName.getLocalPart());
         options.setUseSeparateListener(true);
         options.setTimeOutInMilliSeconds(50000);
 
-        ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        ConfigurationContext configurationContext = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                                                          null);
 
-        ServiceClient sender = new ServiceClient(configurationContext,null);
+        ServiceClient sender = new ServiceClient(configurationContext, null);
         sender.setOptions(options);
         sender.engageModule("addressing");
 
         OMElement result = sender.sendReceive(payload);
 
-        OMElement element = (OMElement) result.getFirstOMChild();
-        OMText binaryNode = (OMText) element.getFirstOMChild();
+        OMElement element = (OMElement)result.getFirstOMChild();
+        OMText binaryNode = (OMText)element.getFirstOMChild();
 
         compareWithCreatedOMText(binaryNode);
 
-        DataHandler actualDH = (DataHandler) binaryNode.getDataHandler();
+        DataHandler actualDH = (DataHandler)binaryNode.getDataHandler();
         BufferedImage bi = ImageIO.read(actualDH.getDataSource().getInputStream());
     }
 
-    protected OMElement createEnvelope() throws Exception
-    {
+    protected OMElement createEnvelope() throws Exception {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMNamespace omNamespace = omFactory.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapperElement = omFactory.createOMElement("echoOMElement", omNamespace);
@@ -180,93 +168,82 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
 
     }
 
-    protected InputStream getResourceAsStream(String path)
-    {
+    protected InputStream getResourceAsStream(String path) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
-    protected void compareWithCreatedOMText(OMText actualTextData)
-    {
+    protected void compareWithCreatedOMText(OMText actualTextData) {
         String originalTextValue = expectedTextData.getText();
         String returnedTextValue = actualTextData.getText();
         TestCase.assertEquals(returnedTextValue, originalTextValue);
     }
 
-    private Handler inboundHandler = new AbstractHandler()
-    {
+    private Handler inboundHandler = new AbstractHandler() {
         private static final long serialVersionUID = 1L;
         private String stateProperty = "InboundHandlerState";
 
-        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault
-        {
+        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault {
             System.out.println("MessageSaveAndRestoreWithMTOMTest:Inbound handler invoked");
-            if (messageContext.getProperty(stateProperty) == null)
-            {
+            if (messageContext.getProperty(stateProperty) == null) {
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Suspending processing");
                 messageContext.setProperty(stateProperty, new Object());
                 messageContext.pause();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                try
-                {
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+                try {
+                    ObjectOutputStream objectOutputStream =
+                            new ObjectOutputStream(byteArrayOutputStream);
                     objectOutputStream.writeObject(messageContext);
                     objectOutputStream.flush();
                     objectOutputStream.close();
                     byteArrayOutputStream.flush();
                     byteArrayOutputStream.close();
                 }
-                catch (IOException e)
-                {
+                catch (IOException e) {
                     e.printStackTrace();
                     fail("An error occurred when serializing the MessageContext");
                 }
-                new Worker(byteArrayOutputStream.toByteArray(), messageContext.getConfigurationContext()).start();
-            }
-            else
-            {
-                System.out.println("MessageSaveAndRestoreWithMTOMTest:Skipping previously invoked Inbound handler");
+                new Worker(byteArrayOutputStream.toByteArray(),
+                           messageContext.getConfigurationContext()).start();
+            } else {
+                System.out.println(
+                        "MessageSaveAndRestoreWithMTOMTest:Skipping previously invoked Inbound handler");
             }
             return InvocationResponse.CONTINUE;
         }
-    };  
+    };
 
-    private Handler outboundHandler = new AbstractHandler()
-    {
+    private Handler outboundHandler = new AbstractHandler() {
         private static final long serialVersionUID = 1L;
 
-        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault
-        {
+        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault {
             System.out.println("MessageSaveAndRestoreWithMTOMTest:Outbound handler invoked");
             return InvocationResponse.CONTINUE;
         }
     };
 
-    private class Worker extends Thread
-    {
+    private class Worker extends Thread {
         private byte[] serializedMessageContext;
         private ConfigurationContext configurationContext;
 
-        public Worker(byte[] serializedMessageContext, ConfigurationContext configurationContext)
-        {
+        public Worker(byte[] serializedMessageContext, ConfigurationContext configurationContext) {
             this.serializedMessageContext = serializedMessageContext;
             this.configurationContext = configurationContext;
         }
 
-        public void run()
-        {
-            try
-            {
+        public void run() {
+            try {
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Worker thread started");
                 Thread.sleep(5000);
                 AxisEngine axisEngine = new AxisEngine(configurationContext);
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Resuming processing");
-                ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
-                MessageContext reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+                ObjectInputStream objectInputStream =
+                        new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
+                MessageContext reconstitutedMessageContext =
+                        (MessageContext)objectInputStream.readObject();
                 reconstitutedMessageContext.activate(configurationContext);
                 axisEngine.resume(reconstitutedMessageContext);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
                 fail("An error occurred in the worker thread");
             }

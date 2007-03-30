@@ -16,28 +16,19 @@
  */
 package org.apache.axis2.jaxws.runtime.description.injection;
 
-import java.lang.reflect.Method;
-
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 
+import java.lang.reflect.Method;
 
-/**
- * Used to cache @Resource injection information
- */
+
+/** Used to cache @Resource injection information */
 public interface ResourceInjectionServiceRuntimeDescription extends ServiceRuntimeDescription {
-   /**
-    * @return true if @Resource is found on any Field or Method of the 
-    * Implementation class
-    */
+    /** @return true if @Resource is found on any Field or Method of the Implementation class */
     boolean hasResourceAnnotation();
-    
-    /**
-     * @return Method with @PostConstruct or null
-     */
+
+    /** @return Method with @PostConstruct or null */
     Method getPostConstructMethod();
-    
-    /**
-     * @return Method with @PreDestroy or null
-     */
+
+    /** @return Method with @PreDestroy or null */
     Method getPreDestroyMethod();
 }

@@ -19,11 +19,9 @@ package org.apache.axis2.integration;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,14 +38,14 @@ public class UtilsTCPServer {
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
-	private static final Log log = LogFactory.getLog(UtilsTCPServer.class);
+    private static final Log log = LogFactory.getLog(UtilsTCPServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {
 
         receiver.getConfigurationContext().getAxisConfiguration().addService(service);
         ContextFactory.createServiceGroupContext(receiver.getConfigurationContext(),
-                (AxisServiceGroup) service.getParent());
+                                                 (AxisServiceGroup)service.getParent());
     }
 
     public static synchronized void unDeployService(QName service)
@@ -67,9 +65,10 @@ public class UtilsTCPServer {
                 throw new Exception("Repository directory does not exist");
             }
 
-            ConfigurationContext er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
-                    .getAbsolutePath(), file
-                    .getAbsolutePath() + "/conf/axis2.xml");
+            ConfigurationContext er =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
+                            .getAbsolutePath(), file
+                            .getAbsolutePath() + "/conf/axis2.xml");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e1) {

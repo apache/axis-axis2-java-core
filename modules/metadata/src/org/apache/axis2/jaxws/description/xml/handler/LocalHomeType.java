@@ -14,17 +14,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The local-homeType defines the fully-qualified
- * 	name of an enterprise bean's local home interface.
- * 
- *       
- * 
+ * The local-homeType defines the fully-qualified name of an enterprise bean's local home
+ * interface.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for local-homeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="local-homeType">
  *   &lt;simpleContent>
@@ -33,14 +31,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "local-homeType")
 public class LocalHomeType
-    extends FullyQualifiedClassType
-{
+        extends FullyQualifiedClassType {
 
 
 }

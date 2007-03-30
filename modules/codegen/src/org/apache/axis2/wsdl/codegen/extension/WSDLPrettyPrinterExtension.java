@@ -19,7 +19,7 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class WSDLPrettyPrinterExtension extends AbstractPrettyPrinterExtension{
+public class WSDLPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
 
     public WSDLPrettyPrinterExtension() {
         fileExtension = ".wsdl";

@@ -29,7 +29,8 @@ public class EchoExtendedStructFaultClientUtil implements SunClientUtil {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
 
         OMElement method = fac.createOMElement("echoExtendedStructFault", omNs);
         method.declareNamespace(envNs);

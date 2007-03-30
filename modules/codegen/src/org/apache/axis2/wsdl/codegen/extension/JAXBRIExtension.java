@@ -16,11 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.description.AxisService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,8 +30,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 public class JAXBRIExtension extends AbstractDBProcessingExtension {
 
@@ -46,11 +46,12 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
-    public static final String JAXB_RI_API_CLASS  = "javax.xml.bind.JAXBContext";
+    public static final String JAXB_RI_API_CLASS = "javax.xml.bind.JAXBContext";
     public static final String JAXB_RI_IMPL_CLASS = "com.sun.xml.bind.Util";
     public static final String JAXB_RI_XJC_CLASS = "com.sun.tools.xjc.api.XJC";
 
-    public static final String JAXB_RI_UTILITY_CLASS = "org.apache.axis2.jaxbri.CodeGenerationUtility";
+    public static final String JAXB_RI_UTILITY_CLASS =
+            "org.apache.axis2.jaxbri.CodeGenerationUtility";
 
     public static final String JAXB_RI_PROCESS_METHOD = "processSchemas";
 
@@ -84,17 +85,19 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
 
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(JAXB_RI_PROCESS_METHOD,
-                    new Class[] { List.class, Element[].class, CodeGenConfiguration.class });
+                                            new Class[] { List.class, Element[].class,
+                                                    CodeGenConfiguration.class });
             List schemas = new ArrayList();
             List axisServices = configuration.getAxisServices();
             AxisService axisService = null;
-            for (Iterator iter = axisServices.iterator();iter.hasNext();){
-                axisService = (AxisService) iter.next();
+            for (Iterator iter = axisServices.iterator(); iter.hasNext();) {
+                axisService = (AxisService)iter.next();
                 schemas.addAll(axisService.getSchema());
             }
             Element[] additionalSchemas = loadAdditionalSchemas();
             TypeMapper mapper = (TypeMapper)method.invoke(null,
-                new Object[] { schemas, additionalSchemas, configuration });
+                                                          new Object[] { schemas, additionalSchemas,
+                                                                  configuration });
 
             // set the type mapper to the config
             configuration.setTypeMapper(mapper);
@@ -126,7 +129,8 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
                 if (!"".equals(schemaNames[i].trim())) {
-                    InputStream schemaStream = this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
+                    InputStream schemaStream =
+                            this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
                     Document doc = documentBuilder.parse(schemaStream);
                     additionalSchemaElements.add(doc.getDocumentElement());
                 }
@@ -135,11 +139,12 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
             //Create the Schema element array
             schemaElements = new Element[additionalSchemaElements.size()];
             for (int i = 0; i < additionalSchemaElements.size(); i++) {
-                schemaElements[i] = (Element) additionalSchemaElements.get(i);
+                schemaElements[i] = (Element)additionalSchemaElements.get(i);
 
             }
         } catch (Exception e) {
-            throw new RuntimeException(CodegenMessages.getMessage("extension.additionalSchemaFailure"), e);
+            throw new RuntimeException(
+                    CodegenMessages.getMessage("extension.additionalSchemaFailure"), e);
         }
 
         return schemaElements;

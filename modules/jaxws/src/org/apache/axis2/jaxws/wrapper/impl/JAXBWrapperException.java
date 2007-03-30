@@ -20,37 +20,33 @@ package org.apache.axis2.jaxws.wrapper.impl;
 
 public class JAXBWrapperException extends Exception {
 
-	/**
-	 * 
-	 */
-	public JAXBWrapperException() {
-		super();
-		
-	}
+    /**
+     *
+     */
+    public JAXBWrapperException() {
+        super();
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public JAXBWrapperException(String message, Throwable cause) {
-		super(message, cause);
-		
-	}
+    }
 
-	/**
-	 * @param message
-	 */
-	public JAXBWrapperException(String message) {
-		super(message);
-		
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public JAXBWrapperException(String message, Throwable cause) {
+        super(message, cause);
 
-	/**
-	 * @param cause
-	 */
-	public JAXBWrapperException(Throwable cause) {
-		super(cause);
-		
-	}
+    }
+
+    /** @param message  */
+    public JAXBWrapperException(String message) {
+        super(message);
+
+    }
+
+    /** @param cause  */
+    public JAXBWrapperException(Throwable cause) {
+        super(cause);
+
+    }
 
 }

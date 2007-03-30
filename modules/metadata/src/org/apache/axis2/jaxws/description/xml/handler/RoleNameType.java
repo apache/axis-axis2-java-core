@@ -14,18 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The role-nameType designates the name of a security role.
- * 
- * 	The name must conform to the lexical rules for a token.
- * 
- *       
- * 
+ * The role-nameType designates the name of a security role.
+ * <p/>
+ * The name must conform to the lexical rules for a token.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for role-nameType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="role-nameType">
  *   &lt;simpleContent>
@@ -34,14 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "role-nameType")
 public class RoleNameType
-    extends String
-{
+        extends String {
 
 
 }

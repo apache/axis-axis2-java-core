@@ -18,62 +18,70 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.ws.Holder;
-
-import org.apache.axis2.jaxws.description.OperationDescription;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 
-import junit.framework.TestCase;
+import javax.xml.ws.Holder;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * 
  */
 public class ParameterDescriptionImplTests extends TestCase {
-    
+
     /*
-     * This is a TEMPORARY test.  It is testing the construction of a 
-     * ParameterDesc using a class (instead of a DBC).  Using a class should
-     * be deprecated and only a DBC should be used in construction
-     */
+    * This is a TEMPORARY test.  It is testing the construction of a
+    * ParameterDesc using a class (instead of a DBC).  Using a class should
+    * be deprecated and only a DBC should be used in construction
+    */
     public void test1() {
         Method[] methods = TestInterface.class.getMethods();
         Method method1 = methods[0];
-        ParameterDescription pdc1 = new ParameterDescriptionImpl(0, method1.getParameterTypes()[0], method1.getGenericParameterTypes()[0], method1.getAnnotations(), null);
+        ParameterDescription pdc1 = new ParameterDescriptionImpl(0, method1.getParameterTypes()[0],
+                                                                 method1.getGenericParameterTypes()[0],
+                                                                 method1.getAnnotations(), null);
         assertNotNull(pdc1);
         assertEquals(List[].class, pdc1.getParameterActualType());
 
     }
+
     public void test2() {
         Method[] methods = TestInterface.class.getMethods();
         Method method2 = methods[1];
-        ParameterDescription pdc2 = new ParameterDescriptionImpl(0, method2.getParameterTypes()[0], method2.getGenericParameterTypes()[0], method2.getAnnotations(), null);
+        ParameterDescription pdc2 = new ParameterDescriptionImpl(0, method2.getParameterTypes()[0],
+                                                                 method2.getGenericParameterTypes()[0],
+                                                                 method2.getAnnotations(), null);
         assertNotNull(pdc2);
         assertEquals(String[].class, pdc2.getParameterActualType());
     }
+
     public void test3() {
         Method[] methods = TestInterface.class.getMethods();
         Method method3 = methods[2];
-        ParameterDescription pdc3 = new ParameterDescriptionImpl(0, method3.getParameterTypes()[0], method3.getGenericParameterTypes()[0], method3.getAnnotations(), null);
+        ParameterDescription pdc3 = new ParameterDescriptionImpl(0, method3.getParameterTypes()[0],
+                                                                 method3.getGenericParameterTypes()[0],
+                                                                 method3.getAnnotations(), null);
         assertNotNull(pdc3);
         assertEquals(List[].class, pdc3.getParameterActualType());
     }
+
     public void test4() {
         Method[] methods = TestInterface.class.getMethods();
         Method method4 = methods[3];
-        ParameterDescription pdc4 = new ParameterDescriptionImpl(0, method4.getParameterTypes()[0], method4.getGenericParameterTypes()[0], method4.getAnnotations(), null);
+        ParameterDescription pdc4 = new ParameterDescriptionImpl(0, method4.getParameterTypes()[0],
+                                                                 method4.getGenericParameterTypes()[0],
+                                                                 method4.getAnnotations(), null);
         assertNotNull(pdc4);
         assertEquals(String[].class, pdc4.getParameterActualType());
     }
+
     public void test5() {
         Method[] methods = TestInterface.class.getMethods();
         Method method5 = methods[4];
-        ParameterDescription pdc = new ParameterDescriptionImpl(0, method5.getParameterTypes()[0], method5.getGenericParameterTypes()[0], method5.getAnnotations(), null);
+        ParameterDescription pdc = new ParameterDescriptionImpl(0, method5.getParameterTypes()[0],
+                                                                method5.getGenericParameterTypes()[0],
+                                                                method5.getAnnotations(), null);
         assertNotNull(pdc);
         assertEquals(List[].class, pdc.getParameterActualType());
     }
@@ -81,8 +89,12 @@ public class ParameterDescriptionImplTests extends TestCase {
 
 interface TestInterface {
     String method1(Holder<List<String>[]> foo);
+
     String method2(Holder<String[]> foo);
+
     String method3(Holder<List<?>[]> foo);
+
     String method4(String[] foo);
+
     String method5(List<String>[] foo);
 }

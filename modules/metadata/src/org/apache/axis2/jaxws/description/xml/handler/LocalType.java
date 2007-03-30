@@ -14,17 +14,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The localType defines the fully-qualified name of an
- * 	enterprise bean's local interface.
- * 
- *       
- * 
+ * The localType defines the fully-qualified name of an enterprise bean's local interface.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for localType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="localType">
  *   &lt;simpleContent>
@@ -33,14 +30,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "localType")
 public class LocalType
-    extends FullyQualifiedClassType
-{
+        extends FullyQualifiedClassType {
 
 
 }

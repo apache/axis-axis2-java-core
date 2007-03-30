@@ -24,18 +24,12 @@ import javax.xml.soap.Name;
  * Took this implementation from Axis 1.2 code
  */
 public class PrefixedQName implements Name {
-    /**
-     * comment/shared empty string
-     */
+    /** comment/shared empty string */
     private static final String EMPTY_STRING = "".intern();
 
-    /**
-     * Field prefix
-     */
+    /** Field prefix */
     private String prefix;
-    /**
-     * Field qName
-     */
+    /** Field qName */
     private QName qName;
 
     /**
@@ -48,8 +42,8 @@ public class PrefixedQName implements Name {
     public PrefixedQName(String uri, String localName, String prefix) {
         qName = new QName(uri, localName);
         this.prefix = (prefix == null)
-                      ? EMPTY_STRING
-                      : prefix.intern();
+                ? EMPTY_STRING
+                : prefix.intern();
     }
 
     /**
@@ -63,8 +57,7 @@ public class PrefixedQName implements Name {
     }
 
     /**
-     * Gets the local name part of the XML name that this <code>Name</code>
-     * object represents.
+     * Gets the local name part of the XML name that this <code>Name</code> object represents.
      *
      * @return Returns the local name.
      */
@@ -73,8 +66,8 @@ public class PrefixedQName implements Name {
     }
 
     /**
-     * Gets the namespace-qualified name of the XML name that this
-     * <code>Name</code> object represents.
+     * Gets the namespace-qualified name of the XML name that this <code>Name</code> object
+     * represents.
      *
      * @return Returns the namespace-qualified name.
      */
@@ -87,8 +80,8 @@ public class PrefixedQName implements Name {
     }
 
     /**
-     * Returns the URI of the namespace for the XML
-     * name that this <code>Name</code> object represents.
+     * Returns the URI of the namespace for the XML name that this <code>Name</code> object
+     * represents.
      *
      * @return Returns the URI as a string.
      */
@@ -97,10 +90,10 @@ public class PrefixedQName implements Name {
     }
 
     /**
-     * Returns the prefix associated with the namespace for the XML
-     * name that this <code>Name</code> object represents.
+     * Returns the prefix associated with the namespace for the XML name that this <code>Name</code>
+     * object represents.
      *
-     * @return  Returns the prefix as a string.
+     * @return Returns the prefix as a string.
      */
     public String getPrefix() {
         return prefix;
@@ -113,7 +106,7 @@ public class PrefixedQName implements Name {
         if (!(obj instanceof PrefixedQName)) {
             return false;
         }
-        if (!qName.equals(((PrefixedQName) obj).qName)) {
+        if (!qName.equals(((PrefixedQName)obj).qName)) {
             return false;
         }
         return true;

@@ -15,38 +15,32 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-
 public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeaderElement {
 
     private SOAPHeaderBlock headerElem;
 
-    /**
-     * @param element
-     */
+    /** @param element  */
     public SOAPHeaderElementImpl(SOAPHeaderBlock element) {
-        super((ElementImpl) element);
+        super((ElementImpl)element);
         this.headerElem = element;
     }
 
     /**
-     * Sets the actor associated with this <CODE>
-     * SOAPHeaderElement</CODE> object to the specified actor. The
-     * default value of an actor is: <CODE>
-     * SOAPConstants.URI_SOAP_ACTOR_NEXT</CODE>
+     * Sets the actor associated with this <CODE> SOAPHeaderElement</CODE> object to the specified
+     * actor. The default value of an actor is: <CODE> SOAPConstants.URI_SOAP_ACTOR_NEXT</CODE>
      *
-     * @param actorURI a <CODE>String</CODE> giving
-     *                 the URI of the actor to set
-     * @throws java.lang.IllegalArgumentException
-     *          if
-     *          there is a problem in setting the actor.
+     * @param actorURI a <CODE>String</CODE> giving the URI of the actor to set
+     * @throws IllegalArgumentException
+     *          if there is a problem in setting the actor.
      * @see #getActor() getActor()
      */
     public void setActor(String actorURI) {
@@ -54,33 +48,28 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     /**
-     * Returns the uri of the actor associated with this <CODE>
-     * SOAPHeaderElement</CODE> object.
+     * Returns the uri of the actor associated with this <CODE> SOAPHeaderElement</CODE> object.
      *
-     * @return a <CODE>String</CODE> giving the URI of the
-     *         actor
-     * @see #setActor(java.lang.String) setActor(java.lang.String)
+     * @return a <CODE>String</CODE> giving the URI of the actor
+     * @see #setActor(String) setActor(java.lang.String)
      */
     public String getActor() {
         return this.headerElem.getRole();
     }
 
     /**
-     * Sets the mustUnderstand attribute for this <CODE>
-     * SOAPHeaderElement</CODE> object to be on or off.
+     * Sets the mustUnderstand attribute for this <CODE> SOAPHeaderElement</CODE> object to be on or
+     * off.
      * <p/>
-     * <P>If the mustUnderstand attribute is on, the actor who
-     * receives the <CODE>SOAPHeaderElement</CODE> must process it
-     * correctly. This ensures, for example, that if the <CODE>
-     * SOAPHeaderElement</CODE> object modifies the message, that
-     * the message is being modified correctly.</P>
+     * <P>If the mustUnderstand attribute is on, the actor who receives the
+     * <CODE>SOAPHeaderElement</CODE> must process it correctly. This ensures, for example, that if
+     * the <CODE> SOAPHeaderElement</CODE> object modifies the message, that the message is being
+     * modified correctly.</P>
      *
-     * @param mustUnderstand <CODE>true</CODE> to
-     *                       set the mustUnderstand attribute on; <CODE>false</CODE>
-     *                       to turn if off
-     * @throws java.lang.IllegalArgumentException
-     *          if
-     *          there is a problem in setting the actor.
+     * @param mustUnderstand <CODE>true</CODE> to set the mustUnderstand attribute on;
+     *                       <CODE>false</CODE> to turn if off
+     * @throws IllegalArgumentException
+     *          if there is a problem in setting the actor.
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public void setMustUnderstand(boolean mustUnderstand) {
@@ -88,12 +77,11 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     /**
-     * Returns whether the mustUnderstand attribute for this
-     * <CODE>SOAPHeaderElement</CODE> object is turned on.
+     * Returns whether the mustUnderstand attribute for this <CODE>SOAPHeaderElement</CODE> object
+     * is turned on.
      *
-     * @return <CODE>true</CODE> if the mustUnderstand attribute of
-     *         this <CODE>SOAPHeaderElement</CODE> object is turned on;
-     *         <CODE>false</CODE> otherwise
+     * @return <CODE>true</CODE> if the mustUnderstand attribute of this
+     *         <CODE>SOAPHeaderElement</CODE> object is turned on; <CODE>false</CODE> otherwise
      */
     public boolean getMustUnderstand() {
         return this.headerElem.getMustUnderstand();
@@ -101,51 +89,53 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
 
     /**
      * Sets the Role associated with this SOAPHeaderElement object to the specified Role.
+     *
      * @param uri - the URI of the Role
-     * @throws SOAPException - if there is an error in setting the role
-     *         java.lang.UnsupportedOperationException - if this message does not support 
-     *         the SOAP 1.2 concept of Fault Role.
+     * @throws SOAPException - if there is an error in setting the role java.lang.UnsupportedOperationException
+     *                       - if this message does not support the SOAP 1.2 concept of Fault Role.
      */
     public void setRole(String uri) throws SOAPException {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
-        	throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         } else {
-        	this.headerElem.setRole(uri);
+            this.headerElem.setRole(uri);
         }
     }
 
     public String getRole() {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
-        	throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         } else {
-            return this.headerElem.getRole();        
+            return this.headerElem.getRole();
         }
     }
 
     /**
-     * Sets the relay attribute for this SOAPHeaderElement to be either true or false.
-     * The SOAP relay attribute is set to true to indicate that the SOAP header block must be relayed by
-     * any node that is targeted by the header block but not actually process it. This attribute is ignored on
-     * header blocks whose mustUnderstand attribute is set to true or that are targeted at the ultimate
-     * reciever (which is the default). The default value of this attribute is false.
+     * Sets the relay attribute for this SOAPHeaderElement to be either true or false. The SOAP
+     * relay attribute is set to true to indicate that the SOAP header block must be relayed by any
+     * node that is targeted by the header block but not actually process it. This attribute is
+     * ignored on header blocks whose mustUnderstand attribute is set to true or that are targeted
+     * at the ultimate reciever (which is the default). The default value of this attribute is
+     * false.
+     *
      * @param relay - the new value of the relay attribute
      * @throws SOAPException - if there is a problem in setting the relay attribute.
-     * 		   java.lang.UnsupportedOperationException - if this message does not support
-     * 		   the SOAP 1.2 concept of Relay attribute.
+     *                       java.lang.UnsupportedOperationException - if this message does not
+     *                       support the SOAP 1.2 concept of Relay attribute.
      */
     public void setRelay(boolean flag) throws SOAPException {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
-        	throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         } else {
-        	this.headerElem.setRelay(flag);
+            this.headerElem.setRelay(flag);
         }
     }
 
     public boolean getRelay() {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
-        	throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
         } else {
-            return this.headerElem.getRelay();    
+            return this.headerElem.getRelay();
         }
     }
 

@@ -20,16 +20,14 @@ import javax.xml.namespace.QName;
 
 
 /**
- * 
- * 
- * 	This type adds an "id" attribute to xsd:QName.
- * 
- *       
- * 
+ * This type adds an "id" attribute to xsd:QName.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for xsdQNameType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="xsdQNameType">
  *   &lt;simpleContent>
@@ -39,13 +37,11 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xsdQNameType", propOrder = {
-    "value"
-})
+        "value"
+        })
 public class XsdQNameType {
 
     @XmlValue
@@ -57,11 +53,8 @@ public class XsdQNameType {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *     
+     *
+     * @return possible object is {@link QName }
      */
     public QName getValue() {
         return value;
@@ -69,11 +62,8 @@ public class XsdQNameType {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link QName }
-     *     
+     *
+     * @param value allowed object is {@link QName }
      */
     public void setValue(QName value) {
         this.value = value;
@@ -81,11 +71,8 @@ public class XsdQNameType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -93,11 +80,8 @@ public class XsdQNameType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

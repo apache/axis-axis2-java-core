@@ -18,18 +18,15 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import junit.framework.TestCase;
+import org.apache.log4j.BasicConfigurator;
+
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
-import org.apache.log4j.BasicConfigurator;
-
-import junit.framework.TestCase;
-
-/**
- * Tests the request and response wrappers.
- */
+/** Tests the request and response wrappers. */
 public class WrapperPackageTests extends TestCase {
     static {
         // Note you will probably need to increase the java heap size, for example
@@ -38,23 +35,23 @@ public class WrapperPackageTests extends TestCase {
         // in the test-resources directory.
         BasicConfigurator.configure();
     }
-    
+
     public void testSEIPackageWrapper() {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEIPackageWrapper.class);
         OperationDescription opDesc = eiDesc.getOperation("method1");
         String requestWrapperClass = opDesc.getRequestWrapperClassName();
-        
+
         // The algorithm to find the response wrapper is not defined by the specification.
         // The marshalling layer (jaxws) can use proprietary mechanisms to find, build or operate
         // without the wrapper class.
-        
+
         //assertEquals("org.apache.axis2.jaxws.description.Method1", requestWrapperClass);
         assertEquals(null, requestWrapperClass);
-        
+
         String responseWrapperClass = opDesc.getResponseWrapperClassName();
         //assertEquals("org.apache.axis2.jaxws.description.Method1Response", responseWrapperClass);
         assertEquals(null, responseWrapperClass);
-        
+
         FaultDescription fDesc = opDesc.getFaultDescriptions()[0];
         String faultExceptionClass = fDesc.getExceptionClassName();
         assertEquals("org.apache.axis2.jaxws.description.Method1Exception", faultExceptionClass);
@@ -62,7 +59,7 @@ public class WrapperPackageTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.ExceptionBean", faultBeanClass);
 
     }
-    
+
     public void testSEISubPackageWrapper() {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEISubPackageWrapper.class);
         OperationDescription opDesc = eiDesc.getOperation("subPackageMethod1");
@@ -85,23 +82,24 @@ public class WrapperPackageTests extends TestCase {
         //assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageExceptionBean", faultBeanClass);
 
     }
-    
+
     /*
-     * Method to return the endpoint interface description for a given implementation class.
-     */
+    * Method to return the endpoint interface description for a given implementation class.
+    */
     private EndpointInterfaceDescription getEndpointInterfaceDesc(Class implementationClass) {
         // Use the description factory directly; this will be done within the JAX-WS runtime
-        ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescription(implementationClass);
+        ServiceDescription serviceDesc =
+                DescriptionFactory.createServiceDescription(implementationClass);
         assertNotNull(serviceDesc);
-        
+
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
         assertNotNull(endpointDesc);
         assertEquals(1, endpointDesc.length);
-        
+
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointDescription testEndpointDesc = endpointDesc[0];
-        EndpointInterfaceDescription testEndpointInterfaceDesc = testEndpointDesc.getEndpointInterfaceDescription();
+        EndpointInterfaceDescription testEndpointInterfaceDesc =
+                testEndpointDesc.getEndpointInterfaceDescription();
         assertNotNull(testEndpointInterfaceDesc);
 
         return testEndpointInterfaceDesc;
@@ -118,20 +116,22 @@ class SEIPackageWrapper {
 }
 
 class Method1 {
-    
+
 }
 
 class Method1Response {
-    
+
 }
 
 @WebFault()
 class Method1Exception extends Exception {
-    public ExceptionBean getFaultInfo() { return null; }
+    public ExceptionBean getFaultInfo() {
+        return null;
+    }
 }
 
 class ExceptionBean {
-    
+
 }
 
 @WebFault

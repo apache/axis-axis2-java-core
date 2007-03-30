@@ -16,9 +16,9 @@
 
 package org.apache.axis2.wsdl.databinding;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
-import java.text.Collator;
 
 public class CUtils {
 
@@ -34,14 +34,10 @@ public class CUtils {
                     "do", "if", "static", "while"
             };
 
-    /**
-     * Collator for comparing the strings
-     */
+    /** Collator for comparing the strings */
     static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
 
-    /**
-     * Use this character as suffix
-     */
+    /** Use this character as suffix */
     static final char keywordPrefix = '_';
 
 
@@ -55,8 +51,8 @@ public class CUtils {
     }
 
     /**
-     * Turns a C keyword string into a non-C keyword string.  (Right now
-     * this simply means appending an underscore.)
+     * Turns a C keyword string into a non-C keyword string.  (Right now this simply means appending
+     * an underscore.)
      */
     public static String makeNonCKeyword(String keyword) {
         return keywordPrefix + keyword;

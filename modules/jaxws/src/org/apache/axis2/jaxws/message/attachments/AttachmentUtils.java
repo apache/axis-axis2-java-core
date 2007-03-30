@@ -16,10 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.attachments;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
@@ -30,18 +26,20 @@ import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * A suite of utilities used for handling MTOM attachment data. 
- */
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+
+/** A suite of utilities used for handling MTOM attachment data. */
 public class AttachmentUtils {
-    
+
     private static final Log log = LogFactory.getLog(AttachmentUtils.class);
-    private static final QName XOP_INCLUDE = 
-        new QName("http://www.w3.org/2004/08/xop/include", "Include");
-    
+    private static final QName XOP_INCLUDE =
+            new QName("http://www.w3.org/2004/08/xop/include", "Include");
+
     /**
-     * Can be used to find all instances of the <pre><xop:include></pre> element 
+     * Can be used to find all instances of the <pre><xop:include></pre> element
      * within a given OM SOAPEnvelope.
+     *
      * @param env
      * @return
      */
@@ -50,76 +48,77 @@ public class AttachmentUtils {
         findXopElements(env, xops);
         return xops;
     }
-    
+
     /*
-     * A recursive search for all of the <xop:include> elements in the tree.
-     */
+    * A recursive search for all of the <xop:include> elements in the tree.
+    */
     private static void findXopElements(OMElement root, ArrayList<OMElement> xops) {
-        
+
         //      Forces a parse.  This seems to be necessary due to bugs in OMNavigator
         root.getNextOMSibling();
-        
+
         // Navigator does a traversal that mimics the structure of an xml document. 
         // Each non-element object is processed once.
         // Each element object is visited prior to its children and after its children.
         // 
         // Suppose you have the following tree (caps are elements, lowers are text)
         // 
-    	//     A
-    	//    / \
-    	//   B   C
-    	//  /\   /\
-    	//  D e F  g
-    	// 
+        //     A
+        //    / \
+        //   B   C
+        //  /\   /\
+        //  D e F  g
+        //
         // The traversal is
-    	// is A B D D' e B' C F F' g C' A'
+        // is A B D D' e B' C F F' g C' A'
         // The ' indicates that this is the second time the node is visited (i.e. nav.visited() returns true)
-        
-    	OMNavigator nav = new OMNavigator(root);
-    	
-    	while (nav.isNavigable()) {
-    		OMNode curr = nav.next();
- 
+
+        OMNavigator nav = new OMNavigator(root);
+
+        while (nav.isNavigable()) {
+            OMNode curr = nav.next();
+
             // Inspect elements that have been visited. 
             // It is probably safer to inspect the node when it is visited, because this guarantees that its
             // children have been processed/expanded.
-    		if (nav.visited() && curr instanceof OMElement) {
-    			OMElement element = (OMElement) curr;
-    			if (element.getQName().equals(XOP_INCLUDE)) {
-    				if (log.isDebugEnabled()) {
-    					log.debug("[XOP_INCLUDE] " + element.getLocalName());
+            if (nav.visited() && curr instanceof OMElement) {
+                OMElement element = (OMElement)curr;
+                if (element.getQName().equals(XOP_INCLUDE)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("[XOP_INCLUDE] " + element.getLocalName());
                     }
-    				xops.add(element);
-    			}
-    		}
-    	}
-    	
-    	/* LEGACY SEARCH CODE
-        // If it has no children, then it's a leaf and we need
-        // to check if it's an <xop:include> element.  If not, then
-        // we need to grab each of the children and continue traversing
-        // down the tree.
-        Iterator itr = root.getChildren();
-        if (itr == null || !itr.hasNext()) {
-            if (log.isDebugEnabled())
-                log.debug("[leaf] " + root.getLocalName());
-            
-            if (root.getQName().equals(XOP_INCLUDE)) {
-                xops.add(root);
+                    xops.add(element);
+                }
             }
         }
-        else if (itr != null && itr.hasNext()) {
-            while (itr.hasNext()) {
-                OMElement next = (OMElement) itr.next();
-                findXopElements(next, xops);
-            }
-        }
-       */ 
+
+        /* LEGACY SEARCH CODE
+         // If it has no children, then it's a leaf and we need
+         // to check if it's an <xop:include> element.  If not, then
+         // we need to grab each of the children and continue traversing
+         // down the tree.
+         Iterator itr = root.getChildren();
+         if (itr == null || !itr.hasNext()) {
+             if (log.isDebugEnabled())
+                 log.debug("[leaf] " + root.getLocalName());
+
+             if (root.getQName().equals(XOP_INCLUDE)) {
+                 xops.add(root);
+             }
+         }
+         else if (itr != null && itr.hasNext()) {
+             while (itr.hasNext()) {
+                 OMElement next = (OMElement) itr.next();
+                 findXopElements(next, xops);
+             }
+         }
+        */
     }
-    
+
     /**
-     * Can be used to find all of the nodes in a tree that contain binary
-     * content that is targetted for optimization via MTOM.
+     * Can be used to find all of the nodes in a tree that contain binary content that is targetted
+     * for optimization via MTOM.
+     *
      * @param env
      * @return
      */
@@ -128,15 +127,15 @@ public class AttachmentUtils {
         findBinaryElements(env, nodes);
         return nodes;
     }
-    
+
     /*
-     * A recursive search for all of the binary, optimized nodes in a tree.
-     */
+    * A recursive search for all of the binary, optimized nodes in a tree.
+    */
     private static void findBinaryElements(OMNode node, ArrayList<OMText> attachments) {
-        
+
         // Forces a parse.  This seems to be necessary due to bugs in OMNavigator
         node.getNextOMSibling();
-    	
+
         // Navigator does a traversal that mimics the structure of an xml document. 
         // Each non-element object is processed once.
         // Each element object is visited prior to its children and after its children.
@@ -153,25 +152,25 @@ public class AttachmentUtils {
         // The traversal is
         // is A B D D' e B' C F F' g C' A'
         // The ' indicates that this is the second time the node is visited (i.e. nav.isVisited() returns true)
-    	OMNavigator nav = new OMNavigator(node);
-    
-    	while (nav.isNavigable()) {
-    		OMNode curr = nav.next();
-    		if (curr instanceof OMText) {
-    			// If it's an OMText, see if its optimized and add it to the list
+        OMNavigator nav = new OMNavigator(node);
+
+        while (nav.isNavigable()) {
+            OMNode curr = nav.next();
+            if (curr instanceof OMText) {
+                // If it's an OMText, see if its optimized and add it to the list
                 if (log.isDebugEnabled())
                     log.debug("text node found");
-                
-                OMText textNode = (OMText) curr;
+
+                OMText textNode = (OMText)curr;
                 if (textNode.isOptimized()) {
                     if (log.isDebugEnabled())
                         log.debug("optimized text node found");
-                    
+
                     attachments.add(textNode);
                 }
             }
-    	}
-    	
+        }
+
         /* LEGACY SEARCH CODE
         if (node instanceof OMText) {
             if (log.isDebugEnabled())
@@ -195,10 +194,11 @@ public class AttachmentUtils {
         }
         */
     }
-    
+
     /**
      * Given an <pre><xop:include></pre> element, create an OMText element
      * with the appropriate attachment data.
+     *
      * @param xop
      * @param data
      * @return
@@ -208,7 +208,7 @@ public class AttachmentUtils {
         OMText binaryNode = factory.createOMText(data.getDataHandler(), true);
         return binaryNode;
     }
-    
+
     /**
      * Given an OMText node, create it's corresponding <pre><xop:include></pre>
      * element.
@@ -219,5 +219,5 @@ public class AttachmentUtils {
         xop.addAttribute("href", data.getContentID(), null);
         return xop;
     }
-   
+
 }

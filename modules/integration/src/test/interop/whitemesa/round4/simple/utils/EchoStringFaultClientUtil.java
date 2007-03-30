@@ -31,7 +31,8 @@ public class EchoStringFaultClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
         OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
         OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsi");
 
         OMElement operation = omfactory.createOMElement("echoStringFault", omNs);

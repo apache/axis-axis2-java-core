@@ -16,6 +16,9 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
@@ -23,235 +26,231 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
-
 /**
- * Reader
- * In many situations, you want the ability to reset an XMLStreamReader.
- * (Or at least ask if the XMLStreamReader is resettable).
- * 
- * The Reader abstract class:
- *    - accepts an XMLStreamReader
- *    - provides reset() and isResettable() methods
- * Adds support resettable support to XMLStreamReader
- * 
- * Derived classes must pass the initial reader to the constructor and indicate if it
- * is resettable.
- * Derived classes must also provide an implementation of the newReader() method if 
- * resettable.
+ * Reader In many situations, you want the ability to reset an XMLStreamReader. (Or at least ask if
+ * the XMLStreamReader is resettable).
+ * <p/>
+ * The Reader abstract class: - accepts an XMLStreamReader - provides reset() and isResettable()
+ * methods Adds support resettable support to XMLStreamReader
+ * <p/>
+ * Derived classes must pass the initial reader to the constructor and indicate if it is resettable.
+ * Derived classes must also provide an implementation of the newReader() method if resettable.
  */
 public abstract class Reader implements XMLStreamReader {
-	protected XMLStreamReader reader;
-	private final boolean resettable;
-	/**
-	 * @param reader
-	 * @param resettable
-	 */
-	Reader(XMLStreamReader reader, boolean resettable) {
-		this.reader = reader;
-		this.resettable = resettable;
-	}
-	
-	/**
-	 * Get a newReader from the Object
-	 * @return XMLStreamReader
-	 */
-	protected abstract XMLStreamReader newReader();
-	
-	/**
-	 * isResettable
-	 * @return true or false
-	 */
-	public boolean isResettable() {
-		return resettable;
-	}
-	
-	public void reset() throws WebServiceException {
-		if (!resettable) {
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("resetReaderErr"));
-		}
-		reader = newReader();
-	}
+    protected XMLStreamReader reader;
+    private final boolean resettable;
 
-	public void close() throws XMLStreamException {
-		reader.close();
-	}
+    /**
+     * @param reader
+     * @param resettable
+     */
+    Reader(XMLStreamReader reader, boolean resettable) {
+        this.reader = reader;
+        this.resettable = resettable;
+    }
 
-	public int getAttributeCount() {
-		return reader.getAttributeCount();
-	}
+    /**
+     * Get a newReader from the Object
+     *
+     * @return XMLStreamReader
+     */
+    protected abstract XMLStreamReader newReader();
 
-	public String getAttributeLocalName(int arg0) {
-		return reader.getAttributeLocalName(arg0);
-	}
+    /**
+     * isResettable
+     *
+     * @return true or false
+     */
+    public boolean isResettable() {
+        return resettable;
+    }
 
-	public QName getAttributeName(int arg0) {
-		return reader.getAttributeName(arg0);
-	}
+    public void reset() throws WebServiceException {
+        if (!resettable) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("resetReaderErr"));
+        }
+        reader = newReader();
+    }
 
-	public String getAttributeNamespace(int arg0) {
-		return reader.getAttributeNamespace(arg0);
-	}
+    public void close() throws XMLStreamException {
+        reader.close();
+    }
 
-	public String getAttributePrefix(int arg0) {
-		return reader.getAttributePrefix(arg0);
-	}
+    public int getAttributeCount() {
+        return reader.getAttributeCount();
+    }
 
-	public String getAttributeType(int arg0) {
-		return reader.getAttributeType(arg0);
-	}
+    public String getAttributeLocalName(int arg0) {
+        return reader.getAttributeLocalName(arg0);
+    }
 
-	public String getAttributeValue(int arg0) {
-		return reader.getAttributeValue(arg0);
-	}
+    public QName getAttributeName(int arg0) {
+        return reader.getAttributeName(arg0);
+    }
 
-	public String getAttributeValue(String arg0, String arg1) {
-		return reader.getAttributeValue(arg0, arg1);
-	}
+    public String getAttributeNamespace(int arg0) {
+        return reader.getAttributeNamespace(arg0);
+    }
 
-	public String getCharacterEncodingScheme() {
-		return reader.getCharacterEncodingScheme();
-	}
+    public String getAttributePrefix(int arg0) {
+        return reader.getAttributePrefix(arg0);
+    }
 
-	public String getElementText() throws XMLStreamException {
-		return reader.getElementText();
-	}
+    public String getAttributeType(int arg0) {
+        return reader.getAttributeType(arg0);
+    }
 
-	public String getEncoding() {
-		return reader.getEncoding();
-	}
+    public String getAttributeValue(int arg0) {
+        return reader.getAttributeValue(arg0);
+    }
 
-	public int getEventType() {
-		return reader.getEventType();
-	}
+    public String getAttributeValue(String arg0, String arg1) {
+        return reader.getAttributeValue(arg0, arg1);
+    }
 
-	public String getLocalName() {
-		return reader.getLocalName();
-	}
+    public String getCharacterEncodingScheme() {
+        return reader.getCharacterEncodingScheme();
+    }
 
-	public Location getLocation() {
-		return reader.getLocation();
-	}
+    public String getElementText() throws XMLStreamException {
+        return reader.getElementText();
+    }
 
-	public QName getName() {
-		return reader.getName();
-	}
+    public String getEncoding() {
+        return reader.getEncoding();
+    }
 
-	public NamespaceContext getNamespaceContext() {
-		return reader.getNamespaceContext();
-	}
+    public int getEventType() {
+        return reader.getEventType();
+    }
 
-	public int getNamespaceCount() {
-		return reader.getNamespaceCount();
-	}
+    public String getLocalName() {
+        return reader.getLocalName();
+    }
 
-	public String getNamespacePrefix(int arg0) {
-		return reader.getNamespacePrefix(arg0);
-	}
+    public Location getLocation() {
+        return reader.getLocation();
+    }
 
-	public String getNamespaceURI() {
-		return reader.getNamespaceURI();
-	}
+    public QName getName() {
+        return reader.getName();
+    }
 
-	public String getNamespaceURI(int arg0) {
-		return reader.getNamespaceURI(arg0);
-	}
+    public NamespaceContext getNamespaceContext() {
+        return reader.getNamespaceContext();
+    }
 
-	public String getNamespaceURI(String arg0) {
-		return reader.getNamespaceURI(arg0);
-	}
+    public int getNamespaceCount() {
+        return reader.getNamespaceCount();
+    }
 
-	public String getPIData() {
-		return reader.getPIData();
-	}
+    public String getNamespacePrefix(int arg0) {
+        return reader.getNamespacePrefix(arg0);
+    }
 
-	public String getPITarget() {
-		return reader.getPITarget();
-	}
+    public String getNamespaceURI() {
+        return reader.getNamespaceURI();
+    }
 
-	public String getPrefix() {
-		return reader.getPrefix();
-	}
+    public String getNamespaceURI(int arg0) {
+        return reader.getNamespaceURI(arg0);
+    }
 
-	public Object getProperty(String arg0) throws IllegalArgumentException {
-		return reader.getProperty(arg0);
-	}
+    public String getNamespaceURI(String arg0) {
+        return reader.getNamespaceURI(arg0);
+    }
 
-	public String getText() {
-		return reader.getText();
-	}
+    public String getPIData() {
+        return reader.getPIData();
+    }
 
-	public char[] getTextCharacters() {
-		return reader.getTextCharacters();
-	}
+    public String getPITarget() {
+        return reader.getPITarget();
+    }
 
-	public int getTextCharacters(int arg0, char[] arg1, int arg2, int arg3) throws XMLStreamException {
-		return reader.getTextCharacters(arg0, arg1, arg2, arg3);
-	}
+    public String getPrefix() {
+        return reader.getPrefix();
+    }
 
-	public int getTextLength() {
-		return reader.getTextLength();
-	}
+    public Object getProperty(String arg0) throws IllegalArgumentException {
+        return reader.getProperty(arg0);
+    }
 
-	public int getTextStart() {
-		return reader.getTextStart();
-	}
+    public String getText() {
+        return reader.getText();
+    }
 
-	public String getVersion() {
-		return reader.getVersion();
-	}
+    public char[] getTextCharacters() {
+        return reader.getTextCharacters();
+    }
 
-	public boolean hasName() {
-		return reader.hasName();
-	}
+    public int getTextCharacters(int arg0, char[] arg1, int arg2, int arg3)
+            throws XMLStreamException {
+        return reader.getTextCharacters(arg0, arg1, arg2, arg3);
+    }
 
-	public boolean hasNext() throws XMLStreamException {
-		return reader.hasNext();
-	}
+    public int getTextLength() {
+        return reader.getTextLength();
+    }
 
-	public boolean hasText() {
-		return reader.hasText();
-	}
+    public int getTextStart() {
+        return reader.getTextStart();
+    }
 
-	public boolean isAttributeSpecified(int arg0) {
-		return reader.isAttributeSpecified(arg0);
-	}
+    public String getVersion() {
+        return reader.getVersion();
+    }
 
-	public boolean isCharacters() {
-		return reader.isCharacters();
-	}
+    public boolean hasName() {
+        return reader.hasName();
+    }
 
-	public boolean isEndElement() {
-		return reader.isEndElement();
-	}
+    public boolean hasNext() throws XMLStreamException {
+        return reader.hasNext();
+    }
 
-	public boolean isStandalone() {
-		return reader.isStandalone();
-	}
+    public boolean hasText() {
+        return reader.hasText();
+    }
 
-	public boolean isStartElement() {
-		return reader.isStartElement();
-	}
+    public boolean isAttributeSpecified(int arg0) {
+        return reader.isAttributeSpecified(arg0);
+    }
 
-	public boolean isWhiteSpace() {
-		return reader.isWhiteSpace();
-	}
+    public boolean isCharacters() {
+        return reader.isCharacters();
+    }
 
-	public int next() throws XMLStreamException {
-		return reader.next();
-	}
+    public boolean isEndElement() {
+        return reader.isEndElement();
+    }
 
-	public int nextTag() throws XMLStreamException {
-		return reader.nextTag();
-	}
+    public boolean isStandalone() {
+        return reader.isStandalone();
+    }
 
-	public void require(int arg0, String arg1, String arg2) throws XMLStreamException {
-		reader.require(arg0, arg1, arg2);
-	}
+    public boolean isStartElement() {
+        return reader.isStartElement();
+    }
 
-	public boolean standaloneSet() {
-		return reader.standaloneSet();
-	}
-	
+    public boolean isWhiteSpace() {
+        return reader.isWhiteSpace();
+    }
+
+    public int next() throws XMLStreamException {
+        return reader.next();
+    }
+
+    public int nextTag() throws XMLStreamException {
+        return reader.nextTag();
+    }
+
+    public void require(int arg0, String arg1, String arg2) throws XMLStreamException {
+        reader.require(arg0, arg1, arg2);
+    }
+
+    public boolean standaloneSet() {
+        return reader.standaloneSet();
+    }
+
 }

@@ -19,61 +19,53 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class BindingTypeAnnot implements javax.xml.ws.BindingType{
-	
-	private String value = "";
+public class BindingTypeAnnot implements javax.xml.ws.BindingType {
 
-	/**
-     * A BindingTypeAnnot cannot be instantiated.
-     */
-	private  BindingTypeAnnot(){
-		
-	}
-	
-	private  BindingTypeAnnot( String value)
-	{
-		this.value = value;
-	}
+    private String value = "";
+
+    /** A BindingTypeAnnot cannot be instantiated. */
+    private BindingTypeAnnot() {
+
+    }
+
+    private BindingTypeAnnot(String value) {
+        this.value = value;
+    }
 
     public static BindingTypeAnnot createBindingTypeAnnotImpl() {
         return new BindingTypeAnnot();
     }
 
-    public static BindingTypeAnnot createBindingTypeAnnotImpl( String value) 
-    {
-        return new BindingTypeAnnot( value );
+    public static BindingTypeAnnot createBindingTypeAnnotImpl(String value) {
+        return new BindingTypeAnnot(value);
     }
 
-	/**
-	 * @return Returns the value.
-	 */
-	public String value() {
-		return value;
-	}
+    /** @return Returns the value. */
+    public String value() {
+        return value;
+    }
 
-	/**
-	 * @param value The value to set.
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	//hmm, should we really do this
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@BindingType.value= " + value);
-		sb.append(newLine);
-		return sb.toString();
+    /** @param value The value to set. */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    //hmm, should we really do this
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@BindingType.value= " + value);
+        sb.append(newLine);
+        return sb.toString();
 	}
 
 

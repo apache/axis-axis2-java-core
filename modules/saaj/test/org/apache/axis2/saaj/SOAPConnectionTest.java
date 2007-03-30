@@ -15,14 +15,13 @@
  */
 package org.apache.axis2.saaj;
 
-import java.net.URL;
+import junit.framework.TestCase;
 
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-
-import junit.framework.TestCase;
+import java.net.URL;
 
 /**
  * 
@@ -61,7 +60,7 @@ public class SOAPConnectionTest extends TestCase {
         }
     }
 
-    public void testCallOnCloseConnection(){
+    public void testCallOnCloseConnection() {
         SOAPConnectionFactory soapConnectionFactory = null;
         try {
             soapConnectionFactory = SOAPConnectionFactory.newInstance();
@@ -84,20 +83,18 @@ public class SOAPConnectionTest extends TestCase {
             assertTrue(true);
         }
     }
-    
-    
-    public void testGet()
-    {
-    	try 
-    	{
-    		SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
-    		SOAPConnection con = sf.createConnection();
-    		//Create a valid non webservice endpoint for invoking HTTP-GET
-    		URL urlEndpoint = new URL("http", "java.sun.com", 80, "/index.html");
-    		//invoking HTTP-GET with a valid non webservice endpoint should throw a SOAPException
-    		SOAPMessage reply = con.get(urlEndpoint);
-    	}catch(Exception e) {
-    		assertTrue(e instanceof SOAPException);
-    	}
+
+
+    public void testGet() {
+        try {
+            SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
+            SOAPConnection con = sf.createConnection();
+            //Create a valid non webservice endpoint for invoking HTTP-GET
+            URL urlEndpoint = new URL("http", "java.sun.com", 80, "/index.html");
+            //invoking HTTP-GET with a valid non webservice endpoint should throw a SOAPException
+            SOAPMessage reply = con.get(urlEndpoint);
+        } catch (Exception e) {
+            assertTrue(e instanceof SOAPException);
+        }
     }
 }

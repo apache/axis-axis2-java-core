@@ -18,7 +18,7 @@ package org.apache.axis2.rpc;
 */
 
 public class Mail {
-    
+
     private String id = null;
     private String from = null;
     private String to = null;

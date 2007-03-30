@@ -40,7 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class TCPTwoChannelEchoRawXMLTest extends TestCase {
@@ -53,7 +52,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private AxisService service;
     private ConfigurationContext configContext;
 
-	private static final Log log = LogFactory.getLog(TCPTwoChannelEchoRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(TCPTwoChannelEchoRawXMLTest.class);
 
     private boolean finish = false;
 
@@ -71,8 +70,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilsTCPServer.deployService(service);
 
         configContext = UtilServer.createClientConfigurationContext();
@@ -91,7 +90,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
 
-        ServiceClient sender ;
+        ServiceClient sender;
 
         try {
             Options options = new Options();
@@ -119,8 +118,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
 
             AxisService serviceClient =
                     Utils.createSimpleServiceforClient(serviceName,
-                            org.apache.axis2.engine.Echo.class.getName(),
-                            operationName);
+                                                       org.apache.axis2.engine.Echo.class.getName(),
+                                                       operationName);
 
             sender = new ServiceClient(configContext, serviceClient);
             sender.setOptions(options);
@@ -137,7 +136,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 }
             }
         } finally {
-            if(finish) {
+            if (finish) {
             }
         }
 

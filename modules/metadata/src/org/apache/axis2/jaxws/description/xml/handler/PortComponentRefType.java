@@ -19,46 +19,44 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- * 	The port-component-ref element declares a client dependency
- * 	on the container for resolving a Service Endpoint Interface
- * 	to a WSDL port. It optionally associates the Service Endpoint
- * 	Interface with a particular port-component. This is only used
- * 	by the container for a Service.getPort(Class) method call.
- * 
- *       
- * 
+ * The port-component-ref element declares a client dependency on the container for resolving a
+ * Service Endpoint Interface to a WSDL port. It optionally associates the Service Endpoint
+ * Interface with a particular port-component. This is only used by the container for a
+ * Service.getPort(Class) method call.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for port-component-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="port-component-refType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="service-endpoint-interface" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="enable-mtom" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="port-component-link" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="enable-mtom" type="{http://java.sun.com/xml/ns/javaee}true-falseType"
+ * minOccurs="0"/>
+ *         &lt;element name="port-component-link" type="{http://java.sun.com/xml/ns/javaee}string"
+ * minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "port-component-refType", propOrder = {
-    "serviceEndpointInterface",
-    "enableMtom",
-    "portComponentLink"
-})
+        "serviceEndpointInterface",
+        "enableMtom",
+        "portComponentLink"
+        })
 public class PortComponentRefType {
 
-    @XmlElement(name = "service-endpoint-interface", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "service-endpoint-interface",
+                namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected FullyQualifiedClassType serviceEndpointInterface;
     @XmlElement(name = "enable-mtom", namespace = "http://java.sun.com/xml/ns/javaee")
     protected TrueFalseType enableMtom;
@@ -71,11 +69,8 @@ public class PortComponentRefType {
 
     /**
      * Gets the value of the serviceEndpointInterface property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @return possible object is {@link FullyQualifiedClassType }
      */
     public FullyQualifiedClassType getServiceEndpointInterface() {
         return serviceEndpointInterface;
@@ -83,11 +78,8 @@ public class PortComponentRefType {
 
     /**
      * Sets the value of the serviceEndpointInterface property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @param value allowed object is {@link FullyQualifiedClassType }
      */
     public void setServiceEndpointInterface(FullyQualifiedClassType value) {
         this.serviceEndpointInterface = value;
@@ -95,11 +87,8 @@ public class PortComponentRefType {
 
     /**
      * Gets the value of the enableMtom property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TrueFalseType }
-     *     
+     *
+     * @return possible object is {@link TrueFalseType }
      */
     public TrueFalseType getEnableMtom() {
         return enableMtom;
@@ -107,11 +96,8 @@ public class PortComponentRefType {
 
     /**
      * Sets the value of the enableMtom property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TrueFalseType }
-     *     
+     *
+     * @param value allowed object is {@link TrueFalseType }
      */
     public void setEnableMtom(TrueFalseType value) {
         this.enableMtom = value;
@@ -119,11 +105,8 @@ public class PortComponentRefType {
 
     /**
      * Gets the value of the portComponentLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @return possible object is {@link String }
      */
     public org.apache.axis2.jaxws.description.xml.handler.String getPortComponentLink() {
         return portComponentLink;
@@ -131,11 +114,9 @@ public class PortComponentRefType {
 
     /**
      * Sets the value of the portComponentLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @param value allowed object is {@link String
+     *              }
      */
     public void setPortComponentLink(org.apache.axis2.jaxws.description.xml.handler.String value) {
         this.portComponentLink = value;
@@ -143,11 +124,8 @@ public class PortComponentRefType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -155,11 +133,8 @@ public class PortComponentRefType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

@@ -16,9 +16,8 @@
 
 package samples.wsdl.perf2;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.commons.logging.Log;
@@ -28,7 +27,7 @@ import java.util.Date;
 
 public class PerfPortTypeTest extends UtilServerBasedTestCase {
 
-	private static final Log log = LogFactory.getLog(PerfPortTypeTest.class);
+    private static final Log log = LogFactory.getLog(PerfPortTypeTest.class);
 
     protected static final String SERVICE_REPOSITORY = "target/perf2/build/repo";
 
@@ -42,16 +41,14 @@ public class PerfPortTypeTest extends UtilServerBasedTestCase {
 
     public PerfPortTypeTest(String arg0) {
         super(arg0);
-    }   
-
-    public static Test suite() {
-        return getTestSetup2(new TestSuite(PerfPortTypeTest.class),SERVICE_REPOSITORY);
     }
 
-    /**
-     * Auto generated test method
-     */
-   public void testhandleStringArray() throws java.lang.Exception {
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(PerfPortTypeTest.class), SERVICE_REPOSITORY);
+    }
+
+    /** Auto generated test method */
+    public void testhandleStringArray() throws java.lang.Exception {
         PerfPortTypeStub stub = new PerfPortTypeStub(null, targetEpr);
         //create a new databinder
         stub._getServiceClient().getOptions().setAction("handleStringArray");

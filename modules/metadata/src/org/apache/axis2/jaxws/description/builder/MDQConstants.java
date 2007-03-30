@@ -21,24 +21,26 @@ import org.apache.axis2.wsdl.WSDLConstants;
 
 public class MDQConstants {
 
-	public static final String WSDL_SERVICE_QNAME = "WSDL_SERVICE_QNAME";
+    public static final String WSDL_SERVICE_QNAME = "WSDL_SERVICE_QNAME";
     public static final String WSDL_PORT = "WSDL_PORT";
     public static final String WSDL_DEFINITION = WSDLConstants.WSDL_4_J_DEFINITION;
     public static final String WSDL_LOCATION = "WSDL_LOCATION";
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String WSDL_PORTTYPE_NAME = "WSDL_PORTTYPE_NAME";
-    
+
     public static final String OBJECT_CLASS_NAME = "java.lang.Object";
-    
-    public static final String PROVIDER_SOURCE = "javax.xml.ws.Provider<javax.xml.transform.Source>";
+
+    public static final String PROVIDER_SOURCE =
+            "javax.xml.ws.Provider<javax.xml.transform.Source>";
     public static final String PROVIDER_SOAP = "javax.xml.ws.Provider<javax.xml.soap.SOAPMessage>";
-    public static final String PROVIDER_DATASOURCE = "javax.xml.ws.Provider<javax.activation.DataSource>";
+    public static final String PROVIDER_DATASOURCE =
+            "javax.xml.ws.Provider<javax.activation.DataSource>";
     public static final String PROVIDER_STRING = "javax.xml.ws.Provider<java.lang.String>";
 
     public static final String WSDL_FILE_NAME = "WSDL_FILE_NAME";
     public static final String SCHEMA_DOCS = "SCHEMA_DOCS";
     public static final String WSDL_COMPOSITE = "WSDL_COMPOSITE";
-    
+
     // Java string that represents a class constructor
     public static final String CONSTRUCTOR_METHOD = "<init>";
 }

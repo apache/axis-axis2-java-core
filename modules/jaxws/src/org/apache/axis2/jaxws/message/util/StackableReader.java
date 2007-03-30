@@ -16,260 +16,258 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
-import java.util.Stack;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.util.Stack;
 
 /**
- * StackableReader
- * A StackableStreamReader provides an additional method
- * push(XMLStreamReader)
- * 
- * You can call push(...) to add a new XMLStreamReader.  The
- * next event will use the pushed stream reader.
- * After the XMLStreamReader is consumed, it is automatically popped off 
- * of the stack.
- * 
- * Note the information returned by the StackableReader is only
- * applicable for the topmost XMLStreamReader.  For example the NamespaceContext
- * that is returned is not a combination of all the namespace contexts on the stack.
+ * StackableReader A StackableStreamReader provides an additional method push(XMLStreamReader)
+ * <p/>
+ * You can call push(...) to add a new XMLStreamReader.  The next event will use the pushed stream
+ * reader. After the XMLStreamReader is consumed, it is automatically popped off of the stack.
+ * <p/>
+ * Note the information returned by the StackableReader is only applicable for the topmost
+ * XMLStreamReader.  For example the NamespaceContext that is returned is not a combination of all
+ * the namespace contexts on the stack.
  */
 public class StackableReader implements XMLStreamReader {
 
-	Stack<XMLStreamReader> stack = new Stack<XMLStreamReader>();
-	XMLStreamReader current = null;
-	
-	/**
-	 * Create a stackable reader with the initial reader
-	 * @param first
-	 */
-	public StackableReader(XMLStreamReader first) {
-		current = first;
-	}
-	
-	/**
-	 * Push a new StreamReader
-	 * @param streamReader
-	 */
-	public void push(XMLStreamReader streamReader) throws XMLStreamException {
-		// Push the current reader if it is not consumed
-		if (current != null &&
-		    current.hasNext()) {
-			stack.push(current);
-		}
-		current = streamReader;
-	}
+    Stack<XMLStreamReader> stack = new Stack<XMLStreamReader>();
+    XMLStreamReader current = null;
 
-	public void close() throws XMLStreamException {
-		current.close();
-	}
+    /**
+     * Create a stackable reader with the initial reader
+     *
+     * @param first
+     */
+    public StackableReader(XMLStreamReader first) {
+        current = first;
+    }
 
-	public int getAttributeCount() {
-		return current.getAttributeCount();
-	}
+    /**
+     * Push a new StreamReader
+     *
+     * @param streamReader
+     */
+    public void push(XMLStreamReader streamReader) throws XMLStreamException {
+        // Push the current reader if it is not consumed
+        if (current != null &&
+                current.hasNext()) {
+            stack.push(current);
+        }
+        current = streamReader;
+    }
 
-	public String getAttributeLocalName(int arg0) {
-		return current.getAttributeLocalName(arg0);
-	}
+    public void close() throws XMLStreamException {
+        current.close();
+    }
 
-	public QName getAttributeName(int arg0) {
-		return current.getAttributeName(arg0);
-	}
+    public int getAttributeCount() {
+        return current.getAttributeCount();
+    }
 
-	public String getAttributeNamespace(int arg0) {
-		return current.getAttributeNamespace(arg0);
-	}
+    public String getAttributeLocalName(int arg0) {
+        return current.getAttributeLocalName(arg0);
+    }
 
-	public String getAttributePrefix(int arg0) {
-		return current.getAttributePrefix(arg0);
-	}
+    public QName getAttributeName(int arg0) {
+        return current.getAttributeName(arg0);
+    }
 
-	public String getAttributeType(int arg0) {
-		return current.getAttributeType(arg0);
-	}
+    public String getAttributeNamespace(int arg0) {
+        return current.getAttributeNamespace(arg0);
+    }
 
-	public String getAttributeValue(int arg0) {
-		return current.getAttributeValue(arg0);
-	}
+    public String getAttributePrefix(int arg0) {
+        return current.getAttributePrefix(arg0);
+    }
 
-	public String getAttributeValue(String arg0, String arg1) {
-		return current.getAttributeValue(arg0, arg1);
-	}
+    public String getAttributeType(int arg0) {
+        return current.getAttributeType(arg0);
+    }
 
-	public String getCharacterEncodingScheme() {
-		return current.getCharacterEncodingScheme();
-	}
+    public String getAttributeValue(int arg0) {
+        return current.getAttributeValue(arg0);
+    }
 
-	public String getElementText() throws XMLStreamException {
-		return current.getElementText();
-	}
+    public String getAttributeValue(String arg0, String arg1) {
+        return current.getAttributeValue(arg0, arg1);
+    }
 
-	public String getEncoding() {
-		return current.getEncoding();
-	}
+    public String getCharacterEncodingScheme() {
+        return current.getCharacterEncodingScheme();
+    }
 
-	public int getEventType() {
-		return current.getEventType();
-	}
+    public String getElementText() throws XMLStreamException {
+        return current.getElementText();
+    }
 
-	public String getLocalName() {
-		return current.getLocalName();
-	}
+    public String getEncoding() {
+        return current.getEncoding();
+    }
 
-	public Location getLocation() {
-		return current.getLocation();
-	}
+    public int getEventType() {
+        return current.getEventType();
+    }
 
-	public QName getName() {
-		return current.getName();
-	}
+    public String getLocalName() {
+        return current.getLocalName();
+    }
 
-	public NamespaceContext getNamespaceContext() {
-		return current.getNamespaceContext();
-	}
+    public Location getLocation() {
+        return current.getLocation();
+    }
 
-	public int getNamespaceCount() {
-		return current.getNamespaceCount();
-	}
+    public QName getName() {
+        return current.getName();
+    }
 
-	public String getNamespacePrefix(int arg0) {
-		return current.getNamespacePrefix(arg0);
-	}
+    public NamespaceContext getNamespaceContext() {
+        return current.getNamespaceContext();
+    }
 
-	public String getNamespaceURI() {
-		return current.getNamespaceURI();
-	}
+    public int getNamespaceCount() {
+        return current.getNamespaceCount();
+    }
 
-	public String getNamespaceURI(int arg0) {
-		return current.getNamespaceURI(arg0);
-	}
+    public String getNamespacePrefix(int arg0) {
+        return current.getNamespacePrefix(arg0);
+    }
 
-	public String getNamespaceURI(String arg0) {
-		return current.getNamespaceURI(arg0);
-	}
+    public String getNamespaceURI() {
+        return current.getNamespaceURI();
+    }
 
-	public String getPIData() {
-		return current.getPIData();
-	}
+    public String getNamespaceURI(int arg0) {
+        return current.getNamespaceURI(arg0);
+    }
 
-	public String getPITarget() {
-		return current.getPITarget();
-	}
+    public String getNamespaceURI(String arg0) {
+        return current.getNamespaceURI(arg0);
+    }
 
-	public String getPrefix() {
-		return current.getPrefix();
-	}
+    public String getPIData() {
+        return current.getPIData();
+    }
 
-	public Object getProperty(String arg0) throws IllegalArgumentException {
-		return current.getProperty(arg0);
-	}
+    public String getPITarget() {
+        return current.getPITarget();
+    }
 
-	public String getText() {
-		return current.getText();
-	}
+    public String getPrefix() {
+        return current.getPrefix();
+    }
 
-	public char[] getTextCharacters() {
-		return current.getTextCharacters();
-	}
+    public Object getProperty(String arg0) throws IllegalArgumentException {
+        return current.getProperty(arg0);
+    }
 
-	public int getTextCharacters(int arg0, char[] arg1, int arg2, int arg3) throws XMLStreamException {
-		return current.getTextCharacters(arg0, arg1, arg2, arg3);
-	}
+    public String getText() {
+        return current.getText();
+    }
 
-	public int getTextLength() {
-		return current.getTextLength();
-	}
+    public char[] getTextCharacters() {
+        return current.getTextCharacters();
+    }
 
-	public int getTextStart() {
-		return current.getTextStart();
-	}
+    public int getTextCharacters(int arg0, char[] arg1, int arg2, int arg3)
+            throws XMLStreamException {
+        return current.getTextCharacters(arg0, arg1, arg2, arg3);
+    }
 
-	public String getVersion() {
-		return current.getVersion();
-	}
+    public int getTextLength() {
+        return current.getTextLength();
+    }
 
-	public boolean hasName() {
-		return current.hasName();
-	}
+    public int getTextStart() {
+        return current.getTextStart();
+    }
 
-	public boolean hasNext() throws XMLStreamException {
-		// This code assumes that the stack only contains readers that are not consumed
-		if (!current.hasNext() &&
-			!stack.isEmpty()) {
-			return stack.peek().hasNext();
-		}
-		return current.hasNext();
-	}
+    public String getVersion() {
+        return current.getVersion();
+    }
 
-	public boolean hasText() {
-		return current.hasText();
-	}
+    public boolean hasName() {
+        return current.hasName();
+    }
 
-	public boolean isAttributeSpecified(int arg0) {
-		return current.isAttributeSpecified(arg0);
-	}
+    public boolean hasNext() throws XMLStreamException {
+        // This code assumes that the stack only contains readers that are not consumed
+        if (!current.hasNext() &&
+                !stack.isEmpty()) {
+            return stack.peek().hasNext();
+        }
+        return current.hasNext();
+    }
 
-	public boolean isCharacters() {
-		return current.isCharacters();
-	}
+    public boolean hasText() {
+        return current.hasText();
+    }
 
-	public boolean isEndElement() {
-		return current.isEndElement();
-	}
+    public boolean isAttributeSpecified(int arg0) {
+        return current.isAttributeSpecified(arg0);
+    }
 
-	public boolean isStandalone() {
-		return current.isStandalone();
-	}
+    public boolean isCharacters() {
+        return current.isCharacters();
+    }
 
-	public boolean isStartElement() {
-		return current.isStartElement();
-	}
+    public boolean isEndElement() {
+        return current.isEndElement();
+    }
 
-	public boolean isWhiteSpace() {
-		return current.isWhiteSpace();
-	}
+    public boolean isStandalone() {
+        return current.isStandalone();
+    }
 
-	public int next() throws XMLStreamException {
-		// Only next is allowed to pop the stack
-		if (!current.hasNext() &&
-		    !stack.isEmpty()) {
-			current = stack.pop();
-		}
-		// The assumption is that the event on the stream reader was processed
-		// prior to pushing a new xmlstreamreader.  thus we proceed to the next
-		// event in all cases
-		int tag = current.next();
-		
-		// Skip start document and end document events for 
-		// stacked stream readers
-		if ((tag == this.START_DOCUMENT || 
-		    tag == this.END_DOCUMENT) &&
-		    !stack.isEmpty()) {
-			tag = next();
-		}
-		
-		return tag;
-	}
+    public boolean isStartElement() {
+        return current.isStartElement();
+    }
 
-	public int nextTag() throws XMLStreamException {
-		if (!current.hasNext() &&
-			!stack.isEmpty()) {
-			return stack.peek().nextTag();
-		}
-		return current.nextTag();
-	}
+    public boolean isWhiteSpace() {
+        return current.isWhiteSpace();
+    }
 
-	public void require(int arg0, String arg1, String arg2) throws XMLStreamException {
-		current.require(arg0, arg1, arg2);
-	}
+    public int next() throws XMLStreamException {
+        // Only next is allowed to pop the stack
+        if (!current.hasNext() &&
+                !stack.isEmpty()) {
+            current = stack.pop();
+        }
+        // The assumption is that the event on the stream reader was processed
+        // prior to pushing a new xmlstreamreader.  thus we proceed to the next
+        // event in all cases
+        int tag = current.next();
 
-	public boolean standaloneSet() {
-		return current.standaloneSet();
-	}
-	
-	
+        // Skip start document and end document events for
+        // stacked stream readers
+        if ((tag == this.START_DOCUMENT ||
+                tag == this.END_DOCUMENT) &&
+                !stack.isEmpty()) {
+            tag = next();
+        }
+
+        return tag;
+    }
+
+    public int nextTag() throws XMLStreamException {
+        if (!current.hasNext() &&
+                !stack.isEmpty()) {
+            return stack.peek().nextTag();
+        }
+        return current.nextTag();
+    }
+
+    public void require(int arg0, String arg1, String arg2) throws XMLStreamException {
+        current.require(arg0, arg1, arg2);
+    }
+
+    public boolean standaloneSet() {
+        return current.standaloneSet();
+    }
+
+
 }

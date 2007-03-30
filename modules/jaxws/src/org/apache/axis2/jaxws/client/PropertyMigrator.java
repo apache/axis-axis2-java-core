@@ -18,23 +18,24 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.util.Map;
-
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
 
+import java.util.Map;
+
 /**
- * The PropertyMigrator implements the ApplicationContextMigrator in order to
- * perform the necessary manipulations of properties during a request or 
- * response flow.  
+ * The PropertyMigrator implements the ApplicationContextMigrator in order to perform the necessary
+ * manipulations of properties during a request or response flow.
  */
 public class PropertyMigrator implements ApplicationContextMigrator {
 
-    public void migratePropertiesFromMessageContext(Map<String, Object> userContext, MessageContext messageContext) {
-        
+    public void migratePropertiesFromMessageContext(Map<String, Object> userContext,
+                                                    MessageContext messageContext) {
+
     }
 
-    public void migratePropertiesToMessageContext(Map<String, Object> userContext, MessageContext messageContext) {
+    public void migratePropertiesToMessageContext(Map<String, Object> userContext,
+                                                  MessageContext messageContext) {
         // Copy all of the properties from the request context into the MessageContext
         messageContext.getProperties().putAll(userContext);
     }

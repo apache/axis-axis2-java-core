@@ -24,10 +24,11 @@ import org.apache.axis2.integration.UtilServer;
 
 public class MultiHopRedirectService1 {
 
-    public OMElement echoRedirect(OMElement ome) throws AxisFault{
+    public OMElement echoRedirect(OMElement ome) throws AxisFault {
         MessageContext currInMc = MessageContext.getCurrentMessageContext();
         MessageContext currOutMc = currInMc.getOperationContext().getMessageContext("Out");
-        currOutMc.setTo(new EndpointReference("http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/MultiHopRedirectService2/echoRedirect"));
+        currOutMc.setTo(new EndpointReference("http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+                "/axis2/services/MultiHopRedirectService2/echoRedirect"));
         currOutMc.setReplyTo(currInMc.getReplyTo());
         return ome;
     }

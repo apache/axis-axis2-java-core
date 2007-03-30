@@ -14,24 +14,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The res-sharing-scope type specifies whether connections
- * 	obtained through the given resource manager connection
- * 	factory reference can be shared. The value, if specified,
- * 	must be one of the two following:
- * 
- * 	    Shareable
- * 	    Unshareable
- * 
- * 	The default value is Shareable.
- * 
- *       
- * 
+ * The res-sharing-scope type specifies whether connections obtained through the given resource
+ * manager connection factory reference can be shared. The value, if specified, must be one of the
+ * two following:
+ * <p/>
+ * Shareable Unshareable
+ * <p/>
+ * The default value is Shareable.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for res-sharing-scopeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="res-sharing-scopeType">
  *   &lt;simpleContent>
@@ -40,14 +36,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "res-sharing-scopeType")
 public class ResSharingScopeType
-    extends String
-{
+        extends String {
 
 
 }

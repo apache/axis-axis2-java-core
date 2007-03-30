@@ -19,9 +19,7 @@ package org.apache.axis2.wsdl.databinding;
 
 public class CSharpTypeMapper extends TypeMappingAdapter {
 
-    /**
-     * Creats a basic Csharp type mapper. This is not complete
-     */
+    /** Creats a basic Csharp type mapper. This is not complete */
     public CSharpTypeMapper() {
         //Todo create the type mapping hastable here
     }

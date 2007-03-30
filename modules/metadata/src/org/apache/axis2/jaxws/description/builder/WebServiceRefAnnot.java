@@ -19,193 +19,159 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef{
-	
-	private String name = "";
-	private String wsdlLocation = "";
-	private Class type;
-	private Class value;
-	private String mappedName = "";
-	
-	private String typeString = "";
-	private String valueString = "";
-	
-	/**
-     * A WebServiceRefAnnot cannot be instantiated.
-     */
-	private  WebServiceRefAnnot(){
-		
-	}
-	
-	private  WebServiceRefAnnot(
-			String 	name,
-			String 	wsdlLocation,
-			Class	type,
-			Class	value,
-			String 	mappedName,
-			String	typeString,
-			String	valueString)
-	{
-		this.name = name;
-		this.wsdlLocation = wsdlLocation;
-		this.type = type;
-		this.value = value;
-		this.mappedName = mappedName;
-		this.typeString = typeString;
-		this.valueString = valueString;
-	}
+public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
+
+    private String name = "";
+    private String wsdlLocation = "";
+    private Class type;
+    private Class value;
+    private String mappedName = "";
+
+    private String typeString = "";
+    private String valueString = "";
+
+    /** A WebServiceRefAnnot cannot be instantiated. */
+    private WebServiceRefAnnot() {
+
+    }
+
+    private WebServiceRefAnnot(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName,
+            String typeString,
+            String valueString) {
+        this.name = name;
+        this.wsdlLocation = wsdlLocation;
+        this.type = type;
+        this.value = value;
+        this.mappedName = mappedName;
+        this.typeString = typeString;
+        this.valueString = valueString;
+    }
 
     public static WebServiceRefAnnot createWebServiceRefAnnotImpl() {
         return new WebServiceRefAnnot();
     }
 
-    public static WebServiceRefAnnot createWebServiceRefAnnotImpl( 
-    			String 	name,
-    			String 	wsdlLocation,
-    			Class	type,
-    			Class	value,
-    			String	mappedName,
-    			String	typeString,
-    			String	valueString
-    		) 
-    {
-        return new WebServiceRefAnnot( 	name, 
-        								wsdlLocation, 
-        								type, 
-        								value, 
-        								mappedName,
-        								typeString,
-        								valueString);
+    public static WebServiceRefAnnot createWebServiceRefAnnotImpl(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName,
+            String typeString,
+            String valueString
+    ) {
+        return new WebServiceRefAnnot(name,
+                                      wsdlLocation,
+                                      type,
+                                      value,
+                                      mappedName,
+                                      typeString,
+                                      valueString);
     }
 
-	
-	/**
-	 * @return Returns the mappedName.
-	 */
-	public String mappedName() {
-		return mappedName;
-	}
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String name() {
-		return name;
-	}
+    /** @return Returns the mappedName. */
+    public String mappedName() {
+        return mappedName;
+    }
 
-	/**
-	 * @return Returns the type.
-	 */
-	public Class type() {
-		return type;
-	}
+    /** @return Returns the name. */
+    public String name() {
+        return name;
+    }
 
-	/**
-	 * @return Returns the value.
-	 */
-	public Class value() {
-		return value;
-	}
+    /** @return Returns the type. */
+    public Class type() {
+        return type;
+    }
 
-	/**
-	 * @return Returns the wsdlLocation.
-	 */
-	public String wsdlLocation() {
-		return wsdlLocation;
-	}
+    /** @return Returns the value. */
+    public Class value() {
+        return value;
+    }
 
-	/**
-	 * @return Returns the typeString.
-	 */
-	public String getTypeString() {
-		return typeString;
-	}
+    /** @return Returns the wsdlLocation. */
+    public String wsdlLocation() {
+        return wsdlLocation;
+    }
 
-	/**
-	 * @return Returns the valueString.
-	 */
-	public String getValueString() {
-		return valueString;
-	}
-	
-	/**
-	 * @param mappedName The mappedName to set.
-	 */
-	public void setMappedName(String mappedName) {
-		this.mappedName = mappedName;
-	}
+    /** @return Returns the typeString. */
+    public String getTypeString() {
+        return typeString;
+    }
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /** @return Returns the valueString. */
+    public String getValueString() {
+        return valueString;
+    }
 
-	/**
-	 * @param type The type to set.
-	 */
-	public void setType(Class type) {
-		this.type = type;
-	}
+    /** @param mappedName The mappedName to set. */
+    public void setMappedName(String mappedName) {
+        this.mappedName = mappedName;
+    }
 
-	/**
-	 * @param value The value to set.
-	 */
-	public void setValue(Class value) {
-		this.value = value;
-	}
+    /** @param name The name to set. */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param wsdlLocation The wsdlLocation to set.
-	 */
-	public void setWsdlLocation(String wsdlLocation) {
-		this.wsdlLocation = wsdlLocation;
-	}
+    /** @param type The type to set. */
+    public void setType(Class type) {
+        this.type = type;
+    }
 
-	/**
-	 * @return Returns the wsdlLocation.
-	 */
-	public String getWsdlLocation() {
-		return wsdlLocation;
-	}
+    /** @param value The value to set. */
+    public void setValue(Class value) {
+        this.value = value;
+    }
 
-	/**
-	 * @param typeString The typeString to set.
-	 */
-	public void setTypeString(String typeString) {
-		this.typeString = typeString;
-	}
-	
-	/**
-	 * @param valueString The valueString to set.
-	 */
-	public void setValueString(String valueString) {
-		this.valueString = valueString;
-	}
-	
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@WebServiceRef.name= " + name);
-		sb.append(newLine);
-		sb.append("@WebServiceRef.wsdlLocation= " + wsdlLocation);
-		sb.append(newLine);
-		sb.append("@WebServiceRef.mappedName= " + mappedName);
-		sb.append(newLine);
-		sb.append("@WebServiceRef.type= " + typeString);
-		sb.append(newLine);
-		sb.append("@WebServiceRef.value= " + valueString);
-		sb.append(newLine);
+    /** @param wsdlLocation The wsdlLocation to set. */
+    public void setWsdlLocation(String wsdlLocation) {
+        this.wsdlLocation = wsdlLocation;
+    }
+
+    /** @return Returns the wsdlLocation. */
+    public String getWsdlLocation() {
+        return wsdlLocation;
+    }
+
+    /** @param typeString The typeString to set. */
+    public void setTypeString(String typeString) {
+        this.typeString = typeString;
+    }
+
+    /** @param valueString The valueString to set. */
+    public void setValueString(String valueString) {
+        this.valueString = valueString;
+    }
+
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@WebServiceRef.name= " + name);
+        sb.append(newLine);
+        sb.append("@WebServiceRef.wsdlLocation= " + wsdlLocation);
+        sb.append(newLine);
+        sb.append("@WebServiceRef.mappedName= " + mappedName);
+        sb.append(newLine);
+        sb.append("@WebServiceRef.type= " + typeString);
+        sb.append(newLine);
+        sb.append("@WebServiceRef.value= " + valueString);
+        sb.append(newLine);
 		return sb.toString();
 	}
 }

@@ -34,9 +34,11 @@ public class Round2SOAP12EchoIntegerArrayclientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoIntegerArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoIntegerArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding",
+                               null);
         OMElement part = omfactory.createOMElement("inputIntegerArray", "", null);
         part.addAttribute("xsi:type", "SOAP-ENC:Array", null);
         part.addAttribute("SOAP-ENC:arrayType", "xsd:int[3]", null);

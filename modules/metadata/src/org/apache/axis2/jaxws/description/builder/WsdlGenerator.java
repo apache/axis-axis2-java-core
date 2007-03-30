@@ -4,5 +4,6 @@ import javax.xml.ws.WebServiceException;
 
 public interface WsdlGenerator {
 
-	public WsdlComposite generateWsdl(String implClass, String bindingType)throws WebServiceException;
+    public WsdlComposite generateWsdl(String implClass, String bindingType)
+            throws WebServiceException;
 }

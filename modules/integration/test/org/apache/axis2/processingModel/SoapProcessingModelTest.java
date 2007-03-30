@@ -18,8 +18,8 @@ package org.apache.axis2.processingModel;
 
 // todo
 
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -32,7 +32,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
@@ -59,9 +61,9 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
 
     protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                operationName);
+                                                        operationName);
         clientService = Utils.createSimpleServiceforClient(serviceName, Echo.class.getName(),
-                operationName);
+                                                           operationName);
         UtilServer.deployService(service);
 
     }
@@ -86,8 +88,8 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
             serviceClient.setOptions(options);
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-                 
+            options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
+
             OperationClient opClient = serviceClient.createClient(operationName);
             opClient.addMessageContext(msgctx);
             opClient.setOptions(options);
@@ -107,7 +109,7 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
         OMNamespace headerNs = fac
                 .createOMNamespace("http://dummyHeader", "dh");
         SOAPHeaderBlock h1 = fac.createSOAPHeaderBlock("DummyHeader", headerNs,
-                envelope.getHeader());
+                                                       envelope.getHeader());
         h1.setMustUnderstand(true);
         h1.addChild(fac.createOMText("Dummy String"));
         h1.setRole(SOAP12Constants.SOAP_ROLE_NEXT);

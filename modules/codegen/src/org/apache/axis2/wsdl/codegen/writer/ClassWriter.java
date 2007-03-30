@@ -35,7 +35,7 @@ import java.util.Map;
 
 public abstract class ClassWriter {
 
-	private static final Log log = LogFactory.getLog(ClassWriter.class);
+    private static final Log log = LogFactory.getLog(ClassWriter.class);
 
     protected File outputFileLocation = null;
     protected File outputFile = null;
@@ -58,9 +58,7 @@ public abstract class ClassWriter {
         this.language = language;
     }
 
-    /**
-     * Loads the template.
-     */
+    /** Loads the template. */
     public void loadTemplate() throws CodeGenerationException {
         // the default behavior for the class writers is to use the property map from the languge specific types
         // The properties are arranged in the following order
@@ -68,9 +66,11 @@ public abstract class ClassWriter {
 
         //first get the language specific property map
         Class clazz = this.getClass();
-        Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
+        Map languageSpecificPropertyMap =
+                (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
         if (languageSpecificPropertyMap == null) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("writer.noLangPropertiesExtension"));
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("writer.noLangPropertiesExtension"));
         }
 
         String templateName = findTemplate(languageSpecificPropertyMap);
@@ -100,7 +100,8 @@ public abstract class ClassWriter {
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
                 if (propertyValue.startsWith(ownClazzName)) {
                     //bingo! we found the right template
-                    templateName = propertyValue.substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
+                    templateName =
+                            propertyValue.substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
                     break;
                 }
             }
@@ -118,9 +119,9 @@ public abstract class ClassWriter {
      */
     public void createOutFile(String packageName, String fileName) throws Exception {
         outputFile = FileWriter.createClassFile(outputFileLocation,
-                packageName,
-                fileName,
-                getFileExtensionForLanguage(language));
+                                                packageName,
+                                                fileName,
+                                                getFileExtensionForLanguage(language));
         //set the existing flag
         fileExists = outputFile.exists();
         if (!fileExists) {
@@ -137,7 +138,8 @@ public abstract class ClassWriter {
      * @return Returns the file extension.
      */
     protected String getFileExtensionForLanguage(String language) {
-        Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
+        Map languageSpecificPropertyMap =
+                (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
         Iterator keys = languageSpecificPropertyMap.keySet().iterator();
         String key;
         String extension = null;
@@ -163,9 +165,9 @@ public abstract class ClassWriter {
     public void parse(Document doc, URIResolver resolver) throws Exception {
         if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
-                    doc,
-                    this.xsltStream,
-                    resolver);
+                                        doc,
+                                        this.xsltStream,
+                                        resolver);
             this.stream.flush();
             this.stream.close();
         }

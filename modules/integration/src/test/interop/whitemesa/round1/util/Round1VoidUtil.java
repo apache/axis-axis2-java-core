@@ -15,6 +15,7 @@
  */
 
 package test.interop.whitemesa.round1.util;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -33,9 +34,11 @@ public class Round1VoidUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
-        OMElement operation = omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

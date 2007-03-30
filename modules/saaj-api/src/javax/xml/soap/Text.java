@@ -16,18 +16,16 @@
 package javax.xml.soap;
 
 /**
- * A representation of a node whose value is text. A <CODE>
- * Text</CODE> object may represent text that is content or text
- * that is a comment.
+ * A representation of a node whose value is text. A <CODE> Text</CODE> object may represent text
+ * that is content or text that is a comment.
  */
 public interface Text extends Node, org.w3c.dom.Text {
 
     /**
-     * Retrieves whether this <CODE>Text</CODE> object
-     * represents a comment.
+     * Retrieves whether this <CODE>Text</CODE> object represents a comment.
      *
-     * @return <CODE>true</CODE> if this <CODE>Text</CODE> object is
-     *         a comment; <CODE>false</CODE> otherwise
+     * @return <CODE>true</CODE> if this <CODE>Text</CODE> object is a comment; <CODE>false</CODE>
+     *         otherwise
      */
     public abstract boolean isComment();
 }

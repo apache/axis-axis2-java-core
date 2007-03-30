@@ -25,7 +25,7 @@ public class MimeHeadersEx extends javax.xml.soap.MimeHeaders {
     public MimeHeadersEx(javax.xml.soap.MimeHeaders mimeHeaders) {
         Iterator iterator = mimeHeaders.getAllHeaders();
         while (iterator.hasNext()) {
-            MimeHeader hdr = (MimeHeader) iterator.next();
+            MimeHeader hdr = (MimeHeader)iterator.next();
             addHeader(hdr.getName(), hdr.getValue());
         }
     }

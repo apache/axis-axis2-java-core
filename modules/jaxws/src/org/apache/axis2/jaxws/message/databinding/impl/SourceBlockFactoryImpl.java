@@ -16,44 +16,44 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Source;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
+import javax.xml.ws.WebServiceException;
+
 /**
  * SourceBlockFactoryImpl
- * 
+ * <p/>
  * Creates a SourceBlock
  */
 public class SourceBlockFactoryImpl extends BlockFactoryImpl implements SourceBlockFactory {
 
-	/**
-	 * Default Constructor required for Factory 
-	 */
-	public SourceBlockFactoryImpl() {
-		super();
-	}
+    /** Default Constructor required for Factory */
+    public SourceBlockFactoryImpl() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
-	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) throws WebServiceException {
-		return new SourceBlockImpl((Source) businessObject, qName, this);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
+      */
+    public Block createFrom(Object businessObject, Object context, QName qName)
+            throws WebServiceException {
+        return new SourceBlockImpl((Source)businessObject, qName, this);
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
-	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException {
-		return new SourceBlockImpl(omElement, qName, this);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
+      */
+    public Block createFrom(OMElement omElement, Object context, QName qName)
+            throws XMLStreamException {
+        return new SourceBlockImpl(omElement, qName, this);
+    }
 
     public boolean isElement() {
         return false;

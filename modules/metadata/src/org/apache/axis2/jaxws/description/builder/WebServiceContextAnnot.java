@@ -17,96 +17,81 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
+import javax.xml.ws.handler.MessageContext;
 import java.lang.annotation.Annotation;
 import java.security.Principal;
 
-import javax.xml.ws.handler.MessageContext;
+public class WebServiceContextAnnot implements javax.xml.ws.WebServiceContext {
 
-public class WebServiceContextAnnot implements javax.xml.ws.WebServiceContext{
-	
-	private MessageContext messageContext;
-	private Principal userPrincipal;
-	private boolean isUserInRole = false;
+    private MessageContext messageContext;
+    private Principal userPrincipal;
+    private boolean isUserInRole = false;
 
-	/**
-     * A WebServiceContextAnnot cannot be instantiated.
-     */
-	private  WebServiceContextAnnot(){
-		
-	}
-	
-	private  WebServiceContextAnnot(
-				MessageContext messageContext,
-				Principal userPrincipal,
-				boolean isUserInRole)
-	{
-		this.messageContext = messageContext;
-		this.userPrincipal = userPrincipal;
-		this.isUserInRole = isUserInRole;
-	}
+    /** A WebServiceContextAnnot cannot be instantiated. */
+    private WebServiceContextAnnot() {
+
+    }
+
+    private WebServiceContextAnnot(
+            MessageContext messageContext,
+            Principal userPrincipal,
+            boolean isUserInRole) {
+        this.messageContext = messageContext;
+        this.userPrincipal = userPrincipal;
+        this.isUserInRole = isUserInRole;
+    }
 
     public static WebServiceContextAnnot createWebServiceConextAnnot() {
         return new WebServiceContextAnnot();
     }
 
-    public static WebServiceContextAnnot createWebServiceContextAnnot( 
-			MessageContext messageContext,
-			Principal userPrincipal,
-			boolean isUserInRole
-    		) 
-    {
-        return new WebServiceContextAnnot( 	messageContext,
-        									userPrincipal,
-        									isUserInRole);
+    public static WebServiceContextAnnot createWebServiceContextAnnot(
+            MessageContext messageContext,
+            Principal userPrincipal,
+            boolean isUserInRole
+    ) {
+        return new WebServiceContextAnnot(messageContext,
+                                          userPrincipal,
+                                          isUserInRole);
     }
 
-	/**
-	 * @param role The role to check.
-	 * @return Returns boolean indicating whether user is in Role
-	 */
-	public boolean isUserInRole(String role) {
-		return isUserInRole;
-	}
+    /**
+     * @param role The role to check.
+     * @return Returns boolean indicating whether user is in Role
+     */
+    public boolean isUserInRole(String role) {
+        return isUserInRole;
+    }
 
-	/**
-	 * @return Returns the messageContext.
-	 */
-	public MessageContext getMessageContext() {
-		return messageContext;
-	}
+    /** @return Returns the messageContext. */
+    public MessageContext getMessageContext() {
+        return messageContext;
+    }
 
-	/**
-	 * @return Returns the userPrincipal.
-	 */
-	public Principal getUserPrincipal() {
-		return userPrincipal;
-	}
+    /** @return Returns the userPrincipal. */
+    public Principal getUserPrincipal() {
+        return userPrincipal;
+    }
 
-	/**
-	 * @param isUserInRole The isUserInRole to set.
-	 */
-	public void setUserInRole(boolean isUserInRole) {
-		this.isUserInRole = isUserInRole;
-	}
+    /** @param isUserInRole The isUserInRole to set. */
+    public void setUserInRole(boolean isUserInRole) {
+        this.isUserInRole = isUserInRole;
+    }
 
-	/**
-	 * @param messageContext The messageContext to set.
-	 */
-	public void setMessageContext(MessageContext messageContext) {
-		this.messageContext = messageContext;
-	}
+    /** @param messageContext The messageContext to set. */
+    public void setMessageContext(MessageContext messageContext) {
+        this.messageContext = messageContext;
+    }
 
-	/**
-	 * @param userPrincipal The userPrincipal to set.
-	 */
-	public void setUserPrincipal(Principal userPrincipal) {
-		this.userPrincipal = userPrincipal;
-	}
+    /** @param userPrincipal The userPrincipal to set. */
+    public void setUserPrincipal(Principal userPrincipal) {
+        this.userPrincipal = userPrincipal;
+    }
 
 
-	//hmm, should we really do this
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
+    //hmm, should we really do this
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
 	}
 	
 }

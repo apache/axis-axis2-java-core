@@ -33,12 +33,13 @@ public class OperationDescriptionValidator extends Validator {
 
     public OperationDescriptionValidator(OperationDescription toValidate) {
         opDesc = toValidate;
-        opDescJava = (OperationDescriptionJava) opDesc;
-        opDescWSDL = (OperationDescriptionWSDL) opDesc;
+        opDescJava = (OperationDescriptionJava)opDesc;
+        opDescWSDL = (OperationDescriptionWSDL)opDesc;
     }
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.description.validator.Validator#validate()
-     */
+    * @see org.apache.axis2.jaxws.description.validator.Validator#validate()
+    */
     @Override
     public boolean validate() {
         if (getValidationLevel() == ValidationLevel.OFF) {

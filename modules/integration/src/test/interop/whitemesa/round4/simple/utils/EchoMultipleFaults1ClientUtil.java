@@ -32,9 +32,12 @@ public class EchoMultipleFaults1ClientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "m0");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-        OMNamespace encNs1 = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs1 =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
         OMElement operation = omfactory.createOMElement("echoMultipleFaults1", omNs);
         operation.declareNamespace(envNs);

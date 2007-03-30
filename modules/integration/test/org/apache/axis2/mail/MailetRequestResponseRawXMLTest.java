@@ -43,18 +43,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 /**
- * This will use the In out functionality to test the mailet functionality. This code was
- * based on the code on the MailRequestResponseRawXMLTest.java.
+ * This will use the In out functionality to test the mailet functionality. This code was based on
+ * the code on the MailRequestResponseRawXMLTest.java.
  */
 public class MailetRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("mail:axis2-server@127.0.0.1" +
                     "/axis2/services/EchoXMLService/echoOMElement");
-	private static final Log log = LogFactory.getLog(MailetRequestResponseRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(MailetRequestResponseRawXMLTest.class);
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
@@ -77,8 +76,8 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
 //                new QName(Constants.MODULE_ADDRESSING));
         AxisService service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         configContext.getAxisConfiguration().addService(service);
     }
 
@@ -118,7 +117,7 @@ public class MailetRequestResponseRawXMLTest extends TestCase {
         options.setAction(operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
-        
+
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
