@@ -545,11 +545,6 @@
                 <version>1.1.1</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>jakarta-httpcore</artifactId>
-                <version>4.0-alpha3</version>
-            </dependency>
-            <dependency>
                 <groupId>wsdl4j</groupId>
                 <artifactId>wsdl4j</artifactId>
                 <version>1.6.1</version>
