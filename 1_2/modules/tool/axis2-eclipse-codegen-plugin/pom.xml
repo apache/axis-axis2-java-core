@@ -56,6 +56,48 @@
             <groupId>org.eclipse.core</groupId>
             <artifactId>org.eclipse.core.jobs</artifactId>
             <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.commands</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.variables</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.contenttype</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.expressions</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.filesystem</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId> org.eclipse.update</groupId>
+                    <artifactId> org.eclipse.update.ui</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId> org.eclipse.update</groupId>
+                    <artifactId> org.eclipse.update.configurator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId> org.eclipse.update</groupId>
+                    <artifactId> org.eclipse.update.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.help</groupId>
+                    <artifactId>org.eclipse.help</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.ant</groupId>
+                    <artifactId>org.eclipse.ant.core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.core</groupId>
@@ -66,11 +108,31 @@
             <groupId>org.eclipse.core</groupId>
             <artifactId>org.eclipse.core.runtime</artifactId>
             <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.runtime.compatibility</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>org.eclipse.core.runtime.compatibility.auth</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.equinox</groupId>
             <artifactId>org.eclipse.equinox.common</artifactId>
             <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.equinox</groupId>
+                    <artifactId>org.eclipse.equinox.registry</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.equinox</groupId>
+                    <artifactId>org.eclipse.equinox.preferences</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jface</groupId>
@@ -96,6 +158,16 @@
             <groupId>org.eclipse.ui</groupId>
             <artifactId>org.eclipse.ui.ide</artifactId>
             <version>3.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.ui</groupId>
+                    <artifactId>org.eclipse.ui.forms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.ui</groupId>
+                    <artifactId>org.eclipse.ui.views</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
