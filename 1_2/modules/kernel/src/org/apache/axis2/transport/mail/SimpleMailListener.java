@@ -418,9 +418,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
     }
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
-                                                             replyTo + "?" + configurationContext
-                .getServiceContextPath() + "/" + serviceName)};
+        return new EndpointReference[]{
+                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
+                                      configurationContext.getServiceContextPath() + "/" +
+                                      serviceName),
+                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
+                                      org.apache.axis2.transport.mail.Constants.X_SERVICE_PATH + "="
+                                      + configurationContext.getServiceContextPath() + "/" +
+                                      serviceName)};
     }
 
 

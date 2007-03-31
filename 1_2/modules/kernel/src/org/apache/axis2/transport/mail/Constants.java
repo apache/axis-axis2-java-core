@@ -75,4 +75,6 @@ public class Constants {
     public static final String MAIL_SMTP = "_MAIL_SMTP_";
 
     public static final String MAIL_POP3 = "_MAIL_POP3_";
+
+    public static final String X_SERVICE_PATH = "X-Service-Path";
 }
