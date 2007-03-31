@@ -164,7 +164,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     public void cleanup(MessageContext msgContext) throws AxisFault {
     }
 
-    private void runtimeMailParameterSetting(MessageContext msgContext) {
+    private void mailProperties(MessageContext msgContext) {
         Object obj = msgContext.getProperty(Constants.MAIL_SMTP);
         if (obj != null) {
             // Overide the axis2.xml cofiguration setting
@@ -176,6 +176,10 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
                 String username = (String) smtpProperties.get(Constants.SMTP_USER);
                 String passwd = props.getPassword();
                 passwordAuthentication = new PasswordAuthentication(username, passwd);
+            } else if (obj instanceof java.util.Properties) {
+                smtpProperties.clear();
+                java.util.Properties props = (java.util.Properties)obj;
+                smtpProperties.putAll(props);
             }
         }
 
@@ -184,7 +188,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     public void sendMimeMessage(MessageContext msgContext) throws AxisFault {
         try {
             // Override with runtime settings
-            runtimeMailParameterSetting(msgContext);
+            mailProperties(msgContext);
 
             EMailSender sender = new EMailSender();
             sender.setOutputStream(byteArrayOutputStream);
@@ -244,7 +248,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             email = eprAddress;
         }
 
-        if (eprAddress.indexOf("x-service-path".toLowerCase()) > -1) {
+        if (eprAddress.indexOf(Constants.X_SERVICE_PATH) > -1) {
             index = eprAddress.indexOf('=');
             if (index > -1) {
                 xServicePath = true;
@@ -279,7 +283,6 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     }
 
     /**
-     * TODO
      *
      * @param msgContext
      * @return
