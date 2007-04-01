@@ -1526,9 +1526,9 @@ public class AxisService extends AxisDescription {
                 new WSDL11ToAxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
-        options.setTo(new EndpointReference(axisService.getEndpointName()));
         AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoints()
                 .get(axisService.getEndpointName());
+        options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));
         if (axisEndpoint != null) {
             options.setSoapVersionURI((String) axisEndpoint.getBinding()
                     .getProperty(WSDL2Constants.ATTR_WSOAP_VERSION));
