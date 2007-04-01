@@ -119,9 +119,11 @@ public class HandlerInvokerUtils {
         // actually have useful code under EndpointDescription.getHandlerList()
 
         List<Handler> handlers = null;
-        InvocationContext ic = msgCtx.getInvocationContext();
-        if(ic != null) {
-            handlers = ic.getHandlers();
+        if(msgCtx != null) {
+            InvocationContext ic = msgCtx.getInvocationContext();
+            if(ic != null) {
+                handlers = ic.getHandlers();
+            }
         }
         if(handlers == null) {
             HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
