@@ -87,8 +87,38 @@ public class PropertyDescriptorPlus {
      * @throws IllegalAccessException
      */
     public Object get(Object targetBean) throws InvocationTargetException, IllegalAccessException {
-        Method method = descriptor.getReadMethod();
-        return method.invoke(targetBean, null);
+            if(descriptor == null){
+                if(log.isDebugEnabled()){
+                    log.debug("Null Descriptor");
+                }
+                throw new RuntimeException("PropertyDescriptor not found");
+            }
+            Method method = descriptor.getReadMethod();
+            if(method == null && descriptor.getPropertyType() == Boolean.class){
+                String propertyName = descriptor.getName();
+                if(propertyName != null){
+                    String methodName = "is";
+                    methodName = methodName + ((propertyName.length()>0)?propertyName.substring(0,1).toUpperCase():"");
+                    methodName = methodName + ((propertyName.length() > 1)?propertyName.substring(1):"");
+                    if(log.isDebugEnabled()){
+                        log.debug("Method Name =" +methodName);
+                    }
+                   try{
+                       method = targetBean.getClass().getMethod(methodName, null);
+                   }catch(NoSuchMethodException e){
+                       if(log.isDebugEnabled()){
+                           log.debug("Mehtod not found" + methodName);
+                       }
+                   }
+                }
+            }
+            if(method == null){
+                if(log.isDebugEnabled()){
+                    log.debug("No read Method found to read propertyvalue");
+                }
+                throw new RuntimeException("No read Method found to read property Value from jaxbObject: "+targetBean.getClass().getName());
+            }
+            return method.invoke(targetBean, null);
     }
 
     /**
