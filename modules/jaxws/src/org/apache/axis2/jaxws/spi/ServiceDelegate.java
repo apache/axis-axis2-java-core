@@ -106,7 +106,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     // are only suitibale for creating Distpach instances.
     public void addPort(QName portName, String bindingId, String endpointAddress)
             throws WebServiceException {
-
+    	if(endpointAddress!=null && endpointAddress.trim().length()==0){
+    		ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr1", (portName!=null)?portName.getLocalPart():"", endpointAddress));
+    	}
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, portName,
                                                   DescriptionFactory.UpdateType.ADD_PORT);
