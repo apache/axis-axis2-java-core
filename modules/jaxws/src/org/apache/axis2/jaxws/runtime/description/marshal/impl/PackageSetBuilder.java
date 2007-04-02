@@ -261,7 +261,21 @@ public class PackageSetBuilder {
                                                    MarshalServiceRuntimeDescription msrd) {
 
         FaultBeanDesc faultBeanDesc = msrd.getFaultBeanDesc(faultDesc);
+        if(faultBeanDesc == null){
+        	if(log.isDebugEnabled()){
+        		log.debug("faultBeanDesc from MarshallServiceRuntimeDescription is null");
+        	}
+        	//NO FaultBeanDesc found nothing we can do.
+        	return;
+        }
         String faultBeanName = faultBeanDesc.getFaultBeanClassName();
+        if(faultBeanName == null){
+        	if(log.isDebugEnabled()){
+        		log.debug("FaultBeanName is null");
+        	}
+        	//We cannot load the faultBeanName
+        	return;
+        }
         Class faultBean = loadClass(faultBeanName);
         if (faultBean != null) {
             setTypeAndElementPackages(faultBean, faultBeanDesc.getFaultBeanNamespace(),
