@@ -29,16 +29,7 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.xml.stream.XMLStreamException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -103,12 +94,21 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             Destination dest = transportInfo.getDestination();
 
             if (dest == null) {
-                // if it does not exist, create it
-                String name = JMSUtils.getDestination(targetAddress);
-                try {
-                    dest = session.createQueue(name);
-                } catch (JMSException e) {
-                    handleException("Error creating destination Queue : " + name, e);
+                if (targetAddress != null) {
+
+                    // if it does not exist, create it
+                    String name = JMSUtils.getDestination(targetAddress);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Creating JMS Destination : " + name);
+                    }
+
+                    try {
+                        dest = session.createQueue(name);
+                    } catch (JMSException e) {
+                        handleException("Error creating destination Queue : " + name, e);
+                    }
+                } else {
+                    handleException("Cannot send reply to unknown JMS Destination");
                 }
             }
 
@@ -154,6 +154,11 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                     }
                 }
                 message.setJMSReplyTo(replyDest);
+                if (log.isDebugEnabled()) {
+                    log.debug("Expecting a response to JMS Destination : " +
+                        (replyDest instanceof Queue ?
+                            ((Queue) replyDest).getQueueName() : ((Topic) replyDest).getTopicName()));
+                }
             }
 
             try {

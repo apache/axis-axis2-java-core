@@ -180,32 +180,35 @@ public class JMSConnectionFactory {
 
         serviceJNDINameMapping.put(destinationJndi, serviceName);
         String destinationName = getDestinationName(destinationJndi);
-        log.warn("JMS Destination with JNDI name : " + destinationJndi + " does not exist");
 
-        Connection con = null;
-        try {
-            con = conFactory.createConnection();
-            Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Queue queue = session.createQueue(destinationJndi);
-            destinationName = queue.getQueueName();
-            log.warn("JMS Destination with JNDI name : " + destinationJndi + " created");
-            
-        } catch (JMSException e) {
-            log.error("Unable to create a Destination with JNDI name : " + destinationJndi, e);
-            // mark service as faulty
-            JMSUtils.markServiceAsFaulty(
-                (String) serviceJNDINameMapping.get(destinationJndi),
-                "Error looking up JMS destination : " + destinationJndi,
-                msgRcvr.getAxisConf().getAxisConfiguration());
+        if (destinationName == null) {
+            log.warn("JMS Destination with JNDI name : " + destinationJndi + " does not exist");
 
-        } finally {
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (JMSException ignore) {}
+            Connection con = null;
+            try {
+                con = conFactory.createConnection();
+                Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                Queue queue = session.createQueue(destinationJndi);
+                destinationName = queue.getQueueName();
+                log.warn("JMS Destination with JNDI name : " + destinationJndi + " created");
+
+            } catch (JMSException e) {
+                log.error("Unable to create a Destination with JNDI name : " + destinationJndi, e);
+                // mark service as faulty
+                JMSUtils.markServiceAsFaulty(
+                    (String) serviceJNDINameMapping.get(destinationJndi),
+                    "Error looking up JMS destination : " + destinationJndi,
+                    msgRcvr.getAxisConf().getAxisConfiguration());
+
+            } finally {
+                if (con != null) {
+                    try {
+                        con.close();
+                    } catch (JMSException ignore) {}
+                }
             }
         }
-
+        
         serviceDestinationMapping.put(destinationName, serviceName);
         log.info("Mapping JNDI name : " + destinationJndi + " and JMS Destination name : " +
             destinationName + " against service : " + serviceName);
