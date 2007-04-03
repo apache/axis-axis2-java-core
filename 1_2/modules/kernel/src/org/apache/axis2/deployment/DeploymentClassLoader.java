@@ -29,6 +29,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,6 +39,8 @@ public class DeploymentClassLoader extends URLClassLoader {
 
     // List of jar files inside the jars in the original url
     private ArrayList embedded_jars;
+
+    private HashMap loadedClass = new HashMap();
 
     /**
      * DeploymentClassLoader is extended from URLClassLoader. The constructor
@@ -256,5 +259,17 @@ public class DeploymentClassLoader extends URLClassLoader {
         public InputStream getInputStream() {
             return new ByteArrayInputStream(bytes);
         }
+    }
+
+    public InputStream getResourceAsStream(String name) {
+        URL url =findResource(name);
+        if(url!=null){
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 }
