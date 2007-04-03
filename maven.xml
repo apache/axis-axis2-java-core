@@ -347,15 +347,11 @@
     </goal>
 
     <goal name="create-jar" prereqs="init">
-        <!-- Hack for now, don't fail building jar if saaj is absent -->
-        <ant:mkdir dir="modules/saaj/target/classes"/>
-
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/kernel/target/classes"/>
             <!-- adding the tool classes. This is needed to get the ant task -->
             <fileset dir="modules/tool/target/classes"/>
-            <fileset dir="modules/saaj/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
@@ -364,6 +360,16 @@
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing-${addressing_version}.mar"/>
             </fileset>
+	    <!-- Copy items that depend on JDK1.5  -->
+            <j:if test="${javaVersion == '1.5'}">
+            	<fileset dir="modules/saaj/target/classes"/>
+            	<fileset dir="modules/saaj-api/target/classes"/>
+            	<fileset dir="modules/jaxbri/target/classes"/>
+            	<fileset dir="modules/metadata/target/classes"/>
+            	<fileset dir="modules/jaxws/target/classes"/>
+            	<fileset dir="modules/jaxws-api/target/classes"/>
+    	    </j:if>
+
         </jar>
     </goal>
 
@@ -450,13 +456,6 @@
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
         </ant:copy>
-
-        <!-- Copy the saaj jar -->
-        <!-- This should only happen if jdk version is 1.5 - sumedha
-        <ant:copy toDir="target/temp/war/lib">
-            <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
-        </ant:copy>
-        -->
 
         <!-- Copy the jibx jar -->
         <ant:copy toDir="target/temp/war/lib">
@@ -724,7 +723,6 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
 
 	    <ant:fileset file="modules/json/target/axis2-json-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/tool/target/axis2-tools-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
             <ant:fileset
@@ -990,12 +988,18 @@
                 <!--ant:pathelement location="modules/jaxbri/src"/-->
                 <ant:pathelement location="modules/jibx/src"/>
                 <ant:pathelement location="modules/kernel/src"/>
-                <ant:pathelement location="modules/saaj/src"/>
+
                 <!-- we are not shipping jaxws with 1.1 -->
                 <!--ant:pathelement location="modules/jaxws/src"/-->
                 <ant:pathelement location="modules/soapmonitor/src"/>
                 <ant:pathelement location="modules/spring/src"/>
                 <ant:pathelement location="modules/xmlbeans/src"/>
+	        <!-- Copy items that depend on JDK1.5  -->
+        	<j:if test="${javaVersion == '1.5'}">
+        	        <ant:pathelement location="modules/saaj/src"/>
+        	        <ant:pathelement location="modules/saaj-api/src"/>
+	                <ant:pathelement location="modules/jaxbri/src"/>
+		</j:if>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">
