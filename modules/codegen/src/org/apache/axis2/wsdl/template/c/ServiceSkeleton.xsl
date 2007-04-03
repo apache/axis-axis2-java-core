@@ -20,7 +20,7 @@
 
         #include "<xsl:value-of select="$svcop-prefix"/>.h"
         #include &lt;axis2_svc_skeleton.h&gt;
-        #include &lt;axis2_array_list.h&gt;
+        #include &lt;axutil_array_list.h&gt;
         #include &lt;stdio.h&gt;
 
         /**
@@ -30,50 +30,52 @@
         /* On fault, handle the fault */
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$method-prefix"/>_on_fault(axis2_svc_skeleton_t *svc_skeleton,
-                  const axis2_env_t *env, axiom_node_t *node);
+                  const axutil_env_t *env, axiom_node_t *node);
 
         /* Free the service */
         int AXIS2_CALL
         <xsl:value-of select="$method-prefix"/>_free(axis2_svc_skeleton_t *svc_skeleton,
-                  const axis2_env_t *env);
+                  const axutil_env_t *env);
 
         /* This method invokes the right service method */
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$method-prefix"/>_invoke(axis2_svc_skeleton_t *svc_skeleton,
-                    const axis2_env_t *env,
+                    const axutil_env_t *env,
                     axiom_node_t *node,
                     axis2_msg_ctx_t *msg_ctx);
 
         /* Initializing the environment  */
         int AXIS2_CALL
         <xsl:value-of select="$method-prefix"/>_init(axis2_svc_skeleton_t *svc_skeleton,
-                        const axis2_env_t *env);
+                        const axutil_env_t *env);
 
         /* Create the service  */
         axis2_svc_skeleton_t* AXIS2_CALL
-        <xsl:value-of select="$method-prefix"/>_create(const axis2_env_t *env);
+        <xsl:value-of select="$method-prefix"/>_create(const axutil_env_t *env);
+
+        static const axis2_svc_skeleton_ops_t <xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var = {
+            <xsl:value-of select="$method-prefix"/>_init,
+            <xsl:value-of select="$method-prefix"/>_invoke,
+            <xsl:value-of select="$method-prefix"/>_on_fault,
+            <xsl:value-of select="$method-prefix"/>_free
+        };
+
 
         /**
          * Implementations for the functions
          */
 
 	axis2_svc_skeleton_t* AXIS2_CALL
-	<xsl:value-of select="$method-prefix"/>_create(const axis2_env_t *env)
+	<xsl:value-of select="$method-prefix"/>_create(const axutil_env_t *env)
 	{
 	    axis2_svc_skeleton_t *svc_skeleton = NULL;
-	    svc_skeleton = AXIS2_MALLOC(env->allocator,
-	        sizeof(axis2_svc_skeleton_t));
+        /* Allocate memory for the structs */
+        svc_skeleton = AXIS2_MALLOC(env->allocator,
+            sizeof(axis2_svc_skeleton_t));
 
-
-	    svc_skeleton->ops = AXIS2_MALLOC(
-	        env->allocator, sizeof(axis2_svc_skeleton_ops_t));
+        svc_skeleton->ops = &amp;<xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var;
 
 	    svc_skeleton->func_array = NULL;
-
-	    svc_skeleton->ops->free = <xsl:value-of select="$method-prefix"/>_free;
-	    svc_skeleton->ops->init = <xsl:value-of select="$method-prefix"/>_init;
-	    svc_skeleton->ops->invoke = <xsl:value-of select="$method-prefix"/>_invoke;
-	    svc_skeleton->ops->on_fault = <xsl:value-of select="$method-prefix"/>_on_fault;
 
 	    return svc_skeleton;
 	}
@@ -81,11 +83,11 @@
 
 	int AXIS2_CALL
 	<xsl:value-of select="$method-prefix"/>_init(axis2_svc_skeleton_t *svc_skeleton,
-	                        const axis2_env_t *env)
+	                        const axutil_env_t *env)
 	{
-	    svc_skeleton->func_array = axis2_array_list_create(env, 10);
+	    svc_skeleton->func_array = axutil_array_list_create(env, 10);
         <xsl:for-each select="method">
-	      axis2_array_list_add(svc_skeleton->func_array, env, "<xsl:value-of select="@localpart"/>");
+	      axutil_array_list_add(svc_skeleton->func_array, env, "<xsl:value-of select="@localpart"/>");
         </xsl:for-each>
 
 	    /* Any initialization stuff of <xsl:value-of select="$svcname"/> goes here */
@@ -94,26 +96,23 @@
 
 	int AXIS2_CALL
 	<xsl:value-of select="$method-prefix"/>_free(axis2_svc_skeleton_t *svc_skeleton,
-				 const axis2_env_t *env)
+				 const axutil_env_t *env)
 	{
-          if(svc_skeleton->func_array)
-          {
-            axis2_array_list_free(svc_skeleton->func_array, env);
+        /* Free the function array */
+        if (svc_skeleton->func_array)
+        {
+            axutil_array_list_free(svc_skeleton->func_array, env);
             svc_skeleton->func_array = NULL;
-          }
+        }
 
-          if(svc_skeleton->ops)
-          {
-            AXIS2_FREE(env->allocator, svc_skeleton->ops);
-            svc_skeleton->ops = NULL;
-          }
-
-          if(svc_skeleton)
-          {
+        /* Free the service skeleton */
+        if (svc_skeleton)
+        {
             AXIS2_FREE(env->allocator, svc_skeleton);
             svc_skeleton = NULL;
-          }
-          return AXIS2_SUCCESS;
+        }
+
+        return AXIS2_SUCCESS;
 	}
 
 
@@ -122,7 +121,7 @@
 	 */
 	axiom_node_t* AXIS2_CALL
 	<xsl:value-of select="$method-prefix"/>_invoke(axis2_svc_skeleton_t *svc_skeleton,
-				const axis2_env_t *env,
+				const axutil_env_t *env,
 				axiom_node_t *content_node,
 				axis2_msg_ctx_t *msg_ctx)
 	{
@@ -132,7 +131,7 @@
 
           axis2_op_ctx_t *operation_ctx = NULL;
           axis2_op_t *operation = NULL;
-          axis2_qname_t *op_qname = NULL;
+          axutil_qname_t *op_qname = NULL;
           axis2_char_t *op_name = NULL;
 
           axiom_node_t *ret_node = NULL;
@@ -158,8 +157,8 @@
 
           operation_ctx = axis2_msg_ctx_get_op_ctx(msg_ctx, env);
           operation = axis2_op_ctx_get_op(operation_ctx, env);
-          op_qname = (axis2_qname_t *)axis2_op_get_qname(operation, env);
-          op_name = AXIS2_QNAME_GET_LOCALPART(op_qname, env);
+          op_qname = (axutil_qname_t *)axis2_op_get_qname(operation, env);
+          op_name = axutil_qname_get_localpart(op_qname, env);
 
           if (op_name)
           {
@@ -177,7 +176,7 @@
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
                         <xsl:when test="@ours">
                         axis2_<xsl:value-of select="@type"/>_create( env);
-                        AXIS2_<xsl:value-of select="@caps-type"/>_DESERIALIZE(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
+                        axis2_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
                         </xsl:choose>
@@ -192,9 +191,9 @@
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
-                               AXIS2_<xsl:value-of select="$outputCapsType"/>_SERIALIZE(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
-                               AXIS2_<xsl:value-of select="$outputCapsType"/>_FREE(ret_val<xsl:value-of select="$position"/>, env);
-                               AXIS2_<xsl:value-of select="@caps-type"/>_FREE(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
+                               axis2_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
+                               axis2_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
+                               axis2_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                                    </xsl:when>
                                    <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
                                 </xsl:choose>
@@ -217,13 +216,13 @@
 
     axiom_node_t* AXIS2_CALL
     <xsl:value-of select="$method-prefix"/>_on_fault(axis2_svc_skeleton_t *svc_skeleton,
-                  const axis2_env_t *env, axiom_node_t *node)
+                  const axutil_env_t *env, axiom_node_t *node)
 	{
 		axiom_node_t *error_node = NULL;
 		axiom_element_t *error_ele = NULL;
 		error_ele = axiom_element_create(env, node, "fault", NULL,
     					&amp;error_node);
-		AXIOM_ELEMENT_SET_TEXT(error_ele, env, "<xsl:value-of select="$qname"/> failed",
+		axiom_element_set_text(error_ele, env, "<xsl:value-of select="$qname"/> failed",
     					error_node);
 		return error_node;
 	}
@@ -235,7 +234,7 @@
 
     AXIS2_EXTERN int
     axis2_get_instance(struct axis2_svc_skeleton **inst,
-	                        const axis2_env_t *env)
+	                        const axutil_env_t *env)
 	{
 		*inst = <xsl:value-of select="$method-prefix"/>_create(env);
 
@@ -249,7 +248,7 @@
 
 	AXIS2_EXTERN int 
     axis2_remove_instance(axis2_svc_skeleton_t *inst,
-                            const axis2_env_t *env)
+                            const axutil_env_t *env)
 	{
         axis2_status_t status = AXIS2_FAILURE;
        	if (inst)

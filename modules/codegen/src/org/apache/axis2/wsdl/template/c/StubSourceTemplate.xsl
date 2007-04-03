@@ -25,7 +25,7 @@
        */
 
       axis2_stub_t*
-      <xsl:value-of select="$method-prefix"/>_create (const axis2_env_t *env,
+      <xsl:value-of select="$method-prefix"/>_create (const axutil_env_t *env,
                                       axis2_char_t *client_home,
                                       axis2_char_t *endpoint_uri)
       {
@@ -46,25 +46,25 @@
       }
 
 
-      void <xsl:value-of select="$method-prefix"/>_populate_services( axis2_stub_t *stub, const axis2_env_t *env)
+      void <xsl:value-of select="$method-prefix"/>_populate_services( axis2_stub_t *stub, const axutil_env_t *env)
       {
          axis2_svc_client_t *svc_client = NULL;
-         axis2_qname_t *svc_qname =  NULL;
-         axis2_qname_t *op_qname =  NULL;
+         axutil_qname_t *svc_qname =  NULL;
+         axutil_qname_t *op_qname =  NULL;
          axis2_svc_t *svc = NULL;
          axis2_op_t *op = NULL;
 
          /* Modifying the Service */
-         svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
-         svc = (axis2_svc_t*)AXIS2_SVC_CLIENT_GET_AXIS_SERVICE ( svc_client, env );
-         axis2_qname_create(env,"<xsl:value-of select="@servicename"/>" ,NULL, NULL);
-         AXIS2_SVC_SET_QNAME (svc, env, svc_qname);
+         svc_client = axis2_stub_get_svc_client (stub, env );
+         svc = (axis2_svc_t*)axis2_svc_client_get_svc( svc_client, env );
+         axutil_qname_create(env,"<xsl:value-of select="@servicename"/>" ,NULL, NULL);
+         axis2_svc_set_qname (svc, env, svc_qname);
 
          /* creating the operations*/
 
          <xsl:for-each select="method">
 
-           op_qname = axis2_qname_create(env,
+           op_qname = axutil_qname_create(env,
                                          "<xsl:value-of select="@localpart"/>" ,
                                          "<xsl:value-of select="@namespace"/>",
                                          NULL);
@@ -77,7 +77,7 @@
                axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_IN);
              </xsl:otherwise>
            </xsl:choose>
-           AXIS2_SVC_ADD_OP(svc, env, op);
+           axis2_svc_add_op(svc, env, op);
 
          </xsl:for-each>
       }
@@ -86,7 +86,7 @@
        *return end point picked from wsdl
        */
       axis2_char_t*
-      <xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl ( const axis2_env_t *env )
+      <xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl ( const axutil_env_t *env )
       {
         axis2_char_t *endpoint_uri = NULL;
         /* set the address from here */
@@ -131,7 +131,7 @@
          <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise>
          </xsl:choose>
          <xsl:text> </xsl:text>
-         <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axis2_env_t *env<xsl:for-each select="input/param[@type!='']">,
+         <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                               <xsl:variable name="inputtype">
                                                   <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                               </xsl:variable>
@@ -143,7 +143,7 @@
             axiom_node_t *ret_node = NULL;
 
             const axis2_char_t *soap_action = NULL;
-            axis2_qname_t *op_qname =  NULL;
+            axutil_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
             <xsl:if test="output/param/@ours">
            	    <!-- this means data binding is enable -->
@@ -156,7 +156,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -166,7 +166,7 @@
             </xsl:for-each>
 
 
-            options = AXIS2_STUB_GET_OPTIONS( stub, env);
+            options = axis2_stub_get_options( stub, env);
             if ( NULL == options )
             {
               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
@@ -174,24 +174,24 @@
                     AXIS2_ERROR_GET_MESSAGE(env->error));
               return NULL;
             }
-            svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
-            soap_action = AXIS2_OPTIONS_GET_ACTION ( options, env );
+            svc_client = axis2_stub_get_svc_client(stub, env );
+            soap_action = axis2_options_get_action( options, env );
             if ( NULL == soap_action )
             {
               soap_action = "<xsl:value-of select="$soapAction"/>";
-              AXIS2_OPTIONS_SET_ACTION( options, env, soap_action );
+              axis2_options_set_action( options, env, soap_action );
             }
             <xsl:if test="$soapVersion='1.2'">
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
             </xsl:if>
             <xsl:if test="$soapVersion!='1.1'">
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
             </xsl:if>
-            op_qname = axis2_qname_create(env,
+            op_qname = axutil_qname_create(env,
                                         "<xsl:value-of select="@localpart"/>" ,
                                         "<xsl:value-of select="@namespace"/>",
                                         NULL);
-            ret_node =  AXIS2_SVC_CLIENT_SEND_RECEIVE_WITH_OP_QNAME( svc_client, env, op_qname, payload);
+            ret_node =  axis2_svc_client_send_receive_with_op_qname( svc_client, env, op_qname, payload);
 
 
             <xsl:choose>
@@ -205,7 +205,7 @@
                     }
                     ret_val = axis2_<xsl:value-of select="output/param/@type"/>_create(env);
 
-                    AXIS2_<xsl:value-of select="$caps-outputtype"/>_DESERIALIZE(ret_val, env, ret_node );
+                    axis2_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, ret_node );
                     return ret_val;
                 </xsl:when>
                 <xsl:otherwise>
@@ -226,14 +226,14 @@
           */
          <xsl:variable name="callbackoncomplete"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_complete</xsl:text></xsl:variable>
          <xsl:variable name="callbackonerror"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_error</xsl:text></xsl:variable>
-         void <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axis2_env_t *env<xsl:for-each select="input/param[@type!='']">,
+         void <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                     <xsl:variable name="inputtype">
                                                         <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                     </xsl:variable>
                                                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                                   </xsl:for-each>,
-                                                  axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axis2_env_t *) ,
-                                                  axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axis2_env_t *, int ) )
+                                                  axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t *) ,
+                                                  axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t *, int ) )
          {
 
             axis2_callback_t *callback = NULL;
@@ -249,7 +249,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -259,7 +259,7 @@
             </xsl:for-each>
 
 
-            options = AXIS2_STUB_GET_OPTIONS( stub, env);
+            options = axis2_stub_get_options( stub, env);
             if ( NULL == options )
             {
               AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
@@ -267,30 +267,30 @@
                       AXIS2_ERROR_GET_MESSAGE(env->error));
               return;
             }
-            svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
-            soap_action = AXIS2_OPTIONS_GET_ACTION ( options, env );
+            svc_client = axis2_stub_get_svc_client (stub, env );
+            soap_action =axis2_options_get_action ( options, env );
             if ( NULL == soap_action )
             {
               soap_action = "<xsl:value-of select="$soapAction"/>";
-              AXIS2_OPTIONS_SET_ACTION( options, env, soap_action );
+              axis2_options_set_action( options, env, soap_action );
             }
             <xsl:choose>
              <xsl:when test="$soapVersion='1.2'">
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
              </xsl:when>
              <xsl:otherwise>
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
              </xsl:otherwise>
             </xsl:choose>
 
             callback = axis2_callback_create(env);
             /* Set our on_complete fucntion pointer to the callback object */
-            AXIS2_CALLBACK_SET_ON_COMPLETE(callback, on_complete);
+            axis2_callback_set_on_complete(callback, on_complete);
             /* Set our on_error function pointer to the callback object */
-            AXIS2_CALLBACK_SET_ON_ERROR(callback, on_error);
+            axis2_callback_set_on_error(callback, on_error);
 
             /* Send request */
-            AXIS2_SVC_CLIENT_SEND_RECEIVE_NON_BLOCKING(svc_client, env, payload, callback);
+            axis2_svc_client_send_receive_non_blocking(svc_client, env, payload, callback);
          }
 
          </xsl:if>  <!--close for  test="$isASync='1'-->
@@ -307,7 +307,7 @@
           * @param on_error callback to handle on error
           */
          axis2_status_t
-         <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axis2_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
+         <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
                                                  <xsl:variable name="inputtype">
                                                     <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                  </xsl:variable>
@@ -320,7 +320,7 @@
             axis2_options_t *options = NULL;
 
             const axis2_char_t *soap_action = NULL;
-            axis2_qname_t *op_qname =  NULL;
+            axutil_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
 
             <!-- for service client currently suppported only 1 input param -->
@@ -328,7 +328,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -338,7 +338,7 @@
             </xsl:for-each>
 
 
-            options = AXIS2_STUB_GET_OPTIONS( stub, env);
+            options = axis2_stub_get_options( stub, env);
             if ( NULL == options )
             {
               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
@@ -346,26 +346,26 @@
                       AXIS2_ERROR_GET_MESSAGE(env->error));
               return AXIS2_FAILURE;
             }
-            svc_client = AXIS2_STUB_GET_SVC_CLIENT (stub, env );
-            soap_action = AXIS2_OPTIONS_GET_ACTION ( options, env );
+            svc_client = axis2_stub_get_svc_client (stub, env );
+            soap_action = axis2_options_get_action ( options, env );
             if ( NULL == soap_action )
             {
               soap_action = "<xsl:value-of select="$soapAction"/>";
-              AXIS2_OPTIONS_SET_ACTION( options, env, soap_action );
+              axis2_options_set_action( options, env, soap_action );
             }
             <xsl:choose>
              <xsl:when test="$soapVersion='1.2'">
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP12 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
              </xsl:when>
              <xsl:otherwise>
-            AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, AXIOM_SOAP11 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
              </xsl:otherwise>
             </xsl:choose>
-            op_qname = axis2_qname_create(env,
+            op_qname = axutil_qname_create(env,
                                         "<xsl:value-of select="@localpart"/>" ,
                                         "<xsl:value-of select="@namespace"/>",
                                         NULL);
-            status =  AXIS2_SVC_CLIENT_SEND_ROBUST_WITH_OP_QNAME( svc_client, env, op_qname, payload);
+            status =  axis2_svc_client_send_robust_with_op_qname( svc_client, env, op_qname, payload);
             return status;
 
         }

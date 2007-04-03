@@ -15,8 +15,8 @@
 
 
 	#include &lt;axis2_svc_skeleton.h&gt;
-	#include &lt;axis2_log_default.h&gt;
-	#include &lt;axis2_error_default.h&gt;
+	#include &lt;axutil_log_default.h&gt;
+	#include &lt;axutil_error_default.h&gt;
 	#include &lt;axiom_text.h&gt;
 	#include &lt;axiom_node.h&gt;
 	#include &lt;axiom_element.h&gt;
@@ -58,7 +58,7 @@
         <xsl:when test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:when>
         </xsl:choose>
         <xsl:text> </xsl:text>
-        <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/> (const axis2_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
+        <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/> (const axutil_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
                                           <xsl:variable name="inputtype">
                                              <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                           </xsl:variable>

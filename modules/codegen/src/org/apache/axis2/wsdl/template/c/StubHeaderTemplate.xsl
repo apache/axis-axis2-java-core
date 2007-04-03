@@ -19,7 +19,7 @@
 
         #include &lt;stdio.h&gt;
         #include &lt;axiom.h&gt;
-        #include &lt;axis2_util.h&gt;
+        #include &lt;axutil_utils.h&gt;
         #include &lt;axiom_soap.h&gt;
         #include &lt;axis2_client.h&gt;
         #include &lt;axis2_stub.h&gt;
@@ -43,19 +43,19 @@
          *        - endpoint_uri : service endpoint uri( optional ) - if NULL default picked from wsdl used
          */
         axis2_stub_t*
-        <xsl:value-of select="$method-prefix"/>_create (const axis2_env_t *env,
+        <xsl:value-of select="$method-prefix"/>_create (const axutil_env_t *env,
                                         axis2_char_t *client_home,
                                         axis2_char_t *endpoint_uri);
         /**
          * <xsl:value-of select="$method-prefix"/>_populate_services
          * populate the svc in stub with the service and operations
          */
-        void <xsl:value-of select="$method-prefix"/>_populate_services( axis2_stub_t *stub, const axis2_env_t *env);
+        void <xsl:value-of select="$method-prefix"/>_populate_services( axis2_stub_t *stub, const axutil_env_t *env);
         /**
          * <xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl
          * return the endpoint URI picked from wsdl
          */
-        axis2_char_t *<xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl ( const axis2_env_t *env );
+        axis2_char_t *<xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl ( const axutil_env_t *env );
 
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
@@ -78,7 +78,7 @@
         <xsl:when test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:when>
         </xsl:choose>
         <xsl:text> </xsl:text>
-        <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axis2_env_t *env<xsl:for-each select="input/param[@type!='']">,
+        <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                     <xsl:variable name="inputtype">
                                                         <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                     </xsl:variable>
@@ -101,14 +101,14 @@
 
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
         <xsl:if test="$mep='12'">
-        void <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axis2_env_t *env<xsl:for-each select="input/param[@type!='']">,
+        void <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                         <xsl:variable name="inputtype">
                                                             <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                         </xsl:variable>
                                                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                                     </xsl:for-each>,
-                                                        axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axis2_env_t* ) ,
-                                                        axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axis2_env_t*, int ) );
+                                                        axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t* ) ,
+                                                        axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t*, int ) );
 
         </xsl:if>  <!--close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out'"-->
         </xsl:for-each>
