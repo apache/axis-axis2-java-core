@@ -22,6 +22,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Properties;
 /*
  * 
  */
@@ -85,7 +87,12 @@ public class SynchronousMailListener {
         TransportInDescription transportIn = msgContext.getConfigurationContext()
                 .getAxisConfiguration().getTransportIn(org.apache.axis2.Constants.TRANSPORT_MAIL);
 
-        listener.init(msgContext.getConfigurationContext(), transportIn);
+        Object obj = msgContext.getProperty(Constants.MAIL_POP3);
+        if (obj != null) {
+            listener.initFromRuntime((Properties)obj,msgContext);
+        } else {
+            listener.init(msgContext.getConfigurationContext(), transportIn);
+        }
         msgContext.getConfigurationContext().getThreadPool().execute(listener);
         listener.start();
 
