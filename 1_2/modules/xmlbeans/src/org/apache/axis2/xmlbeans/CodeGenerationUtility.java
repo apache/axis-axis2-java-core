@@ -597,7 +597,7 @@ public class CodeGenerationUtility {
             for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
                 pathBuilder.append(File.separator + iter.next());
             }
-            systemId = pathBuilder.toString();
+            systemId = pathBuilder.toString().substring(1);
 
             log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId +
                     "]");
