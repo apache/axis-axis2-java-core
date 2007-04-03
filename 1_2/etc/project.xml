@@ -72,10 +72,10 @@
     <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
     <repository>
         <connection>
-            scm:svn:http://svn.apache.org:repos/asf/webservices:axis2/trunk/java</connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/</connection>
         <developerConnection>
-            scm:svn:http://svn.apache.org:repos/asf/webservices:axis2/trunk/java</developerConnection>
-        <url>http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java?root=Apache-SVN</url>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/</developerConnection>
+        <url>http://svn.apache.org/viewcvs.cgi/webservices/axis2/branches/java/1_2/?root=Apache-SVN</url>
     </repository>
     <mailingLists>
         <mailingList>

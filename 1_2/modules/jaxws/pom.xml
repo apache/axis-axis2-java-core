@@ -31,10 +31,10 @@
     <description>Axis2 JAXWS Implementation</description>
     <scm>
         <connection>
-            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxws</connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/jaxws</connection>
         <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxws</developerConnection>
-        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/jaxws</url>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/jaxws</developerConnection>
+        <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/jaxws</url>
     </scm>
     <dependencies>
         <dependency>
