@@ -1019,29 +1019,8 @@ public class AxisService extends AxisDescription {
 
     //WSDL 2.0
     public void printWSDL2(OutputStream out) throws AxisFault {
-        if (isUseUserWSDL()) {
-            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-            if (wsld4jdefinition != null) {
-                try {
-                    String error = "<error>" +
-                            "<description>Unable to showtwo will WSDL for this service</description>" +
-                            "<reason>WSDL 2.0 document is to be shown. But we do not support WSDL 2.0" +
-                            "serialization yet.</reason>" +
-                            "</error>";
-                    out.write(error.getBytes());
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    throw new AxisFault(e);
-                }
-            } else {
-                printWSDLError(out);
-            }
-        } else {
-            setWsdlFound(true);
-            //pick the endpointName and take it as the epr for the WSDL
-            getWSDL2(out, new String[]{this.endpointName});
-        }
+        // Woden has not implemented the serializer yet, so all we can do it serialize the axisService
+        getWSDL2(out, new String[]{this.endpointName});
     }
 
     public void printWSDL2(OutputStream out,
