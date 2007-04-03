@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
@@ -115,7 +116,7 @@ public class EMailSender {
 
                 } else {
                     if (from != null) {
-                         msg.addRecipient(Message.RecipientType.TO,
+                        msg.addRecipient(Message.RecipientType.TO,
                                          new InternetAddress(from.getAddress()));
                     } else {
                         String error = EMailSender.class.getName() + "Couldn't countinue due to" +
@@ -143,15 +144,17 @@ public class EMailSender {
             msg.setSubject("__ Axis2/Java Mail Message __");
 
             if (mailToInfo.isxServicePath()) {
-                msg.setHeader("X-Service-Path", "\"" + mailToInfo.getContentDescription() + "\"");
+                msg.setHeader(Constants.X_SERVICE_PATH, "\"" + mailToInfo.getContentDescription() + "\"");
             }
 
             if (inReplyTo != null) {
-                msg.setHeader("In-Reply-To", inReplyTo);
+                msg.setHeader(Constants.IN_REPLY_TO, inReplyTo);
             }
 
             createMailMimeMessage(msg, mailToInfo, format);
             Transport.send(msg);
+
+            sendReceive(messageContext,msg.getMessageID());
         } catch (AddressException e) {
             throw new AxisFault(e);
         } catch (MessagingException e) {
@@ -215,5 +218,18 @@ public class EMailSender {
 
     public void setFrom(EndpointReference from) {
         this.from = from;
+    }
+
+    private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
+        Object obj = msgContext.getProperty(Constants.MAIL_SYNC);
+        if (obj == null) {
+            return;
+        }
+
+        Options options = msgContext.getOptions();
+
+        SynchronousMailListener listener =
+                new SynchronousMailListener(options.getTimeOutInMilliSeconds());
+        listener.sendReceive(msgContext,msgId);
     }
 }

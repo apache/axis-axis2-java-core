@@ -339,7 +339,7 @@ public class SimpleHTTPServer implements TransportListener {
     }
 
 
-    public SessionContext getSessionContext(MessageContext messageContext) {
+    public SessionContext  getSessionContext(MessageContext messageContext) {
         String sessionKey = (String) messageContext.getProperty(HTTPConstants.COOKIE_STRING);
         return this.sessionManager.getSessionContext(sessionKey);
     }
