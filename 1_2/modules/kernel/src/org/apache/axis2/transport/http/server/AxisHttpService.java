@@ -71,9 +71,9 @@ public class AxisHttpService extends HttpService {
 
     private static final Log LOG = LogFactory.getLog(AxisHttpService.class);
 
-    private final MessageContext msgContext;
     private final ConfigurationContext configurationContext;
     private final Worker worker;
+    private HttpServerConnection conn;
 
     public AxisHttpService(
             final HttpProcessor httpProcessor,
@@ -90,9 +90,6 @@ public class AxisHttpService extends HttpService {
         }
         this.configurationContext = configurationContext;
         this.worker = worker;
-
-        this.msgContext = ContextFactory.createMessageContext(configurationContext);
-        this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
     }
 
     protected void doService(
@@ -100,6 +97,21 @@ public class AxisHttpService extends HttpService {
             final HttpResponse response,
             final HttpContext context) throws HttpException, IOException {
         RequestLine reqline = request.getRequestLine();
+        MessageContext msgContext = ContextFactory.createMessageContext(configurationContext);
+        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+        if(conn!=null){
+            if (conn instanceof HttpInetConnection) {
+                HttpInetConnection inetconn = (HttpInetConnection) conn;
+                InetAddress address = inetconn.getRemoteAddress();
+                msgContext.setProperty(MessageContext.REMOTE_ADDR, address.getHostAddress());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Remote address of the connection : " + address);
+                }
+            }
+            msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
+                    ((DefaultHttpConnectionFactory.Axis2HttpServerConnection)conn).getLocalIPAddress());
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Request method: " + reqline.getMethod());
             LOG.debug("Target URI: " + reqline.getUri());
@@ -116,12 +128,12 @@ public class AxisHttpService extends HttpService {
             TransportInDescription transportIn = this.configurationContext.getAxisConfiguration()
                     .getTransportIn(Constants.TRANSPORT_HTTP);
 
-            String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
-            this.msgContext.setTransportIn(transportIn);
-            this.msgContext.setTransportOut(transportOut);
-            this.msgContext.setServerSide(true);
-            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
-            this.msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
+   ;         String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
+            msgContext.setTransportIn(transportIn);
+            msgContext.setTransportOut(transportOut);
+            msgContext.setServerSide(true);
+            msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
 
             // set the transport Headers
             HashMap headerMap = new HashMap();
@@ -129,8 +141,8 @@ public class AxisHttpService extends HttpService {
                 Header header = (Header) it.next();
                 headerMap.put(header.getName(), header.getValue());
             }
-            this.msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
-            this.worker.service(request, response, this.msgContext);
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
+            this.worker.service(request, response, msgContext);
         } catch (SocketException ex) {
             // Socket is unreliable. 
             throw ex;
@@ -142,14 +154,14 @@ public class AxisHttpService extends HttpService {
                 AxisEngine engine = new AxisEngine(this.configurationContext);
 
                 OutputBuffer outbuffer = new OutputBuffer();
-                this.msgContext
+                msgContext
                         .setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
-                this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+                msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
                 MessageContext faultContext =
                         MessageContextBuilder.createFaultMessageContext(msgContext, e);
                 // If the fault is not going along the back channel we should be 202ing
-                if (AddressingHelper.isFaultRedirected(this.msgContext)) {
+                if (AddressingHelper.isFaultRedirected(msgContext)) {
                     response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
                 } else {
                     response.setStatusLine(new BasicStatusLine(ver, 500, "Internal server error"));
@@ -157,7 +169,7 @@ public class AxisHttpService extends HttpService {
                 engine.sendFault(faultContext);
                 response.setEntity(outbuffer);
             } catch (Exception ex) {
-                if (AddressingHelper.isFaultRedirected(this.msgContext)) {
+                if (AddressingHelper.isFaultRedirected(msgContext)) {
                     response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
                 } else {
                     // TODO: Why isn't this a SOAP fault?
@@ -179,17 +191,7 @@ public class AxisHttpService extends HttpService {
 
     public void handleRequest(final HttpServerConnection conn, final HttpContext context)
             throws IOException, HttpException {
-        if (conn instanceof HttpInetConnection) {
-            HttpInetConnection inetconn = (HttpInetConnection) conn;
-            InetAddress address = inetconn.getRemoteAddress();
-            this.msgContext.setProperty(MessageContext.REMOTE_ADDR, address.getHostAddress());
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Remote address of the connection : " + address);
-            }
-        }
-        this.msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
-                ((DefaultHttpConnectionFactory.Axis2HttpServerConnection)conn).getLocalIPAddress());
+        this.conn = conn;
         super.handleRequest(conn, context);
     }
 
