@@ -49,7 +49,7 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
 			<version>${version}</version>
-			<scope>test</scope>
+			<!-- scope>test</scope -->
         </dependency>
 		 <dependency>
             <groupId>com.sun.xml.bind</groupId>
