@@ -44,7 +44,7 @@ public class RampartEngine {
                 WSSecurityUtil.findElement(rmd.getDocument().getDocumentElement(), 
                         "Fault", 
                         rmd.getSoapConstants().getEnvelopeURI()) != null) {
-            SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument());
+            SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument(), false);
 
             //Convert back to llom since the inflow cannot use llom
             msgCtx.setEnvelope(env);
@@ -78,7 +78,7 @@ public class RampartEngine {
         }
         
 
-        SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument());
+        SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument(), false);
 
         //Convert back to llom since the inflow cannot use DOOM
         msgCtx.setEnvelope(env);

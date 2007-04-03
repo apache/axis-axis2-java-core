@@ -76,6 +76,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 .getProperty(WSSHandlerConstants.DISABLE_DOOM);
         boolean disableDoom = disableDoomValue != null
                 && Constants.VALUE_TRUE.equalsIgnoreCase(disableDoomValue);
+        disableDoom = true;
 
         RequestData reqData = new RequestData();
         try {
@@ -144,7 +145,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 
         // Convert back to llom since the inflow cannot use llom
         msgContext.setEnvelope(Axis2Util
-                .getSOAPEnvelopeFromDOOMDocument(config.getDocument()));
+                .getSOAPEnvelopeFromDOOMDocument(config.getDocument(), false));
     }
 
     private void processBasic(MessageContext msgContext, boolean disableDoom, RequestData reqData)
@@ -277,7 +278,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
          * Set the new SOAPEnvelope
          */
 
-        msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc));
+        msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc, disableDoom));
 
         /*
          * After setting the new current message, probably modified because of

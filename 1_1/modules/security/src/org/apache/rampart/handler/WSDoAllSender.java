@@ -314,6 +314,7 @@ public class WSDoAllSender extends WSDoAllHandler {
         if (doDebug) {
             log.debug("WSDoAllSender: exit invoke()");
         }
+        log.debug(msgContext.getEnvelope());
     }
     
 

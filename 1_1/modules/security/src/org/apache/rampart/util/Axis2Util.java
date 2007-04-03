@@ -28,11 +28,13 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import java.io.ByteArrayInputStream;
@@ -123,20 +125,33 @@ public class Axis2Util {
 		}
 	}
 
-	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(Document doc)
+	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(Document doc, boolean dd)
             throws WSSecurityException {
 
-        try {
-            XMLStreamReader reader = ((OMElement) doc.getDocumentElement())
-                    .getXMLStreamReader();
-            StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(
-                    reader, null);
-            SOAPEnvelope envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
-            envelope.build();
-            return envelope;
-            
-        } catch (FactoryConfigurationError e) {
-            throw new WSSecurityException(e.getMessage());
+        if(!dd) {
+            try {
+                XMLStreamReader reader = ((OMElement) doc.getDocumentElement())
+                        .getXMLStreamReader();
+                StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(
+                        reader, null);
+                SOAPEnvelope envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
+                envelope.build();
+                return envelope;
+                
+            } catch (FactoryConfigurationError e) {
+                throw new WSSecurityException(e.getMessage());
+            }
+        } else {
+            try {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                XMLUtils.outputDOM(doc.getDocumentElement(), os, true);
+                ByteArrayInputStream bais =  new ByteArrayInputStream(os.toByteArray());
+                
+                StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(bais), null);
+                return stAXSOAPModelBuilder.getSOAPEnvelope();
+            } catch (Exception e) {
+                throw new WSSecurityException(e.getMessage());
+            }
         }
 
     }
