@@ -91,6 +91,15 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public SimpleMailListener() {
     }
 
+    /**
+     * This constructor will be used in when Mail simulate the request/response
+     *
+     * @param messageQueue
+     */
+    public SimpleMailListener(LinkedBlockingQueue messageQueue) {
+        this.messageQueue = messageQueue;
+    }
+
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
@@ -280,6 +289,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (smtpMessageId != null) {
                 transportInfo.setInReplyTo(smtpMessageId);
             }
+            String inReplyTo =
+                    getMailHeader(msg, org.apache.axis2.transport.mail.Constants.IN_REPLY_TO);
+            if (inReplyTo != null) {
+                transportInfo.setInReplyTo(inReplyTo);
+            }
             msgContext.setProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo);
 
             buildSOAPEnvelope(msg, msgContext);
@@ -435,5 +449,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public void destroy() {
         this.configurationContext = null;
+    }
+
+    public LinkedBlockingQueue getLinkedBlockingQueue() {
+        return messageQueue;
     }
 }
