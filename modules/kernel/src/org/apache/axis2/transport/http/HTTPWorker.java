@@ -194,8 +194,17 @@ public class HTTPWorker implements Worker {
 
             outbuffer = copyCommonProperties(msgContext, request);
 
+            String contentType = null;
+            Header[] headers = request.getHeaders(HTTPConstants.HEADER_CONTENT_TYPE);
+            if (headers != null && headers.length > 0) {
+                contentType = headers[0].getValue();
+                int index = contentType.indexOf(';');
+                if (index > 0) {
+                    contentType = contentType.substring(0, index);
+                }
+            }
             // deal with GET request
-            pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
+            pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), contentType);
 
         } else if (method.equals(HTTPConstants.HEADER_POST)) {
             // deal with POST request
