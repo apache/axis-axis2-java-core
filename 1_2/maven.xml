@@ -537,7 +537,7 @@
             </ant:fileset>
         </ant:copy>
 
-        <ant:war destfile="target/dist/axis2.war"
+        <ant:war destfile="target/dist/axis2-${pom.currentVersion}.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
