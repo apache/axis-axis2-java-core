@@ -128,6 +128,7 @@
         <jettison.version>1.0-alpha-2-SNAPSHOT</jettison.version>
         <tomcat.tribes.version>6.0.10</tomcat.tribes.version>
         <tomcat.juli.version>6.0.10</tomcat.juli.version>
+
     </properties>
     <mailingLists>
         <mailingList>
