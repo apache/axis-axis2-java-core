@@ -30,9 +30,9 @@
 	<name>Apache Axis 2.0 - Metadata</name>
 	<description>JSR-181 and JSR-224 Annotations Processing</description>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/metadata</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/metadata</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/metadata</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/metadata</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/metadata</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/metadata</url>
   </scm>
 	<dependencies>
 		<dependency>

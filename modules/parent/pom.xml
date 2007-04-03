@@ -72,10 +72,10 @@
 
     <scm>
         <connection>
-            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/parent</connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/parent</connection>
         <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/parent</developerConnection>
-        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/parent/</url>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/parent</developerConnection>
+        <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/parent/</url>
     </scm>
     <properties>
         <!--

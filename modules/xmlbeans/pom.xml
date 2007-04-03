@@ -30,9 +30,9 @@
     <name>Apache Axis 2.0 - XMLBeans Data Binding</name>
     <description>XMLBeans data binding support for Axis2</description>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/xmlbeans</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/xmlbeans</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/xmlbeans</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/xmlbeans</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/xmlbeans</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/xmlbeans</url>
   </scm>
 	<dependencies>
 		<dependency>

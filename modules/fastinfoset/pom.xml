@@ -31,9 +31,9 @@
 	<description>Axis2 Fast Infoset module</description>
 	
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/fastinfoset</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/fastinfoset</developerConnection>
-        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/fastinfoset</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/fastinfoset</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/fastinfoset</developerConnection>
+        <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/fastinfoset</url>
     </scm>
 	
     <dependencies>

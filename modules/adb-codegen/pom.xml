@@ -32,10 +32,10 @@
     <description>ADB code generation support for Axis2</description>
     <scm>
         <connection>
-            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb-codegen</connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/adb-codegen</connection>
         <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb-codegen</developerConnection>
-        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/adb-codegen</url>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/adb-codegen</developerConnection>
+        <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/adb-codegen</url>
     </scm>
     <dependencies>
         <dependency>

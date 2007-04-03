@@ -28,9 +28,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/kernel/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/kernel/</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/kernel/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/kernel/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/kernel/</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/kernel/</url>
   </scm>
 
   <artifactId>axis2-kernel</artifactId>

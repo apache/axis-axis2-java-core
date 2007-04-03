@@ -30,9 +30,9 @@
 	<name>Apache Axis 2.0 - MTOM Policy</name>
 	<description>Axis2 : MTOM Policy</description>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/mtompolicy</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/mtompolicy</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/mtompolicy</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/mtompolicy</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/mtompolicy</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/mtompolicy</url>
   </scm>
 	<dependencies>
 		<dependency>

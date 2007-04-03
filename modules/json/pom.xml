@@ -30,9 +30,9 @@
 	<name>Apache Axis 2.0 - JSON</name>
 	<description>Axis2 JSON module</description>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/json</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/json</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/json</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/json</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/json</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/json</url>
   </scm>
 	<dependencies>
 		<dependency>
