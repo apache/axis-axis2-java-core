@@ -371,6 +371,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
+
         // Added to use in ?wsdl2 as the interface name
         axisService.addParameter(new Parameter(WSDL2Constants.INTERFACE_LOCAL_NAME,
                                                wsdl4jPortType.getQName().getLocalPart()));
@@ -424,6 +425,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         PortType portType = wsdl4jDefinition.getPortType(wsdl4jBinding.getPortType().getQName());
 
+
+
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
 
             axisBindingOperation = new AxisBindingOperation();
@@ -460,7 +463,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
                 if (isSetMessageQNames) {
-                    addQNameReference(axisInMessage, wsdl4jBindingOperation.getOperation(),
+                    addQNameReference(axisInMessage, wsdl4jOperation,
                                       wsdl4jBindingInput,
                                       wrappableOperations.contains(wsdl4jBindingOperation));
                 }
@@ -485,7 +488,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                        axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
 
                 if (isSetMessageQNames) {
-                    addQNameReference(axisOutMessage, wsdl4jBindingOperation.getOperation(),
+                    addQNameReference(axisOutMessage, wsdl4jOperation,
                                       wsdl4jBindingOutput,
                                       wrappableOperations.contains(wsdl4jBindingOperation));
                 }
@@ -551,7 +554,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
         // process the imports
-        WSDL4JImportedWSDLHelper.processImports(wsdl4jDefinition);
+        WSDL4JImportedWSDLHelper.processImports(wsdl4jDefinition, new ArrayList());
 
         // Adding the policies in the Definition to the the PolicyRegistry
         processPoliciesInDefintion(wsdl4jDefinition);
