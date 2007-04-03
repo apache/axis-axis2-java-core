@@ -288,6 +288,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     null);
 
             message = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
+            OMNamespace namespace = message.declareNamespace(WSAD_NS,
+                    "wsaw");
+            message.addAttribute("Action", "urn:" + jmethod.getSimpleName(), namespace);
             message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                     + COLON_SEPARATOR + jmethod.getSimpleName()
                     + MESSAGE_SUFFIX, null);
@@ -298,6 +301,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                         + COLON_SEPARATOR + jmethod.getSimpleName()
                         + RESPONSE_MESSAGE, null);
+                namespace = message.declareNamespace(WSAD_NS,
+                        "wsaw");
+                message.addAttribute("Action", "urn:" + jmethod.getSimpleName(), namespace);
                 operation.addChild(message);
             }
             if (jmethod.getExceptionTypes().length > 0) {
@@ -307,6 +313,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                         + "Fault", null);
                 message.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName()
                         + "Fault", null);
+                namespace = message.declareNamespace(WSAD_NS,
+                        "wsaw");
+                message.addAttribute("Action", "urn:" + jmethod.getSimpleName(), namespace);
                 operation.addChild(message);
             }
         }

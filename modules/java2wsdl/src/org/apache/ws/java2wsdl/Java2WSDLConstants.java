@@ -36,6 +36,8 @@ public interface Java2WSDLConstants {
     String URI_WSDL11_SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
     String TRANSPORT_URI = "http://schemas.xmlsoap.org/soap/http";
     String DEFAULT_LOCATION_URL = "http://localhost:8080/axis2/services/";
+    String WSAD_NS = "http://www.w3.org/2006/05/addressing/wsdl";
+
 
     String HTTP_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/http/";
     String MIME_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/mime/";
