@@ -106,15 +106,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
         ArrayList mailParameters = transportIn.getParameters();
 
-        replyTo = Utils.getParameterValue(
-                transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
-        Parameter listenerWaitIntervalParam = transportIn
-                .getParameter(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
-        if (listenerWaitIntervalParam != null) {
-            listenerWaitInterval =
-                    Integer.parseInt(Utils.getParameterValue(listenerWaitIntervalParam));
-        }
-
         String password = "";
         String host = "";
         String protocol = "";
@@ -126,8 +117,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String paramKey = param.getName();
             String paramValue = Utils.getParameterValue(param);
             if (paramKey == null || paramValue == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull",
-                                                        "Parameter name and value"));
+                String error = Messages.getMessage("canNotBeNull", "Parameter name and value");
+                log.error(error);
+                throw new AxisFault(error);
 
             }
             pop3Properties.setProperty(paramKey, paramValue);
@@ -147,11 +139,21 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 port = paramValue;
             }
 
+            //Transport specific
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.RAPLY_TO)) {
+                replyTo = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL)) {
+                listenerWaitInterval = Integer.parseInt(paramValue);
+            }
+
         }
         if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
             protocol.length() == 0) {
-            throw new AxisFault(
-                    "One or more of Password, User, Host and Protocol are null or empty");
+            String error = SimpleMailListener.class.getName() +
+                           " one or more of Password, User, Host and Protocol are null or empty";
+            log.error(error);
+            throw new AxisFault(error);
         }
 
         if (port.length() == 0) {
@@ -165,6 +167,50 @@ public class SimpleMailListener implements Runnable, TransportListener {
         receiver.setUrlName(urlName);
 
 
+    }
+
+    public void initFromRuntime(Properties properties,MessageContext msgContext) throws AxisFault {
+
+        this.configurationContext = msgContext.getConfigurationContext();
+        
+        String password = "";
+        String host = "";
+        String protocol = "";
+        String port = "";
+        URLName urlName;
+
+        pop3Properties.clear();
+        pop3Properties.putAll(properties);
+
+        user = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_USER);
+        password = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_PASSWORD);
+        host = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_HOST);
+        protocol = properties.getProperty(org.apache.axis2.transport.mail.Constants.STORE_PROTOCOL);
+        port = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_PORT);
+        replyTo = properties.getProperty(org.apache.axis2.transport.mail.Constants.RAPLY_TO);
+        String value =
+                properties.getProperty(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
+        if (value != null) {
+            listenerWaitInterval = Integer.parseInt(value);
+        }
+
+        if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
+            protocol.length() == 0) {
+            String error = SimpleMailListener.class.getName() + " one or more of Password, User," +
+                    " Host and Protocol are null or empty" + "in runtime settings";
+            log.error(error);
+            throw new AxisFault(error);
+        }
+
+        if (port == null) {
+            urlName = new URLName(protocol, host, -1, "", user, password);
+        } else {
+            urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);
+        }
+
+        receiver = new EmailReceiver();
+        receiver.setPop3Properties(pop3Properties);
+        receiver.setUrlName(urlName);
     }
 
     /**
