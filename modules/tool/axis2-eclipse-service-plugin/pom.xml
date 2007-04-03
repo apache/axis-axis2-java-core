@@ -22,14 +22,14 @@
 	<parent>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-parent</artifactId>
-		<version>SNAPSHOT</version>
+		<version>1.2-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2.eclipse.service.plugin</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Apache Axis 2.0 - tool - Eclipse service Plugin</name>
     <packaging>maven-plugin</packaging>
     <description>The Axis 2 Eclipse Service Plugin for Service archive creation</description>
@@ -286,7 +286,7 @@
                                 <delete dir="./target/dist"/>
                                 <mkdir dir="./target/dist"/>
 
-                                <unzip src="./target/axis2.eclipse.service.plugin-SNAPSHOT.jar"
+                                <unzip src="./target/axis2.eclipse.service.plugin-${pom.version}.jar"
                                        dest="./target/plugin/${service.plugin.version}"/>
 
                                 <!-- Copy to the same position with the filtering on-->
