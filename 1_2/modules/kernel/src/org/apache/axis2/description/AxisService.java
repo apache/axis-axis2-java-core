@@ -1002,12 +1002,9 @@ public class AxisService extends AxisDescription {
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
             String wsdlntfound = "<error>" +
-                    "<description>Unable to generate WSDL for this service</description>" +
-                    "<reason>If you wish Axis2 to automatically generate the WSDL, then please use one of the RPC message " +
-                    "receivers for the service(s)/operation(s) in services.xml. If you have added a custom WSDL in the " +
-                    "META-INF directory, then please make sure that the name of the service in services.xml " +
-                    "(/serviceGroup/service/@name) is the same as in the " +
-                    "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>" +
+                    "<description>Unable to generate WSDL 1.1 for this service</description>" +
+                    "<reason>If you wish Axis2 to automatically generate the WSDL 1.1, then please +" +
+                    "set useOriginalwsdl as false in your services.xml" +
                     "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
