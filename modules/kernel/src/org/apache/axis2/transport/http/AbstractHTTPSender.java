@@ -63,10 +63,10 @@ public abstract class AbstractHTTPSender {
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-    
+
     protected static final String PROTOCOL_HTTP = "http";
     protected static final String PROTOCOL_HTTPS = "https";
-    
+
     /**
      * proxydiscription
      */
@@ -110,7 +110,7 @@ public abstract class AbstractHTTPSender {
     protected void configProxyAuthentication(HttpClient client,
                                              TransportOutDescription proxySetting,
                                              HostConfiguration config,
-                                             MessageContext msgCtx)
+                                             MessageContext msgCtx,String realHost, int realPort)
             throws AxisFault {
         Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
         String usrName;
@@ -198,7 +198,7 @@ public abstract class AbstractHTTPSender {
 
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(proxyHostName, proxyPort);
-        config.setHost(proxyHostName);
+        config.setHost(realHost,realPort);
     }
 
     /**
@@ -220,27 +220,27 @@ public abstract class AbstractHTTPSender {
 
             Object contentType = header.getValue();
             Object charSetEnc = null;
-            
+
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc = headers[i].getParameterByName(
                         HTTPConstants.CHAR_SET_ENCODING);
                 if (charsetEnc != null) {
-                	charSetEnc = charsetEnc.getValue();    
+                	charSetEnc = charsetEnc.getValue();
                 }
             }
-            
+
             if (inMessageContext != null) {
                 inMessageContext
                         .setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
                 inMessageContext
                 	.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
             } else {
-            	
+
             	//Transport details will be stored in a HashMap so that anybody interested can retriece them
             	HashMap transportInfoMap = new HashMap ();
             	transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
             	transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-            	
+
             	//the HashMap is stored in the outgoing message.
             	msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
             }
@@ -325,9 +325,9 @@ public abstract class AbstractHTTPSender {
             if (PROTOCOL_HTTP.equals(protocal)) {
                 port = 80;
             } else if (PROTOCOL_HTTPS.equals(protocal)){
-                port = 443;                
+                port = 443;
             }
-            
+
         }
 
         // to see the host is a proxy and in the proxy list - available in axis2.xml
@@ -343,7 +343,7 @@ public abstract class AbstractHTTPSender {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
             this.configProxyAuthentication(client, proxyOutSetting, config,
-                                           msgCtx);
+                                           msgCtx,targetURL.getHost(),port);
         }
 
         return config;

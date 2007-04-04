@@ -359,6 +359,7 @@
                 <exclude>**/*Util*.class</exclude>
                 <exclude>**/*InteropStubTest.class</exclude>
                 <exclude>**/*EchoRawSwAFileInputTest.class</exclude>
+                <exclude>**/*EchoRawRuntimeProxyTest.class</exclude>
                 <exclude>**org/apache/axis2/mail/*.class</exclude>
 		<exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.class</exclude>
                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.class</exclude>
