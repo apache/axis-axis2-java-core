@@ -86,21 +86,29 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                 return null;   // can't go any further without the wsdl
             }
 
-            Iterator wsdlServIter = wsdl4jDefinition.getServices().values().iterator();
-            // let the wsdlToservice builder to decide the port to generate binding
-            portName = null;
-            while (wsdlServIter.hasNext()) {
-                Service service = (Service) wsdlServIter.next();
-                // set the serviceName on the parent to setup call to populateService
-                serviceName = service.getQName();
-                this.axisService = new AxisService();
-                // now that serviceName and portName are set, call up to the
-                // parent class to populate this service.
-                AxisService retAxisService = populateService();
-                if (retAxisService != null) {
-                    axisServices.add(retAxisService);
+            if (wsdl4jDefinition.getServices().size() > 0) {
+                Iterator wsdlServIter = wsdl4jDefinition.getServices().values().iterator();
+                // let the wsdlToservice builder to decide the port to generate binding
+                portName = null;
+                while (wsdlServIter.hasNext()) {
+                    Service service = (Service) wsdlServIter.next();
+                    // set the serviceName on the parent to setup call to populateService
+                    serviceName = service.getQName();
+                    this.axisService = new AxisService();
+                    // now that serviceName and portName are set, call up to the
+                    // parent class to populate this service.
+                    AxisService retAxisService = populateService();
+                    if (retAxisService != null) {
+                        axisServices.add(retAxisService);
+                    }
                 }
+            } else {
+                throw new AxisFault("No service was not found in the WSDL at " +
+                        wsdl4jDefinition.getDocumentBaseURI()
+                        + " with targetnamespace "
+                        + wsdl4jDefinition.getTargetNamespace());
             }
+
 
             if (log.isDebugEnabled()) {
                 log.debug("Exit: populateAllServices.");
