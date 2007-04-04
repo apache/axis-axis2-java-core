@@ -330,16 +330,23 @@ class DescriptionBuilderUtils {
                                 + classToLoad + " using classloader: " + classLoader);
             }
         } else {
-            //Use the default classloader to load the class.
+            //Use the thread context class loader to load the class.
             try {
-                returnClass = forName(classToLoad);
+                returnClass = forName(classToLoad, false,
+                                   getContextClassLoader());
             }
-            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-            //does not extend Exception
             catch (Throwable ex) {
-                throw ExceptionFactory.makeWebServiceException(
-                        "DescriptionBuilderUtils: Class not found using default classloader for parameter: " +
-                                classToLoad);
+                //Use the default classloader to load the class.
+                try {
+                    returnClass = forName(classToLoad);
+                }
+                //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+                //does not extend Exception
+                catch (Throwable ex2) {
+                    throw ExceptionFactory.makeWebServiceException(
+                            "DescriptionBuilderUtils: Class not found using default classloader for parameter: " +
+                                    classToLoad);
+                }
             }
         }
         return returnClass;
