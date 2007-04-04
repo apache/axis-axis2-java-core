@@ -174,6 +174,7 @@ public class WSDLSerializationUtil {
                                                    WSDL2Constants.URI_WSDL2_SOAP));
         binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_VERSION, wsoap,
                                                    WSDL2Constants.SOAP_VERSION_1_1));
+        generateDefaultSOAPBindingOperations(axisService, fac, binding, tns, wsoap);
         return binding;
     }
 
@@ -198,6 +199,7 @@ public class WSDLSerializationUtil {
                                                    WSDL2Constants.URI_WSDL2_SOAP));
         binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_VERSION, wsoap,
                                                    WSDL2Constants.SOAP_VERSION_1_2));
+        generateDefaultSOAPBindingOperations(axisService, fac, binding, tns, wsoap);
         return binding;
     }
 
@@ -232,6 +234,20 @@ public class WSDLSerializationUtil {
                                                          name));
         }
         return binding;
+    }
+
+    private static void generateDefaultSOAPBindingOperations(AxisService axisService, OMFactory omFactory, OMElement binding, OMNamespace tns, OMNamespace wsoap) {
+        Iterator iterator = axisService.getChildren();
+        while (iterator.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) iterator.next();
+            OMElement opElement = omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, null);
+            binding.addChild(opElement);
+            String name = axisOperation.getName().getLocalPart();
+            opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
+                                                         tns.getPrefix() + ":" + name));
+            opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
+                                                         axisOperation.getInputAction()));
+        }
     }
 
     /**
