@@ -40,117 +40,92 @@ public class WSDL4JImportedWSDLHelper {
      *
      * @param wsdl4JDefinition
      */
-    public static void processImports(Definition wsdl4JDefinition) {
-        if (isTraceEnabled) {
-            log.trace("processImports: wsdl4JDefinition=" + wsdl4JDefinition);
-        }
-        Map imported_defs = new HashMap();
-        getImportedDefinitions(wsdl4JDefinition, imported_defs);
+    public static void processImports(Definition wsdl4JDefinition,
+                                    List processedDocuments) {
 
+            Map wsdlImports = wsdl4JDefinition.getImports();
 
-        for (Iterator iterator = imported_defs.values().iterator(); iterator.hasNext();) {
-            Definition imported_def = (Definition) iterator.next();
+            if (null != wsdlImports && !wsdlImports.isEmpty()) {
+                Collection importsCollection = wsdlImports.values();
+                for (Iterator iterator = importsCollection.iterator(); iterator
+                        .hasNext();) {
+                    Vector values = (Vector) iterator.next();
+                    for (int i = 0; i < values.size(); i++) {
+                        Import wsdlImport = (Import) values.elementAt(i);
 
-            Map def_namespaces = wsdl4JDefinition.getNamespaces();
-            Map imported_def_namespaces = imported_def.getNamespaces();
+                        if (wsdlImport.getDefinition() != null) {
+                            Definition importedDef = wsdlImport.getDefinition();
 
-            Object prefix;
+                            if (importedDef != null) {
+                                String key = importedDef.getDocumentBaseURI();
+                                if (key == null) {
+                                    key = importedDef.getTargetNamespace();
+                                }
+                                // stop recursive imports!
+                                if (processedDocuments.contains(key)) {
+                                    return;
+                                }
+                                processedDocuments.add(key);
 
+                                processImports(importedDef,
+                                        processedDocuments);
 
-            for (Iterator prefix_iterator = imported_def_namespaces.keySet().iterator();
-                 prefix_iterator.hasNext();) {
-                prefix = prefix_iterator.next();
+                                // copy ns
+                                Map namespaces = importedDef.getNamespaces();
+                                Iterator keys = namespaces.keySet().iterator();
+                                while (keys.hasNext()) {
+                                    Object key2 = keys.next();
+                                    if (!wsdl4JDefinition.getNamespaces()
+                                            .containsValue(namespaces.get(key2))) {
+                                        wsdl4JDefinition.getNamespaces().put(key2,
+                                                namespaces.get(key2));
+                                    }
+                                }
 
-                if (!def_namespaces.containsKey(prefix)) {
-                    def_namespaces.put(prefix, imported_def_namespaces.get(prefix));
-                }
-            }
+                                wsdl4JDefinition.getNamespaces().putAll(namespaces);
+                                // copy types
+                                Types t = importedDef.getTypes();
+                                if (t != null) {
+                                    List typesList = t.getExtensibilityElements();
+                                    for (int j = 0; j < typesList.size(); j++) {
+                                        Types types = wsdl4JDefinition.getTypes();
+                                        if (types == null) {
+                                            types = wsdl4JDefinition.createTypes();
+                                            wsdl4JDefinition.setTypes(types);
+                                        }
+                                        types.addExtensibilityElement((ExtensibilityElement) typesList
+                                                        .get(j));
 
-            // copy types
-            Types imported_def_types = imported_def.getTypes();
+                                    }
+                                }
 
-            if (imported_def_types != null) {
-                Types def_types = wsdl4JDefinition.getTypes();
+                                // add messages
+                                Map messagesMap = importedDef.getMessages();
+                                wsdl4JDefinition.getMessages().putAll(messagesMap);
 
-                if (def_types == null) {
-                    def_types = wsdl4JDefinition.createTypes();
-                    wsdl4JDefinition.setTypes(def_types);
-                }
+                                // add portypes
+                                Map porttypeMap = importedDef.getPortTypes();
+                                wsdl4JDefinition.getPortTypes().putAll(porttypeMap);
 
-                for (Iterator types_iterator =
-                        imported_def_types.getExtensibilityElements().iterator();
-                     types_iterator.hasNext();) {
-                    // CHECKME
-                    def_types.addExtensibilityElement((ExtensibilityElement) types_iterator.next());
-                }
-            }
+                                // add bindings
+                                Map bindingMap = importedDef.getBindings();
+                                wsdl4JDefinition.getBindings().putAll(bindingMap);
 
-            // add messages
-            wsdl4JDefinition.getMessages().putAll(imported_def.getMessages());
+                                // add services
+                                Map serviceMap = importedDef.getServices();
+                                wsdl4JDefinition.getServices().putAll(serviceMap);
 
-            // add portTypes
-            wsdl4JDefinition.getPortTypes().putAll(imported_def.getPortTypes());
+                                List extElementList = importedDef
+                                        .getExtensibilityElements();
+                                wsdl4JDefinition.getExtensibilityElements().addAll(
+                                        extElementList);
 
+                            }
 
-            // add bindings
-            wsdl4JDefinition.getBindings().putAll(imported_def.getBindings());
-
-            // add services
-            wsdl4JDefinition.getServices().putAll(imported_def.getServices());
-
-            // add ExtensibilityElements
-            wsdl4JDefinition.getExtensibilityElements()
-                    .addAll(imported_def.getExtensibilityElements());
-
-        }
-
-        // after putting the imports we going to remove them to avoid any confilicts
-        List importsList = new ArrayList();
-        Map imports = wsdl4JDefinition.getImports();
-        Import wsdlImport;
-        Vector wsdlImportVector;
-        for (Iterator importsVectorIter = imports.values().iterator(); importsVectorIter.hasNext();) {
-            wsdlImportVector = (Vector) importsVectorIter.next();
-            for (Iterator importsIter = wsdlImportVector.iterator(); importsIter.hasNext();) {
-                wsdlImport = (Import) importsIter.next();
-                importsList.add(wsdlImport);
-            }
-        }
-
-        for (Iterator importsListIter = importsList.iterator();importsListIter.hasNext();){
-            wsdlImport = (Import) importsListIter.next();
-            wsdl4JDefinition.removeImport(wsdlImport);
-        }
-    }
-
-    private static void getImportedDefinitions(Definition definition, Map importedDefs) {
-        Map wsdlImports = definition.getImports();
-
-        Import wsdl_import;
-        Definition imported_def;
-        String import_def_key;
-
-        for (Iterator iterator = wsdlImports.values().iterator(); iterator.hasNext();) {
-            Vector imports = (Vector) iterator.next();
-            Iterator iter2 = imports.iterator();
-            while (iter2.hasNext()) {
-                wsdl_import = (Import) iter2.next();
-                if (isTraceEnabled) {
-                    log.trace("getImportedDefinitions: import uri=" + wsdl_import.getLocationURI());
-                }
-                imported_def = wsdl_import.getDefinition();
-
-                import_def_key = imported_def.getDocumentBaseURI();
-
-                if (import_def_key == null) {
-                    import_def_key = imported_def.getTargetNamespace();
-                }
-
-                if (!importedDefs.containsKey(import_def_key)) {
-                    importedDefs.put(import_def_key, imported_def);
-                    getImportedDefinitions(imported_def, importedDefs);
+                        }
+                    }
                 }
             }
         }
-    }
+
 }
