@@ -687,7 +687,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         private HttpServletResponse response;
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
-
+        AxisFault faultToBeThrownOut = null;
+        
         ServletRequestResponseTransport(HttpServletResponse response) {
             this.response = response;
         }
@@ -710,10 +711,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
         public void awaitResponse()
-                throws InterruptedException {
+                throws InterruptedException,AxisFault {
             log.debug("Blocking servlet thread -- awaiting response");
             status = RequestResponseTransportStatus.WAITING;
             responseReadySignal.await();
+            
+            if (faultToBeThrownOut!=null)
+            	throw faultToBeThrownOut;
         }
 
         public void signalResponseReady() {
@@ -726,6 +730,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             return status;
         }
 
+		public void signalFaultReady(AxisFault fault) {
+			faultToBeThrownOut = fault;
+			signalResponseReady();
+		}
+		
     }
 
     /**
