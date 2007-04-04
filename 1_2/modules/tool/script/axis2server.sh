@@ -27,7 +27,7 @@
 # -----------------------------------------------------------------------------
 
 # Get the context and from that find the location of setenv.sh
-. `dirname $0`/setenv.sh
+sh `dirname $0`/setenv.sh
 
 java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.SimpleAxis2Server \
 -repo $AXIS2_HOME/repository -conf $AXIS2_HOME/conf/axis2.xml $*
