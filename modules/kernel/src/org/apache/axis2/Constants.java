@@ -319,6 +319,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * @see org.apache.axis2.transport.MessageFormatter
          */
         public static final String MESSAGE_TYPE = "messageType";
-
+        
+        public static final String TRANSPORT_INFO_MAP = "TransportInfoMap";
+        
     }
 }

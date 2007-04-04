@@ -315,15 +315,19 @@ public class HTTPWorker implements Worker {
 
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
-
+        AxisFault faultToBeThrownOut = null;
+        
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
             signalResponseReady();
         }
 
-        public void awaitResponse() throws InterruptedException {
+        public void awaitResponse() throws InterruptedException,AxisFault {
             status = RequestResponseTransportStatus.WAITING;
             responseReadySignal.await();
+            
+            if (faultToBeThrownOut!=null)
+            	throw faultToBeThrownOut;
         }
 
         public void signalResponseReady() {
@@ -335,5 +339,10 @@ public class HTTPWorker implements Worker {
             return status;
         }
 
+		public void signalFaultReady(AxisFault fault) {
+			faultToBeThrownOut = fault;
+			signalResponseReady();
+		}
+        
     }
 }

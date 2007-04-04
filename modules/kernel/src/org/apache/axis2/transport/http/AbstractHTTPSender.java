@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -217,20 +218,33 @@ public abstract class AbstractHTTPSender {
             MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
                     WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
-            if (inMessageContext != null) {
-                inMessageContext
-                        .setProperty(Constants.Configuration.CONTENT_TYPE, header.getValue());
-
-
-                for (int i = 0; i < headers.length; i++) {
-                    NameValuePair charsetEnc = headers[i].getParameterByName(
-                            HTTPConstants.CHAR_SET_ENCODING);
-                    if (charsetEnc != null) {
-                        inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                                     charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
-                    }
+            Object contentType = header.getValue();
+            Object charSetEnc = null;
+            
+            for (int i = 0; i < headers.length; i++) {
+                NameValuePair charsetEnc = headers[i].getParameterByName(
+                        HTTPConstants.CHAR_SET_ENCODING);
+                if (charsetEnc != null) {
+                	charSetEnc = charsetEnc.getValue();    
                 }
             }
+            
+            if (inMessageContext != null) {
+                inMessageContext
+                        .setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
+                inMessageContext
+                	.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+            } else {
+            	
+            	//Transport details will be stored in a HashMap so that anybody interested can retriece them
+            	HashMap transportInfoMap = new HashMap ();
+            	transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
+            	transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+            	
+            	//the HashMap is stored in the outgoing message.
+            	msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
+            }
+            
         }
 
         String sessionCookie = null;
