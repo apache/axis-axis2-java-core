@@ -59,7 +59,7 @@ public interface RequestResponseTransport {
      *
      * @throws InterruptedException
      */
-    public void awaitResponse() throws InterruptedException;
+    public void awaitResponse() throws InterruptedException, AxisFault;
 
     /**
      * Signal that a response has be created and is ready for transmission.  This
@@ -67,6 +67,12 @@ public interface RequestResponseTransport {
      */
     public void signalResponseReady();
 
+    /**
+     * This will tell the transport to end a current wait by raising the given fault.
+     * @param fault The fault to be raised.
+     */
+    public void signalFaultReady(AxisFault fault);
+    
     /**
      * This gives the current status of an RequestResponseTransport object.
      *
