@@ -892,14 +892,20 @@
         <ant:mkdir dir="${docs.temp.dir}/xdocs"/>
         <ant:mkdir dir="${docs.temp.dir}/javadocs"/>
 
-	<echo message="Applying dynamic label filter..."></echo>
+    <echo message="Applying dynamic label filter..."></echo>
+		<ant:copy toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
+		<ant:fileset dir="xdocs/@axis2_version_dir@"/>	
+	    </ant:copy>
 	<ant:filter filtersfile="xdocs/dynamic-labels.properties" />
         <ant:copy toDir="${docs.temp.dir}/xdocs" filtering="on" overwrite="true" >
-            <ant:fileset dir="xdocs"/>
+            <ant:fileset dir="xdocs">
+			<ant:exclude name="@axis2_version_dir@/**"/>
+     	    </ant:fileset>
         </ant:copy>
-
-
-        <ant:copy toDir="${docs.temp.dir}/javadocs">
+		<!--delete renamed folder from xdocs folder-->
+	<ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
+	
+	<ant:copy toDir="${docs.temp.dir}/javadocs">
             <ant:fileset dir="target/apidocs"/>
         </ant:copy>
 
