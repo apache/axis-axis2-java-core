@@ -52,7 +52,8 @@ public class URLTemplatingUtilTest extends TestCase {
 
     public void testGetTemplatedURL() throws AxisFault, MalformedURLException {
         URL testURL =
-                new URL("http://locahost:8080/paramOne/{FirstName}?test=1&lastName={LastName}");
+                new URL("http://locahost:8080/paramOne");
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, "{FirstName}?test=1&lastName={LastName}");
         URL modifiedURL = URLTemplatingUtil.getTemplatedURL(testURL, messageContext, true);
 
         System.out.println("original = " + testURL);
@@ -65,6 +66,7 @@ public class URLTemplatingUtilTest extends TestCase {
 
     public void testAppendParametersToURL() throws MalformedURLException, AxisFault {
         URL testURL = new URL("http://locahost:8080/paramOne");
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, null);
         URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
@@ -76,6 +78,7 @@ public class URLTemplatingUtilTest extends TestCase {
 
     public void testQueryParameterSeperator() throws MalformedURLException, AxisFault {
         URL testURL = new URL("http://locahost:8080/paramOne");
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, null);
         messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,";");
         URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
@@ -86,24 +89,11 @@ public class URLTemplatingUtilTest extends TestCase {
         assertEquals(modifiedURL.toString(), expectedURL);
     }
 
-    public void testIgnoreUncitedTrue() throws MalformedURLException, AxisFault {
-
-        URL testURL = new URL("http://locahost:8080/paramOne/Foo?test=1");
-        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,"true");
-        URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
-
-        System.out.println("original = " + testURL);
-        System.out.println("modifiedURL = " + modifiedURL);
-
-        String expectedURL = "http://locahost:8080/paramOne/Foo?test=1";
-        assertEquals(modifiedURL.toString(), expectedURL);
-
-    }
-
     public void testIgnoreUncitedFalse() throws MalformedURLException, AxisFault {
 
         URL testURL = new URL("http://locahost:8080/paramOne/Foo?test=1");
         messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,"false");
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, null);
         URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
