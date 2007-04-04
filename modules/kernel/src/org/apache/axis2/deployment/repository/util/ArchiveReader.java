@@ -333,6 +333,7 @@ public class ArchiveReader implements DeploymentConstants {
                                                                   new ByteArrayInputStream(
                                                                           out.toByteArray()),
                                                                   entry.getName());
+                            service.setClassLoader(file.getClassLoader());
                             if (service != null) {
                                 servicesMap.put(service.getName(), service);
                             }
