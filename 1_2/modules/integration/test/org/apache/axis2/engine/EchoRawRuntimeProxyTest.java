@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 
 public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
     public static final EndpointReference targetEPR = new EndpointReference(
-            "http://apache.axis2.host"
+            "http://localhost:5555"
                     + "/axis2/services/EchoXMLService/echoOMElement");
 
     public static final QName serviceName = new QName("EchoXMLService");
