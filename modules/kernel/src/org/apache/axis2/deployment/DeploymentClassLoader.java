@@ -257,4 +257,16 @@ public class DeploymentClassLoader extends URLClassLoader {
             return new ByteArrayInputStream(bytes);
         }
     }
+
+    public InputStream getResourceAsStream(String name) {
+        URL url =findResource(name);
+        if(url!=null){
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else
+        return super.getResourceAsStream(name);
+    }
 }
