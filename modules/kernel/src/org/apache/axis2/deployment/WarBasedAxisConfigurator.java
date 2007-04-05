@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -92,7 +93,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         try {
             this.config = servletConfig;
             InputStream axis2Stream = null;
-
             try {
 
                 if (axis2Stream == null) {
@@ -134,6 +134,15 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                         cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
             axisConfig = populateAxisConfiguration(axis2Stream);
+
+            Parameter param = new Parameter();
+            param.setName(Constants.Configuration.ARTIFACTS_TEMP_DIR);
+            param.setValue(config.getServletContext().getAttribute("javax.servlet.context.tempdir"));
+            try {
+                axisConfig.addParameter(param);
+            } catch (AxisFault axisFault) {
+                log.error(axisFault);
+            }
 
             // when the module is an unpacked war file,
             // we can set the web location path in the deployment engine.
@@ -312,6 +321,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
 
     public void setConfigContext(ConfigurationContext configContext) {
         super.setConfigContext(configContext);
+
         // setting ServletContext into configctx
         configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
                                   config.getServletContext());

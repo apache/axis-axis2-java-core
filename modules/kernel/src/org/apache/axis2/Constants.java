@@ -245,6 +245,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
 
+        public static final String ARTIFACTS_TEMP_DIR = "artifactsDIR";
+
         //Attachment configurations
         public static final String ENABLE_MTOM = "enableMTOM";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";

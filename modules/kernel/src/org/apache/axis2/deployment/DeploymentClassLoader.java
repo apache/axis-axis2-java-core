@@ -29,7 +29,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.HashMap;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,38 +40,22 @@ public class DeploymentClassLoader extends URLClassLoader {
     private URL[] urls = null;
 
     // List of jar files inside the jars in the original url
-    private ArrayList embedded_jars;
+    private List embedded_jars;
 
     private HashMap loadedClass = new HashMap();
 
     /**
      * DeploymentClassLoader is extended from URLClassLoader. The constructor
-     * does not override the super constructor, but does additional steps like find out
+     * does not override the super constructor, but takes in an addition list of
      * jar files inside /lib directory.
      *
      * @param urls   <code>URL</code>s
      * @param parent parent classloader <code>ClassLoader</code>
      */
-    public DeploymentClassLoader(URL[] urls, ClassLoader parent, boolean antiJARLocking) {
-        super(Utils.getURLsForAllJars(urls[0]), parent);
-    }
-
-    /**
-     * Experimental!! Is not hooked up yet.
-     *
-     * @param urls
-     * @param parent
-     */
-    public DeploymentClassLoader(URL[] urls, ClassLoader parent) {
+    public DeploymentClassLoader(URL[] urls, List embedded_jars, ClassLoader parent) {
         super(urls, parent);
         this.urls = urls;
-        /**
-         * though the URL array can contain one or more urls , we only consider the
-         * first one, since this classLoader is only for Axis2 and the classloader
-         * is created by Deployment, we definitely know that there will be only one url in
-         * the URL array list
-         */
-        embedded_jars = Utils.findLibJars(urls[0]);
+        this.embedded_jars = embedded_jars;
     }
 
     /**
@@ -105,6 +91,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         }
         return clazz;
     }
+
 
     /**
      * Finds the resource with the specified name on the URL search path.
