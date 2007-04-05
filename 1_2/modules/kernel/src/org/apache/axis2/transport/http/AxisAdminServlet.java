@@ -48,6 +48,7 @@ public class AxisAdminServlet extends AxisServlet {
     }
 
     public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         ServletContext servletContext = config.getServletContext();
         this.configContext =
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
