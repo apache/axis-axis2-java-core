@@ -110,7 +110,7 @@ public abstract class AbstractHTTPSender {
     protected void configProxyAuthentication(HttpClient client,
                                              TransportOutDescription proxySetting,
                                              HostConfiguration config,
-                                             MessageContext msgCtx,String realHost, int realPort)
+                                             MessageContext msgCtx)
             throws AxisFault {
         Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
         String usrName;
@@ -198,7 +198,6 @@ public abstract class AbstractHTTPSender {
 
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(proxyHostName, proxyPort);
-        config.setHost(realHost,realPort);
     }
 
     /**
@@ -314,7 +313,7 @@ public abstract class AbstractHTTPSender {
                                                      MessageContext msgCtx,
                                                      URL targetURL)
             throws AxisFault {
-        boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
+        boolean isProxyListed = isProxyListed(msgCtx);    // list the proxy
 
 
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
@@ -338,12 +337,11 @@ public abstract class AbstractHTTPSender {
             this.setAuthenticationInfo(client, msgCtx, config, targetURL);
         }
 
+        // setting the real host configuration
+        config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         // proxy configuration
-        if (!isHostProxy) {
-            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        } else {
-            this.configProxyAuthentication(client, proxyOutSetting, config,
-                                           msgCtx,targetURL.getHost(),port);
+        if (isProxyListed) {
+            this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
         }
 
         return config;
