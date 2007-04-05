@@ -28,6 +28,7 @@ import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
@@ -329,6 +330,45 @@ public class WSDLSerializationUtil {
                     descriptionElement.declareNamespace((String) nameSpaceMap.get(key), key);
                 }
             }
+        }
+    }
+
+    public static void addWSAWActionAttribute(OMElement element, String action) {
+        if (action == null || action.length() == 0) {
+            return;
+        }
+        OMNamespace namespace = element.declareNamespace(
+                AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
+        element.addAttribute("Action", action, namespace);
+    }
+
+    public static void addExtensionElement(OMFactory fac, OMElement element,
+                                     String name, String att1Name, String att1Value,
+                                     OMNamespace soapNameSpace) {
+        OMElement extElement = fac.createOMElement(name, soapNameSpace);
+        element.addChild(extElement);
+        extElement.addAttribute(att1Name, att1Value, null);
+    }
+
+    public static void addWSAddressingToBinding(String addressingFlag, OMFactory omFactory, OMElement bindingElement) {
+        // Add WS-Addressing UsingAddressing element if appropriate
+        // SHOULD be on the binding element per the specification
+        if (addressingFlag.equals(
+                AddressingConstants.ADDRESSING_OPTIONAL)) {
+            OMNamespace wsawNamespace = omFactory.createOMNamespace(
+                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
+            WSDLSerializationUtil.addExtensionElement(omFactory, bindingElement,
+                                AddressingConstants.USING_ADDRESSING,
+                                "required", "true",
+                                wsawNamespace);
+        } else if (addressingFlag.equals(
+                AddressingConstants.ADDRESSING_REQUIRED)) {
+            OMNamespace wsawNamespace = omFactory.createOMNamespace(
+                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
+            WSDLSerializationUtil.addExtensionElement(omFactory, bindingElement,
+                                AddressingConstants.USING_ADDRESSING,
+                                "required", "true",
+                                wsawNamespace);
         }
     }
 }

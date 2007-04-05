@@ -20,6 +20,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.OMElement;
@@ -116,7 +117,7 @@ public class AxisBinding extends AxisDescription {
      * @return The generated binding element
      */
     public OMElement toWSDL20(OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                              String interfaceName,  Map nameSpaceMap) {
+                              String interfaceName,  Map nameSpaceMap, String addressingFlag) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingElement;
@@ -155,6 +156,9 @@ public class AxisBinding extends AxisDescription {
             if (soapModules != null && soapModules.size() > 0) {
                 WSDLSerializationUtil.addSOAPModuleElements(omFactory, soapModules, wsoap, bindingElement);
             }
+
+            WSDLSerializationUtil.addWSAddressingToBinding(addressingFlag, omFactory, bindingElement);
+
         } else if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
             // HTTP Binding specific properties
             property = (String) options.get(WSDL2Constants.ATTR_WHTTP_METHOD);
