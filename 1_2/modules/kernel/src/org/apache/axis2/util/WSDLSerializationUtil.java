@@ -314,17 +314,20 @@ public class WSDLSerializationUtil {
 
     /**
      * Adds the namespaces to the given OMElement
+     *
      * @param descriptionElement - The OMElement that the namespaces should be added to
-     * @param nameSpaceMap - The namespaceMap
+     * @param nameSpaceMap       - The namespaceMap
      */
     public static void populateNamespaces(OMElement descriptionElement, Map nameSpaceMap) {
-        Iterator keys = nameSpaceMap.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if ("".equals(key)) {
-                descriptionElement.declareDefaultNamespace((String) nameSpaceMap.get(key));
-            } else {
-                descriptionElement.declareNamespace((String) nameSpaceMap.get(key), key);
+        if (nameSpaceMap != null) {
+            Iterator keys = nameSpaceMap.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                if ("".equals(key)) {
+                    descriptionElement.declareDefaultNamespace((String) nameSpaceMap.get(key));
+                } else {
+                    descriptionElement.declareNamespace((String) nameSpaceMap.get(key), key);
+                }
             }
         }
     }

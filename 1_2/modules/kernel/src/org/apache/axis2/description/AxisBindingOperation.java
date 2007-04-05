@@ -19,6 +19,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -124,7 +125,8 @@ public class AxisBindingOperation extends AxisDescription {
                                                                   null, tns.getPrefix() + ":" +
                 this.name.getLocalPart()));
 
-        if (WSDL2Constants.URI_WSDL2_SOAP.equals(type)) {
+        if (WSDL2Constants.URI_WSDL2_SOAP.equals(type) || Constants.URI_SOAP11_HTTP.equals(type) ||
+                Constants.URI_SOAP12_HTTP.equals(type)) {
             // SOAP Binding specific properties
             property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_ACTION);
             if (property != null) {
