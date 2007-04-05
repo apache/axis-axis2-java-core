@@ -78,8 +78,6 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private String servicePath;
 
-    private boolean generateHttp = false;
-
     private HashMap policiesInDefinitions;
 
     private ExternalPolicySerializer serializer;
@@ -185,18 +183,8 @@ public class AxisService2OM implements Java2WSDLConstants {
         generatePortType(fac, ele);
         generateSOAP11Binding(fac, ele);
         generateSOAP12Binding(fac, ele);
-        // generateHttp
-        if (axisService.getParent() != null) {
-            AxisDescription axisdesc = axisService.getParent().getParent();
-            Parameter parameter = axisdesc.getParameter("enableHTTP");
-            if (parameter != null) {
-                Object value = parameter.getValue();
-                if ("true".equals(value.toString())) {
-                    generateHttp = true;
-                    generatePostBinding(fac, ele);
-                }
-            }
-        }
+        generateHTTPBinding(fac, ele);
+
         generateService(fac, ele);
         addPoliciesToDefinitionElement(policiesInDefinitions.values()
                 .iterator(), definition);
@@ -426,11 +414,7 @@ public class AxisService2OM implements Java2WSDLConstants {
 
         addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
                 .getPolicyInclude(), service, fac);
-
-        if (generateHttp) {
-            generateHTTPPorts(fac, service);
-        }
-
+        generateHTTPPorts(fac, service);
     }
 
     private void generateSOAP11Ports(OMFactory fac, OMElement service)
@@ -782,7 +766,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         }
     }
 
-    private void generatePostBinding(OMFactory fac, OMElement defintions)
+    private void generateHTTPBinding(OMFactory fac, OMElement defintions)
             throws Exception {
         OMElement binding = fac.createOMElement(BINDING_LOCAL_NAME, wsdl);
         defintions.addChild(binding);

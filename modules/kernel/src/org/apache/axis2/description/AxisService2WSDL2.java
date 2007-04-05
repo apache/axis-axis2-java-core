@@ -142,11 +142,15 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         // generate default endpoint elements.
         Map endpointMap = axisService.getEndpoints();
         if (endpointMap != null && endpointMap.size() > 0) {
+            String[] eprs = axisService.getEPRs();
+            if (eprs == null) {
+                eprs = new String[]{axisService.getName()};
+            }
             OMElement serviceElement = getServiceElement(tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
             while (iterator.hasNext()) {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
-                serviceElement.addChild(axisEndpoint.toWSDL20(tns, whttp));
+                serviceElement.addChild(axisEndpoint.toWSDL20(tns, whttp, eprs[0]));
 
                 descriptionElement.addChild(axisEndpoint.getBinding().toWSDL20(tns, wsoap, whttp,
                                                                                interfaceName,

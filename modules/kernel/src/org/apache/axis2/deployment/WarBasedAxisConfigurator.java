@@ -159,18 +159,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             log.error(e.getMessage(), e);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-        } finally {
-            try {
-                Parameter enableHttp = new Parameter("enableHTTP", "true");
-                if (axisConfig != null) {
-                    axisConfig.addParameter(enableHttp);
-                } else {
-                    log.error("axisConfig was null after initialization");
-                }
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
-            }
-        }
+        } 
     }
 
 
