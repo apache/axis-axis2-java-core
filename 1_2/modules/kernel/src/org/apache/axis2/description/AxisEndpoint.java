@@ -112,13 +112,13 @@ public class AxisEndpoint extends AxisDescription {
 
     }
 
-    public OMElement toWSDL20(OMNamespace tns, OMNamespace whttp) {
+    public OMElement toWSDL20(OMNamespace tns, OMNamespace whttp, String epr) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement endpointElement = omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, null);
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, this.getName()));
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":" + getBinding().getName().getLocalPart()));
-        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, getEndpointURL()));
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
         property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
         if (property != null) {
            endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp, property));
