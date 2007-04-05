@@ -154,7 +154,8 @@ public class AxisService2WSDL2 implements WSDL2Constants {
 
                 descriptionElement.addChild(axisEndpoint.getBinding().toWSDL20(tns, wsoap, whttp,
                                                                                interfaceName,
-                                                                               axisService.getNameSpacesMap()));
+                                                                               axisService.getNameSpacesMap(),
+                                                                               axisService.getWSAddressingFlag()));
             }
 
             descriptionElement.addChild(serviceElement);
