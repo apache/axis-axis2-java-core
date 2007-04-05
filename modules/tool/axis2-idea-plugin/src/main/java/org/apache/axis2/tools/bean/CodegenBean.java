@@ -469,8 +469,8 @@ public class CodegenBean {
     public File getTemp() {
 
         String time = Calendar.getInstance().getTime().toString().replace(':', '-');
-        File temp = new File( getActiveProject().getProjectFilePath() + File.separator + "temp-" + time);
-        return temp;
+        return new File( getOutput() + File.separator + "temp-" + time);
+
     }
 
     public Module[] getModules() {
