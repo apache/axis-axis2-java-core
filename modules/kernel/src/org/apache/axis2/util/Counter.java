@@ -22,44 +22,9 @@ import java.lang.reflect.Method;
 // Counter uses java.util.concurrent.atomic.AtomicLong if present,
 // else falls back to the backport version
 public class Counter {
-    private static Class clazz;
-    private static Method method;
-    private Object counter;
+    private long value = 0L;
 
-    static {
-        try {
-            clazz = Class.forName("java.util.concurrent.atomic.AtomicLong");
-        } catch (ClassNotFoundException e) {
-            try {
-                clazz = Class.forName("edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong");
-            } catch (ClassNotFoundException e1) {
-                throw new RuntimeException(e1);
-            }
-        }
-        try {
-            method = clazz.getMethod("incrementAndGet", new Class[]{});
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Counter() {
-        try {
-            counter = clazz.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public final synchronized long incrementAndGet() {
-        try {
-            return ((Long) method.invoke(counter, new Object[]{})).longValue();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public synchronized long incrementAndGet() {
+        return ++value;
+     }
 }

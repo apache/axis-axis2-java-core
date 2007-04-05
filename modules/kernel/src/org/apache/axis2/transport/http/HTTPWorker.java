@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.RequestResponseTransport;
@@ -30,14 +31,7 @@ import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
 import org.apache.axis2.transport.http.server.Worker;
 import org.apache.axis2.transport.http.util.RESTUtil;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.MethodNotSupportedException;
+import org.apache.http.*;
 import org.apache.http.entity.ContentProducer;
 import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
@@ -45,7 +39,9 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.ws.commons.schema.XmlSchema;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
@@ -185,9 +181,38 @@ public class HTTPWorker implements Worker {
                         response.setEntity(entity);
                         return;
                     } else {
-                        // no schema available by that name  - send 404
-                        response.setStatusLine(new BasicStatusLine(ver, 404, "Schema Not Found!"));
-                        return;
+                      final  InputStream in = service.getClassLoader()
+                                .getResourceAsStream(DeploymentConstants.META_INF + "/" + schemaName);
+                        if (in != null) {
+                            EntityTemplate entity = new EntityTemplate(new ContentProducer() {
+
+                                public void writeTo(final OutputStream outstream) {
+                                    try {
+                                        boolean checkLength = true;
+                                        int length = Integer.MAX_VALUE;
+                                        int nextValue = in.read();
+                                        if (checkLength) length--;
+                                        while (-1 != nextValue && length >= 0) {
+                                            outstream.write(nextValue);
+                                            nextValue = in.read();
+                                            if (checkLength) length--;
+                                        }
+
+                                        outstream.flush();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();  
+                                    }
+                                }
+                            });
+                            entity.setContentType("text/xml");
+                            response.setEntity(entity);
+                            return;
+                        } else {
+                            // no schema available by that name  - send 404
+                            response.setStatusLine(
+                                    new BasicStatusLine(ver, 404, "Schema Not Found!"));
+                            return;
+                        }
                     }
                 }
             }
@@ -214,15 +239,15 @@ public class HTTPWorker implements Worker {
             String contentType = processContentType(inentity, msgContext);
             if (HTTPTransportUtils.isRESTRequest(contentType)) {
                 pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
-                                                outbuffer.getOutputStream(), contentType);
+                        outbuffer.getOutputStream(), contentType);
             } else {
-                String ip = (String)msgContext.getProperty(MessageContext.TRANSPORT_ADDR);
-                if(ip!=null){
+                String ip = (String) msgContext.getProperty(MessageContext.TRANSPORT_ADDR);
+                if (ip != null) {
                     uri = ip + uri;
                 }
                 pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, inentity.getContent(),
-                                                               outbuffer.getOutputStream(),
-                                                               contentType, soapAction, uri);
+                        outbuffer.getOutputStream(),
+                        contentType, soapAction, uri);
             }
 
 
@@ -231,7 +256,7 @@ public class HTTPWorker implements Worker {
             HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
             String contentType = processContentType(inentity, msgContext);
             pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
-                                            outbuffer.getOutputStream(), contentType);
+                    outbuffer.getOutputStream(), contentType);
 
         } else if (method.equals(HTTPConstants.HEADER_DELETE)) {
             outbuffer = copyCommonProperties(msgContext, request);
@@ -303,7 +328,7 @@ public class HTTPWorker implements Worker {
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
         msgContext.setTo(new EndpointReference(request.getRequestLine().getUri()));
         msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                               new SimpleHTTPRequestResponseTransport());
+                new SimpleHTTPRequestResponseTransport());
         return outbuffer;
     }
 
@@ -325,18 +350,18 @@ public class HTTPWorker implements Worker {
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
         AxisFault faultToBeThrownOut = null;
-        
+
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
             signalResponseReady();
         }
 
-        public void awaitResponse() throws InterruptedException,AxisFault {
+        public void awaitResponse() throws InterruptedException, AxisFault {
             status = RequestResponseTransportStatus.WAITING;
             responseReadySignal.await();
-            
-            if (faultToBeThrownOut!=null)
-            	throw faultToBeThrownOut;
+
+            if (faultToBeThrownOut != null)
+                throw faultToBeThrownOut;
         }
 
         public void signalResponseReady() {
@@ -348,10 +373,10 @@ public class HTTPWorker implements Worker {
             return status;
         }
 
-		public void signalFaultReady(AxisFault fault) {
-			faultToBeThrownOut = fault;
-			signalResponseReady();
-		}
-        
+        public void signalFaultReady(AxisFault fault) {
+            faultToBeThrownOut = fault;
+            signalResponseReady();
+        }
+
     }
 }
