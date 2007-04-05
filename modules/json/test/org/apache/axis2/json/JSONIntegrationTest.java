@@ -79,9 +79,9 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
     }
 
     protected void tearDown() throws Exception {
-        if (count == 2) {
-            server.stop();
-        }
+    	if(count == 3){
+    		server.stop();
+    	}
     }
 
     protected OMElement createEnvelope() throws Exception {
@@ -99,12 +99,13 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         return rpcWrapEle;
     }
 
-    private void doEchoOM(String messageType) throws Exception {
-        OMElement payload = createEnvelope();
+    private void doEchoOM(String messageType, String httpMethod) throws Exception{
+    	OMElement payload = createEnvelope();
         Options options = new Options();
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setProperty(Constants.Configuration.HTTP_METHOD, httpMethod);
 //        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
         ServiceClient sender = new ServiceClient(configurationContext, null);
         options.setAction(null);
@@ -115,12 +116,17 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         compareWithCreatedOMText(ele.getText());
     }
 
-    public void testEchoOMWithJSONBadgerfish() throws Exception {
-        doEchoOM("application/json/badgerfish");
+
+    public void testEchoOMWithJSONBadgerfish() throws Exception{
+    	doEchoOM("application/json/badgerfish", Constants.Configuration.HTTP_METHOD_POST);
     }
 
     public void testEchoOMWithJSON() throws Exception {
-        doEchoOM("application/json");
+    	doEchoOM("application/json", Constants.Configuration.HTTP_METHOD_POST);
+    }
+
+    public void testEchoOMWithJSONInGET() throws Exception {
+        doEchoOM("application/json", Constants.Configuration.HTTP_METHOD_GET);
     }
 
     protected void compareWithCreatedOMText(String response) {

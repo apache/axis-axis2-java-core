@@ -118,6 +118,8 @@
                          class="org.apache.axis2.json.JSONBadgerfishMessageFormatter"/>
         <messageFormatter contentType="text/javascript"
                          class="org.apache.axis2.json.JSONMessageFormatter"/>
+        <messageFormatter contentType="application/x-www-form-urlencoded"
+                         class="org.apache.axis2.transport.http.XFormURLEncodedFormatter"/>
     </messageFormatters>
     
     <!-- ================================================= -->
