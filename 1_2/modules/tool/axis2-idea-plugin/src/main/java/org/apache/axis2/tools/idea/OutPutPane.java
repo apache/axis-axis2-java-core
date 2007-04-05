@@ -245,11 +245,11 @@ public class OutPutPane extends JPanel implements ActionListener {
             }
             c = parent.getComponent(0);
             if (c.isVisible()) {
-                c.setBounds(insets.left + 30, insets.top + 130, 150, 24);
+                c.setBounds(insets.left + 30, insets.top + 130, 350, 24);
             }
             c = parent.getComponent(1);
             if (c.isVisible()) {
-                c.setBounds(insets.left + 200, insets.top + 130, 150, 24);
+                c.setBounds(insets.left + 400, insets.top + 130, 80, 24);
             }
         }
     }
