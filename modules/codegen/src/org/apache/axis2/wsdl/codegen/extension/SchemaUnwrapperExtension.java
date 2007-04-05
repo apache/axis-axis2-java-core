@@ -279,7 +279,14 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 // traverse through them
                 if (item instanceof XmlSchemaElement) {
                     //add the element name to the part name list
-                    String partName = ((XmlSchemaElement)item).getName();
+                    XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
+                    XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
+                    String partName = null;
+                    if (xmlSchemaElement.getRefName() != null) {
+                        partName = xmlSchemaElement.getRefName().getLocalPart();
+                    } else {
+                        partName = xmlSchemaElement.getName();
+                    }
 
                     //  part names are not unique across messages. Hence
                     //  we need some way of making the part name a unique
