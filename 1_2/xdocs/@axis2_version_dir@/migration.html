@@ -84,27 +84,38 @@ public class TestClient {
 }</pre>
 
 <p><b>Axis 2</b></p>
-<pre>import ...
+<pre>
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+
+
 public class EchoBlockingClient {
-        private static EndpointReference targetEPR = new EndpointReference(
-        AddressingConstants.WSA_TO,
-                                "http://127.0.0.1:8080/axis2/services/MyService");
-        public static void main(String[] args) {
-                try {
-                        OMElement payload = ClientUtil.getEchoOMElement();
-                        Options options = new Options();
-                        ServiceClient client = new ServiceClient();
-                        options.setTo(targetEPR);
-                        //Blocking invocation
-                        OMElement result = client.sendReceive(payload);
-                        ...
-                } catch (AxisFault axisFault) {
-                        axisFault.printStackTrace();
-                } catch (XMLStreamException e) {
-                        e.printStackTrace();
-                }
-        }
-}</pre>
+	private static EndpointReference targetEPR = new EndpointReference(
+			"http://127.0.0.1:8080/axis2/services/MyService");
+	public static void main(String[] args) {
+		try {
+			OMFactory fac = OMAbstractFactory.getOMFactory();
+			OMNamespace omNs = fac.createOMNamespace("schema namespace", "ns1");
+			OMElement payload = fac.createOMElement("echo", omNs);
+			Options options = new Options();
+			ServiceClient client = new ServiceClient();
+			options.setTo(targetEPR);
+			//Blocking invocation
+			OMElement result = client.sendReceive(payload);
+
+		} catch (AxisFault axisFault) {
+			axisFault.printStackTrace();
+		}
+
+	}
+}
+</pre>
 
 <p>It has been clearly depicted that the invocation in Axis2 is dealt with
 the SOAP body element itself. Here the invocation is synchronous, but Axis2
