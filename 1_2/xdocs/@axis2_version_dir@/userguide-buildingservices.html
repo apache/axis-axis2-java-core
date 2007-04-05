@@ -204,8 +204,7 @@ message receiver class.</p>
 this case, that's the same directory that contains the org directory) and
 place the services.xml file in it.</p>
 
-<p>Create the .aar file by typing: jar cvf SampleService.aar
-./*</p>
+<p>Create the .aar file by typing: jar cvf SampleService.aar ./*</p>
 
 <p>Deploy the SampleService.aar file by using the <a
 href="webadminguide.html">Web Administration application</a> or by copying it
@@ -395,9 +394,9 @@ of this document, you will follow the steps below.</p>
 <p>As with generating clients, you will need the <a
 href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">Axis2
 Standard Distribution</a>, because the <a
-href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#war">Axis2 WAR
-Distribution</a> does not include the WSDL2Java utility. Once you've got it
-downloaded and unpacked, make sure that you set the AXIS2_HOME variable to
+href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#war">Axis2
+WAR Distribution</a> does not include the WSDL2Java utility. Once you've got
+it downloaded and unpacked, make sure that you set the AXIS2_HOME variable to
 point to the location in which you've unpacked it.</p>
 
 <p>Now you are ready to generate the actual service. To keep things neat,
@@ -413,13 +412,15 @@ file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p
 org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd</pre>
 
 <p>This statement tells the utility you want to create a service out of the
-operations in the file Axis2UserGuide.wsdl, and that the Java classes
-generated should be in the org.apache.axis2.axis2userguide package (-p). (You
-can view the appropriate directories created.) It also indicates that you
-want to use the Axis2 DataBinding Framework, or ADB (-d), to generate only
-synchronous or blocking code (-s), and to generate server-side code (-ss) as
-opposed to a client, including the services.xml service descriptor file
-(-sd). It also specifies version 1.1 for the WSDL file (-wv).</p>
+operations in the file <a
+href="userguide-codelisting5.html">Axis2UserGuide.wsdl</a>, and that the
+Java classes generated should be in the org.apache.axis2.axis2userguide
+package (-p). (You can view the appropriate directories created.) It also
+indicates that you want to use the Axis2 DataBinding Framework, or ADB (-d),
+to generate only synchronous or blocking code (-s), and to generate
+server-side code (-ss) as opposed to a client, including the services.xml
+service descriptor file (-sd). It also specifies version 1.1 for the WSDL
+file (-wv).</p>
 
 <p>At this point, you should see four new items in your chosen directory: the
 build.xml file, which includes instructions for Ant, the src directory, which
