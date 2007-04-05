@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -12,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.File;
 import java.net.MalformedURLException;
 
 /*
@@ -35,6 +37,7 @@ import java.net.MalformedURLException;
 public class ModuleDeployer implements Deployer {
 
     private static final Log log = LogFactory.getLog(ModuleDeployer.class);
+    private ConfigurationContext configCtx;
     private AxisConfiguration axisConfig;
 
 
@@ -47,6 +50,7 @@ public class ModuleDeployer implements Deployer {
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
+        this.configCtx = configCtx;
         this.axisConfig = configCtx.getAxisConfiguration();
     }
     //Will process the file and add that to axisConfig
@@ -55,14 +59,15 @@ public class ModuleDeployer implements Deployer {
         ArchiveReader archiveReader = new ArchiveReader();
         String moduleStatus = "";
         StringWriter errorWriter = new StringWriter();
-        boolean explodedDir = deploymentFileData.getFile().isDirectory();
+        boolean isDirectory = deploymentFileData.getFile().isDirectory();
         try {
-            deploymentFileData.setClassLoader(explodedDir,
-                                              axisConfig.getModuleClassLoader());
+            deploymentFileData.setClassLoader(isDirectory,
+                                              axisConfig.getModuleClassLoader(),
+                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
             AxisModule metaData = new AxisModule();
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
-            archiveReader.readModuleArchive(deploymentFileData, metaData, explodedDir,
+            archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory,
                                             axisConfig);
             metaData.setFileName(deploymentFileData.getFile().toURL());
             DeploymentEngine.addNewModule(metaData, axisConfig);

@@ -10,6 +10,7 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.AnnotationConstants;
@@ -68,10 +69,12 @@ public class POJODeployer implements Deployer {
                 File file = deploymentFileData.getFile();
                 if (file != null) {
                     File parentFile = file.getParentFile();
-                    DeploymentClassLoader classLoader =
-                            new DeploymentClassLoader(new URL[]{parentFile.toURL()},
-                                                      configCtx
-                                                              .getAxisConfiguration().getSystemClassLoader(),false);
+                    ClassLoader classLoader =
+                            Utils.createClassLoader(new URL[]{parentFile.toURL()},
+                                    configCtx.getAxisConfiguration().getSystemClassLoader(),
+                                    true,
+                                    (File)configCtx.getAxisConfiguration()
+                                            .getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");
@@ -166,9 +169,11 @@ public class POJODeployer implements Deployer {
                 ArrayList axisServiceList = new ArrayList();
                 for (int i = 0; i < classList.size(); i++) {
                     String className = (String) classList.get(i);
-                    DeploymentClassLoader classLoader = new DeploymentClassLoader(
+                    ClassLoader classLoader = Utils.createClassLoader(
                             new URL[]{deploymentFileData.getFile().toURL()},
-                            configCtx.getAxisConfiguration().getSystemClassLoader(),false);
+                            configCtx.getAxisConfiguration().getSystemClassLoader(),
+                            true,
+                            (File)configCtx.getAxisConfiguration().getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
