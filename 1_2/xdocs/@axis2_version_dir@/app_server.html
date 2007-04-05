@@ -83,8 +83,7 @@ is required:</p>
 
 <p>Adding the following to weblogic-application.xml should resolve the
 issue:</p>
-<pre>
-&lt;prefer-application-packages&gt;
+<pre>&lt;prefer-application-packages&gt;
 &lt;package-name&gt;com.ctc.wstx.*&lt;/package-name&gt;
 &lt;package-name&gt;javax.xml.*&lt;/package-name&gt;
 &lt;package-name&gt;org.apache.*&lt;/package-name&gt;
@@ -93,6 +92,6 @@ issue:</p>
 <p></p>
 
 <p>Note that the classes - Xerces, StAX API, Woodstox need to be on the
-classpath</p>
+application classpath</p>
 </body>
 </html>
