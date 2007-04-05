@@ -483,9 +483,18 @@ class EndpointDescriptionImpl
                         // does not extend Exception, so lets catch everything that extends Throwable
                         // rather than just Exception.
                     } catch (Throwable e) {
-                        // TODO: Throwing wrong exception
-                        e.printStackTrace();
-                        throw new UnsupportedOperationException("Can't create SEI class: " + e);
+                        // FIXME: We should be trying the AxisService Class loader first and then fall back
+                        //        Am doing it the other way round for now.
+                        try {
+                            seiClass = forName(seiClassName, false,
+                                               axisService.getClassLoader());
+                        } catch (Throwable ex) {
+                            log.debug(e);
+                        }
+                        if(seiClass == null){
+                            log.debug(e);
+                            throw new UnsupportedOperationException("Can't create SEI class: " + e);
+                        }
                     }
                 }
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(seiClass, this);
