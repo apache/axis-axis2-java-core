@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
   <title>Application Server Specific Configuration Guide</title>
@@ -21,10 +21,11 @@ href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a>.
 ( Subscription details are available on the <a
 href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
 prefix subject with [Axis2].</p>
-
-<a name="weblogic_websphere"></a>
+<a></a>
 
 <h3>WebLogic/ WebSphere</h3>
+
+<p><strong>1. Use exploded configuration to deploy Axis2 WAR</strong></p>
 
 <p>We recommend using the exploded configuration to deploy Axis2 WAR in
 WebLogic and WebSphere application servers to support the hotupdate/
@@ -70,5 +71,28 @@ information:</p>
     href="http://publib.boulder.ibm.com/infocenter/wsiihelp/v8r3/index.jsp?topic=/com.ibm.websphere.ii.product.ce.doc/configuring/iiyviigdepwebexpl.htm">Deploying
     the Web application in exploded form</a></li>
 </ul>
+
+<p><strong>2. Lack of namespacing on serialised items</strong></p>
+
+<p>BEA WebLogic Server 9.0 comes with its own StAX implementation. This
+results in lack of namespacing on serialised items. In turn, WeLogic server
+(WLS) breaks with AXIOM on the WLS classpath. Hence a filtering classloader
+is required:</p>
+
+<p></p>
+
+<p>Adding the following to weblogic-application.xml should resolve the
+issue:</p>
+<pre>
+&lt;prefer-application-packages&gt;
+&lt;package-name&gt;com.ctc.wstx.*&lt;/package-name&gt;
+&lt;package-name&gt;javax.xml.*&lt;/package-name&gt;
+&lt;package-name&gt;org.apache.*&lt;/package-name&gt;
+&lt;/prefer-application-packages&gt;</pre>
+
+<p></p>
+
+<p>Note that the classes - Xerces, StAX API, Woodstox need to be on the
+classpath</p>
 </body>
 </html>
