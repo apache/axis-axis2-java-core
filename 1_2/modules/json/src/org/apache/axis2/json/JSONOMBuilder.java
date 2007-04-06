@@ -16,13 +16,19 @@
 
 package org.apache.axis2.json;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayInputStream;
+
+import org.apache.axiom.om.*;
+
 import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.util.URIEncoderDecoder;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 
@@ -38,13 +44,40 @@ public class JSONOMBuilder implements Builder {
     }
 
     //returns the OMSourcedElementImpl with JSONDataSource inside
-    public OMElement processDocument(InputStream inputStream, String contentType,
-                                     MessageContext messageContext) throws AxisFault {
+
+    public OMElement processDocument(InputStream inputStream, String contentType, MessageContext messageContext) throws AxisFault {
         String localName = "";
         String prefix = "";
         OMNamespace ns = new OMNamespaceImpl("", "");
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
+
+        //if the input stream is null, then check whether the HTTP method is GET, if so get the JSON String which is received as a parameter, and make it an
+        //input stream
+
+        if (inputStream == null) {
+            EndpointReference endpointReference = messageContext.getTo();
+            if (endpointReference == null) {
+                throw new AxisFault("Cannot create DocumentElement without destination EPR");
+            }
+
+            String requestURL;
+            try {
+                requestURL = URIEncoderDecoder.decode(endpointReference.getAddress());
+            } catch (UnsupportedEncodingException e) {
+                throw new AxisFault(e);
+            }
+
+            String jsonString;
+            int index;
+            if ((index = requestURL.indexOf("=")) > 0) {
+                jsonString = requestURL.substring(index + 1);
+                inputStream = new ByteArrayInputStream(jsonString.getBytes());
+            } else {
+                throw new AxisFault("No JSON message received through HTTP GET or POST");
+            }
+        }
+
         try {
             char temp = (char)inputStream.read();
             while (temp != ':') {
@@ -77,8 +110,7 @@ public class JSONOMBuilder implements Builder {
         return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
     }
 
-    protected JSONDataSource getDataSource(InputStream jsonInputStream, String prefix,
-                                           String localName) {
+    protected JSONDataSource getDataSource(InputStream jsonInputStream, String prefix, String localName) {
         return new JSONDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
     }
 }

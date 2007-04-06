@@ -24,18 +24,17 @@ import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -158,7 +157,6 @@ public class JSONMessageFormatter implements MessageFormatter {
                         OutputStream out, boolean preserve) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
         try {
-
             //Mapped format cannot handle element with namespaces.. So cannot handle Faults
             if (element instanceof SOAPFault && this instanceof JSONMessageFormatter) {
                 SOAPFault fault = (SOAPFault)element;
@@ -170,6 +168,7 @@ public class JSONMessageFormatter implements MessageFormatter {
                     getStringToWrite(((OMSourcedElementImpl)element).getDataSource()) != null) {
                 String jsonToWrite =
                         getStringToWrite(((OMSourcedElementImpl)element).getDataSource());
+
                 out.write(jsonToWrite.getBytes());
             } else {
                 XMLStreamWriter jsonWriter = getJSONWriter(out);
@@ -192,53 +191,39 @@ public class JSONMessageFormatter implements MessageFormatter {
 
         String httpMethod =
                 (String)msgCtxt.getProperty(Constants.Configuration.HTTP_METHOD);
+        OMElement dataOut = msgCtxt.getEnvelope().getBody().getFirstElement();
 
-        //if the http method is GET, parameters are attached to the target URL
-        if ((httpMethod != null)
+        //if the http method is GET, send the json string as a parameter
+        if (dataOut != null && (httpMethod != null)
                 && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-            String param = getParam(msgCtxt);
-
-            if (param != null && param.length() > 0) {
-                String returnURLFile = targetURL.getFile() + "?" + param;
-                try {
-                    return new URL(targetURL.getProtocol(), targetURL.getHost(),
-                                   targetURL.getPort(), returnURLFile);
-                } catch (MalformedURLException e) {
-                    throw new AxisFault(e);
+            try {
+                String jsonString;
+                if (dataOut instanceof OMSourcedElementImpl && getStringToWrite(((OMSourcedElementImpl) dataOut).getDataSource()) != null)
+                {
+                    jsonString = getStringToWrite(((OMSourcedElementImpl) dataOut).getDataSource());
+                } else {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    XMLStreamWriter jsonWriter = getJSONWriter(out);
+                    dataOut.serializeAndConsume(jsonWriter);
+                    jsonWriter.writeEndDocument();
+                    jsonString = new String(out.toByteArray());
                 }
-            } else {
-                return targetURL;
+                jsonString = URIEncoderDecoder.quoteIllegal(jsonString, WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
+                String param = "query=" + jsonString;
+                String returnURLFile = targetURL.getFile() + "?" + param;
+
+
+                return new URL(targetURL.getProtocol(), targetURL.getHost(), targetURL.getPort(), returnURLFile);
+            } catch (MalformedURLException e) {
+                throw new AxisFault(e);
+            } catch (XMLStreamException e) {
+                throw new AxisFault(e);
+            } catch (UnsupportedEncodingException e) {
+                throw new AxisFault(e);
             }
         } else {
             return targetURL;
         }
-    }
-
-    private String getParam(MessageContext msgContext) {
-        OMElement dataOut;
-
-        dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-
-        Iterator iter1 = dataOut.getChildElements();
-        ArrayList paraList = new ArrayList();
-
-        while (iter1.hasNext()) {
-            OMElement ele = (OMElement)iter1.next();
-            String parameter;
-
-            parameter = ele.getLocalName() + "=" + ele.getText();
-            paraList.add(parameter);
-        }
-
-        String paraString = "";
-        int count = paraList.size();
-
-        for (int i = 0; i < count; i++) {
-            String c = (String)paraList.get(i);
-            paraString = "".equals(paraString) ? c : (paraString + "&" + c);
-        }
-
-        return paraString;
     }
 
 }
