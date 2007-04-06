@@ -330,46 +330,21 @@ public class ExtensionUtility {
                     XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
                     boolean isArray = (xmlSchemaElement.getMaxOccurs() - xmlSchemaElement.getMinOccurs()) > 1;
 
-//                    XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();
-//                    if (eltSchemaType != null) {
-//                        //there is a schema type object.We can utilize that
-//                        populateClassName(eltSchemaType.getMetaInfoMap(),
-//                                mapper,
-//                                opName,
-//                                isArray,
-//                                xmlSchemaElement.getName(),
-//                                qnameSuffix);
-//                    } else if (xmlSchemaElement.getSchemaTypeName() != null) {
-//                        //there is no schema type object but there is a
-//                        //schema type QName.  Use that Qname to look up the
-//                        //schematype in other schema objects
-//                        eltSchemaType = findSchemaType(schemaMap,
-//                                xmlSchemaElement.getSchemaTypeName());
-//                        if (eltSchemaType != null) {
-//                            populateClassName(eltSchemaType.getMetaInfoMap(),
-//                                    mapper,
-//                                    opName,
-//                                    isArray,
-//                                    xmlSchemaElement.getName(),
-//                                    qnameSuffix);
-//                        } else if (xmlSchemaElement.getSchemaTypeName().equals(SchemaConstants.XSD_ANYTYPE)) {
-//                            QName partQName = WSDLUtil.getPartQName(opName,
-//                                    qnameSuffix,
-//                                    xmlSchemaElement.getName());
-//
-//                            if (xmlSchemaElement.getMaxOccurs() > 1) {
-//                                mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement[]");
-//                            } else {
-//                                mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
-//                            }
-//                        }
-//                    }
+                    XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
+                    String partName = null;
+                    if (xmlSchemaElement.getRefName() != null) {
+                        partName = xmlSchemaElement.getRefName().getLocalPart();
+                    } else {
+                        partName = xmlSchemaElement.getName();
+                    }
+
+
                     // get the element class name from the element and populate the mapper
                     populateClassName(xmlSchemaElement.getMetaInfoMap(),
                                     mapper,
                                     opName,
                                     isArray,
-                                    xmlSchemaElement.getName(),
+                                    partName,
                                     qnameSuffix);
                 } else if (item instanceof XmlSchemaAny) {
 

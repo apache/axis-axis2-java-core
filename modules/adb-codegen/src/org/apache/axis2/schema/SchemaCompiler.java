@@ -1595,21 +1595,34 @@ public class SchemaCompiler {
             QName attributeQName = att.getQName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
-                QName schemaTypeQName = att.getSchemaTypeName();
-                if (schemaTypeQName == null) {
-                    // set the parent schema target name space since attribute Qname uri is ""
-                    schemaTypeQName = new QName(parentSchema.getTargetNamespace(), attributeQName.getLocalPart() + getNextTypeSuffix());
+                if (attributeSimpleType == null) {
+                    // try to get the schema for using qname
+                    QName attributeSchemaQname = att.getSchemaTypeName();
+                    if (attributeSchemaQname != null) {
+                        attributeSimpleType = (XmlSchemaSimpleType) getType(parentSchema, attributeSchemaQname);
+                    }
                 }
-                processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
-                metainf.registerMapping(att.getQName(),
-                        schemaTypeQName,
-                        processedTypemap.get(schemaTypeQName).toString(),
-                        SchemaConstants.ATTRIBUTE_TYPE);
-                // add optional attribute status if set
-                String use = att.getUse().getValue();
-                if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                    metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+
+                if (attributeSimpleType != null) {
+                    QName schemaTypeQName = att.getSchemaTypeName();
+                    if (schemaTypeQName == null) {
+                        // set the parent schema target name space since attribute Qname uri is ""
+                        schemaTypeQName = new QName(parentSchema.getTargetNamespace(), attributeQName.getLocalPart() + getNextTypeSuffix());
+                    }
+                    processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
+                    metainf.registerMapping(att.getQName(),
+                            schemaTypeQName,
+                            processedTypemap.get(schemaTypeQName).toString(),
+                            SchemaConstants.ATTRIBUTE_TYPE);
+                    // add optional attribute status if set
+                    String use = att.getUse().getValue();
+                    if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
+                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                    }
+                } else {
+                    // TODO: handle the case when no attribute type specifed
                 }
+
             }
 
         }

@@ -20,8 +20,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -99,24 +98,40 @@ public class AxisMessage extends AxisDescription {
     }
 
     public XmlSchemaElement getSchemaElement() {
+        XmlSchemaElement xmlSchemaElement = null;
         AxisService service = (AxisService) getParent().getParent();
         ArrayList schemas = service.getSchema();
-        for (int i = 0; i < schemas.size(); i++) {
-            XmlSchema schema = (XmlSchema) schemas.get(i);
-            if (schema.getItems() != null) {
-                Iterator schemaItems = schema.getItems().getIterator();
-                while (schemaItems.hasNext()) {
-                    Object item = schemaItems.next();
-                    if (item instanceof XmlSchemaElement) {
-                        XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
-                        if (xmlSchemaElement.getQName().equals(this.elementQname)) {
-                            return xmlSchemaElement;
+        for (Iterator schemaIter = schemas.iterator(); schemaIter.hasNext();){
+            xmlSchemaElement = getSchemaElement((XmlSchema) schemaIter.next());
+        }
+        return xmlSchemaElement;
+    }
+
+    private XmlSchemaElement getSchemaElement(XmlSchema schema) {
+        XmlSchemaElement xmlSchemaElement = null;
+        if (schema != null) {
+            xmlSchemaElement = schema.getElementByName(this.elementQname);
+            if (xmlSchemaElement == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaElement = getSchemaElement(schema1);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaElement = getSchemaElement(schema1);
                         }
                     }
                 }
             }
         }
-        return null;
+        return xmlSchemaElement;
     }
 
     public String getName() {
