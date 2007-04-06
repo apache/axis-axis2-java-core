@@ -66,22 +66,27 @@ the phase rules. These are ordered to specific service(s).</p>
 <p>Let's look at a simple example of echoing at client API.</p>
 
 <p><b>Axis 1.x</b></p>
-<pre>import ...
+<pre>
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import javax.xml.namespace.QName;
+   
 public class TestClient {
-        public static void main(String [] args) {
-                try {
-                        String endpoint = ... ;
-                        Service axisService = new Service();
-                        Call call = (Call) axisService.createCall();
-                        call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-                        call.setOperationName(new QName("http://soapinterop.org/", echoString"));
-                        String ret = (String) call.invoke( new Object[] { "Hello!" } );
-                        System.out.println("Sent 'Hello!', got '" + ret + "'");
-                } catch (Exception e) {
-                        System.err.println(e.toString());
-                }
-        }
-}</pre>
+  public static void main(String [] args) {
+    try {
+      String endpoint ="http://ws.apache.org:5049/axis/services/echo";
+      Service  service = new Service();
+      Call     call    = (Call) service.createCall();
+      call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+      call.setOperationName(new QName("http://soapinterop.org/", echoString"));
+      String ret = (String) call.invoke( new Object[] { "Hello!" } );
+      System.out.println("Sent 'Hello!', got '" + ret + "'");
+    } catch (Exception e) {
+       System.err.println(e.toString());
+    }
+  }
+}
+</pre>
 
 <p><b>Axis 2</b></p>
 <pre>
@@ -101,8 +106,9 @@ public class EchoBlockingClient {
 	public static void main(String[] args) {
 		try {
 			OMFactory fac = OMAbstractFactory.getOMFactory();
-			OMNamespace omNs = fac.createOMNamespace("schema namespace", "ns1");
-			OMElement payload = fac.createOMElement("echo", omNs);
+			OMNamespace ns = fac.createOMNamespace("http://soapinterop.org/", "ns1");
+			OMElement payload = fac.createOMElement("echoString", ns);
+			payload.setText("Hello!");
 			Options options = new Options();
 			ServiceClient client = new ServiceClient();
 			options.setTo(targetEPR);
