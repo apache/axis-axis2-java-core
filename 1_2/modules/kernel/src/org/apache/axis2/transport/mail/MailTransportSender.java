@@ -116,9 +116,6 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
 
     private ByteArrayOutputStream byteArrayOutputStream;
     // assosiation with OMOutputFormat
-    private final OMOutputFormat format = new OMOutputFormat();
-
-    private final MailToInfo mailToInfo = new MailToInfo();
 
     private final static String NAME = "MailTransportSender";
 
@@ -152,9 +149,6 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             if (paramKey.equals(Constants.SMTP_USER_PASSWORD)) {
                 password = paramValue;
             }
-            if (paramKey.equals(Constants.RAPLY_TO)) {
-                mailToInfo.setFromAddress(paramValue);
-            }
 
         }
         passwordAuthentication = new PasswordAuthentication(username, password);
@@ -178,7 +172,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
                 passwordAuthentication = new PasswordAuthentication(username, passwd);
             } else if (obj instanceof java.util.Properties) {
                 smtpProperties.clear();
-                java.util.Properties props = (java.util.Properties)obj;
+                java.util.Properties props = (java.util.Properties) obj;
                 smtpProperties.putAll(props);
             }
         }
@@ -201,14 +195,13 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
                     (String) msgContext.getProperty(
                             org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING);
             if (charSet == null) {
-                charSet =
-                        MessageContext.DEFAULT_CHAR_SET_ENCODING;// Since we are deleaing only SOAP and XML messages here
+                charSet = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
+
+            OMOutputFormat format = new OMOutputFormat();
+
             format.setSOAP11(msgContext.isSOAP11());
             format.setCharSetEncoding(charSet);
-
-            parseMailToAddress(msgContext.getTo());
-
             // Check if msg is 'In-Reply-To' received message
             OutTransportInfo transportInfo = (OutTransportInfo) msgContext
                     .getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
@@ -220,48 +213,13 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
                 sender.setInReplyTo(mailTransportInfo.getInReplyTo());
                 sender.setFrom(mailTransportInfo.getFrom());
             }
+            sender.setFormat(format);
 
-            sender.send(mailToInfo, format);
+            sender.send();
 
         } catch (IOException e) {
             throw new AxisFault(e);
         }
-    }
-
-    private void parseMailToAddress(EndpointReference epr) {
-        String eprAddress = epr.getAddress();
-        //TODO URl validation according to rfc :  http://www.ietf.org/rfc/rfc2368.txt
-
-        int mailToIndex = eprAddress.indexOf("mailto:");
-        if (mailToIndex > -1) {
-            eprAddress = eprAddress.substring(mailToIndex + 7);
-        }
-        int index = eprAddress.indexOf('?');
-        String contentDescription = "";
-        String email;
-        boolean xServicePath = false;
-
-
-        if (index > -1) {
-            email = eprAddress.substring(0, index);
-        } else {
-            email = eprAddress;
-        }
-
-        if (eprAddress.indexOf(Constants.X_SERVICE_PATH) > -1) {
-            index = eprAddress.indexOf('=');
-            if (index > -1) {
-                xServicePath = true;
-                contentDescription = eprAddress.substring(index + 1);
-            }
-        } else {
-            contentDescription = eprAddress.substring(index + 1);
-
-        }
-        mailToInfo.setContentDescription(contentDescription);
-        mailToInfo.setEmailAddress(email);
-        mailToInfo.setxServicePath(xServicePath);
-
     }
 
     public void writeMimeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
@@ -283,7 +241,6 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     }
 
     /**
-     *
      * @param msgContext
      * @return
      * @throws AxisFault
