@@ -52,7 +52,7 @@ public class Java2CodeFrame extends JFrame {
 
     // To keep the value of wsdl wizzard
     private CodegenBean codegenBean;
-
+    private int defaultCloseOperation;
     public Java2CodeFrame() {
         windowLayout customLayout = new windowLayout(1);
 
@@ -88,6 +88,26 @@ public class Java2CodeFrame extends JFrame {
         Dimension dim = new Dimension(450, 600);
         setSize(dim);
         setBounds(200, 200, dim.width, dim.height);
+    }
+
+    public void setDefaultCloseOperation(int operation) {
+        if (operation != DO_NOTHING_ON_CLOSE &&
+                operation != HIDE_ON_CLOSE &&
+                operation != DISPOSE_ON_CLOSE &&
+                operation != EXIT_ON_CLOSE) {
+            throw new IllegalArgumentException("defaultCloseOperation must be one of: DO_NOTHING_ON_CLOSE, HIDE_ON_CLOSE, DISPOSE_ON_CLOSE, or EXIT_ON_CLOSE");
+        }
+        if (this.defaultCloseOperation != operation) {
+            if (operation == EXIT_ON_CLOSE) {
+                SecurityManager security = System.getSecurityManager();
+                if (security != null) {
+                    security.checkExit(0);
+                }
+            }
+            int oldValue = this.defaultCloseOperation;
+            this.defaultCloseOperation = operation;
+            firePropertyChange("defaultCloseOperation", oldValue, operation);
+        }
     }
 
     public void setProject(Project project) {
@@ -213,6 +233,7 @@ public class Java2CodeFrame extends JFrame {
 
             copyDirectory(new File(temp + File.separator + "src"), new File(codegenBean.getOutput()+File.separator + ".." + File.separator + "src") );
             copyDirectory(new File(temp + File.separator + "lib"), new File(codegenBean.getOutput() + File.separator + ".." + File.separator + "lib"));
+            copyFiles(new File(temp + File.separator + "build.xml"), new File(codegenBean.getOutput() + File.separator + ".." + File.separator + "build.xml"));
 
         } catch (Exception e1) {
 
