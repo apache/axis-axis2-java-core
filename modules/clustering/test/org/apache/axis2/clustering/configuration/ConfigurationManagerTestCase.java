@@ -34,7 +34,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
        	configurationManagerListener2.clearEventList();
        	
     	String serviceGroupName = "testService";
-    	clusterManager1.getConfigurationManager().loadServiceGroup(serviceGroupName);
+    	clusterManager1.getConfigurationManager().loadServiceGroups(new String[]{serviceGroupName});
     	
     	try {
 			Thread.sleep(3000);
@@ -56,7 +56,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     	configurationManagerListener2.clearEventList();
     	
     	String serviceGroupName = "testService";
-    	clusterManager1.getConfigurationManager().unloadServiceGroup (serviceGroupName);
+    	clusterManager1.getConfigurationManager().unloadServiceGroups(new String[]{serviceGroupName});
     	
     	try {
 			Thread.sleep(3000);
