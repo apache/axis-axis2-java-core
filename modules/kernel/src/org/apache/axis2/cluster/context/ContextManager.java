@@ -19,12 +19,18 @@ package org.apache.axis2.cluster.context;
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.ParameterInclude;
 
-public interface ContextManager {
+public interface ContextManager extends ParameterInclude {
     public void addContext(AbstractContext context) throws ClusteringFault;
+
     public void removeContext(AbstractContext context) throws ClusteringFault;
+
     public void updateState(AbstractContext context) throws ClusteringFault;
-    public boolean isContextClusterable (AbstractContext context) throws ClusteringFault;
-    public void addContextManagerListener (ContextManagerListener listener);
-    public void setConfigurationContext (ConfigurationContext configurationContext);
+
+    public boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
+
+    public void addContextManagerListener(ContextManagerListener listener);
+
+    public void setConfigurationContext(ConfigurationContext configurationContext);
 }

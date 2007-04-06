@@ -23,20 +23,22 @@ import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.AxisFault;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
 import org.apache.neethi.Policy;
+import org.apache.axiom.om.OMElement;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class TribesConfigurationManager implements ConfigurationManager {
 
     private List listeners = null;
     private ChannelSender sender = null;
     private ConfigurationContext configurationContext = null;
+    private Map parameters = new HashMap();
 
     public TribesConfigurationManager() {
         listeners = new ArrayList();
@@ -52,7 +54,7 @@ public class TribesConfigurationManager implements ConfigurationManager {
 
     public void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault {
         ConfigurationCommand command = new ConfigurationCommand(CommandType.APPLY_POLICY);
-        command.setSgcName(serviceGroupName);
+        command.setServiceGroupName(serviceGroupName);
         command.setPolicyId(policy.getId());
         send(command);
     }
@@ -66,9 +68,9 @@ public class TribesConfigurationManager implements ConfigurationManager {
         send(throwable);
     }
 
-    public void loadServiceGroup(String serviceGroupName) throws ClusteringFault {
-        ConfigurationCommand command = new ConfigurationCommand(CommandType.LOAD_SERVICE_GROUP);
-        command.setSgcName(serviceGroupName);
+    public void loadServiceGroups(String[] serviceGroupNames) throws ClusteringFault {
+        ConfigurationCommand command = new ConfigurationCommand(CommandType.LOAD_SERVICE_GROUPS);
+        command.setServiceGroupNames(serviceGroupNames);
         send(command);
     }
 
@@ -87,9 +89,9 @@ public class TribesConfigurationManager implements ConfigurationManager {
         send(command);
     }
 
-    public void unloadServiceGroup(String serviceGroupName) throws ClusteringFault {
-        ConfigurationCommand command = new ConfigurationCommand(CommandType.UNLOAD_SERVICE_GROUP);
-        command.setSgcName(serviceGroupName);
+    public void unloadServiceGroups(String[] serviceGroupNames) throws ClusteringFault {
+        ConfigurationCommand command = new ConfigurationCommand(CommandType.UNLOAD_SERVICE_GROUPS);
+        command.setServiceGroupNames(serviceGroupNames);
         send(command);
     }
 
@@ -120,15 +122,15 @@ public class TribesConfigurationManager implements ConfigurationManager {
         for (Iterator it = listeners.iterator(); it.hasNext();) {
             ConfigurationManagerListener listener = (ConfigurationManagerListener) it.next();
 
-            if (CommandType.LOAD_SERVICE_GROUP == command) {
-                listener.serviceGroupLoaded(event);
-            } else if (CommandType.UNLOAD_SERVICE_GROUP == command) {
-                listener.serviceGroupUnloaded(event);
+            if (CommandType.LOAD_SERVICE_GROUPS == command) {
+                listener.serviceGroupsLoaded(event);
+            } else if (CommandType.UNLOAD_SERVICE_GROUPS == command) {
+                listener.serviceGroupsUnloaded(event);
             } else if (CommandType.APPLY_POLICY == command) {
                 listener.policyApplied(event);
             } else if (CommandType.RELOAD_CONFIGURATION == command) {
                 listener.configurationReloaded(event);
-            } else if (CommandType.PREPARE == command) {            
+            } else if (CommandType.PREPARE == command) {
                 listener.prepareCalled(event);
             } else if (CommandType.COMMIT == command) {
                 listener.commitCalled(event);
@@ -144,5 +146,33 @@ public class TribesConfigurationManager implements ConfigurationManager {
             ConfigurationManagerListener listener = (ConfigurationManagerListener) it.next();
             listener.setConfigurationContext(configurationContext);
         }
+    }
+
+    public void addParameter(Parameter param) throws AxisFault {
+        parameters.put(param.getName(), param);
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        parameters.remove(param.getName());
+    }
+
+    public Parameter getParameter(String name) {
+        return (Parameter) parameters.get(name);
+    }
+
+    public ArrayList getParameters() {
+        ArrayList list = new ArrayList();
+        for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
+            list.add(parameters.get(iter.next()));
+        }
+        return list;
+    }
+
+    public boolean isParameterLocked(String parameterName) {
+        return getParameter(parameterName).isLocked();
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        throw new UnsupportedOperationException();
     }
 }

@@ -145,7 +145,6 @@ public class TribesClusterManager implements ClusterManager {
 		for (Iterator it=parameters.keySet().iterator();it.hasNext();) {
 			list.add(parameters.get(it.next()));
 		}
-
 		return list;
 	}
 

@@ -17,18 +17,19 @@
 package org.apache.axis2.cluster.configuration;
 
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.ParameterInclude;
 import org.apache.neethi.Policy;
 
-public interface ConfigurationManager {
+public interface ConfigurationManager extends ParameterInclude {
 
     /*
       * Configuration management methods
       */
-    void loadServiceGroup(String serviceGroupName) throws ClusteringFault;
 
-    void unloadServiceGroup(String serviceGroupName) throws ClusteringFault;
+    void loadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
+
+    void unloadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
 
     void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault;
 

@@ -24,8 +24,8 @@ import java.util.ArrayList;
 
 public class TestConfigurationManagerListener implements ConfigurationManagerListener {
 
-    ArrayList eventList = null;
-    private ConfigurationContext configurationContext = null;
+    private ArrayList eventList;
+    private ConfigurationContext configurationContext;
 
     public TestConfigurationManagerListener() {
         eventList = new ArrayList();
@@ -63,11 +63,11 @@ public class TestConfigurationManagerListener implements ConfigurationManagerLis
         eventList.add(event);
     }
 
-    public void serviceGroupLoaded(ConfigurationEvent event) {
+    public void serviceGroupsLoaded(ConfigurationEvent event) {
         eventList.add(event);
     }
 
-    public void serviceGroupUnloaded(ConfigurationEvent event) {
+    public void serviceGroupsUnloaded(ConfigurationEvent event) {
         eventList.add(event);
     }
 

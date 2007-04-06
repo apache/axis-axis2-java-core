@@ -37,162 +37,159 @@ import org.apache.commons.logging.LogFactory;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
 
-	ContextUpdater updater = null;
-	TribesContextManager contextManager = null;
-	TribesConfigurationManager configurationManager = null;
-	
+    ContextUpdater updater = null;
+    TribesContextManager contextManager = null;
+    TribesConfigurationManager configurationManager = null;
+
     private static final Log log = LogFactory.getLog(ChannelListener.class);
-    
-	public ChannelListener (TribesConfigurationManager configurationManager, TribesContextManager contextManager) {
-		this.configurationManager = configurationManager;
-		this.contextManager = contextManager;
-	}
-	
-	public void setContextManager(TribesContextManager contextManager) {
-		this.contextManager = contextManager;
-	}
-	
-	public void setConfigurationManager(TribesConfigurationManager configurationManager) {
-		this.configurationManager = configurationManager;
-	}
 
-	public void setUpdater(ContextUpdater updater) {
-		this.updater = updater;
-	}
+    public ChannelListener(TribesConfigurationManager configurationManager,
+                           TribesContextManager contextManager) {
+        this.configurationManager = configurationManager;
+        this.contextManager = contextManager;
+    }
 
-	public boolean accept(Serializable msg, Member sender) {
-		return true;
-	}
+    public void setContextManager(TribesContextManager contextManager) {
+        this.contextManager = contextManager;
+    }
 
-	public void messageReceived(Serializable msg, Member sender) {
+    public void setConfigurationManager(TribesConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+    }
 
-		
-		if (msg instanceof ContextCommandMessage) {
-			
-			ContextCommandMessage comMsg = (ContextCommandMessage) msg;
+    public void setUpdater(ContextUpdater updater) {
+        this.updater = updater;
+    }
 
-			// TODO make sure to remove from the duplicate lists when remove is
-			// requested for both service group and service contexts
-			// TODO fix this to support scopes other than SOAP Session.
+    public boolean accept(Serializable msg, Member sender) {
+        return true;
+    }
 
-			if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_GROUP_CONTEXT) {
+    public void messageReceived(Serializable msg, Member sender) {
 
-				// add to the duplicate list to prevent cyclic replication
-				contextManager.addToDuplicateServiceGroupContexts(comMsg.getContextId());
-				updater.addServiceGroupContext(comMsg.getContextId());
 
-				ContextEvent event = new ContextEvent();
-				event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
-				event.setContextID(comMsg.getContextId());
-				event.setParentContextID(comMsg.getParentId());
-				event.setDescriptionID(comMsg.getAxisDescriptionName());
+        if (msg instanceof ContextCommandMessage) {
 
-				contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
+            ContextCommandMessage comMsg = (ContextCommandMessage) msg;
 
-			} else if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_CONTEXT) {
+            // TODO make sure to remove from the duplicate lists when remove is
+            // requested for both service group and service contexts
+            // TODO fix this to support scopes other than SOAP Session.
 
-				// add to the duplicate list to prevent cyclic replication
-				contextManager.addToDuplicateServiceContexts(comMsg.getParentId()
-						+ comMsg.getContextId());
-				updater.addServiceContext(comMsg.getParentId(), comMsg.getContextId());
+            if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_GROUP_CONTEXT) {
 
-				ContextEvent event = new ContextEvent();
-				event.setContextType(ContextType.SERVICE_CONTEXT);
-				event.setContextID(comMsg.getContextId());
-				event.setParentContextID(comMsg.getParentId());
-				event.setDescriptionID(comMsg.getAxisDescriptionName());
+                // add to the duplicate list to prevent cyclic replication
+                contextManager.addToDuplicateServiceGroupContexts(comMsg.getContextId());
+                updater.addServiceGroupContext(comMsg.getContextId());
 
-				contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
+                ContextEvent event = new ContextEvent();
+                event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
+                event.setContextID(comMsg.getContextId());
+                event.setParentContextID(comMsg.getParentId());
+                event.setDescriptionID(comMsg.getAxisDescriptionName());
 
-			} else if (comMsg.getCommandType() == CommandType.UPDATE_STATE) {
+                contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
 
-				if (comMsg.getContextType() == ContextType.SERVICE_GROUP_CONTEXT) {
+            } else if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_CONTEXT) {
 
-					ContextEvent event = new ContextEvent();
-					event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
-					event.setContextID(comMsg.getContextId());
-					event.setParentContextID(comMsg.getParentId());
-					event.setDescriptionID(comMsg.getAxisDescriptionName());
+                // add to the duplicate list to prevent cyclic replication
+                contextManager.addToDuplicateServiceContexts(comMsg.getParentId()
+                                                             + comMsg.getContextId());
+                updater.addServiceContext(comMsg.getParentId(), comMsg.getContextId());
 
-					contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
+                ContextEvent event = new ContextEvent();
+                event.setContextType(ContextType.SERVICE_CONTEXT);
+                event.setContextID(comMsg.getContextId());
+                event.setParentContextID(comMsg.getParentId());
+                event.setDescriptionID(comMsg.getAxisDescriptionName());
 
-				} else if (comMsg.getContextType() == ContextType.SERVICE_CONTEXT) {
+                contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
 
-					ContextEvent event = new ContextEvent();
-					event.setContextType(ContextType.SERVICE_CONTEXT);
-					event.setContextID(comMsg.getContextId());
-					event.setParentContextID(comMsg.getParentId());
-					event.setDescriptionID(comMsg.getAxisDescriptionName());
+            } else if (comMsg.getCommandType() == CommandType.UPDATE_STATE) {
 
-					contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
+                if (comMsg.getContextType() == ContextType.SERVICE_GROUP_CONTEXT) {
 
-				}
+                    ContextEvent event = new ContextEvent();
+                    event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
+                    event.setContextID(comMsg.getContextId());
+                    event.setParentContextID(comMsg.getParentId());
+                    event.setDescriptionID(comMsg.getAxisDescriptionName());
 
-			} else if (comMsg.getCommandType() == CommandType.UPDATE_STATE_MAP_ENTRY) {
+                    contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
 
-				ContextUpdateEntryCommandMessage mapEntryMsg = (ContextUpdateEntryCommandMessage) comMsg;
-				if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT) {
-					Map props = updater.getServiceGroupProps(comMsg.getContextId());
-					if (mapEntryMsg.getOperation() == ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
-						props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
-					} else {
-						props.remove(mapEntryMsg.getKey());
-					}
-				} else if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_CONTEXT) {
-					Map props = updater
-							.getServiceProps(comMsg.getParentId(), comMsg.getContextId());
-					if (mapEntryMsg.getOperation() == ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
-						props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
-					} else {
-						props.remove(mapEntryMsg.getKey());
-					}
-				}
-			} else {
-				log.error("TribesClusterManager received an unknown Context Command");
-			}
-		}
-		
-		if (msg instanceof ConfigurationCommand) {
+                } else if (comMsg.getContextType() == ContextType.SERVICE_CONTEXT) {
 
-			ConfigurationCommand command = (ConfigurationCommand) msg;
-			if (command.getCommandType() == CommandType.LOAD_SERVICE_GROUP) {
-				
-				ConfigurationEvent event = new ConfigurationEvent();
-				event.setConfigurationName(command.getSgcName());
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.UNLOAD_SERVICE_GROUP) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				event.setConfigurationName(command.getSgcName());
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.APPLY_POLICY) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				event.setConfigurationName(command.getSgcName());
-				event.setPolicyId(command.getPolicyId());
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.PREPARE) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				event.setConfigurationName(command.getSgcName());
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.COMMIT) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.ROLLBACK) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else if (command.getCommandType() == CommandType.RELOAD_CONFIGURATION) {
-				
-				ConfigurationEvent event = new ConfigurationEvent ();
-				configurationManager.notifyListeners(command.getCommandType(), event);
-			} else {
-				log.error("TribesClusterManager received an unknown Configuration Command");
-			}
+                    ContextEvent event = new ContextEvent();
+                    event.setContextType(ContextType.SERVICE_CONTEXT);
+                    event.setContextID(comMsg.getContextId());
+                    event.setParentContextID(comMsg.getParentId());
+                    event.setDescriptionID(comMsg.getAxisDescriptionName());
 
-		}
-	}
-	
+                    contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
+
+                }
+
+            } else if (comMsg.getCommandType() == CommandType.UPDATE_STATE_MAP_ENTRY) {
+
+                ContextUpdateEntryCommandMessage mapEntryMsg =
+                        (ContextUpdateEntryCommandMessage) comMsg;
+                if (mapEntryMsg.getCtxType() ==
+                    ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT) {
+                    Map props = updater.getServiceGroupProps(comMsg.getContextId());
+                    if (mapEntryMsg.getOperation() ==
+                        ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
+                        props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
+                    } else {
+                        props.remove(mapEntryMsg.getKey());
+                    }
+                } else
+                if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_CONTEXT) {
+                    Map props = updater
+                            .getServiceProps(comMsg.getParentId(), comMsg.getContextId());
+                    if (mapEntryMsg.getOperation() ==
+                        ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
+                        props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
+                    } else {
+                        props.remove(mapEntryMsg.getKey());
+                    }
+                }
+            } else {
+                log.error("TribesClusterManager received an unknown Context Command");
+            }
+        } else if (msg instanceof ConfigurationCommand) {
+
+            ConfigurationCommand command = (ConfigurationCommand) msg;
+            ConfigurationEvent event = new ConfigurationEvent();
+            int commandType = command.getCommandType();
+            switch (commandType) {
+                case CommandType.LOAD_SERVICE_GROUPS:
+                    event.setServiceGroupNames(command.getServiceGroupNames());
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.UNLOAD_SERVICE_GROUPS:
+                    event.setServiceGroupNames(command.getServiceGroupNames());
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.RELOAD_CONFIGURATION:
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.APPLY_POLICY:
+                    event.setServiceGroupName(command.getServiceGroupName());
+                    event.setPolicyId(command.getPolicyId());
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.PREPARE:
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.COMMIT:
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                case CommandType.ROLLBACK:
+                    configurationManager.notifyListeners(commandType, event);
+                    break;
+                default:
+                    log.error("TribesClusterManager received an unknown Configuration Command");
+            }
+        }
+    }
 }

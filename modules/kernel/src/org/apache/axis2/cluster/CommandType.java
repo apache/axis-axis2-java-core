@@ -30,10 +30,10 @@ public interface CommandType {
 	
 	public static int UPDATE_STATE_MAP_ENTRY = 6;
 	
-	public static int LOAD_SERVICE_GROUP = 7;
-	
-	public static int UNLOAD_SERVICE_GROUP = 8;
-	
+    public static int LOAD_SERVICE_GROUPS = 7;
+
+    public static int UNLOAD_SERVICE_GROUPS = 8 ;
+
 	public static int APPLY_POLICY = 9;
 	
 	public static int RELOAD_CONFIGURATION = 10;

@@ -30,6 +30,10 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.AxisFault;
+import org.apache.axiom.om.OMElement;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,6 +50,7 @@ public class TribesContextManager implements ContextManager {
     private List addedServiceGrpCtxs = new ArrayList();
     private List addedServiceCtxs = new ArrayList();
     private List listeners = null;
+    private Map parameters = new HashMap();
 
     private ChannelSender sender;
 
@@ -80,7 +85,7 @@ public class TribesContextManager implements ContextManager {
     }
 
     public void addContext(AbstractContext context) throws ClusteringFault {
-        ContextCommandMessage comMsg = null;
+        ContextCommandMessage comMsg;
 
         String contextId = getContextID(context);
         String parentContextId = getContextID(context.getParent());
@@ -163,15 +168,6 @@ public class TribesContextManager implements ContextManager {
         }
     }
 
-    /*
-      * public void addProperty(AbstractContext ctx,String contextId, String
-      * parentId, String propertyName, Object propertyValue) { if (ctx instanceof
-      * ServiceContext){ ctxManager.addPropToServiceContext(parentId, contextId,
-      * propertyName, propertyValue); }else{
-      * ctxManager.addPropToServiceGroupContext(contextId, propertyName,
-      * propertyValue); } }
-      */
-
     public void removeContext(AbstractContext context) throws ClusteringFault {
         ContextCommandMessage comMsg = null;
 
@@ -191,14 +187,6 @@ public class TribesContextManager implements ContextManager {
 
         send(comMsg);
     }
-
-    /*
-      * public void removeProperty(AbstractContext ctx, String contextId, String
-      * parentId, String propertyName) { if (ctx instanceof ServiceContext){
-      * ctxManager.removePropFromServiceContext(parentId, contextId,
-      * propertyName); }else{
-      * ctxManager.removePropFromServiceGroupContext(contextId, propertyName); } }
-      */
 
     public void updateState(AbstractContext context) throws ClusteringFault {
 
@@ -299,5 +287,33 @@ public class TribesContextManager implements ContextManager {
 
     private void send(CommandMessage command) throws ClusteringFault {
         sender.send(command);
+    }
+
+    public void addParameter(Parameter param) throws AxisFault {
+        parameters.put(param.getName(), param);
+    }
+
+    public void removeParameter(Parameter param) throws AxisFault {
+        parameters.remove(param.getName());
+    }
+
+    public Parameter getParameter(String name) {
+        return (Parameter) parameters.get(name);
+    }
+
+    public ArrayList getParameters() {
+        ArrayList list = new ArrayList();
+        for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
+            list.add(parameters.get(iter.next()));
+        }
+        return list;
+    }
+
+    public boolean isParameterLocked(String parameterName) {
+        return getParameter(parameterName).isLocked();
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        throw new UnsupportedOperationException();
     }
 }

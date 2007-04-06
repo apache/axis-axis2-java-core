@@ -48,7 +48,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		
 		assertNotNull(event);
-		assertEquals(event.getConfigurationName(), serviceGroupName);
+		assertEquals(event.getServiceGroupNames(), serviceGroupName);
     }
     
     public void testUnloadServiceGroup ()  throws ClusteringFault {
@@ -70,7 +70,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		
 		assertNotNull(event);
-		assertEquals(event.getConfigurationName(), serviceGroupName);
+		assertEquals(event.getServiceGroupNames(), serviceGroupName);
     }
     
     public void testApplyPolicy () throws ClusteringFault {
@@ -96,7 +96,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     	assertEquals(eventList.size(), 1);
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		assertNotNull(event);
-		assertEquals(event.getConfigurationName(), serviceGroupName);
+		assertEquals(event.getServiceGroupNames(), serviceGroupName);
 		assertEquals(event.getPolicyId(), policyID);
 		
     }
