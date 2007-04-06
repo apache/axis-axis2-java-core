@@ -117,7 +117,8 @@ public class CodeGenerationEngine {
                 }
 
                 WSDL11ToAxisServiceBuilder builder = null;
-                if (serviceQname != null) {
+                // jibx currently does not support multiservice
+                if ((serviceQname != null) || (configuration.getDatabindingType().equals("jibx"))) {
                     builder = new WSDL11ToAxisServiceBuilder(
                             wsdl4jDef,
                             serviceQname,

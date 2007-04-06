@@ -286,9 +286,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new AxisFault("Service with the specified name not found in the WSDL : "
                         + serviceName.getLocalPart());
             }
+        } else {
+           wsdlService = services[0];
         }
 
-        wsdlService = services[0];
         axisService.setName(wsdlService.getName().getLocalPart().toString());
         Interface serviceInterface = wsdlService.getInterface();
         axisService.addParameter(new Parameter(WSDL2Constants.INTERFACE_LOCAL_NAME, serviceInterface.getName().getLocalPart()));
