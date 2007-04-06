@@ -132,5 +132,8 @@ classes as axis2/SOAPMonitorApplet*.class/WEB-INF.</p>
 for your Web application. This will show the SOAP Monitor applet used to view
 the service requests and responses. Any requests to services that have been
 configured and deployed correctly should show up in the applet.</p>
+
+<p>The SOAPMonitor with attachments currently serializes themselves as base64 characters. It is therefore recommended to use the TCPMon tool to correctly capture MTOM and SWA messages as an multipart mime where the binary data is an attachment.
+</p>
 </body>
 </html>
