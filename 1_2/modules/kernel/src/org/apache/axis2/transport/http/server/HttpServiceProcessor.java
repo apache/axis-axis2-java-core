@@ -33,10 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
-import org.apache.http.HttpServerConnection;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpExecutionContext;
-import org.apache.http.protocol.HttpService;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -53,13 +51,13 @@ public class HttpServiceProcessor implements IOProcessor {
 
     private volatile boolean terminated;
 
-    private final HttpService httpservice;
-    private final HttpServerConnection conn;
+    private final AxisHttpService httpservice;
+    private final AxisHttpConnection conn;
     private final IOProcessorCallback callback;
 
     public HttpServiceProcessor(
-            final HttpService httpservice,
-            final HttpServerConnection conn,
+            final AxisHttpService httpservice,
+            final AxisHttpConnection conn,
             final IOProcessorCallback callback) {
         super();
         this.httpservice = httpservice;

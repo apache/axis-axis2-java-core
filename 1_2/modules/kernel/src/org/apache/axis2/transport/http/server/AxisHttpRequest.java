@@ -29,10 +29,18 @@
 
 package org.apache.axis2.transport.http.server;
 
-public interface HttpConnectionManager {
+import java.io.InputStream;
 
-    void process(AxisHttpConnection incoming);
+import org.apache.http.HttpMessage;
 
-    void shutdown();
+public interface AxisHttpRequest extends HttpMessage {
 
+    String getMethod();
+    
+    String getRequestURI();
+    
+    String getContentType();
+    
+    InputStream getInputStream();
+    
 }

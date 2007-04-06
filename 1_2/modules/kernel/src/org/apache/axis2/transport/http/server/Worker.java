@@ -29,14 +29,12 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 
 public interface Worker {
 
-    void service(HttpRequest request, HttpResponse response, MessageContext msgContext)
+    void service(AxisHttpRequest request, AxisHttpResponse response, MessageContext msgContext)
             throws HttpException, IOException;
 
 }
