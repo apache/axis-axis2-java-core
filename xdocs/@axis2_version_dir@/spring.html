@@ -55,9 +55,6 @@ would work as only the core functionality is required.</p>
 href="userguide.html">User's Guide</a> for more information.</p>
 <a name="2"></a>
 
-<h2>Configuring Axis2 to be Spring Aware</h2>
-<a name="21"></a>
-
 <h3>Programming Model</h3>
 
 <p>From an Axis2 standpoint, two hooks are needed to be placed into the AAR
@@ -77,7 +74,7 @@ web.xml. Let's add a context-param and a listener:</p>
 &lt;context-param&gt;
       &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
       &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
-    &lt;/context-param&gt;</pre>
+&lt;/context-param&gt;</pre>
 
 <p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml
 referenced in the web.xml listener -  one using a ServletContext, and one
@@ -88,7 +85,7 @@ without.</p>
 
 <p>This example (with a ServletContext) applicationContext.xml should be
 familiar to any Spring user:</p>
-<pre> &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
 
 &lt;beans&gt;
