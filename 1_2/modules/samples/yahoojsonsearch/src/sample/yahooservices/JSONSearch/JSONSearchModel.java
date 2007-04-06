@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.addressing.EndpointReference;
@@ -60,7 +61,7 @@ public class JSONSearchModel {
             Options options = new Options();
             client.setOptions(options);
             options.setTo(new EndpointReference(epr));
-            options.setProperty(Constants.Configuration.MESSAGE_TYPE, "text/javascript");
+            options.setProperty(Constants.Configuration.MESSAGE_TYPE, HTTPConstants.MEDIA_TYPE_X_WWW_FORM);
             options.setProperty(Constants.Configuration.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
             OMElement response = client.sendReceive(getPayloadForYahooSearchCall(query, format));
             generateSnippet(response);
