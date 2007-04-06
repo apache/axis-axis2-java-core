@@ -140,7 +140,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             }
 
             //Transport specific
-            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.RAPLY_TO)) {
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.REPLY_TO)) {
                 replyTo = paramValue;
             }
             if (paramKey.equals(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL)) {
@@ -169,10 +169,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     }
 
-    public void initFromRuntime(Properties properties,MessageContext msgContext) throws AxisFault {
+    public void initFromRuntime(Properties properties, MessageContext msgContext) throws AxisFault {
 
         this.configurationContext = msgContext.getConfigurationContext();
-        
+
         String password = "";
         String host = "";
         String protocol = "";
@@ -187,7 +187,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
         host = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_HOST);
         protocol = properties.getProperty(org.apache.axis2.transport.mail.Constants.STORE_PROTOCOL);
         port = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_PORT);
-        replyTo = properties.getProperty(org.apache.axis2.transport.mail.Constants.RAPLY_TO);
+        replyTo = properties.getProperty(org.apache.axis2.transport.mail.Constants.REPLY_TO);
         String value =
                 properties.getProperty(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
         if (value != null) {
@@ -197,7 +197,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
         if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
             protocol.length() == 0) {
             String error = SimpleMailListener.class.getName() + " one or more of Password, User," +
-                    " Host and Protocol are null or empty" + "in runtime settings";
+                           " Host and Protocol are null or empty" + "in runtime settings";
             log.error(error);
             throw new AxisFault(error);
         }
@@ -324,9 +324,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
 
             MailBasedOutTransportInfo transportInfo = new MailBasedOutTransportInfo();
-            if (msg.getFrom() != null && msg.getFrom().length > 0) {
-                EndpointReference fromEPR = new EndpointReference((msg.getFrom()[0]).toString());
-                msgContext.setFrom(fromEPR);
+            Address[] mimefroms = msg.getFrom();
+            if (mimefroms != null && mimefroms.length > 0) {
+                EndpointReference fromEPR = new EndpointReference(
+                        org.apache.axis2.transport.mail.Constants.MAILTO + ":" +
+                        msg.getFrom()[0].toString());
                 transportInfo.setFrom(fromEPR);
             }
 
