@@ -27,53 +27,64 @@
 */
 package org.apache.axis2.transport.http.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpServerConnection;
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
-import org.apache.http.RequestLine;
+import org.apache.http.MethodNotSupportedException;
+import org.apache.http.ProtocolException;
 import org.apache.http.UnsupportedHttpVersionException;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpService;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Iterator;
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 
 /**
  * This class is an extension of the defaulf HTTP service responsible for
  * maintaining and polulating the {@link MessageContext} for incoming Axis
  * requests.
  */
-public class AxisHttpService extends HttpService {
+public class AxisHttpService {
 
     private static final Log LOG = LogFactory.getLog(AxisHttpService.class);
 
+    private final HttpProcessor httpProcessor;
+    private final ConnectionReuseStrategy connStrategy;
+    private final HttpResponseFactory responseFactory;
+    private final MessageContext msgContext;
     private final ConfigurationContext configurationContext;
     private final Worker worker;
-    private HttpServerConnection conn;
+
+    private HttpParams params;
 
     public AxisHttpService(
             final HttpProcessor httpProcessor,
@@ -81,45 +92,151 @@ public class AxisHttpService extends HttpService {
             final HttpResponseFactory responseFactory,
             final ConfigurationContext configurationContext,
             final Worker worker) {
-        super(httpProcessor, connStrategy, responseFactory);
+        super();
+        if (httpProcessor == null) {
+            throw new IllegalArgumentException("HTTP processor may not be null");
+        }
+        if (connStrategy == null) {
+            throw new IllegalArgumentException("Connection strategy may not be null");
+        }
+        if (responseFactory == null) {
+            throw new IllegalArgumentException("Response factory may not be null");
+        }
         if (worker == null) {
             throw new IllegalArgumentException("Worker may not be null");
         }
         if (configurationContext == null) {
             throw new IllegalArgumentException("Configuration context may not be null");
         }
+        this.httpProcessor = httpProcessor;
+        this.connStrategy = connStrategy;
+        this.responseFactory = responseFactory;
         this.configurationContext = configurationContext;
         this.worker = worker;
+
+        this.msgContext = ContextFactory.createMessageContext(configurationContext);
+        this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
     }
 
-    protected void doService(
-            final HttpRequest request,
-            final HttpResponse response,
-            final HttpContext context) throws HttpException, IOException {
-        RequestLine reqline = request.getRequestLine();
-        MessageContext msgContext = ContextFactory.createMessageContext(configurationContext);
-        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        if(conn!=null){
-            if (conn instanceof HttpInetConnection) {
-                HttpInetConnection inetconn = (HttpInetConnection) conn;
-                InetAddress address = inetconn.getRemoteAddress();
-                msgContext.setProperty(MessageContext.REMOTE_ADDR, address.getHostAddress());
+    public HttpParams getParams() {
+        return this.params;
+    }
+    
+    public void setParams(final HttpParams params) {
+        this.params = params;
+    }
+    
+    public void handleRequest(final AxisHttpConnection conn, final HttpContext context) 
+            throws IOException, HttpException { 
+        
+        if (conn instanceof HttpInetConnection) {
+            HttpInetConnection inetconn = (HttpInetConnection) conn;
+            this.msgContext.setProperty(MessageContext.REMOTE_ADDR, 
+                    inetconn.getRemoteAddress().getHostAddress());
+            this.msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
+                    inetconn.getLocalAddress().getHostAddress());
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Remote address of the connection : " + address);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Remote address of the connection : " + 
+                        inetconn.getRemoteAddress().getHostAddress());
+            }
+        }
+        
+        HttpResponse response;
+        try {
+            HttpRequest request = conn.receiveRequest(this.params);
+            HttpVersion ver = request.getRequestLine().getHttpVersion();
+            if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
+                // Downgrade protocol version if greater than HTTP/1.1 
+                ver = HttpVersion.HTTP_1_1;
+            }
+
+            response = this.responseFactory.newHttpResponse
+                (ver, HttpStatus.SC_OK, context);
+            response.getParams().setDefaults(this.params);
+            
+            if (request instanceof HttpEntityEnclosingRequest) {
+                if (((HttpEntityEnclosingRequest) request).expectContinue()) {
+                    HttpResponse ack = this.responseFactory.newHttpResponse
+                        (ver, HttpStatus.SC_CONTINUE, context);
+                    ack.getParams().setDefaults(this.params);
+                    conn.sendResponse(ack);
+                    conn.flush();
                 }
             }
-            msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
-                    ((DefaultHttpConnectionFactory.Axis2HttpServerConnection)conn).getLocalIPAddress());
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Request method: " + reqline.getMethod());
-            LOG.debug("Target URI: " + reqline.getUri());
-        }
+            
+            // Create Axis request and response objects
+            AxisHttpRequestImpl axisreq = new AxisHttpRequestImpl(
+                    conn, 
+                    request, 
+                    this.httpProcessor, 
+                    context); 
+            AxisHttpResponseImpl axisres = new AxisHttpResponseImpl(
+                    conn, 
+                    response, 
+                    this.httpProcessor, 
+                    context); 
 
-        HttpVersion ver = reqline.getHttpVersion();
-        if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
-            throw new UnsupportedHttpVersionException("Unsupported HTTP version: " + ver);
+            // Prepare HTTP request
+            axisreq.prepare();
+            
+            // Run the service
+            doService(axisreq, axisres, context);
+            
+            // Make sure the request content is fully consumed
+            InputStream instream = conn.getInputStream();
+            if (instream != null) {
+                instream.close();
+            }
+
+            // Commit response if not committed
+            if (!axisres.isCommitted()) {
+                axisres.commit();
+            }
+
+            // Make sure the response content is properly terminated
+            OutputStream outstream = conn.getOutputStream();
+            if (outstream != null) {
+                outstream.close();
+            }
+            
+        } catch (HttpException ex) {
+            response = this.responseFactory.newHttpResponse
+                (HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                 context);
+            response.getParams().setDefaults(this.params);
+            handleException(ex, response);
+            this.httpProcessor.process(response, context);
+            conn.sendResponse(response);
+        }
+        
+        conn.flush();
+        if (!this.connStrategy.keepAlive(response, context)) {
+            conn.close();
+        } else {
+            conn.reset();
+        }
+    }    
+    
+    protected void handleException(final HttpException ex, final HttpResponse response) {
+        if (ex instanceof MethodNotSupportedException) {
+            response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
+        } else if (ex instanceof UnsupportedHttpVersionException) {
+            response.setStatusCode(HttpStatus.SC_HTTP_VERSION_NOT_SUPPORTED);
+        } else if (ex instanceof ProtocolException) {
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        } else {
+            response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+       
+    protected void doService(
+            final AxisHttpRequest request, 
+            final AxisHttpResponse response,
+            final HttpContext context) throws HttpException, IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Request method: " + request.getMethod());
+            LOG.debug("Target URI: " + request.getRequestURI());
         }
 
         try {
@@ -128,12 +245,13 @@ public class AxisHttpService extends HttpService {
             TransportInDescription transportIn = this.configurationContext.getAxisConfiguration()
                     .getTransportIn(Constants.TRANSPORT_HTTP);
 
-   ;         String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
-            msgContext.setTransportIn(transportIn);
-            msgContext.setTransportOut(transportOut);
-            msgContext.setServerSide(true);
-            msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
-            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
+            String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
+            this.msgContext.setTransportIn(transportIn);
+            this.msgContext.setTransportOut(transportOut);
+            this.msgContext.setServerSide(true);
+            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
+            this.msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, 
+                    request.getRequestURI());
 
             // set the transport Headers
             HashMap headerMap = new HashMap();
@@ -141,8 +259,20 @@ public class AxisHttpService extends HttpService {
                 Header header = (Header) it.next();
                 headerMap.put(header.getName(), header.getValue());
             }
-            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
-            this.worker.service(request, response, msgContext);
+            this.msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, 
+                    headerMap);
+            this.msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, 
+                    request.getContentType());
+            
+            this.msgContext.setProperty(MessageContext.TRANSPORT_OUT, 
+                    response.getOutputStream());
+            this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, 
+                    response);
+            this.msgContext.setTo(new EndpointReference(request.getRequestURI()));
+            this.msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
+                                 new SimpleHTTPRequestResponseTransport());
+            
+            this.worker.service(request, response, this.msgContext);
         } catch (SocketException ex) {
             // Socket is unreliable. 
             throw ex;
@@ -150,49 +280,60 @@ public class AxisHttpService extends HttpService {
             // HTTP protocol violation. Transport is unrelaible
             throw ex;
         } catch (Throwable e) {
-            try {
-                AxisEngine engine = new AxisEngine(this.configurationContext);
 
-                OutputBuffer outbuffer = new OutputBuffer();
-                msgContext
-                        .setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
-                msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+            AxisEngine engine = new AxisEngine(this.configurationContext);
 
-                MessageContext faultContext =
-                        MessageContextBuilder.createFaultMessageContext(msgContext, e);
-                // If the fault is not going along the back channel we should be 202ing
-                if (AddressingHelper.isFaultRedirected(msgContext)) {
-                    response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
-                } else {
-                    response.setStatusLine(new BasicStatusLine(ver, 500, "Internal server error"));
-                }
-                engine.sendFault(faultContext);
-                response.setEntity(outbuffer);
-            } catch (Exception ex) {
-                if (AddressingHelper.isFaultRedirected(msgContext)) {
-                    response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
-                } else {
-                    // TODO: Why isn't this a SOAP fault?
-                    response.setStatusLine(new BasicStatusLine(ver, 500, "Internal server error"));
-                    String msg = ex.getMessage();
-                    StringEntity entity;
-                    if (msg != null && msg.trim().length() != 0) {
-                        entity = new StringEntity(msg);
-                    } else {
-                        entity = new StringEntity("Exception message unknown");
-                    }
-                    entity.setContentType("text/plain");
-                    response.setEntity(entity);
-                }
+            this.msgContext.setProperty(MessageContext.TRANSPORT_OUT, 
+                    response.getOutputStream());
+            this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, 
+                    response);
+
+            MessageContext faultContext =
+                    MessageContextBuilder.createFaultMessageContext(msgContext, e);
+            // If the fault is not going along the back channel we should be 202ing
+            if (AddressingHelper.isFaultRedirected(this.msgContext)) {
+                response.setStatus(HttpStatus.SC_ACCEPTED);
+            } else {
+                response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal server error");
             }
+            engine.sendFault(faultContext);
         }
 
     }
 
-    public void handleRequest(final HttpServerConnection conn, final HttpContext context)
-            throws IOException, HttpException {
-        this.conn = conn;
-        super.handleRequest(conn, context);
-    }
+    class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
 
+        private CountDownLatch responseReadySignal = new CountDownLatch(1);
+        RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
+        AxisFault faultToBeThrownOut = null;
+
+        public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
+            //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
+            signalResponseReady();
+        }
+
+        public void awaitResponse() throws InterruptedException, AxisFault {
+            status = RequestResponseTransportStatus.WAITING;
+            responseReadySignal.await();
+
+            if (faultToBeThrownOut != null)
+                throw faultToBeThrownOut;
+        }
+
+        public void signalResponseReady() {
+            status = RequestResponseTransportStatus.SIGNALLED;
+            responseReadySignal.countDown();
+        }
+
+        public RequestResponseTransportStatus getStatus() {
+            return status;
+        }
+
+        public void signalFaultReady(AxisFault fault) {
+            faultToBeThrownOut = fault;
+            signalResponseReady();
+        }
+
+    }
+    
 }

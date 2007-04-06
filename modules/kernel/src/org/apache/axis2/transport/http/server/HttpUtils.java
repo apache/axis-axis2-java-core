@@ -29,7 +29,6 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.http.Header;
-import org.apache.http.HttpRequest;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -41,7 +40,7 @@ public class HttpUtils {
     private HttpUtils() {
     }
 
-    public static String getSoapAction(final HttpRequest request) {
+    public static String getSoapAction(final AxisHttpRequest request) {
         if (request == null) {
             return null;
         }

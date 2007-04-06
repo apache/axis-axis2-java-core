@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpServerConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.params.HttpParams;
@@ -121,7 +120,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         this.processors.remove(processor);
     }
 
-    public void process(final HttpServerConnection conn) {
+    public void process(final AxisHttpConnection conn) {
         if (conn == null) {
             throw new IllegalArgumentException("HTTP connection may not be null");
         }
@@ -145,7 +144,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             p.addInterceptor(new ResponseContent());
             p.addInterceptor(new ResponseConnControl());
             p.addInterceptor(new ResponseSessionCookie());
-            httpProcessor = new LoggingProcessorDecorator(p);
+            httpProcessor = p;
             connStrategy = new DefaultConnectionReuseStrategy();
             responseFactory = new DefaultHttpResponseFactory();
         }
