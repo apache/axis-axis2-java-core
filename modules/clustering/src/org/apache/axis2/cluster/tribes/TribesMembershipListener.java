@@ -28,20 +28,19 @@ public class TribesMembershipListener implements MembershipListener {
     private static Log log = LogFactory.getLog(TribesMembershipListener.class);
 
     public void memberAdded(Member member) {
-        log.info("New member " + getHostIP(member) + ":" + member.getPort() +
-                 " added to Tribes group.");
+        log.info("New member " + getHostSocket(member) + " added to Tribes group.");
     }
 
     public void memberDisappeared(Member member) {
-        log.info("Member " + getHostIP(member) + " left Tribes group");
+        log.info("Member " + getHostSocket(member) + " left Tribes group");
     }
 
-    private String getHostIP(Member member) {
-        String host = "";
+    private String getHostSocket(Member member) {
+        String host = null;
         byte[] hostBytes = member.getHost();
         for (int i = 0; i < hostBytes.length; i++) {
-            host += hostBytes[i] + ".";
+            host = (host == null) ? ("" + hostBytes[i]) : (host + "." + hostBytes[i]);
         }
-        return host;
+        return host + ":" + member.getPort();
     }
 }
