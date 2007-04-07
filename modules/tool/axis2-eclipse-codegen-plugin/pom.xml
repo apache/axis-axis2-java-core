@@ -244,6 +244,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven.assembly.version}</version>
 				<executions>
 					<execution>
 						<id>distribution-package</id>
@@ -253,7 +254,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>eclipse-codegen-plugin-assembly.xml</descriptor>
+								<descriptor>${pom.basedir}/eclipse-codegen-plugin-assembly.xml</descriptor>
 							</descriptors>
 							<finalName>dist</finalName>
 						</configuration>
