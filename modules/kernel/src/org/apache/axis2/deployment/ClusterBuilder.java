@@ -143,7 +143,6 @@ public class ClusterBuilder extends DescriptionBuilder {
 
                         className = classNameAttr.getAttributeValue();
                         clazz = Class.forName(className);
-                        System.out.println(className);
                         ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
                         contextManager.addContextManagerListener(listener);
                     }
