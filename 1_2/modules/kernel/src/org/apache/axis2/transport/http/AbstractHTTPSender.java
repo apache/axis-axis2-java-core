@@ -332,13 +332,13 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (isAuthenticationEnabled) {
-            // premtive authentication Basic or NTLM
-            this.setAuthenticationInfo(client, msgCtx, config, targetURL);
-        }
-
         // setting the real host configuration
         config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+
+        if (isAuthenticationEnabled) {
+            // Basic, Digest, NTLM and custom authentications. 
+            this.setAuthenticationInfo(client, msgCtx, config);
+        }
         // proxy configuration
         if (isProxyListed) {
             this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
@@ -357,11 +357,7 @@ public abstract class AbstractHTTPSender {
     */
     protected void setAuthenticationInfo(HttpClient agent,
                                          MessageContext msgCtx,
-                                         HostConfiguration config,
-                                         URL targetURL) throws AxisFault {
-        config.setHost(targetURL.getHost(), targetURL.getPort(),
-                       targetURL.getProtocol());
-
+                                         HostConfiguration config) throws AxisFault {
         HttpTransportProperties.Authenticator authenticator;
         Object obj = msgCtx.getProperty(HTTPConstants.AUTHENTICATE);
         if (obj != null) {
