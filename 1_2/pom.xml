@@ -31,9 +31,9 @@
 		<module>modules/tool/axis2-mar-maven-plugin</module>
 		<module>modules/tool/axis2-aar-maven-plugin</module>
 		<module>modules/tool/axis2-ant-plugin</module>
-		<!--<module>modules/tool/axis2-eclipse-codegen-plugin</module>
+		<module>modules/tool/axis2-eclipse-codegen-plugin</module>
 		<module>modules/tool/axis2-eclipse-service-plugin</module>
-		<module>modules/tool/axis2-idea-plugin</module>-->
+		<!--<module>modules/tool/axis2-idea-plugin</module>-->
 		<module>modules/tool/axis2-java2wsdl-maven-plugin</module>
 		<module>modules/tool/axis2-wsdl2code-maven-plugin</module>
 		<module>modules/parent</module>

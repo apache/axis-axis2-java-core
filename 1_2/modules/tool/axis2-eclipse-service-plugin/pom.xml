@@ -189,7 +189,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>./eclipse-service-plugin-assembly.xml</descriptor>
+								<descriptor>${pom.basedir}/eclipse-service-plugin-assembly.xml</descriptor>
 							</descriptors>
 							<finalName>dist</finalName>
 						</configuration>
