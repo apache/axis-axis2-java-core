@@ -87,7 +87,7 @@
 		<commons.io.version>1.2</commons.io.version>
 		<commons.logging.version>1.1</commons.logging.version>
 		<eclipse.version>3.2.0</eclipse.version>
-		<geronimo.spec.activation.version>1.0-m1</geronimo.spec.activation.version>
+		<geronimo.spec.activation.version>1.0-M1</geronimo.spec.activation.version>
 		<geronimo.spec.javamail.version>1.0-M1</geronimo.spec.javamail.version>
 		<geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
 		<groovy.all.version>1.0-jsr-06</groovy.all.version>
