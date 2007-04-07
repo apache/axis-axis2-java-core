@@ -17,7 +17,6 @@
 package test.interop.whitemesa;
 
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -35,41 +34,35 @@ import java.net.URL;
 public class SunClient {
 
     public SOAPEnvelope sendMsg(SunClientUtil util, String epUrl, String soapAction)
-            throws AxisFault {
+            throws Exception {
 
         SOAPEnvelope resEnv;
-        URL url;
-        try {
-            url = new URL(epUrl);
+        URL url = new URL(epUrl);
 
-            Options options = new Options();
-            options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
-            options.setTo(new EndpointReference(url.toString()));
-            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            options.setAction(soapAction);
+        Options options = new Options();
+        options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
+        options.setTo(new EndpointReference(url.toString()));
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setAction(soapAction);
 
-            MessageContext messageContext = new MessageContext();
-            SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
-            messageContext.setEnvelope(requestEnvilope);
+        MessageContext messageContext = new MessageContext();
+        SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
+        messageContext.setEnvelope(requestEnvilope);
 
-            ConfigurationContextFactory factory = new ConfigurationContextFactory();
-            ConfigurationContext configContext =
-                    //factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-                    factory.createConfigurationContextFromFileSystem(
-                            "itest-resources/integrationRepo", null);
-            ServiceClient serviceClient = new ServiceClient(configContext, null);
-            serviceClient.setOptions(options);
-            OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-            opClient.addMessageContext(messageContext);
-            opClient.execute(true);
-            MessageContext responseMCtx =
-                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        ConfigurationContext configContext =
+                //factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "itest-resources/integrationRepo", null);
+        ServiceClient serviceClient = new ServiceClient(configContext, null);
+        serviceClient.setOptions(options);
+        OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
+        opClient.addMessageContext(messageContext);
+        opClient.execute(true);
+        MessageContext responseMCtx =
+                opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
-            resEnv = responseMCtx.getEnvelope();
+        resEnv = responseMCtx.getEnvelope();
 
-        } catch (Exception e) {
-            throw new AxisFault(e);
-        }
         return resEnv;
     }
 }

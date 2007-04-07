@@ -65,9 +65,9 @@ public class RESTUtil {
         } catch (AxisFault axisFault) {
             throw axisFault;
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } finally {
             msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
                                    HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
@@ -98,7 +98,7 @@ public class RESTUtil {
                 soapEnvelope = TransportUtils
                         .createSOAPMessage(msgContext, null, contentType);
             } catch (XMLStreamException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
 
             msgContext.setEnvelope(soapEnvelope);
@@ -108,7 +108,7 @@ public class RESTUtil {
             throw axisFault;
         }
         catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } finally {
             msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
                                    HTTPConstants.MEDIA_TYPE_APPLICATION_XML);

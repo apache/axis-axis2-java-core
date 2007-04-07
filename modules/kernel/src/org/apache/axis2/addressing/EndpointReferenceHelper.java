@@ -120,7 +120,7 @@ public class EndpointReferenceHelper {
             return fromOM(new StAXOMBuilder(
                     new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

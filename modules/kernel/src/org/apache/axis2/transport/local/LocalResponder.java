@@ -53,7 +53,7 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
     /**
      * Method invoke
      *
-     * @param msgContext
+     * @param msgContext the active MessageContext
      * @throws AxisFault
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {

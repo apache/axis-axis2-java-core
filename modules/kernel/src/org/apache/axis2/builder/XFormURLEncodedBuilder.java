@@ -75,14 +75,14 @@ public class XFormURLEncodedBuilder implements Builder {
         try {
             requestURL = URIEncoderDecoder.decode(endpointReference.getAddress());
         } catch (UnsupportedEncodingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         try {
             requestURL = extractParametersUsingHttpLocation(templatedPath, parameterMap,
                                                             requestURL,
                                                             queryParameterSeparator);
         } catch (UnsupportedEncodingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
         String query = requestURL;
@@ -142,7 +142,7 @@ public class XFormURLEncodedBuilder implements Builder {
                     }
                 }
             } catch (IOException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
     }

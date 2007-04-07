@@ -66,7 +66,7 @@ public class Utils {
     }
 
     /**
-     * @see org.apache.axis2.util.MessageContextBuilder.createOutMessageContext()
+     * @see org.apache.axis2.util.MessageContextBuilder:createOutMessageContext()
      * @deprecated (post1.1branch)
      */
     public static MessageContext createOutMessageContext(MessageContext inMessageContext)

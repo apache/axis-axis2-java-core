@@ -71,9 +71,9 @@ public class RESTRequestEntity implements RequestEntity {
                 return bytesOut.toByteArray();
             }
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -89,11 +89,11 @@ public class RESTRequestEntity implements RequestEntity {
             }
             out.flush();
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

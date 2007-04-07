@@ -121,7 +121,7 @@ public class DeploymentFileData {
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent,false);
                 } catch (Exception e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             }
         } else {

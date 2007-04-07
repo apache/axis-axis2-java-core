@@ -48,9 +48,9 @@ public class SOAPBuilder implements Builder {
                     .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
             return envelope;
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

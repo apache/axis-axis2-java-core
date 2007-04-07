@@ -557,7 +557,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     ip = "localhost";
                 }
             } catch (SocketException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
 

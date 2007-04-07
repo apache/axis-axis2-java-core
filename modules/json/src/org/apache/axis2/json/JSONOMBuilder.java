@@ -26,14 +26,10 @@ import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
 
@@ -65,7 +61,7 @@ public class JSONOMBuilder implements Builder {
             try {
                 requestURL = URIEncoderDecoder.decode(endpointReference.getAddress());
             } catch (UnsupportedEncodingException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
 
             String jsonString;
@@ -104,7 +100,7 @@ public class JSONOMBuilder implements Builder {
                 }
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         JSONDataSource jsonDataSource = getDataSource(inputStream, prefix, localName);
         return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);

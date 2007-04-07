@@ -53,30 +53,24 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
         UtilServer.unDeployClientService();
     }
 
-    public void testWSDLClient() throws AxisFault {
-        try {
-            URL wsdlURL = new URL("http://localhost:" + UtilServer.TESTING_PORT +
-                    "/axis2/services/EchoXMLService?wsdl");
-            ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
-                                                            new QName(
-                                                                    "http://engine.axis2.apache.org/xsd",
-                                                                    "EchoXMLService"),
-                                                            "EchoXMLServiceSOAP11port_http");
-            OMElement payload =
-                    TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
-            String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT +
-                    "/axis2/services/EchoXMLService";
-            //This is not smt we need to do but , my build is fail if I dont do that :)
-            serviceClient.getOptions().setTo(new EndpointReference(epr));
-            System.out.println(serviceClient.getOptions().getTo().getAddress());
-            OMElement response = serviceClient.sendReceive(new QName("", "echoOM"), payload);
-            assertNotNull(response);
-            String textValue = response.getFirstElement().getFirstElement().getText();
-            assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new AxisFault(e);
-        }
+    public void testWSDLClient() throws Exception {
+        URL wsdlURL = new URL("http://localhost:" + UtilServer.TESTING_PORT +
+                "/axis2/services/EchoXMLService?wsdl");
+        ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
+                                                        new QName(
+                                                                "http://engine.axis2.apache.org/xsd",
+                                                                "EchoXMLService"),
+                                                        "EchoXMLServiceSOAP11port_http");
+        OMElement payload =
+                TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
+        String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT +
+                "/axis2/services/EchoXMLService";
+        //This is not smt we need to do but , my build is fail if I dont do that :)
+        serviceClient.getOptions().setTo(new EndpointReference(epr));
+        System.out.println(serviceClient.getOptions().getTo().getAddress());
+        OMElement response = serviceClient.sendReceive(new QName("", "echoOM"), payload);
+        assertNotNull(response);
+        String textValue = response.getFirstElement().getFirstElement().getText();
+        assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
     }
-
 }

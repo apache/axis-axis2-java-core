@@ -200,7 +200,7 @@ public class HttpFactory {
             try {
                 return (TimeUnit) TimeUnit.class.getField(config).get(null);
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
         return def;

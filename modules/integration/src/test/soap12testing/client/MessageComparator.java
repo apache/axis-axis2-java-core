@@ -213,7 +213,7 @@ public class MessageComparator {
                 state = BEFORE_SEPARATOR;
             }
         } catch (IOException e) {
-            throw new AxisFault(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
         }
 
         return map;
@@ -239,7 +239,7 @@ public class MessageComparator {
 
             return str.toString();
         } catch (Exception e) {
-            throw new AxisFault(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
         }
     }
 

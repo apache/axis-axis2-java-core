@@ -17,12 +17,8 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -53,7 +49,6 @@ public class AxisEngine {
      * Field log
      */
     private static final Log log = LogFactory.getLog(AxisEngine.class);
-    private ConfigurationContext engineContext;
 
     private static boolean RESUMING_EXECUTION = true;
     private static boolean NOT_RESUMING_EXECUTION = false;
@@ -64,7 +59,6 @@ public class AxisEngine {
      * Constructor AxisEngine
      */
     public AxisEngine(ConfigurationContext engineContext) {
-        this.engineContext = engineContext;
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {

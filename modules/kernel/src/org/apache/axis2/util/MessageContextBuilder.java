@@ -353,7 +353,7 @@ public class MessageContextBuilder {
                 }
             }
         } catch (URISyntaxException urise) {
-            throw new AxisFault(urise);
+            throw AxisFault.makeFault(urise);
         }
     }
 

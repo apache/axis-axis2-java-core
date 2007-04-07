@@ -56,6 +56,7 @@ public class TCPTransportSender extends AbstractHandler implements TransportSend
                 socket = null;
             }
         } catch (IOException e) {
+            // TODO: Log this?
         }
     }
 
@@ -87,7 +88,7 @@ public class TCPTransportSender extends AbstractHandler implements TransportSend
                     socket.shutdownOutput();
                     msgContext.setProperty(MessageContext.TRANSPORT_IN, socket.getInputStream());
                 } catch (IOException e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             }
         } else {
@@ -124,9 +125,9 @@ public class TCPTransportSender extends AbstractHandler implements TransportSend
 
                 return socket.getOutputStream();
             } catch (MalformedURLException e) {
-                throw new AxisFault(e.getMessage(), e);
+                throw AxisFault.makeFault(e);
             } catch (IOException e) {
-                throw new AxisFault(e.getMessage(), e);
+                throw AxisFault.makeFault(e);
             }
         } else {
             throw new AxisFault(Messages.getMessage("canNotBeNull", "End point reference"));

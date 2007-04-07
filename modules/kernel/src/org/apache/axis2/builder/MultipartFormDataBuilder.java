@@ -54,7 +54,7 @@ public class MultipartFormDataBuilder implements Builder {
                                                 OMAbstractFactory.getSOAP12Factory());
 
         } catch (FileUploadException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
     }

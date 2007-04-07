@@ -828,7 +828,7 @@ public class AxisService extends AxisDescription {
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             } else {
                 printWSDLError(out);
@@ -936,7 +936,7 @@ public class AxisService extends AxisDescription {
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             } else {
                 printWSDLError(out);
@@ -994,7 +994,7 @@ public class AxisService extends AxisDescription {
                 out.flush();
                 out.close();
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
     }
@@ -1013,7 +1013,7 @@ public class AxisService extends AxisDescription {
             out.flush();
             out.close();
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -1032,7 +1032,7 @@ public class AxisService extends AxisDescription {
                     out.flush();
                     out.close();
                 } catch (IOException e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             } else {
                 printWSDLError(out);
@@ -1058,7 +1058,7 @@ public class AxisService extends AxisDescription {
             out.flush();
             out.close();
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -1631,7 +1631,7 @@ public class AxisService extends AxisDescription {
                 axisService.setTargetNamespace(targetNamespace);
             }
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
         JMethod[] method = schemaGenerator.getMethods();
@@ -1776,7 +1776,7 @@ public class AxisService extends AxisDescription {
                 axisService.setTargetNamespace(targetNameSpace);
             }
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
         JMethod[] method = schemaGenerator.getMethods();
@@ -2296,11 +2296,11 @@ public class AxisService extends AxisDescription {
             dataLocator = Class.forName(className, true, serviceClassLoader);
             locator = (AxisDataLocator) dataLocator.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IllegalAccessException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (InstantiationException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
 
         }
 

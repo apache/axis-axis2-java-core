@@ -45,8 +45,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -61,7 +59,6 @@ public class MultirefTest extends UtilServerBasedTestCase {
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
                     + "/axis2/services/EchoXMLService/concat");
-    private static final Log log = LogFactory.getLog(MultirefTest.class);
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName(NAMESPACE, "concat");
     protected QName transportName = new QName(NAMESPACE,
@@ -299,7 +296,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     }
 
 
-    public void testMulitrefBean() throws AxisFault {
+    public void testMulitrefBean() throws Exception {
         configureSystem("editBean");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -320,16 +317,16 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
         String ref1 =
                 "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
-        OMElement om1 = getOMelemnt(ref1, fac);
+        OMElement om1 = getOMElement(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
-        OMElement om2 = getOMelemnt(ref2, fac);
+        OMElement om2 = getOMElement(ref2, fac);
         envelope.getBody().addChild(om2);
         String ref3 = "<reference id=\"3\"><town href=\"#4\"/><number>1010</number></reference>";
-        OMElement om3 = getOMelemnt(ref3, fac);
+        OMElement om3 = getOMElement(ref3, fac);
         envelope.getBody().addChild(om3);
         String ref4 = "<reference id=\"4\">Colombo3</reference>";
-        OMElement om4 = getOMelemnt(ref4, fac);
+        OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
 
         Options options = new Options();
@@ -361,7 +358,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     }
 
 
-    public void testbeanOM() throws AxisFault {
+    public void testbeanOM() throws Exception {
         configureSystem("beanOM");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -382,16 +379,16 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
         String ref1 =
                 "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
-        OMElement om1 = getOMelemnt(ref1, fac);
+        OMElement om1 = getOMElement(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
-        OMElement om2 = getOMelemnt(ref2, fac);
+        OMElement om2 = getOMElement(ref2, fac);
         envelope.getBody().addChild(om2);
         String ref3 = "<reference id=\"3\"><town href=\"#4\"/><number>1010</number></reference>";
-        OMElement om3 = getOMelemnt(ref3, fac);
+        OMElement om3 = getOMElement(ref3, fac);
         envelope.getBody().addChild(om3);
         String ref4 = "<reference id=\"4\">Colombo3</reference>";
-        OMElement om4 = getOMelemnt(ref4, fac);
+        OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
 
         Options options = new Options();
@@ -423,7 +420,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     }
 
 
-    public void testomrefs() throws AxisFault {
+    public void testomrefs() throws Exception {
         configureSystem("omrefs");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -446,16 +443,16 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
         String ref1 =
                 "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
-        OMElement om1 = getOMelemnt(ref1, fac);
+        OMElement om1 = getOMElement(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
-        OMElement om2 = getOMelemnt(ref2, fac);
+        OMElement om2 = getOMElement(ref2, fac);
         envelope.getBody().addChild(om2);
         String ref3 = "<reference id=\"3\"><town href=\"#4\"/><number>1010</number></reference>";
-        OMElement om3 = getOMelemnt(ref3, fac);
+        OMElement om3 = getOMElement(ref3, fac);
         envelope.getBody().addChild(om3);
         String ref4 = "<reference id=\"4\">Colombo3</reference>";
-        OMElement om4 = getOMelemnt(ref4, fac);
+        OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
         Options options = new Options();
         options.setTo(targetEPR);
@@ -489,23 +486,16 @@ public class MultirefTest extends UtilServerBasedTestCase {
         assertEquals(((Boolean)resBean[0]).booleanValue(), true);
     }
 
-    private OMElement getOMelemnt(String str, OMFactory fac) throws AxisFault {
+    private OMElement getOMElement(String str, OMFactory fac) throws Exception {
         StAXOMBuilder staxOMBuilder;
-        try {
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                    ByteArrayInputStream(str.getBytes()));
-            staxOMBuilder = new
-                    StAXOMBuilder(fac, xmlReader);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw new AxisFault(factoryConfigurationError);
-        }
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
+                ByteArrayInputStream(str.getBytes()));
+        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         return staxOMBuilder.getDocumentElement();
     }
 
 
-    public void testechoEmployee() throws AxisFault {
+    public void testechoEmployee() throws Exception {
         configureSystem("echoEmployee");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -528,11 +518,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
                 " <emplyer href=\"#1\"/>\n" +
                 " <address href=\"#2\"/>\n" +
                 "</reference>";
-        envelope.getBody().addChild(getOMelemnt(str, fac));
+        envelope.getBody().addChild(getOMElement(str, fac));
         str = "<reference id=\"2\">\n" +
                 "<town>Colombo3</town><number>1010</number>\n" +
                 "</reference>";
-        envelope.getBody().addChild(getOMelemnt(str, fac));
+        envelope.getBody().addChild(getOMElement(str, fac));
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -594,9 +584,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
             staxOMBuilder = new
                     StAXOMBuilder(fac, xmlReader);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw new AxisFault(factoryConfigurationError);
+            throw AxisFault.makeFault(factoryConfigurationError);
         }
         envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
 

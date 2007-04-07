@@ -134,8 +134,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         service.addParameter(
                 new Parameter(Constants.SERVICE_CLASS,
                               MessageContextEnabledEcho.class.getName()));
-        AxisOperation axisOperation = new InOnlyAxisOperation(
-                operationName);
+        AxisOperation axisOperation = new InOnlyAxisOperation(operationName);
         axisOperation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         service.addOperation(axisOperation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());

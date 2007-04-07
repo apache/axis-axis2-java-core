@@ -393,7 +393,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             service.setObjectSupplier(
                     objectSupplier);
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

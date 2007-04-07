@@ -34,22 +34,22 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
-        QName operationName = null;
         if (bodyFirstChild == null) {
             return null;
-        } else {
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString() +
-                        " Checking for Operation using SOAP message body's first child's local name : "
-                        + bodyFirstChild.getLocalName());
-            }
-            operationName = new QName(bodyFirstChild.getLocalName());
         }
-
-        AxisOperation axisOperation = service.getOperation(operationName);
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() +
+                    " Checking for Operation using SOAP message body's first child's local name : "
+                    + bodyFirstChild.getLocalName());
+        }
+        AxisOperation axisOperation = service.getOperation(new QName(bodyFirstChild.getLocalName()));
 
         if (axisOperation == null) {
             axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
+        }
+
+        if (axisOperation == null) {
+            axisOperation = service.getOperation(bodyFirstChild.getQName());
         }
         return axisOperation;
     }

@@ -2,9 +2,6 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -91,10 +88,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     protected Description description;
 
     private String wsdlURI;
-
-    // FIXME @author Chathura THis shoud be a URI. Find whats used by
-    // woden.
-    private static String RPC = "rpc";
 
     protected String interfaceName;
 
@@ -223,7 +216,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             processService();
             return axisService;
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -392,7 +385,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         } catch (AxisFault e) {
             throw e; // just rethrow AxisFaults
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

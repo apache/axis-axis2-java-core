@@ -60,9 +60,9 @@ public class EmailReceiver {
 
             folder = folder.getFolder("inbox");
         } catch (NoSuchProviderException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class EmailReceiver {
             folder.close(true);
             store.close();
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -87,9 +87,9 @@ public class EmailReceiver {
                 return msgs;
             }
         } catch (NoSuchProviderException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

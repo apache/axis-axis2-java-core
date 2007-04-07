@@ -132,7 +132,7 @@ public class URLTemplatingUtil {
                     params = params + URIEncoderDecoder.quoteIllegal(element.getLocalName(), legalCharacters) + "=" + URIEncoderDecoder.quoteIllegal(element.getText(), legalCharacters) +
                             queryParameterSeparator;
                 } catch (UnsupportedEncodingException e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             }
         }
@@ -151,7 +151,7 @@ public class URLTemplatingUtil {
             try {
                 return new URL(urlString);
             } catch (MalformedURLException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
         return url;

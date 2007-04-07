@@ -116,7 +116,7 @@ public class GroovyReceiver
                 outMessage.setEnvelope(envelope);
             }
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

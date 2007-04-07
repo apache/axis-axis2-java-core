@@ -517,13 +517,15 @@ public class ConfigurationContext extends AbstractContext {
     private String internalGetServiceContextPath() {
         String ctxRoot = getContextRoot();
         String path = "/";
-        if (!ctxRoot.equals("/")) {
-            path = ctxRoot + "/";
-        }
-        if (servicePath == null || servicePath.trim().length() == 0) {
-            throw new IllegalArgumentException("service path cannot be null or empty");
-        } else {
-            path += servicePath.trim();
+        if (ctxRoot != null) {
+            if (!ctxRoot.equals("/")) {
+                path = ctxRoot + "/";
+            }
+            if (servicePath == null || servicePath.trim().length() == 0) {
+                throw new IllegalArgumentException("service path cannot be null or empty");
+            } else {
+                path += servicePath.trim();
+            }
         }
         return path;
     }

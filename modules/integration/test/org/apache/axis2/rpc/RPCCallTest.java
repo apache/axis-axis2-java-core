@@ -44,8 +44,6 @@ import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
@@ -680,7 +678,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
     }
 
 
-    public void testhandleArrayList() throws AxisFault {
+    public void testhandleArrayList() throws Exception {
         configureSystem("handleArrayList");
 
         Options options = new Options();
@@ -692,11 +690,11 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         RPCServiceClient sender = new RPCServiceClient(configContext, null);
         sender.setOptions(options);
 
-        OMElement elem = sender.sendReceive(getpayLoad());
+        OMElement elem = sender.sendReceive(getPayload());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
     }
 
-    public void testomElementArray() throws AxisFault {
+    public void testomElementArray() throws Exception {
         configureSystem("omElementArray");
         String str = "<req:omElementArray xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
                 "    <arg0><abc>vaue1</abc></arg0>\n" +
@@ -705,18 +703,11 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 "    <arg0><abc>vaue4</abc></arg0>\n" +
                 "</req:omElementArray>";
         StAXOMBuilder staxOMBuilder;
-        try {
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                    ByteArrayInputStream(str.getBytes()));
-            OMFactory fac = OMAbstractFactory.getOMFactory();
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
+                ByteArrayInputStream(str.getBytes()));
+        OMFactory fac = OMAbstractFactory.getOMFactory();
 
-            staxOMBuilder = new
-                    StAXOMBuilder(fac, xmlReader);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw new AxisFault(factoryConfigurationError);
-        }
+        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
@@ -730,7 +721,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         assertEquals("4", elem.getFirstElement().getText());
     }
 
-    private OMElement getpayLoad() throws AxisFault {
+    private OMElement getPayload() throws Exception {
         String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
                 "  <arg0>\n" +
                 "    <item0>abc</item0>\n" +
@@ -740,18 +731,11 @@ public class RPCCallTest extends UtilServerBasedTestCase {
                 "  </arg0><arg1>10</arg1>" +
                 "</req:handleArrayList>";
         StAXOMBuilder staxOMBuilder;
-        try {
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new
-                    ByteArrayInputStream(str.getBytes()));
-            OMFactory fac = OMAbstractFactory.getOMFactory();
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                new ByteArrayInputStream(str.getBytes()));
+        OMFactory fac = OMAbstractFactory.getOMFactory();
 
-            staxOMBuilder = new
-                    StAXOMBuilder(fac, xmlReader);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw new AxisFault(factoryConfigurationError);
-        }
+        staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         return staxOMBuilder.getDocumentElement();
     }
 

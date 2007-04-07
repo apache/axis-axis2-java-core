@@ -28,7 +28,7 @@ public class ConvertorFactory {
             try {
                 oc = getDefaultScriptConvertor(axisService, scriptName);
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         } 
         if (oc == null) {

@@ -62,7 +62,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
                 }
             }
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -86,7 +86,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_STRING);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             assertEquals(itemElem.getText(), WhiteMesaConstants.ECHO_STRING_ARR_3);
 
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_INTEGER);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             assertEquals(itemElem.getText(), WhiteMesaConstants.ECHO_INTEGER_ARR_3);
 
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -204,7 +204,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_FLOAT);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -239,7 +239,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             assertEquals(itemElem.getText(), WhiteMesaConstants.ECHO_FLOAT_ARR_3);
 
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -279,7 +279,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_STRUCT_STRING);
 
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -352,7 +352,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             assertNotNull(varStringElem);
             assertEquals(varStringElem.getText(), WhiteMesaConstants.ECHO_STRUCT_ARRAY_FLOAT_3);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -389,7 +389,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_BASE_64);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -414,7 +414,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
             boolean equal = WhiteMesaConstants.ECHO_HEX_BINARY.equalsIgnoreCase(textElem.getText());
             assertTrue(equal);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -438,7 +438,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_DATE);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -462,7 +462,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_DECIMAL);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -486,7 +486,7 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
 
             assertEquals(textElem.getText(), WhiteMesaConstants.ECHO_BOOLEAN);
         } catch (JaxenException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

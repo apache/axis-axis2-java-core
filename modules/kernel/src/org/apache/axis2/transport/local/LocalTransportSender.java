@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
-    private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
@@ -55,7 +54,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
     /**
      * Method invoke
      *
-     * @param msgContext
+     * @param msgContext the current MessageContext
      * @throws AxisFault
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
@@ -66,17 +65,13 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
 
         OutputStream out;
-        EndpointReference epr = null;
-
-        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
-            epr = msgContext.getTo();
-        }
+        EndpointReference epr = msgContext.getTo();
 
         if (epr != null) {
             if (!epr.hasNoneAddress()) {
                 out = new ByteArrayOutputStream();
                 TransportUtils.writeMessage(msgContext, out);
-                finalizeSendWithToAddress(msgContext, out);
+                finalizeSendWithToAddress(msgContext, (ByteArrayOutputStream)out);
             }
         } else {
             out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
@@ -98,10 +93,10 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         return InvocationResponse.CONTINUE;
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
+    public void finalizeSendWithToAddress(MessageContext msgContext, ByteArrayOutputStream out)
             throws AxisFault {
         try {
-            InputStream in = new ByteArrayInputStream(this.out.toByteArray());
+            InputStream in = new ByteArrayInputStream(out.toByteArray());
             response = new ByteArrayOutputStream();
 
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
@@ -111,7 +106,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
             in = new ByteArrayInputStream(response.toByteArray());
             msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

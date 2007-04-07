@@ -93,9 +93,9 @@ public class AxisRequestEntity implements RequestEntity {
             }
             outStream.flush();
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
     }

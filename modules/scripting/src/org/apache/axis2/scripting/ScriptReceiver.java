@@ -114,7 +114,7 @@ public class ScriptReceiver extends AbstractInOutSyncMessageReceiver {
             engine.call(null, scriptFunction, args);
 
         } catch (BSFException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class ScriptReceiver extends AbstractInOutSyncMessageReceiver {
             return bsfEngine;
 
         } catch (BSFException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

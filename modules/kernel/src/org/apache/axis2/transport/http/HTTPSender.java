@@ -100,7 +100,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, getMethod);
             handleResponse(msgContext, getMethod);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
 
@@ -125,7 +125,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, deleteMethod);
             handleResponse(msgContext, deleteMethod);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
     }
@@ -176,7 +176,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, postMethod);
             handleResponse(msgContext, postMethod);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
     }
@@ -202,6 +202,8 @@ public class HTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
+        // TODO - Do something with charEncoding???
+
         PutMethod putMethod = new PutMethod();
         MessageFormatter messageFormatter =
                 populateCommonProperties(msgContext, url, putMethod, httpClient, soapActionString);
@@ -226,7 +228,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, putMethod);
             handleResponse(msgContext, putMethod);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

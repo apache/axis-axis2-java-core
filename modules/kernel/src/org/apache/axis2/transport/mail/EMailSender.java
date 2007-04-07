@@ -153,9 +153,9 @@ public class EMailSender {
             createMailMimeMessage(msg, mailToInfo, format);
             Transport.send(msg);
         } catch (AddressException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

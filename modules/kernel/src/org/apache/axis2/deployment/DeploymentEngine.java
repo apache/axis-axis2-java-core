@@ -1000,7 +1000,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             fillServiceGroup(serviceGroup, serviceList, null, axisConfig);
             return serviceGroup;
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

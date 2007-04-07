@@ -25,7 +25,7 @@ public class DefaultObjectSupplier implements ObjectSupplier {
         try {
             return clazz.newInstance();
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

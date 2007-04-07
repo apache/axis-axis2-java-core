@@ -290,10 +290,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             return axisService;
         } catch (WSDLException e) {
             log.error(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (Exception e) {
             log.error(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

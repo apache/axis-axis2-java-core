@@ -79,7 +79,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         }
 
         ConfigurationContext configurationContext = messageContext.getConfigurationContext();
-        String[] values =
+        String[] values = 
                 Utils.parseRequestURLForServiceAndOperation(address,
                                                             configurationContext.
                                                                     getServiceContextPath());

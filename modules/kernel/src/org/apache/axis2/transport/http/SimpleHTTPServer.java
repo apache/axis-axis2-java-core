@@ -118,7 +118,7 @@ public class SimpleHTTPServer implements TransportListener {
                 hostAddress = httpFactory.getHostAddress();
             }
         } catch (Exception e1) {
-            throw new AxisFault(e1);
+            throw AxisFault.makeFault(e1);
         }
     }
 
@@ -215,7 +215,7 @@ public class SimpleHTTPServer implements TransportListener {
             embedded.start();
         } catch (IOException e) {
             log.error(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

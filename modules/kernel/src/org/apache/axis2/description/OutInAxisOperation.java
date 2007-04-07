@@ -280,7 +280,7 @@ class OutInAxisOperationClient extends OperationClient {
                     if (internalCallback.error instanceof AxisFault) {
                         throw (AxisFault) internalCallback.error;
                     } else if (internalCallback.error != null) {
-                        throw new AxisFault(internalCallback.error);
+                        throw AxisFault.makeFault(internalCallback.error);
                     } else if (! internalCallback.isComplete()) {
                         throw new AxisFault(Messages.getMessage("responseTimeOut"));
                     } else {

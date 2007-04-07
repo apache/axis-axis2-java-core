@@ -217,13 +217,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
         } catch (XMLStreamException e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         return InvocationResponse.CONTINUE;
     }
@@ -310,13 +310,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             sender.send(messageContext, url, findSOAPAction(messageContext));
         } catch (MalformedURLException e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (HttpException e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
             log.debug(e);
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

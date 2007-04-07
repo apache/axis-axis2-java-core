@@ -56,7 +56,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 }
             }
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -82,9 +82,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 return bytesOut.toByteArray();
             }
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

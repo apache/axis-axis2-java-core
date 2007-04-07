@@ -68,7 +68,6 @@ import java.util.ListIterator;
  *                                                             </pre>
  */
 public class AxisFault extends RemoteException {
-
     private static final long serialVersionUID = -374933082062124907L;
 
     /**
@@ -222,12 +221,13 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * construct a fault from an exception
-     * TODO: handle AxisFaults or SOAPFaultException implementations differently?
+     * Construct a fault from a Throwable.  This is a protected constructor - in general
+     * to make an AxisFault from an Exception, you should be calling AxisFault.makeFault(e),
+     * which prevents AxisFaults within AxisFaults.
      *
-     * @param cause
+     * @param cause the Throwable that caused the problem
      */
-    public AxisFault(Throwable cause) {
+    protected AxisFault(Throwable cause) {
         this((cause != null)
                 ? cause.getMessage()
                 : null, cause);
@@ -365,13 +365,9 @@ public class AxisFault extends RemoteException {
      * @param e the <code>Exception</code> to build a fault for
      * @return an <code>AxisFault</code> representing <code>e</code>
      */
-    public static AxisFault makeFault(Exception e) {
+    public static AxisFault makeFault(Throwable e) {
         if (e instanceof InvocationTargetException) {
-            Throwable t = ((InvocationTargetException) e).getTargetException();
-
-            if (t instanceof Exception) {
-                e = (Exception) t;
-            }
+            return makeFault(((InvocationTargetException) e).getTargetException());
         }
 
         if (e instanceof AxisFault) {

@@ -38,7 +38,7 @@ public class POP3Server extends Thread {
                 log.info("Server started on port " + port);
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -61,7 +61,7 @@ public class POP3Server extends Thread {
                 serverSocket.close();
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

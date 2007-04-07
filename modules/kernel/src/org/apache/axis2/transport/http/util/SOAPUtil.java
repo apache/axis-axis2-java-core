@@ -103,7 +103,7 @@ public class SOAPUtil {
             throw axisFault;
         }
         catch (IOException ioException) {
-            throw new AxisFault(ioException);
+            throw AxisFault.makeFault(ioException);
         }
     }
 

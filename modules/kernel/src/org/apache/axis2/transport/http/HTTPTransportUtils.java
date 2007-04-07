@@ -281,17 +281,17 @@ public class HTTPTransportUtils {
 
             return pi;
         } catch (SOAPProcessingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (AxisFault e) {
             throw e;
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (OMException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
                 msgContext.setEnvelope(new SOAP12Factory().getDefaultEnvelope());

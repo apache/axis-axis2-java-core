@@ -272,7 +272,7 @@ public class PhasesInfo {
                 axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
                 axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
             } catch (DeploymentException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
     }

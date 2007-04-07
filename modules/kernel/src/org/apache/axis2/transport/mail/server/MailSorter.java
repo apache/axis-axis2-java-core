@@ -171,7 +171,7 @@ public class MailSorter {
                 return null;
             }
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

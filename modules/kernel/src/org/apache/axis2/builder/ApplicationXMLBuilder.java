@@ -61,9 +61,9 @@ public class ApplicationXMLBuilder implements Builder {
             }
 
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         return soapEnvelope;
     }

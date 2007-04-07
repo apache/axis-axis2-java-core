@@ -256,6 +256,13 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
     	</java>
+    	<echo>Generating java from AddNumbersHandler.wsdl</echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <classpath refid="maven.runtime.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+   	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+    	</java>
+
     	<echo>Generating java from async_doclitwr.wsdl</echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <classpath refid="maven.runtime.classpath"/>

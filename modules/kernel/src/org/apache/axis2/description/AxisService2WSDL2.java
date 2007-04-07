@@ -120,7 +120,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                         typesElement.addChild(
                                 XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
                     } catch (XMLStreamException e) {
-                        throw new AxisFault(e);
+                        throw AxisFault.makeFault(e);
                     }
                 }
             }

@@ -70,7 +70,7 @@ public class TCPServer implements Runnable, TransportListener {
             contextPath = configContext.getServiceContextPath();
 
         } catch (IOException e1) {
-            throw new AxisFault(e1);
+            throw AxisFault.makeFault(e1);
         }
     }
 
@@ -168,7 +168,7 @@ public class TCPServer implements Runnable, TransportListener {
             this.serversocket.close();
             started = false;
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

@@ -122,7 +122,7 @@ public class SOAP12InFlowHandlerDefaultB extends AbstractHandler implements Head
                                     msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, reason);
 
                                 } catch (SOAPProcessingException e) {
-                                   throw new AxisFault(e);
+                                   throw AxisFault.makeFault(e);
                                 }
 
                                 headerBlock.discard();

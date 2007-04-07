@@ -160,6 +160,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     /**
      * Server process.
+     * @param args command line args
+     * @throws AxisFault if a problem occurs
      */
     public static void main(String args[]) throws AxisFault {
         if (args.length < 2) {
@@ -342,15 +344,16 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
+/* Commented since this is never used...?
     private String getMailHeader(MimeMessage msg, String headerName) throws AxisFault {
         try {
             String values[] = msg.getHeader(headerName);
@@ -361,9 +364,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 return null;
             }
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
+*/
 
     private String getMailHeaderFromPart(Part part, String headerName) throws AxisFault {
         try {
@@ -375,7 +379,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 return null;
             }
         } catch (MessagingException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

@@ -121,7 +121,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                 log.debug("populateAllServices caught Exception.  Converting to AxisFault. " +
                         e.toString());
             }
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

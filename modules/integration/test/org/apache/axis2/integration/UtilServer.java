@@ -114,7 +114,7 @@ public class UtilServer {
                 System.out.print("Server started on port "
                         + TESTING_PORT + ".....");
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
 
             try {

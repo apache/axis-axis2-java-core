@@ -286,7 +286,7 @@
       
     </xsl:choose>
           } catch (org.jibx.runtime.JiBXException e) {
-              throw new org.apache.axis2.AxisFault(e);
+              throw org.apache.axis2.AxisFault.makeFault(e);
           }
           return envelope;
       }
@@ -690,7 +690,7 @@
             } else if (ex instanceof java.rmi.RemoteException) {
                 throw (java.rmi.RemoteException)ex;
             } else {
-                throw new org.apache.axis2.AxisFault(ex);
+                throw org.apache.axis2.AxisFault.makeFault(ex);
             }
         }
     

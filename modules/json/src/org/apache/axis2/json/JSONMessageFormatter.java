@@ -37,8 +37,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This JSONMessageFormatter is the formatter for "Mapped" formatted JSON in Axis2. This type of
@@ -101,9 +99,9 @@ public class JSONMessageFormatter implements MessageFormatter {
                 return bytesOut.toByteArray();
 
             } catch (XMLStreamException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             } catch (FactoryConfigurationError e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             } catch (IllegalStateException e) {
                 throw new AxisFault(
                         "Mapped formatted JSON with namespaces are not supported in Axis2. Make sure that your" +
@@ -176,9 +174,9 @@ public class JSONMessageFormatter implements MessageFormatter {
                 jsonWriter.writeEndDocument();
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IllegalStateException e) {
             throw new AxisFault(
                     "Mapped formatted JSON with namespaces are not supported in Axis2. Make sure that your" +
@@ -215,11 +213,11 @@ public class JSONMessageFormatter implements MessageFormatter {
 
                 return new URL(targetURL.getProtocol(), targetURL.getHost(), targetURL.getPort(), returnURLFile);
             } catch (MalformedURLException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             } catch (XMLStreamException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             } catch (UnsupportedEncodingException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         } else {
             return targetURL;

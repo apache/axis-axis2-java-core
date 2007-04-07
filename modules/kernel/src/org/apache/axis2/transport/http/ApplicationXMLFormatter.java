@@ -59,7 +59,7 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             try {
                 omElement.serializeAndConsume(bytesOut, format);
             } catch (XMLStreamException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
 
             return bytesOut.toByteArray();
@@ -89,13 +89,13 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             try {
                 omElement.serializeAndConsume(outputStream, format);
             } catch (XMLStreamException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
         try {
             outputStream.flush();
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

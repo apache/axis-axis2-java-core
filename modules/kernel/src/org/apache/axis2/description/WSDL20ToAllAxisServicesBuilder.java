@@ -110,7 +110,7 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
                 log.debug("populateAllServices caught Exception.  Converting to AxisFault. " +
                         e.toString());
             }
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

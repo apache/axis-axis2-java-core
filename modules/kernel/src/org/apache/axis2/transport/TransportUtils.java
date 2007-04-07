@@ -78,11 +78,11 @@ public class TransportUtils {
         } catch (AxisFault e) {
             throw e;
         } catch (OMException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -207,7 +207,7 @@ public class TransportUtils {
                 outputMessage.serializeAndConsume(out, format);
                 out.flush();
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         } else {
             throw new AxisFault(Messages.getMessage("outMessageNull"));

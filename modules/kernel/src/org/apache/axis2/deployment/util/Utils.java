@@ -92,9 +92,9 @@ public class Utils {
                 handler.init(handlermd);
                 handlermd.setHandler(handler);
             } catch (InstantiationException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             } catch (IllegalAccessException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         }
     }
@@ -225,7 +225,7 @@ public class Utils {
         try {
             handlerClass = Loader.loadClass(loader1, className);
         } catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage());
+            throw AxisFault.makeFault(e);
         }
 
         return handlerClass;
@@ -498,7 +498,7 @@ public class Utils {
                 }
             }
         } catch (IOException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 

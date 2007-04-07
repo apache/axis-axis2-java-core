@@ -80,9 +80,9 @@ public class LocalTransportReceiver {
                 engine.receive(msgCtx);
             }
         } catch (XMLStreamException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

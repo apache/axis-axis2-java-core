@@ -93,7 +93,7 @@ public class MultipartFormDataFormatter implements MessageFormatter {
                 // This is accessing a class of Commons-FlieUpload
                 Part.sendParts(bytesOut, parts, format.getMimeBoundary().getBytes());
             } catch (IOException e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
             return bytesOut.toByteArray();
         }
