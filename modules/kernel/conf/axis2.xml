@@ -173,14 +173,23 @@
         </parameter>
     </transportReceiver>-->
 
-    <!--Uncomment if you want to have SMTP transport support-->
-    <!--<transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">-->
-    <!--<parameter name="transport.mail.pop3.host">127.0.0.1</parameter>-->
-    <!--<parameter name="transport.mail.pop3.user">axis2</parameter>-->
-    <!--<parameter name="transport.mail.pop3.password">axis2</parameter>-->
-    <!--<parameter name="transport.mail.pop3.port">110</parameter>-->
-    <!--<parameter name="transport.mail.replyToAddress">axis2@127.0.0.1</parameter>-->
-    <!--</transportReceiver>-->
+    <!-- ================================================= -->
+    <!-- Mail Transport Listener  -->
+    <!-- This is a sample configuration. It assumes a mail server running in localhost.
+         Listener pops  messages that comes to the email address red@localhost. Users
+         password is red. Listener connect to the server every 3000 milliseconds.
+         Parameters with "transport." prefix is Axis2 specific. Others are all from Java Mail API. 
+         http://people.apache.org/~pzf/SMTPBase64Binding-0.2.html
+     -->
+    <!-- ================================================= -->
+    <!--<transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener">
+        <parameter name="mail.pop3.host">localhost</parameter>
+        <parameter name="mail.pop3.user">red</parameter>
+        <parameter name="mail.store.protocol">pop3</parameter>
+        <parameter name="transport.mail.pop3.password">red</parameter>
+        <parameter name="transport.mail.replyToAddress">red@localhost</parameter>
+        <parameter name="transport.listener.interval">3000</parameter>
+    </transportReceiver>-->
 
 	<!--Uncomment if you want to have TCP transport support-->
     <!--transportReceiver name="tcp"
@@ -216,14 +225,16 @@
     <transportSender name="jms"
                      class="org.apache.axis2.transport.jms.JMSSender"/>
 
-    <!-- Uncomment this one with the appropriate parameters to enable the SMTP transport Receiver
-   <transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender">
-       <parameter name="transport.mail.smtp.host">127.0.0.1</parameter>
-       <parameter name="transport.mail.smtp.user">axis2</parameter>
-       <parameter name="transport.mail.smtp.password">axis2</parameter>
-       <parameter name="transport.mail.smtp.port">25</parameter>
-   </transportSender>
-   -->
+    <!-- ================================================= -->
+    <!-- Mail Transport Sender  -->
+    <!--Only need to uncomment the sender. Configuration is achieved with every client.
+        At any instant mail host should be given. Sample configuration has been given.
+        http://people.apache.org/~pzf/SMTPBase64Binding-0.2.html
+        -->
+    <!-- ================================================= -->
+   <!--<transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender">
+        <parameter name="mail.smtp.host">localhost</parameter>
+    </transportSender>-->
 
     <!-- ================================================= -->
     <!-- Global Modules  -->
