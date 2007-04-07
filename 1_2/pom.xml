@@ -15,9 +15,7 @@
 	! See the License for the specific language governing permissions and
 	! limitations under the License.
 	!-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.apache</groupId>
 		<artifactId>apache</artifactId>
@@ -30,20 +28,18 @@
 	<packaging>pom</packaging>
 	<name>Apache Axis 2.0 - Root</name>
 	<modules>
-		<module>modules/xmlbeans</module>
+		<module>modules/tool/axis2-mar-maven-plugin</module>
 		<module>modules/tool/axis2-aar-maven-plugin</module>
 		<module>modules/tool/axis2-ant-plugin</module>
-		<module>modules/tool/axis2-eclipse-codegen-plugin</module>
+		<!--<module>modules/tool/axis2-eclipse-codegen-plugin</module>
 		<module>modules/tool/axis2-eclipse-service-plugin</module>
-		<module>modules/tool/axis2-idea-plugin</module>
+		<module>modules/tool/axis2-idea-plugin</module>-->
 		<module>modules/tool/axis2-java2wsdl-maven-plugin</module>
 		<module>modules/tool/axis2-wsdl2code-maven-plugin</module>
-		<module>modules/tool/axis2-mar-maven-plugin</module>
-	 	<module>modules/parent</module>
+		<module>modules/parent</module>
 		<module>modules/addressing</module>
 		<module>modules/java2wsdl</module>
 		<module>modules/kernel</module>
-		<!--<module>modules/tool</module>-->
 		<module>modules/adb</module>
 		<module>modules/codegen</module>
 		<module>modules/adb-codegen</module>
@@ -51,6 +47,8 @@
 		<module>modules/json</module>
 		<module>modules/mtompolicy</module>
 		<module>modules/spring</module>
+		<!--<module>modules/integration</module>-->
+		<module>modules/xmlbeans</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -65,8 +63,8 @@
 				<module>modules/saaj</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
-                <module>modules/clustering</module>
-            </modules>
+				<module>modules/clustering</module>
+			</modules>
 		</profile>
 		<profile>
 			<id>java16</id>
@@ -80,101 +78,93 @@
 				<module>modules/saaj</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
-                <module>modules/clustering</module>
-            </modules>
+				<module>modules/clustering</module>
+			</modules>
 		</profile>
 	</profiles>
-
 	<ciManagement>
-            <system>continuum</system>
-            <url>http://vmbuild.apache.org/continuum</url>
-            <notifiers>
-                <notifier>
-                    <configuration>
-                        <address>axis2-cvs@ws.apache.org</address>
-                    </configuration>
-                </notifier>
-            </notifiers>
-        </ciManagement>
-
+		<system>continuum</system>
+		<url>http://vmbuild.apache.org/continuum</url>
+		<notifiers>
+			<notifier>
+				<configuration>
+					<ADDRESS>axis2-cvs@ws.apache.org</ADDRESS>
+				</configuration>
+			</notifier>
+		</notifiers>
+	</ciManagement>
 	<scm>
-        <connection>
-            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/</connection>
-        <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/</developerConnection>
+		<connection>
+         scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/
+      </connection>
+		<developerConnection>
+         scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/
+      </developerConnection>
 		<url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/</url>
 	</scm>
 	<distributionManagement>
-        <repository>
-            <id>apache-repo</id>
-            <name>Maven Central Repository</name>
-            <url>
-                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-        </repository>
-        <snapshotRepository>
-            <id>apache-snapshots</id>
-            <name>Apache Development Repository</name>
-            <url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <id>axis2-jar</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/lib"/>
-                                <jar destfile="target/lib/axis2-${pom.version}.jar">
-                                    <fileset dir="modules/java2wsdl/target/classes"/>
-                                    <fileset dir="modules/kernel/target/classes"/>
-                                    <!-- adding the tool classes. This is needed to get the ant task -->
-<!-- No such path! Commented out. -Glen -->
-<!--                                    <fileset dir="modules/tool/target/classes"/> -->
-<!--                                    <fileset dir="modules/saaj/target/classes"/> -->
-                                    <fileset dir="modules/addressing/target/classes"/>
-                                    <fileset dir="modules/codegen/target/classes"/>
-                                    <fileset dir="modules/adb/target/classes"/>
-                                    <fileset dir="modules/adb-codegen/target/classes"/>
-                                    <fileset dir="modules/xmlbeans/target/classes"/>
-                                </jar>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>axis2-jar-package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>target/lib/axis2-${pom.version}.jar</file>
-                                    <type>jar</type>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+		<repository>
+			<id>apache-repo</id>
+			<name>Maven Central Repository</name>
+			<url>
+            scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+		</repository>
+		<snapshotRepository>
+			<id>apache-snapshots</id>
+			<name>Apache Development Repository</name>
+			<url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>axis2-jar</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+								<mkdir dir="target/lib"/>
+								<jar destfile="target/lib/axis2-${pom.version}.jar">
+									<fileset dir="modules/java2wsdl/target/classes"/>
+									<fileset dir="modules/kernel/target/classes"/>
+									<fileset dir="modules/addressing/target/classes"/>
+									<fileset dir="modules/codegen/target/classes"/>
+									<fileset dir="modules/adb/target/classes"/>
+									<fileset dir="modules/adb-codegen/target/classes"/>
+									<fileset dir="modules/xmlbeans/target/classes"/>
+								</jar>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>axis2-jar-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/lib/axis2-${pom.version}.jar</file>
+									<type>jar</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

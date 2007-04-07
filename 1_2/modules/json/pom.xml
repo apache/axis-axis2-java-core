@@ -15,9 +15,7 @@
 	! See the License for the specific language governing permissions and
 	! limitations under the License.
 	!-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.apache.axis2</groupId>
@@ -25,15 +23,9 @@
 		<version>1.2-SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>axis2-json</artifactId>
 	<name>Apache Axis 2.0 - JSON</name>
 	<description>Axis2 JSON module</description>
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/json</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/json</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/json</url>
-  </scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -41,17 +33,15 @@
 			<version>${version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
-            <version>1.0-alpha-2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-     	 <groupId>xmlunit</groupId>
-     	 <artifactId>xmlunit</artifactId>
-     	 <scope>test</scope>
-   	    </dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
@@ -60,15 +50,14 @@
 				<directory>test-resources</directory>
 			</testResource>
 		</testResources>
-		    
 		<plugins>
-	  	  <plugin>
-	  		<artifactId>maven-surefire-plugin</artifactId>
-	  		<inherited>true</inherited>
-	  		<configuration>
-	  			<skip>false</skip>
-	  		</configuration>
-	  	  </plugin>
-	    </plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>
