@@ -28,26 +28,27 @@
 	<packaging>pom</packaging>
 	<name>Apache Axis 2.0 - Root</name>
 	<modules>
-		<module>modules/tool/axis2-mar-maven-plugin</module>
+		<module>modules/adb-codegen</module>
+		<module>modules/adb</module>
+		<module>modules/addressing</module>
+		<module>modules/codegen</module>
+		<!--<module>modules/integration</module>-->
+		<module>modules/java2wsdl</module>
+		<module>modules/jibx</module>
+		<module>modules/json</module>
+		<module>modules/kernel</module>
+		<module>modules/mtompolicy</module>
+		<module>modules/parent</module>
+		<module>modules/ping</module>
+		<module>modules/spring</module>
 		<module>modules/tool/axis2-aar-maven-plugin</module>
 		<module>modules/tool/axis2-ant-plugin</module>
 		<module>modules/tool/axis2-eclipse-codegen-plugin</module>
 		<module>modules/tool/axis2-eclipse-service-plugin</module>
 		<!--<module>modules/tool/axis2-idea-plugin</module>-->
 		<module>modules/tool/axis2-java2wsdl-maven-plugin</module>
+		<module>modules/tool/axis2-mar-maven-plugin</module>
 		<module>modules/tool/axis2-wsdl2code-maven-plugin</module>
-		<module>modules/parent</module>
-		<module>modules/addressing</module>
-		<module>modules/java2wsdl</module>
-		<module>modules/kernel</module>
-		<module>modules/adb</module>
-		<module>modules/codegen</module>
-		<module>modules/adb-codegen</module>
-		<module>modules/jibx</module>
-		<module>modules/json</module>
-		<module>modules/mtompolicy</module>
-		<module>modules/spring</module>
-		<!--<module>modules/integration</module>-->
 		<module>modules/xmlbeans</module>
 	</modules>
 	<profiles>
