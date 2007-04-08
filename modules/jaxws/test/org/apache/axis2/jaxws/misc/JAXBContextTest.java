@@ -57,7 +57,8 @@ public class JAXBContextTest extends TestCase {
         context3.add("org.test.addnumbers");
         context3.add("org.test.anytype");
         context3.add("my.grandma.loves.jaxws");
-        
+
+        Thread.currentThread().setContextClassLoader(JAXBContextTest.class.getClassLoader());
         JAXBContext jaxbContext3 = JAXBUtils.getJAXBContext(context3);
         
         // The following assertion is probably true,but GC may have wiped out the weak reference
