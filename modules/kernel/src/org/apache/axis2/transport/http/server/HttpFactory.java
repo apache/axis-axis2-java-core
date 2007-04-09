@@ -29,11 +29,8 @@
 
 package org.apache.axis2.transport.http.server;
 
-import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import java.io.IOException;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -44,8 +41,8 @@ import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpParams;
 import org.apache.http.impl.DefaultHttpResponseFactory;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -56,7 +53,11 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 
-import java.io.IOException;
+import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 
 /**
  * Factory used to configure and create the various instances required in http transports.
@@ -244,24 +245,22 @@ public class HttpFactory {
     /**
      * Create the listener for request connections
      */
-    public IOProcessor newRequestConnectionListener(HttpConnectionFactory factory,
-                                                    HttpConnectionManager manager, int port)
-            throws IOException {
-        return new DefaultConnectionListener(port, factory, manager);
-    }
-
-    /**
-     * Create a request connection
-     */
-    public HttpConnectionFactory newRequestConnectionFactory(HttpParams params) {
-        return new DefaultHttpConnectionFactory(params);
+    public IOProcessor newRequestConnectionListener(
+            int port,
+            final HttpConnectionManager manager, 
+            final HttpParams params) throws IOException {
+        return new DefaultConnectionListener(
+                port, 
+                manager, 
+                new DefaultConnectionListenerFailureHandler(), 
+                params);
     }
 
     /**
      * Create and set the parameters applied to incoming request connections
      */
     public HttpParams newRequestConnectionParams() {
-        HttpParams params = new DefaultHttpParams();
+        HttpParams params = new BasicHttpParams();
         params
                 .setIntParameter(HttpConnectionParams.SO_TIMEOUT, requestSocketTimeout)
                 .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, requestTcpNoDelay)
@@ -320,7 +319,7 @@ public class HttpFactory {
         httpProcessor.addInterceptor(new ResponseContent());
         httpProcessor.addInterceptor(new ResponseConnControl());
         httpProcessor.addInterceptor(new ResponseSessionCookie());
-        return new LoggingProcessorDecorator(httpProcessor);
+        return httpProcessor;
     }
 
     public ConnectionReuseStrategy newConnStrategy() {

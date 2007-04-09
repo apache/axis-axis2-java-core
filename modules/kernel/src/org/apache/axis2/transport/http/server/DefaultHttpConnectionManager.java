@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpServerConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.params.HttpParams;
@@ -59,7 +58,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     private final WorkerFactory workerfactory;
     private final HttpParams params;
     private final List processors;
-    private final SessionManager sessionManager;
 
     private HttpFactory httpFactory = null;
 
@@ -82,7 +80,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             throw new IllegalArgumentException("HTTP parameters may not be null");
         }
         this.configurationContext = configurationContext;
-        this.sessionManager = new SessionManager();
         this.executor = executor;
         this.workerfactory = workerfactory;
         this.params = params;
@@ -123,7 +120,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         this.processors.remove(processor);
     }
 
-    public void process(final HttpServerConnection conn) {
+    public void process(final AxisHttpConnection conn) {
         if (conn == null) {
             throw new IllegalArgumentException("HTTP connection may not be null");
         }
@@ -147,7 +144,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             p.addInterceptor(new ResponseContent());
             p.addInterceptor(new ResponseConnControl());
             p.addInterceptor(new ResponseSessionCookie());
-            httpProcessor = new LoggingProcessorDecorator(p);
+            httpProcessor = p;
             connStrategy = new DefaultConnectionReuseStrategy();
             responseFactory = new DefaultHttpResponseFactory();
         }
@@ -157,7 +154,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
                 connStrategy,
                 responseFactory,
                 this.configurationContext,
-                this.sessionManager,
                 this.workerfactory.newWorker());
         httpService.setParams(this.params);
 

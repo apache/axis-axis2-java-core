@@ -15,9 +15,7 @@
 	! See the License for the specific language governing permissions and
 	! limitations under the License.
 	!-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.apache.axis2</groupId>
@@ -25,15 +23,9 @@
 		<version>SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>axis2-xmlbeans</artifactId>
-    <name>Apache Axis 2.0 - XMLBeans Data Binding</name>
-    <description>XMLBeans data binding support for Axis2</description>
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/xmlbeans</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/xmlbeans</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/xmlbeans</url>
-  </scm>
+	<name>Apache Axis 2.0 - XMLBeans Data Binding</name>
+	<description>XMLBeans data binding support for Axis2</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -41,81 +33,75 @@
 			<version>${version}</version>
 		</dependency>
 		<dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean</artifactId>
-        </dependency>
-        <dependency>
-       		<groupId>org.apache.ant</groupId>
-       		<artifactId>ant</artifactId>
-       		<version>1.7.0</version>
-      </dependency>
-      <dependency>
-       		<groupId>org.apache.ant</groupId>
-       		<artifactId>ant-launcher</artifactId>
-       		<version>1.7.0</version>
-      </dependency>
+			<groupId>xmlbeans</groupId>
+			<artifactId>xbean</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant-launcher</artifactId>
+		</dependency>
 	</dependencies>
-
 	<build>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 		<testResources>
-      <testResource>
-        <targetPath>../test-resources</targetPath>
-        <directory>test-resources</directory>
-        <includes>
-          <include>**/**</include>
-        </includes>
-      </testResource>
-    </testResources>
-    <plugins>
-  	  <plugin>
-  		<artifactId>maven-surefire-plugin</artifactId>
-  		<inherited>true</inherited>
-  		<configuration>
-  			<skip>false</skip>
-  		</configuration>
-  	  </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-        <execution>
-            <id>gen-cp</id>
-            <phase>generate-test-sources</phase>
-            <configuration>
-              <tasks>
-              <property name="cp" refid="maven.runtime.classpath" />             
-              <echo message="${cp}" file="target/cp.txt" /> 
-			  </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant-antlr</artifactId>
-            <version>1.7.0</version>
-          </dependency>
-          <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlrall</artifactId>
-            <version>2.7.4</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
+			<testResource>
+				<targetPath>../test-resources</targetPath>
+				<directory>test-resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>gen-cp</id>
+						<phase>generate-test-sources</phase>
+						<configuration>
+							<tasks>
+								<property name="cp" refid="maven.runtime.classpath"/>
+								<echo message="${cp}" file="target/cp.txt"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<!--<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-antlr</artifactId>
+					</dependency>
+					<dependency>
+						<groupId>antlr</groupId>
+						<artifactId>antlrall</artifactId>
+					</dependency>-->
+				</dependencies>
+			</plugin>
+		</plugins>
 	</build>
 </project>

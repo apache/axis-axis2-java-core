@@ -8,7 +8,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.axis2.maven2</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
         <version>SNAPSHOT</version>
         <configuration>

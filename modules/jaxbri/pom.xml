@@ -15,9 +15,7 @@
 	! See the License for the specific language governing permissions and
 	! limitations under the License.
 	!-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.apache.axis2</groupId>
@@ -25,15 +23,9 @@
 		<version>SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
-
 	<artifactId>axis2-jaxbri</artifactId>
 	<name>Apache Axis 2.0 - JAXB-RI Data Binding</name>
 	<description>JAXB-RI data binding support for Axis 2.0</description>
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxbri</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxbri</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/jaxbri</url>
-  </scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -43,36 +35,32 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-xjc</artifactId>
-			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.0</version>
 		</dependency>
 	</dependencies>
-
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>conf</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-        </excludes>
-        <filtering>false</filtering>
-      </resource>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
-  </build>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>conf</directory>
+				<excludes>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
 </project>

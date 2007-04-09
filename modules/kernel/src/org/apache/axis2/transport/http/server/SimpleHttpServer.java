@@ -27,7 +27,6 @@
 *
 */
 
-
 package org.apache.axis2.transport.http.server;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
@@ -56,7 +55,6 @@ public class SimpleHttpServer {
     private IOProcessor listener = null;
     private ExecutorService listenerExecutor = null;
     private HttpConnectionManager connmanager = null;
-    private HttpConnectionFactory connfactory = null;
     private ExecutorService requestExecutor = null;
 
     public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory,
@@ -77,8 +75,7 @@ public class SimpleHttpServer {
         connmanager =
                 httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
         listenerExecutor = httpFactory.newListenerExecutor(port);
-        connfactory = httpFactory.newRequestConnectionFactory(params);
-        listener = httpFactory.newRequestConnectionListener(connfactory, connmanager, port);
+        listener = httpFactory.newRequestConnectionListener(port, connmanager, params);
     }
 
     public void destroy() throws IOException, InterruptedException {

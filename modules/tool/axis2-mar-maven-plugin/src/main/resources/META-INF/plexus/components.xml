@@ -24,7 +24,7 @@
           <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
           <test-compile>org.apache.maven.plugins:maven-compiler-plugin:testCompile</test-compile>
           <test>org.apache.maven.plugins:maven-surefire-plugin:test</test>
-          <package>org.apache.axis2.maven2:axis2-mar-maven-plugin:mar</package>
+          <package>org.apache.axis2:axis2-mar-maven-plugin:mar</package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
         </phases>

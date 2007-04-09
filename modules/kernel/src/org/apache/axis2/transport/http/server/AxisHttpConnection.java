@@ -29,10 +29,33 @@
 
 package org.apache.axis2.transport.http.server;
 
-public interface HttpConnectionManager {
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-    void process(AxisHttpConnection incoming);
+import org.apache.http.HttpConnection;
+import org.apache.http.HttpException;
+import org.apache.http.HttpInetConnection;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.params.HttpParams;
 
-    void shutdown();
+public interface AxisHttpConnection extends HttpConnection, HttpInetConnection {
+
+    HttpRequest receiveRequest(HttpParams params)
+        throws HttpException, IOException;
+    
+    InputStream getInputStream();
+    
+    void sendResponse(HttpResponse response) 
+        throws HttpException, IOException;    
+    
+    OutputStream getOutputStream();
+    
+    void flush()
+        throws IOException;
+    
+    void reset()
+        throws IOException;
 
 }

@@ -29,13 +29,18 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.http.HttpServerConnection;
+import java.io.InputStream;
 
-import java.io.IOException;
-import java.net.Socket;
+import org.apache.http.HttpMessage;
 
-public interface HttpConnectionFactory {
+public interface AxisHttpRequest extends HttpMessage {
 
-    HttpServerConnection newConnection(Socket socket) throws IOException;
-
+    String getMethod();
+    
+    String getRequestURI();
+    
+    String getContentType();
+    
+    InputStream getInputStream();
+    
 }
