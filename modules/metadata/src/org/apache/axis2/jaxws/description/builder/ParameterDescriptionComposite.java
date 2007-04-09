@@ -10,6 +10,8 @@ public class ParameterDescriptionComposite {
     private WebServiceRefAnnot webServiceRefAnnot;
     private WebServiceContextAnnot webServiceContextAnnot;
     private int listOrder;
+	// Will indicate whether or not we found an @XMLList annotation on the parameter
+	private boolean                 isListType;
 
     private MethodDescriptionComposite parentMDC;
 
@@ -173,6 +175,15 @@ public class ParameterDescriptionComposite {
         }
     }
 
+    	
+    public void setIsListType(boolean isListType) {
+    	this.isListType = isListType;
+    }
+
+    public boolean isListType() {
+    	return isListType;
+    }
+    
     /** Convenience method for unit testing. We will print all of the data members here. */
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -207,4 +218,5 @@ public class ParameterDescriptionComposite {
     public boolean isHolderType() {
         return DescriptionBuilderUtils.isHolderType(parameterType);
     }
+    
 }

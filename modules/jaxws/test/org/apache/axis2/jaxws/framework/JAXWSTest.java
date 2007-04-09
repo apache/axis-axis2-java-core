@@ -72,6 +72,7 @@ import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
+import org.apache.axis2.jaxws.sample.StringListTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
@@ -178,7 +179,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SchemaReaderTests.class);
         suite.addTestSuite(RPCLitEnumTests.class);
         suite.addTestSuite(BindingProviderTests.class);
-
+        suite.addTestSuite(StringListTests.class);
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {

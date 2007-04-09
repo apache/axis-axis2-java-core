@@ -47,6 +47,7 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
@@ -94,6 +95,9 @@ class OperationDescriptionImpl
     private Oneway onewayAnnotation;
     private Boolean onewayIsOneway;
 
+    // ANNOTATION: @XmlList
+    private boolean 			isListType = false;
+    
     // ANNOTATION: @RequestWrapper
     private RequestWrapper requestWrapperAnnotation;
     private String requestWrapperTargetNamespace;
@@ -162,7 +166,7 @@ class OperationDescriptionImpl
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
         setSEIMethod(method);
-
+		checkForXmlListAnnotation(method.getAnnotations());
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
@@ -190,6 +194,7 @@ class OperationDescriptionImpl
 
         parameterDescriptions = createParameterDescriptions();
         faultDescriptions = createFaultDescriptions();
+		isListType = mdc.isListType();
 
         //If an AxisOperation was already created for us by populateService then just use that one
         //Otherwise, create it
@@ -1488,6 +1493,18 @@ class OperationDescriptionImpl
         runtimeDescMap.put(ord.getKey(), ord);
     }
 
+    private void checkForXmlListAnnotation(Annotation[] annotations) {
+    	for(Annotation annotation : annotations) {
+    		if(annotation.annotationType() == XmlList.class) {
+    			isListType = true;
+    		}
+    	}
+    }
+    
+    public boolean isListType() {
+    	return isListType;
+    }
+    
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";

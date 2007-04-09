@@ -9,6 +9,9 @@ public class FieldDescriptionComposite implements TMFAnnotationComposite {
     //Method reflective information
     private String fieldName;        //field name
     private String modifierType;    //field modifier
+	
+	// indicates whether the field was annotated with @XmlList or not
+	private boolean isListType = false;
 
     private HandlerChainAnnot handlerChainAnnot;
     private WebServiceRefAnnot webServiceRefAnnot;
@@ -72,6 +75,14 @@ public class FieldDescriptionComposite implements TMFAnnotationComposite {
         this.webServiceRefAnnot = webServiceRefAnnot;
     }
 
+	public void setIsListType(boolean isListType) {
+		this.isListType = isListType;
+	}
+	
+	public boolean isListType() {
+		return isListType;
+	}
+	
     /**
      * Convenience method for unit testing. We will print all of the
      * data members here.

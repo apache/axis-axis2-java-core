@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -106,6 +107,9 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
                 returnValue = returnElement.getTypeValue();
+                if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                	returnValue = ConvertUtils.convert(returnValue, returnType);
+                }                
                 if (returnValue == null) {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                             "NullParamErr1", "Return", operationDesc.getJavaMethodName(),

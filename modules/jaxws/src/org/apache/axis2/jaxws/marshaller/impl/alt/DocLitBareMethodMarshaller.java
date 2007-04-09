@@ -30,12 +30,15 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.lang.reflect.Array;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class DocLitBareMethodMarshaller implements MethodMarshaller {
@@ -95,6 +98,9 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
                 returnValue = returnElement.getTypeValue();
+                if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                	returnValue = ConvertUtils.convert(returnValue, returnType);
+                }
                 if (returnValue == null) {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                             "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
@@ -235,7 +241,22 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                 if (marshalDesc.getAnnotationDesc(returnType).hasXmlRootElement()) {
                     returnElement = new Element(returnObject, returnQName);
                 } else {
-                    returnElement = new Element(returnObject, returnQName, returnType);
+                    /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
+                     * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List.
+                     */
+                    if(operationDesc.isListType()){
+                       List list= new ArrayList();
+                       if(returnType.isArray()){
+                            for(int count = 0; count < Array.getLength(returnObject); count++){
+                                Object obj = Array.get(returnObject, count);
+                                list.add(obj);
+                            }
+                            returnElement = new Element(list, returnQName, List.class);
+                        }
+                      }
+                    else{
+                        returnElement = new Element(returnObject, returnQName, returnType);
+                    }
                 }
                 MethodMarshallerUtils.toMessage(returnElement, returnType,
                                                 marshalDesc, m,

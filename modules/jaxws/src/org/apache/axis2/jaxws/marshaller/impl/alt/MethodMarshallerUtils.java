@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
+import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -57,6 +58,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,7 +67,9 @@ import java.math.BigInteger;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -146,7 +150,24 @@ public class MethodMarshallerUtils {
                 // Create an Element rendering
                 Element element = null;
                 if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
-                    element = new Element(value, qName, formalType);
+                    /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
+                     * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List and recreate
+                     * the JAXBElements for the same.
+                     */
+                    if(pd.isListType()){
+                        
+                       List<Object> list= new ArrayList<Object>();
+                       if(formalType.isArray()){
+                            for(int count = 0; count < Array.getLength(value); count++){
+                                Object obj = Array.get(value, count);
+                                list.add(obj);
+                            }
+                            element = new Element(list, qName, List.class);
+                        }
+                      }
+                    else{
+                        element = new Element(value, qName, formalType);
+                    }
                 } else {
                     element = new Element(value, qName);
                 }

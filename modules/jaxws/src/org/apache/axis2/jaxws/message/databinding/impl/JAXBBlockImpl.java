@@ -423,4 +423,5 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         }
         return obj;
     }
+    
 }

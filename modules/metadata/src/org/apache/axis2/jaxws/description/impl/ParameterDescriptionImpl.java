@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.ws.Holder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -60,7 +61,10 @@ class ParameterDescriptionImpl
     private WebParam.Mode webParamMode;
     public static final Boolean WebParam_Header_DEFAULT = new Boolean(false);
     private Boolean webParamHeader;
-
+    
+    // This boolean indicates whether or not there was an @XMLList on the parameter
+    private boolean isListType = false;
+    
     ParameterDescriptionImpl(int parameterNumber, Class parameterType, Type parameterGenericType,
                              Annotation[] parameterAnnotations, OperationDescription parent) {
         this.parameterNumber = parameterNumber;
@@ -75,6 +79,7 @@ class ParameterDescriptionImpl
                     getGenericParameterActualType((ParameterizedType)parameterGenericType);
         }
         findWebParamAnnotation(parameterAnnotations);
+        findXmlListAnnotation(parameterAnnotations);
     }
 
     ParameterDescriptionImpl(int parameterNumber, ParameterDescriptionComposite pdc,
@@ -83,6 +88,7 @@ class ParameterDescriptionImpl
         this.parameterNumber = parameterNumber;
         this.parentOperationDescription = parent;
         webParamAnnotation = pdc.getWebParamAnnot();
+        this.isListType = pdc.isListType();
 
         //TODO: Need to build the schema map. Need to add logic to add this parameter
         //      to the schema map.
@@ -107,6 +113,18 @@ class ParameterDescriptionImpl
         }
     }
 
+    /**
+     * This method will search array of parameter annotations for the presence of the @XmlList
+     * annotation.
+     */
+    private void findXmlListAnnotation(Annotation[] annotations) {
+    	for (Annotation checkAnnotation:annotations) {
+            if (checkAnnotation.annotationType() == XmlList.class) {
+                isListType = true;
+            }
+        }
+    }
+    
     public OperationDescription getOperationDescription() {
         return parentOperationDescription;
     }
@@ -363,5 +381,9 @@ class ParameterDescriptionImpl
             return string.toString();
         }
         return string.toString();
+    }
+
+    public boolean isListType() {
+    	return isListType;
     }
 }
