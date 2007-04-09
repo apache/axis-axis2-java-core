@@ -30,11 +30,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +57,6 @@ public class ObjectStateUtils {
      */
     private static final Log log = LogFactory.getLog(ObjectStateUtils.class);
 
-
     // used as part of the metadata written out 
     // indicating a null or empty object
     public static boolean EMPTY_OBJECT = false;
@@ -65,14 +66,15 @@ public class ObjectStateUtils {
     public static boolean ACTIVE_OBJECT = true;
 
     // used to indicate the end of a list
-    public static String LAST_ENTRY = "LAST_ENTRY";
+    public static String LAST_ENTRY = "LAST_OBJ";
 
     // used to indicate an "empty" object
-    public static String EMPTY_MARKER = "EMPTY_MARKER";
+    public static String EMPTY_MARKER = "EMPTY_OBJ";
+
 
     // used to indicate an valid "null" object, 
     // typically used in key-value pairs where a non-null key refers to a null value
-    public static String NULL_OBJECT = "NULL_OBJECT";
+    public static String NULL_OBJECT = "NULL_OBJ";
 
     // message/trace/logging strings
     public static final String UNSUPPORTED_SUID = "Serialization version ID is not supported.";
@@ -100,20 +102,18 @@ public class ObjectStateUtils {
      * <p/>
      * The format of the information written to the output stream is:
      * <BOLD>Non-Null String</BOLD>
-     * <LI> UTF     - class name string
+     * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> int     - number of string sections
-     * <LI> int     - byte buffer size
-     * <LI> bytes(UTF) - string data
+     * <LI> Object  - string data
      * <p/>
      * <BOLD>Null String</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
      * <p/>
-     *
-     * @param out  The output stream
-     * @param str  The string to write
-     * @param desc A text description to use for logging
+     * 
+     * @param out    The output stream
+     * @param str    The string to write
+     * @param desc   A text description to use for logging
      * @throws IOException Exception
      */
     public static void writeString(ObjectOutput out, String str, String desc) throws IOException {
@@ -128,51 +128,10 @@ public class ObjectStateUtils {
             out.writeUTF(str_desc);
 
             out.writeBoolean(ACTIVE_OBJECT);
-
-            // set the number of sections for the string to be processed
-            // for now, the string will be treated as a single section
-            // notes: this would be used for strings that don't fit the
-            // writeUTF(string) limitations
-            int numberStringSections = 1;
-
-            // set up a temporary stream to use for the string
-            ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-
-            // -------------------------------------------------------------
-            // notes: there is some problem with the writeUTF(str) below
-            //        the ObjectOutputStream is getting the UTF string
-            //        but isn't reporting the correct size or converting
-            //        to the correct byte array with the UTF data
-            // -------------------------------------------------------------
-            //ObjectOutputStream objOut = new ObjectOutputStream(outBuffer);
-            //
-            //try
-            //{
-            //    objOut.writeUTF(str);
-            //}
-            //catch (java.io.UTFDataFormatException udfe)
-            //{
-            //    // break string into sections and write the sections
-            //    log.trace("ObjectStateUtils:writeString(): ACTIVE string: UTFDataFormatException ["+udfe.getMessage()+"]");
-            //}
-            // -------------------------------------------------------------
-
-            outBuffer.write(str.getBytes(), 0, str.length());
-
-            out.writeInt(numberStringSections);
-            int outSize = outBuffer.size();
-            out.writeInt(outSize);
-            out.write(outBuffer.toByteArray());
-
-            outBuffer.close();
-
+            out.writeObject(str);
             // trace point
             if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeString(): ACTIVE string: str_desc [" + str_desc +
-                        "]    string [" + str + "]   desc [" + desc +
-                        "]   output byte buffer size [" + outSize + "]");
-                log.trace("ObjectStateUtils:writeString(): ACTIVE string: outBuffer [" +
-                        outBuffer.toString() + "]");
+                log.trace("ObjectStateUtils:writeString(): ACTIVE string: str_desc ["+str_desc+"]    string ["+str+"]   desc ["+desc+"]");
             }
 
         } else {
@@ -198,19 +157,17 @@ public class ObjectStateUtils {
      * <p/>
      * The format of the information to be read from the input stream should be
      * <BOLD>Non-Null String</BOLD>
-     * <LI> UTF     - class name string
+     * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> int     - number of string sections
-     * <LI> int     - byte buffer size
-     * <LI> bytes(UTF) - string data
+     * <LI> Object  - string data
      * <p/>
      * <BOLD>Null String</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
      * <p/>
-     *
-     * @param in   The input stream
-     * @param desc A text description to use for logging
+     * 
+     * @param in     The input stream
+     * @param desc   A text description to use for logging
      * @return The string or null, if not available
      * @throws IOException
      * @throws ClassNotFoundException
@@ -226,84 +183,11 @@ public class ObjectStateUtils {
         boolean isActive = in.readBoolean();
 
         if (isActive == ACTIVE_OBJECT) {
-            // then should have one or more sections of the string to get
-            int numberStringSections = in.readInt();
-
-            if (numberStringSections > 1) {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readString(): ACTIVE string: the [" + desc +
-                            "] string with saved description [" + str_desc + "] has [" +
-                            numberStringSections + "] sections");
-                }
-
-                // TODO: read the sections and concatenate them together
-                //       may need to adjust the saved information to make 
-                //       putting the sections back together easier
-
-                StringBuffer sbuff = new StringBuffer();
-
-                for (int k = 0; k < numberStringSections; k++) {
-                    String section = in.readUTF();
-                    sbuff.append(section);
-                }
-
-                str = sbuff.toString();
-            } else {
-                // one string section
-
-                // get the size of the string in bytes
-                int bufSize = in.readInt();
-
-                // set up a byte buffer to read into
-                byte [] buffer = new byte [bufSize];
-
-                int bytesRead = in.read(buffer, 0, bufSize);
-
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readString(): ACTIVE string: str_desc [" +
-                            str_desc + "]    bufSize [" + bufSize + "]   bytesRead [" + bytesRead +
-                            "]   desc [" + desc + "]");
-                }
-
-                if (bytesRead > 0) {
-                    // -------------------------------------------------------------
-                    // notes: there is some problem with the writeUTF(str) 
-                    //        the ObjectOutputStream is getting the UTF string
-                    //        but isn't reporting the correct size or converting
-                    //        to the correct byte array with the UTF data
-                    // -------------------------------------------------------------
-                    //ByteArrayInputStream strBuffer = null;
-                    //ObjectInputStream    objin = null;
-                    //
-                    //// use a byte array input stream to read the UTF
-                    //strBuffer = new ByteArrayInputStream(buffer);
-                    //objin = new ObjectInputStream(strBuffer);
-                    //
-                    // read the UTF data
-                    //str = objin.readUTF();
-                    //
-                    //log.trace("ObjectStateUtils:readString(): UTF str from buffer  ["+str+"]");
-                    //
-                    // close internal streams
-                    //objin.close();
-                    //strBuffer.close();
-                    // -------------------------------------------------------------
-
-                    str = new String(buffer);
-                }
-            }
-        }
-
-        String value = "null";
-        if (str != null) {
-            value = str;
+        	str = (String) in.readObject();
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("ObjectStateUtils:readString(): [" + desc + "]  returning  [" + value +
-                    "]  for  saved [" + str_desc + "]");
+            log.trace("ObjectStateUtils:readString(): ["+desc+"]  returning  ["+str+"]  for  saved ["+str_desc+"]");
         }
 
         return str;
@@ -316,19 +200,26 @@ public class ObjectStateUtils {
      * The format of the information written to the output stream is
      * <p/>
      * <BOLD>Non-Null Object</BOLD>
-     * <LI> UTF     - class name string
+     * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> object  - object if no error
-     * <LI> LAST_ENTRY marker
+     * <LI> object  - object if no error 
+     *      in the form of 
+     *                int
+     *                byte array
+     *                
+     * <LI> LAST_ENTRY marker 
+     *      in the form of 
+     *                int
+     *                object
      * <p/>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
      * <p/>
-     *
-     * @param out  The output stream
-     * @param obj  The object to write
-     * @param desc A text description to use for logging
+     * 
+     * @param out    The output stream
+     * @param obj    The object to write
+     * @param desc   A text description to use for logging
      * @throws IOException Exception
      */
     public static void writeObject(ObjectOutput out, Object obj, String desc) throws IOException {
@@ -336,28 +227,31 @@ public class ObjectStateUtils {
 
         if (obj != null) {
             String objClassName = obj.getClass().getName();
-            String fullDesc = desc + ":" + objClassName;
+            String fullDesc     = desc +":"+ objClassName;
             // this string is expected to fit the writeUTF limitations
             out.writeUTF(fullDesc);
 
-            out.writeBoolean(ACTIVE_OBJECT);
-
-            // put the object into a test output buffer to see if it can be saved
-            // this technique preserves the integrity of the real output stream in the
-            // event of a serialization error
-            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
-            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
-
-            boolean canWrite = false;
-
             try {
+                // put the object into a test output buffer to see if it can be saved
+                // this technique preserves the integrity of the real output stream in the
+                // event of a serialization error
+                ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+                ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
                 // write the object to the test buffer
                 test_objOut.writeObject(obj);
-                canWrite = true;
-            }
+                test_objOut.close();
+
+                // put the contents of the test buffer into the
+                // real output stream
+                test_outBuffer.close();
+                byte[] data = test_outBuffer.toByteArray();
+                out.writeBoolean(ACTIVE_OBJECT);
+                out.writeObject(data);
+           }
             catch (NotSerializableException nse2) {
                 returned_exception = nse2;
-                // only trace the first time a particular class causes this exception
+                // process this exception
                 traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeObject()",
                                      OBJ_SAVE_PROBLEM);
             }
@@ -374,45 +268,10 @@ public class ObjectStateUtils {
                 }
             }
 
-            if (canWrite) {
-                // write the object to the real output stream
-                try {
-                    out.writeObject(obj);
-
-                    // trace point
-                    if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:writeObject(): Object [" + objClassName +
-                                "]  desc [" + desc + "]");
-                    }
-                }
-                catch (NotSerializableException nse) {
-                    returned_exception = nse;
-                    // only trace the first time a particular class causes this exception
-                    traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeObject()",
-                                         OBJ_SAVE_PROBLEM);
-                }
-                catch (IOException exc) {
-                    // use this as a generic point for exceptions for the test output stream
-                    returned_exception = exc;
-
-                    // trace point
-                    if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:writeObject(): object[" +
-                                obj.getClass().getName() + "]  ***Exception***  [" +
-                                exc.getClass().getName() + " : " + exc.getMessage() + "]  " +
-                                OBJ_SAVE_PROBLEM, exc);
-                        //exc.printStackTrace();
-                    }
-                }
-            }
-
-            // put the end-of-marker in the stream
-            out.writeObject(LAST_ENTRY);
-
-            test_outBuffer.close();
-            test_objOut.close();
-
             if (returned_exception != null) {
+            	// Write a null object into the stream instead of the data that failed
+            	out.writeBoolean(EMPTY_OBJECT);
+
                 // let the caller know that there was a problem
                 // note the integrity of the real output stream has been preserved
                 throw returned_exception;
@@ -425,7 +284,7 @@ public class ObjectStateUtils {
 
             // trace point
             if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeObject(): EMPTY Object [" + desc + "]  ");
+                log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
             }
         }
     }
@@ -437,18 +296,18 @@ public class ObjectStateUtils {
      * <p/>
      * The format of the information to be read from the input stream should be
      * <BOLD>Non-Null Object</BOLD>
-     * <LI> UTF     - class name string
+     * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> object  - object if no error
-     * <LI> LAST_ENTRY marker
+     * <LI> object  - object if no error 
+     * <LI> LAST_ENTRY marker 
      * <p/>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
      * <p/>
-     *
-     * @param in   The input stream
-     * @param desc A text description to use for logging
+     * 
+     * @param in     The input stream
+     * @param desc   A text description to use for logging
      * @return The object or null, if not available
      * @throws IOException
      * @throws ClassNotFoundException
@@ -456,63 +315,30 @@ public class ObjectStateUtils {
     public static Object readObject(ObjectInput in, String desc)
             throws IOException, ClassNotFoundException {
         Object obj = null;
+        byte [] data = null;
 
         String str_desc = in.readUTF();
 
         boolean isActive = in.readBoolean();
 
         if (isActive == ACTIVE_OBJECT) {
-            boolean done = false;
 
-            obj = in.readObject();
-
-            if (obj != null) {
-                if (obj instanceof String) {
-                    String tmp = (String) obj;
-                    if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
-                        // this is the last entry
-                        done = true;
-
-                        // reset the object to be returned
-                        obj = null;
-                    }
-                }
-            }
-
-            // if we haven't got the end marker, then pull it from the stream
-            if (done == false) {
-                Object obj2 = in.readObject();
-
-                // verify that this is the end marker
-                boolean isConsistent = false;
-
-                if (obj2 != null) {
-                    if (obj2 instanceof String) {
-                        String tmp2 = (String) obj2;
-                        if (tmp2.equalsIgnoreCase(LAST_ENTRY)) {
-                            // ok
-                            isConsistent = true;
-                        }
-                    }
-                }
-
-                if (isConsistent == false) {
-                    // trace the inconsistency
-                    if (log.isTraceEnabled()) {
-                        log.trace(
-                                "ObjectStateUtils:readObject(): Inconsistent results reading the stream for [" +
-                                        desc + "]  for saved [" + str_desc + "]");
-                    }
-                    //System.trace.println("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
-                }
-            }
+            // Read the byte array that contains our object
+        	data = (byte[]) in.readObject();
+            
+            // convert the byte[] back into the real object
+            ByteArrayInputStream test_inBuffer = new ByteArrayInputStream(data);
+            ObjectInputStream test_objIn = new ObjectInputStream(test_inBuffer);
+            obj = test_objIn.readObject();
+            test_objIn.close();
+            test_inBuffer.close();
 
         }
 
         String value = "null";
 
         if (obj != null) {
-            value = "(" + str_desc + ")" + ":" + obj.getClass().getName();
+            value = obj.getClass().getName();
         }
 
         // trace point
@@ -550,129 +376,67 @@ public class ObjectStateUtils {
         //  Non-null list:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - objects from list
-        //                        last entry will be the LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//    	- ACTIVE_OBJECT
+    	//      - data
+    	//    EMPTY_OBJEXT - end of array marker
         //    
-        //  Empty list:
+        //  Null list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
+        int savedListSize = 0;
 
         out.writeUTF(desc);
+        out.writeBoolean(al == null ? EMPTY_OBJECT : ACTIVE_OBJECT);
 
-        if ((al == null) || (al.isEmpty())) {
-            // handle null or empty
-
-            out.writeBoolean(EMPTY_OBJECT);
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeArrayList(): EMPTY List [" + desc + "]  ");
-            }
-        } else {
-            // active flag
-            out.writeBoolean(ACTIVE_OBJECT);
-
-            int listSize = al.size();
-            int savedListSize = 0;
-
-            // expected list size
-            out.writeInt(listSize);
-
-            // put each list entry into a test output buffer to see if it can be saved
-            // this technique preserves the integrity of the real output stream in the
-            // event of a serialization error
-            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
-            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
-
+        if (al != null) {
             // setup an iterator for the list
             Iterator i = al.iterator();
-
             while (i.hasNext()) {
+
                 Object obj = i.next();
-                String tmpClassName = obj.getClass().getName();
-
-                boolean canWrite = false;
-
                 try {
+                    // put each list entry into a test output buffer to see if it can be saved
+                    // this technique preserves the integrity of the real output stream in the
+                    // event of a serialization error
+                    ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+                    ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
                     // write the object to the test buffer
                     test_objOut.writeObject(obj);
-                    canWrite = true;
+                    test_objOut.flush();
+                    
+                    byte[] data = test_outBuffer.toByteArray();
+                    out.writeBoolean(ACTIVE_OBJECT);
+                    out.writeObject(data);
+                    
+                    test_objOut.close();
+                    test_outBuffer.close();
+                    savedListSize++;
                 }
                 catch (NotSerializableException nse2) {
-                    // only trace the first time a particular class causes this exception
-                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeArrayList()",
-                                         OBJ_SAVE_PROBLEM);
+                    // process this exception
+                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeArrayList()", OBJ_SAVE_PROBLEM);
                 }
                 catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:writeArrayList(): object[" +
-                                obj.getClass().getName() + "]  ***Exception***  [" +
-                                exc.getClass().getName() + " : " + exc.getMessage() + "]  " +
-                                OBJ_SAVE_PROBLEM, exc);
+                        log.trace("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
-
-                if (canWrite) {
-                    // write the object to the real output stream
-                    try {
-                        out.writeObject(obj);
-                        savedListSize++;
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeArrayList(): " + desc + " [" +
-                                    obj.getClass().getName() + "]");
-                        }
-
-                    }
-                    catch (NotSerializableException nse) {
-                        // only trace the first time a particular class causes this exception
-                        traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeArrayList()",
-                                             OBJ_SAVE_PROBLEM);
-                    }
-                    catch (Exception ex) {
-                        // use this as a generic point for exceptions
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeArrayList(): " + desc + " [" +
-                                    obj.getClass().getName() + "]  ***Exception***  [" +
-                                    ex.getClass().getName() + " : " + ex.getMessage() + "]  " +
-                                    OBJ_SAVE_PROBLEM, ex);
-                            //ex.printStackTrace();
-                        }
-                    }
-                }
-
-                // reset the temporary buffer for the next round
-                test_objOut.reset();
             }
 
             // put the end-of-marker in the stream
-            out.writeObject(LAST_ENTRY);
-            savedListSize++;
-
-            out.writeInt(savedListSize);
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeArrayList(): List [" + desc +
-                        "]   members saved [" + savedListSize + "]");
-            }
-
-            test_outBuffer.close();
-            test_objOut.close();
+            out.writeBoolean(EMPTY_OBJECT);
         }
-
+        // trace point
+        if (log.isTraceEnabled()) {
+            log.trace("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
+        }
     }
 
 
@@ -685,13 +449,13 @@ public class ObjectStateUtils {
      * <LI> active or empty
      * <LI> data
      * <p/>
-     * NOTE: each object in the array should implement either
+     * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
      * <p/>
-     *
-     * @param in   The input stream
-     * @param desc A text description to use for logging
+     * 
+     * @param in     The input stream
+     * @param desc   A text description to use for logging
      * @return The ArrayList or null, if not available
      * @throws IOException
      * @throws ClassNotFoundException
@@ -702,76 +466,45 @@ public class ObjectStateUtils {
         //  Non-null list:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - objects from list
-        //                        last entry will be the LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//    	- ACTIVE_OBJECT
+    	//      - data
+    	//    EMPTY_OBJEXT - end of array marker
         //    
-        //  Empty list:
+        //  Null list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
 
-        ArrayList list = new ArrayList();
+        ArrayList list = null;
 
         String str_desc = in.readUTF();
 
         boolean isActive = in.readBoolean();
 
         if (isActive == ACTIVE_OBJECT) {
-            // get the expected number of entries
-            int expectedListSize = in.readInt();
+        	list = new ArrayList();
 
-            // process the objects
-            boolean keepGoing = true;
-            int count = 0;
-            Object obj = null;
-
-            while (keepGoing) {
-                // stop when we get to the end-of-list marker
+            // stop when we get to the end-of-list marker
+        	while(in.readBoolean()) {
 
                 // get the object
                 try {
-                    obj = in.readObject();
-                    count++;
+                	byte [] data = (byte[]) in.readObject();
 
-                    if (obj != null) {
-                        if (obj instanceof String) {
-                            String tmp = (String) obj;
-                            if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
-                                // this is the last entry
-                                keepGoing = false;
+                	// convert the byte[] back into the real object
+                    ByteArrayInputStream test_inBuffer = new ByteArrayInputStream(data);
+                    ObjectInputStream test_objIn = new ObjectInputStream(test_inBuffer);
+                    Object obj = test_objIn.readObject();
+                    test_objIn.close();
+                    test_inBuffer.close();
 
-                            } //end if last entry marker
-                        } // end if a String object
+                    // add the entry to the list
+                    list.add(obj);
 
-                        if (keepGoing) {
-                            String tmpClassName = obj.getClass().getName();
-
-                            // not at the end of the list so
-                            // add the entry to the list
-                            list.add(obj);
-
-                            // trace point
-                            if (log.isTraceEnabled()) {
-                                log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                                        "]  index [" + count + "]  object [" + tmpClassName +
-                                        "]   for saved [" + str_desc + "]");
-                            }
-                        }
-                    } else {
-                        // some other problem occurred
-                        // the object to be read is null
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                                    "]  object index [" + count +
-                                    "] ***Unexpected null object***   for saved [" + str_desc +
-                                    "]");
-                        }
-                        keepGoing = false;
+                    // trace point
+                    if (log.isTraceEnabled()) {
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+list.size()+"]  for saved ["+str_desc+"]");
                     }
                 }
                 catch (Exception ex) {
@@ -779,54 +512,20 @@ public class ObjectStateUtils {
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                                "]  object index [" + count + "]   for saved [" + str_desc +
-                                "]  ***Exception***  [" + ex.getClass().getName() + " : " +
-                                ex.getMessage() + "]  " + OBJ_RESTORE_PROBLEM, ex);
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+list.size()+"]   for saved ["+str_desc+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
                         //ex.printStackTrace();
                     }
-
-                    keepGoing = false;
                 }
 
             } // end while keep going
-
-            int adjustedNumberEntries = in.readInt();
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:readArrayList(): adjusted number of entries [" +
-                        adjustedNumberEntries + "]     for saved [" + str_desc + "] ");
-            }
-
-
-            if (list.isEmpty()) {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                            "]  returning  [null]  for saved [" + str_desc + "]");
-                }
-
-                return null;
-            } else {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                            "]  returning  [listsize=" + list.size() + "]  for saved [" + str_desc +
-                            "]");
-                }
-
-                return list;
-            }
-        } else {
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:readArrayList(): [" + desc +
-                        "]  returning  [null]    for saved [" + str_desc + "]");
-            }
-
-            return null;
         }
+        
+        // trace point
+        if (log.isTraceEnabled()) {
+            int size = (list == null)? -1 : list.size();
+            log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+size+"]  for saved ["+str_desc+"]");
+        }
+        return list;
     }
 
 
@@ -838,59 +537,38 @@ public class ObjectStateUtils {
      * <LI> active or empty
      * <LI> data
      * <p/>
-     * NOTE: each object in the map should implement either
+     * NOTE: each object in the map should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
      * <p/>
      *
-     * @param out  The output stream
-     * @param map  The HashMap to write
-     * @param desc A text description to use for logging
+     * @param out    The output stream
+     * @param map    The HashMap to write
+     * @param desc   A text description to use for logging
      * @throws IOException Exception
      */
     public static void writeHashMap(ObjectOutput out, HashMap map, String desc) throws IOException {
         // The format of the data is
         //
-        //  Non-null list:
+        //  Non-null map:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - object,object pairs from list
-        //                        last entry will be a single LAST_ENTRY marker object
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//      - active flag
+    	//      - key
+    	//      - value
+    	//    EMPTY OBJECT - end marker
         //    
         //  Empty list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
+    	int savedMapSize = 0;
 
         out.writeUTF(desc);
+        out.writeBoolean(map == null ? EMPTY_OBJECT : ACTIVE_OBJECT);
 
-        if ((map == null) || (map.isEmpty())) {
-            // handle null or empty
-
-            out.writeBoolean(EMPTY_OBJECT);
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeHashMap(): EMPTY map [" + desc + "]  ");
-            }
-        } else {
-            out.writeBoolean(ACTIVE_OBJECT);
-
-            // the expected number of pairs in the map
-            int listSize = map.size();
-            out.writeInt(listSize);
-
-            // this will be the actual number of pairs saved
-            int savedListSize = 0;
-
-            // put each pair into a buffer to see if they can be saved
-            ByteArrayOutputStream pair_outBuffer = new ByteArrayOutputStream();
-            ObjectOutputStream pair_objOut = new ObjectOutputStream(pair_outBuffer);
-
+        if (map != null) {
             Set keyset = map.keySet();
             Iterator i = keyset.iterator();
 
@@ -900,136 +578,47 @@ public class ObjectStateUtils {
                 Object key = i.next();
                 Object value = map.get(key);
 
-                boolean canWritePair = false;
-
                 try {
+                    // put each pair into a buffer to see if they can be saved
+                    ByteArrayOutputStream pair_outBuffer = new ByteArrayOutputStream();
+                    ObjectOutputStream pair_objOut = new ObjectOutputStream(pair_outBuffer);
+
                     // write the objects in pairs
                     pair_objOut.writeObject(key);
-
-                    try {
-                        if (value == null) {
-                            pair_objOut.writeObject(NULL_OBJECT);
-                        } else {
-                            pair_objOut.writeObject(value);
-                        }
-
-                        // ok, the pair can be saved so write them to our "real" buffer
-                        canWritePair = true;
-                    }
-                    catch (NotSerializableException nse) {
-                        // only trace the first time a particular class causes this exception
-                        traceNotSerializable(value, nse, desc,
-                                             "ObjectStateUtils.writeHashMap() map value",
-                                             OBJ_SAVE_PROBLEM);
-                    }
-                    catch (Exception ex) {
-                        // use this as a generic point for exceptions
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeHashMap(): map value [" +
-                                    value.getClass().getName() + "]  ***Exception***  [" +
-                                    ex.getClass().getName() + " : " + ex.getMessage() + "]  " +
-                                    OBJ_SAVE_PROBLEM, ex);
-                            //ex.printStackTrace();
-                        }
-                    }
+                    pair_objOut.writeObject(value);
+                    pair_objOut.flush();
+                    
+                    byte[] data = pair_outBuffer.toByteArray();
+                    out.writeBoolean(ACTIVE_OBJECT);
+                    out.writeObject(data);
+                    
+                    pair_objOut.close();
+                    pair_outBuffer.close();
+                    savedMapSize++;
                 }
                 catch (NotSerializableException nse2) {
                     // only trace the first time a particular class causes this exception
-                    traceNotSerializable(key, nse2, desc, "ObjectStateUtils.writeHashMap() map key",
-                                         OBJ_SAVE_PROBLEM);
+                    traceNotSerializable(key, nse2, desc, "ObjectStateUtils.writeHashMap() map key", OBJ_SAVE_PROBLEM);
                 }
                 catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:writeHashMap(): map key [" +
-                                key.getClass().getName() + "]  ***Exception***  [" +
-                                exc.getClass().getName() + " : " + exc.getMessage() + "]  " +
-                                OBJ_SAVE_PROBLEM, exc);
+                        log.trace("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
-
-                if (canWritePair) {
-                    try {
-                        // write the objects in pairs
-                        out.writeObject(key);
-
-                        // TODO: what if there is an error with the real output stream?
-                        try {
-                            if (value == null) {
-                                out.writeObject(NULL_OBJECT);
-                            } else {
-                                out.writeObject(value);
-                            }
-                        }
-                        catch (NotSerializableException nse3) {
-                            // only trace the first time a particular class causes this exception
-                            traceNotSerializable(value, nse3, desc,
-                                                 "ObjectStateUtils.writeHashMap() map value output error",
-                                                 OBJ_SAVE_PROBLEM);
-                        }
-                        catch (Exception excp) {
-                            // trace point
-                            if (log.isTraceEnabled()) {
-                                log.trace(
-                                        "ObjectStateUtils:writeHashMap(): output error: map value [" +
-                                                value.getClass().getName() +
-                                                "]  ***Exception***  [" +
-                                                excp.getClass().getName() + " : " +
-                                                excp.getMessage() + "]  " + OBJ_SAVE_PROBLEM, excp);
-                                //excp.printStackTrace();
-                            }
-
-                            // put an "null" marker here
-                            out.writeObject(EMPTY_MARKER);
-                        }
-
-                        savedListSize++;
-                    }
-                    catch (NotSerializableException nse4) {
-                        // only trace the first time a particular class causes this exception
-                        traceNotSerializable(key, nse4, desc,
-                                             "ObjectStateUtils.writeHashMap() map key output error",
-                                             OBJ_SAVE_PROBLEM);
-                    }
-                    catch (Exception ex) {
-                        // there was an error with the key to the real output stream
-                        // so skip to the next pair
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeHashMap(): output error: map key [" +
-                                    key.getClass().getName() + "]  ***Exception***  [" +
-                                    ex.getClass().getName() + " : " + ex.getMessage() + "]  " +
-                                    OBJ_SAVE_PROBLEM, ex);
-                            //ex.printStackTrace();
-                        }
-                    }
-                }
-
-                // reset the temporary buffer for the next round
-                pair_objOut.reset();
             }
 
             // write out a marker for the end of list
-            out.writeObject(LAST_ENTRY);
-            savedListSize++;
+            out.writeBoolean(EMPTY_OBJECT);
 
-            // put what we got into our stream
-            out.writeInt(savedListSize);
+        }
 
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeHashMap(): map [" + desc + "]   members saved [" +
-                        savedListSize + "]");
-            }
-
-            pair_outBuffer.close();
-            pair_objOut.close();
+        // trace point
+        if (log.isTraceEnabled()) {
+            log.trace("ObjectStateUtils:writeHashMap(): map ["+desc+"]   members saved ["+savedMapSize+"]");
         }
     }
 
@@ -1043,13 +632,13 @@ public class ObjectStateUtils {
      * <LI> active or empty
      * <LI> data
      * <p/>
-     * NOTE: each object in the array should implement either
+     * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
      * <p/>
-     *
-     * @param in   The input stream
-     * @param desc A text description to use for logging
+     * 
+     * @param in     The input stream
+     * @param desc   A text description to use for logging
      * @return The HashMap or null, if not available
      * @throws IOException
      * @throws ClassNotFoundException
@@ -1057,149 +646,70 @@ public class ObjectStateUtils {
     public static HashMap readHashMap(ObjectInput in, String desc) throws IOException {
         // The format of the data is
         //
-        //  Non-null list:
+        //  Non-null map:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - object,object pairs from list
-        //                        last entry will be a single LAST_ENTRY marker object
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//      - active flag
+    	//      - key
+    	//      - value
+    	//    EMPTY OBJECT - end marker
         //    
         //  Empty list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
-
-        HashMap map = new HashMap();
-
+    	int obtainedMapSize = 0;
+    	
+        HashMap map = null;
         String str_desc = in.readUTF();
-
         boolean isActive = in.readBoolean();
 
         if (isActive == ACTIVE_OBJECT) {
-            // get the hashmap
+            map = new HashMap();
 
-            // first, get the expected number of pairs
-            int expectedListSize = in.readInt();
-
-            // count the pairs as we get them from the in buffer,
-            // including pairs that we don't keep
-            int obtainedListSize = 0;
-
-            // process the object pairs
-            boolean keepGoing = true;
-
-            while (keepGoing) {
+            while (in.readBoolean()) {
                 Object key = null;
                 Object value = null;
 
                 try {
+                	byte [] data = (byte[]) in.readObject();
+                	
+                	// convert the byte[] back into the real objects
+                    ByteArrayInputStream test_inBuffer = new ByteArrayInputStream(data);
+                    ObjectInputStream test_objIn = new ObjectInputStream(test_inBuffer);
+                    key = test_objIn.readObject();
+                    value = test_objIn.readObject();
+                    test_objIn.close();
+                    test_inBuffer.close();
 
-                    key = in.readObject();
+                    // add the entry to the map
+                    map.put(key, value);
+                    obtainedMapSize++;
 
-                    if (key instanceof String) {
-                        String tmpkey = (String) key;
-
-                        // check to see if this is the last entry
-                        if (tmpkey.equalsIgnoreCase(LAST_ENTRY) == true) {
-                            // stop here
-                            keepGoing = false;
-                            break;
-                        }
+                    // trace point
+                    if (log.isTraceEnabled()) {
+                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedMapSize+"]   for saved ["+str_desc+"]");
                     }
-
-                    // that object was not the last entry marker,
-                    // so get the next object in the pair
-
-                    value = in.readObject();
-
-                    boolean keepPair = true;
-
-                    if (value instanceof String) {
-                        String tmpvalue = (String) value;
-
-                        // if the value object is not available, then
-                        // don't preserve the key-value setting
-                        if (tmpvalue.equalsIgnoreCase(EMPTY_MARKER) == true) {
-                            // an empty value, so skip pair
-                            keepPair = false;
-
-                            // trace point
-                            if (log.isTraceEnabled()) {
-                                log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                                        "]  object pair index [" + obtainedListSize +
-                                        "]  will be skipped because the value object is unavailable.    For saved [" +
-                                        str_desc + "]");
-                            }
-                        } else if (tmpvalue.equalsIgnoreCase(NULL_OBJECT) == true) {
-                            value = null;
-                        }
-                    }
-
-                    if (keepPair) {
-                        map.put(key, value);
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                                    "]  object pair index [" + obtainedListSize +
-                                    "]   for saved [" + str_desc + "]");
-                        }
-                    }
-
-                    obtainedListSize++;
-
                 }
                 catch (Exception ex) {
                     // use this as a generic point for all exceptions
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                                "]  object pair index [" + obtainedListSize + "]   for saved [" +
-                                str_desc + "] ***Exception***  [" + ex.getClass().getName() +
-                                " : " + ex.getMessage() + "]  " + OBJ_RESTORE_PROBLEM, ex);
+                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedMapSize+"]   for saved ["+str_desc+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
                         //ex.printStackTrace();
                     }
                 }
-
             }
-
-            // get the adjusted list size from the buffer
-            int savedListSize = in.readInt();
-
-
-            if (map.isEmpty()) {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                            "]  returning  [null]  for saved [" + str_desc + "]");
-                }
-
-                return null;
-            } else {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                            "]  returning  [mapsize=" + map.size() + "]    for saved [" + str_desc +
-                            "]");
-                }
-
-                return map;
-            }
-
-        } else {
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:readHashMap(): [" + desc +
-                        "]  returning  [null]    for saved [" + str_desc + "]");
-            }
-
-            return null;
+        }
+        
+        int size = (map == null) ? -1 : map.size();
+        if (log.isTraceEnabled()) {
+            log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+size+"]    for saved ["+str_desc+"]");
         }
 
+        return map;
     }
 
     /**
@@ -1210,14 +720,14 @@ public class ObjectStateUtils {
      * <LI> active or empty
      * <LI> data
      * <p/>
-     * NOTE: each object in the array should implement either
+     * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
      * <p/>
      *
-     * @param out  The output stream
-     * @param list The LinkedList to write
-     * @param desc A text description to use for logging
+     * @param out    The output stream
+     * @param list   The LinkedList to write
+     * @param desc   A text description to use for logging
      * @throws IOException Exception
      */
     public static void writeLinkedList(ObjectOutput out, LinkedList objlist, String desc)
@@ -1227,128 +737,68 @@ public class ObjectStateUtils {
         //  Non-null list:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - objects from list
-        //                        last entry will be the LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//    	- ACTIVE_OBJECT
+    	//      - data
+    	//    EMPTY_OBJEXT - end of array marker
         //    
-        //  Empty list:
+        //  Null list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
-
+    	int savedListSize = 0;
+    	
         out.writeUTF(desc);
+        out.writeBoolean(objlist == null ? EMPTY_OBJECT : ACTIVE_OBJECT);
 
-        if ((objlist == null) || (objlist.isEmpty())) {
-            // handle null or empty
-
-            out.writeBoolean(EMPTY_OBJECT);
-
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List [" + desc + "]  ");
-            }
-        } else {
-            // active flag
-            out.writeBoolean(ACTIVE_OBJECT);
-
-            int listSize = objlist.size();
-            int savedListSize = 0;
-
-            // expected list size
-            out.writeInt(listSize);
-
-            // put each list entry into a test output buffer to see if it can be saved
-            // this technique preserves the integrity of the real output stream in the
-            // event of a serialization error
-            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
-            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
-
+        if (objlist != null) {
             // setup an iterator for the list
             Iterator i = objlist.iterator();
 
             while (i.hasNext()) {
                 Object obj = i.next();
-                String tmpClassName = obj.getClass().getName();
-
-                boolean canWrite = false;
 
                 try {
+                    // put each list entry into a test output buffer to see if it can be saved
+                    // this technique preserves the integrity of the real output stream in the
+                    // event of a serialization error
+                    ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+                    ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
                     // write the object to the test buffer
                     test_objOut.writeObject(obj);
-                    canWrite = true;
+                    test_objOut.flush();
+                    
+                    byte[] data = test_outBuffer.toByteArray();
+                    out.writeBoolean(ACTIVE_OBJECT);
+                    out.writeObject(data);
+                    
+                    test_objOut.close();
+                    test_outBuffer.close();
+                    savedListSize++;
                 }
                 catch (NotSerializableException nse2) {
-                    // only trace the first time a particular class causes this exception
-                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeLinkedList()",
-                                         OBJ_SAVE_PROBLEM);
+                    // process this exception
+                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeLinkedList()", OBJ_SAVE_PROBLEM);
                 }
                 catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:writeLinkedList(): object[" +
-                                obj.getClass().getName() + "]  ***Exception***  [" +
-                                exc.getClass().getName() + " : " + exc.getMessage() + "]  " +
-                                OBJ_SAVE_PROBLEM, exc);
+                        log.trace("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
-
-                if (canWrite) {
-                    // write the object to the real output stream
-                    try {
-                        out.writeObject(obj);
-                        savedListSize++;
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeLinkedList(): " + desc + " [" +
-                                    obj.getClass().getName() + "]");
-                        }
-
-                    }
-                    catch (NotSerializableException nse) {
-                        // only trace the first time a particular class causes this exception
-                        traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeLinkedList()",
-                                             OBJ_SAVE_PROBLEM);
-                    }
-                    catch (Exception ex) {
-                        // use this as a generic point for exceptions
-
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:writeLinkedList(): " + desc + " [" +
-                                    obj.getClass().getName() + "]  ***Exception***  [" +
-                                    ex.getClass().getName() + " : " + ex.getMessage() + "] " +
-                                    OBJ_SAVE_PROBLEM, ex);
-                            //ex.printStackTrace();
-                        }
-                    }
-                }
-
-                // reset the temporary buffer for the next round
-                test_objOut.reset();
             }
 
             // put the end-of-marker in the stream
-            out.writeObject(LAST_ENTRY);
-            savedListSize++;
-
-            out.writeInt(savedListSize);
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:writeLinkedList(): List [" + desc +
-                        "]   members saved [" + savedListSize + "]");
-            }
-
-            test_outBuffer.close();
-            test_objOut.close();
+            out.writeBoolean(EMPTY_OBJECT);
         }
-
+        // trace point
+        if (log.isTraceEnabled()) {
+            log.trace("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
+        }
     }
 
 
@@ -1361,13 +811,13 @@ public class ObjectStateUtils {
      * <LI> active or empty
      * <LI> data
      * <p/>
-     * NOTE: each object in the array should implement either
+     * NOTE: each object in the list should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
      * <p/>
-     *
-     * @param in   The input stream
-     * @param desc A text description to use for logging
+     * 
+     * @param in     The input stream
+     * @param desc   A text description to use for logging
      * @return The linked list or null, if not available
      * @throws IOException
      * @throws ClassNotFoundException
@@ -1378,76 +828,45 @@ public class ObjectStateUtils {
         //  Non-null list:
         //    UTF          - description string
         //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
         //    objects      - objects from list
-        //                        last entry will be the LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last entry
+    	//    	- ACTIVE_OBJECT
+    	//      - data
+    	//    EMPTY_OBJEXT - end of array marker
         //    
-        //  Empty list:
+        //  Null list:
         //    UTF          - description string
         //    boolean      - empty flag
         //
 
-        LinkedList list = new LinkedList();
+        LinkedList list = null;
 
         String str_desc = in.readUTF();
 
         boolean isActive = in.readBoolean();
 
         if (isActive == ACTIVE_OBJECT) {
-            // get the expected number of entries
-            int expectedListSize = in.readInt();
+        	list = new LinkedList();
 
-            // process the objects
-            boolean keepGoing = true;
-            int count = 0;
-            Object obj = null;
-
-            while (keepGoing) {
-                // stop when we get to the end-of-list marker
+            // stop when we get to the end-of-list marker
+        	while(in.readBoolean()) {
 
                 // get the object
                 try {
-                    obj = in.readObject();
-                    count++;
+                	byte [] data = (byte[]) in.readObject();
 
-                    if (obj != null) {
-                        if (obj instanceof String) {
-                            String tmp = (String) obj;
-                            if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
-                                // this is the last entry
-                                keepGoing = false;
+                	// convert the byte[] back into the real object
+                    ByteArrayInputStream test_inBuffer = new ByteArrayInputStream(data);
+                    ObjectInputStream test_objIn = new ObjectInputStream(test_inBuffer);
+                    Object obj = test_objIn.readObject();
+                    test_objIn.close();
+                    test_inBuffer.close();
 
-                            } //end if last entry marker
-                        } // end if a String object
+                    // add the entry to the list
+                    list.add(obj);
 
-                        if (keepGoing) {
-                            String tmpClassName = obj.getClass().getName();
-
-                            // not at the end of the list so
-                            // add the entry to the list
-                            list.add(obj);
-
-                            // trace point
-                            if (log.isTraceEnabled()) {
-                                log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                                        "]  index [" + count + "]  object [" + tmpClassName +
-                                        "]   for saved [" + str_desc + "]");
-                            }
-                        }
-                    } else {
-                        // some other problem occurred
-                        // the object to be read is null
-                        // trace point
-                        if (log.isTraceEnabled()) {
-                            log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                                    "]  object index [" + count +
-                                    "] ***Unexpected null object***   for saved [" + str_desc +
-                                    "]");
-                        }
-                        keepGoing = false;
+                    // trace point
+                    if (log.isTraceEnabled()) {
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+list.size()+"]  for saved ["+str_desc+"]");
                     }
                 }
                 catch (Exception ex) {
@@ -1455,55 +874,23 @@ public class ObjectStateUtils {
 
                     // trace point
                     if (log.isTraceEnabled()) {
-                        log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                                "]  object index [" + count + "]   for saved [" + str_desc +
-                                "] ***Exception***  [" + ex.getClass().getName() + " : " +
-                                ex.getMessage() + "]  " + OBJ_RESTORE_PROBLEM, ex);
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+list.size()+"]   for saved ["+str_desc+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
                         //ex.printStackTrace();
                     }
-
-                    keepGoing = false;
                 }
 
             } // end while keep going
-
-            int adjustedNumberEntries = in.readInt();
-
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:readLinkedList(): adjusted number of entries [" +
-                        adjustedNumberEntries + "]     for saved [" + str_desc + "] ");
-            }
-
-
-            if (list.isEmpty()) {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                            "]  returning  [null]  for saved [" + str_desc + "]");
-                }
-
-                return null;
-            } else {
-                // trace point
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                            "]  returning  [listsize=" + list.size() + "]   for saved [" +
-                            str_desc + "]");
-                }
-
-                return list;
-            }
-        } else {
-            // trace point
-            if (log.isTraceEnabled()) {
-                log.trace("ObjectStateUtils:readLinkedList(): [" + desc +
-                        "]  returning  [null]   for saved [" + str_desc + "]");
-            }
-
-            return null;
         }
+        
+        // trace point
+        if (log.isTraceEnabled()) {
+        	int size = (list == null)? -1 : list.size();
+            log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+size+"]  for saved ["+str_desc+"]");
+        }
+        return list;
     }
+
+
 
     //--------------------------------------------------------------------
     // Finder methods
@@ -1559,11 +946,11 @@ public class ObjectStateUtils {
 
     /**
      * Find the AxisOperation object that matches the criteria
-     *
-     * @param service     The AxisService object
+     * 
+     * @param service    The AxisService object
      * @param opClassName The class name string for the target object
-     *                    (could be a derived class)
-     * @param opQName     the name associated with the operation
+     *                   (could be a derived class)
+     * @param opQName    the name associated with the operation
      * @return the AxisOperation object that matches the given criteria
      */
     public static AxisOperation findOperation(AxisService service, String opClassName,
