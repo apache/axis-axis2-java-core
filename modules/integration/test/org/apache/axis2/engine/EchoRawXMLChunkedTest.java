@@ -76,6 +76,6 @@ public class EchoRawXMLChunkedTest extends UtilServerBasedTestCase implements Te
         OMElement result = sender.sendReceive(payload);
 
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 }

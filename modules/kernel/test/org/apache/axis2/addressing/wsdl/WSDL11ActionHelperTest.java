@@ -31,6 +31,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.axis2.AbstractTestCase;
+
 public class WSDL11ActionHelperTest extends TestCase {
 
     String testWSDLFile = "/target/test-resources/wsdl/actionTests.wsdl";
@@ -43,7 +45,7 @@ public class WSDL11ActionHelperTest extends TestCase {
         reader.setFeature("javax.wsdl.importDocuments", false);
         reader.setFeature("javax.wsdl.verbose", false);
 
-        URL wsdlFile = new File(System.getProperty("basedir") + testWSDLFile)
+        URL wsdlFile = new File(AbstractTestCase.basedir + testWSDLFile)
                 .toURL();//getClass().getClassLoader().getResource(testWSDLFile);
         definition = reader.readWSDL(wsdlFile.toString());
     }

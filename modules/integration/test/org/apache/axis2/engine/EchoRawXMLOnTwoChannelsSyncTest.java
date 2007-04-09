@@ -88,7 +88,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase
 
         OMElement result = sender.sendReceive(operationName, method);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
         sender.cleanup();
 
     }
@@ -119,7 +119,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase
 
         OMElement result = sender.sendReceive(operationName, method);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
         sender.cleanup();
 
     }

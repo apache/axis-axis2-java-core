@@ -19,6 +19,7 @@ package org.apache.axis2.java.security.action;
 
 import org.apache.axis2.java.security.driver.Java2SecTest;
 import org.apache.axis2.java.security.interf.Actor;
+import org.apache.axis2.AbstractTestCase;
 
 import java.io.CharArrayWriter;
 import java.io.FileReader;
@@ -44,7 +45,7 @@ public class Action implements Actor {
     public void takeAction() {
         try {
             // Print out maven's base,build, and test direcotories
-            String baseDir = System.getProperty("basedir");
+            String baseDir = AbstractTestCase.basedir;
             System.out.println("basedir => " + baseDir);
 
             String buildDir = System.getProperty("maven_build_dir");

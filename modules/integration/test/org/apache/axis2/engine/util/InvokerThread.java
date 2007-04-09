@@ -63,7 +63,7 @@ public class InvokerThread extends Thread {
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
 
-            TestingUtils.campareWithCreatedOMElement(result);
+            TestingUtils.compareWithCreatedOMElement(result);
             log.info("Finishing Thread number " + threadNumber + " .....");
         } catch (AxisFault axisFault) {
             thrownException = axisFault;

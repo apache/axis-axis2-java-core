@@ -7,6 +7,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AbstractTestCase;
 
 import javax.xml.namespace.QName;
 /*
@@ -30,7 +31,7 @@ public class AxisMessageTest extends TestCase {
 
     public void testAxisMessage() throws Exception {
         String filename =
-                System.getProperty("basedir") + "/test-resources/deployment/AxisMessageTestRepo";
+                AbstractTestCase.basedir + "/test-resources/deployment/AxisMessageTestRepo";
         AxisConfiguration er = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();

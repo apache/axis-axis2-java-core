@@ -158,7 +158,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
         OMElement payload = TestingUtils.createDummyOMElement();
         OMElement result = createClient().sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testSuccessfulInvocation() throws Exception {

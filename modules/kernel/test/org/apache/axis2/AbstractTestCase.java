@@ -39,18 +39,22 @@ public abstract class AbstractTestCase
 
     /**
      * Basedir for all file I/O. Important when running tests from
-     * the reactor.
+     * the reactor.  Note that anyone can use this statically.
      */
-    public String basedir = System.getProperty("basedir");
+    public static String basedir;
+
+    static {
+        basedir = System.getProperty("basedir");
+        if (basedir == null) {
+            basedir = new File(".").getAbsolutePath();
+        }
+    }
 
     /**
      * @param testName
      */
     public AbstractTestCase(String testName) {
         super(testName);
-        if (basedir == null) {
-            basedir = new File(".").getAbsolutePath();
-        }
         testDir = new File(basedir, testDir).getAbsolutePath();
         sampleDir = new File(basedir, sampleDir).getAbsolutePath();
         outDir = new File(basedir, outDir).getAbsolutePath();

@@ -18,6 +18,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -25,7 +26,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 public class ServiceGroupTest extends TestCase {
     AxisConfiguration ar;
-    String repo = System.getProperty("basedir") + "/test-resources/deployment/serviceGroupRepo";
+    String repo = AbstractTestCase.basedir + "/test-resources/deployment/serviceGroupRepo";
 
 
     protected void setUp() throws Exception {

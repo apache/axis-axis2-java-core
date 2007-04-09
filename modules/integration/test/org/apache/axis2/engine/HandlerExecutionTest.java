@@ -163,7 +163,7 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
         OMElement payload = TestingUtils.createDummyOMElement();
         OMElement result = createClient().sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testSuccessfulInvocation() throws Exception {
@@ -204,7 +204,7 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
 
         List expectedExecutionState = Arrays.asList(new String[] { "COut1", "COut2", "COut3", "In1",
                 "In2", "In3", "In4", "In5", "In6", "Out1", "Out2", "Out3", "FCOut3", "FCOut2",

@@ -120,12 +120,11 @@ public class Utils {
     public static URL[] getURLsForAllJars(URL url) {
         try {
             ArrayList array = new ArrayList();
-            String urlString = url.toString();
+//            String urlString = url.toString();
             InputStream in = url.openStream();
             ZipInputStream zin;
-            FileInputStream fin = null;
-                array.add(url);
-                zin = new ZipInputStream(in);
+            array.add(url);
+            zin = new ZipInputStream(in);
 
             ZipEntry entry;
             String entryName;
@@ -143,9 +142,6 @@ public class Utils {
                 }
             }
             zin.close();
-            if (fin != null) {
-                fin.close();
-            }
             return (URL[]) array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -233,6 +229,11 @@ public class Utils {
 
     /**
      * This guy will create a AxisService using java reflection
+     * @param axisService the target AxisService
+     * @param axisConfig the in-scope AxisConfiguration
+     * @param excludeOperations a List of Strings (or null), each containing a method to exclude
+     * @param nonRpcMethods a List of Strings (or null), each containing a non-rpc method name
+     * @throws Exception if a problem occurs
      */
     public static void fillAxisService(AxisService axisService,
                                        AxisConfiguration axisConfig,
@@ -316,7 +317,7 @@ public class Utils {
                 // no need to expose , private and protected methods
                 continue;
             }
-            if (excludeOperations.contains(jmethod.getSimpleName())) {
+            if (excludeOperations != null && excludeOperations.contains(jmethod.getSimpleName())) {
                 continue;
             }
             String opName = jmethod.getSimpleName();

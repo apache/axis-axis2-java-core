@@ -86,7 +86,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
         sender.setOptions(options);
         for (int i = 0; i < 5; i++) {
             OMElement result = sender.sendReceive(payload);
-            TestingUtils.campareWithCreatedOMElement(result);
+            TestingUtils.compareWithCreatedOMElement(result);
         }
         sender.cleanup();
         configContext.terminate();
@@ -111,7 +111,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
 
         for (int i = 0; i < 5; i++) {
             OMElement result = sender.sendReceive(payload);
-            TestingUtils.campareWithCreatedOMElement(result);
+            TestingUtils.compareWithCreatedOMElement(result);
         }
         sender.cleanup();
         configContext.terminate();

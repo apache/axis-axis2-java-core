@@ -71,14 +71,20 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
         if (axis2xml == null) {
             // If not, check for a system property setting
             axis2xml = System.getProperty(Constants.AXIS2_CONF);
+
+            // And if not that, try at the root of the repository
+            if (axis2xml == null) {
+                axis2xml = repoLocation + File.separator + Constants.AXIS2_CONF;
+            }
+
             // In either case, check that the file exists... if not
             // we'll use the default axis2.xml on the classpath.
             if (axis2xml != null) {
                 File configFile = new File(axis2xml);
                 if (!configFile.exists()) {
-                    log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
-                    throw new AxisFault(
-                            "Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                    log.info("Config file '" + axis2xml + "' doesn't exist, ignoring.");
+                    axis2xml = null;
+//                    throw new AxisFault("Config file '" + axis2xml + "' doesn't exist");
                 }
             }
         }

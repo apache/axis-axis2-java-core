@@ -106,7 +106,7 @@ public class IntegrationTest extends TestCase {
             assertFalse(response.getAttachments().hasNext());
             assertEquals(0, response.countAttachments());
 
-            String requestStr = printSOAPMessage(request);
+            printSOAPMessage(request);
             String responseStr = printSOAPMessage(response);
             assertTrue(responseStr.indexOf("echo") != -1);
             sCon.close();
@@ -221,7 +221,6 @@ public class IntegrationTest extends TestCase {
 
         Iterator attachIter = response.getAttachments();
 
-        int i = 0;
         while (attachIter.hasNext()) {
             AttachmentPart attachment = (AttachmentPart)attachIter.next();
             final Object content = attachment.getDataHandler().getContent();

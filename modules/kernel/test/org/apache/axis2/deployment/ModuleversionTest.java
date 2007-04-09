@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -29,7 +30,7 @@ import java.util.Iterator;
 public class ModuleversionTest extends TestCase {
 
     public void testDefautModuleVersion() throws AxisFault {
-        String filename = System.getProperty("basedir") +
+        String filename = AbstractTestCase.basedir +
                 "/test-resources/deployment/moduleVersion/Test1/axis2.xml";
         AxisConfiguration ac =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, filename)

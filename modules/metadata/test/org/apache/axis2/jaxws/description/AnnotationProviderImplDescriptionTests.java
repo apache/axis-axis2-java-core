@@ -128,8 +128,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     public void testNoWebServiceProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         try {
-            ServiceDescription serviceDesc =
-                    DescriptionFactory.createServiceDescription(NoWebServiceProviderTestImpl.class);
+            DescriptionFactory.createServiceDescription(NoWebServiceProviderTestImpl.class);
             fail("Expected WebServiceException not caught");
         }
         catch (WebServiceException e) {
@@ -144,9 +143,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     public void testBothWebServiceAnnotations() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         try {
-            ServiceDescription serviceDesc =
-                    DescriptionFactory
-                            .createServiceDescription(BothWebServiceAnnotationTestImpl.class);
+            DescriptionFactory.createServiceDescription(BothWebServiceAnnotationTestImpl.class);
             fail("Expected WebServiceException not caught");
         }
         catch (WebServiceException e) {

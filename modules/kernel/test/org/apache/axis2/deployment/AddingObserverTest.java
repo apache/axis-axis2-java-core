@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AbstractTestCase;
 
 public class AddingObserverTest extends TestCase {
 
@@ -26,7 +27,7 @@ public class AddingObserverTest extends TestCase {
 
     public void testAddingObservs() throws Exception {
         try {
-            String filename = System.getProperty("basedir") +
+            String filename = AbstractTestCase.basedir +
                     "/test-resources/deployment/ConfigWithObservers";
             er = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")

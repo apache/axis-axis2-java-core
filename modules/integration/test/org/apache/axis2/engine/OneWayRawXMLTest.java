@@ -60,7 +60,7 @@ public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestCon
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {
                 envelope = messageCtx.getEnvelope();
-                TestingUtils.campareWithCreatedOMElement(
+                TestingUtils.compareWithCreatedOMElement(
                         envelope.getBody().getFirstElement());
             }
         });

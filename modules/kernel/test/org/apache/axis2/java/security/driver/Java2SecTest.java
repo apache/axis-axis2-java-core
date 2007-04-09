@@ -28,6 +28,7 @@ import org.apache.axis2.java.security.less.LessPermissionPrivilegedExceptionActi
 import org.apache.axis2.java.security.more.MorePermission;
 import org.apache.axis2.java.security.more.MorePermissionAccessControlContext;
 import org.apache.axis2.java.security.more.MorePermissionPrivilegedExceptionAction;
+import org.apache.axis2.AbstractTestCase;
 
 import java.security.AccessControlException;
 import java.security.Permission;
@@ -448,7 +449,7 @@ public class Java2SecTest extends TestCase {
 
         try {
             // Print out maven's base,build, and test direcotories
-            String baseDir = System.getProperty("basedir");
+            String baseDir = AbstractTestCase.basedir;
             System.out.println("basedir => " + baseDir);
             // Convert the \ (back slash) to / (forward slash)
             String baseDirM = baseDir.replace('\\', '/');
@@ -504,7 +505,7 @@ public class Java2SecTest extends TestCase {
 
         try {
             // Print out maven's base,build, and test direcotories
-            String baseDir = System.getProperty("basedir");
+            String baseDir = AbstractTestCase.basedir;
             System.out.println("basedir => " + baseDir);
 
             // Convert the \ (back slash) to / (forward slash)

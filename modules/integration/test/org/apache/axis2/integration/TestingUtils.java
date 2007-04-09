@@ -46,7 +46,7 @@ public class TestingUtils {
     }
 
 
-    public static void campareWithCreatedOMElement(OMElement element) {
+    public static void compareWithCreatedOMElement(OMElement element) {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String textValue = firstChild.getText();

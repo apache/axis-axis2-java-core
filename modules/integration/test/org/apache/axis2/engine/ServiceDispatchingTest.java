@@ -74,7 +74,7 @@ public class ServiceDispatchingTest extends UtilServerBasedTestCase implements T
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testDispatchWithURLAndSOAPAction() throws Exception {
@@ -96,7 +96,7 @@ public class ServiceDispatchingTest extends UtilServerBasedTestCase implements T
         sender.setOptions(options);
 
         OMElement result = sender.sendReceive(payload);
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testDispatchWithSOAPBody() throws Exception {
@@ -119,6 +119,6 @@ public class ServiceDispatchingTest extends UtilServerBasedTestCase implements T
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 }

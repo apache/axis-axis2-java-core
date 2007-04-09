@@ -18,6 +18,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -32,7 +33,7 @@ public class DeploymentTotalTest extends TestCase {
             DeploymentException,
             AxisFault,
             XMLStreamException {
-        String filename = System.getProperty("basedir") + "/target/test-resources/deployment";
+        String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
         er = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();

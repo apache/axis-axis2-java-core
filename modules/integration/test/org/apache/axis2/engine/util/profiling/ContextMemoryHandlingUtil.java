@@ -49,7 +49,7 @@ public class ContextMemoryHandlingUtil implements TestConstants {
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
 

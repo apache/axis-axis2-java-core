@@ -97,7 +97,7 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    TestingUtils.campareWithCreatedOMElement(
+                    TestingUtils.compareWithCreatedOMElement(
                             result.getResponseEnvelope().getBody()
                                     .getFirstElement());
                     finish = true;

@@ -105,7 +105,7 @@ public class AsyncServiceTest extends UtilServerBasedTestCase implements TestCon
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
-                    TestingUtils.campareWithCreatedOMElement(
+                    TestingUtils.compareWithCreatedOMElement(
                             result.getResponseEnvelope().getBody()
                                     .getFirstElement());
                     System.out.println("result = " + result.getResponseEnvelope().getBody()

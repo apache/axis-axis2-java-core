@@ -98,6 +98,6 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 }

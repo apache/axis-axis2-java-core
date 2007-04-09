@@ -244,7 +244,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private void processDeployers(Iterator deployerItr) {
         HashMap directoryToExtensionMappingMap = new HashMap();
-        HashMap extensioToDeployerMappingMap = new HashMap();
+        HashMap extensionToDeployerMappingMap = new HashMap();
         while (deployerItr.hasNext()) {
             OMElement element = (OMElement) deployerItr.next();
             String directory = element.getAttributeValue(new QName(DIRECTORY));
@@ -260,7 +260,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         deployer.setDirectory(directory);
                         deployer.setExtension(extension);
                         directoryToExtensionMappingMap.put(directory, extension);
-                        extensioToDeployerMappingMap.put(extension, deployer);
+                        extensionToDeployerMappingMap.put(extension, deployer);
                     } catch (ClassNotFoundException e) {
                         log.error(e);
                     } catch (InstantiationException e) {
@@ -273,7 +273,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
         if (deploymentEngine != null) {
             deploymentEngine.setDirectoryToExtensionMappingMap(directoryToExtensionMappingMap);
-            deploymentEngine.setExtensioToDeployerMappingMap(extensioToDeployerMappingMap);
+            deploymentEngine.setExtensionToDeployerMappingMap(extensionToDeployerMappingMap);
         }
     }
 
@@ -384,7 +384,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
-                HandlerDescription handler = processHandler(omElement, axisConfig);
+                HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
+//                HandlerDescription handler = processHandler(omElement, axisConfig);
 
                 handler.getRules().setPhaseName(phaseName);
                 Utils.loadHandler(axisConfig.getSystemClassLoader(), handler);

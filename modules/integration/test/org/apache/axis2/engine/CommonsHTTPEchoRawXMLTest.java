@@ -81,7 +81,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
-                TestingUtils.campareWithCreatedOMElement(
+                TestingUtils.compareWithCreatedOMElement(
                         result.getResponseEnvelope().getBody().getFirstElement());
                 finish = true;
             }
@@ -128,7 +128,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
         sender.cleanup();
 //        call.close();
     }

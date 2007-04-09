@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -37,7 +38,7 @@ public class ModuleDisengagementTest extends TestCase {
 
     protected void setUp() throws Exception {
         String filename =
-                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
+                AbstractTestCase.basedir + "/test-resources/deployment/moduleDisEngegeRepo";
         er = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
         AxisService testService = new AxisService();

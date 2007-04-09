@@ -86,8 +86,8 @@ public class UtilServer {
             throws Exception {
         File file = new File(repository);
         if (!file.exists()) {
-            throw new Exception("repository directory "
-                    + file.getAbsolutePath() + " does not exists");
+            throw new Exception("repository directory " + file.getAbsolutePath() +
+                    " does not exist");
         }
         return ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);

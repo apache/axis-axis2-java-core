@@ -72,6 +72,6 @@ public class EchoRawXMLLoadTest extends UtilServerBasedTestCase implements TestC
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 }

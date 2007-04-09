@@ -30,6 +30,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -372,6 +373,11 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     }
 
+    protected HandlerDescription processHandler(OMElement handler_element, ParameterInclude parent)
+            throws DeploymentException
+    {
+        return processHandler(handler_element, parent, null);
+    }
     /**
      * Processes Handler element.
      *
@@ -380,7 +386,8 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @throws DeploymentException <code>DeploymentException</code>
      */
     protected HandlerDescription processHandler(OMElement handler_element,
-                                                ParameterInclude parent)
+                                                ParameterInclude parent,
+                                                String containingPhase)
             throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
@@ -411,10 +418,15 @@ public class DescriptionBuilder implements DeploymentConstants {
         OMElement order_element = handler_element
                 .getFirstChildWithName(new QName(TAG_ORDER));
 
+        PhaseRule rules = handler.getRules();
         if (order_element == null) {
-            throw new DeploymentException((Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,
-                    "phase rule has not been specified")));
+            if (containingPhase == null) {
+                // TODO : Include more information (which handler?) in message!
+                throw new DeploymentException((Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_HANDLER,
+                        "phase rule has not been specified")));
+            }
+            rules.setPhaseName(containingPhase);
         } else {
             Iterator order_itr = order_element.getAllAttributes();
 
@@ -424,26 +436,26 @@ public class DescriptionBuilder implements DeploymentConstants {
                 String value = orderAttribute.getAttributeValue();
 
                 if (TAG_AFTER.equals(name)) {
-                    handler.getRules().setAfter(value);
+                    rules.setAfter(value);
                 } else if (TAG_BEFORE.equals(name)) {
-                    handler.getRules().setBefore(value);
+                    rules.setBefore(value);
                 } else if (TAG_PHASE.equals(name)) {
-                    handler.getRules().setPhaseName(value);
+                    rules.setPhaseName(value);
                 } else if (TAG_PHASE_FIRST.equals(name)) {
                     String boolval = getValue(value);
 
                     if (boolval.equals(BOOLEAN_TRUE)) {
-                        handler.getRules().setPhaseFirst(true);
+                        rules.setPhaseFirst(true);
                     } else if (boolval.equals(BOOLEAN_FALSE)) {
-                        handler.getRules().setPhaseFirst(false);
+                        rules.setPhaseFirst(false);
                     }
                 } else if (TAG_PHASE_LAST.equals(name)) {
                     String boolval = getValue(value);
 
                     if (boolval.equals(BOOLEAN_TRUE)) {
-                        handler.getRules().setPhaseLast(true);
+                        rules.setPhaseLast(true);
                     } else if (boolval.equals(BOOLEAN_FALSE)) {
-                        handler.getRules().setPhaseLast(false);
+                        rules.setPhaseLast(false);
                     }
                 }
             }

@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -34,7 +35,7 @@ public class OperationExcludeTest extends TestCase {
             DeploymentException,
             AxisFault,
             XMLStreamException {
-        String filename = System.getProperty("basedir") + "/test-resources/deployment/exculeRepo";
+        String filename = AbstractTestCase.basedir + "/test-resources/deployment/exculeRepo";
         er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
                 .getAxisConfiguration();
         AxisService service = er.getService("excludeService");

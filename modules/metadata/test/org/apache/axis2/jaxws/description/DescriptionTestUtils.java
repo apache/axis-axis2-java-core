@@ -42,7 +42,7 @@ public class DescriptionTestUtils {
     static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
-        String basedir = System.getProperty("basedir");
+        String basedir = System.getProperty("basedir", ".");
         String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/" + wsdlFileName;
         try {
             wsdlURL = new URL(urlString);

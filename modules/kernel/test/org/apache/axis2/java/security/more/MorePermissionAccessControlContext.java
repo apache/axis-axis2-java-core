@@ -18,6 +18,7 @@ package org.apache.axis2.java.security.more;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.java.security.interf.Actor;
+import org.apache.axis2.AbstractTestCase;
 
 import java.security.AccessControlContext;
 import java.security.Permission;
@@ -45,7 +46,7 @@ public class MorePermissionAccessControlContext implements Actor {
             if (_usingDoPrivilege) {
                 final AccessControlContext acc = AccessController.getContext();
                 // Print out maven's base,build, and test direcotories
-                String baseDir = System.getProperty("basedir");
+                String baseDir = AbstractTestCase.basedir;
                 System.out.println("basedir => " + baseDir);
 
                 // Convert the \ (back slash) to / (forward slash)

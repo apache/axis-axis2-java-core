@@ -114,7 +114,7 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     private Handler inboundHandler = new AbstractHandler() {

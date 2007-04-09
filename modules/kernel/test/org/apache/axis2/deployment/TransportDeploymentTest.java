@@ -37,7 +37,7 @@ public class TransportDeploymentTest extends AbstractTestCase {
             PhaseException,
             DeploymentException,
             XMLStreamException {
-        String repositoryName = System.getProperty("basedir") + "/target/test-resources/deployment";
+        String repositoryName = AbstractTestCase.basedir + "/target/test-resources/deployment";
         File repo = new File(repositoryName);
         String xmlFile = repositoryName + "/server-transport.xml";
         File xml = new File(xmlFile);

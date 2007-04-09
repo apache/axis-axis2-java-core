@@ -35,7 +35,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
 
     public void testDeployment() {
         try {
-            String filename = System.getProperty("basedir") + "/target/test-resources/deployment";
+            String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
             AxisConfiguration er = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(filename, null)
                     .getAxisConfiguration();

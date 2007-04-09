@@ -42,13 +42,9 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
 
     private static final Log log = LogFactory.getLog(EchoRawXMLTest.class);
-    protected QName transportName = new QName("http://localhost/my",
-                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -91,7 +87,7 @@ public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConst
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
-                TestingUtils.campareWithCreatedOMElement(
+                TestingUtils.compareWithCreatedOMElement(
                         result.getResponseEnvelope().getBody().getFirstElement());
                 finish = true;
             }
@@ -136,7 +132,24 @@ public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConst
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
+    }
+
+    public void testLocalEchoXMLSync() throws Exception {
+        OMElement payload = TestingUtils.createDummyOMElement();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+        ServiceClient sender = new ServiceClient(configContext, null);
+        sender.setOptions(options);
+
+        OMElement result = sender.sendReceive(payload);
+
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testCorrectSOAPEnvelope() throws Exception {
@@ -154,7 +167,7 @@ public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConst
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
     public void testEchoXMLSyncHttpVersion() throws Exception {
@@ -172,7 +185,7 @@ public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConst
 
         OMElement result = sender.sendReceive(payload);
 
-        TestingUtils.campareWithCreatedOMElement(result);
+        TestingUtils.compareWithCreatedOMElement(result);
     }
 
 
