@@ -104,6 +104,16 @@ public class SAAJConverterImpl implements SAAJConverter {
         StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);
         // Create and return the OM Envelope
         org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
+        
+        // TODO The following statement expands the OM tree.  This is 
+        // a brute force workaround to get around an apparent bug in the om serialization
+        // (the pull stream parsing was not pulling the final tag).
+        // Four things need to occur:
+        //   a) analyze fix the serialization/pull stream problem.
+        //   b) add a method signature to allow the caller to request build or no build
+        //   c) add a method signature to allow the caller to enable/disable caching
+        //   d) possibly add an optimization to use OMSE for the body elements...to flatten the tree.
+        omEnvelope.build();
         return omEnvelope;
     }
 
@@ -118,6 +128,14 @@ public class SAAJConverterImpl implements SAAJConverter {
         StAXOMBuilder builder = new StAXOMBuilder(reader);
         // Create and return the Element
         OMElement om = builder.getDocumentElement();
+        // TODO The following statement expands the OM tree.  This is 
+        // a brute force workaround to get around an apparent bug in the om serialization
+        // (the pull stream parsing was not pulling the final tag).
+        // Three things need to occur:
+        //   a) analyze fix the serialization/pull stream problem.
+        //   b) add a method signature to allow the caller to request build or no build
+        //   c) add a method signature to allow the caller to enable/disable caching
+        om.build();
         return om;
     }
 
@@ -195,7 +213,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 
                         // The first START_ELEMENT defines the prefix and attributes of the root
                         if (parent == null) {
-                            updateTagData(nc, root, reader);
+                            updateTagData(nc, root, reader, false);
                             parent = root;
                         } else {
                             parent = createElementFromTag(nc, parent, reader);
@@ -294,12 +312,10 @@ public class SAAJConverterImpl implements SAAJConverter {
         // All element children of a SOAPBody must be object's that are SOAPBodyElements.
         // createElement creates the proper child element.
         QName qName = reader.getName();
-        String prefix = reader.getPrefix();
-        Name name = nc.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
-        SOAPElement child = createElement(parent, name);
+        SOAPElement child = createElement(parent, qName);
 
         // Update the tag data on the child
-        updateTagData(nc, child, reader);
+        updateTagData(nc, child, reader, true);
         return child;
     }
 
@@ -310,36 +326,36 @@ public class SAAJConverterImpl implements SAAJConverter {
      * @param name   Name
      * @return
      */
-    protected SOAPElement createElement(SOAPElement parent, Name name)
+    protected SOAPElement createElement(SOAPElement parent, QName qName)
             throws SOAPException {
         SOAPElement child;
         if (parent instanceof SOAPEnvelope) {
-            if (name.getURI().equals(parent.getNamespaceURI())) {
-                if (name.getLocalName().equals("Body")) {
+            if (qName.getNamespaceURI().equals(parent.getNamespaceURI())) {
+                if (qName.getLocalPart().equals("Body")) {
                     child = ((SOAPEnvelope)parent).addBody();
                 } else {
                     child = ((SOAPEnvelope)parent).addHeader();
                 }
             } else {
-                child = parent.addChildElement(name);
+                child = parent.addChildElement(qName);
             }
         } else if (parent instanceof SOAPBody) {
-            if (name.getURI().equals(parent.getNamespaceURI()) &&
-                    name.getLocalName().equals("Fault")) {
+            if (qName.getNamespaceURI().equals(parent.getNamespaceURI()) &&
+                    qName.getLocalPart().equals("Fault")) {
                 child = ((SOAPBody)parent).addFault();
             } else {
-                child = ((SOAPBody)parent).addBodyElement(name);
+                child = ((SOAPBody)parent).addBodyElement(qName);
             }
         } else if (parent instanceof SOAPHeader) {
-            child = ((SOAPHeader)parent).addHeaderElement(name);
+            child = ((SOAPHeader)parent).addHeaderElement(qName);
         } else if (parent instanceof SOAPFault) {
             // This call assumes that the addChildElement implementation
             // is smart enough to add "Detail" or "SOAPFaultElement" objects.
-            child = parent.addChildElement(name);
+            child = parent.addChildElement(qName);
         } else if (parent instanceof Detail) {
-            child = ((Detail)parent).addDetailEntry(name);
+            child = ((Detail)parent).addDetailEntry(qName);
         } else {
-            child = parent.addChildElement(name);
+            child = parent.addChildElement(qName);
         }
 
         return child;
@@ -354,30 +370,42 @@ public class SAAJConverterImpl implements SAAJConverter {
      */
     protected void updateTagData(NameCreator nc,
                                  SOAPElement element,
-                                 XMLStreamReader reader) throws SOAPException {
+                                 XMLStreamReader reader, 
+                                 boolean newElement) throws SOAPException {
         String prefix = reader.getPrefix();
         prefix = (prefix == null) ? "" : prefix;
 
         // Make sure the prefix is correct
         if (prefix.length() > 0 && !element.getPrefix().equals(prefix)) {
-            element.setPrefix(prefix);
+            // Due to a bug in Axiom DOM or in the reader...not sure where yet,
+            // there may be a non-null prefix and no namespace
+            String ns = reader.getNamespaceURI();
+            if (ns != null && ns.length() != 0) {
+                element.setPrefix(prefix);
+            }
+
+        }
+        
+        if (!newElement) {    
+            // Add the namespace declarations from the reader for the missing namespaces
+            int size = reader.getNamespaceCount();
+            for (int i=0; i<size; i++) {
+                String pre = reader.getNamespacePrefix(i);
+                String ns = reader.getNamespaceURI(i);
+                String existingNS = element.getNamespaceURI(pre);
+                if (!ns.equals(existingNS)) {
+                    element.removeNamespaceDeclaration(pre);  // Is it necessary to remove the existing prefix/ns
+                    element.addNamespaceDeclaration(pre, ns);
+                }
+            }
+        } else {
+            // Add the namespace declarations from the reader
+            int size = reader.getNamespaceCount();
+            for (int i=0; i<size; i++) {
+                element.addNamespaceDeclaration(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+            }
         }
 
-        //Remove all of the namespace declarations on the element
-        Iterator it = element.getNamespacePrefixes();
-        while (it.hasNext()) {
-            String aPrefix = (String)it.next();
-            element.removeNamespaceDeclaration(aPrefix);
-        }
-
-        // Add the namespace declarations from the reader
-        int size = reader.getNamespaceCount();
-        for (int i = 0; i < size; i++) {
-            element.addNamespaceDeclaration(reader.getNamespacePrefix(i),
-                                            reader.getNamespaceURI(i));
-        }
-
-        // Add attributes
         addAttributes(nc, element, reader);
 
         return;
