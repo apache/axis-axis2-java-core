@@ -276,6 +276,14 @@ public class EndpointController {
             EndpointDescription ed = (EndpointDescription)param.getValue();
             return ed;
         } else {
+            // TODO: This is using a deprecated factory method to create the ServiceDescription.
+            // The correct way to fix this is to create the ServiceDescriptions (and the AxisService
+            // and associated descritpion hierahcy) at startup.  However, that is currently not done
+            // in the Axis2 testing environment.  So, for testing, we create a Description hierachy
+            // on the fly and attach the AxisService to it.  This should be changed to not used the
+            // deprecated factory method.  HOWEVER doing so currently causes testcase failures in 
+            // JAXWS and or Metadata
+//            ServiceDescription sd = DescriptionFactory.createServiceDescription(implClass);
             ServiceDescription sd =
                     DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
             EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
