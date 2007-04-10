@@ -35,6 +35,7 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URL;
@@ -58,7 +59,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
     private URL wsdlURL;
 
     public WSDL4JWrapper(URL wsdlURL) throws FileNotFoundException, UnknownHostException,
-            ConnectException, WSDLException {
+            ConnectException, IOException, WSDLException {
         super();
         this.wsdlURL = wsdlURL;
         try {
@@ -127,11 +128,12 @@ public class WSDL4JWrapper implements WSDLWrapper {
             throw ex;
         } catch (ConnectException ex) {
             throw ex;
+        } catch(IOException ex)  {
+            throw ex;
         } catch (Exception ex) {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
         }
     }
-
 
     private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) {
 

@@ -2,6 +2,7 @@ package org.apache.axis2.jaxws.polymorphic.shape.tests;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -92,7 +93,10 @@ public class PolymorphicTests extends TestCase {
 		}catch(ConnectException e) {
 			e.printStackTrace();
 			fail();
-		}catch(WSDLException e){
+		}catch(IOException e) {
+		    e.printStackTrace();
+            fail();
+        }catch(WSDLException e){
 			e.printStackTrace();
 			fail();
 		}catch(SchemaReaderException e){
@@ -137,6 +141,9 @@ public class PolymorphicTests extends TestCase {
 		}catch(ConnectException e) {
 			e.printStackTrace();
 			fail();
+        }catch(IOException e) {
+            e.printStackTrace();
+            fail();
 		}catch(WSDLException e){
 			e.printStackTrace();
 			fail();

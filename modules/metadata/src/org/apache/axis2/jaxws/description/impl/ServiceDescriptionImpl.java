@@ -47,6 +47,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -488,6 +489,9 @@ class ServiceDescriptionImpl
             catch (ConnectException e) {
                 throw ExceptionFactory.makeWebServiceException(
                         Messages.getMessage("connectionRefused", e.getMessage()), e);
+            }
+            catch(IOException e) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("urlStream", e.getMessage()), e);
             }
             catch (WSDLException e) {
                 throw ExceptionFactory.makeWebServiceException(
