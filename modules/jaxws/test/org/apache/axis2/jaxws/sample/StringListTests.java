@@ -25,18 +25,13 @@ import junit.framework.TestCase;
 
 
 public class StringListTests extends TestCase{
-    public void testStringListScenario(){
+    public void testStringListScenario() throws Exception {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
-        try{
-            StringListService sls = new StringListService();
-            StringListPortType portType =sls.getStringListPort();
-            String[] retString = portType.stringList(new String[]{"String1","String2","String3"});
-            assertNotNull(retString);
-            assertTrue(retString.length == 3);
-        }catch(Exception e){
-            e.printStackTrace();
-            fail();
-        }
+        StringListService sls = new StringListService();
+        StringListPortType portType =sls.getStringListPort();
+        String[] retString = portType.stringList(new String[]{"String1","String2","String3"});
+        assertNotNull(retString);
+        assertTrue(retString.length == 3);
     }
 }
