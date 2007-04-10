@@ -221,14 +221,14 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op1(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op1param1PartName") int param1) {
+                      name = "op1param1PartName") int param1) {
     }
 
     @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL,
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op2(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op2param1PartName",
+                      name = "op2param1PartName",
                       mode = WebParam.Mode.INOUT) Holder<Integer> param1) {
     }
 
@@ -236,10 +236,10 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op3(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op3param1PartName",
+                      name = "op3param1PartName",
                       mode = WebParam.Mode.INOUT) Holder<Integer> param1,
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op3param2PartName",
+                      name = "op3param2PartName",
                       mode = WebParam.Mode.IN) int param2) {
     }
 
@@ -247,7 +247,7 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op4(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op4param1PartName",
+                      name = "op4param1PartName",
                       mode = WebParam.Mode.OUT) Holder<Integer> param1) {
     }
 
@@ -255,10 +255,10 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op5(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op5param1PartName",
+                      name = "op5param1PartName",
                       mode = WebParam.Mode.OUT) Holder<Integer> param1,
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op5param2PartName",
+                      name = "op5param2PartName",
                       mode = WebParam.Mode.IN) int param2) {
     }
 
@@ -277,11 +277,11 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.BARE)
     public void op8(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op8param1PartName",
+                      name = "op8param1PartName",
                       mode = WebParam.Mode.IN,
                       header = true) Integer param1,
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op8param2PartName",
+                      name = "op8param2PartName",
                       mode = WebParam.Mode.IN) int param2) {
     }
 
@@ -289,7 +289,7 @@ class DLBResolveOperation {
                  parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
     public void op10(
             @WebParam(targetNamespace = "org.apache.axis2.jaxws.description.DLBResolveOperation",
-                      partName = "op10param1PartName") int param1) {
+                      name = "op10param1PartName") int param1) {
     }
 
 }

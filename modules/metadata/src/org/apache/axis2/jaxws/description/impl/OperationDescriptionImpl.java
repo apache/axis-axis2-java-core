@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -266,13 +268,13 @@ class OperationDescriptionImpl
                         // QName based on this parameter then break out of the loop.
                         AxisMessage axisMessage =
                                 newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        String partLocalName = paramDesc.getPartName();
+                        String elementName = paramDesc.getParameterName();
                         String partNamespace = paramDesc.getTargetNamespace();
                         if (log.isDebugEnabled()) {
                             log.debug("Setting up annotation based Doc/Lit/Bare operation: " +
                                     newAxisOperation.getName()
-                                    + "; axisMessage: " + axisMessage + "; partLocalName: "
-                                    + partLocalName + "; partTNS: " + partNamespace);
+                                    + "; axisMessage: " + axisMessage + "; name: "
+                                    + elementName + "; partTNS: " + partNamespace);
                         }
                         if (axisMessage == null) {
                             // TODO: RAS & NLS
@@ -282,12 +284,16 @@ class OperationDescriptionImpl
                             // TODO: RAS & NLS
                             throw ExceptionFactory.makeWebServiceException(
                                     "Could not setup Doc/Lit/Bare operation because part namespace is empty");
-                        } else if (DescriptionUtils.isEmpty(partLocalName)) {
+                        } else if (DescriptionUtils.isEmpty(elementName)) {
                             // TODO: RAS & NLS
                             throw ExceptionFactory.makeWebServiceException(
-                                    "Could not setup Doc/Lit/Bare operation because part local name is empty");
+                                    "Could not setup Doc/Lit/Bare operation because name is empty");
                         } else {
-                            QName partQName = new QName(partNamespace, partLocalName);
+                            QName partQName = new QName(partNamespace, elementName);
+                            if(log.isDebugEnabled()) {
+                                log.debug("Setting AxisMessage element QName for bare mapping: " +
+                                        partQName);
+                            }
                             axisMessage.setElementQName(partQName);
                         }
                         break;
