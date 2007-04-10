@@ -20,7 +20,7 @@
 			
 			
 			
-			<xsd:element name="invoke">
+			<xsd:element name="invoke" nillable="true">
 				<xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="invoke_str" type="xsd:string" />
@@ -28,7 +28,7 @@
 				</xsd:complexType>
 			</xsd:element>			
 			
-			<xsd:element name="ReturnType">
+			<xsd:element name="ReturnType" nillable="true">
 				<xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="return_str" type="xsd:string" />

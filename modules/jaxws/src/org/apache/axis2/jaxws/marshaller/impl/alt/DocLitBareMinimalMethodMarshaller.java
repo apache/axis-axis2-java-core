@@ -109,12 +109,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                 returnValue = returnElement.getTypeValue();
                 if (ConvertUtils.isConvertable(returnValue, returnType)) {
                 	returnValue = ConvertUtils.convert(returnValue, returnType);
-                }                
-                if (returnValue == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-                }
+                }               
             }
 
             // We want to use "by Java Type" unmarshalling for 
@@ -195,22 +190,6 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
 
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
-
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (sigArguments != null) {
-                for (Object argument : sigArguments) {
-                    if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                "doc/lit"));
-
-                    }
-                }
-            }
             return sigArguments;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -262,16 +241,6 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-
-                }
 
                 // Use byJavaType marshalling if necessary
                 Class byJavaType = null;
@@ -347,27 +316,6 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (pds.length > 0) {
-                if (signatureArguments == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-                }
-                if (signatureArguments != null) {
-                    for (Object argument : signatureArguments) {
-                        if (argument == null) {
-                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                    "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                    "doc/lit"));
-                        }
-                    }
-                }
-            }
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);

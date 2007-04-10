@@ -93,19 +93,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils
                             .getReturnElement(packages, message, null, false, null, null);
                 }
-                //TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
                 returnValue = returnElement.getTypeValue();
                 if (ConvertUtils.isConvertable(returnValue, returnType)) {
                 	returnValue = ConvertUtils.convert(returnValue, returnType);
                 }
-                if (returnValue == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-                }
+                
             }
 
             // Unmarshall the ParamValues from the Message
@@ -159,21 +151,6 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (sigArguments != null) {
-                for (Object argument : sigArguments) {
-                    if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                "doc/lit"));
-
-                    }
-                }
-            }
             return sigArguments;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -225,16 +202,6 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-
-                }
                 Element returnElement = null;
                 QName returnQName = new QName(operationDesc.getResultTargetNamespace(),
                                               operationDesc.getResultName());

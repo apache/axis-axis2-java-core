@@ -29,12 +29,15 @@ public class DocLitnonWrappedImpl implements Provider<String> {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.xml.ws.Provider#invoke(T)
-	 */
-	public String invoke(String invoke_str) {
-		System.out.println("End point called with String value =" + invoke_str);
-		return new String("<ns2:ReturnType xmlns:ns2=\"http://doclitnonwrapped.proxy.test.org\"><return_str>some response</return_str></ns2:ReturnType>");
-	}
-
+    /* (non-Javadoc)
+     * @see javax.xml.ws.Provider#invoke(T)
+     */
+    public String invoke(String invoke_str) {
+        System.out.println("End point called with String value =" + invoke_str);
+        if (invoke_str.contains("nil")) {
+            return new String("<ns2:ReturnType xsi:nil='true' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:ns2=\"http://doclitnonwrapped.proxy.test.org\"/>");
+        } else {
+            return new String("<ns2:ReturnType xmlns:ns2=\"http://doclitnonwrapped.proxy.test.org\"><return_str>some response</return_str></ns2:ReturnType>");
+        }
+    }
 }

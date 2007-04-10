@@ -77,6 +77,24 @@ public class ProxyNonWrappedTests extends TestCase {
         System.out.println("-------------------------------------");
     }
     
+    public void testNullInvoke(){
+        System.out.println("-----------------------------------");
+        System.out.println("test: " + getName());
+        System.out.println(">>Testing Sync Invoke on Proxy DocLit bare with a null parameter");
+        ObjectFactory factory = new ObjectFactory();
+        Invoke invokeObj = null;
+        Service service = Service.create(null, serviceName);
+        assertNotNull(service);
+        DocLitnonWrappedProxy proxy = service.getPort(portName, DocLitnonWrappedProxy.class);
+        assertNotNull(proxy);
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        ReturnType response = proxy.invoke(invokeObj);
+        assertNull(response);
+        
+        System.out.println("-------------------------------------");
+    }
+    
     public void testInvokeAsyncCallback(){
         try{ 
             System.out.println("---------------------------------------");

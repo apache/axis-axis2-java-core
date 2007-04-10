@@ -48,6 +48,36 @@ public class NonWrapTests extends TestCase {
 			fail();
 		}
 	}
+    
+    public void testTwoWaySyncNull() throws Exception{
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        try{
+            TwoWay twoWay = null;  // This should cause an WebServiceException
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+            ReturnType returnValue = proxy.twoWay(twoWay);
+            
+            // TODO Revisit JAXB validation
+            // JAXWS does not make the decision of whether a
+            // null parameter can be marshalled.  This decision is
+            // delegated to JAXB.  In this case, the schema indicates
+            // that this is not a nillable element.  The assumption is
+            // that JAXB will fail.  However the current version of 
+            // JAXB considers this as 'validation checking' and is not
+            // supported.  Thus JAXB will marshal the element without
+            // an exception (and unmarshal without exception) even though
+            // this is a violation of the schema.
+            
+            
+            
+            //fail("Expected WebServiceException");
+            
+            
+        } catch(WebServiceException e){
+            System.out.println(e.toString());
+        }
+    }
 
 	public void testTwoWayASyncCallback(){
 		System.out.println("------------------------------");
