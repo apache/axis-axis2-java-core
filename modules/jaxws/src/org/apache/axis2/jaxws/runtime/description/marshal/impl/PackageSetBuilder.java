@@ -49,6 +49,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -94,10 +95,10 @@ public class PackageSetBuilder {
         //read wsdlLocation from @WebService Annotation.
         ServiceDescriptionWSDL sdw = (ServiceDescriptionWSDL)serviceDesc;
         Definition wsdlDefinition = sdw.getWSDLDefinition();
-        EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
         if (endpointDescs != null) {
-            for (int i = 0; i < endpointDescs.length; i++) {
-                EndpointDescription ed = (EndpointDescription)endpointDescs[i];
+            for (EndpointDescription ed:endpointDescs) {
+
                 if (wsdlDefinition == null) {
                     // TODO I don't think we should be trying to load the wsdlDefinition here.
 
@@ -131,12 +132,12 @@ public class PackageSetBuilder {
     public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc,
                                                              MarshalServiceRuntimeDescription msrd) {
         TreeSet<String> set = new TreeSet<String>();
-        EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
-
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
+        
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
-            for (int i = 0; i < endpointDescs.length; i++) {
-                set.addAll(getPackagesFromAnnotations(endpointDescs[i], msrd));
+            for (EndpointDescription endpointDesc: endpointDescs) {
+                set.addAll(getPackagesFromAnnotations(endpointDesc, msrd));
             }
         }
         return set;

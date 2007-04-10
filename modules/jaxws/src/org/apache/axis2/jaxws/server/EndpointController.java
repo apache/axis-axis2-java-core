@@ -57,6 +57,7 @@ import javax.xml.ws.http.HTTPBinding;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 
 /**
  * The EndpointController is the server side equivalent to the InvocationController on the client
@@ -292,11 +293,12 @@ public class EndpointController {
     private boolean bindingTypesMatch(MessageContext requestMsgCtx,
                                       ServiceDescription serviceDesc) {
         // compare soap versions and respond appropriately under SOAP 1.2 Appendix 'A'
-        EndpointDescription[] eds = serviceDesc.getEndpointDescriptions();
+        Collection<EndpointDescription> eds = serviceDesc.getEndpointDescriptions_AsCollection();
         // dispatch endpoints do not have SEIs, so watch out for null or empty array
-        if ((eds != null) && (eds.length > 0)) {
+        if ((eds != null) && (eds.size() > 0)) {
+            EndpointDescription ed = eds.iterator().next();
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
-            String endpointBindingType = eds[0].getBindingType();
+            String endpointBindingType = ed.getBindingType();
             if (protocol.equals(Protocol.soap11)) {
                 return (SOAPBinding.SOAP11HTTP_BINDING.equalsIgnoreCase(endpointBindingType)) ||
                         (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(endpointBindingType));

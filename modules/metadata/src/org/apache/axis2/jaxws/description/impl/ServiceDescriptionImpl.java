@@ -1173,8 +1173,8 @@ class ServiceDescriptionImpl
         // Go through the list of Endpoints that have been created and add any
         // not already in the list.  This will include ports added to the Service
         // via getPort(...) and addPort(...)
-        EndpointDescription[] endpointDescArray = getEndpointDescriptions();
-        for (EndpointDescription endpointDesc : endpointDescArray) {
+        Collection<EndpointDescription> endpointDescs = getEndpointDescriptions_AsCollection();
+        for (EndpointDescription endpointDesc : endpointDescs) {
             QName endpointPortQName = endpointDesc.getPortQName();
             if (!portList.contains(endpointPortQName)) {
                 portList.add(endpointPortQName);
@@ -1272,11 +1272,12 @@ class ServiceDescriptionImpl
             // string.append("ConfigurationContext: " + getAxisConfigContext());
             // EndpointDescriptions
             string.append(newline);
-            EndpointDescription[] endpointDescs = getEndpointDescriptions();
+            Collection<EndpointDescription> endpointDescs = getEndpointDescriptions_AsCollection();
             if (endpointDescs == null) {
                 string.append("EndpointDescription array is null");
-            } else {
-                string.append("Number of EndpointDescrptions: " + endpointDescs.length);
+            }
+            else {
+                string.append("Number of EndpointDescrptions: " + endpointDescs.size());
                 string.append(newline);
                 for (EndpointDescription endpointDesc : endpointDescs) {
                     string.append(endpointDesc.toString());

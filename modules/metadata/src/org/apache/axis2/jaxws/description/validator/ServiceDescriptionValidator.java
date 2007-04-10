@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
+import java.util.Collection;
+
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
@@ -60,10 +62,10 @@ public class ServiceDescriptionValidator extends Validator {
     private boolean validateEndpointDescriptions() {
         boolean areAllValid = true;
         // Validate all the Endpoints that were created under this Service Description
-        EndpointDescription[] endpointDescArray = serviceDesc.getEndpointDescriptions();
-        for (EndpointDescription endpointDesc : endpointDescArray) {
-            EndpointDescriptionValidator endpointValidator =
-                    new EndpointDescriptionValidator(endpointDesc);
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
+        for (EndpointDescription endpointDesc:endpointDescs) {
+            EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
+
             boolean isEndpointValid = endpointValidator.validate();
             if (!isEndpointValid) {
                 addValidationFailure(endpointValidator, "Endpoint failed validation");

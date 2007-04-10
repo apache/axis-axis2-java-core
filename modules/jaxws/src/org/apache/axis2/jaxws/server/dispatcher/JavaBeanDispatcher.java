@@ -189,19 +189,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return op;
     }
 
-    /*
-    private ServiceDescription getServiceDescription(MessageContext mc){
-        return mc.getServiceDescription();
-    }
-
-    private EndpointDescription getEndpointDescription(MessageContext mc){
-        ServiceDescription sd = mc.getServiceDescription();
-        EndpointDescription[] eds = sd.getEndpointDescriptions();
-        EndpointDescription ed = eds[0];
-        return ed;
-    }
-    */
-
     private MethodMarshaller getMethodMarshaller(Protocol protocol,
                                                  OperationDescription operationDesc) {
         javax.jws.soap.SOAPBinding.Style styleOnSEI =

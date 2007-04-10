@@ -875,8 +875,7 @@ public class MethodMarshallerUtils {
     static <T> Holder<T> createHolder(Class paramType, T value)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (Holder.class.isAssignableFrom(paramType)) {
-            Class holderClazz = loadClass(paramType.getName());
-            Holder<T> holder = (Holder<T>)holderClazz.newInstance();
+            Holder holder = (Holder) paramType.newInstance();
             holder.value = value;
             return holder;
         }

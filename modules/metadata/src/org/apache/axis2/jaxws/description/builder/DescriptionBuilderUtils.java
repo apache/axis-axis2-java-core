@@ -136,9 +136,9 @@ class DescriptionBuilderUtils {
     static boolean isHolderType(String checkType) {
         boolean isHolder = false;
         if (checkType != null) {
-            String rawType = getRawType(checkType);
-            if (rawType != null && rawType.equals(JAXWS_HOLDER_CLASS)) {
-                isHolder = true;
+            if (checkType.startsWith(JAXWS_HOLDER_CLASS)) {
+                isHolder = checkType.length() == JAXWS_HOLDER_CLASS.length() ||
+                           checkType.charAt(JAXWS_HOLDER_CLASS.length()) == '<';
             }
         }
         return isHolder;
