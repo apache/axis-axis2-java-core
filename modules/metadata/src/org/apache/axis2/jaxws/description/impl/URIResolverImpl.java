@@ -98,7 +98,12 @@ public class URIResolverImpl implements URIResolver {
 
             }
         }
-        return new InputSource(is);
+        InputSource returnInputSource = new InputSource(is);
+        // We need to set the systemId.  XmlSchema will use this value to maintain a collection of
+        // imported XSDs that have been read.  If this value is null, then circular XSDs will 
+        // cause infinite recursive reads.
+        returnInputSource.setSystemId(schemaLocation);
+        return returnInputSource;
     }
 
     /**
