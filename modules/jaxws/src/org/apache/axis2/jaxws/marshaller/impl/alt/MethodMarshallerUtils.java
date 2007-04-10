@@ -538,6 +538,7 @@ public class MethodMarshallerUtils {
             log.debug("Marshal Throwable =" + throwable.getClass().getName());
             log.debug("  rootCause =" + t.getClass().getName());
             log.debug("  exception=" + t.toString());
+            log.debug("  stack=" + stackToString(t));
         }
 
         XMLFault xmlfault = null;
@@ -1076,5 +1077,19 @@ public class MethodMarshallerUtils {
         return false;
 
 
+    }
+    
+    /**
+     * Get a string containing the stack of the specified exception   
+     * @param e   
+     * @return    
+     */   
+    public static String stackToString(Throwable e) {       
+        java.io.StringWriter sw= new java.io.StringWriter();        
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);       
+        java.io.PrintWriter pw= new java.io.PrintWriter(bw);       
+        e.printStackTrace(pw);       
+        pw.close();       
+        return sw.getBuffer().toString();      
     }
 }
