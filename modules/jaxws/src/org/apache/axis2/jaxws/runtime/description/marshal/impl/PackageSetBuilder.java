@@ -432,26 +432,27 @@ public class PackageSetBuilder {
         return null;
     }
 
-    private static Definition getWSDLDefinition(String wsdlLocation) {
+    private static Definition getWSDLDefinition(String wsdlLoc){
         Definition wsdlDefinition = null;
+        final String wsdlLocation = wsdlLoc;
         if (wsdlLocation != null && wsdlLocation.trim().length() > 0) {
             try {
-                String baseDir = new File(System.getProperty("basedir", ".")).getCanonicalPath();
-                wsdlLocation = new File(baseDir + File.separator + wsdlLocation).getAbsolutePath();
-                File file = new File(wsdlLocation);
-                URL url = file.toURL();
-                if (log.isDebugEnabled()) {
-                    log.debug("Reading WSDL from URL:" + url.toString());
-                }
-                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
-                wsdlDefinition = wsdlWrapper.getDefinition();
-
-            } catch (MalformedURLException e) {
-                ExceptionFactory.makeWebServiceException(e);
-            } catch (IOException e) {
-                ExceptionFactory.makeWebServiceException(e);
-            } catch (WSDLException e) {
-                ExceptionFactory.makeWebServiceException(e);
+                wsdlDefinition = (Definition) AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws MalformedURLException, IOException, WSDLException {
+                                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                                String wsdlLocationPath = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
+                                File file = new File(wsdlLocationPath);
+                                URL url = file.toURL();
+                                if(log.isDebugEnabled()){
+                                    log.debug("Reading WSDL from URL:" +url.toString());
+                                }
+                                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+                                return wsdlWrapper.getDefinition();
+                            }
+                        });
+            } catch (PrivilegedActionException e) {
+                ExceptionFactory.makeWebServiceException(e.getException());
             }
         }
 
