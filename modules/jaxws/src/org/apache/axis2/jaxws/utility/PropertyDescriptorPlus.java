@@ -47,8 +47,10 @@ import java.util.Collection;
 public class PropertyDescriptorPlus {
     PropertyDescriptor descriptor;
     String xmlName = null;
+    Object[] SINGLE_PARAM = new Object[1];
 
     private static Log log = LogFactory.getLog(PropertyDescriptorPlus.class);
+    private static final boolean DEBUG_ENABLED = log.isDebugEnabled();
 
     /**
      * Package protected constructor.  Only created by XMLRootElementUtil.createPropertyDescriptorMap
@@ -166,24 +168,31 @@ public class PropertyDescriptorPlus {
      * @throws IllegalAccessException
      * @throws JAXBWrapperException
      */
-    private void setAtomic(Object targetBean, Object propValue, Method writeMethod)
-            throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
+    private void setAtomic(Object targetBean, Object propValue, Method writeMethod) 
+    throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
         // JAXB provides setters for atomic value.
-        Object[] object = new Object[] { propValue };
-        Class[] paramTypes = writeMethod.getParameterTypes();
-        if (paramTypes != null && paramTypes.length == 1) {
-            Class paramType = paramTypes[0];
-            if (paramType.isPrimitive() && propValue == null) {
-                //Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
-                //default values defined in JAXBObject/xmlSchema.
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Ignoring null value for primitive type, this is the way to set default values defined in JAXBObject/xmlSchema. for primitive types");
+        
+        if (propValue != null) {
+            // Normal case
+            SINGLE_PARAM[0] = propValue;
+            writeMethod.invoke(targetBean, SINGLE_PARAM);
+        } else {
+            Class[] paramTypes = writeMethod.getParameterTypes();
+            
+            if(paramTypes !=null && paramTypes.length ==1){
+                Class paramType = paramTypes[0];
+                if(paramType.isPrimitive() && propValue == null){
+                    // TODO NLS
+                    //Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
+                    //default values defined in JAXBObject/xmlSchema.
+                    if(DEBUG_ENABLED){
+                        log.debug("Ignoring null value for primitive type, this is the way to set default values defined in JAXBObject/xmlSchema. for primitive types");
+                    }
+                    return;
                 }
-                return;
             }
         }
-        writeMethod.invoke(targetBean, object);
+        
     }
 
     /**
@@ -202,9 +211,9 @@ public class PropertyDescriptorPlus {
         Class paramType = writeMethod.getParameterTypes()[0];
         Object value = asArray(propValue, paramType);
         // JAXB provides setters for atomic value.
-        Object[] object = new Object[] { value };
-
-        writeMethod.invoke(targetBean, value);
+        SINGLE_PARAM[0] =value;
+        
+        writeMethod.invoke(targetBean, SINGLE_PARAM);
     }
 
     /**

@@ -165,26 +165,27 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
                                             List<String> xmlChildNames,
                                             Map<String, PropertyDescriptorPlus> pdMap)
             throws JAXBWrapperException {
-        Map<String, PropertyDescriptorPlus> map = new HashMap<String, PropertyDescriptorPlus>();
-
-        // Now check the property info map
-        for (int i = 0; i < xmlChildNames.size(); i++) {
-            String xmlChildName = xmlChildNames.get(i);
-            PropertyDescriptorPlus pd = pdMap.get(xmlChildName);
-            if (pd == null) {
-                // Each xml child name must have a matching property.  
-                if (log.isDebugEnabled()) {
+        // The following code is slow, and doc/lit wrapped is in the main
+        // performance flow.  So only do this check if debug is enabled.
+        if (log.isDebugEnabled()) {
+            for (int i = 0; i < xmlChildNames.size(); i++) {
+                String xmlChildName = xmlChildNames.get(i);
+                PropertyDescriptorPlus pd = pdMap.get(xmlChildName);
+                if (pd == null) {
+                    // Each xml child name must have a matching property.  
+                    
                     log.debug(
-                            "Error occurred trying to match an xml name to a child of a jaxb object");
+                    "Error occurred trying to match an xml name to a child of a jaxb object");
                     log.debug("  The JAXBClass is:" + jaxbClass.getName());
                     log.debug("  The child name that we are looking for is:" + xmlChildName);
                     log.debug("  The JAXBClass has the following child xml names:" +
                             toString(pdMap.keySet()));
                     log.debug("  Complete list of child names that we are looking for:" +
                             toString(xmlChildNames));
+                    
+                    throw new JAXBWrapperException(
+                            Messages.getMessage("JAXBWrapperErr6", jaxbClass.getName(), xmlChildName));
                 }
-                throw new JAXBWrapperException(
-                        Messages.getMessage("JAXBWrapperErr6", jaxbClass.getName(), xmlChildName));
             }
         }
     }
