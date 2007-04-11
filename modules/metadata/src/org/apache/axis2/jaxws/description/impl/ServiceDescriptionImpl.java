@@ -316,10 +316,13 @@ class ServiceDescriptionImpl
 
     private Class getEndpointSEI(QName portQName) {
         Class endpointSEI = null;
-        EndpointInterfaceDescription endpointInterfaceDesc =
-                getEndpointDescription(portQName).getEndpointInterfaceDescription();
-        if (endpointInterfaceDesc != null) {
-            endpointSEI = endpointInterfaceDesc.getSEIClass();
+        EndpointDescription endpointDesc = getEndpointDescription(portQName);
+        if (endpointDesc != null) {
+            EndpointInterfaceDescription endpointInterfaceDesc = 
+                endpointDesc.getEndpointInterfaceDescription();
+            if (endpointInterfaceDesc != null ) {
+                endpointSEI = endpointInterfaceDesc.getSEIClass();
+            }
         }
         return endpointSEI;
     }
@@ -546,8 +549,28 @@ class ServiceDescriptionImpl
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getServiceClient(javax.xml.namespace.QName)
     */
     public ServiceClient getServiceClient(QName portQName) {
-        // TODO: RAS if no portQName found
-        return getEndpointDescription(portQName).getServiceClient();
+        ServiceClient returnServiceClient = null;
+        if (!DescriptionUtils.isEmpty(portQName)) {
+            EndpointDescription endpointDesc = getEndpointDescription(portQName);
+            if (endpointDesc != null) {
+                returnServiceClient = endpointDesc.getServiceClient();
+            }
+            else {
+                // Couldn't find Endpoint Description for port QName
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not find portQName: " + portQName 
+                            + " under ServiceDescription: " + toString());
+                }
+            }
+        }
+        else {
+            // PortQName is empty
+            if (log.isDebugEnabled()) {
+                log.debug("PortQName agrument is invalid; it can not be null or an empty string: " + portQName);
+            }
+        }
+        
+        return returnServiceClient;
     }
 
     /* (non-Javadoc)
