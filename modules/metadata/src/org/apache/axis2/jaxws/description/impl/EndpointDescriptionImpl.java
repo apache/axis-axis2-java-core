@@ -296,78 +296,93 @@ class EndpointDescriptionImpl
         buildDescriptionHierachy();
 
         WsdlComposite wsdlComposite = null;
+        
+        String bindingType = getBindingType();
+        boolean isSOAP12 = (bindingType.equals( javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING) 
+                            || bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING)) 
+                            ? true : false;
 
         //Determine if we need to generate WSDL
-        //Assumption is that WSDL will be generated only when the composite does not contain a
-        //Wsdl Definition
-        if (
-                (isEndpointBased() &&
-                        DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface()))
-                        ||
-                        (!isEndpointBased())
-                ) {
-            //This is either an implicit SEI, or a WebService Provider
-
-            wsdlComposite = generateWSDL(composite);
-
-        } else if (isEndpointBased()) {
-            //This impl class specifies an SEI...this is a special case. There is a bug
-            //in the tooling that allows for the wsdllocation to be specifed on either the
-            //impl. class, or the SEI, or both. So, we need to look for the wsdl as follows:
-            //			1. If the Wsdl exists on the SEI, then check for it on the impl.
-            //			2. If it is not found in either location, in that order, then generate
-
-            DescriptionBuilderComposite seic =
-                    getServiceDescriptionImpl().getDBCMap()
-                            .get(composite.getWebServiceAnnot().endpointInterface());
-
-            //Only generate WSDL if a definition doesn't already exist
-            if (seic.getWsdlDefinition() == null)
+        //First, make sure that this is not a SOAP 1.2 based binding, per JAXWS spec. we cannot 
+        //generate WSDL if the binding type is SOAP 1.2 based.
+        //Then, assuming the composite does not contain a 
+        //Wsdl Definition, go ahead and generate it
+        // REVIEW: I think this should this be isSOAP11 so the generators are only called for 
+        //         SOAP11; i.e. NOT for SOAP12 or XML/HTTP bindings.
+        if (!isSOAP12) {
+            if (
+                    (isEndpointBased() &&
+                            DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface()))
+                            ||
+                            (!isEndpointBased())
+                    ) {
+                //This is either an implicit SEI, or a WebService Provider
+    
                 wsdlComposite = generateWSDL(composite);
+    
+            } else if (isEndpointBased()) {
+                //This impl class specifies an SEI...this is a special case. There is a bug
+                //in the tooling that allows for the wsdllocation to be specifed on either the
+                //impl. class, or the SEI, or both. So, we need to look for the wsdl as follows:
+                //			1. If the Wsdl exists on the SEI, then check for it on the impl.
+                //			2. If it is not found in either location, in that order, then generate
+    
+                DescriptionBuilderComposite seic =
+                        getServiceDescriptionImpl().getDBCMap()
+                                .get(composite.getWebServiceAnnot().endpointInterface());
+    
+                //Only generate WSDL if a definition doesn't already exist
+                if (seic.getWsdlDefinition() == null)
+                    wsdlComposite = generateWSDL(composite);
+            }
+
+        } else if (composite.getWsdlDefinition() == null) {
+            //This is a SOAP12 binding that does not contain a WSDL definition, log a WARNING
+            log.warn("This implementation does not contain a WSDL definition and uses a SOAP 1.2 based binding. " +
+                    "Per JAXWS spec. - a WSDL definition cannot be generated for this implementation. Name: "
+                    + composite.getClassName());
         }
 
-        //Store the WsdlComposite only if it was created
-        if (wsdlComposite != null) {
+        if (!isSOAP12) {
+    
+            //Save the WSDL Location and the WsdlDefinition, value depends on whether wsdl was generated
+            Parameter wsdlLocationParameter = new Parameter();
+            wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
+    
+            Parameter wsdlDefParameter = new Parameter();
+            wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);
+    
             Parameter wsdlCompositeParameter = new Parameter();
             wsdlCompositeParameter.setName(MDQConstants.WSDL_COMPOSITE);
-            wsdlCompositeParameter.setValue(wsdlComposite);
-
+    
+            if (wsdlComposite != null) {
+    
+                //We have a wsdl composite, so set these values for the generated wsdl
+                wsdlCompositeParameter.setValue(wsdlComposite);
+                wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
+                wsdlDefParameter.setValue(
+                        getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
+            } else if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
+                //No wsdl composite because wsdl already exists
+                wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
+                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
+            } else {
+                //There is no wsdl composite and there is NOT a wsdl definition
+                wsdlLocationParameter.setValue(null);
+                wsdlDefParameter.setValue(null);
+    
+            }
+    
             try {
-                axisService.addParameter(wsdlCompositeParameter);
+                if (wsdlComposite != null) {
+                    axisService.addParameter(wsdlCompositeParameter);
+                }
+                axisService.addParameter(wsdlDefParameter);
+                axisService.addParameter(wsdlLocationParameter);
             } catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException(
-                        "EndpointDescription: Unable to add wsdlComposite parm. to AxisService");
+                        "EndpointDescription: Unable to add parameters to AxisService");
             }
-        }
-
-        //Save the WSDL Location and the WsdlDefinition, value depends on whether wsdl was generated
-        Parameter wsdlLocationParameter = new Parameter();
-        wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
-
-        Parameter wsdlDefParameter = new Parameter();
-        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);
-
-        if (wsdlComposite != null) {
-
-            wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
-            wsdlDefParameter.setValue(
-                    getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
-        } else if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
-
-            wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
-        } else {
-            wsdlLocationParameter.setValue(null);
-            wsdlDefParameter.setValue(null);
-
-        }
-
-        try {
-            axisService.addParameter(wsdlDefParameter);
-            axisService.addParameter(wsdlLocationParameter);
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(
-                    "EndpointDescription: Unable to add parms. to AxisService");
         }
     }
 

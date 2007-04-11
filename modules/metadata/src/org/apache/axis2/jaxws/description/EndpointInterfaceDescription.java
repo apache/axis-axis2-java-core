@@ -85,7 +85,7 @@ public interface EndpointInterfaceDescription {
      * @see #getOperation(QName operationQName)
      */
     public abstract OperationDescription[] getDispatchableOperation(QName operationQName);
-
+    public abstract OperationDescription[] getDispatchableOperations();
     public abstract OperationDescription getOperation(String operationName);
 
     public abstract OperationDescription[] getOperations();

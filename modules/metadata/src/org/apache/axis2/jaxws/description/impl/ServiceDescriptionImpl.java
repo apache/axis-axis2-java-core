@@ -156,7 +156,12 @@ class ServiceDescriptionImpl
         String serviceImplName = this.composite.getClassName();
 
         this.dbcMap = dbcMap;
-//TODO: How to we get this when called from server side, create here for now
+        //TODO: How to we get this when called from server side, create here for now
+        //REVIEW: The value being set here is used later in validation checking to
+        //        validation that should occur separately on server and client. If
+        //        at some point this constructor is ever called by the client side,
+        //        then we'll have to get smarter about how we determine server/client
+        //        validation
         this.isServerSide = true;
 
         //capture the WSDL, if there is any...to be used for later processing
@@ -587,7 +592,7 @@ class ServiceDescriptionImpl
     }
 
 
-    boolean isServerSide() {
+    public boolean isServerSide() {
         return isServerSide;
     }
 
@@ -931,7 +936,8 @@ class ServiceDescriptionImpl
            *	compiler will take care of everything else.
            */
 
-        HashMap compositeHashMap = new HashMap();
+        HashMap<String, MethodDescriptionComposite> compositeHashMap = 
+            new HashMap<String, MethodDescriptionComposite>();
         Iterator<MethodDescriptionComposite> compIterator =
                 composite.getMethodDescriptionsList().iterator();
         while (compIterator.hasNext()) {
@@ -941,7 +947,8 @@ class ServiceDescriptionImpl
         // Add methods declared in the implementation's superclass
         addSuperClassMethods(compositeHashMap, composite);
 
-        HashMap seiMethodHashMap = new HashMap();
+        HashMap<String, MethodDescriptionComposite> seiMethodHashMap = 
+            new HashMap<String, MethodDescriptionComposite>();
         Iterator<MethodDescriptionComposite> seiMethodIterator =
                 seic.getMethodDescriptionsList().iterator();
         while (seiMethodIterator.hasNext()) {
@@ -957,16 +964,84 @@ class ServiceDescriptionImpl
                 seiMethodHashMap.values().iterator();
         while (verifySEIIterator.hasNext()) {
             MethodDescriptionComposite mdc = verifySEIIterator.next();
-            // REVIEW:  Only the names are checked; this isn't checking signatures
-            if (compositeHashMap.get(mdc.getMethodName()) == null) {
+            MethodDescriptionComposite implMDC = compositeHashMap.get(mdc.getMethodName());
+            
+            if (implMDC == null) {
                 // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
                         "Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
                                 + composite.getClassName() + "; missing method name: " +
                                 mdc.getMethodName() + "; endpointInterface: " +
                                 seic.getClassName());
+            } else {
+                //At least we found it, now make sure that signatures match up
+                
+                //Check for exceptions matching
+                validateMethodExceptions(mdc, implMDC, seic.getClassName());
+                                
+                // REVIEW:  Probably should do other signature comparisons
             }
         }
+    }
+    
+    private void validateMethodExceptions ( MethodDescriptionComposite seiMDC, 
+                                            MethodDescriptionComposite implMDC,
+                                            String className) {
+        
+        String[] seiExceptions = seiMDC.getExceptions();
+        String[] implExceptions = implMDC.getExceptions();
+
+        if (seiExceptions == null) {
+            if (implExceptions == null) {
+                return;
+            } else {
+                //Exception: sei list is null, but impl list is not null
+                throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
+                        + composite.getClassName() 
+                        + "; method name: " + seiMDC.getMethodName() 
+                        + "; endpointInterface: " + className);
+
+            }
+        } else if (implExceptions == null) {
+            //Exception: sei list is not null, but impl list is null
+            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
+                    + composite.getClassName() 
+                    + "; method name: " + seiMDC.getMethodName() 
+                    + "; endpointInterface: " + className);
+
+        }
+        
+        //check the list length
+        if (seiExceptions.length != implExceptions.length) {
+            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
+                                            + composite.getClassName() 
+                                            + "; method name: " + seiMDC.getMethodName() 
+                                            + "; endpointInterface: " + className);
+        }
+        
+        if (seiExceptions.length > 0) {     
+            
+            for (String seiException : seiExceptions) {
+                boolean foundIt = false;
+                if (implExceptions.length > 0) {        
+                    for (String implException : implExceptions) {
+                        if (seiException.equals(implException)) {
+                            foundIt = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!foundIt) {
+                    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
+                                                                    + composite.getClassName() 
+                                                                    + "; method name: " + seiMDC.getMethodName() 
+                                                                    + "; endpointInterface: " + className);
+
+                }
+            }
+        }
+
     }
 
     /**

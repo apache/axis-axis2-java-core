@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
+import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -216,6 +217,16 @@ public class DescriptionFactoryImpl {
         EndpointDescription endpointDesc =
                 ((ServiceDescriptionImpl)serviceDescription)
                         .updateEndpointDescription(sei, portQName, updateType);
+        EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
+        
+        boolean isEndpointValid = endpointValidator.validate();
+        
+        if (!isEndpointValid) {
+            String msg = "The Endpoint description validation failed to validate due to the following errors: \n" +
+            endpointValidator.toString();
+            
+            throw ExceptionFactory.makeWebServiceException(msg);
+        }
         if (log.isDebugEnabled()) {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
