@@ -151,7 +151,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         endpointDesc = mc.getEndpointDescription();
         mc.setOperationDescription(getOperationDescription(mc));
-        //methodMarshaller = null;
+        String bindingType = endpointDesc.getBindingType();
+        if (bindingType != null) {
+            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                mc.getMessage().setMTOMEnabled(true);
+            }
+        }
     }
 
     /*

@@ -71,6 +71,7 @@ import org.apache.axis2.jaxws.sample.DLWMinTests;
 import org.apache.axis2.jaxws.sample.DocLitBareMinTests;
 import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
+import org.apache.axis2.jaxws.sample.MtomSampleByteArrayTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.StringListTests;
@@ -148,8 +149,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(AddressBookTests.class);
         suite.addTestSuite(MtomSampleTests.class);
         
-        // TODO: This test fails only on Solaris
-        //suite.addTestSuite(MtomSampleByteArrayTests.class);
+        // This test use to fail only on Solaris
+        suite.addTestSuite(MtomSampleByteArrayTests.class);
         suite.addTestSuite(BareTests.class);
         suite.addTestSuite(DocLitBareMinTests.class);
         suite.addTestSuite(NonWrapTests.class);

@@ -50,7 +50,6 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 @WebServiceProvider()
 @ServiceMode(value=Service.Mode.MESSAGE)
-@BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 public class SoapMessageProvider implements Provider<SOAPMessage> {
       
     String responseMsgStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body>";
@@ -191,9 +190,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         SOAPMessage response;
         
         // Transport header check
-        //TODO: FIXME - does not work!!!
-//        assert(request.getContentDescription() != null);
-//        assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
+        assert(request.getContentDescription() != null);
+        assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
 
         // Additional assertion checks
         assert(countAttachments(request) == 0);

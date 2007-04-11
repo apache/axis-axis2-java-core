@@ -117,9 +117,8 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         	SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
-            // TODO: FIXME: Does not work!
-//            assert(response.getContentDescription() != null);
-//            assert(response.getContentDescription().equals(SoapMessageProvider.XML_RESPONSE));
+            assert(response.getContentDescription() != null);
+            assert(response.getContentDescription().equals(SoapMessageProvider.XML_RESPONSE));
             
             // Check assertions and get the data element
             SOAPElement dataElement = assertResponseXML(response, SoapMessageProvider.XML_RESPONSE);
@@ -312,11 +311,10 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
             
-            // Must indicated that this is a JAX-WS MTOM Dispatch
-            Binding binding = dispatch.getBinding();
-            SOAPBinding soapBinding = (SOAPBinding) binding;
-            soapBinding.setMTOMEnabled(true);
-            
+            // MTOM should be automatically detected.  There is no need to set it
+            //Binding binding = dispatch.getBinding();
+            //SOAPBinding soapBinding = (SOAPBinding) binding;
+            //soapBinding.setMTOMEnabled(true);
             
             // Create the SOAPMessage
             String msg = reqMsgStart + MTOM_INVOKE + reqMsgEnd;

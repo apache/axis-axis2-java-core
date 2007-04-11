@@ -21,7 +21,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -89,8 +88,7 @@ public class MessageFactoryImpl implements MessageFactory {
                 Iterator it = message.getAttachments();
                 while (it.hasNext()) {
                     AttachmentPart ap = (AttachmentPart)it.next();
-                    Attachment a = MessageUtils.createAttachment(ap, m);
-                    m.addAttachment(a);
+                    m.addDataHandler(ap.getDataHandler(), ap.getContentId());
                 }
             }
             return m;

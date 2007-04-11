@@ -17,8 +17,8 @@
 package org.apache.axis2.jaxws.message.attachments;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,8 +27,6 @@ import javax.xml.bind.attachment.AttachmentUnmarshaller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * JAXBAttachmentUnmarshaller
@@ -42,13 +40,18 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
 
     private Message message;
 
+    public JAXBAttachmentUnmarshaller(Message message) {
+        this.message = message;
+    }
+
     @Override
     public boolean isXOPPackage() {
-        // FIXME: This should really be set based on whether or not the 
-        // incoming message is "application/xop+xml".  Please read the
-        // javadoc for this method.
+        
+        // Any message that is received might contain MTOM.
+        // So always return true.
         boolean value = true;
-        if (log.isDebugEnabled()) {
+    
+        if (log.isDebugEnabled()){ 
             log.debug("isXOPPackage returns " + value);
         }
         return value;
@@ -82,12 +85,17 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
             log.debug("Attempting to retrieve attachment [" + cid + "] as a DataHandler");
         }
 
-        List<Attachment> attachments = message.getAttachments();
-        Iterator<Attachment> itr = attachments.iterator();
-        while (itr.hasNext()) {
-            Attachment a = itr.next();
-            if (a.getContentID().equals(cid)) {
-                return a.getDataHandler();
+        DataHandler dh = message.getDataHandler(cid);
+        if (dh != null) {
+            return dh;
+        } else {
+            String cid2 = getNewCID(cid);
+            if (log.isDebugEnabled()) {
+                log.debug("A dataHandler was not found for [" + cid + "] trying [" + cid2 + "]");
+            }
+            dh = message.getDataHandler(cid2);
+            if (dh != null) {
+                return dh;
             }
         }
 
@@ -96,14 +104,18 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         }
         return null;
     }
-
+    
     /**
-     * Set the message that holds the attachment data.
-     *
-     * @param msg
+     * @param cid
+     * @return cid with translated characters
      */
-    public void setMessage(Message msg) {
-        message = msg;
+    private String getNewCID(String cid) {
+        // TODO This method only converts : and /
+        // A more complete fix is needed.
+        String cid2 = cid;
+        cid2 = JavaUtils.replace(cid2, "%3A", ":");
+        cid2 = JavaUtils.replace(cid2, "%2F", "/");
+        return cid2;
     }
 
     /**
