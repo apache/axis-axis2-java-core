@@ -17,41 +17,59 @@
 
 package org.apache.axis2.jaxws.binding;
 
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+
 import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * @author rott classes that would normally "implement javax.xml.ws.Binding" should extend this
- *         class instead.
+ * @author rott classes that would normally "implement javax.xml.ws.Binding"
+ *         should extend this class instead.
  */
 public class BindingImpl implements Binding {
 
     // an unsorted list of handlers
-    private List<Handler> handlers;
+    private List<Handler> handlers = null;
 
     protected String bindingId = null;
+
+    private EndpointDescription endpointDesc;
+
     protected Set<URI> roles = null;
 
     protected static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+
     protected static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
 
-    public BindingImpl(String bindingId) {
-        this.bindingId = bindingId;
+    public BindingImpl(EndpointDescription endpointDesc) {
+        this.endpointDesc = endpointDesc;
+        this.bindingId = endpointDesc.getBindingType();
     }
 
     public List<Handler> getHandlerChain() {
+        if (handlers == null) {
+            handlers = new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc
+                            .getPortInfo());
+            if (handlers == null)
+                handlers = new ArrayList<Handler>(); // non-null so client
+                                                        // apps can manipulate
+        }
         return handlers;
     }
 
     public void setHandlerChain(List<Handler> list) {
         // handlers cannot be null so a client app can request and manipulate it
         if (list == null)
-            handlers = new ArrayList<Handler>();
-        this.handlers = list;
+            handlers = new ArrayList<Handler>(); // non-null, but rather
+                                                    // empty
+        else
+            this.handlers = list;
     }
 
 }

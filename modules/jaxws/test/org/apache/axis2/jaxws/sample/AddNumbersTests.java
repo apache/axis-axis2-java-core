@@ -28,7 +28,8 @@ public class AddNumbersTests extends TestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersService";
 	
-    public void testAddNumbers() throws Exception {
+    public void testAddNumbers() {
+        try {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
         
@@ -42,6 +43,10 @@ public class AddNumbersTests extends TestCase {
                 
         System.out.println("Total =" +total);
         System.out.println("----------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
     
     public void testOneWay() {

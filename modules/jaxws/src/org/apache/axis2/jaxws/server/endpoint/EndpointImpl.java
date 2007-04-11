@@ -46,7 +46,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     private void initialize() {
         if (endpointDesc != null) {
-            binding = new BindingImpl(endpointDesc.getBindingType());
+            binding = new BindingImpl(endpointDesc);
         }
     }
 

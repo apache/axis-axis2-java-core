@@ -2,10 +2,10 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
+import org.w3c.dom.Node;
 
 public class AddNumbersLogicalHandler2 implements javax.xml.ws.handler.LogicalHandler {
 
@@ -19,7 +19,22 @@ public class AddNumbersLogicalHandler2 implements javax.xml.ws.handler.LogicalHa
         if (outbound) {  // outbound response if we're on the server
             SOAPMessage msg = ((SoapMessageContext)messagecontext).getMessage();
             SOAPPart part = msg.getSOAPPart();
-            part.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getNextSibling().setTextContent("AddNumbersLogicalHandler2 was here");
+            Node node1 = part.getFirstChild();
+            if (node1 != null) {
+                Node node2 = node1.getFirstChild();
+                if (node2 != null) {
+                    Node node3 = node2.getFirstChild();
+                    if (node3 != null) {
+                        Node node4 = node3.getFirstChild();
+                        if (node4 != null) {
+                            Node node5 = node4.getNextSibling();
+                            if (node5 != null)
+                                node5.setTextContent("AddNumbersLogicalHandler2 was here");
+                        }
+                    }
+                }
+            }
+            //part.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getNextSibling().setTextContent("AddNumbersLogicalHandler2 was here");
         }
         return true;
     }

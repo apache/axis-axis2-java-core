@@ -21,12 +21,15 @@ package org.apache.axis2.jaxws.client.async;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.Response;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -34,7 +37,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 /**
  * The AsyncResponse class is used to collect the response information from Axis2 and deliver it to
  * a JAX-WS client.  AsyncResponse implements the <link>javax.xml.ws.Response</link> API that is
@@ -203,8 +205,7 @@ public abstract class AsyncResponse implements Response {
         // TODO: IMPORTANT: this is the right call here, but beware that the messagecontext may be turned into
         // a fault context with a fault message.  We need to check for this and, if necessary, make an exception and throw it.
         // Invoke inbound handlers.
-        // TODO: integrate -- uncomment line
-        //HandlerInvokerUtils.invokeInboundHandlers(response, response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+        HandlerInvokerUtils.invokeInboundHandlers(response, response.getInvocationContext().getHandlers(), response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
 
         // TODO: Check the type of the object to make sure it corresponds with
         // the parameterized generic type.
@@ -246,7 +247,7 @@ public abstract class AsyncResponse implements Response {
         if (faultMessageContext != null) {
             // Invoke inbound handlers.
             // TODO: integrate -- uncomment line
-            //HandlerInvokerUtils.invokeInboundHandlers(response, response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+            HandlerInvokerUtils.invokeInboundHandlers(faultMessageContext, faultMessageContext.getInvocationContext().getHandlers(), faultMessageContext.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
             Throwable t = getFaultResponse(faultMessageContext);
             if (t != null) {
                 return t;

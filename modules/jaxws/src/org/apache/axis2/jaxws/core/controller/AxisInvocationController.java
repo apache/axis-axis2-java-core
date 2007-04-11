@@ -228,8 +228,7 @@ public class AxisInvocationController extends InvocationController {
 
         CallbackFuture cbf = null;
         if (callback != null) {
-            cbf = new CallbackFuture(ic.getAsyncResponseListener(),
-                                     callback, ic.getExecutor());
+            cbf = new CallbackFuture(ic, callback);
         } else {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr4"));
         }
@@ -303,7 +302,7 @@ public class AxisInvocationController extends InvocationController {
         }
 
         AsyncResponse resp = ic.getAsyncResponseListener();
-        PollingFuture pf = new PollingFuture(resp);
+        PollingFuture pf = new PollingFuture(ic);
         opClient.setCallback(pf);
 
         org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();

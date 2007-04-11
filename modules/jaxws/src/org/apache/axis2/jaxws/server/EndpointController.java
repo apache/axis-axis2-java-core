@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -94,6 +95,21 @@ public class EndpointController {
         EndpointDescription endpointDesc = getEndpointDescription(requestMsgCtx, implClass);
         requestMsgCtx.setEndpointDescription(endpointDesc);
 
+        /*
+         * TODO: review: make sure the handlers are set on the InvocationContext
+         * This implementation of the JAXWS runtime does not use Endpoint, which
+         * would normally be the place to initialize and store the handler list.
+         * In lieu of that, we will have to intialize and store them on the 
+         * InvocationContext.  also see the InvocationContextFactory.  On the client
+         * side, the binding is not yet set when we call into that factory, so the
+         * handler list doesn't get set on the InvocationContext object there.  Thus
+         * we gotta do it here.
+         * 
+         * Since we're on the server, and there apparently is no Binding object
+         * anywhere to be found...
+         */
+        ic.setHandlers(new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc.getPortInfo()));
+        
         if (!bindingTypesMatch(requestMsgCtx, endpointDesc.getServiceDescription())) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
             // only if protocol is soap12 and MISmatches the endpoint do we halt processing
@@ -139,6 +155,7 @@ public class EndpointController {
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
             boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx,
+                    ic.getHandlers(),
                                                                         requestMsgCtx.getEndpointDescription(),
                                                                         HandlerChainProcessor.MEP.REQUEST,
                                                                         isOneWay(
@@ -161,6 +178,7 @@ public class EndpointController {
                 // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
                 // always exactly one EndpointDescription on a server invoke
                 HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext,
+                        ic.getHandlers(),
                                                            requestMsgCtx.getEndpointDescription(),
                                                            HandlerChainProcessor.MEP.RESPONSE,
                                                            false);
@@ -170,9 +188,6 @@ public class EndpointController {
                         MessageContextUtils.createResponseMessageContext(requestMsgCtx);
                 // since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
                 responseMsgContext.setMessage(requestMsgCtx.getMessage());
-
-                // The response MessageContext should be set on the InvocationContext
-                ic.setResponseMessageContext(responseMsgContext);
             }
 
         } catch (Exception e) {
@@ -181,6 +196,9 @@ public class EndpointController {
         } finally {
             restoreRequestMessage(requestMsgCtx);
         }
+
+		// The response MessageContext should be set on the InvocationContext
+		ic.setResponseMessageContext(responseMsgContext);
 
         return ic;
     }

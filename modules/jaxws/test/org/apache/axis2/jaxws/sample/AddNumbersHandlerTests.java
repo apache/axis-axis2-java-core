@@ -18,12 +18,26 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Response;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends TestCase {
 	
@@ -42,7 +56,7 @@ public class AddNumbersHandlerTests extends TestCase {
                     axisEndpoint);	
 			int total = proxy.addNumbersHandler(10,10);
 			
-            assertEquals("With handler manipulation, total should be 2 less than a proper sumation.", 18, total);
+            assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
 			System.out.println("Total (after handler manipulation) = " +total);
 			System.out.println("----------------------------------");
 		} catch(Exception e) {
@@ -78,6 +92,178 @@ public class AddNumbersHandlerTests extends TestCase {
         System.out.println("----------------------------------");
     }
     
+    // TODO: disabled until handler support is more complete
+    public void _testAddNumbersClientHandler() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            p.getBinding().setHandlerChain(handlers);
+
+            int total = proxy.addNumbersHandler(10,10);
+            
+            assertEquals("With handler manipulation, total should be 4 less than a proper sumation.", 16, total);
+            System.out.println("Total (after handler manipulation) = " +total);
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    /*
+     * uses a custom HandlerResolver instead of the default
+     */
+    // TODO: disabled until handler support is more complete
+    public void _testAddNumbersClientHandlerMyResolver() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            
+            // There's a HandlerChain annotation on the SEI, but since
+            // we're using our own handlerresolver that returns an empty list
+            // no client-side handlers will be run
+            service.setHandlerResolver(new MyHandlerResolver());
+            
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            int total = proxy.addNumbersHandler(10,10);
+            
+            assertEquals("With server-side only handler manipulation, total should be a 17.", 17, total);
+            System.out.println("Total (after handler manipulation) = " +total);
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    
+    // TODO: disabled until handler support is more complete
+    public void _testAddNumbersClientProtoAndLogicalHandler() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
+            p.getBinding().setHandlerChain(handlers);
+
+            // value 102 triggers an endpoint exception, which will run through the server outbound
+            // handleFault methods, then client inbound handleFault methods
+            int total = proxy.addNumbersHandler(102,10);
+            
+            fail("should have got an exception, but didn't");
+        } catch(Exception e) {
+            e.printStackTrace();
+            assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
+            assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
+        }
+        System.out.println("----------------------------------");
+    }
+    
+    // TODO: disabled until handler support is more complete
+    public void _testAddNumbersClientHandlerWithFault() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            p.getBinding().setHandlerChain(handlers);
+
+            int total = proxy.addNumbersHandler(99,10);
+            
+            fail("Should have got an exception, but we didn't.");
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
+            assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
+        }
+    }
+    
+    // TODO: disabled until handler support is more complete
+    public void _testAddNumbersClientHandlerAsync() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientLogicalHandler2());
+            p.getBinding().setHandlerChain(handlers);
+
+            
+            AddNumbersHandlerAsyncCallback callback = new AddNumbersHandlerAsyncCallback();
+            Future<?> future = proxy.addNumbersHandlerAsync(10, 10, callback);
+
+            while (!future.isDone()) {
+                Thread.sleep(1000);
+                System.out.println("Async invocation incomplete");
+            }
+            
+            int total = callback.getResponseValue();
+            
+            assertEquals("With handler manipulation, total should be 26.", 26, total);
+            System.out.println("Total (after handler manipulation) = " +total);
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail(e.toString());
+        }
+    }
+    
     public void testOneWay() {
         try {
             System.out.println("----------------------------------");
@@ -96,4 +282,43 @@ public class AddNumbersHandlerTests extends TestCase {
             fail();
         }       
     }
+    
+    /*
+     * A callback implementation that can be used to collect the exceptions
+     */
+    class AddNumbersHandlerAsyncCallback implements AsyncHandler<AddNumbersHandlerResponse> {
+     
+        private Exception exception;
+        private int retVal;
+        
+        public void handleResponse(Response<AddNumbersHandlerResponse> response) {
+            try {
+                System.out.println("FaultyAsyncHandler.handleResponse() was called");
+                AddNumbersHandlerResponse r = response.get();
+                System.out.println("No exception was thrown from Response.get()");
+                retVal = r.getReturn();
+            }
+            catch (Exception e) {
+                System.out.println("An exception was thrown: " + e.getClass());
+                exception = e;
+            }
+        }
+        
+        public int getResponseValue() {
+            return retVal;
+        }
+        
+        public Exception getException() {
+            return exception;
+        }
+    }
+    
+    class MyHandlerResolver implements HandlerResolver {
+
+        public List<Handler> getHandlerChain(PortInfo portinfo) {
+            return new ArrayList<Handler>();
+        }
+        
+    }
+    
 }

@@ -21,11 +21,14 @@ package org.apache.axis2.jaxws;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.ws.Binding;
+import javax.xml.ws.handler.HandlerResolver;
+
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -77,8 +80,14 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         // The default Binding is the SOAPBinding
         if (binding == null) {
-            String bindingType = endpointDesc.getClientBindingID();
-            binding = new SOAPBinding(bindingType);
+            binding = new SOAPBinding(endpointDesc);
+            // TODO should we allow the ServiceDelegate to figure out the
+            // default handlerresolver? Probably yes, since a client app may
+            // look for one there.
+            HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver() != null ? serviceDelegate
+                            .getHandlerResolver()
+                            : new HandlerResolverImpl(endpointDesc);
+            binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         }
         return binding;
     }

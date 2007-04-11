@@ -1189,7 +1189,7 @@ class EndpointDescriptionImpl
      * @return HandlerChainsType This is the top-level element for the Handler configuration file
      */
     public HandlerChainsType getHandlerChain() {
-        // TODO: This needs to work for DBC or class
+    	
         if (handlerChainsType == null) {
             getAnnoHandlerChainAnnotation();
             if (handlerChainAnnotation != null) {
@@ -1214,9 +1214,6 @@ class EndpointDescriptionImpl
                         className,
                         classLoader);
 
-                if(is == null) {
-                    log.warn("Unable to load handlers from file: " + handlerFileName);                    
-                } else {
                     try {
                         // All the classes we need should be part of this package
                         JAXBContext jc = JAXBContext
@@ -1235,7 +1232,6 @@ class EndpointDescriptionImpl
                     }
                 }
             }
-        }
         return handlerChainsType;
     }
 

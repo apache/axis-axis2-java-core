@@ -25,6 +25,8 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.soap.SOAPBody;
@@ -39,7 +41,10 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.util.ArrayList;
+
+import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.util.SoapUtils;
+import org.apache.axis2.saaj.SOAPFactoryImpl;
 
 public class HandlerChainProcessor {
 
@@ -53,7 +58,7 @@ public class HandlerChainProcessor {
     };
 
     private MessageContext mc;
-    private List<Handler> handlers = null;
+	private List<Handler> handlers = null;
 
     // track start/end of logical and protocol handlers in the list
     // The two scenarios are:  1) run logical handlers only, 2) run all handlers
@@ -68,6 +73,7 @@ public class HandlerChainProcessor {
     private final static int OTHER_EXCEPTION = 3;
     // save it if Handler.handleMessage throws one in HandlerChainProcessor.handleMessage
     private RuntimeException savedException;
+    private Protocol proto; // need to save it incase we have to make a fault message
 
     /*
       * HandlerChainProcess expects null, empty list, or an already-sorted
@@ -76,11 +82,13 @@ public class HandlerChainProcessor {
       * it may not be sorted.  The processChain and processFault methods check
       * for this by calling verifyChain.
       */
-    public HandlerChainProcessor(List<Handler> chain) {
+	public HandlerChainProcessor(List<Handler> chain, Protocol proto) {
         if (chain == null) {
             handlers = new ArrayList<Handler>();
-        } else
+		}
+		else
             handlers = chain;
+        this.proto = proto;
     }
 
     /*
@@ -88,29 +96,44 @@ public class HandlerChainProcessor {
       * a chain built or modified by a client application.  Also keep track of
       * start/end for each type of handler.
       */
-    private void verifyChain() throws WebServiceException {
-        boolean protocolHandlersStarted = false;
-        for (Handler handlerClass : handlers) {
-            if (LogicalHandler.class.isAssignableFrom(handlerClass.getClass())) {
-                if (protocolHandlersStarted)
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "handlerChainErr0", handlerClass.getClass().getName()));
-                else {
-                    logicalLength++;
-                }
-            } else if (SOAPHandler.class.isAssignableFrom(handlerClass.getClass()))
-                protocolHandlersStarted = true;
-            else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
-                throw ExceptionFactory.makeWebServiceException(
-                        Messages.getMessage("handlerChainErr1", handlerClass.getClass().getName()));
+	private void sortChain() throws WebServiceException {
+        
+        ArrayList<Handler> logicalHandlers = new ArrayList<Handler>();
+        ArrayList<Handler> protocolHandlers = new ArrayList<Handler>();
+        
+        Iterator handlerIterator = handlers.iterator();
+        
+        while (handlerIterator.hasNext()) {
+            // this is a safe cast since the handlerResolver and binding.setHandlerChain
+            // and InvocationContext.setHandlerChain verifies it before we get here
+            Handler handler = (Handler)handlerIterator.next();
+            // JAXWS 9.2.1.2 sort them by Logical, then SOAP
+            if (LogicalHandler.class.isAssignableFrom(handler.getClass()))
+                logicalHandlers.add((LogicalHandler) handler);
+            else if (SOAPHandler.class.isAssignableFrom(handler.getClass()))
+                // instanceof ProtocolHandler
+                protocolHandlers.add((SOAPHandler) handler);
+            else if (Handler.class.isAssignableFrom(handler.getClass())) {
+                // TODO: NLS better error message
+                throw ExceptionFactory.makeWebServiceException(Messages
+                    .getMessage("handlerChainErr1", handler
+                            .getClass().getName()));
             } else {
-                throw ExceptionFactory.makeWebServiceException(
-                        Messages.getMessage("handlerChainErr2", handlerClass.getClass().getName()));
+                // TODO: NLS better error message
+                throw ExceptionFactory.makeWebServiceException(Messages
+                    .getMessage("handlerChainErr2", handler
+                            .getClass().getName()));
             }
-
         }
-    }
-
+        
+        logicalLength = logicalHandlers.size();
+        
+        // JAXWS 9.2.1.2 sort them by Logical, then SOAP
+        handlers.clear();
+        handlers.addAll(logicalHandlers);
+        handlers.addAll(protocolHandlers);
+	}
+	
 
     /**
      * @param mc By the time processChain method is called, we already have the sorted chain, and now
@@ -122,30 +145,25 @@ public class HandlerChainProcessor {
      *           direction 2.  Has the message been converted to a fault message? (indicated by a flag
      *           in the message)
      */
-    public MessageContext processChain(MessageContext mc, Direction direction, MEP mep,
-                                       boolean expectResponse) {
+	public void processChain(MessageContext mc, Direction direction, MEP mep, boolean expectResponse) {
         // make sure it's set:
         mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
 
         this.mc = mc;
-        verifyChain();
+		sortChain();
 
-        if (SOAPMessageContext.class.isAssignableFrom(mc.getClass())) {  // all handlers
-            if (direction == Direction.OUT) {  // 9.3.2 outbound
-                callGenericHandlers(mep, expectResponse, 0, handlers.size() - 1, direction);
-            } else { // IN case - 9.3.2 inbound
-                callGenericHandlers(mep, expectResponse, handlers.size() - 1, 0, direction);
-            }
-        } else {  // logical handlers only
-            if (direction == Direction.OUT) {  // 9.3.2 outbound
-                callGenericHandlers(mep, expectResponse, 0, logicalLength - 1, direction);
-            } else { // IN case - 9.3.2 inbound
-                callGenericHandlers(mep, expectResponse, logicalLength - 1, 0, direction);
-            }
-        }
-        // message context may have been changed to be response, and message converted
-        // according to the JAXWS spec 9.3.2.1 footnote 2
-        return this.mc;
+		if (direction == Direction.OUT) {  // 9.3.2 outbound
+            // logical context, then SOAP
+		    callGenericHandlers(mep, expectResponse, 0, handlers.size()-1, direction);
+		}
+		else { // IN case - 9.3.2 inbound
+            // soap context, then logical
+			callGenericHandlers(mep, expectResponse, handlers.size()-1, 0, direction);
+		}
+
+		// message context may have been changed to be response, and message converted
+		// according to the JAXWS spec 9.3.2.1 footnote 2
+
     }
 
 
@@ -265,7 +283,7 @@ public class HandlerChainProcessor {
                 // mark it as reverse direction
                 mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction != Direction.OUT));
             if (ProtocolException.class.isAssignableFrom(re.getClass())) {
-                convertToFaultMessage(mc, re);
+				convertToFaultMessage(mc, re, proto);
                 return PROTOCOL_EXCEPTION;
             }
             return OTHER_EXCEPTION;
@@ -285,6 +303,9 @@ public class HandlerChainProcessor {
             for (int i = start; i <= end; i++) {
                 try {
                     ((Handler)handlers.get(i)).close(mc);
+                    // TODO when we close, are we done with the handler instance, and thus
+                    // may call the PreDestroy annotated method?  I don't think so, especially
+                    // if we've cached the handler list somewhere.
                 } catch (Exception e) {
                     // TODO: log it, but otherwise ignore
                 }
@@ -293,6 +314,9 @@ public class HandlerChainProcessor {
             for (int i = start; i >= end; i--) {
                 try {
                     ((Handler)handlers.get(i)).close(mc);
+					// TODO when we close, are we done with the handler instance, and thus
+                    // may call the PreDestroy annotated method?  I don't think so, especially
+                    // if we've cached the handler list somewhere.
                 } catch (Exception e) {
                     // TODO: log it, but otherwise ignore
                 }
@@ -312,11 +336,12 @@ public class HandlerChainProcessor {
 
         // direction.IN = client
         // direction.OUT = server
+        this.mc = mc;
 
         // make sure it's right:
         mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
 
-        verifyChain();
+		sortChain();
 
         try {
             if (direction == Direction.OUT) {
@@ -366,7 +391,7 @@ public class HandlerChainProcessor {
     }
 
 
-    public static void convertToFaultMessage(MessageContext mc, Exception e) {
+	public static void convertToFaultMessage(MessageContext mc, Exception e, Protocol protocol) {
 
         // need to check if message is already a fault message or not,
         // probably by way of a flag (isFault) in the MessageContext or Message
@@ -375,12 +400,6 @@ public class HandlerChainProcessor {
             /* TODO TODO TODO
                 * There has GOT to be a better way to do this.
                 */
-
-            // TODO how do we figure out the soap version on the MessageContext without
-            // using the message itself?  Reason for not using the message itself is that
-            // most of the SAAJ methods in Axis2 that we need are unimplemented.
-            // for testing, I'm gonna use soap11.
-            Protocol protocol = Protocol.soap11;
 
             if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
                 String protocolNS = (protocol == Protocol.soap11) ?
@@ -401,11 +420,11 @@ public class HandlerChainProcessor {
                 ((SoapMessageContext)mc).setMessage(message);
 
             } else {
-                // TODO throw an exception, because we only support SOAP11 and SOAP12, I think.
+                throw ExceptionFactory.makeWebServiceException("We only support SOAP11 and SOAP12 for JAXWS handlers");
             }
 
         } catch (SOAPException soapex) {
-            // TODO not too sure what to do here.
+            throw ExceptionFactory.makeWebServiceException(soapex);
         }
 
     }

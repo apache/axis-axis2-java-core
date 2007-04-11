@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.spi;
 
+import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -30,6 +31,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -69,6 +71,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private QName serviceQname;
     private ServiceClient serviceClient = null;
 
+    private HandlerResolver handlerResolver = null;
+    
     public ServiceDelegate(URL url, QName qname, Class clazz) throws WebServiceException {
         super();
         this.serviceQname = qname;
@@ -257,7 +261,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getHandlerResolver()
     */
     public HandlerResolver getHandlerResolver() {
-        return null;
+        return handlerResolver;
     }
 
     /*
@@ -302,7 +306,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#setHandlerResolver(javax.xml.ws.handler.HandlerResolver)
     */
     public void setHandlerResolver(HandlerResolver handlerresolver) {
-
+        this.handlerResolver = handlerresolver;
     }
 
     //================================================

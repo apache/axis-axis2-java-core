@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.binding;
 
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,59 +25,63 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
+
 import java.net.URI;
 import java.util.Set;
 
 /**
- * An implementation of the <link>javax.xml.ws.soap.SOAPBinding</link> interface.  This is the
- * default binding for JAX-WS, and will exist for all Dispatch and Dynamic Proxy instances unless
- * the XML/HTTP Binding is explicitly specificied.
+ * An implementation of the <link>javax.xml.ws.soap.SOAPBinding</link>
+ * interface. This is the default binding for JAX-WS, and will exist for all
+ * Dispatch and Dynamic Proxy instances unless the XML/HTTP Binding is
+ * explicitly specificied.
  */
-public class SOAPBinding extends BindingImpl
-        implements javax.xml.ws.soap.SOAPBinding {
+public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBinding {
 
     private boolean mtomEnabled = false;
+
     private static Log log = LogFactory.getLog(SOAPBinding.class);
 
-    public SOAPBinding(String bindingId) {
-        super(bindingId);
+    public SOAPBinding(EndpointDescription endpointDesc) {
+        super(endpointDesc);
     }
 
     /*
-    * (non-Javadoc)
-    * @see javax.xml.ws.soap.SOAPBinding#getMessageFactory()
-    */
+     * (non-Javadoc)
+     * 
+     * @see javax.xml.ws.soap.SOAPBinding#getMessageFactory()
+     */
     public MessageFactory getMessageFactory() {
         String bindingNamespace = null;
         try {
             /*
-             * SAAJFactory.createMessageFactory takes a namespace String as a param:
-             *     "http://schemas.xmlsoap.org/soap/envelope/"  (SOAP1.1)
-             *     "http://www.w3.org/2003/05/soap-envelope"    (SOAP1.2)
-             *     
+             * SAAJFactory.createMessageFactory takes a namespace String as a
+             * param: "http://schemas.xmlsoap.org/soap/envelope/" (SOAP1.1)
+             * "http://www.w3.org/2003/05/soap-envelope" (SOAP1.2)
+             * 
              * The bindingId will be in one of the following forms:
-             *     "http://schemas.xmlsoap.org/wsdl/soap/http"      (SOAP1.1)
-             *     "http://www.w3.org/2003/05/soap/bindings/HTTP/"  (SOAP1.2)
+             * "http://schemas.xmlsoap.org/wsdl/soap/http" (SOAP1.1)
+             * "http://www.w3.org/2003/05/soap/bindings/HTTP/" (SOAP1.2)
              */
             if (bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_BINDING)
-                    || bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                            || bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
                 bindingNamespace = SOAP12_ENV_NS;
             } else {
-                // TODO currently defaults to SOAP11.  Should we be more stricct about checking?
+                // TODO currently defaults to SOAP11. Should we be more stricct
+                // about checking?
                 bindingNamespace = SOAP11_ENV_NS;
             }
             return SAAJFactory.createMessageFactory(bindingNamespace);
         } catch (WebServiceException e) {
             // TODO log it and then what?
             if (log.isDebugEnabled()) {
-                log.debug("WebServiceException calling SAAJFactory.createMessageFactory(\"" +
-                        bindingNamespace + "\")");
+                log.debug("WebServiceException calling SAAJFactory.createMessageFactory(\""
+                                + bindingNamespace + "\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?
             if (log.isDebugEnabled()) {
-                log.debug("SOAPException calling SAAJFactory.createMessageFactory(\"" +
-                        bindingNamespace + "\")");
+                log.debug("SOAPException calling SAAJFactory.createMessageFactory(\""
+                                + bindingNamespace + "\")");
             }
         }
         return null;
@@ -84,6 +89,7 @@ public class SOAPBinding extends BindingImpl
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.xml.ws.soap.SOAPBinding#getRoles()
      */
     public Set<URI> getRoles() {
@@ -92,39 +98,41 @@ public class SOAPBinding extends BindingImpl
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.xml.ws.soap.SOAPBinding#getSOAPFactory()
      */
     public SOAPFactory getSOAPFactory() {
         String bindingNamespace = null;
         try {
             /*
-             * SAAJFactory.createMessageFactory takes a namespace String as a param:
-             *     "http://schemas.xmlsoap.org/soap/envelope/"  (SOAP1.1)
-             *     "http://www.w3.org/2003/05/soap-envelope"    (SOAP1.2)
-             *     
+             * SAAJFactory.createMessageFactory takes a namespace String as a
+             * param: "http://schemas.xmlsoap.org/soap/envelope/" (SOAP1.1)
+             * "http://www.w3.org/2003/05/soap-envelope" (SOAP1.2)
+             * 
              * The bindingId will be in one of the following forms:
-             *     "http://schemas.xmlsoap.org/wsdl/soap/http"      (SOAP1.1)
-             *     "http://www.w3.org/2003/05/soap/bindings/HTTP/"  (SOAP1.2)
+             * "http://schemas.xmlsoap.org/wsdl/soap/http" (SOAP1.1)
+             * "http://www.w3.org/2003/05/soap/bindings/HTTP/" (SOAP1.2)
              */
             if (bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_BINDING)
-                    || bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                            || bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
                 bindingNamespace = SOAP12_ENV_NS;
             } else {
-                // TODO currently defaults to SOAP11.  Should we be more stricct about checking?
+                // TODO currently defaults to SOAP11. Should we be more stricct
+                // about checking?
                 bindingNamespace = SOAP11_ENV_NS;
             }
             return SAAJFactory.createSOAPFactory(bindingNamespace);
         } catch (WebServiceException e) {
             // TODO log it and then what?
             if (log.isDebugEnabled()) {
-                log.debug("WebServiceException calling SAAJFactory.createSOAPFactory(\"" +
-                        bindingNamespace + "\")");
+                log.debug("WebServiceException calling SAAJFactory.createSOAPFactory(\""
+                                + bindingNamespace + "\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?
             if (log.isDebugEnabled()) {
-                log.debug("SOAPException calling SAAJFactory.createSOAPFactory(\"" +
-                        bindingNamespace + "\")");
+                log.debug("SOAPException calling SAAJFactory.createSOAPFactory(\""
+                                + bindingNamespace + "\")");
             }
         }
         return null;
@@ -132,6 +140,7 @@ public class SOAPBinding extends BindingImpl
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.xml.ws.soap.SOAPBinding#isMTOMEnabled()
      */
     public boolean isMTOMEnabled() {
@@ -140,6 +149,7 @@ public class SOAPBinding extends BindingImpl
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.xml.ws.soap.SOAPBinding#setMTOMEnabled(boolean)
      */
     public void setMTOMEnabled(boolean flag) {
@@ -148,6 +158,7 @@ public class SOAPBinding extends BindingImpl
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.xml.ws.soap.SOAPBinding#setRoles(java.util.Set)
      */
     public void setRoles(Set<URI> set) {

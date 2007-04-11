@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
+import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
@@ -163,6 +164,22 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 requestMsg.setMTOMEnabled(true);
             }
         }
+        
+        /*
+         * TODO: review: make sure the handlers are set on the InvocationContext
+         * This implementation of the JAXWS runtime does not use Endpoint, which
+         * would normally be the place to initialize and store the handler list.
+         * In lieu of that, we will have to intialize and store them on the 
+         * InvocationContext.  also see the InvocationContextFactory.  On the client
+         * side, the binding is not yet set when we call into that factory, so the
+         * handler list doesn't get set on the InvocationContext object there.  Thus
+         * we gotta do it here.
+         */
+        
+        // be sure to use whatever handlerresolver is registered on the Service
+        //HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
+        //bnd.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
+        requestIC.setHandlers(bnd.getHandlerChain());
 
         // Before we invoke, copy all of the properties from the client request
         // context to the MessageContext

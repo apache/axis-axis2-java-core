@@ -47,7 +47,21 @@ public class MessageContextUtils {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
-
+    
+    
+    /*
+     * special messagecontext that has no AxisContext associated with it.  Typically, this
+     * would be used in a "client outbound handler throws exception" case since that would
+     * mean we never hit the InvocationController and thus never hit the Axis layer.
+     */
+    public static MessageContext createMinimalResponseMessageContext(MessageContext mc) {
+        org.apache.axis2.context.MessageContext sourceAxisMC = mc.getAxisMessageContext();
+        MessageContext newMC = new MessageContext(sourceAxisMC);
+        newMC.setEndpointDescription(mc.getEndpointDescription());
+        newMC.setOperationDescription(mc.getOperationDescription());
+        return newMC;
+    }
+    
     /**
      * Given a request MessageContext, create a new MessageContext for a fault response.
      *
