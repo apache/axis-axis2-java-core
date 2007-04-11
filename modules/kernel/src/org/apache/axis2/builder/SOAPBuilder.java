@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 public class SOAPBuilder implements Builder {
 
@@ -38,8 +39,14 @@ public class SOAPBuilder implements Builder {
         try {
             String charSetEncoding = (String) messageContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-            streamReader = StAXUtils.createXMLStreamReader(BuilderUtil.getReader(inputStream,
-                                                                                 charSetEncoding));
+            
+            // Get the actual encoding by looking at the BOM of the InputStream
+            PushbackInputStream pis = BuilderUtil.getPushbackInputStream(inputStream);
+            String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
+            
+            // Get the XMLStreamReader for this input stream
+            streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);
+
             StAXBuilder builder = new StAXSOAPModelBuilder(streamReader);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             BuilderUtil

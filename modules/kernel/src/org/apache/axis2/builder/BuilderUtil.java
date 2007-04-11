@@ -183,13 +183,36 @@ public class BuilderUtil {
      * @throws java.io.IOException
      */
     public static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
-        PushbackInputStream is2 = new PushbackInputStream(is, BOM_SIZE);
+        PushbackInputStream is2 = getPushbackInputStream(is);
+        String encoding = getCharSetEncoding(is2, charSetEncoding);
+        return new BufferedReader(new InputStreamReader(is2, encoding));
+    }
+    
+    /**
+     * Convenience method to get a PushbackInputStream so that we can read the BOM
+     * @param is
+     * @return PushbackInputStream
+     * @see getActualEncoding()
+     */
+    public static PushbackInputStream getPushbackInputStream(InputStream is) {
+        return new PushbackInputStream(is, BOM_SIZE);
+    }
+    
+    /**
+     * Use the BOM Mark to identify the encoding to be used. Fall back to
+     * default encoding specified
+     *
+     * @param is2 PushBackInputStream (it must be a pushback input stream so that we can unread the BOM)
+     * @param charSetEncoding
+     * @throws java.io.IOException
+     */
+    public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding) throws IOException {
         String encoding;
         byte bom[] = new byte[BOM_SIZE];
         int n, unread;
-
+        
         n = is2.read(bom, 0, bom.length);
-
+        
         if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
             encoding = "UTF-8";
             unread = n - 3;
@@ -208,17 +231,16 @@ public class BuilderUtil {
             encoding = "UTF-32LE";
             unread = n - 4;
         } else {
-
+            
             // Unicode BOM mark not found, unread all bytes
-            encoding = charSetEncoding;
+            encoding = defaultEncoding;
             unread = n;
         }
-
+        
         if (unread > 0) {
             is2.unread(bom, (n - unread), unread);
         }
-
-        return new BufferedReader(new InputStreamReader(is2, encoding));
+        return encoding;
     }
 
 
@@ -296,11 +318,14 @@ public class BuilderUtil {
                                charSetEncoding);
 
         try {
-            streamReader = StAXUtils.createXMLStreamReader(getReader(
-                    attachments.getSOAPPartInputStream(), charSetEncoding));
+            PushbackInputStream pis = getPushbackInputStream(attachments.getSOAPPartInputStream());
+            String actualCharSetEncoding = getCharSetEncoding(pis, charSetEncoding);
+            
+            streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }
+
 
         //  Put a reference to Attachments Map in to the message context For
         // backword compatibility with Axis2 1.0 
