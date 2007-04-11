@@ -139,12 +139,10 @@ public class JAXBUtils {
             adjustPoolSize(innerMap);
 
             // A pooled context was not found, so create one and put it in the map.
-
-            // A copy is made of the original list of packages because createJAXBContext may 
-            // prune the list.
-            TreeSet<String> origContextPackages = new TreeSet<String>(contextPackages);
-            contextValue = createJAXBContextValue(contextPackages, cl);
-
+            synchronized(contextPackages) {
+               // synchronized on contextPackages because this method may prune the contextPackages
+               contextValue = createJAXBContextValue(contextPackages, cl);
+            }
             // Put the new context in the map keyed by both the original and current list of packages
             innerMap.put(key, contextValue);
             innerMap.put(contextPackages.toString(), contextValue);
