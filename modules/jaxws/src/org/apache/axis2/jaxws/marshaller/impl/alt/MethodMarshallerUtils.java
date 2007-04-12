@@ -259,6 +259,11 @@ public class MethodMarshallerUtils {
                     index++;
                 }
 
+                if(block == null){
+                    log.info("Block is null");
+                    throw new XMLStreamException("Block is null in getPDElements");
+                }
+
                 Element element = new Element(block.getBusinessObject(true), block.getQName());
                 PDElement pde = new PDElement(pd, element, unmarshalByJavaType == null ? null :
                         unmarshalByJavaType[i]);
