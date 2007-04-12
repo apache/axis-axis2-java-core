@@ -966,6 +966,7 @@ class ServiceDescriptionImpl
                 seiMethodHashMap.values().iterator();
         while (verifySEIIterator.hasNext()) {
             MethodDescriptionComposite mdc = verifySEIIterator.next();
+            // TODO: This does not take into consideration overloaded java methods!
             MethodDescriptionComposite implMDC = compositeHashMap.get(mdc.getMethodName());
             
             if (implMDC == null) {
@@ -978,18 +979,112 @@ class ServiceDescriptionImpl
             } else {
                 //At least we found it, now make sure that signatures match up
                 
-                //Check for exceptions matching
+                //Check for exception and signature matching
                 validateMethodExceptions(mdc, implMDC, seic.getClassName());
-                                
-                // REVIEW:  Probably should do other signature comparisons
+                validateMethodReturnValue(mdc, implMDC, seic.getClassName());
+                validateMethodParameters(mdc, implMDC, seic.getClassName());
             }
         }
     }
-    
+
+    private void validateMethodParameters(MethodDescriptionComposite seiMDC,
+        MethodDescriptionComposite implMDC, String className) {
+        List<ParameterDescriptionComposite> seiPDCList = seiMDC
+            .getParameterDescriptionCompositeList();
+        List<ParameterDescriptionComposite> implPDCList = implMDC
+            .getParameterDescriptionCompositeList();
+        if ((seiPDCList == null || seiPDCList.isEmpty())
+            && (implPDCList == null || implPDCList.isEmpty())) {
+            // There are no parameters on the SEI or the impl; all is well
+        } else if ((seiPDCList == null || seiPDCList.isEmpty())
+            && !(implPDCList == null || implPDCList.isEmpty())) {
+            String message = "Validation error: SEI indicates no parameters but implementation method specifies parameters: "
+                + implPDCList
+                + "; Implementation class: "
+                + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if ((seiPDCList != null && !seiPDCList.isEmpty())
+            && !(implPDCList != null && !implPDCList.isEmpty())) {
+            String message = "Validation error: SEI indicates parameters " + seiPDCList
+                + " but implementation method specifies no parameters; Implementation class: "
+                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
+                + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (seiPDCList.size() != implPDCList.size()) {
+            String message = "Validation error: The number of parameters on the SEI method ("
+                + seiPDCList.size()
+                + ") does not match the number of parameters on the implementation ( "
+                + implPDCList.size() + "); Implementation class: " + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+
+        } else {
+            // Make sure the order and type of parameters match
+            // REVIEW: This checks for strict equality of the fully qualified
+            // type. It does not
+            // take into consideration object hierachy. For example foo(Animal)
+            // will not equal bar(Zebra)
+            boolean parametersMatch = true;
+            String failingMessage = null;
+            for (int paramNumber = 0; paramNumber < seiPDCList.size(); paramNumber++) {
+                String seiParamType = seiPDCList.get(paramNumber).getParameterType();
+                String implParamType = implPDCList.get(paramNumber).getParameterType();
+                if (!seiParamType.equals(implParamType)) {
+                    parametersMatch = false;
+                    failingMessage = "Validation error: SEI and implementation parameters do not match.  Parameter number "
+                        + paramNumber
+                        + " on the SEI is "
+                        + seiParamType
+                        + "; on the implementation it is "
+                        + implParamType
+                        + "; Implementation class: "
+                        + composite.getClassName()
+                        + "; Method name: "
+                        + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+                    break;
+                }
+            }
+            if (!parametersMatch) {
+                throw ExceptionFactory.makeWebServiceException(failingMessage);
+            }
+        }
+    }
+
+    private void validateMethodReturnValue(MethodDescriptionComposite seiMDC,
+        MethodDescriptionComposite implMDC, String className) {
+        String seiReturnValue = seiMDC.getReturnType();
+        String implReturnValue = implMDC.getReturnType();
+
+        if (seiReturnValue == null && implReturnValue == null) {
+            // Neither specify a return value; all is well
+        } else if (seiReturnValue == null && implReturnValue != null) {
+            String message = "Validation error: SEI indicates no return value but implementation method specifies return value: "
+                + implReturnValue
+                + "; Implementation class: "
+                + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (seiReturnValue != null && implReturnValue == null) {
+            String message = "Validation error: SEI indicates return value " + seiReturnValue
+                + " but implementation method specifies no return value; Implementation class: "
+                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
+                + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (!seiReturnValue.equals(implReturnValue)) {
+            String message = "Validation error: SEI return value " + seiReturnValue
+                + " does not match implementation method return value " + implReturnValue
+                + "; Implementation class: " + composite.getClassName() + "; Method name: "
+                + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        }
+
+    }
+
     private void validateMethodExceptions ( MethodDescriptionComposite seiMDC, 
-                                            MethodDescriptionComposite implMDC,
-                                            String className) {
-        
+        MethodDescriptionComposite implMDC,
+        String className) {
+
         String[] seiExceptions = seiMDC.getExceptions();
         String[] implExceptions = implMDC.getExceptions();
 
