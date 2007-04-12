@@ -26,6 +26,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
@@ -413,8 +414,10 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         needsToBeReconciled = true;
 
         // trace point
-        log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
                 in.available() + "]  ");
+        }
 
         //---------------------------------------------------------
         // object level identifiers
@@ -449,8 +452,10 @@ public class ServiceContext extends AbstractContext implements Externalizable {
                 ObjectStateUtils.readString(in, myClassName + ".logCorrelationIDString");
 
         // trace point
-        log.trace(myClassName + ":readExternal():  reading input stream for [" +
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(myClassName + ":readExternal():  reading input stream for [" +
                 logCorrelationIDString + "]  ");
+        }
 
         // EndpointReference targetEPR
         targetEPR = (EndpointReference) ObjectStateUtils.readObject(in, "ServiceContext.targetEPR");
@@ -715,8 +720,10 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      */
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
-            log.warn(logCorrelationIDString + ":" + methodname + "(): ****WARNING**** " +
+            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
+                log.warn(logCorrelationIDString + ":" + methodname + "(): ****WARNING**** " +
                     myClassName + ".activate(configurationContext) needs to be invoked.");
+            }
         }
     }
 
