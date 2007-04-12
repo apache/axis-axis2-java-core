@@ -54,7 +54,9 @@ public abstract class BaseDispatch<T> extends BindingProvider
     private Log log = LogFactory.getLog(BaseDispatch.class);
 
     protected InvocationController ic;
+
     protected ServiceClient serviceClient;
+
     protected Mode mode;
 
     protected BaseDispatch(ServiceDelegate svcDelgate, EndpointDescription epDesc) {
@@ -143,11 +145,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Object returnObj = getValueFromMessage(responseMsg);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
@@ -201,11 +199,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ic.invokeOneWay(invocationContext);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("One-way invocation completed: BaseDispatch.invokeOneWay()");
@@ -270,11 +264,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");
@@ -339,11 +329,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Response asyncResponse = ic.invokeAsync(invocationContext);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous (polling) invocation sent: BaseDispatch.invokeAsync()");

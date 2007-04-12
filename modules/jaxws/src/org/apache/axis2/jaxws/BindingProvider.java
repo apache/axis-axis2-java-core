@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws;
 
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
+import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -35,8 +37,11 @@ import java.util.Map;
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
 
     protected Map<String, Object> requestContext;
+
     protected Map<String, Object> responseContext;
+
     protected EndpointDescription endpointDesc;
+
     protected ServiceDelegate serviceDelegate;
 
     private Binding binding;  // force subclasses to use the lazy getter
@@ -98,6 +103,28 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     public Map<String, Object> getResponseContext() {
         return responseContext;
+    }
+
+    /**
+     * Check for maintain session state enablement either in the
+     * MessageContext.isMaintainSession() or in the ServiceContext properties.
+     * 
+     * @param mc
+     * @param ic
+     */
+    protected void checkMaintainSessionState(MessageContext mc, InvocationContext ic) {
+        Map<String, Object> properties = ic.getServiceClient().getServiceContext().getProperties();
+        boolean bValue = false;
+
+        if (properties != null
+            && properties
+                         .containsKey(javax.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY)) {
+            bValue = (Boolean) properties
+                .get(javax.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY);
+        }
+        if (mc.isMaintainSession() || bValue == true) {
+            setupSessionContext(properties);
+        }
     }
 
     /*

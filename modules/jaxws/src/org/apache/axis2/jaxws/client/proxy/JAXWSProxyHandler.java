@@ -77,7 +77,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
     //Reference to ServiceDelegate instance that was used to create the Proxy
     protected ServiceDescription serviceDesc = null;
+
     private Class seiClazz = null;
+
     private Method method = null;
 
     public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
@@ -201,12 +203,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             controller.invokeOneWay(requestIC);
 
             // Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call.  This could probably
-                //make use of the property migrator mentioned above.
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
         }
 
         if (method.getReturnType() == Future.class) {
@@ -248,11 +245,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             return future;
         }
@@ -268,11 +261,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             Response response = controller.invokeAsync(requestIC);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             return response;
         }
@@ -281,11 +270,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             InvocationContext responseIC = controller.invoke(requestIC);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             MessageContext responseContext = responseIC.getResponseMessageContext();
             Object responseObj = createResponse(method, args, responseContext, operationDesc);
