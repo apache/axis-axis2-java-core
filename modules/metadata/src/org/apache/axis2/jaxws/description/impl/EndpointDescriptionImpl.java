@@ -384,12 +384,38 @@ class EndpointDescriptionImpl
                         "EndpointDescription: Unable to add parameters to AxisService");
             }
         }
+        else {
+            // Need to account for SOAP 1.2 WSDL when supplied with application
+            Parameter wsdlDefParameter = new Parameter();
+            wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);
+            Parameter wsdlLocationParameter = new Parameter();
+            wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
+            if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
+                wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
+                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper()
+                    .getDefinition());
+            }
+            // No WSDL supplied and we do not generate for non-SOAP 1.1/HTTP
+            // endpoints
+            else {
+                wsdlLocationParameter.setValue(null);
+                wsdlDefParameter.setValue(null);
+            }
+            try {
+                axisService.addParameter(wsdlDefParameter);
+                axisService.addParameter(wsdlLocationParameter);
+
+            } catch (Exception e) {
+                throw ExceptionFactory
+                    .makeWebServiceException("EndpointDescription: Unable to add parameters to AxisService");
+            }
+        }
     }
 
     /**
-     * Create from an annotated implementation or SEI class. Note this is currently used only on the
-     * server-side (this probably won't change).
-     *
+     * Create from an annotated implementation or SEI class. Note this is
+     * currently used only on the server-side (this probably won't change).
+     * 
      * @param theClass An implemntation or SEI class
      * @param portName May be null; if so the annotation is used
      * @param parent
