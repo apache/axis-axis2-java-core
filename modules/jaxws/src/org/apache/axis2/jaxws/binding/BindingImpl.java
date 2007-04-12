@@ -47,18 +47,23 @@ public class BindingImpl implements Binding {
 
     protected static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
 
+    public BindingImpl(String bindingId) {
+        this.bindingId = bindingId;
+    }
+
     public BindingImpl(EndpointDescription endpointDesc) {
         this.endpointDesc = endpointDesc;
         this.bindingId = endpointDesc.getBindingType();
     }
 
     public List<Handler> getHandlerChain() {
-        if (handlers == null) {
+        if (handlers == null && endpointDesc != null) {
             handlers = new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc
                             .getPortInfo());
-            if (handlers == null)
-                handlers = new ArrayList<Handler>(); // non-null so client
-                                                        // apps can manipulate
+        }
+        if (handlers == null) {
+            handlers = new ArrayList<Handler>(); // non-null so client
+                                                 // apps can manipulate
         }
         return handlers;
     }
