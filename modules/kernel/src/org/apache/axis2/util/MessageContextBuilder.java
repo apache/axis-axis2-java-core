@@ -473,6 +473,9 @@ public class MessageContextBuilder {
             }
         }
 
+        if(faultCode == null && !context.isSOAP11()){
+            fault.getCode().getValue().setText(soapFaultCode);
+        }
         Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
         String message = "";
 
