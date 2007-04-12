@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider.soapmsg;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -104,7 +106,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     
     
     public SOAPMessage invoke(SOAPMessage soapMessage) throws SOAPFaultException {
-    	System.out.println(">> SoapMessageProvider: Request received.");
+        TestLogger.logger.debug(">> SoapMessageProvider: Request received.");
     	
     	try{
     	    // Look at the incoming request message
@@ -136,19 +138,20 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
                 throwWebServiceException();
             } else {
                 // We should not get here
-                System.out.println("Unknown Type of Message");
+                TestLogger.logger.debug("Unknown Type of Message");
                 assert(false);
             }
             
             // Write out the Message
-            System.out.println(">> Response being sent by Server:");
+            TestLogger.logger.debug(">> Response being sent by Server:");
             //response.writeTo(System.out);
             //System.out.println("\n");
             return response;
     	} catch (WebServiceException wse) {
     	    throw wse;
         } catch(Exception e){
-            System.out.println("***ERROR: In SoapMessageProvider.invoke: Caught exception " + e);
+            TestLogger.logger
+                    .debug("***ERROR: In SoapMessageProvider.invoke: Caught exception " + e);
     		e.printStackTrace();
     	}
     	return null;
@@ -175,7 +178,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         String text = discElement.getValue();
         assert(text != null);
         assert(text.length() > 0);
-        System.out.println("Request Message Type is:" + text);
+        TestLogger.logger.debug("Request Message Type is:" + text);
         
         return (SOAPElement) discElement;
     }
@@ -263,16 +266,16 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
      */
     private SOAPMessage getXMLMTOMResponse(SOAPMessage request, SOAPElement dataElement) throws Exception {
         SOAPMessage response;
-        
-        System.out.println("Received MTOM Message");
+
+        TestLogger.logger.debug("Received MTOM Message");
         // Additional assertion checks
         assert(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
         StreamSource contentSS = (StreamSource) requestAP.getContent();
         String content = getAsString(contentSS);
         assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
-        
-        System.out.println("The MTOM Request Message appears correct.");
+
+        TestLogger.logger.debug("The MTOM Request Message appears correct.");
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -283,8 +286,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         AttachmentPart ap = response.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
         ap.setContentId(ID);
         response.addAttachmentPart(ap);
-        
-        System.out.println("Returning the Response Message");
+
+        TestLogger.logger.debug("Returning the Response Message");
         return response;
     }
     

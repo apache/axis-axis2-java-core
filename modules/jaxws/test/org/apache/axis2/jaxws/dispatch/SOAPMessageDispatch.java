@@ -30,6 +30,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class SOAPMessageDispatch extends TestCase {
 	private String url = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
@@ -44,9 +45,9 @@ public class SOAPMessageDispatch extends TestCase {
 		
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
-        
-		System.out.println("---------------------------------------");
-		System.out.println("test: " + getName());
+
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 		//Initialize the JAX-WS client artifacts
 		Service svc = Service.create(serviceName);
 		svc.addPort(portName, null, url);
@@ -59,7 +60,7 @@ public class SOAPMessageDispatch extends TestCase {
 		SOAPMessage msgObject = factory.createMessage(null, inputStream);
 
 		//Invoke the Dispatch
-		System.out.println(">> Invoking Async Dispatch");
+        TestLogger.logger.debug(">> Invoking Async Dispatch");
 		SOAPMessage response = dispatch.invoke(msgObject);
 
 		assertNotNull("dispatch invoke returned null", response);
@@ -70,9 +71,9 @@ public class SOAPMessageDispatch extends TestCase {
 		
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
-        
-		System.out.println("---------------------------------------");
-		System.out.println("test: " + getName());
+
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 		//Initialize the JAX-WS client artifacts
 		Service svc = Service.create(serviceName);
 		svc.addPort(portName, null, url);
@@ -86,12 +87,12 @@ public class SOAPMessageDispatch extends TestCase {
 		
         AsyncCallback<SOAPMessage> ac = new AsyncCallback<SOAPMessage>();
 		//Invoke the Dispatch
-		System.out.println(">> Invoking sync Dispatch");
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
 		Future<?> monitor = dispatch.invokeAsync(msgObject, ac);
 
 		assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
 		while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -104,9 +105,9 @@ public class SOAPMessageDispatch extends TestCase {
         
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
-        
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         //Initialize the JAX-WS client artifacts
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, url);
@@ -119,12 +120,12 @@ public class SOAPMessageDispatch extends TestCase {
         SOAPMessage msgObject = factory.createMessage(null, inputStream);
 
         //Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch");
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
         Response<SOAPMessage> asyncResponse = dispatch.invokeAsync(msgObject);
 
         assertNotNull("dispatch invokeAsync returned null Response", asyncResponse);
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         

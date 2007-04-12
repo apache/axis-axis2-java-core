@@ -23,6 +23,7 @@ import javax.xml.ws.BindingProvider;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenService;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenInterface;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class WSGenTests extends TestCase {
     
@@ -30,8 +31,8 @@ public class WSGenTests extends TestCase {
     
     public void testWSGen() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             WSGenService service = new WSGenService();
             WSGenInterface proxy = service.getWSGenPort();
@@ -41,10 +42,10 @@ public class WSGenTests extends TestCase {
                     axisEndpoint);  
             String outString = "this is a wonderful test";
             String s = proxy.echoString(outString);
-            
-            System.out.println("String s = " + s);
+
+            TestLogger.logger.debug("String s = " + s);
             assertEquals(outString, s);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             fail("We should not get an exception, but we did");

@@ -24,6 +24,7 @@ import javax.xml.ws.WebServiceException;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.soap12.Echo;
 import org.apache.axis2.jaxws.proxy.soap12.SOAP12EchoService;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * A suite of tests to test dynamic proxy clients sending SOAP 1.2
@@ -43,8 +44,8 @@ public class SOAP12ProxyTests extends TestCase {
      * Send a SOAP 1.2 request and expect a SOAP 1.2 response.
      */
     public void testSOAP12RequestSOAP12Response() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // create the proxy instance.  the WSDL used by this proxy
         // should have a proper SOAP 1.2 binding configured
@@ -54,7 +55,7 @@ public class SOAP12ProxyTests extends TestCase {
         // invoke the remote operation.  send a key that tells the 
         // service send back a SOAP 1.2 response.
         String response = proxy.echo(SEND_SOAP12_RESPONSE);
-        System.out.println("response returned [" + response + "]");
+        TestLogger.logger.debug("response returned [" + response + "]");
         
         // validate the results
         assertNotNull(response);
@@ -67,8 +68,8 @@ public class SOAP12ProxyTests extends TestCase {
      */
     // TODO fix and re-enable
     public void _testSOAP12RequestSOAP11Response() {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // create the proxy instance.  the WSDL used by this proxy
         // should have a proper SOAP 1.2 binding configured
@@ -80,14 +81,14 @@ public class SOAP12ProxyTests extends TestCase {
         // in an error.
         try {
             String response = proxy.echo(SEND_SOAP11_RESPONSE);
-            System.out.println("response returned [" + response + "]");
+            TestLogger.logger.debug("response returned [" + response + "]");
             
             // if we've gotten this far, then something went wrong.
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("an exception was thrown, as expected");
-            System.out.println(wse.getMessage());
+            TestLogger.logger.debug("an exception was thrown, as expected");
+            TestLogger.logger.debug(wse.getMessage());
         }
     } 
     

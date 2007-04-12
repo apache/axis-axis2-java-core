@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
@@ -57,8 +59,8 @@ public class StringProviderTests extends ProviderTestCase {
         
     }
     public void testNormal() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -68,8 +70,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testEmptyString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -84,8 +86,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testNullString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -98,8 +100,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testNonNullString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -112,8 +114,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testCommentString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -125,8 +127,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testTwoElementsString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -139,8 +141,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testTwoElementsAndMixedContentString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         
@@ -152,8 +154,8 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testException() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch();
         

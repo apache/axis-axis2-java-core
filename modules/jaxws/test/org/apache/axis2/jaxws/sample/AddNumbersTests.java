@@ -23,6 +23,7 @@ import javax.xml.ws.BindingProvider;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class AddNumbersTests extends TestCase {
 	
@@ -30,8 +31,8 @@ public class AddNumbersTests extends TestCase {
 	
     public void testAddNumbers() {
         try {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
         
         AddNumbersService service = new AddNumbersService();
         AddNumbersPortType proxy = service.getAddNumbersPort();
@@ -40,9 +41,9 @@ public class AddNumbersTests extends TestCase {
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                 axisEndpoint);	
         int total = proxy.addNumbers(10,10);
-                
-        System.out.println("Total =" +total);
-        System.out.println("----------------------------------");
+
+            TestLogger.logger.debug("Total =" + total);
+            TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -51,8 +52,8 @@ public class AddNumbersTests extends TestCase {
     
     public void testOneWay() {
         try {
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersService service = new AddNumbersService();
             AddNumbersPortType proxy = service.getAddNumbersPort();
@@ -61,7 +62,7 @@ public class AddNumbersTests extends TestCase {
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
             proxy.oneWayInt(11);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
             fail();

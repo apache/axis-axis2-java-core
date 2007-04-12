@@ -37,6 +37,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -159,7 +160,7 @@ public class RPCProxyTests extends TestCase {
             fail("RPC/LIT should throw webserviceException when operation is invoked with null input parameter");
         }catch(Exception e){ 
             assertTrue(e instanceof WebServiceException);
-            System.out.println(e.getMessage());
+            TestLogger.logger.debug(e.getMessage());
         }
     }
     
@@ -174,7 +175,7 @@ public class RPCProxyTests extends TestCase {
             fail("RPC/LIT should throw webserviceException when operation is invoked with null out parameter");
         }catch(Exception e){ 
             assertTrue(e instanceof WebServiceException);
-            System.out.println(e.getMessage());
+            TestLogger.logger.debug(e.getMessage());
         }
     }
     
@@ -191,7 +192,7 @@ public class RPCProxyTests extends TestCase {
         String response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -219,7 +220,7 @@ public class RPCProxyTests extends TestCase {
         
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -244,7 +245,7 @@ public class RPCProxyTests extends TestCase {
         
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -288,7 +289,7 @@ public class RPCProxyTests extends TestCase {
         String response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));

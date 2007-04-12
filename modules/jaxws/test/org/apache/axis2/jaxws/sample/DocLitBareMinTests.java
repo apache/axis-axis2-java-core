@@ -8,6 +8,7 @@ import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.sample.doclitbaremin.sei.BareDocLitMinService;
 import org.apache.axis2.jaxws.sample.doclitbaremin.sei.DocLitBareMinPortType;
+import org.apache.axis2.jaxws.TestLogger;
 
 import junit.framework.TestCase;
 
@@ -15,8 +16,8 @@ import junit.framework.TestCase;
 public class DocLitBareMinTests extends TestCase {
 	
     public void testEcho() throws Exception {
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         
         
         BareDocLitMinService service = new BareDocLitMinService();

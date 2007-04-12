@@ -26,6 +26,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
+import org.apache.axis2.jaxws.TestLogger;
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType")
 public class ResourceInjectionPortTypeImpl implements ResourceInjectionPortType {
@@ -63,14 +64,14 @@ public class ResourceInjectionPortTypeImpl implements ResourceInjectionPortType 
 	@PostConstruct
 	public void initialize(){
 		//Called after resource injection and before a method is called.
-		System.out.println("Calling PostConstruct to Initialize");
+        TestLogger.logger.debug("Calling PostConstruct to Initialize");
 	}
 	
 	@PreDestroy
 	public void distructor(){
 		//Called before the scope of request or session or application ends.
-		
-		System.out.println("Calling PreDestroy ");
+
+        TestLogger.logger.debug("Calling PreDestroy ");
 		
 	}
 

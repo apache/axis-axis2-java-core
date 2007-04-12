@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * This suite is used to test the creation of messages based on SOAP 1.2
@@ -95,7 +96,7 @@ public class SOAP12Tests extends TestCase {
         // reader
         Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReader());
         String newText = r2w.getAsString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
@@ -140,7 +141,7 @@ public class SOAP12Tests extends TestCase {
         // reader
         Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReaderWithoutCaching());
         String newText = r2w.getAsString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));

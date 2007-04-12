@@ -26,11 +26,12 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class CallbackHandler<T> implements AsyncHandler <T> {
 
     public void handleResponse(Response response) {
-        System.out.println(">> Processing async reponse");
+        TestLogger.logger.debug(">> Processing async reponse");
         try{
             T res = (T) response.get();
             
@@ -41,7 +42,7 @@ public class CallbackHandler<T> implements AsyncHandler <T> {
             }
             
             if(res instanceof String){
-                System.out.println("Response [" + res + "]");
+                TestLogger.logger.debug("Response [" + res + "]");
             }
             else if(Source.class.isAssignableFrom(res.getClass())){
                 Source source = (Source) res;
@@ -50,10 +51,10 @@ public class CallbackHandler<T> implements AsyncHandler <T> {
                 XMLStreamReader reader = inputFactory.createXMLStreamReader(source);
                 Reader2Writer r2w = new Reader2Writer(reader);
                 String responseText = r2w.getAsString();
-                
-                System.out.println(responseText);
+
+                TestLogger.logger.debug(responseText);
             }
-            System.out.println("---------------------------------------------");
+            TestLogger.logger.debug("---------------------------------------------");
         }catch(Exception e){
             e.printStackTrace();
         }

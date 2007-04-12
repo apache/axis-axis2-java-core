@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.ThreadContextMigrator;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
@@ -33,8 +34,8 @@ public class FaultyWebServiceTests extends TestCase {
 	public void testFaultyWebService(){
 		FaultyWebServiceFault_Exception exception = null;
 		try{
-			System.out.println("----------------------------------");
-		    System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
 		    FaultyWebServiceService service = new FaultyWebServiceService();
 		    FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
 			BindingProvider p =	(BindingProvider)proxy;
@@ -49,8 +50,8 @@ public class FaultyWebServiceTests extends TestCase {
            e.printStackTrace();
            fail(e.toString());
         }
-		
-		System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
 		
 		assertNotNull(exception);
 		assertEquals("custom exception", exception.getMessage());
@@ -68,8 +69,8 @@ public class FaultyWebServiceTests extends TestCase {
         WebServiceException exception = null;
 
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             FaultyWebServiceService service = new FaultyWebServiceService();
             FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
             BindingProvider p = (BindingProvider)proxy;
@@ -86,8 +87,8 @@ public class FaultyWebServiceTests extends TestCase {
         }catch(Exception e) {
             fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
@@ -105,9 +106,9 @@ public class FaultyWebServiceTests extends TestCase {
         String badEndpoint = "http://" + host;
         
         WebServiceException exception = null;
-        
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         try{
             
             DocLitWrapService service = new DocLitWrapService();
@@ -121,8 +122,8 @@ public class FaultyWebServiceTests extends TestCase {
         }catch(Exception e) {
             fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
@@ -136,8 +137,8 @@ public class FaultyWebServiceTests extends TestCase {
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
 
-        System.out.println("------------------------------");
-        System.out.println("Test : " + getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
@@ -150,7 +151,7 @@ public class FaultyWebServiceTests extends TestCase {
 
         while (!future.isDone()) {
             Thread.sleep(1000);
-            System.out.println("Async invocation incomplete");
+            TestLogger.logger.debug("Async invocation incomplete");
         }
 
         Exception e = callback.getException();
@@ -174,8 +175,8 @@ public class FaultyWebServiceTests extends TestCase {
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
 
-        System.out.println("------------------------------");
-        System.out.println("Test : " + getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
@@ -186,7 +187,7 @@ public class FaultyWebServiceTests extends TestCase {
         Future<?> future = proxy.faultyWebServiceAsync(1);
         while (!future.isDone()) {
             Thread.sleep(1000);
-            System.out.println("Async invocation incomplete");
+            TestLogger.logger.debug("Async invocation incomplete");
         }
 
         Exception e = null;
@@ -213,8 +214,8 @@ public class FaultyWebServiceTests extends TestCase {
      * Tests fault processing for user defined fault types
      */      
     public void testCustomFault_AsyncCallback() throws Exception {
-        System.out.println("------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         FaultyWebServiceService service = new FaultyWebServiceService();
         FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
@@ -226,7 +227,7 @@ public class FaultyWebServiceTests extends TestCase {
 
         while (!future.isDone()) {
             Thread.sleep(1000);
-            System.out.println("Async invocation incomplete");
+            TestLogger.logger.debug("Async invocation incomplete");
         }
         
         Exception e = callback.getException();
@@ -252,12 +253,12 @@ public class FaultyWebServiceTests extends TestCase {
         
         public void handleResponse(Response<FaultyWebServiceResponse> response) {
             try {
-                System.out.println("FaultyAsyncHandler.handleResponse() was called");
+                TestLogger.logger.debug("FaultyAsyncHandler.handleResponse() was called");
                 FaultyWebServiceResponse r = response.get();
-                System.out.println("No exception was thrown from Response.get()");
+                TestLogger.logger.debug("No exception was thrown from Response.get()");
             }
             catch (Exception e) {
-                System.out.println("An exception was thrown: " + e.getClass());
+                TestLogger.logger.debug("An exception was thrown: " + e.getClass());
                 exception = e;
             }
         }

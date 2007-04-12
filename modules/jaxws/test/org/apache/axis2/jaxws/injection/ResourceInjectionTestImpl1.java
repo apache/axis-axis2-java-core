@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.injection;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -36,14 +38,14 @@ public class ResourceInjectionTestImpl1 {
 	@PostConstruct
 	public void initialize(){
 		//Called after resource injection and before a method is called.
-		System.out.println("Calling PostConstruct to Initialize");
+        TestLogger.logger.debug("Calling PostConstruct to Initialize");
 	}
 	
 	@PreDestroy
 	public void distructor(){
 		//Called before the scope of request or session or application ends.
-		
-		System.out.println("Calling PreDestroy ");
+
+        TestLogger.logger.debug("Calling PreDestroy ");
 		
 	}
 

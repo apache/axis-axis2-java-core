@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.sample.addressbook;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -49,11 +51,12 @@ public class AddressBookImpl implements AddressBook {
     
     public boolean addEntry(AddressBookEntry entry) {
         if (entry != null) {
-            System.out.println("New AddressBookEntry received");
-            System.out.println("       [name] " + entry.getLastName() + ", " + entry.getFirstName());
-            System.out.println("      [phone] " + entry.getPhone());
-            System.out.println("     [street] " + entry.getStreet());
-            System.out.println("[city, state] " + entry.getCity() + ", " + entry.getState());
+            TestLogger.logger.debug("New AddressBookEntry received");
+            TestLogger.logger
+                    .debug("       [name] " + entry.getLastName() + ", " + entry.getFirstName());
+            TestLogger.logger.debug("      [phone] " + entry.getPhone());
+            TestLogger.logger.debug("     [street] " + entry.getStreet());
+            TestLogger.logger.debug("[city, state] " + entry.getCity() + ", " + entry.getState());
             data.add(entry);
             return true;
         }
@@ -63,8 +66,8 @@ public class AddressBookImpl implements AddressBook {
     }
 
     public AddressBookEntry findEntryByName(String firstname, String lastname) {
-        System.out.println("New request received.");
-        System.out.println("Looking for entry: [" + firstname + "] [" + lastname + "]");
+        TestLogger.logger.debug("New request received.");
+        TestLogger.logger.debug("Looking for entry: [" + firstname + "] [" + lastname + "]");
         Iterator<AddressBookEntry> i = data.iterator();
         while (i.hasNext()) {
             AddressBookEntry entry = i.next();

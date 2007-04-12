@@ -9,6 +9,7 @@ import javax.wsdl.Definition;
 
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
+import org.apache.axis2.jaxws.TestLogger;
 
 import junit.framework.TestCase;
 
@@ -37,9 +38,9 @@ public class SchemaReaderTests extends TestCase {
 	    	Definition wsdlDef = w4j.getDefinition();
 	    	assertNotNull(wsdlDef);
 	    	Set<String> pkg = sri.readPackagesFromSchema(wsdlDef);
-	    	System.out.println("Packages:");
+            TestLogger.logger.debug("Packages:");
 	    	for(String pkgName:pkg){
-	    		System.out.println(pkgName);
+                TestLogger.logger.debug(pkgName);
 	    	}
 	    }catch(Exception e){
 	    	e.printStackTrace();

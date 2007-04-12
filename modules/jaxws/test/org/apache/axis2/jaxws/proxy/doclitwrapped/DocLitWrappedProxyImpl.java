@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.proxy.doclitwrapped;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 
@@ -24,7 +26,7 @@ public class DocLitWrappedProxyImpl implements Provider<String> {
 
 	public String invoke(String invoke_str) {
 		// TODO Auto-generated method stub
-		System.out.println("End point called with String value =" + invoke_str);
+        TestLogger.logger.debug("End point called with String value =" + invoke_str);
 		return new String("<ns2:ReturnType xmlns:ns2=\"http://doclitwrapped.proxy.test.org\"><return_str>some response</return_str></ns2:ReturnType>");
 	}
 }

@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -146,7 +147,7 @@ public class RPCLitImpl implements RPCLit {
     private void assertTrue(boolean value) throws RuntimeException {
         if (!value) {
             RuntimeException re = new RuntimeException();
-            System.out.println("Test FAILURE=" +re);
+            TestLogger.logger.debug("Test FAILURE=" + re);
             throw re;
         }
     }

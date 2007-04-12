@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.security.server;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 
@@ -28,12 +30,12 @@ public class SecurityProvider implements Provider<String> {
     public String invoke(String obj) {
         if (obj != null) {
             String str = (String) obj;
-            System.out.println(">> StringProvider received a new request");
-            System.out.println(">> request [" + str + "]");
+            TestLogger.logger.debug(">> StringProvider received a new request");
+            TestLogger.logger.debug(">> request [" + str + "]");
             
             return responseGood;
         }
-        System.out.println(">> ERROR:null request received");
+        TestLogger.logger.debug(">> ERROR:null request received");
         return responseBad;
     }
 }

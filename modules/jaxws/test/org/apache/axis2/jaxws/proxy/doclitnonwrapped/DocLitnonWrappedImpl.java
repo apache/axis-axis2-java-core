@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.proxy.doclitnonwrapped;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 
@@ -33,7 +35,7 @@ public class DocLitnonWrappedImpl implements Provider<String> {
      * @see javax.xml.ws.Provider#invoke(T)
      */
     public String invoke(String invoke_str) {
-        System.out.println("End point called with String value =" + invoke_str);
+        TestLogger.logger.debug("End point called with String value =" + invoke_str);
         if (invoke_str.contains("nil")) {
             return new String("<ns2:ReturnType xsi:nil='true' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:ns2=\"http://doclitnonwrapped.proxy.test.org\"/>");
         } else {

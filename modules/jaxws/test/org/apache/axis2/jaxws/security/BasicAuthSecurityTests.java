@@ -24,6 +24,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class BasicAuthSecurityTests extends TestCase {
 
@@ -48,21 +49,21 @@ public class BasicAuthSecurityTests extends TestCase {
     }
     
     public void testBasicAuth() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
         		                                endpointUrl,
         		                                SOAPBinding.SOAP11HTTP_BINDING);
-        
-        System.out.println(">> Invoking Dispatch<String> BasicAuthSecurityService");
+
+        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         String retVal = dispatch.invoke(xmlString);
-        System.out.println(">> Response [" + retVal + "]");
+        TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
     
     public void testBasicAuth_uid_pwd() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
         		                                endpointUrl,
@@ -71,14 +72,14 @@ public class BasicAuthSecurityTests extends TestCase {
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
 		dispatch.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
 
-        System.out.println(">> Invoking Dispatch<String> BasicAuthSecurityService");
+        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         String retVal = dispatch.invoke(xmlString);
-        System.out.println(">> Response [" + retVal + "]");
+        TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
     
     public void testBasicAuth_uid()throws Exception{
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
         		                                endpointUrl,
@@ -86,22 +87,22 @@ public class BasicAuthSecurityTests extends TestCase {
         
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
 
-        System.out.println(">> Invoking Dispatch<String> BasicAuthSecurityService");
+        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         
         try{
         	String retVal = dispatch.invoke(xmlString);
-            System.out.println(">> Response [" + retVal + "]");
+            TestLogger.logger.debug(">> Response [" + retVal + "]");
             
             fail("Set USERID with no PASSWORD: WebServiceException is expected");
         }
         catch(WebServiceException wse){
-        	System.out.println(getName()+": "+ wse);
+            TestLogger.logger.debug(getName() + ": " + wse);
         }
     }
     
     public void testBasicAuth_pwd()throws Exception{
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Dispatch<String> dispatch = getDispatch(Service.Mode.PAYLOAD,
         		                                endpointUrl,
@@ -109,16 +110,16 @@ public class BasicAuthSecurityTests extends TestCase {
         
 		dispatch.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
 
-        System.out.println(">> Invoking Dispatch<String> BasicAuthSecurityService");
+        TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         
         try{
         	String retVal = dispatch.invoke(xmlString);
-            System.out.println(">> Response [" + retVal + "]");
+            TestLogger.logger.debug(">> Response [" + retVal + "]");
             
             fail("Set PASSWORD with no USERID: WebServiceException is expected");
         }
         catch(WebServiceException wse){
-        	System.out.println(getName()+": "+ wse);
+            TestLogger.logger.debug(getName() + ": " + wse);
         }
     }
     

@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider.string;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
@@ -24,7 +26,7 @@ import javax.xml.ws.WebServiceProvider;
 public class StringProvider implements Provider<String> {
     
     public String invoke(String text) {
-        System.out.println("StringProvider invoke received the message [" + text + "]");
+        TestLogger.logger.debug("StringProvider invoke received the message [" + text + "]");
         if (text != null && text.contains("throwWebServiceException")) {
             throw new WebServiceException("provider");
         } else {

@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.stock1.ObjectFactory;
 import org.test.stock1.StockPrice;
 
@@ -156,7 +157,7 @@ public class MessageRPCTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("m:op"));
         assertTrue(newText.contains("m:param"));
         assertTrue(newText.contains("100"));
@@ -237,7 +238,7 @@ public class MessageRPCTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("m:op"));
         assertTrue(newText.contains("m:param"));
         assertTrue(newText.contains("100"));

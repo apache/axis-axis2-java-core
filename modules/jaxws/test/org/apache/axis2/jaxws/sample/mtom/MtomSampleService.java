@@ -13,6 +13,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 
@@ -21,10 +22,10 @@ import org.test.mtom.ObjectFactory;
 public class MtomSampleService implements MtomSample {
 
     public ImageDepot sendImage(ImageDepot input) {
-        System.out.println("[new sendImage request received]");
+        TestLogger.logger.debug("[new sendImage request received]");
         DataHandler data = input.getImageData();
-        
-        System.out.println("[contentType] " + data.getContentType());
+
+        TestLogger.logger.debug("[contentType] " + data.getContentType());
         ImageDepot output = (new ObjectFactory()).createImageDepot();
         Image image = null;
         try {
@@ -42,7 +43,7 @@ public class MtomSampleService implements MtomSample {
     }
 
     public ImageDepot sendText(byte[] input) {
-        System.out.println("[new sendText request received]");
+        TestLogger.logger.debug("[new sendText request received]");
         return null;
     }
 

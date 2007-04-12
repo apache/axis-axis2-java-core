@@ -86,6 +86,7 @@ import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXMessa
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXPayloadSource;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXMessageString;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadString;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
@@ -188,12 +189,12 @@ public class JAXWSTest extends TestCase {
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {
-                System.out.println("Starting the server.");
+                TestLogger.logger.debug("Starting the server.");
                 StartServer startServer = new StartServer("server1");
                 startServer.testStartServer();
             }
             public void tearDown() {
-                System.out.println("Stopping the server");
+                TestLogger.logger.debug("Stopping the server");
                 StopServer stopServer = new StopServer("server1");
                 stopServer.testStopServer();
             }

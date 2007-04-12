@@ -19,6 +19,7 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
@@ -26,22 +27,22 @@ import org.test.shape.threed.ThreeDSquare;
 public class PolymorphicTests extends TestCase {
 
 	public void testFormalAndActualTypeInDifferentPackages(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		PolymorphicShapeService service = new PolymorphicShapeService();
 		PolymorphicShapePortType port = service.getPolymorphicShapePort();
 		Shape shapeType;
-		
-		System.out.println("Sending Request to draw Square");
+
+        TestLogger.logger.debug("Sending Request to draw Square");
 		Square shape = new Square();
 		shape.setXAxis(1);
 		shape.setYAxis(1);
 		shape.setLength(10);
 		shapeType = port.draw(shape);
 		assertTrue(shapeType instanceof Square);
-		System.out.println("Square was drawn");
-		
-		System.out.println("Sending Request to draw 3D Square");
+        TestLogger.logger.debug("Square was drawn");
+
+        TestLogger.logger.debug("Sending Request to draw 3D Square");
 		ThreeDSquare threeDshape = new ThreeDSquare();
 		threeDshape.setXAxis(1);
 		threeDshape.setYAxis(1);
@@ -50,13 +51,13 @@ public class PolymorphicTests extends TestCase {
 		threeDshape.setBredth(10);
 		shapeType = port.draw3D(threeDshape);
 		assertTrue(shapeType instanceof ThreeDSquare);
-		System.out.println("3D Square was drawn");
-		System.out.println("-------------------------------");
+        TestLogger.logger.debug("3D Square was drawn");
+        TestLogger.logger.debug("-------------------------------");
 	}
 	
 	public void testInlineUseOfJAXBBinding(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		String schemaBindingPkgName = "org.test.echomessage";
 		String standardPkgName= "org.test.complextype.nonanonymous";
 		String wsdlLocation="test-resources/wsdl/JAXB_Customization_Sample.wsdl";
@@ -78,9 +79,9 @@ public class PolymorphicTests extends TestCase {
 			Iterator<String> iter = set.iterator();
 			while(iter.hasNext()){
 				String pkg = iter.next();
-				System.out.println("Package = " +pkg);
+                TestLogger.logger.debug("Package = " + pkg);
 			}
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			fail();
@@ -106,8 +107,8 @@ public class PolymorphicTests extends TestCase {
 	}
 	
 	public void testSchemaReader(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		String wsdlLocation="test-resources/wsdl/shapes.wsdl";
 		URL url = null;
 		try{
@@ -126,9 +127,9 @@ public class PolymorphicTests extends TestCase {
 			assertNotNull(set);
 			Iterator<String> iter = set.iterator();
 			while(iter.hasNext()){
-				System.out.println("Package ="+iter.next());
+                TestLogger.logger.debug("Package =" + iter.next());
 			}
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			fail();

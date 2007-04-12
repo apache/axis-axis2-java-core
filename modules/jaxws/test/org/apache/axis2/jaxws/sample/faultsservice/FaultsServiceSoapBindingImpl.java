@@ -31,6 +31,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axis2.saaj.SOAPEnvelopeImpl;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.polymorphicfaults.BaseFault;
 import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
@@ -57,7 +58,7 @@ public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
     public float getQuote(String tickerSymbol) throws 
         BaseFault_Exception, DerivedFault1_Exception, 
         DerivedFault2_Exception, InvalidTickerFault_Exception, SimpleFault {
-System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
+        TestLogger.logger.debug("\nIn getQuote(): " + tickerSymbol + "\n");
         if (tickerSymbol.equals("SMPL")) {
             throw new SimpleFault("Server throws SimpleFault", 100);
         } else if (tickerSymbol.equals("LEGC")) {
@@ -187,15 +188,15 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
     @PostConstruct
     public void initialize(){
         //Called after resource injection and before a method is called.
-        System.out.println("Calling PostConstruct to Initialize");
+        TestLogger.logger.debug("Calling PostConstruct to Initialize");
         this.init = true;
     }
     
     @PreDestroy
     public void distructor(){
         //Called before the scope of request or session or application ends.
-        
-        System.out.println("Calling PreDestroy ");
+
+        TestLogger.logger.debug("Calling PreDestroy ");
         
     }
     @Resource

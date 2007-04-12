@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class WrapperToolTest extends TestCase {
 	public void testWrapStockQuote(){
@@ -127,7 +128,6 @@ public class WrapperToolTest extends TestCase {
 			childNames.add(nav);
 			
 			Object[] jaxbObjects = wrapper.unWrap(price, childNames);
-			System.out.println();
 		}catch(JAXBWrapperException e){
 			e.printStackTrace();
 		}

@@ -11,6 +11,7 @@ import javax.xml.ws.WebServiceException;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
@@ -33,16 +34,16 @@ public class NonWrapTests extends TestCase {
 	}
 	
 	public void testTwoWaySync(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			TwoWay twoWay = new ObjectFactory().createTwoWay();
 			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
 			DocLitNonWrapService service = new DocLitNonWrapService();
 			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 			ReturnType returnValue = proxy.twoWay(twoWay);
-			System.out.println(returnValue.getReturnStr());
-			System.out.println("------------------------------");
+            TestLogger.logger.debug(returnValue.getReturnStr());
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -50,8 +51,8 @@ public class NonWrapTests extends TestCase {
 	}
     
     public void testTwoWaySyncNull() throws Exception{
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         try{
             TwoWay twoWay = null;  // This should cause an WebServiceException
             DocLitNonWrapService service = new DocLitNonWrapService();
@@ -75,13 +76,13 @@ public class NonWrapTests extends TestCase {
             
             
         } catch(WebServiceException e){
-            System.out.println(e.toString());
+            TestLogger.logger.debug(e.toString());
         }
     }
 
 	public void testTwoWayASyncCallback(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			TwoWay twoWay = new ObjectFactory().createTwoWay();
 			twoWay.setTwowayStr("testing Async call for java bean non wrap endpoint");
@@ -90,15 +91,15 @@ public class NonWrapTests extends TestCase {
 			AsyncCallback callback = new AsyncCallback();
 			Future<?> monitor = proxy.twoWayAsync(twoWay, callback);
 			assertNotNull(monitor);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
 		}
 	}
 	public void testTwoWayHolder(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			TwoWayHolder twh = new TwoWayHolder();
 			twh.setTwoWayHolderInt(new Integer(0));
@@ -110,10 +111,10 @@ public class NonWrapTests extends TestCase {
 			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
 			proxy.twoWayHolder(holder);
 			twh = holder.value;
-			System.out.println("Holder string ="+twh.getTwoWayHolderStr());
-			System.out.println("Holder int ="+twh.getTwoWayHolderInt());
-			
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Holder string =" + twh.getTwoWayHolderStr());
+            TestLogger.logger.debug("Holder int =" + twh.getTwoWayHolderInt());
+
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -121,8 +122,8 @@ public class NonWrapTests extends TestCase {
 	}
 	
 	public void testTwoWayHolderAsync(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			TwoWayHolder twh = new TwoWayHolder();
 			twh.setTwoWayHolderInt(new Integer(0));
@@ -137,8 +138,8 @@ public class NonWrapTests extends TestCase {
 			while(!monitor.isDone()){
 				Thread.sleep(1000);
 			}
-			
-			System.out.println("------------------------------");
+
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();

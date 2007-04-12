@@ -34,6 +34,7 @@ import javax.xml.ws.Service;
 import junit.framework.TestCase;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
+import org.apache.axis2.jaxws.TestLogger;
 
 /*
 * This is a test case for Invoking Dispatch with a JAXBSource.
@@ -52,8 +53,8 @@ public class JAXBSourceDispatch extends TestCase {
 	private QName portName =new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
 	
     public void testJAXBSourceSyncPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         try{
 	        // Initialize the JAX-WS client artifacts
 	        Service svc = Service.create(serviceName);
@@ -68,7 +69,7 @@ public class JAXBSourceDispatch extends TestCase {
 	       
 	        JAXBSource jbSrc = new JAXBSource(ctx.createMarshaller(), invokeObj);
 	        // Invoke the Dispatch
-	        System.out.println(">> Invoking sync Dispatch");
+            TestLogger.logger.debug(">> Invoking sync Dispatch");
 	        //Invoke Server endpoint and read response
 	        Source response = dispatch.invoke(jbSrc);
 	       
@@ -78,9 +79,9 @@ public class JAXBSourceDispatch extends TestCase {
 	        Transformer t = TransformerFactory.newInstance().newTransformer();
 	        Result result = new StreamResult(writer);
 	        t.transform(response, result);
-	
-	        System.out.println("Response On Client: \n"+writer.getBuffer().toString());
-	        System.out.println("---------------------------------------");
+
+            TestLogger.logger.debug("Response On Client: \n" + writer.getBuffer().toString());
+            TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){
         	e.printStackTrace();
         }

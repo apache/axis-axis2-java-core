@@ -8,6 +8,7 @@ import javax.xml.ws.Holder;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
@@ -32,15 +33,15 @@ public class WrapTests extends TestCase {
 	}
 	
 	public void testTwoWaySync(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			String reqString = "Test twoWay Sync";
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
 			String response = proxy.twoWay(reqString);
-			System.out.println("Sync Response =" + response);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Sync Response =" + response);
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -48,15 +49,15 @@ public class WrapTests extends TestCase {
 	}
 	
 	public void testOneWayVoidWithNoInputParams(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
 			proxy.oneWayVoid();
-			
-			System.out.println("------------------------------");
+
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -64,8 +65,8 @@ public class WrapTests extends TestCase {
 	}
 	
 	public void testTwoWayHolder(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			String holderString = new String("Test twoWay Sync");
 			Integer holderInteger = new Integer(0);
@@ -74,9 +75,9 @@ public class WrapTests extends TestCase {
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
 			proxy.twoWayHolder(strHolder, intHolder);
-			System.out.println("Holder Response String =" + strHolder.value);;
-			System.out.println("Holder Response Integer ="+ intHolder.value);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
+            TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -84,8 +85,8 @@ public class WrapTests extends TestCase {
 	}
 	
 	public void testTwoWayWithHeadersAndHolders(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			Header header = new Header();
 			header.setOut(0);
@@ -98,9 +99,9 @@ public class WrapTests extends TestCase {
 			DocLitWrap proxy = service.getDocLitWrapPort();
 			HeaderResponse hr = proxy.header(header, holder, hp1);
 			hp0=holder.value;
-			System.out.println("Holder Response String =" + hp0.getHeaderType());
-			System.out.println("Header Response Long =" + hr.getOut());
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Holder Response String =" + hp0.getHeaderType());
+            TestLogger.logger.debug("Header Response Long =" + hr.getOut());
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -108,8 +109,8 @@ public class WrapTests extends TestCase {
 	}
 
 	public void testTwoWayHolderAsync(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			String holderString = new String("Test twoWay Sync");
 			Integer holderInteger = new Integer(0);
@@ -118,9 +119,9 @@ public class WrapTests extends TestCase {
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
 			proxy.twoWayHolder(strHolder, intHolder);
-			System.out.println("Holder Response String =" + strHolder.value);;
-			System.out.println("Holder Response Integer ="+ intHolder.value);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
+            TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -133,8 +134,8 @@ public class WrapTests extends TestCase {
      * annotations and WSGEN.  WSImport will not allow this.
      */
     public void testEchoStringWSGEN1() {
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         try{
             String request = "hello world";
             
@@ -142,7 +143,7 @@ public class WrapTests extends TestCase {
             DocLitWrap proxy = service.getDocLitWrapPort();
             String response = proxy.echoStringWSGEN1(request);
             assertTrue(response.equals(request));
-            System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
         }catch(Exception e){
             e.printStackTrace();
             fail();
@@ -156,8 +157,8 @@ public class WrapTests extends TestCase {
      */
     
     public void testEchoStringWSGEN2() {
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         try{
             String request = "hello world 2";
             
@@ -165,7 +166,7 @@ public class WrapTests extends TestCase {
             DocLitWrap proxy = service.getDocLitWrapPort();
             String response = proxy.echoStringWSGEN2(request);
             assertTrue(response.equals(request));
-            System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
         }catch(Exception e){
             e.printStackTrace();
             fail();

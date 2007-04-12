@@ -38,6 +38,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
@@ -113,7 +114,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             request.setContentDescription(SoapMessageProvider.XML_REQUEST);
             
             // Dispatch
-        	System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
         	SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
@@ -126,7 +127,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             assertTrue(countAttachments(response) == 0);
             
             // Print out the response
-        	System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             response.writeTo(System.out);
         	
         }catch(Exception e){
@@ -155,7 +156,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             request.setContentDescription(SoapMessageProvider.XML_EMPTYBODY_REQUEST);
             
             // Dispatch
-            System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
             
             // Check assertions
@@ -166,7 +167,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             assertTrue(countAttachments(response) == 0);
             
             // Print out the response
-            System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             response.writeTo(System.out);
             
         }catch(Exception e){
@@ -196,7 +197,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             try {
                 // Dispatch
-                System.out.println(">> Invoking SourceMessageProviderDispatch");
+                TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
                 SOAPMessage response = dispatch.invoke(request);
                 assertTrue("Expected failure", false);
             } catch (SOAPFaultException e) {
@@ -235,7 +236,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             try {
                 // Dispatch
-                System.out.println(">> Invoking SourceMessageProviderDispatch");
+                TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
                 SOAPMessage response = dispatch.invoke(request);
                 assertTrue("Expected failure", false);
             } catch (SOAPFaultException e) {
@@ -270,12 +271,12 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-            
-            System.out.println("Request Message:");
+
+            TestLogger.logger.debug("Request Message:");
             request.writeTo(System.out);
             
             // Dispatch
-            System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -292,7 +293,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             
             // Print out the response
-            System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             response.writeTo(System.out);
             
         }catch(Exception e){
@@ -326,12 +327,12 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-            
-            System.out.println("Request Message:");
+
+            TestLogger.logger.debug("Request Message:");
             request.writeTo(System.out);
             
             // Dispatch
-            System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -348,7 +349,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             
             // Print out the response
-            System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             response.writeTo(System.out);
             
         }catch(Exception e){
@@ -377,12 +378,12 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-            
-            System.out.println("Request Message:");
+
+            TestLogger.logger.debug("Request Message:");
             request.writeTo(System.out);
             
             // Dispatch
-            System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -400,7 +401,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             assert(attachmentPart.getContentId().equals(SoapMessageProvider.ID));
             
             // Print out the response
-            System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             response.writeTo(System.out);
             
         }catch(Exception e){

@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHa
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends TestCase {
@@ -45,8 +46,8 @@ public class AddNumbersHandlerTests extends TestCase {
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersHandler() {
 		try{
-			System.out.println("----------------------------------");
-		    System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
 			
             AddNumbersHandlerService service = new AddNumbersHandlerService();
 			AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -57,8 +58,8 @@ public class AddNumbersHandlerTests extends TestCase {
 			int total = proxy.addNumbersHandler(10,10);
 			
             assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
-			System.out.println("Total (after handler manipulation) = " +total);
-			System.out.println("----------------------------------");
+            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            TestLogger.logger.debug("----------------------------------");
 		} catch(Exception e) {
 			e.printStackTrace();
 			fail();
@@ -68,8 +69,8 @@ public class AddNumbersHandlerTests extends TestCase {
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersHandlerWithFault() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -89,14 +90,14 @@ public class AddNumbersHandlerTests extends TestCase {
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
             assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
         }
-        System.out.println("----------------------------------");
+        TestLogger.logger.debug("----------------------------------");
     }
     
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersClientHandler() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -115,8 +116,8 @@ public class AddNumbersHandlerTests extends TestCase {
             int total = proxy.addNumbersHandler(10,10);
             
             assertEquals("With handler manipulation, total should be 4 less than a proper sumation.", 16, total);
-            System.out.println("Total (after handler manipulation) = " +total);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             fail();
@@ -129,8 +130,8 @@ public class AddNumbersHandlerTests extends TestCase {
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersClientHandlerMyResolver() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             
@@ -149,8 +150,8 @@ public class AddNumbersHandlerTests extends TestCase {
             int total = proxy.addNumbersHandler(10,10);
             
             assertEquals("With server-side only handler manipulation, total should be a 17.", 17, total);
-            System.out.println("Total (after handler manipulation) = " +total);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             fail();
@@ -161,8 +162,8 @@ public class AddNumbersHandlerTests extends TestCase {
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersClientProtoAndLogicalHandler() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -189,14 +190,14 @@ public class AddNumbersHandlerTests extends TestCase {
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
             assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
         }
-        System.out.println("----------------------------------");
+        TestLogger.logger.debug("----------------------------------");
     }
     
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersClientHandlerWithFault() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -215,7 +216,7 @@ public class AddNumbersHandlerTests extends TestCase {
             int total = proxy.addNumbersHandler(99,10);
             
             fail("Should have got an exception, but we didn't.");
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
@@ -226,8 +227,8 @@ public class AddNumbersHandlerTests extends TestCase {
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersClientHandlerAsync() {
         try{
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -250,14 +251,14 @@ public class AddNumbersHandlerTests extends TestCase {
 
             while (!future.isDone()) {
                 Thread.sleep(1000);
-                System.out.println("Async invocation incomplete");
+                TestLogger.logger.debug("Async invocation incomplete");
             }
             
             int total = callback.getResponseValue();
             
             assertEquals("With handler manipulation, total should be 26.", 26, total);
-            System.out.println("Total (after handler manipulation) = " +total);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             fail(e.toString());
@@ -266,8 +267,8 @@ public class AddNumbersHandlerTests extends TestCase {
     
     public void testOneWay() {
         try {
-            System.out.println("----------------------------------");
-            System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
@@ -276,7 +277,7 @@ public class AddNumbersHandlerTests extends TestCase {
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
             proxy.oneWayInt(11);
-            System.out.println("----------------------------------");
+            TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -293,13 +294,13 @@ public class AddNumbersHandlerTests extends TestCase {
         
         public void handleResponse(Response<AddNumbersHandlerResponse> response) {
             try {
-                System.out.println("FaultyAsyncHandler.handleResponse() was called");
+                TestLogger.logger.debug("FaultyAsyncHandler.handleResponse() was called");
                 AddNumbersHandlerResponse r = response.get();
-                System.out.println("No exception was thrown from Response.get()");
+                TestLogger.logger.debug("No exception was thrown from Response.get()");
                 retVal = r.getReturn();
             }
             catch (Exception e) {
-                System.out.println("An exception was thrown: " + e.getClass());
+                TestLogger.logger.debug("An exception was thrown: " + e.getClass());
                 exception = e;
             }
         }

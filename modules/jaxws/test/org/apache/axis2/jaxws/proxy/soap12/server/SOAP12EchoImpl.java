@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.proxy.soap12.server;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service.Mode;
@@ -57,7 +59,7 @@ public class SOAP12EchoImpl implements Provider<String> {
         "</soapenv:Envelope>";
         
     public String invoke(String input) {
-        System.out.println("received request [" + input + "]");
+        TestLogger.logger.debug("received request [" + input + "]");
         
         // check the request to see if it contains the SOAP 1.1 namespace 
         // URI.  if so, then that is an error and we should respond with 
@@ -65,11 +67,11 @@ public class SOAP12EchoImpl implements Provider<String> {
         String status = "FAIL";
         if (input.indexOf(SOAP12_NS_URI) > 0) {
             status = "PASS";
-            System.out.println("the request contains the SOAP 1.2 namespace as expected.");
+            TestLogger.logger.debug("the request contains the SOAP 1.2 namespace as expected.");
         }
         else {
-            System.out.println("the request did NOT contain the SOAP 1.2 namespace.");
-            System.out.println("sending back a failure");
+            TestLogger.logger.debug("the request did NOT contain the SOAP 1.2 namespace.");
+            TestLogger.logger.debug("sending back a failure");
         }
         
         // the contents of the response should contain the status
@@ -91,8 +93,8 @@ public class SOAP12EchoImpl implements Provider<String> {
             response.append(responseBody);
             response.append(SOAP12_ENVELOPE_TAIL);
         }
-        
-        System.out.println("sending response [" + response + "]");        
+
+        TestLogger.logger.debug("sending response [" + response + "]");
         return response.toString();
     }
 }

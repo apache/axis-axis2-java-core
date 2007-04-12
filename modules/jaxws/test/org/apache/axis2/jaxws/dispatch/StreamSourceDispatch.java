@@ -33,6 +33,7 @@ import javax.xml.ws.Service.Mode;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * This class tests the JAX-WS Dispatch<Source> functionality with various
@@ -47,8 +48,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> synchronously with the content in PAYLOAD mode.
 	 */
     public void testSyncPayloadMode() throws Exception {
-		System.out.println("---------------------------------------");
-		System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -62,7 +63,7 @@ public class StreamSourceDispatch extends TestCase {
         Source srcStream = new StreamSource((InputStream) stream);
         
         // Invoke the Dispatch<Source>
-		System.out.println(">> Invoking sync Dispatch with PAYLOAD mode");
+        TestLogger.logger.debug(">> Invoking sync Dispatch with PAYLOAD mode");
 		Source response = dispatch.invoke(srcStream);
 		assertNotNull(response);
         
@@ -70,7 +71,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -83,8 +84,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> synchronously with the content in MESSAGE mode.
      */
     public void testSyncMessageMode() throws Exception {
-		System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
 		Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -96,8 +97,8 @@ public class StreamSourceDispatch extends TestCase {
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
         Source srcStream = new StreamSource((InputStream) stream);
-        
-        System.out.println(">> Invoking sync Dispatch with MESSAGE Mode");
+
+        TestLogger.logger.debug(">> Invoking sync Dispatch with MESSAGE Mode");
 		StreamSource response = (StreamSource) dispatch.invoke(srcStream);
         assertNotNull(response);
 
@@ -105,7 +106,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -118,8 +119,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> asynchronously with the content in PAYLOAD mode.
      */
     public void testAsyncCallbackPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -135,12 +136,12 @@ public class StreamSourceDispatch extends TestCase {
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
         Source srcStream = new StreamSource((InputStream) stream);
 
-        System.out.println(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
         Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -151,7 +152,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -164,8 +165,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> asynchronously with the content in MESSAGE mode.
      */
 	public void testAsyncCallbackMessageMode() throws Exception {
-		System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts 
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -180,13 +181,13 @@ public class StreamSourceDispatch extends TestCase {
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 		Source srcStream = new StreamSource((InputStream) stream);
-		
-        System.out.println(">> Invoking async (callback) Dispatch with MESSAGE mode");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
         Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
         // Wait for the async response to be returned
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -197,7 +198,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -210,8 +211,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> asynchronously with the content in PAYLOAD mode.
      */
     public void testAsyncPollingPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -223,12 +224,12 @@ public class StreamSourceDispatch extends TestCase {
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
         Source srcStream = new StreamSource((InputStream) stream);
 
-        System.out.println(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
         Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -239,7 +240,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -252,8 +253,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> asynchronously with the content in MESSAGE mode.
      */
     public void testAsyncPollingMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts 
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -265,13 +266,13 @@ public class StreamSourceDispatch extends TestCase {
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
         Source srcStream = new StreamSource((InputStream) stream);
-        
-        System.out.println(">> Invoking async (callback) Dispatch with MESSAGE mode");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
         Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
         // Wait for the async response to be returned
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -282,7 +283,7 @@ public class StreamSourceDispatch extends TestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
-        System.out.println(responseText);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -295,8 +296,8 @@ public class StreamSourceDispatch extends TestCase {
      * Invoke a Dispatch<Source> one-way operation
      */
 	public void testOneWayPayloadMode() throws Exception {
-		System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
 		Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -308,8 +309,8 @@ public class StreamSourceDispatch extends TestCase {
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 		Source srcStream = new StreamSource((InputStream) stream);
-		
-		System.out.println(">> Invoking One Way Dispatch");
+
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
 		dispatch.invokeOneWay(srcStream);
 	}
 }

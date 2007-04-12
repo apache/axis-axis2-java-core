@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionService;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class ResourceInjectionTests extends TestCase {
 
@@ -38,15 +39,15 @@ public class ResourceInjectionTests extends TestCase {
 
 	public void testInjectionOnField(){
 		Object serviceInstance = new ResourceInjectionTestImpl1();
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
 			injector.inject(resource, serviceInstance);
 			ResourceInjectionTestImpl1 serviceImpl =(ResourceInjectionTestImpl1)serviceInstance;
 			assertNotNull(serviceImpl.ctx);
-			System.out.println("Resource Injected on Field");
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Resource Injected on Field");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -55,15 +56,15 @@ public class ResourceInjectionTests extends TestCase {
 	
 	public void testInjectionOnMethod(){
 		Object serviceInstance = new ResourceInjectionTestImpl2();
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
 			injector.inject(resource, serviceInstance);
 			ResourceInjectionTestImpl2 serviceImpl =(ResourceInjectionTestImpl2)serviceInstance;
 			assertNotNull(serviceImpl.ctx);
-			System.out.println("Resource Injected on Method");
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Resource Injected on Method");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -72,15 +73,15 @@ public class ResourceInjectionTests extends TestCase {
 	
 	public void testInjectionOnPrivateField(){
 		Object serviceInstance = new ResourceInjectionTestImpl3();
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
 			injector.inject(resource, serviceInstance);
 			ResourceInjectionTestImpl3 serviceImpl =(ResourceInjectionTestImpl3)serviceInstance;
 			assertNotNull(serviceImpl.getCtx());
-			System.out.println("Resource Injected on Private Field");
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Resource Injected on Private Field");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -89,15 +90,15 @@ public class ResourceInjectionTests extends TestCase {
 	
 	public void testInjectionOnProvateMethod(){
 		Object serviceInstance = new ResourceInjectionTestImpl4();
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
 			injector.inject(resource, serviceInstance);
 			ResourceInjectionTestImpl4 serviceImpl =(ResourceInjectionTestImpl4)serviceInstance;
 			assertNotNull(serviceImpl.getCtx());
-			System.out.println("Resource Injected using private Method");
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Resource Injected using private Method");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -106,15 +107,15 @@ public class ResourceInjectionTests extends TestCase {
 	
 	public void testTypedResourceInjectionOnField(){
 		Object serviceInstance = new ResourceInjectionTestImpl5();
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjector injector = ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
 			injector.inject(resource, serviceInstance);
 			ResourceInjectionTestImpl5 serviceImpl =(ResourceInjectionTestImpl5)serviceInstance;
 			assertNotNull(serviceImpl.ctx);
-			System.out.println("Resource Injected on Field");
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Resource Injected on Field");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -123,14 +124,14 @@ public class ResourceInjectionTests extends TestCase {
 
 	
     public void testEchoWithResourceInjectionAndLifecycleMethods(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			ResourceInjectionService service = new ResourceInjectionService();
 			ResourceInjectionPortType proxy = service.getResourceInjectionPort();
 			String response = proxy.echo("echo Request");
-			System.out.println("Response String = " +response);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Response String = " + response);
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
