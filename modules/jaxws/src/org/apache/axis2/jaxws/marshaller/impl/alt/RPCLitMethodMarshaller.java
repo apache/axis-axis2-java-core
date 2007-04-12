@@ -198,6 +198,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          javaTypes); // unmarshal by type
 
             // Build the signature arguments
@@ -397,6 +398,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
@@ -410,10 +412,14 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils
                             .getReturnElement(packages, message, byJavaType, true,
                                               operationDesc.getResultTargetNamespace(),
-                                              operationDesc.getResultPartName());
+                                              operationDesc.getResultPartName(),
+                                              MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, byJavaType, false, null, null);
+                            .getReturnElement(packages, message, byJavaType, false, null, null,
+                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
                 }
                 returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
@@ -444,6 +450,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          javaTypes); // unmarshal by type
 
             // TODO Should we check for null output body values?  Should we check for null output header values ?

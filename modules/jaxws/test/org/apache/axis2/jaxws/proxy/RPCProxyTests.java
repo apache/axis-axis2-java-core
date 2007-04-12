@@ -30,6 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
@@ -91,6 +92,26 @@ public class RPCProxyTests extends TestCase {
             String response = proxy.testSimple(request);
             assertTrue(response != null);
             assertTrue(response.equals(request));
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testSimpleInOut() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+            String request = "This is a test...";
+            Holder<String> requestParam = new Holder<String>();
+            requestParam.value = request;
+           
+            String response = proxy.testSimpleInOut(requestParam);
+            assertTrue(response != null);
+            assertTrue(response.equals(request));
+            assertTrue(requestParam.value.equals(request));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);

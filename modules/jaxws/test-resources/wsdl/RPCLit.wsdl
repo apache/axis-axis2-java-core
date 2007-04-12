@@ -216,6 +216,19 @@
 
    </wsdl:message>
    
+   <wsdl:message name="testSimpleInOutRequest">
+
+      <wsdl:part name="simpleInOut" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="testSimpleInOutResponse">
+
+      <wsdl:part name="simpleOut" type="xsd:string"/>
+      <wsdl:part name="simpleInOut" type="xsd:string"/>
+
+   </wsdl:message>
+   
    <wsdl:message name="testSimple2Request">
 
       <wsdl:part name="simple2In1" type="xsd:string"/>
@@ -256,6 +269,14 @@
          <wsdl:input message="impl:testSimpleRequest" name="testSimpleRequest"/>
 
          <wsdl:output message="impl:testSimpleResponse" name="testSimpleResponse"/>
+
+      </wsdl:operation>
+      
+       <wsdl:operation name="testSimpleInOut" parameterOrder="simpleInOut">
+
+         <wsdl:input message="impl:testSimpleInOutRequest" name="testSimpleInOutRequest"/>
+
+         <wsdl:output message="impl:testSimpleInOutResponse" name="testSimpleInOutResponse"/>
 
       </wsdl:operation>
       
@@ -360,6 +381,18 @@
          </wsdl:input>
 
          <wsdl:output name="testSimpleResponse">
+               <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
+         </wsdl:output>
+
+      </wsdl:operation>
+      
+      <wsdl:operation name="testSimpleInOut">
+
+         <wsdl:input name="testSimpleInOutRequest">
+               <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
+         </wsdl:input>
+
+         <wsdl:output name="testSimpleInOutResponse">
                <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
          </wsdl:output>
 

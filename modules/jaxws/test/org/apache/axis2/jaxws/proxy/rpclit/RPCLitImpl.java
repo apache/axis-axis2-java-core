@@ -24,6 +24,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
@@ -159,4 +160,9 @@ public class RPCLitImpl implements RPCLit {
     public void testFault() throws RPCFault {
         throw new RPCFault("Throw RPCFault", 123);
     }
+
+    public String testSimpleInOut(Holder<String> simpleInOut) {
+        return simpleInOut.value;
+    }
+
 }

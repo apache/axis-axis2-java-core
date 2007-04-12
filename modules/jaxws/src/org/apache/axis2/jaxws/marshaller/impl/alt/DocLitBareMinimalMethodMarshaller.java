@@ -85,6 +85,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // Use "byJavaType" unmarshalling if necessary
                 Class byJavaType = null;
@@ -97,10 +98,14 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils
                             .getReturnElement(packages, message, byJavaType, true,
                                               operationDesc.getResultTargetNamespace(),
-                                              operationDesc.getResultName());
+                                              operationDesc.getResultName(),
+                                              MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, byJavaType, false, null, null);
+                            .getReturnElement(packages, message, byJavaType, false, null, null,
+                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
                 }
                 //TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
@@ -128,6 +133,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          javaTypes); // byJavaType unmarshalling
 
             // Populate the response Holders
@@ -170,15 +176,10 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                // If it is a JAXB basic type or it has no annotations
+                // If it is not a JAXB Root Element
                 if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
-                } else {
-                    Annotation annos[] = type.getAnnotations();
-                    if (annos == null || annos.length == 0) {
-                        javaTypes[i] = type;
-                    }
-                }
+                } 
             }
 
             // Unmarshal the ParamValues from the message
@@ -186,6 +187,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          javaTypes); // never unmarshal by type for doc/lit bare
 
             // Build the signature arguments

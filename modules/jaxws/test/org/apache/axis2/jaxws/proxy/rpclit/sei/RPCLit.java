@@ -7,11 +7,13 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
@@ -38,6 +40,20 @@ public interface RPCLit {
     public String testSimple(
         @WebParam(name = "simpleIn", partName = "simpleIn")
         String simpleIn);
+    
+    /**
+     * 
+     * @param simpleInOut
+     * @return
+     *     returns java.lang.String
+     * TESTS combination of out and return values
+     */
+    @WebMethod
+    @WebResult(name = "simpleOut", partName = "simpleOut")
+    public String testSimpleInOut(
+        @WebParam(name = "simpleInOut", partName = "simpleInOut", mode=Mode.INOUT)
+        Holder<String> simpleInOut);
+    
     
     /**
      * 

@@ -249,7 +249,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     Element returnElement =
                             MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                                                                    operationDesc.getResultTargetNamespace(),
-                                                                   operationDesc.getResultPartName());
+                                                                   operationDesc.getResultPartName(),
+                                                                   false);
                     returnValue = returnElement.getTypeValue();
                 }
                 // returnValue may be incompatible with JAX-WS signature

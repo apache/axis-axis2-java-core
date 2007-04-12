@@ -81,6 +81,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
@@ -88,10 +89,14 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     returnElement =
                             MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                                                                    operationDesc.getResultTargetNamespace(),
-                                                                   operationDesc.getResultName());
+                                                                   operationDesc.getResultName(),
+                                                                   MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, null, false, null, null);
+                            .getReturnElement(packages, message, null, false, null, null,
+                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
                 }
                 returnValue = returnElement.getTypeValue();
                 if (ConvertUtils.isConvertable(returnValue, returnType)) {
@@ -105,6 +110,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          null); // always unmarshal with "by element" mode
 
             // Populate the response Holders
@@ -146,6 +152,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          null); // always unmarshal using "by element" mode
 
             // Build the signature arguments

@@ -184,20 +184,21 @@ public class MethodMarshallerUtils {
 
     /**
      * Return the list of PDElements that is unmarshalled from the wire
-     *
-     * @param params              ParameterDescription for this operation
-     * @param message             Message
-     * @param packages            set of packages needed to unmarshal objects for this operation
-     * @param isInput             indicates if input or output  params (input on server, output on
-     *                            client)
-     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios
-     *                            that require unmarshalling by java type
+     * 
+     * @param params ParameterDescription for this operation
+     * @param message Message
+     * @param packages set of packages needed to unmarshal objects for this operation
+     * @param isInput indicates if input or output  params (input on server, output on client)
+     * @param hasReturnInBody if isInput=false, then this parameter indicates whether a 
+     * return value is expected in the body.
+     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios that require unmarshalling by java type
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params,
                                          Message message,
                                          TreeSet<String> packages,
                                          boolean isInput,
+                                         boolean hasReturnInBody, 
                                          Class[] unmarshalByJavaType) throws XMLStreamException {
 
         List<PDElement> pdeList = new ArrayList<PDElement>();
@@ -216,7 +217,11 @@ public class MethodMarshallerUtils {
             }
         }
 
-        int index = 0;
+        if (!isInput && hasReturnInBody) {
+            totalBodyBlocks++;
+        }
+            
+        int index = (!isInput && hasReturnInBody) ? 1 : 0;
         for (int i = 0; i < params.length; i++) {
             ParameterDescription pd = params[i];
 
@@ -258,11 +263,6 @@ public class MethodMarshallerUtils {
                         block = message.getBodyBlock(context, factory);
                     }
                     index++;
-                }
-
-                if(block == null){
-                    log.info("Block is null");
-                    throw new XMLStreamException("Block is null in getPDElements");
                 }
 
                 Element element = new Element(block.getBusinessObject(true), block.getQName());
@@ -436,7 +436,7 @@ public class MethodMarshallerUtils {
                                        block);
             } else {
                 // Body block
-                if (totalBodyBlocks <= 1) {
+                if (totalBodyBlocks < 1) {
                     // If there is only one block, use the following "more performant" method
                     message.setBodyBlock(block);
                 } else {
@@ -496,6 +496,7 @@ public class MethodMarshallerUtils {
      * @param isHeader
      * @param headerNS                 (only needed if isHeader)
      * @param headerLocalPart          (only needed if isHeader)
+     * @param hasOutputBodyParams (true if the method has out or inout params other than the return value)
      * @return Element
      * @throws WebService
      * @throws XMLStreamException
@@ -505,7 +506,9 @@ public class MethodMarshallerUtils {
                                     Class unmarshalByJavaTypeClass,  // normally null
                                     boolean isHeader,
                                     String headerNS,
-                                    String headerLocalPart)
+                                    String headerLocalPart,
+                                    boolean hasOutputBodyParams)
+
             throws WebServiceException, XMLStreamException {
 
         // The return object is the first block in the body
@@ -517,7 +520,13 @@ public class MethodMarshallerUtils {
         if (isHeader) {
             block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
         } else {
-            block = message.getBodyBlock(context, factory);
+            if (hasOutputBodyParams) {
+                block = message.getBodyBlock(0, context, factory);
+            } else {
+                // If there is only 1 block, we can use the get body block method
+                // that streams the whole block content.
+                block = message.getBodyBlock(context, factory);
+            }
         }
 
         // Get the business object.  We want to return the object that represents the type.
@@ -851,6 +860,25 @@ public class MethodMarshallerUtils {
         return exception;
     }
 
+    
+    /**
+     * @param pds
+     * @return Number of inout or out parameters
+     */
+    static int numOutputBodyParams(ParameterDescription[] pds) {
+        int count = 0;
+        for (int i=0; i<pds.length; i++) {
+            // TODO Need to change this to also detect not attachment
+            if (!pds[i].isHeader()) {
+                if (pds[i].getMode() == Mode.INOUT ||
+                        pds[i].getMode() == Mode.OUT) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
 
     /**
      * @param value
