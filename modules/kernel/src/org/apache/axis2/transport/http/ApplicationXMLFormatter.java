@@ -71,13 +71,14 @@ public class ApplicationXMLFormatter implements MessageFormatter {
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {
 
-        OMElement omElement;
+        OMElement omElement = null;
 
         if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
             SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
             SOAPFaultDetail soapFaultDetail = fault.getDetail();
-            omElement = soapFaultDetail.getFirstElement();
-
+            if (soapFaultDetail != null) {
+                omElement = soapFaultDetail.getFirstElement();
+            }
             if (omElement == null) {
                 omElement = fault.getReason();
             }
