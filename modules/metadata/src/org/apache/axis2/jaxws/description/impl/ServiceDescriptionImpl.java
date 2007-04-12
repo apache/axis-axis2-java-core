@@ -993,40 +993,40 @@ class ServiceDescriptionImpl
         String[] seiExceptions = seiMDC.getExceptions();
         String[] implExceptions = implMDC.getExceptions();
 
+        // An impl can choose to throw fewer checked exceptions than declared on the SEI, but not more.
+        // This is analagous to the Java rules for interfaces.
         if (seiExceptions == null) {
             if (implExceptions == null) {
                 return;
             } else {
-                //Exception: sei list is null, but impl list is not null
-                throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
-                        + composite.getClassName() 
-                        + "; method name: " + seiMDC.getMethodName() 
-                        + "; endpointInterface: " + className);
-
-            }
-        } else if (implExceptions == null) {
-            //Exception: sei list is not null, but impl list is null
-            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
+                // SEI delcares no checked exceptions, but the implementation has checked exceptions, which is an error
+                throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions than SEI method signature (0): Implementation class: "
                     + composite.getClassName() 
                     + "; method name: " + seiMDC.getMethodName() 
                     + "; endpointInterface: " + className);
-
+            }
+        } else if (implExceptions == null) {
+            // Implementation throws fewer checked exceptions than SEI, which is OK.
+            return;
         }
         
-        //check the list length
-        if (seiExceptions.length != implExceptions.length) {
-            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
-                                            + composite.getClassName() 
-                                            + "; method name: " + seiMDC.getMethodName() 
-                                            + "; endpointInterface: " + className);
+        // Check the list length; An implementation can not declare more exceptions than the SEI
+        if (seiExceptions.length < implExceptions.length) {
+            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions ("
+                + implExceptions.length + ") than SEI method signature ("
+                + seiExceptions.length + "): Implementation class: "
+                + composite.getClassName() 
+                + "; method name: " + seiMDC.getMethodName() 
+                + "; endpointInterface: " + className);
         }
         
-        if (seiExceptions.length > 0) {     
-            
-            for (String seiException : seiExceptions) {
+        // Make sure that each checked exception declared by the 
+        // implementation is on the SEI also
+        if (implExceptions.length > 0) {                
+            for (String implException : implExceptions) {
                 boolean foundIt = false;
-                if (implExceptions.length > 0) {        
-                    for (String implException : implExceptions) {
+                if (seiExceptions.length > 0) {         
+                    for (String seiException : seiExceptions) {
                         if (seiException.equals(implException)) {
                             foundIt = true;
                             break;
@@ -1035,11 +1035,11 @@ class ServiceDescriptionImpl
                 }
                 
                 if (!foundIt) {
-                    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature does not match SEI method signature - mismatched exceptions list: Implementation class: "
-                                                                    + composite.getClassName() 
-                                                                    + "; method name: " + seiMDC.getMethodName() 
-                                                                    + "; endpointInterface: " + className);
-
+                    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature throws exception " 
+                        + implException + "which is not declared on the SEI method signature: Implementation class: "
+                        + composite.getClassName() 
+                        + "; method name: " + seiMDC.getMethodName() 
+                        + "; endpointInterface: " + className);
                 }
             }
         }
