@@ -1153,8 +1153,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     public AxisMessage getAxisMessage() {
         if (reconcileAxisMessage) {
-            log.warn(this.getLogIDString() +
+            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
+                log.warn(this.getLogIDString() +
                     ":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
+            }
         }
 
         return axisMessage;
@@ -1872,8 +1874,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         }
         catch (IOException e) {
-            log.trace("MessageContext:serializeSelfManagedData(): Exception [" +
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace("MessageContext:serializeSelfManagedData(): Exception [" +
                     e.getClass().getName() + "]  description [" + e.getMessage() + "]", e);
+            }
         }
 
     }
@@ -1922,11 +1926,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
                             selfManagedDataHandlerCount++;
                         }
                         catch (Exception exc) {
-                            log.trace("MessageContext:serializeSelfManagedData(): exception [" +
+                            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                                log.trace("MessageContext:serializeSelfManagedData(): exception [" +
                                     exc.getClass().getName() + "][" + exc.getMessage() +
                                     "]  in setting up SelfManagedDataHolder object for [" +
                                     handler.getClass().getName() + " / " + handler.getName() + "] ",
                                       exc);
+                            }
                         }
                     }
                 }
@@ -1935,8 +1941,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
             return selfManagedDataHolderList;
         }
         catch (Exception ex) {
-            log.trace("MessageContext:serializeSelfManagedData(): exception [" +
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace("MessageContext:serializeSelfManagedData(): exception [" +
                     ex.getClass().getName() + "][" + ex.getMessage() + "]", ex);
+            }
             return null;
         }
 
@@ -1981,9 +1989,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
             // implementation than the one we saved during serializeSelfManagedData.
             // NOTE: the exception gets absorbed!
 
-            log.trace(
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(
                     "MessageContext:deserialize_getHandlerFromExecutionChain(): ClassCastException thrown: " +
                             e.getMessage(), e);
+            }
             return null;
         }
     }
@@ -2154,9 +2164,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             }
             catch (Exception e) {
-                log.trace(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         ":writeExternal(): can not serialize the SOAP message ***Exception***  [" +
                         e.getClass().getName() + " : " + e.getMessage() + "]");
+                }
             }
 
             //---------------------------------------------
@@ -2596,8 +2608,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
             setMessageID(tmpID);
         }
 
-        if (log.isInfoEnabled()) {
-            log.info(logCorrelationIDString + ":writeExternal():   message ID [" + tmpID + "]");
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(logCorrelationIDString + ":writeExternal():   message ID [" + tmpID + "]");
         }
 
         ObjectStateUtils.writeObject(out, options, logCorrelationIDString + ".options   for  [" +
@@ -3018,7 +3030,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
                 // convert what was saved into the soap envelope
 
-                XMLStreamReader xmlreader;
+                XMLStreamReader xmlreader = null;
 
                 try {
                     if (persistedWithOptimizedMTOM) {
@@ -3026,10 +3038,14 @@ public class MessageContext extends AbstractContext implements Externalizable {
                         StAXBuilder builder = BuilderUtil
                                 .getAttachmentsBuilder(this, msgBuffer, contentType, isSOAP);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        // build the OM in order to free the input stream
+                        envelope.buildWithAttachments();
                     } else {
                         xmlreader = StAXUtils.createXMLStreamReader(msgBuffer, charSetEnc);
                         StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespaceURI);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        // build the OM in order to free the input stream
+                        envelope.build();
                     }
                 }
                 catch (Exception ex) {
@@ -3039,6 +3055,17 @@ public class MessageContext extends AbstractContext implements Externalizable {
                             ":readExternal(): Error when deserializing persisted envelope: [" +
                             ex.getClass().getName() + " : " + ex.getLocalizedMessage() + "]", ex);
                     envelope = null;
+                }
+
+                if (xmlreader != null) {
+                    try {
+                        xmlreader.close();
+                    } catch (Exception xmlex) {
+                        // Can't close down the xml stream reader
+                        log.error(logCorrelationIDString+
+                                ":readExternal(): Error when closing XMLStreamReader for envelope: ["
+                                + xmlex.getClass().getName() + " : " + xmlex.getLocalizedMessage() + "]", xmlex);
+                    }
                 }
 
                 msgBuffer.close();
@@ -3825,10 +3852,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
-                log.info(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         "activate():  exception caught when getting the TransportOutDescription [" +
                         qout.toString() + "]  from the AxisConfiguration [" +
                         exout.getClass().getName() + " : " + exout.getMessage() + "]");
+                }
             }
 
             if (tmpOut != null) {
@@ -3859,9 +3888,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception ex) {
                 // log the exception
-                log.trace(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         ":activate(): *** WARNING *** deserializing the self managed data encountered Exception [" +
                         ex.getClass().getName() + " : " + ex.getMessage() + "]", ex);
+                }
             }
         }
 
@@ -3944,8 +3975,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (operationCtx == null) {
             // won't be able to finish
-            log.trace(logCorrelationIDString +
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(logCorrelationIDString +
                     ":activateWithOperationContext():  *** WARNING ***  No active OperationContext object is available.");
+            }
             return;
         }
 
@@ -3956,8 +3989,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (configCtx == null) {
             // won't be able to finish
-            log.trace(logCorrelationIDString +
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(logCorrelationIDString +
                     ":activateWithOperationContext():  *** WARNING ***  No active ConfigurationContext object is available.");
+            }
             return;
         }
 
@@ -4034,10 +4069,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
-                log.info(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         "activateWithOperationContext():  exception caught when getting the TransportInDescription [" +
                         qin.toString() + "]  from the AxisConfiguration [" +
                         exin.getClass().getName() + " : " + exin.getMessage() + "]");
+                }
 
             }
 
@@ -4059,11 +4096,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
-                log.info(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         "activateWithOperationContext():  exception caught when getting the TransportOutDescription [" +
                         qout.toString() + "]  from the AxisConfiguration [" +
                         exout.getClass().getName() + " : " + exout.getMessage() + "]");
-
+                }
             }
 
             if (tmpOut != null) {
@@ -4094,9 +4132,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception ex) {
                 // log the exception
-                log.trace(logCorrelationIDString +
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace(logCorrelationIDString +
                         ":activateWithOperationContext(): *** WARNING *** deserializing the self managed data encountered Exception [" +
                         ex.getClass().getName() + " : " + ex.getMessage() + "]", ex);
+                }
             }
         }
 
@@ -4350,9 +4390,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
             copy.setEnvelope(envelope);
         }
         catch (Exception ex) {
-            log.trace(logCorrelationIDString +
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(logCorrelationIDString +
                     ":extractCopyMessageContext():  Exception caught when setting the copy with the envelope",
                       ex);
+            }
         }
 
         copy.setAttachmentMap(attachments);
@@ -4499,8 +4541,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
-            log.warn(getLogIDString() + ":" + methodname + "(): ****WARNING**** " + myClassName +
+            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
+                log.warn(getLogIDString() + ":" + methodname + "(): ****WARNING**** " + myClassName +
                     ".activate(configurationContext) needs to be invoked.");
+            }
         }
     }
 
