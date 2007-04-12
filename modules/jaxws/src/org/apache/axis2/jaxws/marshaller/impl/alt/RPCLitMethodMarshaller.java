@@ -131,7 +131,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
                 if (!pd.isHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }
@@ -188,7 +188,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
                 if (!pd.isHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
                 }
             }
@@ -316,7 +316,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 // Use marshalling by java type if necessary
                 Class byJavaType = null;
                 if (!operationDesc.isResultHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
                 MethodMarshallerUtils.toMessage(returnElement,
@@ -342,7 +342,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
                 if (!pd.isHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }
@@ -403,7 +403,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 // Use "byJavaType" unmarshalling if necessary
                 Class byJavaType = null;
                 if (!operationDesc.isResultHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
                 if (operationDesc.isResultHeader()) {
@@ -434,7 +434,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
                 if (!pd.isHeader() ||
-                        MethodMarshallerUtils.isJAXBBasicType(type)) {
+                        MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
                 }
             }

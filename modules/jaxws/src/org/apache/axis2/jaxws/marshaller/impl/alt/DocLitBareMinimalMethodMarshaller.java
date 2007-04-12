@@ -88,7 +88,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             if (returnType != void.class) {
                 // Use "byJavaType" unmarshalling if necessary
                 Class byJavaType = null;
-                if (MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
                 // If the webresult is in the header, we need the name of the header so that we can find it.
@@ -118,7 +118,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
                 }
             }
@@ -171,7 +171,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
                 // If it is a JAXB basic type or it has no annotations
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
                 } else {
                     Annotation annos[] = type.getAnnotations();
@@ -244,7 +244,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
 
                 // Use byJavaType marshalling if necessary
                 Class byJavaType = null;
-                if (MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
 
@@ -274,7 +274,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }
@@ -334,7 +334,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }

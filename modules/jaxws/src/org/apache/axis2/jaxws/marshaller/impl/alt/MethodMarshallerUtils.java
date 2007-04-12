@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
@@ -597,7 +598,7 @@ public class MethodMarshallerUtils {
                 if (faultBeanObject == t ||
                         (context.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE
                                 .BY_CONTEXT_PATH &&
-                                isJAXBBasicType(faultBeanObject.getClass()))) {
+                                isNotJAXBRootElement(faultBeanObject.getClass(), marshalDesc))) {
                     context.setProcessType(faultBeanObject.getClass());
                 }
 
@@ -816,7 +817,7 @@ public class MethodMarshallerUtils {
 
             // Use "by java type" marshalling if necessary
             if (blockContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
-                    isJAXBBasicType(faultBeanFormalClass)) {
+                    isNotJAXBRootElement(faultBeanFormalClass, marshalDesc)) {
                 blockContext.setProcessType(faultBeanFormalClass);
             }
 
@@ -1063,11 +1064,11 @@ public class MethodMarshallerUtils {
      * This probably should be available from the ParameterDescription
      *
      * @param cls
+     * @param marshalDesc
      * @return true if primitive, wrapper, java.lang.String. Calendar (or GregorianCalendar),
      *         BigInteger etc or anything other java type that is mapped by the basic schema types
      */
-    static boolean isJAXBBasicType(Class cls) {
-        // TODO : Others ?  Look at default JAXBContext
+    static boolean isNotJAXBRootElement(Class cls, MarshalServiceRuntimeDescription marshalDesc) {
         if (cls == String.class ||
                 cls.isPrimitive() ||
                 cls == Calendar.class ||
@@ -1079,9 +1080,12 @@ public class MethodMarshallerUtils {
 
             return true;
         }
-        return false;
-
-
+        AnnotationDesc aDesc = marshalDesc.getAnnotationDesc(cls);
+        if (aDesc != null) {
+            // XmlRootElementName returns null if @XmlRootElement is not specified
+            return (aDesc.getXmlRootElementName() == null);
+        }
+        return true;  
     }
     
     /**
