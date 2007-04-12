@@ -30,6 +30,8 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -1148,7 +1150,7 @@ class ServiceDescriptionImpl
 
         //This will perform validation for all methods, regardless of WebMethod annotations
         //It is called for the SEI, and an impl. class that does not specify an endpointInterface
-        validateMethods();
+        validateMethods(seic.getMethodDescriptionsList());
     }
 
     /** @return Returns TRUE if we find just one WebMethod Annotation */
@@ -1179,10 +1181,21 @@ class ServiceDescriptionImpl
     }
 
 
-    /**
-     */
-    private void validateMethods() {
-        //TODO: Fill this out to validate all MethodDescriptionComposite (and their inclusive
+    private void validateMethods(List<MethodDescriptionComposite> mdcList) {
+        if (mdcList != null && !mdcList.isEmpty()) {
+            for (MethodDescriptionComposite mdc : mdcList) {
+                String returnType = mdc.getReturnType();
+                if (returnType != null
+                                && (returnType.equals(RETURN_TYPE_FUTURE) || returnType
+                                                .equals(RETURN_TYPE_RESPONSE))) {
+                    throw ExceptionFactory.makeWebServiceException(Messages
+                                    .getMessage("serverSideAsync", mdc.getDeclaringClass(), mdc
+                                                    .getMethodName()));
+                }
+            }
+        }
+        // TODO: Fill this out to validate all MethodDescriptionComposite (and
+        // their inclusive
         //      annotations on this SEI (SEI is assumed here)
         //check oneway
         //
