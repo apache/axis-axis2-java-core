@@ -319,9 +319,14 @@ class EndpointInterfaceDescriptionImpl
                     for (OperationDescription checkOpDesc : updateOpDesc) {
                         if (checkOpDesc.getSEIMethod() == null) {
                             // TODO: Should this be checking (somehow) that the signature matches?  Probably not an issue until overloaded WSDL ops are supported.
-                            ((OperationDescriptionImpl)checkOpDesc).setSEIMethod(seiMethod);
-                            addOpDesc = false;
-                            break;
+                            
+                            //Make sure that this is not one of the 'async' methods associated with
+                            //this operation. If it is, let it be created as its own opDesc.
+                            if (!DescriptionUtils.isAsync(seiMethod)) {
+                                ((OperationDescriptionImpl) checkOpDesc).setSEIMethod(seiMethod);
+                                addOpDesc = false;
+                                break;
+                            }
                         }
                     }
                     if (addOpDesc) {

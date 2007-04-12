@@ -357,6 +357,16 @@ class OperationDescriptionImpl
     }
 
     public AxisOperation getAxisOperation() {
+        // Note that only the sync operations, and not the JAX-WS async client versions of an 
+        // operation, will have an AxisOperation associated with it.  For those async operations, 
+        // get the AxisOperation associated with the sync method and return that.
+        if (axisOperation == null) {
+            OperationDescription opDesc = getSyncOperation();
+            if (opDesc != null && opDesc != this) {
+                return getSyncOperation().getAxisOperation();
+            }
+        } 
+        
         return axisOperation;
     }
 
