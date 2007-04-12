@@ -260,13 +260,13 @@ class ServiceDescriptionImpl
                     // This guards against the case where an addPort was done previously and now a getPort is done on it.
                     // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
-                                    portQName != null ? portQName.toString() : "not specified");
+                        "ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
+                        (portQName != null ? portQName.toString() : "not specified"));
                 } else if (sei == null) {
                     // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " +
-                                    portQName != null ? portQName.toString() : "not specified");
+                        "ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " +
+                        (portQName != null ? portQName.toString() : "not specified"));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
