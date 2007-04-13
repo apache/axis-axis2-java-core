@@ -790,6 +790,25 @@ public class AxisService extends AxisDescription {
         return addNameSpaces(index);
     }
 
+
+    /**
+     * Release the list of schema objects.
+     * <P>
+     * In some environments, this can provide significant relief
+     * of memory consumption in the java heap, as long as the 
+     * need for the schema list has completed.
+     */
+    public void releaseSchemaList() {
+        if (schemaList != null) {
+            // release the schema list 
+            schemaList.clear();
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("releaseSchemaList: schema list has been released."); 
+        }
+    }
+
     private XmlSchema addNameSpaces(int i) {
         XmlSchema schema = (XmlSchema) schemaList.get(i);
         NamespaceMap map = (NamespaceMap) nameSpacesMap.clone();

@@ -104,7 +104,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     private HashMap directoryToExtensionMappingMap = new HashMap();
     //to keep map of which deployer can process which file extension ,
     // for example ServiceDeployer will process .aar file
-    private HashMap extensioToDeployerMappingMap = new HashMap();
+    private HashMap extensionToDeployerMappingMap = new HashMap();
 
     public void loadServices() {
         repoListener.checkServices();
@@ -586,7 +586,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     } else if (TYPE_MODULE.equals(type)) {
                         moduleDeployer.deploy(currentDeploymentFile);
                     } else {
-                        Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(type);
+                        Deployer deployer = (Deployer) extensionToDeployerMappingMap.get(type);
                         if (deployer != null) {
                             try {
                                 deployer.deploy(currentDeploymentFile);
@@ -675,7 +675,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     } else {
                         if (isHotUpdate()) {
                             Deployer deployer =
-                                    (Deployer) extensioToDeployerMappingMap.get(fileType);
+                                    (Deployer) extensionToDeployerMappingMap.get(fileType);
                             if (deployer != null) {
                                 deployer.unDeploy(wsInfo.getFileName());
                             }
@@ -880,7 +880,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     private void initializeDeployers(ConfigurationContext configContext) {
         serviceDeployer = new ServiceDeployer();
         serviceDeployer.init(configContext);
-        Iterator deployers = extensioToDeployerMappingMap.values().iterator();
+        Iterator deployers = extensionToDeployerMappingMap.values().iterator();
         while (deployers.hasNext()) {
             Deployer deployer = (Deployer) deployers.next();
             deployer.init(configContext);
@@ -1023,8 +1023,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return repositoryDir;
     }
 
-    public void setExtensioToDeployerMappingMap(HashMap extensioToDeployerMappingMap) {
-        this.extensioToDeployerMappingMap = extensioToDeployerMappingMap;
+    public void setExtensionToDeployerMappingMap(HashMap extensionToDeployerMappingMap) {
+        this.extensionToDeployerMappingMap = extensionToDeployerMappingMap;
     }
 
     public void setDirectoryToExtensionMappingMap(HashMap directoryToExtensionMappingMap) {

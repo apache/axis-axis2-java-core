@@ -115,7 +115,6 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     private PasswordAuthentication passwordAuthentication;
 
     private ByteArrayOutputStream byteArrayOutputStream;
-    // assosiation with OMOutputFormat
 
     private final static String NAME = "MailTransportSender";
 

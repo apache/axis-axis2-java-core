@@ -221,7 +221,6 @@ public class IntegrationTest extends TestCase {
 
         Iterator attachIter = response.getAttachments();
 
-        int i = 0;
         while (attachIter.hasNext()) {
             AttachmentPart attachment = (AttachmentPart)attachIter.next();
             final Object content = attachment.getDataHandler().getContent();
