@@ -293,13 +293,13 @@ public class AddressingFaultsHelper {
         String namespace =
                 (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, address,
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, null,
                                    AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE,
                                    null,
                                    AddressingMessages.getMessage(
                                            "spec.submission.FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON"));
         } else {
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, null,
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, address,
                                    AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE,
                                    null,
                                    AddressingMessages.getMessage(
