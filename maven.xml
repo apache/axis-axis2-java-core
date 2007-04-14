@@ -537,7 +537,7 @@
             </ant:fileset>
         </ant:copy>
 
-        <ant:war destfile="target/dist/axis2.war"
+        <ant:war destfile="target/dist/axis2-${pom.currentVersion}.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
@@ -773,6 +773,7 @@
                 <include name="soapwithattachments/**/*.*"/>
                 <include name="version/**/*.*"/>
                 <include name="servicelifecycle/**/*.*"/>
+                <include name="wsdl/*.*"/>
                 <include name="pojo/**/*.*"/>
 		<include name="ping/**/*.*"/>
                 <!-- Docs related samples -->
@@ -879,6 +880,41 @@
         <ant:echo>+----------------------------------------------</ant:echo>
     </goal>
 
+	<!--creates a backup of xdocs folder(xdocs-original) & apply the filter to the 
+	xdocs folder.This filter applied xdocs folder will be used by maven site goal.
+	Once site generation is completed, the original content will be replaced, so
+	svn diff will not see any difference.
+	@see preGoal name="site"
+	@see postGoal name="site" -->
+     
+    <preGoal name="site">
+	<!--copy the content of the xdocs folder into a backup folder -->
+	<!--This backed up copy will be copied into xdocs @ postGoal="site" -->
+	<ant:mkdir dir="xdocs-original"/>
+        <copy todir="xdocs-original">
+           <fileset dir="xdocs"/>
+        </copy>
+
+	<ant:filter filtersfile="xdocs-original/dynamic-labels.properties" />
+        <ant:copy toDir="xdocs" filtering="on" overwrite="true" >
+            <ant:fileset dir="xdocs-original"/>
+        </ant:copy>
+
+	<ant:move toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
+	    <ant:fileset dir="xdocs/@axis2_version_dir@"/>	
+	</ant:move>
+    </preGoal>
+
+    <postGoal name="site">
+	<echo message="Replacing the original xdocs folder..."></echo>
+	<ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
+        <ant:copy toDir="xdocs" overwrite="true" >
+            <ant:fileset dir="xdocs-original"/>
+        </ant:copy>
+	<!-- Delete the backup of xdocs folder. @see preGoal name="site" -->
+	<ant:delete dir="xdocs-original"/>
+    </postGoal>
+	
     <goal name="dist-docs" prereqs="init-dist, javadocs">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Docs Distribution</ant:echo>
@@ -893,11 +929,17 @@
         <ant:mkdir dir="${docs.temp.dir}/javadocs"/>
 
 	<echo message="Applying dynamic label filter..."></echo>
+		<ant:copy toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
+		<ant:fileset dir="xdocs/@axis2_version_dir@"/>	
+	    </ant:copy>
 	<ant:filter filtersfile="xdocs/dynamic-labels.properties" />
         <ant:copy toDir="${docs.temp.dir}/xdocs" filtering="on" overwrite="true" >
-            <ant:fileset dir="xdocs"/>
+            <ant:fileset dir="xdocs">
+			<ant:exclude name="@axis2_version_dir@/**"/>
+     	    </ant:fileset>
         </ant:copy>
-
+		<!--delete renamed folder from xdocs folder-->
+	<ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
 
         <ant:copy toDir="${docs.temp.dir}/javadocs">
             <ant:fileset dir="target/apidocs"/>
