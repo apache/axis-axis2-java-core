@@ -23,6 +23,7 @@ import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import junit.framework.TestCase;
 
@@ -84,8 +85,8 @@ public class HandlerChainProcessorTests extends TestCase {
 		HandlerChainProcessor processor1 = new HandlerChainProcessor(null, Protocol.soap11);
 		HandlerChainProcessor processor2 = new HandlerChainProcessor(new ArrayList<Handler>(), Protocol.soap11);
 		try {
-			processor1.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
-			processor2.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+			processor1.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+			processor2.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 		} catch (Exception e) {
 			local_exception = e;
 		}
@@ -113,7 +114,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	
 		HandlerChainProcessor processor = new HandlerChainProcessor(local_list, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("S1m:S1c:", result);
 		
@@ -138,7 +139,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	
 		HandlerChainProcessor processor = new HandlerChainProcessor(local_list, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("S1m:S1c:", result);
 	}
@@ -162,7 +163,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	
 		HandlerChainProcessor processor = new HandlerChainProcessor(local_list, Protocol.soap11);
 		
-		processor.processChain(new LogicalMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("L1m:L1c:", result);
 	}
@@ -188,7 +189,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 
 		assertEquals("S2m:S1m:L1m:L2m:", result);
 		
@@ -215,7 +216,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("S2m:S1m:L1m:L2m:L2c:L1c:S1c:S2c:", result);
 		
@@ -242,7 +243,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.RESPONSE, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.RESPONSE, true);
 
 		assertEquals("S2m:S1m:L1m:L2m:L2c:L1c:S1c:S2c:", result);
 
@@ -269,7 +270,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, true);
 
 		assertEquals("L2m:L1m:S1m:S2m:", result);
 	}
@@ -295,7 +296,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("L2m:L1m:S1m:S2m:S2c:S1c:L1c:L2c:", result);
 	}
@@ -321,7 +322,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
 
 		assertEquals("L2m:L1m:S1m:S2m:S2c:S1c:L1c:L2c:", result);
 	}
@@ -334,8 +335,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * outgoing response (we must be on the server), response expected (ignored)
 	 * processing expected:  Logical only, normal order, close
 	 */
-    // TODO re-enable when handlers are fixed
-	public void _testHandleMessage_true7() {
+	public void testHandleMessage_true7() {
 		
 		// reset result
 		result = "";
@@ -352,8 +352,8 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processChain(new LogicalMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
-		assertEquals("L2m:L1m:L1c:L2c:", result);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
+		assertEquals("L2m:L1m:S1m:S2m:S2c:S1c:L1c:L2c:", result);
 	}
 	
 	/*
@@ -361,7 +361,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage returns false
 	 * processing expected:  Logical and SOAP, reverse order, message reversed, close
 	 */
-	public void _testHandleMessage_false1() {
+	public void testHandleMessage_false1() {
 		
 		// reset result
 		result = "";
@@ -377,11 +377,9 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 
 		assertEquals("S2m:S1m:L1m:S1m:S2m:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -389,7 +387,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage returns false
 	 * processing expected:  Logical and SOAP, normal order, message reversed, close
 	 */
-	public void _testHandleMessage_false2() {
+	public void testHandleMessage_false2() {
 		
 		// reset result
 		result = "";
@@ -405,11 +403,9 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, true);
 
 		assertEquals("L2m:L1m:L2m:L1c:L2c:", result);
-		assertTrue(!(Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -417,7 +413,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage returns false
 	 * processing expected:  Logical and SOAP, normal order, message NOT reversed, close
 	 */
-	public void _testHandleMessage_false3() {
+	public void testHandleMessage_false3() {
 		
 		// reset result
 		result = "";
@@ -433,11 +429,9 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.REQUEST, false);
 
 		assertEquals("L2m:L1m:L1c:L2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -445,7 +439,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws ProtocolException
 	 * processing expected:  Logical and SOAP, reverse order, message reversed, handleFault, close
 	 */
-	public void _testHandleMessage_protocolex_true1() {
+	public void testHandleMessage_protocolex_true1() {
 		
 		// reset result
 		result = "";
@@ -461,12 +455,10 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 
 		// handleFault processing
 		assertEquals("S2m:S1m:L1m:S1f:S2f:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -474,7 +466,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws ProtocolException
 	 * processing expected:  Logical and SOAP, reverse order, message NOT reversed, close
 	 */
-	public void _testHandleMessage_protocolex_true2() {
+	public void testHandleMessage_protocolex_true2() {
 		
 		// reset result
 		result = "";
@@ -490,12 +482,10 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, false);
 
 		// no handleFault calls
 		assertEquals("S2m:S1m:L1m:L1c:S1c:S2c:", result);
-		assertTrue(!(Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -503,7 +493,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws RuntimeException
 	 * processing expected:  Logical and SOAP, reverse order, message reversed, (no handleFault), close
 	 */
-	public void _testHandleMessage_runtimeex_true() {
+	public void testHandleMessage_runtimeex_true() {
 		
 		// reset result
 		result = "";
@@ -519,10 +509,9 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
 		Exception e = null;
 		try {
-			processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+			processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 		} catch (RuntimeException re) {
 			e = re;
 		}
@@ -530,7 +519,6 @@ public class HandlerChainProcessorTests extends TestCase {
 		assertNotNull(e);
 		// no handleFault calls
 		assertEquals("S2m:S1m:L1m:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -538,7 +526,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws ProtocolException, later a Handler.handleFault returns false
 	 * processing expected:  Logical and SOAP, reverse order, message reversed, handleFault, close
 	 */
-	public void _testHandleMessage_protocolex_false() {
+	public void testHandleMessage_protocolex_false() {
 		
 		// reset result
 		result = "";
@@ -554,12 +542,10 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
-		processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 
 		// handleFault processing, but notice S2f does not get called
 		assertEquals("S2m:S1m:L1m:S1f:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -567,7 +553,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws ProtocolException, later a Handler.handleFault throws ProtocolException
 	 * processing expected:  Logical and SOAP, reverse order, message reversed, handleFault, close
 	 */
-	public void _testHandleMessage_protocolex_protocolex() {
+	public void testHandleMessage_protocolex_protocolex() {
 		
 		// reset result
 		result = "";
@@ -583,18 +569,16 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
 		Exception e = null;
 		try {
 			// handleFault processing, but notice S2f does not get called, and we get an exception
-			processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+			processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 		} catch (ProtocolException pe) {
 			e = pe;
 		}
 
 		assertNotNull(e);
 		assertEquals("S2m:S1m:L1m:S1f:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 	
 	/*
@@ -602,7 +586,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleMessage throws ProtocolException, later a Handler.handleFault throws ProtocolException
 	 * processing expected:  Logical and SOAP, reverse order, handleFault, close
 	 */
-	public void _testHandleMessage_protocolex_runtimeex() {
+	public void testHandleMessage_protocolex_runtimeex() {
 		
 		// reset result
 		result = "";
@@ -618,18 +602,16 @@ public class HandlerChainProcessorTests extends TestCase {
 		logicalhandler2_FaultResultDesired = ResultDesired.TRUE;
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
-		SoapMessageContext context = new SoapMessageContext(new MessageContext());
 		Exception e = null;
 		try {
 			// same results as testHandlers_protocolex_protocolex
-			processor.processChain(context, HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
+			processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.REQUEST, true);
 		} catch (RuntimeException pe) {
 			e = pe;
 		}
 
 		assertNotNull(e);
 		assertEquals("S2m:S1m:L1m:S1f:L1c:S1c:S2c:", result);
-		assertTrue((Boolean)(context.get(SoapMessageContext.MESSAGE_OUTBOUND_PROPERTY)));
 	}
 
 	
@@ -643,8 +625,8 @@ public class HandlerChainProcessorTests extends TestCase {
 		HandlerChainProcessor processor1 = new HandlerChainProcessor(null, Protocol.soap11);
 		HandlerChainProcessor processor2 = new HandlerChainProcessor(new ArrayList<Handler>(), Protocol.soap11);
 		try {
-			processor1.processFault(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN);
-			processor2.processFault(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN);
+			processor1.processFault(new MessageContext(), HandlerChainProcessor.Direction.IN);
+			processor2.processFault(new MessageContext(), HandlerChainProcessor.Direction.IN);
 		} catch (Exception e) {
 			local_exception = e;
 		}
@@ -658,7 +640,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * outgoing response (we must be on the server), response expected (ignored)
 	 * processing expected:  Logical and SOAP, normal order, handleFault, close
 	 */
-	public void _testHandleFault_true1() {
+	public void testHandleFault_true1() {
 		
 		// reset result
 		result = "";
@@ -675,7 +657,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processFault(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT);
+		processor.processFault(new MessageContext(), HandlerChainProcessor.Direction.OUT);
 
 		assertEquals("L2f:L1f:S1f:S2f:S2c:S1c:L1c:L2c:", result);
 	}
@@ -685,7 +667,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleFault returns false
 	 * processing expected:  Logical and SOAP, normal order, handleFault, close (all)
 	 */
-	public void _testHandleFault_false1() {
+	public void testHandleFault_false1() {
 		
 		// reset result
 		result = "";
@@ -702,7 +684,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
-		processor.processFault(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.OUT);
+		processor.processFault(new MessageContext(), HandlerChainProcessor.Direction.OUT);
 
 		// notice all handlers are closed in this scenario
 		assertEquals("L2f:L1f:S2c:S1c:L1c:L2c:", result);
@@ -713,7 +695,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	 * a middle Handler.handleFault throws ProtocolException
 	 * processing expected:  Logical and SOAP, reverse order, handleFault, close (all)
 	 */
-	public void _testHandleFault_protocolex() {
+	public void testHandleFault_protocolex() {
 		
 		// reset result
 		result = "";
@@ -733,7 +715,7 @@ public class HandlerChainProcessorTests extends TestCase {
 		Exception e = null;
 		try {
 			// notice all handlers are closed in this scenario, and we get an exception
-			processor.processFault(new SoapMessageContext(new MessageContext()), HandlerChainProcessor.Direction.IN);
+			processor.processFault(new MessageContext(), HandlerChainProcessor.Direction.IN);
 		} catch (ProtocolException pe) {
 			e = pe;
 		}
@@ -744,7 +726,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	
 	
 	
-	private class SOAPHandler1 implements SOAPHandler {
+	private class SOAPHandler1 implements SOAPHandler<SOAPMessageContext> {
 		
 		public Set getHeaders() {
 			return null;
@@ -754,7 +736,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			result = result.concat("S1c:");
 		}
 
-		public boolean handleFault(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleFault(SOAPMessageContext messagecontext) {
 			result = result.concat("S1f:");
 			if (soaphandler1_FaultResultDesired == ResultDesired.TRUE)
 				return true;
@@ -769,7 +751,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			return true;
 		}
 
-		public boolean handleMessage(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleMessage(SOAPMessageContext messagecontext) {
 			result = result.concat("S1m:");
 			if (soaphandler1_MessageResultDesired == ResultDesired.TRUE)
 				return true;
@@ -787,7 +769,7 @@ public class HandlerChainProcessorTests extends TestCase {
 	}
 	
 
-	private class SOAPHandler2 implements SOAPHandler {
+	private class SOAPHandler2 implements SOAPHandler<SOAPMessageContext> {
 
 		public Set getHeaders() {
 			return null;
@@ -797,7 +779,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			result = result.concat("S2c:");
 		}
 
-		public boolean handleFault(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleFault(SOAPMessageContext messagecontext) {
 			result = result.concat("S2f:");
 			if (soaphandler2_FaultResultDesired == ResultDesired.TRUE)
 				return true;
@@ -812,7 +794,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			return true;
 		}
 
-		public boolean handleMessage(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleMessage(SOAPMessageContext messagecontext) {
 			result = result.concat("S2m:");
 			if (soaphandler2_MessageResultDesired == ResultDesired.TRUE)
 				return true;
@@ -830,13 +812,13 @@ public class HandlerChainProcessorTests extends TestCase {
 	}
 	
 
-	private class LogicalHandler1 implements LogicalHandler {
+	private class LogicalHandler1 implements LogicalHandler<LogicalMessageContext> {
 
 		public void close(javax.xml.ws.handler.MessageContext messagecontext) {
 			result = result.concat("L1c:");
 		}
 
-		public boolean handleFault(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleFault(LogicalMessageContext messagecontext) {
 			result = result.concat("L1f:");
 			if (logicalhandler1_FaultResultDesired == ResultDesired.TRUE)
 				return true;
@@ -851,7 +833,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			return true;
 		}
 
-		public boolean handleMessage(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleMessage(LogicalMessageContext messagecontext) {
 			result = result.concat("L1m:");
 			if (logicalhandler1_MessageResultDesired == ResultDesired.TRUE)
 				return true;
@@ -869,13 +851,13 @@ public class HandlerChainProcessorTests extends TestCase {
 	}
 	
 
-	private class LogicalHandler2 implements LogicalHandler {
+	private class LogicalHandler2 implements LogicalHandler<LogicalMessageContext> {
 
 		public void close(javax.xml.ws.handler.MessageContext messagecontext) {
 			result = result.concat("L2c:");
 		}
 
-		public boolean handleFault(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleFault(LogicalMessageContext messagecontext) {
 			result = result.concat("L2f:");
 			if (logicalhandler2_FaultResultDesired == ResultDesired.TRUE)
 				return true;
@@ -890,7 +872,7 @@ public class HandlerChainProcessorTests extends TestCase {
 			return true;
 		}
 
-		public boolean handleMessage(javax.xml.ws.handler.MessageContext messagecontext) {
+		public boolean handleMessage(LogicalMessageContext messagecontext) {
 			result = result.concat("L2m:");
 			if (logicalhandler2_MessageResultDesired == ResultDesired.TRUE)
 				return true;

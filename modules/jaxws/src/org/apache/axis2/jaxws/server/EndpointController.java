@@ -177,11 +177,15 @@ public class EndpointController {
 
                 // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
                 // always exactly one EndpointDescription on a server invoke
+                // Also, if the message is oneWay, don't bother with response handlers.  The responseMsgContext is probably NULL
+                // anyway, and would cause an NPE.
+                if (!isOneWay(requestMsgCtx.getAxisMessageContext())) {
                 HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext,
                         ic.getHandlers(),
                                                            requestMsgCtx.getEndpointDescription(),
                                                            HandlerChainProcessor.MEP.RESPONSE,
                                                            false);
+                }
             } else
             { // the inbound handler chain must have had a problem, and we've reversed directions
                 responseMsgContext =

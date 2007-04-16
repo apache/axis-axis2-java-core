@@ -56,7 +56,7 @@ public class SoapMessageContext extends ProtectedMessageContext
         return msg.getAsSOAPMessage();
     }
 
-    public Set<URI> getRoles() {
+    public Set<String> getRoles() {
         return null;
     }
 

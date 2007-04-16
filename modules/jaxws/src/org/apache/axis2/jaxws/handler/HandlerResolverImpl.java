@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.handler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -58,6 +60,15 @@ import java.util.List;
 
 public class HandlerResolverImpl implements HandlerResolver {
 
+    // TODO should probably use constants defined elsewhere
+    static final Map<String, String> protocolBindingsMap = new HashMap<String, String>(5);
+    static {
+        protocolBindingsMap.put("##SOAP11_HTTP",        "http://schemas.xmlsoap.org/wsdl/soap/http");
+        protocolBindingsMap.put("##SOAP11_HTTP_MTOM",   "http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true");
+        protocolBindingsMap.put("##SOAP12_HTTP",        "http://www.w3.org/2003/05/soap/bindings/HTTP/");
+        protocolBindingsMap.put("##SOAP12_HTTP_MTOM",   "http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true");
+        protocolBindingsMap.put("##XML_HTTP",           "http://www.w3.org/2004/08/wsdl/http");
+    }
     private static Log log = LogFactory.getLog(HandlerResolverImpl.class);
     /*
       * TODO:  is there any value/reason in caching the list we collect from the
@@ -88,6 +99,42 @@ public class HandlerResolverImpl implements HandlerResolver {
 	 * and returning it.  We do not sort here.
       */
     private ArrayList<Handler> resolveHandlers(PortInfo portinfo) throws WebServiceException {
+        /*
+
+            A sample XML file for the handler-chains:
+            
+            <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
+                <jws:handler-chain>
+                    <jws:protocol-bindings>##XML_HTTP</jws:protocol-bindings>
+                    <jws:handler>
+                        <jws:handler-name>MyHandler</jws:handler-name>
+                        <jws:handler-class>org.apache.axis2.jaxws.MyHandler</jws:handler-class>
+                    </jws:handler>
+                </jws:handler-chain>
+                <jws:handler-chain>
+                    <jws:port-name-pattern>jws:Foo*</jws:port-name-pattern>
+                    <jws:handler>
+                        <jws:handler-name>MyHandler</jws:handler-name>
+                        <jws:handler-class>org.apache.axis2.jaxws.MyHandler</jws:handler-class>
+                    </jws:handler>
+                </jws:handler-chain>
+                <jws:handler-chain>
+                    <jws:service-name-pattern>jws:Bar</jws:service-name-pattern>
+                    <jws:handler>
+                        <jws:handler-name>MyHandler</jws:handler-name>
+                        <jws:handler-class>org.apache.axis2.jaxws.MyHandler</jws:handler-class>
+                    </jws:handler>
+                </jws:handler-chain>
+            </jws:handler-chains>
+            
+            Couple of things I'm not sure about...
+            1)  if the protocol-binding, port-name-pattern, and service-name-pattern all
+                match the PortInfo object, does MyHandler get added three times?  Probably would get added 3 times.
+            2)  I assume the asterisk "*" is a wildcard.  Can the asterisk only occur on the local part of the qname?
+            3)  Can there be more than one service-name-pattern or port-name-pattern, just like for protocol-bindings?
+            4)  How many protocol-bindings are there?  ##XML_HTTP ##SOAP11_HTTP ##SOAP12_HTTP ##SOAP11_HTTP_MTOM ##SOAP12_HTTP_MTOM
+                They are separated by spaces
+         */
 
         // our implementation already has a reference to the EndpointDescription,
         // which is where one might get the portinfo object.  We still have the 
@@ -105,7 +152,13 @@ public class HandlerResolverImpl implements HandlerResolver {
         Iterator it = handlerCT == null ? null : handlerCT.getHandlerChain().iterator();
 
         while ((it != null) && (it.hasNext())) {
-            List<HandlerType> handlerTypeList = ((HandlerChainType)it.next()).getHandler();
+            HandlerChainType handlerChainType = ((HandlerChainType)it.next());
+            
+            // if !match, continue (to next chain)
+            if (!(chainResolvesToPort(handlerChainType, portinfo)))
+                continue;
+            
+            List<HandlerType> handlerTypeList = handlerChainType.getHandler();
             Iterator ht = handlerTypeList.iterator();
             while (ht.hasNext()) {
                 
@@ -268,6 +321,33 @@ public class HandlerResolverImpl implements HandlerResolver {
             // TODO perhaps a "HandlerLifecycleException" would be better?
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+    
+    private static boolean chainResolvesToPort(HandlerChainType handlerChainType, PortInfo portinfo) {
+        
+        boolean match = true;
+        
+        List<String> protocolBindings = handlerChainType.getProtocolBindings();
+        if (protocolBindings != null) {
+            for (Iterator<String> it = protocolBindings.iterator() ; it.hasNext();) {
+                match = false;  // default to false in the protocol bindings until we find a match
+                String protocolBinding = it.next();
+                protocolBinding = protocolBinding.startsWith("##") ? protocolBindingsMap.get(protocolBinding) : protocolBinding;
+                if ((protocolBinding != null) && (protocolBinding.equals(portinfo.getBindingID()))) {
+                    match = true;
+                    break;
+                }
+            }
+            if (match == false) {
+                // we've checked all the protocolBindings, but didn't find a match, no need to continue
+                return match;
+            }
+        }
+        
+        // TODO should continue on and check portnamepattern and servicenamepattern
+        String portNamePattern = handlerChainType.getPortNamePattern();
+        
+        return match;
     }
     
 }

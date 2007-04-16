@@ -245,8 +245,10 @@ public abstract class AsyncResponse implements Response {
         // A faultMessageContext means that there could possibly be a SOAPFault
         // on the MessageContext that we need to unmarshall.
         if (faultMessageContext != null) {
+            // it is possible the message could be null.  For example, if we gave the proxy a bad endpoint address.
+            // If it is the case that the message is null, there's no sense running through the handlers.
+            if (faultMessageContext.getMessage() != null)
             // Invoke inbound handlers.
-            // TODO: integrate -- uncomment line
             HandlerInvokerUtils.invokeInboundHandlers(faultMessageContext, faultMessageContext.getInvocationContext().getHandlers(), faultMessageContext.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
             Throwable t = getFaultResponse(faultMessageContext);
             if (t != null) {
