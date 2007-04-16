@@ -80,35 +80,36 @@ public class DescriptionFactoryImpl {
                 log.debug("Description Key = " + key.printKey());
 
         }
-        ServiceDescription serviceDesc = cache.get(key);
-        if (log.isDebugEnabled()) {
-            log.debug("Check to see if ServiceDescription is found in cache");
-        }
-        if (serviceDesc != null) {
+        ServiceDescription serviceDesc = null;
+        synchronized(configContext) {
+            serviceDesc = cache.get(key);
             if (log.isDebugEnabled()) {
-                log.debug("ServiceDescription found in the cache");
-                log.debug(serviceDesc.toString());
+                log.debug("Check to see if ServiceDescription is found in cache");
             }
-        }
-        if (serviceDesc == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("ServiceDescription not found in the cache");
-                log.debug(" creating new ServiceDescriptionImpl");
+            if (serviceDesc != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription found in the cache");
+                    log.debug(serviceDesc.toString());
+                }
             }
+            if (serviceDesc == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription not found in the cache");
+                    log.debug(" creating new ServiceDescriptionImpl");
+                }
 
-            serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
-            if (log.isDebugEnabled()) {
-                log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " +
+                serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " +
                         serviceQName + "; Class: " + serviceClass);
-                log.debug(serviceDesc.toString());
+                    log.debug(serviceDesc.toString());
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Caching new ServiceDescription in the cache");
+                }
+                cache.put(key, serviceDesc);
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Caching new ServiceDescription in the cache");
-
-            }
-            cache.put(key, serviceDesc);
         }
-
         return serviceDesc;
     }
 
@@ -214,9 +215,12 @@ public class DescriptionFactoryImpl {
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
             DescriptionFactory.UpdateType updateType) {
-        EndpointDescription endpointDesc =
+        EndpointDescription endpointDesc = null;
+        synchronized(serviceDescription) {
+                endpointDesc = 
                 ((ServiceDescriptionImpl)serviceDescription)
                         .updateEndpointDescription(sei, portQName, updateType);
+        }
         EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
         
         boolean isEndpointValid = endpointValidator.validate();
