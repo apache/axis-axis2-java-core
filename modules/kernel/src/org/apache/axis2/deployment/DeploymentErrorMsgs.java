@@ -41,6 +41,7 @@ public class DeploymentErrorMsgs {
     public static final String INVALID_STORAGE_CLASS = "invalid_storage";
     public static final String MODULE_CANNOT_HAVE_BOTH_NAME_AND_REFERENCE =
             "modulecannothavrbothnameandref";
+    public static final String DISPATCH_PHASE_NOT_FOUND = "dispatchPhaseNotFoundOnInflow";
     public static final String MODULE_NOT_FOUND = "modulenotfound";
     public static final String MODULE_VALIDATION_FAILED = "modulevalfailed";
     public static final String MODULE_XML_MISSING = "modulexmlnotfound";

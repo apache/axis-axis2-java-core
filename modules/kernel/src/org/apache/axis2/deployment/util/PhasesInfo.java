@@ -109,7 +109,7 @@ public class PhasesInfo {
         }
         if (!foundDispatchPhase) {
             throw new DeploymentException(
-                    Messages.getMessage("dispatchPhaseNotFoundOnInflow"));
+                    Messages.getMessage(DeploymentErrorMsgs.DISPATCH_PHASE_NOT_FOUND));
         }
         return globalphase;
     }
@@ -184,20 +184,20 @@ public class PhasesInfo {
 
     public ArrayList getGlobalInFaultPhases() throws DeploymentException {
         ArrayList globalInfaultphase = new ArrayList();
-        boolean foundDispathcPase = false;
+        boolean foundDispatchPhase = false;
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             Phase phase = (Phase) IN_FaultPhases.get(i);
             String phaseName = phase.getPhaseName();
-            if (!foundDispathcPase) {
+            if (!foundDispatchPhase) {
                 if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
-                    foundDispathcPase = true;
+                    foundDispatchPhase = true;
                 }
                 globalInfaultphase.add(phase);
             }
         }
-        if (!foundDispathcPase) {
+        if (!foundDispatchPhase) {
             throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
+                    Messages.getMessage(DeploymentErrorMsgs.DISPATCH_PHASE_NOT_FOUND));
         }
         return globalInfaultphase;
     }
