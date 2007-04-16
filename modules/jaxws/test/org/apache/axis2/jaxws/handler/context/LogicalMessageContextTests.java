@@ -99,7 +99,12 @@ public class LogicalMessageContextTests extends TestCase {
         JAXBContext jbc = JAXBContext.newInstance("test");
         
         Object obj = msg.getPayload(jbc);
-        //assertTrue("The returned payload (Object) was null", obj != null);
+        assertTrue("The returned payload (Object) was null", obj != null);
+        assertTrue("The returned payload (Object) was of the wrong type: " + obj.getClass().getName(), obj.getClass().equals(EchoString.class));
+       
+        EchoString echo = (EchoString) obj;
+        assertTrue("The EchoString object had null input", echo.getInput() != null);
+        assertTrue("The EchoString object had bad input: " + echo.getInput(), echo.getInput().equals(INPUT));
     }
     
     private MessageContext createSampleMessageContext() throws Exception {

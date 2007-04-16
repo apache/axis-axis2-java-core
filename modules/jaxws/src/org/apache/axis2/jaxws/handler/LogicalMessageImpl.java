@@ -27,6 +27,7 @@ import javax.xml.ws.WebServiceException;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -56,7 +57,8 @@ public class LogicalMessageImpl implements LogicalMessage {
      */
     public Object getPayload(JAXBContext context) {
         BlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-        Object payload = _getPayload(context, factory);
+        JAXBBlockContext jbc = new JAXBBlockContext(context);
+        Object payload = _getPayload(jbc, factory);
         return payload;
     }
     
@@ -86,7 +88,8 @@ public class LogicalMessageImpl implements LogicalMessage {
      */
     public void setPayload(Object obj, JAXBContext context) {
         BlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-        _setPayload(obj, context, factory);
+        JAXBBlockContext jbc = new JAXBBlockContext(context);
+        _setPayload(obj, jbc, factory);
     }
 
     /*
