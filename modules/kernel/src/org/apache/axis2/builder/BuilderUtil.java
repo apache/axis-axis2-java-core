@@ -17,6 +17,7 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -49,6 +50,8 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -63,6 +66,8 @@ import java.io.Reader;
 import java.util.Iterator;
 
 public class BuilderUtil {
+    private static final Log log = LogFactory.getLog(BuilderUtil.class);
+
     public static final int BOM_SIZE = 4;
 
     public static SOAPEnvelope buildsoapMessage(MessageContext messageContext,
@@ -192,7 +197,6 @@ public class BuilderUtil {
      * Convenience method to get a PushbackInputStream so that we can read the BOM
      * @param is
      * @return PushbackInputStream
-     * @see getActualEncoding()
      */
     public static PushbackInputStream getPushbackInputStream(InputStream is) {
         return new PushbackInputStream(is, BOM_SIZE);
@@ -203,7 +207,7 @@ public class BuilderUtil {
      * default encoding specified
      *
      * @param is2 PushBackInputStream (it must be a pushback input stream so that we can unread the BOM)
-     * @param charSetEncoding
+     * @param defaultEncoding
      * @throws java.io.IOException
      */
     public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding) throws IOException {
@@ -470,7 +474,17 @@ public class BuilderUtil {
     public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        return new StAXOMBuilder(xmlReader);
+        try {
+            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
+            return builder;
+        } catch (OMException e){
+            log.info("OMException in getSOAPBuilder", e);
+            try {
+                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc)+ "]");
+            } catch (IOException e1) {
+            }
+            throw e;
+        }
     }
 
     /**
@@ -481,8 +495,18 @@ public class BuilderUtil {
      * @throws XMLStreamException
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream) throws XMLStreamException {
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream);
-        return new StAXSOAPModelBuilder(xmlreader);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
+        try {
+            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
+            return builder;
+        } catch (OMException e){
+            log.info("OMException in getSOAPBuilder", e);
+            try {
+                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream))+ "]");
+            } catch (IOException e1) {
+            }
+            throw e;
+        }
     }
 
     /**
@@ -495,8 +519,18 @@ public class BuilderUtil {
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream, String charSetEnc)
             throws XMLStreamException {
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        return new StAXSOAPModelBuilder(xmlreader);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+        try {
+            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
+            return builder;
+        } catch (OMException e){
+            log.info("OMException in getSOAPBuilder", e);
+            try {
+                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc)+ "]");
+            } catch (IOException e1) {
+            }
+            throw e;
+        }
     }
 
     public static StAXBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc)
