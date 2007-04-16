@@ -68,14 +68,18 @@ public class Parameter implements Externalizable {
 
 
     /**
+     * Field  ANY_PARAMETER
+     */
+    public final static int ANY_PARAMETER = 0;
+    /**
      * Field TEXT_PARAMETER
      */
-    public static int TEXT_PARAMETER = 0;
+    public final static int TEXT_PARAMETER = 1;
 
     /**
      * Field OM_PARAMETER
      */
-    public static int OM_PARAMETER = 1;
+    public final static int OM_PARAMETER = 2;
 
     /**
      * Field type
@@ -193,6 +197,13 @@ public class Parameter implements Externalizable {
      * @param value
      */
     public void setValue(Object value) {
+        if (value instanceof String) {
+            setParameterType(TEXT_PARAMETER);
+        } else if (value instanceof OMElement) {
+            setParameterType(OM_PARAMETER);
+        } else {
+            setParameterType(ANY_PARAMETER);
+        }
         this.value = value;
     }
 

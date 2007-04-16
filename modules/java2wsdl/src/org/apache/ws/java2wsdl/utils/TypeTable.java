@@ -145,6 +145,10 @@ public class TypeTable {
         return false;
     }
 
+    public Map getComplexSchemaMap() {
+        return complexTypeMap;
+    }
+
     public void addComplexSchema(String name, QName schemaType) {
         complexTypeMap.put(name, schemaType);
     }
