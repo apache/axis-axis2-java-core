@@ -187,16 +187,16 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
     private URL getAbsoluteURL(ClassLoader classLoader, String filePath){
     	URL url = classLoader.getResource(filePath);
-    	if(url == null) {
-    		if(log.isDebugEnabled()) {
-    			log.debug("Could not get URL from classloader. Looking in a jar.");
-    		}
-    		if(classLoader instanceof URLClassLoader){
-    			URLClassLoader urlLoader = (URLClassLoader)classLoader;
-    			url = getURLFromJAR(urlLoader, wsdlURL);
-    		}
-    	}
-    	return url;    
+        if(url == null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Could not get URL from classloader. Looking in a jar.");
+            }
+            if(classLoader instanceof URLClassLoader){
+                URLClassLoader urlLoader = (URLClassLoader)classLoader;
+                url = getURLFromJAR(urlLoader, wsdlURL);
+            }
+        }
+        return url;    
     }
     private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) {
 
@@ -205,11 +205,10 @@ public class WSDL4JWrapper implements WSDLWrapper {
     	ResourceFinder cf = rff.getResourceFinder();
     	urlList = cf.getURLs(urlLoader);
     	if(urlList == null){
-    		if(log.isDebugEnabled()){
-    			log.debug("No URL's found in URL ClassLoader");
-    		}
-    		ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
-
+    	    if(log.isDebugEnabled()){
+    	        log.debug("No URL's found in URL ClassLoader");
+    	    }
+    	    ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
     	}
 
         for (URL url : urlList) {
@@ -229,8 +228,17 @@ public class WSDL4JWrapper implements WSDLWrapper {
                             if (name.endsWith(".wsdl")) {
                                 String relativePath = relativeURL.getPath();
                                 if (relativePath.endsWith(name)) {
+                                    String path = f.getAbsolutePath();
+                                    // This check is necessary because Unix/Linux file paths begin
+                                    // with a '/'. When adding the prefix 'jar:file:/' we may end
+                                    // up with '//' after the 'file:' part. This causes the URL 
+                                    // object to treat this like a remote resource
+                                    if(path != null && path.indexOf("/") == 0) {
+                                        path = path.substring(1, path.length());
+                                    }
+
                                     URL absoluteUrl = new URL("jar:file:/"
-                                            + f.getAbsolutePath() + "!/"
+                                            + path + "!/"
                                             + je.getName());
                                     return absoluteUrl;
                                 }
