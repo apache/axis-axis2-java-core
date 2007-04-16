@@ -45,6 +45,7 @@
                 <include>**/*Test.java</include>
             </includes>
             <excludes>
+                <exclude>**/IntegrationTest.java</exclude>
             </excludes>
 
             <resources>
