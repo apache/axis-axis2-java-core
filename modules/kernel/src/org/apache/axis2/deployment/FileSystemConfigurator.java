@@ -82,9 +82,8 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
             if (axis2xml != null) {
                 File configFile = new File(axis2xml);
                 if (!configFile.exists()) {
-                    log.info("Config file '" + axis2xml + "' doesn't exist, ignoring.");
+                    log.debug("Config file '" + axis2xml + "' doesn't exist, ignoring.");
                     axis2xml = null;
-//                    throw new AxisFault("Config file '" + axis2xml + "' doesn't exist");
                 }
             }
         }

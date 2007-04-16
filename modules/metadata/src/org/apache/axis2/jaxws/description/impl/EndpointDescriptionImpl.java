@@ -43,6 +43,7 @@ import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -743,12 +744,16 @@ class EndpointDescriptionImpl
             // Note that the axis service builder takes only the localpart of the port qname.
             // TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
 
+            WSDLWrapper wrapper = getServiceDescriptionImpl().getWSDLWrapper();
             WSDL11ToAxisServiceBuilder serviceBuilder =
                     new WSDL11ToAxisServiceBuilder(
-                            getServiceDescriptionImpl().getWSDLWrapper().getDefinition(),
+                            wrapper.getDefinition(),
                             getServiceDescription().getServiceQName(),
                             getPortQName().getLocalPart());
 
+            //TODO: Temporary, please change the following log.info to log.debug
+            log.info("Building AxisService from wsdl: " + wrapper.getWSDLLocation());
+            
             if (getServiceDescriptionImpl().isDBCMap()) {
                 //this.class.getClass().getClassLoader();
                 URIResolverImpl uriResolver =
