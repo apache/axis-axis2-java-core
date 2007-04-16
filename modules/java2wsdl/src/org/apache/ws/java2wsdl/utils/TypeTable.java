@@ -128,6 +128,10 @@ public class TypeTable {
         complexTypeMap.put(name, schemaType);
     }
 
+    public Map getComplexSchemaMap() {
+        return complexTypeMap;
+    }
+
     public QName getComplexSchemaType(String name) {
         return (QName) complexTypeMap.get(name);
     }
