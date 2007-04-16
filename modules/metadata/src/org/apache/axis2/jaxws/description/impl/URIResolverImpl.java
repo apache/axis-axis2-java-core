@@ -40,6 +40,8 @@ public class URIResolverImpl implements URIResolver {
 
     private final String FILE_PROTOCOL = "file";
 
+    private final String JAR_PROTOCOL = "jar";
+
     private ClassLoader classLoader;
     
     private static final Log log = LogFactory.getLog(URIResolverImpl.class);
@@ -125,7 +127,9 @@ public class URIResolverImpl implements URIResolver {
                     }
                 }
             } catch (Exception e) {
-
+                if(log.isDebugEnabled()) {
+                    log.debug(e);
+                }
             }
         }
         if(is == null) {
@@ -223,6 +227,10 @@ public class URIResolverImpl implements URIResolver {
             // Check for file
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+            }
+            // Check for jar
+            else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(JAR_PROTOCOL)) {
+                url = new URL(resolvedURI.toString());
             }
         }
         catch (MalformedURLException e) {
