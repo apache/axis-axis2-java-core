@@ -16,7 +16,11 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -104,6 +108,11 @@ public class WSDL11Writer {
                                                      null, serviceName, ".wsdl");
         FileOutputStream out = new FileOutputStream(outputFile);
 
+        // we have a catch here
+        // if there are multimple services in the definition object
+        // we have to write only the relavent service.
+
+
         if (definition.getServices().size() > 1){
            List removedServices = new ArrayList();
            List servicesList = new ArrayList();
@@ -134,7 +143,6 @@ public class WSDL11Writer {
            // no problem proceed normaly
            wsdlWriter.writeWSDL(definition, out);
         }
-
         out.flush();
         out.close();
     }

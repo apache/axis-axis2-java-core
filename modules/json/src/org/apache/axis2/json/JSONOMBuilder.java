@@ -26,10 +26,14 @@ import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
 

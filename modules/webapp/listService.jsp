@@ -30,7 +30,6 @@
 
 <h1>Available Services</h1>
 <% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
-    String restPrefix = request.getAttribute("frontendHostUrl") + "rest/";
 %>
 <%
     HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);
@@ -62,8 +61,6 @@
     if (!disableREST) {
 %>
 
-<br/>
-<font color="blue">Service REST epr : </font><font color="black"><%=restPrefix + axisService.getName()%></font>
 <%
 %>
 <%

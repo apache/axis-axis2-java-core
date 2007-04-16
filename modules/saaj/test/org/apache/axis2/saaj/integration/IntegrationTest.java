@@ -106,7 +106,7 @@ public class IntegrationTest extends TestCase {
             assertFalse(response.getAttachments().hasNext());
             assertEquals(0, response.countAttachments());
 
-            printSOAPMessage(request);
+            String requestStr = printSOAPMessage(request);
             String responseStr = printSOAPMessage(response);
             assertTrue(responseStr.indexOf("echo") != -1);
             sCon.close();

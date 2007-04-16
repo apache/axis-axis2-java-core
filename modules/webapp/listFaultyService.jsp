@@ -35,7 +35,6 @@
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <%
         String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"services/";
-        String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
         <%
             String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
@@ -57,7 +56,6 @@
           String  serviceName = axisService.getName();
             %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
            <font color="blue">Service EPR : </font><font color="black"><%=prifix + axisService.getName()%></font><br>
-               <font color="blue">Service REST epr :</font><font color="black"><%=restprefix + axisService.getName()%></font>
            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <i><font color="blue">Service Status : <%=axisService.isActive()?"Active":"InActive"%></font></i><br>
            <%

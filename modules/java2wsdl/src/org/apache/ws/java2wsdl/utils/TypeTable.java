@@ -79,6 +79,27 @@ public class TypeTable {
         simpleTypetoxsd.put("java.util.Calendar",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
+         //consider BigDecimal, BigInteger, Day, Duration, Month, MonthDay,
+        //Time, Year, YearMonth as SimpleType as well
+        simpleTypetoxsd.put("java.math.BigDecimal",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "decimal", "xs"));
+        simpleTypetoxsd.put("java.math.BigInteger",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "integer", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.Day",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gDay", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.Duration",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "duration", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.Month",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gMonth", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.MonthDay",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gMonthDay", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.Time",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "time", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.Year",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gYear", "xs"));
+        simpleTypetoxsd.put("org.apache.axis2.databinding.types.YearMonth",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "gYearMonth", "xs"));       
+
         simpleTypetoxsd.put("java.lang.Object",
                 ANY_TYPE);
 
@@ -124,12 +145,12 @@ public class TypeTable {
         return false;
     }
 
-    public void addComplexSchema(String name, QName schemaType) {
-        complexTypeMap.put(name, schemaType);
-    }
-
     public Map getComplexSchemaMap() {
         return complexTypeMap;
+    }
+
+    public void addComplexSchema(String name, QName schemaType) {
+        complexTypeMap.put(name, schemaType);
     }
 
     public QName getComplexSchemaType(String name) {

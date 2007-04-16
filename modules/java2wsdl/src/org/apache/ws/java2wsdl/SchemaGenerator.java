@@ -316,7 +316,11 @@ public class SchemaGenerator implements Java2WSDLConstants {
         }
     }
 
-    /** @param javaType  */
+    /**
+     * Generate schema construct for given type
+     * 
+     * @param javaType
+     */
     private QName generateSchema(JClass javaType) throws Exception {
         String name = getQualifiedName(javaType);
         QName schemaTypeName = typeTable.getComplexSchemaType(name);
@@ -368,9 +372,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
                 complexType.setContentModel(contentModel);
 
-            } else
+            } else {
                 complexType.setParticle(sequence);
-
+            }
 
             complexType.setName(simpleName);
 

@@ -19,8 +19,8 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.tempuri.attribute.TestBoolean1;
-import org.tempuri.attribute.TestBoolean2;
+import org.tempuri.boolean1.TestBoolean1;
+import org.tempuri.boolean1.TestBoolean2;
 
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;

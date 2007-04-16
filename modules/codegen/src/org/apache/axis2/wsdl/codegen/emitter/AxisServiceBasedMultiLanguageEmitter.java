@@ -2154,6 +2154,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                                            org.apache.axis2.transport.http.HTTPConstants
                                                                                    .MEDIA_TYPE_X_WWW_FORM +
                                                                            "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,
+                    "org.apache.axis2.Constants.Configuration.SOAP_RESPONSE_MEP",
+                    "true"));
         } else if (bindingType != null && bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
 
             methodElement.appendChild(generateOptionParamComponent(doc,

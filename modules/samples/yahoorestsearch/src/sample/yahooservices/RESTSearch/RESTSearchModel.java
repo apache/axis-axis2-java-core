@@ -47,7 +47,7 @@ public class RESTSearchModel {
     public String searchYahoo(String query, String format) {
         try {
             snippet = beginHTML;
-            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
+            String epr = "http://search.yahooapis.com/WebSearchService/V1/webSearch";
 
             ServiceClient client = new ServiceClient();
             Options options = new Options();

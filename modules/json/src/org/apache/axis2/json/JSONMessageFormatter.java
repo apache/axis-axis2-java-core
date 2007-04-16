@@ -37,6 +37,8 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This JSONMessageFormatter is the formatter for "Mapped" formatted JSON in Axis2. This type of
