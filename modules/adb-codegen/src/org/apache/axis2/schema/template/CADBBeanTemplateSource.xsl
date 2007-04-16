@@ -1455,9 +1455,9 @@
                      if ( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> != NULL)
                      {
                          start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
-                         start_input_str_len = axis2_strlen(start_input_str);
+                         start_input_str_len = axutil_strlen(start_input_str);
                          end_input_str = "&lt;/<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
-                         end_input_str_len = axis2_strlen(end_input_str);
+                         end_input_str_len = axutil_strlen(end_input_str);
                          count = axutil_array_list_size( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env);
                          for( i = 0; i &lt; count; i ++)
                          {
@@ -1473,9 +1473,9 @@
                     <!-- how to build all the ours things -->
                     <xsl:if test="not(@isarray)">
                         start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
-                        start_input_str_len = axis2_strlen(start_input_str);
+                        start_input_str_len = axutil_strlen(start_input_str);
                         end_input_str = "&lt;/<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
-                        end_input_str_len = axis2_strlen(end_input_str);
+                        end_input_str_len = axutil_strlen(end_input_str);
                     </xsl:if>
 
                     <xsl:choose>
@@ -1497,7 +1497,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1512,7 +1512,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1527,7 +1527,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1544,7 +1544,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1559,7 +1559,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1574,7 +1574,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1582,7 +1582,7 @@
                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                            text_value_<xsl:value-of select="$position"/> = <xsl:value-of select="$attriName"/>;
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1590,7 +1590,7 @@
                         <xsl:when test="$nativePropertyType='axis2_uri_t*'">
                            text_value_<xsl:value-of select="$position"/> = axutil_uri_to_string(<xsl:value-of select="$attriName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1598,7 +1598,7 @@
                         <xsl:when test="$nativePropertyType='axis2_qname_t*'">
                            text_value_<xsl:value-of select="$position"/> = AXIS2_QNAME_TO_STRING(<xsl:value-of select="$attriName"/>, env);
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1606,7 +1606,7 @@
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                            strcpy( text_value_<xsl:value-of select="$position"/>, (<xsl:value-of select="$attriName"/>)?"true":"false" );
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
@@ -1619,14 +1619,14 @@
                         <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
                           text_value_<xsl:value-of select="$position"/> = axutil_date_time_serialize_date_time( <xsl:value-of select="$attriName"/>, env);
                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
                         <xsl:when test="$propertyType='axis2_base64_binary_t*'">
                           text_value_<xsl:value-of select="$position"/> =axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$attriName"/>, env);
                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
