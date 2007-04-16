@@ -501,11 +501,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
             elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
             sequence.getItems().add(elt1);
 
-            if (isArryType) {
+            if (isArryType && (!propertyName.equals("base64Binary"))){
                 elt1.setMaxOccurs(Long.MAX_VALUE);
                 elt1.setMinOccurs(1);
             }
-
 
             if (String.class.getName().equals(propertyName)) {
                 elt1.setNillable(true);
