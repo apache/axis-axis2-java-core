@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
+import org.apache.axis2.jaxws.endpoint.BasicEndpointTests;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.handler.context.LogicalMessageContextTests;
@@ -191,6 +192,9 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BindingProviderTests.class);
         // Commented due to test failure...
 //        suite.addTestSuite(StringListTests.class);
+        
+        // ------ Endpoint Tests ------
+        suite.addTestSuite(BasicEndpointTests.class);
 
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
