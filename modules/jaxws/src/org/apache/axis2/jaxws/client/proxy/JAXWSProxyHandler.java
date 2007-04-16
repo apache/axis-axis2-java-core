@@ -33,7 +33,9 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -194,6 +196,12 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // TODO: Change this to some form of factory so that we can change the IC to
         // a more simple one for marshaller/unmarshaller testing.
         InvocationController controller = new AxisInvocationController();
+        
+        // Migrate the properties from the client request context bag to
+        // the request MessageContext.
+        ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                getRequestContext(), request);
 
         // Check if the call is OneWay, Async or Sync
         if (operationDesc.isOneWay()) {
@@ -273,6 +281,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
             checkMaintainSessionState(request, requestIC);
 
             MessageContext responseContext = responseIC.getResponseMessageContext();
+            
+            // Migrate the properties from the response MessageContext back
+            // to the client response context bag.
+            ApplicationContextMigratorUtil.performMigrationFromMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getResponseContext(), responseContext);
+            
             Object responseObj = createResponse(method, args, responseContext, operationDesc);
             return responseObj;
         }
