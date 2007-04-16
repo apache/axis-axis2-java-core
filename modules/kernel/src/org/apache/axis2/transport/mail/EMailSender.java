@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
@@ -55,6 +56,7 @@ public class EMailSender {
     private OutputStream outputStream;
     private String inReplyTo;
     private EndpointReference from;
+    private OMOutputFormat format;
 
     protected static Log log = LogFactory.getLog(EMailSender.class);
 
@@ -89,7 +91,7 @@ public class EMailSender {
         this.passwordAuthentication = passwordAuthentication;
     }
 
-    public void send(MailToInfo mailToInfo, OMOutputFormat format)
+    public void send()
             throws AxisFault {
 
         try {
@@ -103,6 +105,7 @@ public class EMailSender {
 
 
             EndpointReference epr = null;
+            MailToInfo mailToInfo = null;
 
             if (messageContext.getTo() != null && !messageContext.getTo().hasAnonymousAddress()) {
                 epr = messageContext.getTo();
@@ -110,13 +113,15 @@ public class EMailSender {
 
             if (epr != null) {
                 if (!epr.hasNoneAddress()) {
+                    mailToInfo = new MailToInfo(epr);
                     msg.addRecipient(Message.RecipientType.TO,
                                      new InternetAddress(mailToInfo.getEmailAddress()));
 
                 } else {
                     if (from != null) {
+                        mailToInfo = new MailToInfo(from);
                          msg.addRecipient(Message.RecipientType.TO,
-                                         new InternetAddress(from.getAddress()));
+                                         new InternetAddress(mailToInfo.getEmailAddress()));
                     } else {
                         String error = EMailSender.class.getName() + "Couldn't countinue due to" +
                                        " FROM addressing is NULL";
@@ -126,10 +131,10 @@ public class EMailSender {
                 }
             } else {
                 // replyto : from : or reply-path;
-                if (messageContext.isServerSide()) {
                     if (from != null) {
+                    mailToInfo = new MailToInfo(from);
                         msg.addRecipient(Message.RecipientType.TO,
-                                         new InternetAddress(from.getAddress()));
+                                     new InternetAddress(mailToInfo.getEmailAddress()));
                     } else {
                         String error = EMailSender.class.getName() + "Couldn't countinue due to" +
                                        " FROM addressing is NULL and EPR is NULL";
@@ -138,20 +143,22 @@ public class EMailSender {
                     }
 
                 }
-            }
 
             msg.setSubject("__ Axis2/Java Mail Message __");
 
             if (mailToInfo.isxServicePath()) {
-                msg.setHeader("X-Service-Path", "\"" + mailToInfo.getContentDescription() + "\"");
+                msg.setHeader(Constants.X_SERVICE_PATH,
+                              "\"" + mailToInfo.getContentDescription() + "\"");
             }
 
             if (inReplyTo != null) {
-                msg.setHeader("In-Reply-To", inReplyTo);
+                msg.setHeader(Constants.IN_REPLY_TO, inReplyTo);
             }
 
             createMailMimeMessage(msg, mailToInfo, format);
             Transport.send(msg);
+
+            sendReceive(messageContext, msg.getMessageID());
         } catch (AddressException e) {
             throw AxisFault.makeFault(e);
         } catch (MessagingException e) {
@@ -215,5 +222,22 @@ public class EMailSender {
 
     public void setFrom(EndpointReference from) {
         this.from = from;
+    }
+
+    public void setFormat(OMOutputFormat format) {
+        this.format = format;
+    }
+
+    private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
+        Object obj = msgContext.getProperty(Constants.MAIL_SYNC);
+        if (obj == null) {
+            return;
+        }
+
+        Options options = msgContext.getOptions();
+
+        SynchronousMailListener listener =
+                new SynchronousMailListener(options.getTimeOutInMilliSeconds());
+        listener.sendReceive(msgContext, msgId);
     }
 }

@@ -108,25 +108,24 @@ public class DeploymentFileData {
         this.classLoader = classLoader;
     }
 
-    public void setClassLoader(boolean extractArchive, ClassLoader parent) throws AxisFault {
-        if (!extractArchive) {
-
-            if (file != null) {
+    public void setClassLoader(boolean isDirectory, ClassLoader parent, File file) throws AxisFault {
+        if (!isDirectory) {
+            if (this.file != null) {
                 URL[] urlsToLoadFrom;
                 try {
-                    if (!file.exists()) {
+                    if (!this.file.exists()) {
                         throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
-                                                                file.getAbsolutePath()));
+                                                                this.file.getAbsolutePath()));
                     }
-                    urlsToLoadFrom = new URL[]{file.toURL()};
-                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent,false);
+                    urlsToLoadFrom = new URL[]{this.file.toURL()};
+                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }
             }
         } else {
-            if (file != null) {
-                classLoader = Utils.getClassLoader(parent, file);
+            if (this.file != null) {
+                classLoader = Utils.getClassLoader(parent, this.file);
             }
         }
     }

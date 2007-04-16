@@ -8,6 +8,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.description.AxisMessage;
@@ -46,6 +47,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +55,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -117,14 +120,22 @@ public class Utils {
         }
     }
 
-    public static URL[] getURLsForAllJars(URL url) {
+    public static URL[] getURLsForAllJars(URL url, File tmpDir) {
         try {
             ArrayList array = new ArrayList();
-//            String urlString = url.toString();
+            String urlString = url.toString();
             InputStream in = url.openStream();
+            String fileName = url.getFile();
+            int index = fileName.lastIndexOf('/');
+            if(index != -1) {
+                fileName = fileName.substring(index+1);
+            }
+            File f = createTempFile(fileName, in, tmpDir);
+            in.close();
             ZipInputStream zin;
-            array.add(url);
-            zin = new ZipInputStream(in);
+            FileInputStream fin = new FileInputStream(f);
+                array.add(f.toURL());
+                zin = new ZipInputStream(fin);
 
             ZipEntry entry;
             String entryName;
@@ -137,22 +148,33 @@ public class Utils {
                 if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
                         && entryName.toLowerCase().endsWith(".jar")) {
                     String suffix = entryName.substring(4);
-                    File f = createTempFile(suffix, zin);
+                    f = createTempFile(suffix, zin, tmpDir);
                     array.add(f.toURL());
                 }
             }
             zin.close();
+            if (fin != null) {
+                fin.close();
+            }
             return (URL[]) array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static File createTempFile(String suffix, InputStream in) throws IOException {
+    public static File createTempFile(String suffix, InputStream in, File tmpDir) throws IOException {
         byte data[] = new byte[2048];
         int count;
+        File f;
+        if(tmpDir == null) {
         new File(System.getProperty("java.io.tmpdir")).mkdirs();
-        File f = File.createTempFile("axis2", suffix);
+            f = File.createTempFile("axis2", suffix);
+        } else {
+            f = File.createTempFile("axis2", suffix, tmpDir);
+        }
+        if(log.isDebugEnabled()) {
+            log.info("Created temporary file : " + f.getAbsolutePath());
+        }
         f.deleteOnExit();
         FileOutputStream out = new FileOutputStream(f);
         while ((count = in.read(data, 0, 2048)) != -1) {
@@ -463,14 +485,17 @@ public class Utils {
                     }
                     InputStream fin = moduleClassLoader.getResourceAsStream("aars/" + servicename);
                     if (fin == null) {
-                        throw new AxisFault("No service archiev found : " + servicename);
+                        throw new AxisFault("No service archive found : " + servicename);
                     }
-                    File inputFile = Utils.createTempFile(servicename, fin);
+                    File inputFile = Utils.createTempFile(servicename,
+                            fin,
+                            (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     DeploymentFileData filedata = new DeploymentFileData(inputFile,
                                                                          DeploymentConstants.TYPE_SERVICE);
 
                     filedata.setClassLoader(false,
-                                            moduleClassLoader);
+                                            moduleClassLoader,
+                            (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     HashMap wsdlservice = archiveReader.processWSDLs(filedata);
                     if (wsdlservice != null && wsdlservice.size() > 0) {
                         Iterator servicesitr = wsdlservice.values().iterator();
@@ -596,7 +621,7 @@ public class Utils {
      * Searches for jar files inside /lib dirctory. If there are any, the
      * names of those jar files will be added to the array list
      */
-    public static ArrayList findLibJars(URL url) {
+    public static List findLibJars(URL url) {
         ArrayList embedded_jars = new ArrayList();
         try {
             ZipInputStream zin = new ZipInputStream(url.openStream());
@@ -631,5 +656,16 @@ public class Utils {
         excludeList.add("startUp");
         excludeList.add("destroy");
         excludeList.add("shutDown");
+    }
+
+    public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
+                                                boolean extractJars, File tmpDir) {
+        if(extractJars) {
+            URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
+            return new DeploymentClassLoader(urls1, null, serviceClassLoader);
+        } else {
+            List embedded_jars = Utils.findLibJars(urls[0]);
+            return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
+        }
     }
 }

@@ -202,13 +202,18 @@ public class URLTemplatingUtil {
         int separator = httpLocation.indexOf('{');
             try {
 
-        if (separator > 0) {
+        if (separator > -1) {
             replacedQuery = URIEncoderDecoder.quoteIllegal(
                     URLTemplatingUtil.applyURITemplating(messageContext, httpLocation, detach),
                     WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
 
         }
-                URI targetURI = new URI(targetURL.toString() + "/");
+                URI targetURI;
+                if (replacedQuery.charAt(0) == '?') {
+                    targetURI = new URI(targetURL.toString());
+                } else {
+                    targetURI = new URI(targetURL.toString() + "/");
+                }
                 
                 URI appendedURI = targetURI.resolve(replacedQuery);
                 targetURL = appendedURI.toURL(); 

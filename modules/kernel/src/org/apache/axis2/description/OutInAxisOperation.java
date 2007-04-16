@@ -337,7 +337,7 @@ class OutInAxisOperationClient extends OperationClient {
 
         // Options object reused above so soapAction needs to be removed so
         // that soapAction+wsa:Action on response don't conflict
-        responseMessageContext.setSoapAction("");
+        responseMessageContext.setSoapAction(null);
 
         if (responseMessageContext.getEnvelope() == null) {
             // If request is REST we assume the responseMessageContext is REST, so

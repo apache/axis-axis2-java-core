@@ -225,6 +225,10 @@ public class HttpTransportProperties {
         }
     }
 
+    /**
+     * @deprecated org.apache.axis2.transport.http.HttpTransportProperties.MailProperties has been
+     * deprecated and user are encourage the use of java.util.Properties instead.  
+     */
     public static class MailProperties {
         final Properties mailProperties = new Properties();
 

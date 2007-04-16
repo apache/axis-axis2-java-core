@@ -106,10 +106,12 @@ public class AxisOperationFactory implements WSDLConstants {
                 WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
+            abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY);
         } else if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
                 WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
+            abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }

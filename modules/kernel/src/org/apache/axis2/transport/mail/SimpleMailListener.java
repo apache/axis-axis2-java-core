@@ -91,20 +91,20 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public SimpleMailListener() {
     }
 
+    /**
+     * This constructor will be used in when Mail simulate the request/response
+     *
+     * @param messageQueue
+     */
+    public SimpleMailListener(LinkedBlockingQueue messageQueue) {
+        this.messageQueue = messageQueue;
+    }
+
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
 
         ArrayList mailParameters = transportIn.getParameters();
-
-        replyTo = Utils.getParameterValue(
-                transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
-        Parameter listenerWaitIntervalParam = transportIn
-                .getParameter(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
-        if (listenerWaitIntervalParam != null) {
-            listenerWaitInterval =
-                    Integer.parseInt(Utils.getParameterValue(listenerWaitIntervalParam));
-        }
 
         String password = "";
         String host = "";
@@ -117,8 +117,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String paramKey = param.getName();
             String paramValue = Utils.getParameterValue(param);
             if (paramKey == null || paramValue == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull",
-                                                        "Parameter name and value"));
+                String error = Messages.getMessage("canNotBeNull", "Parameter name and value");
+                log.error(error);
+                throw new AxisFault(error);
 
             }
             pop3Properties.setProperty(paramKey, paramValue);
@@ -138,11 +139,21 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 port = paramValue;
             }
 
+            //Transport specific
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.REPLY_TO)) {
+                replyTo = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL)) {
+                listenerWaitInterval = Integer.parseInt(paramValue);
+            }
+
         }
         if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
             protocol.length() == 0) {
-            throw new AxisFault(
-                    "One or more of Password, User, Host and Protocol are null or empty");
+            String error = SimpleMailListener.class.getName() +
+                           " one or more of Password, User, Host and Protocol are null or empty";
+            log.error(error);
+            throw new AxisFault(error);
         }
 
         if (port.length() == 0) {
@@ -158,10 +169,52 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     }
 
+    public void initFromRuntime(Properties properties, MessageContext msgContext) throws AxisFault {
+
+        this.configurationContext = msgContext.getConfigurationContext();
+
+        String password = "";
+        String host = "";
+        String protocol = "";
+        String port = "";
+        URLName urlName;
+
+        pop3Properties.clear();
+        pop3Properties.putAll(properties);
+
+        user = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_USER);
+        password = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_PASSWORD);
+        host = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_HOST);
+        protocol = properties.getProperty(org.apache.axis2.transport.mail.Constants.STORE_PROTOCOL);
+        port = properties.getProperty(org.apache.axis2.transport.mail.Constants.POP3_PORT);
+        replyTo = properties.getProperty(org.apache.axis2.transport.mail.Constants.REPLY_TO);
+        String value =
+                properties.getProperty(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
+        if (value != null) {
+            listenerWaitInterval = Integer.parseInt(value);
+        }
+
+        if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
+            protocol.length() == 0) {
+            String error = SimpleMailListener.class.getName() + " one or more of Password, User," +
+                           " Host and Protocol are null or empty" + "in runtime settings";
+            log.error(error);
+            throw new AxisFault(error);
+        }
+
+        if (port == null) {
+            urlName = new URLName(protocol, host, -1, "", user, password);
+        } else {
+            urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);
+        }
+
+        receiver = new EmailReceiver();
+        receiver.setPop3Properties(pop3Properties);
+        receiver.setUrlName(urlName);
+    }
+
     /**
      * Server process.
-     * @param args command line args
-     * @throws AxisFault if a problem occurs
      */
     public static void main(String args[]) throws AxisFault {
         if (args.length < 2) {
@@ -271,9 +324,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
 
             MailBasedOutTransportInfo transportInfo = new MailBasedOutTransportInfo();
-            if (msg.getFrom() != null && msg.getFrom().length > 0) {
-                EndpointReference fromEPR = new EndpointReference((msg.getFrom()[0]).toString());
-                msgContext.setFrom(fromEPR);
+            Address[] mimefroms = msg.getFrom();
+            if (mimefroms != null && mimefroms.length > 0) {
+                EndpointReference fromEPR = new EndpointReference(
+                        org.apache.axis2.transport.mail.Constants.MAILTO + ":" +
+                        msg.getFrom()[0].toString());
                 transportInfo.setFrom(fromEPR);
             }
 
@@ -281,6 +336,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String smtpMessageId = msg.getMessageID();
             if (smtpMessageId != null) {
                 transportInfo.setInReplyTo(smtpMessageId);
+            }
+            String inReplyTo =
+                    getMailHeader(msg, org.apache.axis2.transport.mail.Constants.IN_REPLY_TO);
+            if (inReplyTo != null) {
+                transportInfo.setInReplyTo(inReplyTo);
             }
             msgContext.setProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo);
 
@@ -353,7 +413,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
         }
     }
 
-/* Commented since this is never used...?
     private String getMailHeader(MimeMessage msg, String headerName) throws AxisFault {
         try {
             String values[] = msg.getHeader(headerName);
@@ -367,7 +426,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
             throw AxisFault.makeFault(e);
         }
     }
-*/
 
     private String getMailHeaderFromPart(Part part, String headerName) throws AxisFault {
         try {
@@ -422,9 +480,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
     }
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
-                                                             replyTo + "?" + configurationContext
-                .getServiceContextPath() + "/" + serviceName)};
+        return new EndpointReference[]{
+                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
+                                      configurationContext.getServiceContextPath() + "/" +
+                                      serviceName),
+                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
+                                      org.apache.axis2.transport.mail.Constants.X_SERVICE_PATH + "="
+                                      + configurationContext.getServiceContextPath() + "/" +
+                                      serviceName)};
     }
 
 
@@ -434,5 +497,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public void destroy() {
         this.configurationContext = null;
+    }
+
+    public LinkedBlockingQueue getLinkedBlockingQueue() {
+        return messageQueue;
     }
 }

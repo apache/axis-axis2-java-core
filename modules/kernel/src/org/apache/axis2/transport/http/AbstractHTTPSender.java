@@ -198,7 +198,6 @@ public abstract class AbstractHTTPSender {
 
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(proxyHostName, proxyPort);
-        config.setHost(proxyHostName);
     }
 
     /**
@@ -244,7 +243,6 @@ public abstract class AbstractHTTPSender {
             	//the HashMap is stored in the outgoing message.
             	msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
             }
-            
         }
 
         String sessionCookie = null;
@@ -315,7 +313,7 @@ public abstract class AbstractHTTPSender {
                                                      MessageContext msgCtx,
                                                      URL targetURL)
             throws AxisFault {
-        boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
+        boolean isProxyListed = isProxyListed(msgCtx);    // list the proxy
 
 
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
@@ -334,17 +332,16 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (isAuthenticationEnabled) {
-            // premtive authentication Basic or NTLM
-            this.setAuthenticationInfo(client, msgCtx, config, targetURL);
-        }
+        // setting the real host configuration
+        config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
 
+        if (isAuthenticationEnabled) {
+            // Basic, Digest, NTLM and custom authentications. 
+            this.setAuthenticationInfo(client, msgCtx, config);
+        }
         // proxy configuration
-        if (!isHostProxy) {
-            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        } else {
-            this.configProxyAuthentication(client, proxyOutSetting, config,
-                                           msgCtx);
+        if (isProxyListed) {
+            this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
         }
 
         return config;
@@ -360,11 +357,7 @@ public abstract class AbstractHTTPSender {
     */
     protected void setAuthenticationInfo(HttpClient agent,
                                          MessageContext msgCtx,
-                                         HostConfiguration config,
-                                         URL targetURL) throws AxisFault {
-        config.setHost(targetURL.getHost(), targetURL.getPort(),
-                       targetURL.getProtocol());
-
+                                         HostConfiguration config) throws AxisFault {
         HttpTransportProperties.Authenticator authenticator;
         Object obj = msgCtx.getProperty(HTTPConstants.AUTHENTICATE);
         if (obj != null) {

@@ -400,6 +400,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      */
     public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         try {
             this.servletConfig = config;
             configContext = initConfigContext(config);

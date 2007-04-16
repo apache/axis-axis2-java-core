@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,14 +52,15 @@ public class ServiceDeployer implements Deployer {
     //Will process the file and add that to axisConfig
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
-        boolean explodedDir = deploymentFileData.getFile().isDirectory();
+        boolean isDirectory = deploymentFileData.getFile().isDirectory();
         ArchiveReader archiveReader;
         StringWriter errorWriter = new StringWriter();
         archiveReader = new ArchiveReader();
         String serviceStatus = "";
         try {
-            deploymentFileData.setClassLoader(explodedDir,
-                                              axisConfig.getServiceClassLoader());
+            deploymentFileData.setClassLoader(isDirectory,
+                                              axisConfig.getServiceClassLoader(),
+                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
             HashMap wsdlservice = archiveReader.processWSDLs(deploymentFileData);
             if (wsdlservice != null && wsdlservice.size() > 0) {
                 Iterator services = wsdlservice.values().iterator();
@@ -75,7 +78,7 @@ public class ServiceDeployer implements Deployer {
                     deploymentFileData.getClassLoader());
             ArrayList serviceList = archiveReader.processServiceGroup(
                     deploymentFileData.getAbsolutePath(), deploymentFileData,
-                    sericeGroup, explodedDir, wsdlservice,
+                    sericeGroup, isDirectory, wsdlservice,
                     configCtx);
             DeploymentEngine.addServiceGroup(sericeGroup,
                                              serviceList,

@@ -664,6 +664,7 @@ public abstract class AxisOperation extends AxisDescription
         if (inMessage != null) {
             OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, null);
             inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
+            WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, getInputAction());
             axisOperationElement.addChild(inMessageElement);
         }
 
@@ -672,6 +673,7 @@ public abstract class AxisOperation extends AxisDescription
         if (outMessage != null) {
             OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, null);
             outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
+            WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, getOutputAction());
             axisOperationElement.addChild(outMessageElement);
         }
 
@@ -688,6 +690,7 @@ public abstract class AxisOperation extends AxisDescription
                     faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, null);
                 }
                 faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
+                WSDLSerializationUtil.addWSAWActionAttribute(faultElement, getFaultAction(faultMessage.getName()));
                 axisOperationElement.addChild(faultElement);
             }
         }

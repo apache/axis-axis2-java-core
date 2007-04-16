@@ -67,6 +67,10 @@ public interface RequestResponseTransport {
      */
     public void signalResponseReady();
 
+    /**
+     * This will tell the transport to end a current wait by raising the given fault.
+     * @param fault The fault to be raised.
+     */
     public void signalFaultReady(AxisFault fault);
     
     /**

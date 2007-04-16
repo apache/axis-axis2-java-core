@@ -33,7 +33,7 @@ public class Constants {
     public final static String STORE_PROTOCOL = "mail.store.protocol";
 
 
-    public final static String RAPLY_TO = "transport.mail.replyToAddress";
+    public final static String REPLY_TO = "transport.mail.replyToAddress";
 
     public final static String LISTENER_INTERVAL = "transport.listener.interval";
 
@@ -75,4 +75,9 @@ public class Constants {
     public static final String MAIL_SMTP = "_MAIL_SMTP_";
 
     public static final String MAIL_POP3 = "_MAIL_POP3_";
+
+    public static final String X_SERVICE_PATH = "X-Service-Path";
+    public static final String MAIL_SYNC = "_MAIL_SYNC_";
+    public static final String IN_REPLY_TO = "In-Reply-To";
+    public static final String MAILTO = "mailto";
 }

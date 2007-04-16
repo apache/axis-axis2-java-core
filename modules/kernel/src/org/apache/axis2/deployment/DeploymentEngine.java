@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -210,10 +211,12 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 String fileUrl = (String) fileIterator.next();
                 if (fileUrl.endsWith(".mar")) {
                     URL moduleurl = new URL(moduleDir, fileUrl);
-                    DeploymentClassLoader deploymentClassLoader =
-                            new DeploymentClassLoader(
+                    ClassLoader deploymentClassLoader =
+                           Utils.createClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader(), false);
+                                    axisConfig.getModuleClassLoader(),
+                                    true,
+                                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -258,8 +261,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                         String serviceName) throws DeploymentException {
         try {
             serviceGroup.setServiceGroupName(serviceName);
-            DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), false);
+            ClassLoader serviceClassLoader = Utils.createClassLoader(
+                    new URL[]{servicesURL},
+                    axisConfig.getServiceClassLoader(),
+                    true,
+                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -902,7 +908,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
-            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader());
+            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader(), null);
             axismodule.setModuleClassLoader(currentDeploymentFile.getClassLoader());
             archiveReader.readModuleArchive(currentDeploymentFile, axismodule,
                                             false, config);

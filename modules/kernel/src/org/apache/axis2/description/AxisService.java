@@ -1021,12 +1021,9 @@ public class AxisService extends AxisDescription {
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
             String wsdlntfound = "<error>" +
-                    "<description>Unable to generate WSDL for this service</description>" +
-                    "<reason>If you wish Axis2 to automatically generate the WSDL, then please use one of the RPC message " +
-                    "receivers for the service(s)/operation(s) in services.xml. If you have added a custom WSDL in the " +
-                    "META-INF directory, then please make sure that the name of the service in services.xml " +
-                    "(/serviceGroup/service/@name) is the same as in the " +
-                    "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>" +
+                    "<description>Unable to generate WSDL 1.1 for this service</description>" +
+                    "<reason>If you wish Axis2 to automatically generate the WSDL 1.1, then please +" +
+                    "set useOriginalwsdl as false in your services.xml</reason>" +
                     "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
@@ -1038,30 +1035,9 @@ public class AxisService extends AxisDescription {
 
     //WSDL 2.0
     public void printWSDL2(OutputStream out) throws AxisFault {
-        if (isUseUserWSDL()) {
-            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-            if (wsld4jdefinition != null) {
-                try {
-                    String error = "<error>" +
-                            "<description>Unable to showtwo will WSDL for this service</description>" +
-                            "<reason>WSDL 2.0 document is to be shown. But we do not support WSDL 2.0" +
-                            "serialization yet.</reason>" +
-                            "</error>";
-                    out.write(error.getBytes());
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    throw AxisFault.makeFault(e);
-                }
-            } else {
-                printWSDLError(out);
-            }
-        } else {
-            setWsdlFound(true);
-            //pick the endpointName and take it as the epr for the WSDL
+        // Woden has not implemented the serializer yet, so all we can do it serialize the axisService
             getWSDL2(out, new String[]{this.endpointName});
         }
-    }
 
     public void printWSDL2(OutputStream out,
                            String requestIP,
@@ -1545,7 +1521,6 @@ public class AxisService extends AxisDescription {
                 new WSDL11ToAxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
-
         AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoints()
                 .get(axisService.getEndpointName());
         options.setTo(new EndpointReference(axisEndpoint.getEndpointURL()));

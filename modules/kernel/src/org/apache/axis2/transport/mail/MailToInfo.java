@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.apache.axis2.transport.mail;
+
+import org.apache.axis2.addressing.EndpointReference;
 /*
  * 
  */
@@ -22,7 +24,36 @@ public class MailToInfo {
     private String emailAddress;
     private String contentDescription;
     private boolean xServicePath;
-    private String fromAddress;
+
+    public MailToInfo(String eprAddress) {
+        //URl validation according to rfc :  http://www.ietf.org/rfc/rfc2368.txt
+
+        int mailToIndex = eprAddress.indexOf(Constants.MAILTO+":");
+        if (mailToIndex > -1) {
+            eprAddress = eprAddress.substring(mailToIndex + 7);
+        }
+        int index = eprAddress.indexOf('?');
+
+        if (index > -1) {
+            emailAddress = eprAddress.substring(0, index);
+        } else {
+            emailAddress = eprAddress;
+        }
+
+        if (eprAddress.indexOf(Constants.X_SERVICE_PATH) > -1) {
+            index = eprAddress.indexOf('=');
+            if (index > -1) {
+                xServicePath = true;
+                contentDescription = eprAddress.substring(index + 1);
+            }
+        } else {
+            contentDescription = eprAddress.substring(index + 1);
+
+        }
+    }
+    public MailToInfo(EndpointReference epr) {
+        this(epr.getAddress());
+    }
 
     public String getEmailAddress() {
         return emailAddress;
@@ -48,11 +79,4 @@ public class MailToInfo {
         this.xServicePath = xServicePath;
     }
 
-    public String getFromAddress() {
-        return fromAddress;
-    }
-
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
-    }
 }

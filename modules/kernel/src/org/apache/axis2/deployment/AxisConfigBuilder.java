@@ -384,8 +384,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
-                HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
-//                HandlerDescription handler = processHandler(omElement, axisConfig);
+                HandlerDescription handler = processHandler(omElement, axisConfig);
 
                 handler.getRules().setPhaseName(phaseName);
                 Utils.loadHandler(axisConfig.getSystemClassLoader(), handler);
