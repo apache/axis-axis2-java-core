@@ -19,31 +19,68 @@ package org.apache.axis2.cluster.configuration;
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
-import org.apache.neethi.Policy;
 
 public interface ConfigurationManager extends ParameterInclude {
 
-    /*
-      * Configuration management methods
-      */
-
+    // ###################### Configuration management methods ##########################
+    /**
+     * Load a set of service groups
+     *
+     * @param serviceGroupNames The set of service groups to be loaded
+     * @throws ClusteringFault
+     */
     void loadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
 
+    /**
+     * Unload a set of service groups
+     *
+     * @param serviceGroupNames The set of service groups to be unloaded
+     * @throws ClusteringFault
+     */
     void unloadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
 
-    void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault;
+    /**
+     * Apply a policy to a service
+     *
+     * @param serviceName The name of the service to which this policy needs to be applied
+     * @param policy      The serialized policy to be applied to the service
+     * @throws ClusteringFault
+     */
+    void applyPolicy(String serviceName, String policy) throws ClusteringFault;
 
+    /**
+     * Reload the entire configuration of an Axis2 Node
+     *
+     * @throws ClusteringFault
+     */
     void reloadConfiguration() throws ClusteringFault;
 
-    /*
-    * Transaction management methods
-    */
+    // ###################### Transaction management methods ##########################
+
+    /**
+     * First phase of the 2-phase commit protocol.
+     * Notifies a node that it needs to prepare to switch to a new configuration.
+     *
+     * @throws ClusteringFault
+     */
     void prepare() throws ClusteringFault;
 
+    /**
+     * Rollback whatever was done
+     *
+     * @throws ClusteringFault
+     */
     void rollback() throws ClusteringFault;
 
+    /**
+     * Second phase of the 2-phase commit protocol.
+     * Notifies a node that it needs to switch to a new configuration.
+     *
+     * @throws ClusteringFault
+     */
     void commit() throws ClusteringFault;
 
+    // ######################## General management methods ############################
     /**
      * To notify other nodes that an Exception occurred, during the processing
      * of a {@link ConfigurationEvent}
@@ -57,5 +94,10 @@ public interface ConfigurationManager extends ParameterInclude {
      */
     void addConfigurationManagerListener(ConfigurationManagerListener listener);
 
+    /**
+     * Set the configuration context
+     *
+     * @param configurationContext
+     */
     void setConfigurationContext(ConfigurationContext configurationContext);
 }

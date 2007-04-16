@@ -20,7 +20,7 @@ import org.apache.axis2.cluster.tribes.CommandMessage;
 
 public class ConfigurationCommand extends CommandMessage {
 	
-	private String policyId;
+	private String policy;
     private String serviceGroupName;
     private String[] serviceGroupNames;
 	
@@ -28,12 +28,12 @@ public class ConfigurationCommand extends CommandMessage {
 		super (commandType);
 	}
 	
-	public String getPolicyId() {
-		return policyId;
+	public String getPolicy() {
+		return policy;
 	}
 
-	public void setPolicyId(String policyId) {
-		this.policyId = policyId;
+	public void setPolicy(String policy) {
+		this.policy = policy;
 	}
 
 	public String[] getServiceGroupNames() {

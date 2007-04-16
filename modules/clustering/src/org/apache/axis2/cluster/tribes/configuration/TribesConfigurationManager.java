@@ -28,7 +28,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
-import org.apache.neethi.Policy;
 import org.apache.axiom.om.OMElement;
 
 import java.util.*;
@@ -52,10 +51,10 @@ public class TribesConfigurationManager implements ConfigurationManager {
         listeners.add(listener);
     }
 
-    public void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault {
+    public void applyPolicy(String serviceGroupName, String policy) throws ClusteringFault {
         ConfigurationCommand command = new ConfigurationCommand(CommandType.APPLY_POLICY);
         command.setServiceGroupName(serviceGroupName);
-        command.setPolicyId(policy.getId());
+        command.setPolicy(policy);
         send(command);
     }
 
