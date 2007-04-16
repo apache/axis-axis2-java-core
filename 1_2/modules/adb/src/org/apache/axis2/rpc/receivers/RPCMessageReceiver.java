@@ -56,8 +56,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
      * <p/>
      * - create response msg and add return value as grand child of <soap:body>
      *
-     * @param inMessage
-     * @param outMessage
+     * @param inMessage incoming MessageContext
+     * @param outMessage outgoing MessageContext
      * @throws AxisFault
      */
 
