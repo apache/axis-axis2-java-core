@@ -1235,7 +1235,7 @@ class EndpointDescriptionImpl
      * @return HandlerChainsType This is the top-level element for the Handler configuration file
      */
     public HandlerChainsType getHandlerChain() {
-        // TODO: This needs to work for DBC or class
+
         if (handlerChainsType == null) {
             getAnnoHandlerChainAnnotation();
             if (handlerChainAnnotation != null) {
@@ -1243,7 +1243,7 @@ class EndpointDescriptionImpl
 
                 // TODO RAS & NLS
                 if (log.isDebugEnabled()) {
-                    log.debug("EndpointDescriptionImpl.getHandlerList: fileName: "
+                    log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
                             + handlerFileName
                             + " className: "
                             + composite.getClassName());
@@ -1288,7 +1288,31 @@ class EndpointDescriptionImpl
     public HandlerChain getAnnoHandlerChainAnnotation() {
         if (this.handlerChainAnnotation == null) {
             if (getServiceDescriptionImpl().isDBCMap()) {
+                /*
+                 * Per JSR-181 The @HandlerChain annotation MAY be present on
+                 * the endpoint interface and service implementation bean. The
+                 * service implementations bean's @HandlerChain is used if
+                 * @HandlerChain is present on both. So, if we do find the
+                 * annotation on this impl, then don't worry about else
+                 * Otherwise, check to see if the SEI might be annotated with
+                 * @HandlerChain
+                 */
+
                 handlerChainAnnotation = composite.getHandlerChainAnnot();
+                if (handlerChainAnnotation == null) {
+
+                    // If this is NOT an implicit SEI, then check for the
+                    // annotation on the SEI
+                    if (!DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface())) {
+
+                        DescriptionBuilderComposite seic = getServiceDescriptionImpl().getDBCMap()
+                                        .get(composite.getWebServiceAnnot().endpointInterface());
+                        if (seic != null) {
+                            handlerChainAnnotation = seic.getHandlerChainAnnot();
+                        }
+                        // TODO else clause for if to throw exception when seic == null
+                    }
+                }
             } else {
                 if (implOrSEIClass != null) {
                     handlerChainAnnotation =
@@ -1299,20 +1323,7 @@ class EndpointDescriptionImpl
 
         return handlerChainAnnotation;
     }
-
-    /*
-     * Returns a live list describing the handlers on this port.
-     * TODO: This is currently returning List<String>, but it should return a HandlerDescritpion
-     * object that can represent a handler description from various Metadata (annotation, deployment descriptors, etc);
-     * use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point for HandlerDescription.
-     *  
-     * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
     
-    public List<String> getHandlerList() {
-        return handlerList;
-    }
-    */
-
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL)getServiceDescription()).getWSDLDefinition();
     }
