@@ -43,7 +43,8 @@ public class MessageContextUtils {
                     MessageContextBuilder.createOutMessageContext(sourceAxisMC);
 
             MessageContext newMC = new MessageContext(newAxisMC);
-
+            newMC.setEndpointDescription(mc.getEndpointDescription());
+            newMC.setOperationDescription(mc.getOperationDescription());
             return newMC;
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -76,6 +77,8 @@ public class MessageContextUtils {
                     MessageContextBuilder.createFaultMessageContext(
                             mc.getAxisMessageContext(), null);
             MessageContext jaxwsFaultMC = new MessageContext(faultMC);
+            jaxwsFaultMC.setEndpointDescription(mc.getEndpointDescription());
+            jaxwsFaultMC.setOperationDescription(mc.getOperationDescription());
             return jaxwsFaultMC;
         }
         catch (AxisFault e) {
