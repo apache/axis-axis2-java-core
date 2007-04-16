@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions name="Ping"
+    targetNamespace="http://xmlsoap.org/Ping"
+    xmlns:tns="http://xmlsoap.org/Ping"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <schema targetNamespace="http://xmlsoap.org/Ping"
+         xmlns="http://www.w3.org/2001/XMLSchema">
+      <complexType name="ping">
+        <sequence>
+          <element name="text" type="xsd:string" nillable="true"/>
+                 </sequence>
+      </complexType>
+      <complexType name="pingResponse">
+        <sequence>
+          <element name="text" type="xsd:string" nillable="true"/>
+                 </sequence>
+      </complexType>
+      <element name="Ping" type="tns:ping"/>
+      <element name="PingResponse" type="tns:pingResponse"/>
+    </schema>
+  </types>
+
+  <message name="PingRequest">
+    <part name="ping" element="tns:Ping"/>
+    <part name="attach1" type="xsd:string"/>
+    <part name="attach2" type="xsd:string"/>
+  </message>
+
+  <message name="PingResponse">
+    <part name="pingResponse" element="tns:PingResponse"/>
+  </message>
+
+  <portType name="PingPort">
+    <operation name="Ping">
+      <input  message="tns:PingRequest"/>
+      <output message="tns:PingResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="PingBinding" type="tns:PingPort">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="Ping">
+      <soap:operation soapAction=""/>
+      <input> 
+          <mime:multipartRelated>
+            <mime:part>
+              <soap:body parts="ping" use="literal"/>
+            </mime:part>
+            <mime:part>
+              <mime:content part="attach1" type="text/plain"/>
+            </mime:part>
+            <mime:part>
+              <mime:content part="attach2" type="text/plain"/>
+            </mime:part>
+          </mime:multipartRelated>
+        </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+   </binding>
+
+  <service name="PingService">
+    <port name="PingPort" binding="tns:PingBinding">
+    <soap:address location="http://localhost:8080/axis2/services/PingService"/>
+    </port>
+  </service>
+
+</definitions>
