@@ -23,6 +23,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -69,8 +70,8 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
             endpointDesc = sd.getEndpointDescriptions_AsCollection().iterator().next();
         }
         
-        if (endpointDesc != null) {
-            binding = new BindingImpl(endpointDesc);
+        if (endpointDesc != null && binding == null) {
+            binding = BindingUtils.createBinding(endpointDesc);
         }
         
         published = false;

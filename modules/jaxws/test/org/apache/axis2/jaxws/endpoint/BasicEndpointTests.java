@@ -19,7 +19,9 @@
 package org.apache.axis2.jaxws.endpoint;
 
 import javax.jws.WebService;
+import javax.xml.ws.Binding;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
 
@@ -35,7 +37,19 @@ public class BasicEndpointTests extends TestCase {
         assertTrue("The endpoint was not published successfully", ep.isPublished());
     }
     
-    @WebService
+    public void testGetBinding() throws Exception {
+        SampleEndpoint sample = new SampleEndpoint();
+
+        Endpoint ep = Endpoint.create(sample);
+        assertTrue("The returned Endpoint instance was null", ep != null);
+
+        Binding bnd = ep.getBinding();
+        assertTrue("The returned Binding instance was null", bnd != null);
+        assertTrue("The returned Binding instance was of the wrong type (" + bnd.getClass().getName() + "), expected SOAPBinding", 
+                SOAPBinding.class.isAssignableFrom(bnd.getClass()));
+    }
+    
+        @WebService
     class SampleEndpoint {
         
         public int foo(String bar) {
