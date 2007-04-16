@@ -55,9 +55,11 @@ public class HandlerChainProcessor {
         REQUEST, RESPONSE
     };
 
-	private javax.xml.ws.handler.MessageContext currentMC;
+    private javax.xml.ws.handler.MessageContext currentMC;
+
     private MessageContext mc;
-	private List<Handler> handlers = null;
+
+    private List<Handler> handlers = null;
 
     // track start/end of logical and protocol handlers in the list
     // The two scenarios are:  1) run logical handlers only, 2) run all handlers
@@ -70,7 +72,8 @@ public class HandlerChainProcessor {
     private final static int FAILED = 1;
     private final static int PROTOCOL_EXCEPTION = 2;
     private final static int OTHER_EXCEPTION = 3;
-    // save it if Handler.handleMessage throws one in HandlerChainProcessor.handleMessage
+    // save it if Handler.handleMessage throws one in
+    // HandlerChainProcessor.handleMessage
     private RuntimeException savedException;
     private Protocol proto; // need to save it incase we have to make a fault message
 
@@ -151,21 +154,23 @@ public class HandlerChainProcessor {
             return true;
         
         this.mc = mc;
-		sortChain();
+        sortChain();
         initContext(direction);
-		
-		if (direction == Direction.OUT) {  // 9.3.2 outbound
-            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
-		    callGenericHandlers(mep, expectResponse, 0, handlers.size()-1, direction);
-		}
-		else { // IN case - 9.3.2 inbound
-            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
-			callGenericHandlers(mep, expectResponse, handlers.size()-1, 0, direction);
-		}
 
-		// message context may have been changed to be response, and message converted
-		// according to the JAXWS spec 9.3.2.1 footnote 2        
-        if ((Boolean)(currentMC.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)) != (direction == Direction.OUT))
+        if (direction == Direction.OUT) { // 9.3.2 outbound
+            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                            (direction == Direction.OUT));
+            callGenericHandlers(mep, expectResponse, 0, handlers.size() - 1, direction);
+        } else { // IN case - 9.3.2 inbound
+            currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                            (direction == Direction.OUT));
+            callGenericHandlers(mep, expectResponse, handlers.size() - 1, 0, direction);
+        }
+
+        // message context may have been changed to be response, and message
+        // converted
+        // according to the JAXWS spec 9.3.2.1 footnote 2
+        if ((Boolean) (currentMC.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)) != (direction == Direction.OUT))
             return false;
         return true;
 
@@ -240,11 +245,34 @@ public class HandlerChainProcessor {
                 throw savedException;
             }
         } else { // everything was successful OR finished processing handlers
-            callCloseHandlers(newStart_inclusive, newEnd, newDirection);
+            /*
+             * This is a little confusing. There are several cases we should be
+             * aware of. An incoming request with false expectResponse is
+             * equivalent to server inbound one-way, for example.
+             * 
+             * An outgoing response is server outbound, and is always marked
+             * with a false expectResponse. The problem, however, is that the
+             * direction for the call to closehandlers will be incorrect. In
+             * this case, the handlers should be closed in the opposite order of
+             * the ORIGINAL invocation.
+             */
+            if (mep.equals(MEP.REQUEST)) {
+                // a request that requires no response is a one-way message
+                // and we should only close whomever got invoked
+                callCloseHandlers(newStart_inclusive, newEnd, newDirection);
+            }
+            else {
+                // it's a response, so we can safely assume that 
+                // ALL the handlers were invoked on the request,
+                // so we need to close ALL of them
+                if (direction.equals(Direction.IN))
+                    callCloseHandlers(handlers.size() - 1, 0, direction);
+                else
+                    callCloseHandlers(0, handlers.size() - 1, direction);
+            }
         }
 
     }
-
 
     /*
       * callGenericHandlers_avoidRecursion should ONLY be called from one place.
@@ -279,21 +307,26 @@ public class HandlerChainProcessor {
     private int handleMessage(Handler handler, Direction direction,
                               boolean expectResponse) throws RuntimeException {
         try {
-			boolean success = handler.handleMessage(currentMC);
+            boolean success = handler.handleMessage(currentMC);
             if (success)
                 return SUCCESSFUL;
             else {
                 if (expectResponse)
-					currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction != Direction.OUT));
+                    currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                                    (direction != Direction.OUT));
                 return FAILED;
             }
         } catch (RuntimeException re) {  // RuntimeException and ProtocolException
             savedException = re;
             if (expectResponse)
                 // mark it as reverse direction
-				currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction != Direction.OUT));
+                currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
+                                (direction != Direction.OUT));
             if (ProtocolException.class.isAssignableFrom(re.getClass())) {
 				convertToFaultMessage(mc, re, proto);
+                // just re-initialize the current handler message context since
+                // that will pick up the now-changed message
+                reInitContext();
                 return PROTOCOL_EXCEPTION;
             }
             return OTHER_EXCEPTION;
@@ -308,9 +341,10 @@ public class HandlerChainProcessor {
       */
     private void callCloseHandlers(int start, int end,
                                    Direction direction) {
+        int i = start;
 
         if (direction == Direction.OUT) {
-            for (int i = start; i <= end; i++) {
+            for (; i <= end; i++) {
                 try {
                     switchContext(direction, i);
 					((Handler) handlers.get(i)).close(currentMC);
@@ -322,7 +356,7 @@ public class HandlerChainProcessor {
                 }
             }
         } else { // IN case
-            for (int i = start; i >= end; i--) {
+            for (; i >= end; i--) {
                 try {
                     switchContext(direction, i);
 					((Handler) handlers.get(i)).close(currentMC);
@@ -334,13 +368,10 @@ public class HandlerChainProcessor {
                 }
             }
         }
-	}
-    public void callHandlerCloseMethods(Direction direction) {
-        callCloseHandlers(0, handlers.size() - 1, direction);
     }
 
     /*
-      * callHandleFault is available for a server to use when the endpoint
+     * processFault is available for a server to use when the endpoint
       * throws an exception or a client when it gets a fault response message
       *
       * In both cases, all of the handlers have run successfully in the
@@ -451,6 +482,20 @@ public class HandlerChainProcessor {
 
 	}
     
+    /*
+     * utility method to re-initialize handlercontext so it picks up a changed 
+     * message under the org.apache.axis2.jaxws.core.MessageContext object
+     * 
+     * TODO: hopefully we can fix this so the message under the handler message context
+     * will grab it without us having to create new objects.
+     */
+    private void reInitContext() {
+        if (currentMC.getClass().isAssignableFrom(LogicalMessageContext.class))
+            currentMC = MessageContextFactory.createLogicalMessageContext(mc);
+        else
+            currentMC = MessageContextFactory.createSoapMessageContext(mc);
+    }
+
     private void initContext(Direction direction) {
         if (direction == Direction.OUT) {
             // logical context, then SOAP

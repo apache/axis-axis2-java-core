@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleExcepti
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
@@ -324,14 +325,14 @@ public class HandlerResolverImpl implements HandlerResolver {
     
     private static boolean chainResolvesToPort(HandlerChainType handlerChainType, PortInfo portinfo) {
         
-        boolean match = true;
-        
         List<String> protocolBindings = handlerChainType.getProtocolBindings();
         if (protocolBindings != null) {
+            boolean match = true;
             for (Iterator<String> it = protocolBindings.iterator() ; it.hasNext();) {
                 match = false;  // default to false in the protocol bindings until we find a match
                 String protocolBinding = it.next();
                 protocolBinding = protocolBinding.startsWith("##") ? protocolBindingsMap.get(protocolBinding) : protocolBinding;
+                // if the protocolBindingsMap returns null, it would mean someone has some nonsense ##binding
                 if ((protocolBinding != null) && (protocolBinding.equals(portinfo.getBindingID()))) {
                     match = true;
                     break;
@@ -342,11 +343,52 @@ public class HandlerResolverImpl implements HandlerResolver {
                 return match;
             }
         }
+
+        /*
+         * need to figure out how to get the namespace declaration out of the port-name-pattern and service-name-pattern
+         */
         
-        // TODO should continue on and check portnamepattern and servicenamepattern
-        String portNamePattern = handlerChainType.getPortNamePattern();
+        if (!doesPatternMatch(portinfo.getPortName(), handlerChainType.getPortNamePattern())) {
+                // we've checked the port-name-pattern, and didn't find a match, no need to continue
+                return false;
+        }
         
-        return match;
+        if (!doesPatternMatch(portinfo.getServiceName(), handlerChainType.getServiceNamePattern())) {
+                // we've checked the service-name-pattern, and didn't find a match, no need to continue
+                return false;
+        }
+
+        return true;
+    }
+    
+    /*
+     * A comparison routing to check service-name-pattern and port-name-pattern.  These patterns may be of
+     * the form:
+     * 
+     * 1)  namespace:localpart
+     * 2)  namespace:localpart*
+     * 3)  namespace:*    (not sure about this one)
+     * 4)  *   (which is equivalent to not specifying a pattern, therefore always matching)
+     * 
+     * I've not seen any examples where the wildcard may be placed mid-string or on the namespace, such as:
+     * 
+     * namespace:local*part
+     * *:localpart
+     * 
+     */
+    private static boolean doesPatternMatch(QName portInfoQName, QName pattern) {
+        if (pattern == null)
+            return true;
+        String portInfoString = portInfoQName.toString();
+        String patternString = pattern.toString();
+        if (patternString.equals("*"))
+            return true;
+        if (patternString.contains("*")) {
+            patternString = patternString.substring(0, patternString.length() - 1);
+            return portInfoString.startsWith(patternString);
+        }
+        return portInfoString.equals(patternString);
+        
     }
     
 }

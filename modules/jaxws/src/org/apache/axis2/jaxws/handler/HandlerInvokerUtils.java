@@ -75,11 +75,6 @@ public class HandlerInvokerUtils {
         	HandlerChainProcessor.convertToFaultMessage(msgCtx, re, proto);
             return false;
         }
-
-        if (success && mep.equals(HandlerChainProcessor.MEP.RESPONSE)) {
-            // inbound response must be client, and we were successful, so close handlers
-            processor.callHandlerCloseMethods(HandlerChainProcessor.Direction.IN);
-        }
         
         if (!success && mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
             // uh-oh.  We've changed directions on the server inbound handler processing,
@@ -129,11 +124,6 @@ public class HandlerInvokerUtils {
                 */
         	HandlerChainProcessor.convertToFaultMessage(msgCtx, re, proto);
             return false;
-        }
-
-        if (success && mep.equals(HandlerChainProcessor.MEP.RESPONSE)) {
-            // outbound response must be server, and we were successful, so close handlers
-            processor.callHandlerCloseMethods(HandlerChainProcessor.Direction.OUT);
         }
 
         if (!success && mep.equals(HandlerChainProcessor.MEP.REQUEST)) {

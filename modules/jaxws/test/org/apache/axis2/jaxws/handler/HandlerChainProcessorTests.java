@@ -245,7 +245,12 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.IN, HandlerChainProcessor.MEP.RESPONSE, true);
 
-		assertEquals("S2m:S1m:L1m:L2m:L2c:L1c:S1c:S2c:", result);
+                /*
+                 * since this is client inbound response, the original outbound invocation
+                 * would have been L2m:L1m:S1m:S2m, so the closes would be S2c:S1c:L1c:L2c
+                 */
+                
+		assertEquals("S2m:S1m:L1m:L2m:S2c:S1c:L1c:L2c:", result);
 
 	}
 	
@@ -324,7 +329,12 @@ public class HandlerChainProcessorTests extends TestCase {
 		
 		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
 
-		assertEquals("L2m:L1m:S1m:S2m:S2c:S1c:L1c:L2c:", result);
+                /*
+                 * since this is server outbound response, the original inbound invocation
+                 * would have been S2m:S1m:L1m:L2m, so the closes would be L2c:L1c:S1c:S2c
+                 */
+                
+		assertEquals("L2m:L1m:S1m:S2m:L2c:L1c:S1c:S2c:", result);
 	}
 	
 	/*
@@ -353,7 +363,13 @@ public class HandlerChainProcessorTests extends TestCase {
 		HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
 		
 		processor.processChain(new MessageContext(), HandlerChainProcessor.Direction.OUT, HandlerChainProcessor.MEP.RESPONSE, true);
-		assertEquals("L2m:L1m:S1m:S2m:S2c:S1c:L1c:L2c:", result);
+                
+                /*
+                 * since this is server outbound response, the original invocation
+                 * would have been S2m:S1m:L1m:L2m, so the closes would be L2c:L1c:S1c:S2c
+                 */
+                
+		assertEquals("L2m:L1m:S1m:S2m:L2c:L1c:S1c:S2c:", result);
 	}
 	
 	/*

@@ -34,6 +34,8 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler4;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
@@ -43,8 +45,8 @@ import org.test.addnumbershandler.AddNumbersHandlerResponse;
 public class AddNumbersHandlerTests extends TestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersHandlerService";
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersHandler() {
+    
+    public void testAddNumbersHandler() {
 		try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -93,8 +95,7 @@ public class AddNumbersHandlerTests extends TestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientHandler() {
+    public void testAddNumbersClientHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -127,8 +128,7 @@ public class AddNumbersHandlerTests extends TestCase {
     /*
      * uses a custom HandlerResolver instead of the default
      */
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientHandlerMyResolver() {
+    public void testAddNumbersClientHandlerMyResolver() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -210,7 +210,10 @@ public class AddNumbersHandlerTests extends TestCase {
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null)
                 handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler4());
+            handlers.add(new AddNumbersClientLogicalHandler3());
             handlers.add(new AddNumbersClientLogicalHandler());
+            
             p.getBinding().setHandlerChain(handlers);
 
             int total = proxy.addNumbersHandler(99,10);
@@ -224,8 +227,7 @@ public class AddNumbersHandlerTests extends TestCase {
         }
     }
     
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientHandlerAsync() {
+    public void testAddNumbersClientHandlerAsync() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
