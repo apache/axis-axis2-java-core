@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
+import org.apache.axis2.jaxws.handler.context.LogicalMessageContextTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
 import org.apache.axis2.jaxws.injection.ResourceInjectionTests;
 import org.apache.axis2.jaxws.lifecycle.EndpointLifecycleTests;
@@ -123,6 +124,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
         
+        // ------ Metadata Tests ------
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
@@ -130,7 +132,11 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ServiceTests.class);
         suite.addTestSuite(PortSelectionTests.class);
         
+        // ------ Handler Tests ------
+        suite.addTestSuite(LogicalMessageContextTests.class);
         suite.addTestSuite(HandlerChainProcessorTests.class);
+        
+        // ------ Message Tests ------
         suite.addTestSuite(JaxwsMessageBundleTests.class);
         
         suite.addTestSuite(StringProviderTests.class);
