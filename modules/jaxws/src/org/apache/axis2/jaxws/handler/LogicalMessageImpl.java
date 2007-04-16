@@ -18,9 +18,20 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.WebServiceException;
 
@@ -66,17 +77,19 @@ public class LogicalMessageImpl implements LogicalMessage {
         Object payload = null;
         try {
             Block block = message.getBodyBlock(context, factory);
-            payload = block.getBusinessObject(true);
+            Object content = block.getBusinessObject(true);
             
             // For now, we have to create a new Block from the original content
             // and set that back on the message.  The Block is not currently
             // able to create a copy of itself just yet.
-            Block cacheBlock = factory.createFrom(payload, context, block.getQName());
+            Payloads payloads = createPayloads(content);
+            
+            Block cacheBlock = factory.createFrom(payloads.CACHE_PAYLOAD, context, block.getQName());
             message.setBodyBlock(cacheBlock);
-        } catch (WebServiceException e) {
-            ExceptionFactory.makeWebServiceException(e);
+            
+            payload = payloads.HANDLER_PAYLOAD;
         } catch (XMLStreamException e) {
-            ExceptionFactory.makeWebServiceException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
         
         return payload;
@@ -108,4 +121,64 @@ public class LogicalMessageImpl implements LogicalMessage {
             message.setBodyBlock(block);
         }
     }
+
+    private Payloads createPayloads(Object content) {
+        if (content == null) {
+            return null;
+        }
+                
+        Payloads payloads = new Payloads();
+                
+        if (Source.class.isAssignableFrom(content.getClass())) {
+            try {
+                Transformer trans = TransformerFactory.newInstance().newTransformer();
+                        
+                // First we have to get the content out of the original
+                // Source object so we can build the cache from there.
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                StreamResult result = new StreamResult(baos);
+                        
+                Source source = (Source) content;
+                trans.transform(source, result);
+                trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                byte[] bytes = baos.toByteArray();
+                        
+                // Given that we've consumed the original Source object, 
+                // we need to create another one with the original content
+                // and assign it back.
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                payloads.HANDLER_PAYLOAD = new StreamSource(bais);
+                        
+                // We need a different byte[] for the cache so that we're not just
+                // building two Source objects that point to the same array.
+                byte[] cacheBytes = new byte[bytes.length];
+                System.arraycopy(bytes, 0, cacheBytes, 0, bytes.length);
+
+                // Now build the Soure object for the cache.
+                ByteArrayInputStream cacheBais = new ByteArrayInputStream(cacheBytes);
+                payloads.CACHE_PAYLOAD = new StreamSource(cacheBais);
+            } catch (TransformerConfigurationException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            } catch (TransformerFactoryConfigurationError e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            } catch (TransformerException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+        } else {
+            // no cache implemented yet
+            payloads.HANDLER_PAYLOAD = content;
+            payloads.CACHE_PAYLOAD = content;
+        }
+
+        return payloads;
+    }
+            
+    /*
+     * A simple holder for the different payload objects.
+     */
+    class Payloads {
+        Object HANDLER_PAYLOAD;    // The payload object that will be returned to the handler
+        Object CACHE_PAYLOAD;      // The payload object that will be used for the cache
+    }    
+
 }

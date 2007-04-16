@@ -122,6 +122,29 @@ public class LogicalMessageContextTests extends TestCase {
     }
     
     /**
+     * Test to make sure we can get the payload multiple times from the same LogicalMessage.
+     * @throws Exception
+     */
+    public void testGetMultiplePayloadsAsSource() throws Exception {
+        LogicalMessageContext lmc = createSampleContext();
+
+        LogicalMessage msg = lmc.getMessage();
+        assertTrue("The returned LogicalMessage was null", msg != null);
+
+        int loopCount = 3;
+        for (int i = 0; i < loopCount; ++i) {
+            Source payload = msg.getPayload();
+            assertTrue("Attempt number "  + i + " to get the payload (Source) was null", payload != null);
+
+
+            String resultContent = _getStringFromSource(payload);
+            assertTrue("The content returned in loop " + i + " was null", resultContent != null);
+            assertTrue("The content returned in loop " + i + " was incomplete, unexpected element", resultContent.indexOf("echoString") > -1);
+            assertTrue("The content returned in loop " + i + " was incomplete, unexpected content", resultContent.indexOf(INPUT) > -1);            
+        }
+    }
+    
+    /**
      * Tests the setting of the payload when the original content is a fault.
      * @throws Exception
      */
