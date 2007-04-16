@@ -217,8 +217,7 @@ public class HandlerResolverImpl implements HandlerResolver {
 
     private static Class loadClass(String clazz) throws ClassNotFoundException {
         try {
-            // TODO: review:  necessary to use static method getSystemClassLoader in this class?
-            return forName(clazz, true, ClassLoader.getSystemClassLoader());
+            return forName(clazz, true, getContextClassLoader());
         } catch (ClassNotFoundException e) {
             throw e;
         }
@@ -253,14 +252,14 @@ public class HandlerResolverImpl implements HandlerResolver {
 
 
     /** @return ClassLoader */
-    private static ClassLoader getSystemClassLoader() {
+    private static ClassLoader getContextClassLoader() {
         // NOTE: This method must remain private because it uses AccessController
         ClassLoader cl = null;
         try {
             cl = (ClassLoader)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return ClassLoader.getSystemClassLoader();
+                            return Thread.currentThread().getContextClassLoader();
                         }
                     }
             );
@@ -268,7 +267,7 @@ public class HandlerResolverImpl implements HandlerResolver {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
-            throw (RuntimeException)e.getException();
+            throw ExceptionFactory.makeWebServiceException(e.getException());
         }
 
         return cl;
