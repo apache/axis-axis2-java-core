@@ -317,7 +317,6 @@ public class AntCodegenTask extends Task {
                     false);
 
             Thread.currentThread().setContextClassLoader(cl);
-            cl.addPathElement(output);
 
             Map commandLineOptions = this.fillOptionMap();
             CommandLineOptionParser parser =
