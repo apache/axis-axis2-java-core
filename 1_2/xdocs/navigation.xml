@@ -18,7 +18,7 @@
 			<item name="Tools" href="tools/index.html" />
 		</menu>
 		<menu name="Documentation">
-			<item name="Version @axi2_version@" href="/@axis2_version_dir@/contents.html" >
+			<item name="Version 1.2" href="/@axis2_version_dir@/contents.html" >
 			   <item name="Table of Contents" href="@axis2_version_dir@/toc.html" />
 			   <item name="Installation Guide" href="@axis2_version_dir@/installationguide.html" />
 			   <item name="QuickStart Guide" href="@axis2_version_dir@/quickstartguide.html" />
@@ -40,7 +40,7 @@
 		<item name="Articles" href="articles.html" />
 		<item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
 			<item name="Reference Library" href="refLib.html" />
-			<item name="Online Java Docs" href="http://ws.apache.org/axis2/1_1/api/index.html" />
+			<item name="Online Java Docs" href="http://ws.apache.org/axis2/@axis2_version_dir@/api/index.html" />
 		</menu>
 		<menu name="Get Involved" href="overview.html">
 		<item name="Overview" href="overview.html" />
