@@ -176,7 +176,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                     break;
                 case CommandType.APPLY_POLICY:
                     event.setServiceGroupName(command.getServiceGroupName());
-                    event.setPolicyId(command.getPolicy());
+                    event.setPolicy(command.getPolicy());
                     configurationManager.notifyListeners(commandType, event);
                     break;
                 case CommandType.PREPARE:

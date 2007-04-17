@@ -110,7 +110,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		assertNotNull(event);
 		assertEquals(event.getServiceGroupNames(), serviceGroupName);
-		assertEquals(event.getPolicyId(), policyID);
+		assertEquals(event.getPolicy(), policyID);
 		
     }
     

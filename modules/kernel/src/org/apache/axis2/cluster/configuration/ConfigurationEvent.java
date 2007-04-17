@@ -21,7 +21,7 @@ public class ConfigurationEvent {
 	private String[] serviceGroupNames;
     private String serviceGroupName;
 	private int configurationType;
-	private String policyId;
+	private String policy;
 	
 	public String[] getServiceGroupNames() {
 		return serviceGroupNames;
@@ -47,12 +47,12 @@ public class ConfigurationEvent {
 		this.configurationType = configurationType;
 	}
 
-	public String getPolicyId() {
-		return policyId;
+	public String getPolicy() {
+		return policy;
 	}
 
-	public void setPolicyId(String policyId) {
-		this.policyId = policyId;
+	public void setPolicy(String policy) {
+		this.policy = policy;
 	}
 	
 }
