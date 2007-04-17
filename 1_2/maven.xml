@@ -897,7 +897,10 @@
 
 	<ant:filter filtersfile="xdocs-original/dynamic-labels.properties" />
         <ant:copy toDir="xdocs" filtering="on" overwrite="true" >
-            <ant:fileset dir="xdocs-original"/>
+            <ant:fileset dir="xdocs-original">
+            <ant:exclude name="images/**"/>
+            <ant:exclude name="@axis2_version_dir@/images/**"/>
+            </ant:fileset>
         </ant:copy>
 
 	<ant:move toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
@@ -913,6 +916,7 @@
         </ant:copy>
 	<!-- Delete the backup of xdocs folder. @see preGoal name="site" -->
 	<ant:delete dir="xdocs-original"/>
+       <ant:delete dir="target/docs/@axis2_version_dir@"/>
     </postGoal>
 	
     <goal name="dist-docs" prereqs="init-dist, javadocs">
