@@ -177,6 +177,15 @@
     <reports/>
     <!-- add the build properties-->
     <build>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/*JSONDataSourceTest.java</exclude>
+            </excludes>
+        </unitTest>
         <resources>
             <resource>
                 <directory>src</directory>
@@ -187,14 +196,14 @@
                     <include>**/*.xsd</include>
                 </includes>
             </resource>
-	    <resource>
-            <directory>../../</directory>
-            <targetPath>META-INF</targetPath>
-            <includes>
-                <include>NOTICE.txt</include>
-                <include>LICENSE.txt</include>
-            </includes>
-       </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+           </resource>
         </resources>
     </build>
 </project>
