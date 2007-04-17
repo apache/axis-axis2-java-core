@@ -510,7 +510,7 @@
                         </xsl:when>
                         <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
-                           if ( !AXIS2_STRCMP( attrib_text, "TRUE") || !AXIS2_STRCMP( attrib_text, "true") )
+                           if ( !axutil_strcmp( attrib_text, "TRUE") || !axutil_strcmp( attrib_text, "true") )
                            {
                                <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>,
                                                           env, AXIS2_TRUE);
