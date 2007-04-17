@@ -30,7 +30,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
 
     @Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
-        return null;
+        Endpoint ep = new EndpointImpl(obj);
+        ep.publish(s);
+        return ep;
     }
 
     @Override

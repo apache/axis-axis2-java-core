@@ -37,6 +37,14 @@ public class BasicEndpointTests extends TestCase {
         assertTrue("The endpoint was not published successfully", ep.isPublished());
     }
     
+    public void testCreateAndPublishEndpoint() {
+        SampleEndpoint sample = new SampleEndpoint();
+
+        Endpoint ep = Endpoint.publish("test" , sample);
+        assertTrue("The returned Endpoint instance was null", ep != null);
+        assertTrue("The endpoint was not published successfully", ep.isPublished());
+    }
+    
     public void testGetBinding() throws Exception {
         SampleEndpoint sample = new SampleEndpoint();
 
