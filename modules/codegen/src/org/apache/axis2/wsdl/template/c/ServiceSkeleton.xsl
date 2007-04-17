@@ -170,7 +170,7 @@
                 <xsl:variable name="outputCapsType"><xsl:value-of select="output/param/@caps-type"/> </xsl:variable>
                 <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
 
-                if ( AXIS2_STRCMP(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
+                if ( axutil_strcmp(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
                 {
                     <xsl:for-each select="input/param[@type!='']">
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
