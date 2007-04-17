@@ -182,9 +182,7 @@
             <includes>
                 <include>**/*Test.java</include>
             </includes>
-            <excludes>
-                <exclude>**/*JSONDataSourceTest.java</exclude>
-            </excludes>
+        
         </unitTest>
         <resources>
             <resource>

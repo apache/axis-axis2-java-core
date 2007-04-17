@@ -15,19 +15,20 @@
  */
 package org.apache.axis2.json;
 
-import org.apache.axiom.om.util.StAXUtils;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.json.JSONException;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.om.util.StAXUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.xml.sax.SAXException;
 
 public class JSONDataSourceTest extends XMLTestCase {
 
