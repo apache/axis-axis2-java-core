@@ -17,6 +17,8 @@
 package org.apache.axis2.clustering.configuration;
 
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
@@ -24,6 +26,10 @@ import org.apache.axis2.clustering.ClusterManagerTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
+
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 
 
 public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCase {
@@ -73,7 +79,7 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		assertEquals(event.getServiceGroupNames(), serviceGroupName);
     }
     
-    public void testApplyPolicy () throws ClusteringFault {
+    public void testApplyPolicy () throws ClusteringFault, XMLStreamException {
     	
     	configurationManagerListener2.clearEventList();
     	
@@ -82,8 +88,15 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     	
     	Policy policy = new Policy ();
     	policy.setId(policyID);
-    	
-    	clusterManager1.getConfigurationManager().applyPolicy (serviceGroupName,policy);
+
+        StringWriter writer = new StringWriter();
+        XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(writer);
+
+        policy.serialize(xmlStreamWriter);
+        xmlStreamWriter.flush();
+        
+        clusterManager1.getConfigurationManager().applyPolicy (serviceGroupName,writer.toString());
     	
     	try {
 			Thread.sleep(3000);
