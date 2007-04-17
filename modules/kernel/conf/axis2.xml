@@ -283,6 +283,16 @@
         <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
+            <handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+
+            <handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
@@ -304,7 +314,7 @@
 
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="Dispatch"/>
+                <order phase="PostDispatch"/>
             </handler>
         </phase>
         <!--  System predefined phases       -->
