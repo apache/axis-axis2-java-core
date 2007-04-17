@@ -89,7 +89,7 @@ public class GorillaDLWProxyTests extends TestCase {
            
             String response = proxy.echoString(request);
             assertTrue(response != null);
-            assert(response.equals(request));
+            assertEquals(response, request);
             
         }catch(Exception e){ 
             e.printStackTrace(); 

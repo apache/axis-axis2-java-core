@@ -139,7 +139,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             } else {
                 // We should not get here
                 TestLogger.logger.debug("Unknown Type of Message");
-                assert(false);
+                assertTrue(false);
             }
             
             // Write out the Message
@@ -163,21 +163,21 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
      * @return SOAPElement representing the data element
      */
     private SOAPElement assertRequestXML(SOAPMessage msg) throws Exception {
-        assert(msg != null);
+        assertTrue(msg != null);
         SOAPBody body = msg.getSOAPBody();
-        assert(body != null);
+        assertTrue(body != null);
         
         Node invokeElement = (Node) body.getFirstChild();
-        assert(invokeElement instanceof SOAPElement);
-        assert(SoapMessageProvider.REQUEST_NAME.equals(invokeElement.getLocalName()));
+        assertTrue(invokeElement instanceof SOAPElement);
+        assertTrue(SoapMessageProvider.REQUEST_NAME.equals(invokeElement.getLocalName()));
         
         Node discElement = (Node) invokeElement.getFirstChild();
-        assert(discElement instanceof SOAPElement);
-        assert(SoapMessageProvider.REQUEST_DATA_NAME.equals(discElement.getLocalName()));
+        assertTrue(discElement instanceof SOAPElement);
+        assertTrue(SoapMessageProvider.REQUEST_DATA_NAME.equals(discElement.getLocalName()));
         
         String text = discElement.getValue();
-        assert(text != null);
-        assert(text.length() > 0);
+        assertTrue(text != null);
+        assertTrue(text.length() > 0);
         TestLogger.logger.debug("Request Message Type is:" + text);
         
         return (SOAPElement) discElement;
@@ -193,11 +193,11 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         SOAPMessage response;
         
         // Transport header check
-        assert(request.getContentDescription() != null);
-        assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
+        assertTrue(request.getContentDescription() != null);
+        assertTrue(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
 
         // Additional assertion checks
-        assert(countAttachments(request) == 0);
+        assertTrue(countAttachments(request) == 0);
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -220,7 +220,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
        
 
         // Additional assertion checks
-        assert(countAttachments(request) == 0);
+        assertTrue(countAttachments(request) == 0);
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -239,11 +239,11 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         SOAPMessage response;
         
         // Additional assertion checks
-        assert(countAttachments(request) == 1);
+        assertTrue(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
         StreamSource contentSS = (StreamSource) requestAP.getContent();
         String content = getAsString(contentSS);
-        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+        assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -269,11 +269,11 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
 
         TestLogger.logger.debug("Received MTOM Message");
         // Additional assertion checks
-        assert(countAttachments(request) == 1);
+        assertTrue(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
         StreamSource contentSS = (StreamSource) requestAP.getContent();
         String content = getAsString(contentSS);
-        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+        assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
 
         TestLogger.logger.debug("The MTOM Request Message appears correct.");
         
@@ -301,12 +301,12 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         SOAPMessage response;
         
         // Additional assertion checks
-        assert(countAttachments(request) == 1);
+        assertTrue(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
-        assert(requestAP.getContentId().equals(ID));
+        assertTrue(requestAP.getContentId().equals(ID));
         StreamSource contentSS = (StreamSource) requestAP.getContent();
         String content = getAsString(contentSS);
-        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+        assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -358,7 +358,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     private int countAttachments(SOAPMessage msg) {
         Iterator it = msg.getAttachments();
         int count = 0;
-        assert(it != null);
+        assertTrue(it != null);
         while (it.hasNext()) {
             it.next();
             count++;
@@ -374,5 +374,11 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         transformer.transform(ss, result); 
         String text = new String(out.toByteArray());
         return text;
+    }
+    
+    private void assertTrue(boolean testAssertion) {
+        if (!testAssertion) {
+            throw new RuntimeException("Assertion false");
+        }
     }
 }

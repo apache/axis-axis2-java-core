@@ -118,8 +118,8 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         	SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
-            assert(response.getContentDescription() != null);
-            assert(response.getContentDescription().equals(SoapMessageProvider.XML_RESPONSE));
+            assertNotNull(response.getContentDescription());
+            assertEquals(SoapMessageProvider.XML_RESPONSE, response.getContentDescription());
             
             // Check assertions and get the data element
             SOAPElement dataElement = assertResponseXML(response, SoapMessageProvider.XML_RESPONSE);
@@ -398,7 +398,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             String content = SoapMessageProvider.getAsString(contentSS);
             assertTrue(content != null);
             assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
-            assert(attachmentPart.getContentId().equals(SoapMessageProvider.ID));
+            assertEquals(SoapMessageProvider.ID, attachmentPart.getContentId());
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
@@ -433,12 +433,12 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         assertTrue(body != null);
         
         Node invokeElement = (Node) body.getFirstChild();
-        assert(invokeElement instanceof SOAPElement);
-        assert(SoapMessageProvider.RESPONSE_NAME.equals(invokeElement.getLocalName()));
+        assertTrue(invokeElement instanceof SOAPElement);
+        assertEquals(SoapMessageProvider.RESPONSE_NAME, invokeElement.getLocalName());
         
         Node dataElement = (Node) invokeElement.getFirstChild();
-        assert(dataElement instanceof SOAPElement);
-        assert(SoapMessageProvider.RESPONSE_DATA_NAME.equals(dataElement.getLocalName()));
+        assertTrue(dataElement instanceof SOAPElement);
+        assertEquals(SoapMessageProvider.RESPONSE_DATA_NAME, dataElement.getLocalName());
         
         // TODO AXIS2 SAAJ should (but does not) support the getTextContent();
         // String text = dataElement.getTextContent();
@@ -456,7 +456,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     private int countAttachments(SOAPMessage msg) {
         Iterator it = msg.getAttachments();
         int count = 0;
-        assert(it != null);
+        assertTrue(it != null);
         while (it.hasNext()) {
             it.next();
             count++;

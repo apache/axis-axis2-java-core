@@ -62,7 +62,7 @@ public class RPCLitImpl implements RPCLit {
      * Echo the input
      */
     public String testSimple(String simpleIn) {
-        assert(simpleIn != null);  // According to JAX-WS an RPC service should never receive a null
+        assertTrue(simpleIn != null);  // According to JAX-WS an RPC service should never receive a null
         
         // Test to ensure that returning null causes the proper exception 
         if (simpleIn.contains("returnNull")) {
