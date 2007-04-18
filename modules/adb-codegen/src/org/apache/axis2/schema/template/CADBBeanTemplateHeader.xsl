@@ -24,7 +24,7 @@
 
         #include &lt;stdio.h&gt;
         #include &lt;axiom.h&gt;
-        #include &lt;axutil_utils.h&gt;
+        #include &lt;axis2_util.h&gt;
         #include &lt;axiom_soap.h&gt;
         #include &lt;axis2_client.h&gt;
 
@@ -77,10 +77,10 @@
           </xsl:if>
         </xsl:for-each>
         <!--include special headers-->
-        <xsl:if test="property/@type='axis2_date_time_t*'">
+        <xsl:if test="property/@type='axutil_date_time_t*'">
           #include &lt;axutil_date_time.h&gt;
         </xsl:if>
-        <xsl:if test="property/@type='axis2_base64_binary_t*'">
+        <xsl:if test="property/@type='axutil_base64_binary_t*'">
           #include &lt;axutil_base64_binary.h&gt;
         </xsl:if>
 
@@ -131,7 +131,7 @@
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
             <xsl:choose>
-                <xsl:when test="@isarray">axis2_array_list_t*</xsl:when>
+                <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                 <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
