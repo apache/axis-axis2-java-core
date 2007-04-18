@@ -127,6 +127,9 @@ public class AxisMessage extends AxisDescription {
                             XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
                             xmlSchemaElement = getSchemaElement(schema1);
                         }
+                        if (xmlSchemaElement != null){
+                            break;
+                        }
                     }
                 }
             }
