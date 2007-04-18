@@ -144,7 +144,7 @@
             <xsl:for-each select="property">
              <!-- please check all the freeing thing below -->
              <!--<xsl:if test="@isarray or not(@type='short' or @type='int' or @type='char' or @type='long' or @type='double' or @type='float' or @type='axis2_bool_t')">-->
-             <xsl:if test="@isarray or @ours or @type='axis2_char_t*' or @type='axis2_qname_t*' or @type='axis2_uri_t*' or @type='axis2_date_time_t*' or @type='axis2_base64_binary_t*'">
+             <xsl:if test="@isarray or @ours or @type='axis2_char_t*' or @type='axutil_qname_t*' or @type='axutil_uri_t*' or @type='axutil_date_time_t*' or @type='axutil_base64_binary_t*'">
               <xsl:variable name="propertyType">
                  <xsl:choose>
                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
@@ -231,19 +231,19 @@
                     axiom_node_free_tree ( <xsl:value-of select="$attriName"/>, env );
                    </xsl:when>
 
-                   <xsl:when test="$nativePropertyType='axis2_qname_t*'">
+                   <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                     axutil_qname_free( <xsl:value-of select="$attriName"/>, env );
                    </xsl:when>
 
-                   <xsl:when test="$nativePropertyType='axis2_uri_t*'">
+                   <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                     axutil_uri_free( <xsl:value-of select="$attriName"/>, env );
                    </xsl:when>
 
-                   <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                   <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                     axutil_date_time_free( <xsl:value-of select="$attriName"/>, env );
                    </xsl:when>
 
-                   <xsl:when test="$propertyType='axis2_base64_binary_t*'">
+                   <xsl:when test="$propertyType='axutil_base64_binary_t*'">
                     axutil_base64_binary_free ( <xsl:value-of select="$attriName"/>, env );
                    </xsl:when>
 
@@ -317,7 +317,7 @@
                axiom_node_t *tmp_node = NULL;
             </xsl:if>
             <!-- these two are requried -->
-            <xsl:if test="property/@ours or (property/@isarray and (property/@type='short' or property/@type='int' or property/@type='char' or property/@type='long' or property/@type='float' or property/@type='double')) or property/@type='axis2_date_time_t*' or property/@type='axis2_base64_binary_t*'">
+            <xsl:if test="property/@ours or (property/@isarray and (property/@type='short' or property/@type='int' or property/@type='char' or property/@type='long' or property/@type='float' or property/@type='double')) or property/@type='axutil_date_time_t*' or property/@type='axutil_base64_binary_t*'">
                void *element = NULL;
             </xsl:if>
              axis2_char_t* text_value = NULL;
@@ -498,13 +498,13 @@
                         </xsl:when>
 
                         <!-- add axis2_qname_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_qname_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>,
                                                           env, axutil_qname_create_from_string( env, attrib_text));
                         </xsl:when>
 
                         <!-- add axis2_uri_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_uri_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>,
                                                           env, axutil_uri_parse_string( env, attrib_text));
                         </xsl:when>
@@ -522,15 +522,15 @@
                            }
                         </xsl:when>
                         <!-- add date_time_t* s -->
-                        <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                            element = (void*)axutil_date_time_create( env);
-                           axutil_date_time_deserialize_date_time( (axis2_date_time_t*)element, env,
+                           axutil_date_time_deserialize_date_time( (axutil_date_time_t*)element, env,
                                                                       attrib_text);
                            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>,
                                                           env, ( <xsl:value-of select="$nativePropertyType"/>)element);
                         </xsl:when>
                         <!-- add hex_binary_t* s -->
-                        <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                            element = (void*)axutil_base64_binary_create( env);
                            axutil_base64_binary_set_encoded_binary( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
                                                                       attrib_text);
@@ -809,10 +809,10 @@
                                              </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:when>
-                                    <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                                    <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                                       element = (void*)axutil_date_time_create( env);
                                       text_value = axiom_element_get_text(current_element, env, current_node );
-                                      status = axutil_date_time_deserialize_date_time( (axis2_date_time_t*)element, env,
+                                      status = axutil_date_time_deserialize_date_time( (axutil_date_time_t*)element, env,
                                                                       text_value);
                                       if( AXIS2_FAILURE ==  status)
                                       {
@@ -824,10 +824,10 @@
                                       status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>, env,
                                                                    ( <xsl:value-of select="$nativePropertyType"/>)element);
                                     </xsl:when>
-                                    <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
+                                    <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                                       element = (void*)axutil_base64_binary_create( env);
                                       text_value = axiom_element_get_text(current_element, env, current_node );
-                                      status = axutil_base64_binary_set_encoded_binary( (axis2_base64_binary_t*)element, env,
+                                      status = axutil_base64_binary_set_encoded_binary( (axutil_base64_binary_t*)element, env,
                                                                       text_value);
                                       if( AXIS2_FAILURE ==  status)
                                       {
@@ -973,10 +973,10 @@
                                              axutil_array_list_add_at( arr_list, env, i, (void*)AXIS2_FALSE);
                                           }
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                                        <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                                           element = (void*)axutil_date_time_create( env);
                                           text_value = axiom_element_get_text(current_element, env, current_node );
-                                          status = axutil_date_time_deserialize_date_time( (axis2_date_time_t*)element, env,
+                                          status = axutil_date_time_deserialize_date_time( (axutil_date_time_t*)element, env,
                                                                           text_value);
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -987,7 +987,7 @@
                                           }
                                           axutil_array_list_add_at( arr_list, env, i, element);
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
+                                        <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                                           element = (void*)axutil_base64_binary_create( env);
                                           text_value = axiom_element_get_text(current_element, env, current_node );
                                           status = axutil_base64_binary_set_encoded_binary( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
@@ -1128,10 +1128,10 @@
                                              axutil_array_list_add_at( arr_list, env, i, (void*)AXIS2_FALSE);
                                           }
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                                        <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                                           element = (void*)axutil_date_time_create( env);
                                           text_value = axiom_element_get_text(current_element, env, current_node );
-                                          status = axutil_date_time_deserialize_date_time( (axis2_date_time_t*)element, env,
+                                          status = axutil_date_time_deserialize_date_time( (axutil_date_time_t*)element, env,
                                                                           text_value);
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -1142,7 +1142,7 @@
                                           }
                                           axutil_array_list_add_at( arr_list, env, i, element);
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
+                                        <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                                           element = (void*)axutil_base64_binary_create( env);
                                           text_value = axiom_element_get_text(current_element, env, current_node );
                                           status = axutil_base64_binary_set_encoded_binary( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
@@ -1214,7 +1214,7 @@
             <xsl:for-each select="property">
                 <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
                 <xsl:choose>
-                    <xsl:when test="not(@type) or (@ours='yes' and (@type='uri' or @type='qname' or @type='date_time' or @type='base64_binary' or @type='char')) or @type='char' or @type='axis2_char_t*' or @type='axis2_base64_binary_t*' or @type='axis2_date_time_t*'">
+                    <xsl:when test="not(@type) or (@ours='yes' and (@type='uri' or @type='qname' or @type='date_time' or @type='base64_binary' or @type='char')) or @type='char' or @type='axis2_char_t*' or @type='axutil_base64_binary_t*' or @type='axutil_date_time_t*'">
                     axis2_char_t *text_value_<xsl:value-of select="$position"/>;
                     </xsl:when>
                     <xsl:otherwise>
@@ -1402,14 +1402,14 @@
                         </xsl:when>
 
                         <!-- add axis2_uri_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_uri_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            text_value = axutil_uri_to_string(<xsl:value-of select="$attriName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                         </xsl:when>
 
                         <!-- add axis2_qname_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_qname_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                            text_value = AXIS2_QNAME_TO_STRING(<xsl:value-of select="$attriName"/>, env);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
@@ -1423,13 +1423,13 @@
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                         </xsl:when>
                         <!-- add axis2_date_time_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                            text_value =  axutil_date_time_serialize_date_time( <xsl:value-of select="$attriName"/>, env);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                         </xsl:when>
                         <!-- add axis2_base64_binary_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                            text_value =  axutil_base64_binary_get_encoded_binary( <xsl:value-of select="$attriName"/>, env);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
@@ -1587,7 +1587,7 @@
                         </xsl:when>
 
                         <!-- add axis2_uri_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_uri_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            text_value_<xsl:value-of select="$position"/> = axutil_uri_to_string(<xsl:value-of select="$attriName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
@@ -1595,7 +1595,7 @@
                         </xsl:when>
 
                         <!-- add axis2_qname_t s -->
-                        <xsl:when test="$nativePropertyType='axis2_qname_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                            text_value_<xsl:value-of select="$position"/> = AXIS2_QNAME_TO_STRING(<xsl:value-of select="$attriName"/>, env);
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
@@ -1616,14 +1616,14 @@
                            axiom_node_add_child( current_node, env, <xsl:value-of select="$attriName"/>);
                         </xsl:when>
 
-                        <xsl:when test="$nativePropertyType='axis2_date_time_t*'">
+                        <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                           text_value_<xsl:value-of select="$position"/> = axutil_date_time_serialize_date_time( <xsl:value-of select="$attriName"/>, env);
                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
-                        <xsl:when test="$propertyType='axis2_base64_binary_t*'">
+                        <xsl:when test="$propertyType='axutil_base64_binary_t*'">
                           text_value_<xsl:value-of select="$position"/> =axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$attriName"/>, env);
                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
