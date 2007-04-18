@@ -69,11 +69,11 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         boolean syncFlagPresent =
                 (loadOption(WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION,
                             WSDL2JavaConstants.CODEGEN_SYNC_ONLY_OPTION_LONG, optionMap) != null);
-        if (asyncFlagPresent) {
+        if (asyncFlagPresent && !syncFlagPresent) {
             config.setAsyncOn(true);
             config.setSyncOn(false);
         }
-        if (syncFlagPresent) {
+        if (syncFlagPresent && !asyncFlagPresent) {
             config.setAsyncOn(false);
             config.setSyncOn(true);
         }
