@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client.dispatch;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
@@ -112,7 +113,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -183,7 +184,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -237,7 +238,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -302,7 +303,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -435,20 +436,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
         // but only in PAYLOAD mode per JAX-WS Section 4.3.2.
         if (!bindingId.equals(HTTPBinding.HTTP_BINDING)) {
             if (mode.equals(Mode.MESSAGE) && object == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchNullParamMessageMode");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchNullParamMessageMode"));
             }
         } else {
             // In all cases (PAYLOAD and MESSAGE) we must throw a WebServiceException
             // if the parameter is null.
             if (object == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchNullParamHttpBinding");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchNullParamHttpBinding"));
             }
         }
 
         if (object instanceof DOMSource) {
             DOMSource ds = (DOMSource)object;
             if (ds.getNode() == null && ds.getSystemId() == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchBadDOMSource");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchBadDOMSource"));
             }
         }
 
