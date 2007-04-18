@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.util.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -25,6 +26,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -42,10 +45,20 @@ import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
 import java.util.Iterator;
+import java.io.ByteArrayOutputStream;
 
 /** SAAJConverterImpl Provides an conversion methods between OM<->SAAJ */
 public class SAAJConverterImpl implements SAAJConverter {
+
+    private static final Log log = LogFactory.getLog(SAAJConverterImpl.class);
 
     /** Constructed via SAAJConverterFactory */
     SAAJConverterImpl() {
@@ -113,10 +126,26 @@ public class SAAJConverterImpl implements SAAJConverter {
         //   b) add a method signature to allow the caller to request build or no build
         //   c) add a method signature to allow the caller to enable/disable caching
         //   d) possibly add an optimization to use OMSE for the body elements...to flatten the tree.
-        omEnvelope.build();
+        try {
+            omEnvelope.build();
+        } catch (OMException ex){
+            log.info("Got OMException for [" + toString(saajEnvelope) + "]");
+            throw ex;
+        }
         return omEnvelope;
     }
 
+    private String toString(SOAPEnvelope saajEnvelope) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Transformer tf;
+        try {
+            tf = TransformerFactory.newInstance().newTransformer();
+            tf.transform(new DOMSource(saajEnvelope.getOwnerDocument()), new StreamResult(baos));
+        } catch (TransformerException e) {
+            log.info(e);
+        }
+        return new String(baos.toByteArray());
+    }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPElement)
