@@ -22,6 +22,45 @@
                java method -->
         /**
          * Auto generated method signature
+         <xsl:choose>
+            <xsl:when test="$isbackcompatible = 'true'">
+                <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                <xsl:choose>
+                    <xsl:when test="$inputcount=1">
+                        <!-- should provide the inter complex type to method signature if is available -->
+                        <xsl:variable name="inputComplexType" select="input/param[@location='body' and @type!='']/@complextype"/>
+                        <xsl:choose>
+                            <xsl:when test="string-length(normalize-space($inputComplexType)) > 0">
+                               * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                               * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                  <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                    <xsl:choose>
+                        <xsl:when test="$inputcount=1">
+                            <!-- Even when the parameters are 1 we have to see whether we have the
+                          wrapped parameters -->
+                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                            <xsl:choose>
+                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                   <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                        * @param<xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                    </xsl:for-each>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    * @param<xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                    </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
          */
 
         <xsl:choose>
