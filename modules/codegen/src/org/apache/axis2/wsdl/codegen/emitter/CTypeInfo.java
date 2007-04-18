@@ -57,22 +57,22 @@ public class CTypeInfo extends Constants {
 
         //Qname maps to  jax rpc QName class
         CTypeInfo.addTypemapping(XSD_QNAME,
-                                 "axis2_qname_t*");
+                                 "axutil_qname_t*");
 
         //xsd Date is mapped to the java.util.date!
         CTypeInfo.addTypemapping(XSD_DATE,
-                                 "axis2_date_time_t*");
+                                 "axutil_date_time_t*");
 
         // Mapping for xsd:time.  Map to Axis type Time
         CTypeInfo.addTypemapping(XSD_TIME,
-                                 "axis2_date_time_t*");
+                                 "axutil_date_time_t*");
         CTypeInfo.addTypemapping(XSD_DATETIME,
-                                 "axis2_date_time_t*");
+                                 "axutil_date_time_t*");
 
         //as for the base 64 encoded binary stuff we map it to a javax.
         // activation.Datahandler object
         CTypeInfo.addTypemapping(XSD_BASE64,
-                                 "axis2_base64_binary_t*");
+                                 "axutil_base64_binary_t*");
 
         CTypeInfo.addTypemapping(XSD_HEXBIN,
                                  "void*");
@@ -169,7 +169,7 @@ public class CTypeInfo extends Constants {
 
         // a xsd:anyURI
         CTypeInfo.addTypemapping(XSD_ANYURI,
-                                 "axis2_uri_t*");
+                                 "axutil_uri_t*");
 
 
     }
