@@ -179,8 +179,7 @@ advised to send smaller binary attachments using base64encoding
         // Creating the Data Handler for the file.  Any implementation of
         // javax.activation.DataSource interface can fit here.
         javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("SomeFile"));
-        DataHandler dataHandler = new DataHandler(dataSource);
-
+      
         //create an OMText node with the above DataHandler and set optimized to true
         OMText textData = <strong>fac.createOMText(dataHandler, true);</strong>
 
