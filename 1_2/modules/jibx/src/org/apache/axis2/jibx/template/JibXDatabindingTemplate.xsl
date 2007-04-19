@@ -286,7 +286,7 @@
       
     </xsl:choose>
           } catch (org.jibx.runtime.JiBXException e) {
-              throw new org.apache.axis2.AxisFault(e);
+              throw org.apache.axis2.AxisFault.makeFault(e);
           }
           return envelope;
       }
@@ -690,7 +690,7 @@
             } else if (ex instanceof java.rmi.RemoteException) {
                 throw (java.rmi.RemoteException)ex;
             } else {
-                throw new org.apache.axis2.AxisFault(ex);
+                throw org.apache.axis2.AxisFault.makeFault(ex);
             }
         }
     
@@ -899,7 +899,7 @@
         <xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
       </xsl:when>
       <xsl:when test="@form='complex'">
-        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(new <xsl:value-of select="@create-type"/>(), uctx)
+        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(<xsl:choose><xsl:when test="string-length(normalize-space(@create-type)) = 0">null</xsl:when><xsl:otherwise>new <xsl:value-of select="@create-type"/>()</xsl:otherwise></xsl:choose>, uctx)
       </xsl:when>
     </xsl:choose>
   </xsl:template>

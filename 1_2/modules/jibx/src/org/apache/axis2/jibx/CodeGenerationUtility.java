@@ -311,7 +311,7 @@ public class CodeGenerationUtility {
             }
 
             // make sure classes will be generated for abstract mappings
-            if (unwrap && complexTypeMap.size() > 0 && !binding.isForceClasses()) {
+            if (unwrap && complexTypeMap.size() > 0 && (binding == null || !binding.isForceClasses())) {
                 throw new RuntimeException(
                         "unwrapped binding must use force-classes='true' option in " + path);
             }
@@ -577,7 +577,7 @@ public class CodeGenerationUtility {
             }
 
             // set binding lookup parameters
-            if (binding.getName() != null && binding.getTargetPackage() != null) {
+            if (binding != null && binding.getName() != null && binding.getTargetPackage() != null) {
                 bindinit.setAttribute("binding-name", binding.getName());
                 bindinit.setAttribute("binding-package", binding.getTargetPackage());
             } else {
@@ -769,7 +769,7 @@ public class CodeGenerationUtility {
                     boolean isarray = element.getMaxOccurs() > 1;
                     param.setAttribute("array", Boolean.toString(isarray));
                     String javatype;
-                    String createtype;
+                    String createtype = null;
                     if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
 
                         // simple type translates to format element in binding
@@ -779,7 +779,7 @@ public class CodeGenerationUtility {
                                     qname + ": no format definition found for type " +
                                     typename + " (used by element " + itemname + ')');
                         }
-                        javatype = createtype = format.getTypeName();
+                        javatype = format.getTypeName();
                         param.setAttribute("form", "simple");
                         param.setAttribute("serializer", format.getSerializerName());
                         param.setAttribute("deserializer", format.getDeserializerName());
@@ -821,9 +821,6 @@ public class CodeGenerationUtility {
                         }
                         javatype = mapping.getClassName();
                         createtype = mapping.getCreateType();
-                        if (createtype == null) {
-                            createtype = javatype;
-                        }
                         param.setAttribute("form", "complex");
                         param.setAttribute("type-index", tindex.toString());
 
@@ -851,7 +848,9 @@ public class CodeGenerationUtility {
                         }
                     }
                     param.setAttribute("java-type", javatype);
-                    param.setAttribute("create-type", createtype);
+                    if (createtype != null) {
+                        param.setAttribute("create-type", createtype);
+                    }
 
                     boolean isobj = !s_primitiveSet.contains(javatype);
                     String fulltype = javatype;
