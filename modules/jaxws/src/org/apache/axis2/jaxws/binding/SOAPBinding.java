@@ -94,7 +94,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
      * 
      * @see javax.xml.ws.soap.SOAPBinding#getRoles()
      */
-    public Set<URI> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
@@ -163,7 +163,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
      * 
      * @see javax.xml.ws.soap.SOAPBinding#setRoles(java.util.Set)
      */
-    public void setRoles(Set<URI> set) {
+    public void setRoles(Set<String> set) {
         roles = set;
     }
 

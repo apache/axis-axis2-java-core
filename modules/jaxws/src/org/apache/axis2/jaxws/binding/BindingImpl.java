@@ -41,7 +41,7 @@ public class BindingImpl implements Binding {
 
     private EndpointDescription endpointDesc;
 
-    protected Set<URI> roles = null;
+    protected Set<String> roles = null;
 
     protected static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 
