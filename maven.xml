@@ -933,16 +933,32 @@
         <ant:mkdir dir="${docs.temp.dir}/javadocs"/>
 
     <echo message="Applying dynamic label filter..."></echo>
-		<ant:copy toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
-		<ant:fileset dir="xdocs/@axis2_version_dir@"/>	
+  	    <ant:copy toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
+		<ant:fileset dir="xdocs/@axis2_version_dir@"/>
 	    </ant:copy>
+
 	<ant:filter filtersfile="xdocs/dynamic-labels.properties" />
         <ant:copy toDir="${docs.temp.dir}/xdocs" filtering="on" overwrite="true" >
             <ant:fileset dir="xdocs">
-			<ant:exclude name="@axis2_version_dir@/**"/>
+	  	    <ant:exclude name="@axis2_version_dir@/**"/>
+		    <!--exclude the images from going through the filter 
+			https://issues.apache.org/jira/browse/AXIS2-2412
+		    -->
+	            <ant:exclude name="**/*.gif"/>
+	            <ant:exclude name="**/*.jpg"/>
      	    </ant:fileset>
         </ant:copy>
-		<!--delete renamed folder from xdocs folder-->
+
+	<!-- copy the imaged seperately -->
+        <ant:copy toDir="${docs.temp.dir}/xdocs" filtering="off" overwrite="true" >
+            <ant:fileset dir="xdocs">
+		<ant:exclude name="@axis2_version_dir@/**"/>
+		<ant:include name="**/*.gif"/>
+		<ant:include name="**/*.jpg"/>
+	    </ant:fileset>
+        </ant:copy>
+
+	<!--delete renamed folder from xdocs folder-->
 	<ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
 	
 	<ant:copy toDir="${docs.temp.dir}/javadocs">
@@ -1255,5 +1271,6 @@
     </define:taglib>
 
 </project>
+
 
 
