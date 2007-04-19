@@ -888,35 +888,37 @@
 	@see postGoal name="site" -->
      
     <preGoal name="site">
-	<!--copy the content of the xdocs folder into a backup folder -->
-	<!--This backed up copy will be copied into xdocs @ postGoal="site" -->
-	<ant:mkdir dir="xdocs-original"/>
-        <copy todir="xdocs-original">
+    <!--copy the content of the xdocs folder into a backup folder -->
+    <!--This backed up copy will be copied into xdocs @ postGoal="site" -->
+    <ant:mkdir dir="target/xdocs-original"/>
+        <copy todir="target/xdocs-original">
            <fileset dir="xdocs"/>
         </copy>
 
-	<ant:filter filtersfile="xdocs-original/dynamic-labels.properties" />
+    <ant:filter filtersfile="target/xdocs-original/dynamic-labels.properties" />
         <ant:copy toDir="xdocs" filtering="on" overwrite="true" >
-            <ant:fileset dir="xdocs-original">
-            <ant:exclude name="images/**"/>
-            <ant:exclude name="@axis2_version_dir@/images/**"/>
-            </ant:fileset>
+            <ant:fileset dir="target/xdocs-original">
+        <exclude name="images/**"/>
+        <exclude name="@axis2_version_dir@/images/**"/>
+        </ant:fileset>
         </ant:copy>
 
-	<ant:move toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
-	    <ant:fileset dir="xdocs/@axis2_version_dir@"/>	
-	</ant:move>
+    <ant:move toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
+        <ant:fileset dir="xdocs/@axis2_version_dir@"/>    
+    </ant:move>
     </preGoal>
 
+
+
     <postGoal name="site">
-	<echo message="Replacing the original xdocs folder..."></echo>
-	<ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
+    <echo message="Replacing the original xdocs folder..."></echo>
+    <ant:delete dir="xdocs/${maven.xdoc.axis_doc_folder_name}"/>
         <ant:copy toDir="xdocs" overwrite="true" >
-            <ant:fileset dir="xdocs-original"/>
+            <ant:fileset dir="target/xdocs-original"/>
         </ant:copy>
-	<!-- Delete the backup of xdocs folder. @see preGoal name="site" -->
-	<ant:delete dir="xdocs-original"/>
-       <ant:delete dir="target/docs/@axis2_version_dir@"/>
+    <!-- Delete the backup of xdocs folder. @see preGoal name="site" -->
+        <ant:delete dir="target/xdocs-original"/>
+        <ant:delete dir="target/docs/@axis2_version_dir@"/>
     </postGoal>
 	
     <goal name="dist-docs" prereqs="init-dist, javadocs">
