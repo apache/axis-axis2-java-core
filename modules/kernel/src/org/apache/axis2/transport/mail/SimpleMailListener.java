@@ -360,7 +360,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
                     String disposition = part.getDisposition();
 
-                    if (disposition != null && disposition.equals(Part.ATTACHMENT)) {
+                    if (disposition != null && disposition.equalsIgnoreCase(Part.ATTACHMENT)) {
                         String soapAction;
 
                         /* Set the Charactorset Encoding */
