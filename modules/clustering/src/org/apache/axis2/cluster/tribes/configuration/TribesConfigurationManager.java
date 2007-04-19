@@ -53,7 +53,7 @@ public class TribesConfigurationManager implements ConfigurationManager {
 
     public void applyPolicy(String serviceGroupName, String policy) throws ClusteringFault {
         ConfigurationCommand command = new ConfigurationCommand(CommandType.APPLY_POLICY);
-        command.setServiceGroupName(serviceGroupName);
+        command.setServiceName(serviceGroupName);
         command.setPolicy(policy);
         send(command);
     }

@@ -19,8 +19,8 @@ package org.apache.axis2.cluster.configuration;
 public class ConfigurationEvent {
 
 	private String[] serviceGroupNames;
-    private String serviceGroupName;
 	private int configurationType;
+    private String serviceName;
 	private String policy;
 	
 	public String[] getServiceGroupNames() {
@@ -31,12 +31,12 @@ public class ConfigurationEvent {
 		this.serviceGroupNames = serviceGroupNames;
 	}
 
-    public String getServiceGroupName() {
-        return serviceGroupName;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setServiceGroupName(String serviceGroupName) {
-        this.serviceGroupName = serviceGroupName;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public int getConfigurationType() {

@@ -773,8 +773,12 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public boolean isEngaged(String moduleName) {
-        boolean b = engagedModules.contains(moduleName);
-        return b ? b : engagedModules.contains(getDefaultModule(moduleName).getName());
+        boolean isEngaged = engagedModules.contains(moduleName);
+        AxisModule defaultModule = getDefaultModule(moduleName);
+        if (!isEngaged && defaultModule != null) {
+            isEngaged = engagedModules.contains(defaultModule.getName());
+        }
+        return isEngaged;
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {

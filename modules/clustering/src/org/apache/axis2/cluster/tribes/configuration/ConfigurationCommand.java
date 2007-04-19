@@ -21,7 +21,7 @@ import org.apache.axis2.cluster.tribes.CommandMessage;
 public class ConfigurationCommand extends CommandMessage {
 	
 	private String policy;
-    private String serviceGroupName;
+    private String serviceName;
     private String[] serviceGroupNames;
 	
 	public ConfigurationCommand (int commandType) {
@@ -44,11 +44,11 @@ public class ConfigurationCommand extends CommandMessage {
 		this.serviceGroupNames = serviceGroupNames;
 	}
 
-    public String getServiceGroupName() {
-        return serviceGroupName;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setServiceGroupName(String serviceGroupName) {
-        this.serviceGroupName = serviceGroupName;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 }
