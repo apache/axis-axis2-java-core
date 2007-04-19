@@ -98,6 +98,8 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
         if (service != null) {
             index = service.indexOf("/");
+        }
+        if (service != null && -1 != index) {
             service = service.substring(index);
         } else {
             int queryIndex = path.indexOf("?");
