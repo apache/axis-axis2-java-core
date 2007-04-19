@@ -48,6 +48,8 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -55,6 +57,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class Utils {
+    private static final Log log = LogFactory.getLog(Utils.class);
+
     public static void addHandler(Flow flow, Handler handler, String phaseName) {
         HandlerDescription handlerDesc = new HandlerDescription();
         PhaseRule rule = new PhaseRule(phaseName);
@@ -168,6 +172,8 @@ public class Utils {
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
+        //FIXME TODO : lower the log level to debug
+        log.info("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
         if (path == null) {
             return null;
         }
@@ -194,10 +200,16 @@ public class Utils {
                 if (operationIndex > 0) {
                     values[0] = service.substring(0, operationIndex);
                     values[1] = service.substring(operationIndex + 1);
+                    operationIndex = values[1].lastIndexOf('/');
+                    if (operationIndex > 0){
+                        values[1] = values[1].substring(operationIndex + 1);
+                    }
                 } else {
                     values[0] = service;
                 }
             }
+        } else {
+            log.info("Unable to parse request URL ["+ path +"]["+ servicePath +"]");
         }
 
         return values;
