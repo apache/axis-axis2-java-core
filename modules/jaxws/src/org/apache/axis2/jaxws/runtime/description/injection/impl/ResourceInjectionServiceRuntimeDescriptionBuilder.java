@@ -53,7 +53,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         Method method = getPostConstructMethod(implClass);
         desc.setPostConstructMethod(method);
 
-        method = getPreDestoryMethod(implClass);
+        method = getPreDestroyMethod(implClass);
         desc.setPreDestroyMethod(method);
 
         return desc;
@@ -95,7 +95,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         return null;
     }
 
-    static private Method getPreDestoryMethod(Class implClass) {
+    static private Method getPreDestroyMethod(Class implClass) {
         List<Method> methods = getMethods(implClass);
         for (Method method : methods) {
             if (method.getAnnotation(PreDestroy.class) != null) {
