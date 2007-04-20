@@ -53,7 +53,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         Method method = getPostConstructMethod(implClass);
         desc.setPostConstructMethod(method);
 
-        method = getPostConstructMethod(implClass);
+        method = getPreDestoryMethod(implClass);
         desc.setPreDestroyMethod(method);
 
         return desc;
