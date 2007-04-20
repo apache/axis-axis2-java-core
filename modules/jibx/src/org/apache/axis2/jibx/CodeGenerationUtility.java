@@ -379,16 +379,16 @@ public class CodeGenerationUtility {
                     dbmethod.setAttribute("method-name", op.getName().getLocalPart());
                     Set nameset = new HashSet(s_reservedWords);
                     if (inmsg != null) {
-                        Element wrapper = unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap,
-                                                        typeMappedClassMap, bindingMap, nameset,
-                                                        nsMap, doc);
+                        Element wrapper = unwrapMessage(inmsg, false, simpleTypeMap, elementMap,
+                                                        complexTypeMap, typeMappedClassMap,
+                                                        bindingMap, nameset, nsMap, doc);
                         dbmethod.appendChild(wrapper);
                         wrappers.add(wrapper);
                     }
                     if (outmsg != null) {
-                        Element wrapper = unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap,
-                                                        typeMappedClassMap, bindingMap, nameset,
-                                                        nsMap, doc);
+                        Element wrapper = unwrapMessage(outmsg, true, simpleTypeMap, elementMap,
+                                                        complexTypeMap, typeMappedClassMap,
+                                                        bindingMap, nameset, nsMap, doc);
                         dbmethod.appendChild(wrapper);
                         wrappers.add(wrapper);
                     }
@@ -672,6 +672,7 @@ public class CodeGenerationUtility {
      * @param msg                message to be unwrapped
      * @param isout              output message flag (wrapper inherits inner type, for XSLTs)
      * @param simpleTypeMap      binding formats
+     * @param elementMap         map from element names to concrete mapping components of binding
      * @param complexTypeMap     binding mappings
      * @param typeMappedClassMap map from type qname to index
      * @param bindingMap         map from mapping components to containing binding definition
@@ -682,7 +683,7 @@ public class CodeGenerationUtility {
      * @return detailed description element for code generation
      */
     private Element unwrapMessage(AxisMessage msg, boolean isout,
-                                  Map simpleTypeMap, Map complexTypeMap, Map typeMappedClassMap,
+                                  Map simpleTypeMap, Map elementMap, Map complexTypeMap, Map typeMappedClassMap,
                                   Map bindingMap, Set nameset, Map nsmap, Document doc) {
 
         // find the schema definition for this message element
@@ -738,14 +739,15 @@ public class CodeGenerationUtility {
                     XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
                     if (!(item instanceof XmlSchemaElement)) {
                         throw new RuntimeException("Cannot unwrap element " +
-                                qname + ": only element items allowed in seqence");
+                                qname + ": only element items allowed in sequence");
                     }
                     XmlSchemaElement element = (XmlSchemaElement)item;
+                    QName refname = element.getRefName();
                     QName typename = element.getSchemaTypeName();
-                    if (typename == null) {
+                    if (refname == null && typename == null) {
                         throw new RuntimeException("Cannot unwrap element " +
                                 qname +
-                                ": all elements in contained sequence must reference a named type");
+                                ": all elements in contained sequence must be element references or reference a named type");
                     }
                     if (first) {
                         first = false;
@@ -758,7 +760,7 @@ public class CodeGenerationUtility {
                     // add element to output with details of this element handling
                     Element param =
                             doc.createElement(isout ? "return-element" : "parameter-element");
-                    QName itemname = element.getQName();
+                    QName itemname = (refname == null) ? element.getQName() : refname;
                     nons = nons || itemname.getNamespaceURI().length() == 0;
                     param.setAttribute("ns", itemname.getNamespaceURI());
                     param.setAttribute("name", itemname.getLocalPart());
@@ -805,24 +807,50 @@ public class CodeGenerationUtility {
                         }
 
                     } else {
+                        
+                        // conversion must be defined by mapping
+                        MappingElement mapping;
+                        if (refname == null) {
 
-                        // complex type translates to abstract mapping in binding
+                            // complex type reference translates to abstract mapping in binding
+                            mapping = (MappingElement)complexTypeMap.get(typename);
+                            if (mapping == null) {
+                                throw new RuntimeException("Cannot unwrap element " +
+                                        qname + ": no abstract mapping definition found for type " +
+                                        typename + " (used by element " + itemname + ')');
+                            }
+                            Integer tindex = (Integer)typeMappedClassMap.get(typename);
+                            if (tindex == null) {
+                                tindex = new Integer(typeMappedClassMap.size());
+                                typeMappedClassMap.put(typename, tindex);
+                            }
+                            param.setAttribute("type-index", tindex.toString());
+                            
+                        } else {
+                            
+                            // element reference translates to concrete mapping
+                            mapping = (MappingElement)elementMap.get(refname);
+                            if (mapping == null) {
+                                throw new RuntimeException("Cannot unwrap element " +
+                                        qname + ": no concrete mapping definition found for element " +
+                                        refname + " (used by element " + itemname + ')');
+                            }
+                            param.setAttribute("type-index", "");
+                            
+                        }
+
+                        // configure based on the mapping information
+                        param.setAttribute("form", "complex");
                         complex = true;
-                        MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
-                        if (mapping == null) {
-                            throw new RuntimeException("Cannot unwrap element " +
-                                    qname + ": no abstract mapping definition found for type " +
-                                    typename + " (used by element " + itemname + ')');
-                        }
-                        Integer tindex = (Integer)typeMappedClassMap.get(typename);
-                        if (tindex == null) {
-                            tindex = new Integer(typeMappedClassMap.size());
-                            typeMappedClassMap.put(typename, tindex);
-                        }
                         javatype = mapping.getClassName();
                         createtype = mapping.getCreateType();
-                        param.setAttribute("form", "complex");
-                        param.setAttribute("type-index", tindex.toString());
+                        if (createtype == null && mapping.isAbstract() &&
+                            mapping.getExtensionTypes().isEmpty()) {
+                            
+                            // abstract mapping with no extensions requires instance
+                            //  this assumes the mapped type can be created, but no easy way to check
+                            createtype = javatype;
+                        }
 
                         // merge contained namespace definitions into set for operation
                         Iterator citer = mapping.topChildIterator();
@@ -1038,12 +1066,14 @@ public class CodeGenerationUtility {
             } else if (child.type() == ElementBase.MAPPING_ELEMENT) {
                 MappingElement mapping = (MappingElement)child;
                 bindingMap.put(mapping, binding);
-                if (mapping.isAbstract()) {
+                if (mapping.isAbstract() && mapping.getTypeQName() != null) {
 
                     // register named abstract mappings as complex type conversions
                     registerElement(mapping.getTypeQName(), mapping,
                                     complexTypeMap);
 
+                } else if (mapping.getName() == null) {
+                    throw new RuntimeException("Non-abstract mapping for class " + mapping.getClassName() + " needs element name.");
                 } else {
 
                     // register concrete mappings as element conversions
