@@ -635,7 +635,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                                new ServletBasedOutTransportInfo(response));
         // set the transport Headers
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(request));
-        msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, request);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, response);
 
