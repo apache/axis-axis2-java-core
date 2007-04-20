@@ -183,7 +183,14 @@
                           if (bindingFactory == null) {
                               throw new RuntimeException(bindingErrorMessage);
                           }
+            <xsl:choose>
+              <xsl:when test="out-wrapper/return-element/@form='complex' and out-wrapper/return-element/@type-index=''">
+                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)result, bindingFactory);
+              </xsl:when>
+              <xsl:otherwise>
                           org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+              </xsl:otherwise>
+            </xsl:choose>
                           org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                           org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                           wrapper.addChild(child);
@@ -248,7 +255,14 @@
                   if (bindingFactory == null) {
                       throw new RuntimeException(bindingErrorMessage);
                   }
+            <xsl:choose>
+              <xsl:when test="out-wrapper/return-element/@form='complex' and out-wrapper/return-element/@type-index=''">
+                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)result, bindingFactory);
+              </xsl:when>
+              <xsl:otherwise>
                   org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+              </xsl:otherwise>
+            </xsl:choose>
                   org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                   org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                   wrapper.addChild(child);
@@ -597,6 +611,14 @@
         child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         child.setText(<xsl:value-of select="@serializer"/>(<xsl:call-template name="parameter-or-array-item"/>));
       </xsl:when>
+      <xsl:when test="@form='complex' and @type-index=''">
+        if (bindingFactory == null) {
+            throw new RuntimeException(bindingErrorMessage);
+        }
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)<xsl:call-template name="parameter-or-array-item"/>, bindingFactory);
+        org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
+        child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
+      </xsl:when>
       <xsl:when test="@form='complex'">
         if (bindingFactory == null) {
             throw new RuntimeException(bindingErrorMessage);
@@ -830,7 +852,14 @@
   <xsl:template name="unmarshal-array">
     <xsl:value-of select="@java-type"/>[] <xsl:value-of select="@java-name"/> = new <xsl:value-of select="@java-type"/>[4];
       index = 0;
+    <xsl:choose>
+      <xsl:when test="@form='complex' and @type-index=''">
+      while (uctx.getUnmarshaller("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>").isPresent(uctx)) {
+      </xsl:when>
+      <xsl:otherwise>
       while (uctx.isAt("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")) {
+      </xsl:otherwise>
+    </xsl:choose>
           if (index >= <xsl:value-of select="@java-name"/>.length) {
               <xsl:value-of select="@java-name"/> = (<xsl:value-of select="@java-type"/>[])org.jibx.runtime.Utility.growArray(<xsl:value-of select="@java-name"/>);
           }
@@ -840,7 +869,7 @@
           } else {
     </xsl:if>
     <xsl:value-of select="@java-name"/>[index++] = (<xsl:value-of select="@java-type"/>)<xsl:call-template name="deserialize-element-value"/>;
-    <xsl:if test="@form='complex'">
+    <xsl:if test="@form='complex' and @type-index!=''">
               uctx.parsePastCurrentEndTag("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>");
     </xsl:if>
     <xsl:if test="@nillable='true'">
@@ -858,27 +887,34 @@
   <!-- Unmarshal a non-repeated element into an simple value -->
   <xsl:template name="unmarshal-value">
     <xsl:value-of select="@java-type"/><xsl:text> </xsl:text><xsl:value-of select="@java-name"/> = <xsl:choose><xsl:when test="boolean(@default)"><xsl:value-of select="@default"/></xsl:when><xsl:otherwise>null</xsl:otherwise></xsl:choose>;
-          if (uctx.isAt("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")) {
+    <xsl:choose>
+      <xsl:when test="@form='complex' and @type-index=''">
+            if (uctx.getUnmarshaller("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>").isPresent(uctx)) {
+      </xsl:when>
+      <xsl:otherwise>
+            if (uctx.isAt("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")) {
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:if test="@nillable='true'">
-              if (uctx.attributeBoolean("http://www.w3.org/2001/XMLSchema-instance", "nil", false)) {
-                  uctx.skipElement();
-              } else {
+                if (uctx.attributeBoolean("http://www.w3.org/2001/XMLSchema-instance", "nil", false)) {
+                    uctx.skipElement();
+                } else {
     </xsl:if>
     <xsl:value-of select="@java-name"/> = (<xsl:value-of select="@java-type"/>)<xsl:call-template name="deserialize-element-value"/>;
-    <xsl:if test="@form='complex'">
-              uctx.parsePastCurrentEndTag("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>");
+    <xsl:if test="@form='complex' and @type-index!=''">
+                uctx.parsePastCurrentEndTag("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>");
     </xsl:if>
     <xsl:if test="@nillable='true'">
-              }
+                }
     </xsl:if>
     <xsl:choose>
       <xsl:when test="@optional='true'">
-          }
+            }
       </xsl:when>
       <xsl:otherwise>
-          } else {
-              throw new org.apache.axis2.AxisFault("Missing required element {<xsl:value-of select='@ns'/>}<xsl:value-of select='@name'/>");
-          }
+            } else {
+                throw new org.apache.axis2.AxisFault("Missing required element {<xsl:value-of select='@ns'/>}<xsl:value-of select='@name'/>");
+            }
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -897,6 +933,9 @@
       </xsl:when>
       <xsl:when test="@form='simple'">
         <xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
+      </xsl:when>
+      <xsl:when test="@form='complex' and @type-index=''">
+        uctx.unmarshalElement()
       </xsl:when>
       <xsl:when test="@form='complex'">
         uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(<xsl:choose><xsl:when test="string-length(normalize-space(@create-type)) = 0">null</xsl:when><xsl:otherwise>new <xsl:value-of select="@create-type"/>()</xsl:otherwise></xsl:choose>, uctx)
