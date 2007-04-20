@@ -259,5 +259,8 @@ public abstract class OperationClient {
         mc.setTransportOut(senderTransport);
 
         addReferenceParameters(mc);
+        if(sc.isCachingOperationContext()){
+            sc.setLastOperationContext(oc);
+        }
     }
 }
