@@ -22,6 +22,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -430,7 +431,9 @@ public class EndpointController {
             if (mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) ||
                     mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||
                     mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                    mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)) {
+                    mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)||
+                    mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY)||
+                    mep.equals(WSDL2Constants.MEP_URI_IN_ONLY)) {
                 return true;
             }
         }
