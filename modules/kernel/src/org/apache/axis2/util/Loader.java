@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.PrivilegedAction;
+import java.io.InputStream;
 
 /**
  * Loads resources (or images) from various sources.
@@ -100,6 +101,90 @@ public class Loader {
             log.warn("Caught Exception while in Loader.getResource. This may be innocuous.", t);
         }
         return getResource(resource);
+    }
+
+    /**
+     * Searches for <code>resource</code> in different
+     * places. The search order is as follows:
+     * <ol>
+     * <p><li>Search for <code>resource</code> using the thread context
+     * class loader under Java2. If that fails, search for
+     * <code>resource</code> using the class loader that loaded this
+     * class (<code>Loader</code>).
+     * <p><li>Try one last time with
+     * <code>ClassLoader.getSystemResourceAsStream(resource)</code>, that is is
+     * using the system class loader in JDK 1.2 and virtual machine's
+     * built-in class loader in JDK 1.1.
+     * </ol>
+     * <p/>
+     *
+     * @param resource
+     * @return Returns URL
+     */
+    static public InputStream getResourceAsStream(String resource) {
+        ClassLoader classLoader = null;
+        try {
+            // Let's try the Thread Context Class Loader
+            classLoader = getTCL();
+            if (classLoader != null) {
+                log.debug("Trying to find [" + resource + "] using " + classLoader +
+                        " class loader.");
+                InputStream is = classLoader.getResourceAsStream(resource);
+                if (is != null) {
+                    return is;
+                }
+            }
+        } catch (Throwable t) {
+            log.warn("Caught Exception while in Loader.getResourceAsStream. This may be innocuous.", t);
+        }
+
+        try {
+            // We could not find resource. Ler us now try with the
+            // classloader that loaded this class.
+            classLoader = Loader.class.getClassLoader();
+            if (classLoader != null) {
+                log.debug("Trying to find [" + resource + "] using " + classLoader +
+                        " class loader.");
+                InputStream is = classLoader.getResourceAsStream(resource);
+                if (is != null) {
+                    return is;
+                }
+            }
+        } catch (Throwable t) {
+            log.warn("Caught Exception while in Loader.getResourceAsStream. This may be innocuous.", t);
+        }
+
+        // Last ditch attempt: get the resource from the class path. It
+        // may be the case that clazz was loaded by the Extentsion class
+        // loader which the parent of the system class loader. Hence the
+        // code below.
+        log.debug("Trying to find [" + resource + "] using ClassLoader.getSystemResourceAsStream().");
+        return ClassLoader.getSystemResourceAsStream(resource);
+    }
+
+
+    /**
+     * Gets the resource with the specified class loader.
+     *
+     * @param loader
+     * @param resource
+     * @return Returns URL.
+     * @throws ClassNotFoundException
+     */
+    static public InputStream getResourceAsStream(ClassLoader loader, String resource)
+            throws ClassNotFoundException {
+        try {
+            if (loader != null) {
+                log.debug("Trying to find [" + resource + "] using " + loader + " class loader.");
+                InputStream is = loader.getResourceAsStream(resource);
+                if (is != null) {
+                    return is;
+                }
+            }
+        } catch (Throwable t) {
+            log.warn("Caught Exception while in Loader.getResource. This may be innocuous.", t);
+        }
+        return getResourceAsStream(resource);
     }
 
     /**
