@@ -981,8 +981,14 @@
     <goal name="cache-std-deps" prereqs="init-dist">
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
+	   <j:if test="${javaVersion == '1.5'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="webapp,jibx,spring,saaj,kernel,adb,json,jaxbri"/>
+                              mods="webapp,jibx,spring,saaj-api,saaj,kernel,adb,json,jaxbri"/>
+	   </j:if>	
+	   <j:if test="${javaVersion == '1.4'}">
+            <macros:copy-deps copyToDir="${std_dep_cache}"
+                              mods="webapp,jibx,spring,kernel,adb,json,jaxbri"/>
+	   </j:if>	
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
 
@@ -1005,8 +1011,14 @@
     <goal name="cache-war-deps" prereqs="init-dist">
         <ant:mkdir dir="${war_dep_cache}"/>
         <j:if test="${warDeps.uptodate != 'yes'}">
+	   <j:if test="${javaVersion == '1.5'}">
             <macros:copy-deps copyToDir="${war_dep_cache}"
-                              mods="webapp,spring,jibx,saaj"/>
+                              mods="webapp,spring,jibx,saaj-api,saaj"/>
+	   </j:if>	
+	   <j:if test="${javaVersion == '1.4'}">
+            <macros:copy-deps copyToDir="${war_dep_cache}"
+                              mods="webapp,spring,jibx"/>
+	   </j:if>	
             <property name="warDeps.uptodate" value="yes"/>
         </j:if>
 
