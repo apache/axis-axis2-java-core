@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
@@ -103,9 +104,8 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
             if (axis2xml != null && !"".equals(axis2xml)) {
                 axis2xmlSream = new FileInputStream(axis2xml);
             } else {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2xmlSream =
-                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                        Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
             axisConfig = populateAxisConfiguration(axis2xmlSream);
         } catch (FileNotFoundException e) {

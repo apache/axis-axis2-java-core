@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -129,9 +130,8 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             } // catch
 
             if (axis2Stream == null) {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2Stream =
-                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                        Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
             axisConfig = populateAxisConfiguration(axis2Stream);
 

@@ -31,6 +31,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.SessionUtils;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -262,8 +263,7 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      */
     public static ConfigurationContext createDefaultConfigurationContext() throws Exception {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        InputStream in = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+        InputStream in = Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
 
         AxisConfiguration axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig, null);

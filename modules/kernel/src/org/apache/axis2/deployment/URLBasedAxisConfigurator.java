@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
@@ -44,9 +45,8 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         InputStream axis2xmlStream;
         try {
             if (axis2xml == null) {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2xmlStream =
-                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                        Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             } else {
                 axis2xmlStream = axis2xml.openStream();
             }
