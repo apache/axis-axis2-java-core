@@ -79,6 +79,16 @@ public class ServiceBuilder extends DescriptionBuilder {
      */
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
+            // Determine whether service should be activated.
+            String serviceActivate = service_element.getAttributeValue(new QName(ATTRIBUTE_ACTIVATE));
+            if (serviceActivate != null) {
+                if ("true".equals(serviceActivate)) {
+                    service.setActive(true);
+                } else if ("false".equals(serviceActivate)) {
+                    service.setActive(false);
+                }
+            }
+            
             // Processing service level parameters
              OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
