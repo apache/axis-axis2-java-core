@@ -172,8 +172,7 @@ public class Utils {
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
-        //FIXME TODO : lower the log level to debug
-        log.info("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
         if (path == null) {
             return null;
         }
