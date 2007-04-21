@@ -121,6 +121,9 @@ public interface DeploymentConstants {
     String ATTRIBUTE_SCOPE = "scope";
     String ATTRIBUTE_LOCKED = "locked";
 
+    // Whether to activate a deployed service.
+    String ATTRIBUTE_ACTIVATE = "activate";
+
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";
     String DIRECTORY_CONF = "conf";
     String DIRECTORY_AXIS2_HOME = ".axis2";
