@@ -69,12 +69,8 @@ public class POJODeployer implements Deployer {
                 File file = deploymentFileData.getFile();
                 if (file != null) {
                     File parentFile = file.getParentFile();
-                    ClassLoader classLoader =
-                            Utils.createClassLoader(new URL[]{parentFile.toURL()},
-                                    configCtx.getAxisConfiguration().getSystemClassLoader(),
-                                    true,
-                                    (File)configCtx.getAxisConfiguration()
-                                            .getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                   ClassLoader classLoader =
+                           Utils.getClassLoader(configCtx.getAxisConfiguration().getSystemClassLoader(), parentFile);
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");
