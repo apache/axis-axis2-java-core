@@ -223,14 +223,21 @@ public class URIResolverImpl implements URIResolver {
                     HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
                               resolvedURI.toString());
+                importLocation = url.toString();
             }
             // Check for file
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+                importLocation = url.toString();
             }
             // Check for jar
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(JAR_PROTOCOL)) {
-                url = new URL(resolvedURI.toString());
+                importLocation = resolvedURI.toString();  
+                if(importLocation.startsWith(":")){
+                  importLocation = "jar" + importLocation; 
+                } else {
+                  importLocation = "jar:" + importLocation; 
+                }
             }
         }
         catch (MalformedURLException e) {
@@ -239,12 +246,11 @@ public class URIResolverImpl implements URIResolver {
                                                                                baseURL.toString()),
                                                            e);
         }
-        if (url == null) {
+        if (importLocation == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
                                                                                resolvedURI.toString(),
                                                                                baseURL.toString()));
         }
-        importLocation = url.toString();
         return importLocation;
     }
 
