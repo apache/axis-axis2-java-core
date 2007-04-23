@@ -103,6 +103,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, getMethod);
             handleResponse(msgContext, getMethod);
         } catch (IOException e) {
+            log.info("Unable to sendViaGet to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
 
@@ -128,6 +129,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, deleteMethod);
             handleResponse(msgContext, deleteMethod);
         } catch (IOException e) {
+            log.info("Unable to sendViaDelete to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
 
@@ -179,6 +181,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, postMethod);
             handleResponse(msgContext, postMethod);
         } catch (IOException e) {
+            log.info("Unable to sendViaPost to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
 
@@ -231,7 +234,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, putMethod);
             handleResponse(msgContext, putMethod);
         } catch (IOException e) {
-            log.info("Unable to POST to url[" + url + "]", e);
+            log.info("Unable to sendViaPut to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
     }
