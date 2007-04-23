@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
@@ -46,6 +47,7 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.security.PrivilegedAction;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
@@ -244,11 +246,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @return Object that represents an element
      * @throws WebServiceException
      */
-    private static Object unmarshalByElement(Unmarshaller u, XMLStreamReader reader)
+    private static Object unmarshalByElement(final Unmarshaller u, final XMLStreamReader reader)
             throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
-            return u.unmarshal(reader);
+        	 if(log.isDebugEnabled()){
+        	    log.debug("Invoking unMarshalByElement");
+        	 }
+        	 return AccessController.doPrivileged(new PrivilegedAction() {
+        		 public Object run() {
+        			 try {
+        				 return u.unmarshal(reader);
+        			 } catch (Exception e) {
+        				 throw ExceptionFactory.makeWebServiceException(e);
+        			 }
+        		 }
+        	 });
+
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
