@@ -77,7 +77,7 @@
 		<annogen.version>0.1.0</annogen.version>
 		<ant.version>1.7.0</ant.version>
 		<antlr.version>2.7.4</antlr.version>
-		<axiom.version>1.2.3</axiom.version>
+		<axiom.version>1.2.4</axiom.version>
 		<backport.util.concurrent.version>2.2</backport.util.concurrent.version>
 		<bcel.version>5.2</bcel.version>
 		<bcprov.version>jdk13-133</bcprov.version>
