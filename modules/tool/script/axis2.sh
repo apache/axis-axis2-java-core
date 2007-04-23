@@ -28,7 +28,7 @@
 # -----------------------------------------------------------------------------
 
 # Get the context and from that find the location of setenv.sh
-sh `dirname $0`/setenv.sh
+. `dirname $0`/setenv.sh
 
 
 $JAVA_HOME/bin/java -classpath "$AXIS2_CLASSPATH" \
