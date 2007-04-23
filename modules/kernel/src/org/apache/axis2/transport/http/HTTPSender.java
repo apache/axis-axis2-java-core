@@ -36,6 +36,8 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,6 +45,7 @@ import java.net.URL;
 
 public class HTTPSender extends AbstractHTTPSender {
 
+    private static final Log log = LogFactory.getLog(HTTPSender.class);
 
     public void send(MessageContext msgContext, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
@@ -228,6 +231,7 @@ public class HTTPSender extends AbstractHTTPSender {
             executeMethod(httpClient, msgContext, url, putMethod);
             handleResponse(msgContext, putMethod);
         } catch (IOException e) {
+            log.info("Unable to POST to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         }
     }
