@@ -407,26 +407,52 @@ TwoWayOneParameterEcho, MultipleParametersAddItem, and DoInOnly. To generate
 the service, use the WSDL2Java utility, as in Code Listing 14.</p>
 
 <h3>Code Listing 14 - Using the WSDL2Java Utility to Generate the Service</h3>
+
+<p><strong>Code Listing 14.1:</strong></p>
 <pre>java org.apache.axis2.wsdl.WSDL2Java -uri 
 file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p 
-org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd</pre>
+org.apache.axis2.axis2userguide -d adb -s -wv @axis2_version@ -ss -sd</pre>
+
+<p>Note: Make sure all the .jar files in the Axis2 lib directory is set to
+the CLASSPATH before you run the above code.</p>
 
 <p>This statement tells the utility you want to create a service out of the
 operations in the file <a
-href="userguide-codelisting5.html">Axis2UserGuide.wsdl</a>, and that the
-Java classes generated should be in the org.apache.axis2.axis2userguide
-package (-p). (You can view the appropriate directories created.) It also
-indicates that you want to use the Axis2 DataBinding Framework, or ADB (-d),
-to generate only synchronous or blocking code (-s), and to generate
-server-side code (-ss) as opposed to a client, including the services.xml
-service descriptor file (-sd). It also specifies version 1.1 for the WSDL
-file (-wv).</p>
+href="userguide-codelisting5.html">Axis2UserGuide.wsdl</a>, and that the Java
+classes generated should be in the org.apache.axis2.axis2userguide package
+(-p). (You can view the appropriate directories created.) It also indicates
+that you want to use the Axis2 DataBinding Framework, or ADB (-d), to
+generate only synchronous or blocking code (-s), and to generate server-side
+code (-ss) as opposed to a client, including the services.xml service
+descriptor file (-sd). It also specifies version @axis2_version@ for the WSDL
+file (-wv)<strong>.</strong></p>
 
-<p>At this point, you should see four new items in your chosen directory: the
-build.xml file, which includes instructions for Ant, the src directory, which
-includes all the generated classes and stubs, the resources directory, which
-includes a regenerated version of the WSDL, and the services.xml file, which
-ultimately controls the service's behavior.</p>
+<p><strong>Code Listing 14.2:</strong></p>
+
+<p>You can also use the following script files to achieve the same. In this
+case you do not have the set the CLASSPATH manually.</p>
+
+<p>For Linux:</p>
+
+<p><code>$AXIS2_HOME/bin/wsdl2java.sh -uri
+file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl</code></p>
+
+<p><code>-p org.apache.axis2.axis2userguide -o target_directory_name -d adb
+-s -wv @axis2_version@ -ss -sd</code></p>
+
+<p>For MS Windows:</p>
+
+<p><code>%AXIS2_HOME%\bin\wsdl2java.bat -uri
+file:\\\C:\apps\axis2\samples\zSample\Axis2UserGuide.wsdl</code></p>
+
+<p><code>-p org.apache.axis2.axis2userguide -o target_directory_name -d adb
+-s -wv @axis2_version@ -ss -sd</code></p>
+
+<p>In both instances, at this point, you should see four new items in your
+chosen directory: the build.xml file, which includes instructions for Ant,
+the src directory, which includes all the generated classes and stubs, the
+resources directory, which includes a regenerated version of the WSDL, and
+the services.xml file, which ultimately controls the service's behavior.</p>
 
 <p>You can compile the service at this point, but it doesn't actually do
 anything yet. You can solve that problem by opening the
