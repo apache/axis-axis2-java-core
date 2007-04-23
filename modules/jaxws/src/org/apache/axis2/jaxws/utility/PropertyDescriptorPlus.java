@@ -47,8 +47,7 @@ import java.util.Collection;
 public class PropertyDescriptorPlus {
     PropertyDescriptor descriptor;
     String xmlName = null;
-    Object[] SINGLE_PARAM = new Object[1];
-
+    
     private static Log log = LogFactory.getLog(PropertyDescriptorPlus.class);
     private static final boolean DEBUG_ENABLED = log.isDebugEnabled();
 
@@ -174,6 +173,7 @@ public class PropertyDescriptorPlus {
         
         if (propValue != null) {
             // Normal case
+        	Object[] SINGLE_PARAM = new Object[1];
             SINGLE_PARAM[0] = propValue;
             writeMethod.invoke(targetBean, SINGLE_PARAM);
         } else {
@@ -211,6 +211,7 @@ public class PropertyDescriptorPlus {
         Class paramType = writeMethod.getParameterTypes()[0];
         Object value = asArray(propValue, paramType);
         // JAXB provides setters for atomic value.
+        Object[] SINGLE_PARAM = new Object[1];
         SINGLE_PARAM[0] =value;
         
         writeMethod.invoke(targetBean, SINGLE_PARAM);
