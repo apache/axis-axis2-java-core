@@ -34,6 +34,7 @@ import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JClass;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
@@ -370,11 +371,21 @@ public class Utils {
                     outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }
                 if (jmethod.getExceptionTypes().length > 0) {
-                    AxisMessage faultMessage = new AxisMessage();
-                    faultMessage.setName(jmethod.getSimpleName() + "Fault");
-                    faultMessage.setElementQName(
-                            table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
-                    operation.setFaultMessages(faultMessage);
+                    JClass[] extypes = jmethod.getExceptionTypes() ;
+                    for (int j= 0 ; j < extypes.length ; j++) {
+                        AxisMessage faultMessage = new AxisMessage();
+                        JClass extype = extypes[j] ;
+                        String exname = extype.getSimpleName() ;
+                        if(extypes.length>1){
+                            faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
+                        } else{
+                            faultMessage.setName(jmethod.getSimpleName() + "Fault");
+                        }
+                        faultMessage.setElementQName(
+                                table.getComplexSchemaType(exname + "Fault"));
+                        operation.setFaultMessages(faultMessage);
+                    }
+
                 }
             } else {
                 operation = getAxisOperationforJmethod(jmethod, table);
@@ -414,11 +425,20 @@ public class Utils {
             outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
         }
         if (jmethod.getExceptionTypes().length > 0) {
-            AxisMessage faultMessage = new AxisMessage();
-            faultMessage.setName(jmethod.getSimpleName() + "Fault");
-            faultMessage
-                    .setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
-            operation.setFaultMessages(faultMessage);
+            JClass[] extypes = jmethod.getExceptionTypes() ;
+            for (int j= 0 ; j < extypes.length ; j++) {
+                AxisMessage faultMessage = new AxisMessage();
+                JClass extype = extypes[j] ;
+                String exname = extype.getSimpleName() ;
+                if(extypes.length >1){
+                    faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
+                } else {
+                    faultMessage.setName(jmethod.getSimpleName() + "Fault" );
+                }
+                faultMessage.setElementQName(
+                        table.getComplexSchemaType(exname + "Fault"));
+                operation.setFaultMessages(faultMessage);
+            }
         }
         operation.setName(new QName(opName));
         AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);

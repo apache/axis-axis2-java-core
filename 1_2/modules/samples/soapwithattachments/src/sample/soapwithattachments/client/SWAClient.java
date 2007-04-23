@@ -134,7 +134,8 @@ public class SWAClient {
 		MessageContext response = mepClient
 				.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 	  	SOAPBody body = response.getEnvelope().getBody();
-	  	OMElement element = body.getFirstElement().getFirstChildWithName(new QName("return"));
+	  	OMElement element = body.getFirstElement().getFirstChildWithName(
+	  	new QName("http://service.soapwithattachments.sample/xsd","return"));
 		System.out.println(element.getText());
 	}
 }

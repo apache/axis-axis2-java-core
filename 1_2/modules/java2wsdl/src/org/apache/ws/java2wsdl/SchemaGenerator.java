@@ -218,19 +218,30 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         continue;
                     }
                     if (jMethod.getExceptionTypes().length > 0) {
-                        methodSchemaType =
-                                createSchemaTypeForMethodPart(getSimpleName(jMethod) + "Fault");
-                        sequence = new XmlSchemaSequence();
-                        XmlSchemaElement elt1 = new XmlSchemaElement();
-                        elt1.setName(getSimpleName(jMethod) + "Fault");
-                        elt1.setSchemaTypeName(
-                                typeTable.getQNamefortheType(Object.class.getName()));
-                        sequence.getItems().add(elt1);
-                        methodSchemaType.setParticle(sequence);
+                    	/*
+                    	methodSchemaType = createSchemaTypeForMethodPart(getSimpleName(jMethod) + "Fault");
+                         sequence = new XmlSchemaSequence();
+                         XmlSchemaElement elt1 = new XmlSchemaElement();
+                         elt1.setName(getSimpleName(jMethod) + "Fault");
+                         elt1.setSchemaTypeName(typeTable.getQNamefortheType(Object.class.getName()));
+                         sequence.getItems().add(elt1);
+                         methodSchemaType.setParticle(sequence);
+                        */
+//                    	 begin mj
+                        JClass[] extypes = jMethod.getExceptionTypes() ;
+                        for (int j= 0 ; j < extypes.length ; j++) {
+                            JClass extype = extypes[j] ;
+                            methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
+                            sequence = new XmlSchemaSequence();
+                           // methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName());
+                           // methodSchemaType.setParticle(sequence);
+                        	generateSchemaForType(sequence, extype, extype.getSimpleName());
+                            methodSchemaType.setParticle(sequence);
+                        }
+                        // end mj
                     }
                     uniqueMethods.put(getSimpleName(jMethod), jMethod);
                     //create the schema type for the method wrapper
-
                     uniqueMethods.put(getSimpleName(jMethod), jMethod);
                     JParameter [] paras = jMethod.getParameters();
                     String parameterNames [] = null;
@@ -346,7 +357,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
             JClass sup = javaType.getSuperclass() ;
             
 //          AXIS2-1749 inheritance
-            if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0)) {
+            if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
+            		!("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
             	String superClassName = sup.getQualifiedName();
             	String superclassname = getSimpleName(sup) ;
             	String tgtNamespace ;
@@ -361,7 +373,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
                      tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
                  }
 
-            	QName basetype = new QName(tgtNamespace,superclassname,tgtNamespacepfx) ;
+                if (tgtNamespacepfx == null) {
+                    tgtNamespacepfx = generatePrefix();
+                    targetNamespacePrefixMap.put(tgtNamespace, tgtNamespacepfx) ;
+                }
+
+                QName basetype = new QName(tgtNamespace,superclassname,tgtNamespacepfx) ;
             	
             	complexExtension.setBaseTypeName(basetype) ;
             	complexExtension.setParticle(sequence) ;
@@ -505,12 +522,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 elt1.setMaxOccurs(Long.MAX_VALUE);
                 elt1.setMinOccurs(1);
             }
-    		  		
-    		if (String.class.getName().equals(propertyName)) {
-    			elt1.setNillable(true);
-    		}
-    		    		    		
-    		
+            if(type.isPrimitiveType() == false)
+                elt1.setNillable(true) ;
+
     	} else {
     		if (isArryType) {
     			generateSchema(type.getArrayComponentType());
