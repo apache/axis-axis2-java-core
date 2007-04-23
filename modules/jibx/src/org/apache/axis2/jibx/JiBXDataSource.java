@@ -109,11 +109,12 @@ public class JiBXDataSource implements OMDataSource {
      * @throws JiBXException
      */
     private void marshal(IMarshallingContext ctx) throws JiBXException {
-        if (marshallerIndex < 0) {
-            ((IMarshallable)dataObject).marshal(ctx);
-        } else {
-            try {
-
+        try {
+            
+            if (marshallerIndex < 0) {
+                ((IMarshallable)dataObject).marshal(ctx);
+            } else {
+    
                 // open namespaces from wrapper element
                 IXMLWriter wrtr = ctx.getXmlWriter();
                 wrtr.openNamespaces(openNamespaceIndexes, openNamespacePrefixes);
@@ -122,17 +123,18 @@ public class JiBXDataSource implements OMDataSource {
                     name = elementNamespacePrefix + ':' + name;
                 }
                 wrtr.startTagOpen(0, name);
-
+    
                 // marshal object representation (may include attributes) into element
                 IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
                                                      bindingFactory
                                                              .getMappedClasses()[marshallerIndex]);
                 mrsh.marshal(dataObject, ctx);
                 wrtr.endTag(0, name);
-
-            } catch (IOException e) {
-                throw new JiBXException("Error marshalling XML representation", e);
             }
+            ctx.getXmlWriter().flush();
+
+        } catch (IOException e) {
+            throw new JiBXException("Error marshalling XML representation", e);
         }
     }
 
