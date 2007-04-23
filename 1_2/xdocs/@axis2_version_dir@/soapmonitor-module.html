@@ -125,10 +125,11 @@ code to the web.xml (The SOAPMonitorPort is configurable.):</p>
 <p>Alternatively, you can get the compiled applet classes from the
 axis2-soapmonitor-*.jar from inside the expanded axis2.war under WEB-INF/lib
 . Simply execute 'jar -xf axis2-soapmonitor-*.jar' and place the applet
-classes, as for a common example, as /home/myuser/tomcat/axis2/SOAPMonitorApplet*.class/WEB-INF . 
-Modify the path to suit your environment. The important point here is that 
-in this example, the compiled applet classes need to be placed at the root 
-of the expanded WAR, ie, inside the 'axis2' directory.</p>
+classes, for example, in
+/home/myuser/tomcat/axis2/SOAPMonitorApplet*.class/WEB-INF . Modify the path
+to suit your environment. The important point here is that in this example,
+the compiled applet classes need to be placed at the root of the expanded
+WAR, ie, inside the 'axis2' directory.</p>
 
 <p>Using a Web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor
 (e.g.http://localhost:8080/axis2/SOAPMonitor) substituting the correct values
@@ -136,7 +137,9 @@ for your Web application. This will show the SOAP Monitor applet used to view
 the service requests and responses. Any requests to services that have been
 configured and deployed correctly should show up in the applet.</p>
 
-<p>The SOAPMonitor with attachments currently serializes themselves as base64 characters. It is therefore recommended to use the TCPMon tool to correctly capture MTOM and SWA messages as an multipart mime where the binary data is an attachment.
-</p>
+<p>The SOAPMonitor with attachments currently serializes themselves as base64
+characters. It is therefore recommended to use the TCPMon tool to correctly
+capture MTOM and SWA messages as an multipart mime where the binary data is
+an attachment.</p>
 </body>
 </html>
