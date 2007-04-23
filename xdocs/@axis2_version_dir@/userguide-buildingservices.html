@@ -433,20 +433,12 @@ file (-wv)<strong>.</strong></p>
 case you do not have the set the CLASSPATH manually.</p>
 
 <p>For Linux:</p>
-
-<p><code>$AXIS2_HOME/bin/wsdl2java.sh -uri
-file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl</code></p>
-
-<p><code>-p org.apache.axis2.axis2userguide -o target_directory_name -d adb
--s -wv @axis2_version@ -ss -sd</code></p>
+<pre>$AXIS2_HOME/bin/wsdl2java.sh -uri file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv @axis2_version@ -ss -sd</pre>
 
 <p>For MS Windows:</p>
-
-<p><code>%AXIS2_HOME%\bin\wsdl2java.bat -uri
-file:\\\C:\apps\axis2\samples\zSample\Axis2UserGuide.wsdl</code></p>
-
-<p><code>-p org.apache.axis2.axis2userguide -o target_directory_name -d adb
--s -wv @axis2_version@ -ss -sd</code></p>
+<pre>%AXIS2_HOME%\bin\wsdl2java.bat -uri file:\\\C:\apps\axis2\samples\zSample\Axis2UserGuide.wsdl
+-p org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv @axis2_version@ -ss -sd</pre>
 
 <p>In both instances, at this point, you should see four new items in your
 chosen directory: the build.xml file, which includes instructions for Ant,
