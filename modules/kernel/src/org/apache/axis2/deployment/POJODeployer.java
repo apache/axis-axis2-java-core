@@ -108,6 +108,7 @@ public class POJODeployer implements Deployer {
                                                       configCtx.getAxisConfiguration(),
                                                       new ArrayList(),
                                                       new ArrayList());
+                                axisService.setName(className);
                                 setMessageReceivers(axisService);
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
