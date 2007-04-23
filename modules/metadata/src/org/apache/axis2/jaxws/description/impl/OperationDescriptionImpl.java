@@ -1211,7 +1211,7 @@ class OperationDescriptionImpl
 
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapBindingParameterStyle == null) {
-            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
+            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
                 soapBindingParameterStyle = getAnnoSoapBinding().parameterStyle();
             } else {
                 // Per JSR-181 MR Sec 4.7, pg 28: if not specified, use the Type value.
