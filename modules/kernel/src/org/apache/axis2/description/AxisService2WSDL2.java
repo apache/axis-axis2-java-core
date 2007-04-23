@@ -62,10 +62,10 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         OMNamespace tns = omFactory
                 .createOMNamespace(axisService.getTargetNamespace(),
                                    axisService.getTargetNamespacePrefix());
-        if (!nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
+        if (nameSpacesMap!= null && !nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
             descriptionElement.declareDefaultNamespace(WSDL2Constants.WSDL_NAMESPACE);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
+        if (nameSpacesMap!= null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
             wsoap = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
                                        WSDLSerializationUtil.getPrefix(
@@ -74,7 +74,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             wsoap = descriptionElement
                     .declareNamespace(WSDL2Constants.URI_WSDL2_SOAP, WSDL2Constants.SOAP_PREFIX);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
+        if (nameSpacesMap!= null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
             whttp = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_HTTP,
                                        WSDLSerializationUtil.getPrefix(
@@ -83,7 +83,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             whttp = descriptionElement
                     .declareNamespace(WSDL2Constants.URI_WSDL2_HTTP, WSDL2Constants.HTTP_PREFIX);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
+        if (nameSpacesMap!= null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
             wsdlx = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
                                        WSDLSerializationUtil.getPrefix(
