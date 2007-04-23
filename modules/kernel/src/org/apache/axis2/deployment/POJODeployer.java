@@ -11,6 +11,8 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.AnnotationConstants;
@@ -268,6 +270,30 @@ public class POJODeployer implements Deployer {
     }
 
     public void unDeploy(String fileName) {
+        if(fileName.endsWith(".class")){
+            String className = fileName.replaceAll(".class", "");
+            try {
+                AxisServiceGroup serviceGroup =
+                        configCtx.getAxisConfiguration().removeServiceGroup(className);
+                configCtx.removeServiceGroupContext(serviceGroup);
+                log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                        fileName));
+            } catch (AxisFault axisFault) {
+                //May be a faulty service
+                configCtx.getAxisConfiguration().removeFaultyService(fileName);
+            }
+        } else if (fileName.endsWith(".jar")){
+            try {
+                AxisServiceGroup serviceGroup =
+                        configCtx.getAxisConfiguration().removeServiceGroup(fileName);
+                configCtx.removeServiceGroupContext(serviceGroup);
+                log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                        fileName));
+            } catch (AxisFault axisFault) {
+                //May be a faulty service
+                configCtx.getAxisConfiguration().removeFaultyService(fileName);
+            }
+        }
     }
 }
 
