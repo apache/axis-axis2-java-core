@@ -116,20 +116,18 @@ code to the web.xml (The SOAPMonitorPort is configurable.):</p>
         &lt;url-pattern&gt;/SOAPMonitor&lt;/url-pattern&gt;
     &lt;/servlet-mapping&gt;</pre>
 
-<p>Finally, compile the applet classes and place them at the root of the .war
-- for example axis2/SOAPMonitorApplet*.class/WEB-INF :</p>
+<p>Finally, compile the applet classes and place them at the root (eg:
+&lt;CATALINA_HOME&gt;/webapps/axis2/) of the extracted WAR file. You can find
+the SOAPMonitorApplet.java in the source distribution. To compile, use the
+following command:</p>
 <pre>javac -classpath axis2-soapmonitor.jar SOAPMonitorApplet.java</pre>
 
-<p>You can find the SOAPMonitorApplet.java in the source distribution.</p>
-
-<p>Alternatively, you can get the compiled applet classes from the
-axis2-soapmonitor-*.jar from inside the expanded axis2.war under WEB-INF/lib
-. Simply execute 'jar -xf axis2-soapmonitor-*.jar' and place the applet
-classes, for example, in
-/home/myuser/tomcat/axis2/SOAPMonitorApplet*.class/WEB-INF . Modify the path
-to suit your environment. The important point here is that in this example,
-the compiled applet classes need to be placed at the root of the expanded
-WAR, ie, inside the 'axis2' directory.</p>
+<p>Alternatively, you can directly get the <strong>compiled applet
+classes</strong> from the WEB-INF/lib/axis2-soapmonitor-*.jar which is inside
+the extracted axis2.war. To extract the axis2-soapmonitor-*.jar file, simply
+execute the command, <code>jar -xf axis2-soapmonitor-*.jar</code> and place
+the compiled applet classes in the root directory of the extracted WAR, for
+example, in &lt;CATALINA_HOME&gt;/webapps/axis2/.</p>
 
 <p>Using a Web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor
 (e.g.http://localhost:8080/axis2/SOAPMonitor) substituting the correct values
