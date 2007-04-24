@@ -30,6 +30,23 @@
 # Get the context and from that find the location of setenv.sh
 . `dirname $0`/setenv.sh
 
+#add any user given classpath's
+USER_COMMANDS=""
+prearg=""
+for arg in "$@"
+do
+   if [ $arg != -classpath ] && [ $arg != -cp ] && [ $prearg != -classpath ] && [ $prearg != -cp  ]
+   then
+      USER_COMMANDS="$USER_COMMANDS ""$arg"
+   fi
+
+   if [ $prearg=-classpath ] || [ $prearg=-cp  ]
+   then
+      AXIS2_CLASSPATH="$arg":"$AXIS2_CLASSPATH"
+   fi
+   prearg=$arg
+done 
+
 
 $JAVA_HOME/bin/java -classpath "$AXIS2_CLASSPATH" \
--Daxis2.xml="$AXIS2_HOME/conf/axis2.xml" -Daxis2.repo="$AXIS2_HOME/repository" $*
+-Daxis2.xml="$AXIS2_HOME/conf/axis2.xml" -Daxis2.repo="$AXIS2_HOME/repository"  $USER_COMMANDS
