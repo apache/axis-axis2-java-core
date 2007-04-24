@@ -2590,7 +2590,7 @@
                                                            <xsl:value-of select="$loopBoolName"/> = true;
                                                         }
 
-                                                 }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event){
                                                      <xsl:value-of select="$loopBoolName"/> = true;
                                                  }else{
                                                      reader.next();
@@ -4861,7 +4861,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                            <xsl:value-of select="$loopBoolName"/> = true;
                                                         }
 
-                                                 }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event){
                                                      <xsl:value-of select="$loopBoolName"/> = true;
                                                  }else{
                                                      reader.next();
