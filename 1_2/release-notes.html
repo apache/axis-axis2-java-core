@@ -8,7 +8,6 @@
 <h1>Welcome to Apache Axis2 version 1.1</h1>
 
 <h3>@TODAY@</h3>
-
 <pre>Just over 6 months since the original 1.0 release, we are very proud to
 announce the release of Apache Axis2 version 1.1.
 
@@ -26,21 +25,22 @@ WS-Trust (Apache Rahas), WS-Reliable Messaging (Apache Sandesha) and
 WS-Eventing (Apache Savan) will be available soon after the Apache Axis2
 1.1 release. Please see these projects' own sites for further information.
 
-Major Changes Since 1.0:
-- Significantly improved documentation
-- Significantly improved support for POJO services and clients
-- Significantly improved support for Spring services
-- Significantly improved Axis Data Binding (ADB) to increase schema
-  coverage and overall stability
-- Improved service lifecycle model
-- Improved JMS support
-- Improved handler and module interfaces
-- Improved Eclipse and Idea plugins
-- New Attachments API for sending & receiving MTOM and SwA attachments
-- Built in support for WS-Policy via Apache Neethi
-- Added support for unwrapping Web service requests
-- Fixed tons of small and not-so-small bugs
-- Major refactoring of release structure to make usage easy
+Major Changes Since 1.1:
+- WSDL 2.0 fully support (reading, writing, and codegen)
+- POJO annotation 
+- JAX-WS integration
+- JAX-WS -annotation
+- Un-wrapping (Response) 
+- ADB - missing schema support 
+- Maven2 support
+- JASON support 
+- Binary serialization 
+- Multiple services support in code gen 
+- HTTP code generation (both WSDL 1.1 and 2.0)
+- Fix/update helper mode 
+- Custom deployer support
+- Message formatters
+- Message Builders
 
 Known Issues and Limitations in 1.1 Release:
 - Unwrapping of response messages (coming in 1.2)
@@ -66,7 +66,7 @@ http://ws.apache.org/axis2/
 Features of Apache Axis2:
 
 Programming Model
-   - Simple XML-centric client API with full WSDL and policy support
+   - Improved XML-centric client API with full WSDL and policy support
    - Support for POJO and Spring services and clients
    - Support for any message exchange pattern (MEP)
    - Synchronous and asynchronous programming model
@@ -80,6 +80,10 @@ Programming Model
    - Automatic support for POX (REST) style invocation of services
    - Support for querying service's WSDL (with ?wsdl), schema (with
      ?xsd) and policies (with ?policy)
+   - WSDL 2.0POJO annotation (JSR 181)
+   - JAX-WS intregration
+   - Binary serialization (Fast Infoset)
+   - JSON support
 
 Supported Specifications
    - SOAP 1.1 and 1.2
