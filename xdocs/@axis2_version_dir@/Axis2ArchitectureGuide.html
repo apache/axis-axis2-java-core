@@ -9,7 +9,7 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<h1 align="center">Apache Axis2 Architecture Guide</h1>
+<h1 align="center">eApache Axis2 Architecture Guide</h1>
 
 <p>This document gives an introduction to Axis2's modular architecture with
 explanations on every module.</p>
@@ -436,7 +436,7 @@ There are three special handlers defined in Axis2.
 <p>An incoming SOAP message is always received by a Transport Receiver
 waiting for the SOAP messages. Once the SOAP message arrives, the transport
 Headers are parsed and a <a href="#messageContext">Message Context</a> is
-created from the incoming SOAP message. This message context encpsulates all
+created from the incoming SOAP message. This message context encapsulates all
 the information, including the SOAP message itself, transport headers, etc.,
 inside it. Then the <i>In Pipe</i> is executed with the Message Context.</p>
 
