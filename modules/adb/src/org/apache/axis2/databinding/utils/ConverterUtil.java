@@ -207,14 +207,23 @@ public class ConverterUtil {
 
 
     public static int convertToInt(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Integer.parseInt(s);
     }
 
     public static BigDecimal convertToBigDecimal(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new BigDecimal(s);
     }
 
     public static double convertToDouble(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         if (POSITIVE_INFINITY.equals(s)) {
             return Double.POSITIVE_INFINITY;
         } else if (NEGATIVE_INFINITY.equals(s)) {
@@ -224,10 +233,16 @@ public class ConverterUtil {
     }
 
     public static BigDecimal convertToDecimal(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new BigDecimal(s);
     }
 
     public static float convertToFloat(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         if (POSITIVE_INFINITY.equals(s)) {
             return Float.POSITIVE_INFINITY;
         } else if (NEGATIVE_INFINITY.equals(s)) {
@@ -241,10 +256,16 @@ public class ConverterUtil {
     }
 
     public static long convertToLong(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Long.parseLong(s);
     }
 
     public static short convertToShort(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Short.parseShort(s);
     }
 
@@ -386,34 +407,58 @@ public class ConverterUtil {
     }
 
     public static UnsignedLong convertToUnsignedLong(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new UnsignedLong(s);
     }
 
     public static UnsignedInt convertToUnsignedInt(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new UnsignedInt(s);
     }
 
     public static UnsignedShort convertToUnsignedShort(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new UnsignedShort(s);
     }
 
     public static UnsignedByte convertToUnsignedByte(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new UnsignedByte(s);
     }
 
     public static NonNegativeInteger convertToNonNegativeInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new NonNegativeInteger(s);
     }
 
     public static NegativeInteger convertToNegativeInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new NegativeInteger(s);
     }
 
     public static PositiveInteger convertToPositiveInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new PositiveInteger(s);
     }
 
     public static NonPositiveInteger convertToNonPositiveInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new NonPositiveInteger(s);
     }
 
@@ -476,10 +521,16 @@ public class ConverterUtil {
     }
 
     public static BigInteger convertToInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new BigInteger(s);
     }
 
     public static BigInteger convertToBigInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return convertToInteger(s);
     }
 
