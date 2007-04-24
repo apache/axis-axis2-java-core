@@ -207,14 +207,23 @@ public class ConverterUtil {
 
 
     public static int convertToInt(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Integer.parseInt(s);
     }
 
     public static BigDecimal convertToBigDecimal(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new BigDecimal(s);
     }
 
     public static double convertToDouble(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         if (POSITIVE_INFINITY.equals(s)) {
             return Double.POSITIVE_INFINITY;
         } else if (NEGATIVE_INFINITY.equals(s)) {
@@ -224,10 +233,16 @@ public class ConverterUtil {
     }
 
     public static BigDecimal convertToDecimal(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return new BigDecimal(s);
     }
 
     public static float convertToFloat(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         if (POSITIVE_INFINITY.equals(s)) {
             return Float.POSITIVE_INFINITY;
         } else if (NEGATIVE_INFINITY.equals(s)) {
@@ -241,10 +256,16 @@ public class ConverterUtil {
     }
 
     public static long convertToLong(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Long.parseLong(s);
     }
 
     public static short convertToShort(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return Short.parseShort(s);
     }
 
@@ -476,10 +497,17 @@ public class ConverterUtil {
     }
 
     public static BigInteger convertToInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
+
         return new BigInteger(s);
     }
 
     public static BigInteger convertToBigInteger(String s) {
+        if (s.startsWith("+")) {
+            s = s.substring(1);
+        }
         return convertToInteger(s);
     }
 
@@ -728,7 +756,7 @@ public class ConverterUtil {
         }
 
         try {
-            objectList.toArray((Object[])returnArray);
+            objectList.toArray((Object[]) returnArray);
         } catch (Exception e) {
             //we are over with alternatives - throw the
             //converison exception
@@ -880,8 +908,8 @@ public class ConverterUtil {
         //take the string as an argument.
         boolean continueFlag = false;
         try {
-            Constructor stringConstructor = clazz.getConstructor(new Class[] { String.class });
-            return stringConstructor.newInstance(new Object[] { value });
+            Constructor stringConstructor = clazz.getConstructor(new Class[]{String.class});
+            return stringConstructor.newInstance(new Object[]{value});
         } catch (NoSuchMethodException e) {
             //oops - no such constructors - continue with the
             //parse method
@@ -889,32 +917,34 @@ public class ConverterUtil {
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
-                                           clazz.getName()),
+                            clazz.getName()),
                     e);
         }
 
         if (!continueFlag) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotConvert",
-                                           clazz.getName()));
+                            clazz.getName()));
         }
 
         try {
-            Method parseMethod = clazz.getMethod("parse", new Class[] { String.class });
+            Method parseMethod = clazz.getMethod("parse", new Class[]{String.class});
             Object instance = clazz.newInstance();
-            return parseMethod.invoke(instance, new Object[] { value });
+            return parseMethod.invoke(instance, new Object[]{value});
         } catch (NoSuchMethodException e) {
             throw new ObjectConversionException(e);
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
-                                           clazz.getName()),
+                            clazz.getName()),
                     e);
         }
 
     }
 
-    /** A simple exception that is thrown when the conversion fails */
+    /**
+     * A simple exception that is thrown when the conversion fails
+     */
     public static class ObjectConversionException extends RuntimeException {
         public ObjectConversionException() {
         }
