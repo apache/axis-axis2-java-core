@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.message.util.impl;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -26,6 +27,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,6 +56,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 
 /** SAAJConverterImpl Provides an conversion methods between OM<->SAAJ */
 public class SAAJConverterImpl implements SAAJConverter {
@@ -129,21 +132,36 @@ public class SAAJConverterImpl implements SAAJConverter {
         try {
             omEnvelope.build();
         } catch (OMException ex){
-            log.info("Got OMException for [" + toString(saajEnvelope) + "]");
-            throw ex;
+            try {
+                // Let's try to see if we can save the envelope as a string
+                // and then make it into axiom SOAPEnvelope
+                return toOM(toString(saajEnvelope));
+            } catch (TransformerException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
         }
         return omEnvelope;
     }
 
-    private String toString(SOAPEnvelope saajEnvelope) {
+    private org.apache.axiom.soap.SOAPEnvelope toOM(String xml)
+            throws WebServiceException {
+        XMLStreamReader reader;
+        try {
+            reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(xml.getBytes()));
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);
+        // Create and return the OM Envelope
+        return builder.getSOAPEnvelope();
+    }
+
+    private String toString(SOAPEnvelope saajEnvelope) throws TransformerException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Transformer tf;
-        try {
-            tf = TransformerFactory.newInstance().newTransformer();
-            tf.transform(new DOMSource(saajEnvelope.getOwnerDocument()), new StreamResult(baos));
-        } catch (TransformerException e) {
-            log.info(e);
-        }
+        tf = TransformerFactory.newInstance().newTransformer();
+        tf.transform(new DOMSource(saajEnvelope.getOwnerDocument()), new StreamResult(baos));
         return new String(baos.toByteArray());
     }
 
