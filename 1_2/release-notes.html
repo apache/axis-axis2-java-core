@@ -8,8 +8,8 @@
 <h1>Welcome to Apache Axis2 version 1.1</h1>
 
 <h3>@TODAY@</h3>
-<pre>Just over 6 months since the original 1.0 release, we are very proud to
-announce the release of Apache Axis2 version 1.1.
+<pre>Just over 4 months since the original 1.1.1 release, we are very proud to
+announce the release of Apache Axis2 version 1.2
 
 Downloads are available at:
     http://ws.apache.org/axis2/download.cgi
@@ -22,22 +22,21 @@ functionality for features such as security and reliability.
 
 Modules supporting WS-Security/Secure-Conversation (Apache Rampart),
 WS-Trust (Apache Rahas), WS-Reliable Messaging (Apache Sandesha) and
-WS-Eventing (Apache Savan) will be available soon after the Apache Axis2
-1.1 release. Please see these projects' own sites for further information.
+WS-Eventing (Apache Savan) will be available after the Apache Axis2
+1.2 release. Please see these projects' own sites for further information.
 
 Major Changes Since 1.1:
 - WSDL 2.0 fully support (reading, writing, and codegen)
-- POJO annotation 
+- POJO annotation (JSR 181)
 - JAX-WS integration
 - JAX-WS -annotation
 - Un-wrapping (Response) 
-- ADB - missing schema support 
+- ADB - support for union and list
 - Maven2 support
-- JASON support 
-- Binary serialization 
-- Multiple services support in code gen 
+- JSON support 
+- Binary serialization (Fast infoste)
+- Codegen support for WSDL with Multiple services
 - HTTP code generation (both WSDL 1.1 and 2.0)
-- Fix/update helper mode 
 - Custom deployer support
 - Message formatters
 - Message Builders
@@ -46,12 +45,9 @@ Major Changes Since 1.1:
 
 
 Known Issues and Limitations in 1.1 Release:
-- Unwrapping of response messages (coming in 1.2)
-- JSR 181/183 Annotation support (coming in 1.2)
-- JaxMe and JAXBRI data binding support is experimental
-- Simple Axis Server does not support POX/REST
+- 
 
-Apache Axis2 1.1 is a major new release compared to Axis2 1.0. We are
+Apache Axis2 1.2 is a major new release compared to Axis2 1.1. We are
 striving for a simple and happy first time user experience as well as a
 satisfying experienced user experience with this release. We welcome any
 and all feedback at:
@@ -85,6 +81,7 @@ Programming Model
      ?xsd) and policies (with ?policy)
    - WSDL 2.0POJO annotation (JSR 181)
    - JAX-WS intregration
+   - Custom Deployers
    - Binary serialization (Fast Infoset)
    - JSON support
    - EJB Provider support
