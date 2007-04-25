@@ -70,12 +70,14 @@ options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
 <h3>Sample REST - HTTP POST Client</h3>
 
-<p>There is an example named, userguide.clients.RESTClient.java which
-demonstrates the usage of the above. It uses the "echo" operation of the</p>
-<pre>userguide.example1.MyService </pre>
+<p>There is an example named, userguide.clients.RESTClient.java found in
+AXIS2_HOME/samples/userguide/src/userguide/clients which demonstrates the
+usage of the above. It uses the "echo" operation of the
+<code>userguide.example1.MyService </code>of the
+AXIS2_HOME/samples/userguide/src/userguide/example1. </p>
 
-<p>of the samples.The class source will be as follows:</p>
-<source><pre>public class RESTClient {
+<p>The class source will be as follows:<source></p>
+<pre>public class RESTClient {
 
     private static String toEpr = "http://localhost:8080/axis2/services/MyService";
     
@@ -125,8 +127,7 @@ parameters are converted into XML and put into the SOAP body.</p>
 <source><pre>http://127.0.0.1:8080/axis2/rest/Version/getVersion</pre>
 </source>
 <p>The result can be shown in the browser as follows:</p>
-<img src="images/userguide/http-get-ws.jpg"><br clear="all">
-
+<img src="/images/userguide/http-get-ws.jpg">
 
 <p>For example, the following request,</p>
 <source><pre>http://127.0.0.1:8080/axis2/rest/Version/getVersion</pre>
