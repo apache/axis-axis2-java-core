@@ -123,11 +123,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         prepareRepository(repoDir);
         // setting the CLs
         setClassLoaders(repoDir);
-        if (repoListener == null) {
-            repoListener = new RepositoryListener(this, false);
-        } else {
-            repoListener.init2(false);
-        }
+        repoListener = new RepositoryListener(this, false);
         org.apache.axis2.util.Utils
                 .calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
         try {
@@ -212,11 +208,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 if (fileUrl.endsWith(".mar")) {
                     URL moduleurl = new URL(moduleDir, fileUrl);
                     ClassLoader deploymentClassLoader =
-                           Utils.createClassLoader(
+                            Utils.createClassLoader(
                                     new URL[]{moduleurl},
                                     axisConfig.getModuleClassLoader(),
                                     true,
-                                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -265,7 +261,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     new URL[]{servicesURL},
                     axisConfig.getServiceClassLoader(),
                     true,
-                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
