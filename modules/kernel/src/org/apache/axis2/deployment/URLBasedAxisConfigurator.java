@@ -34,11 +34,11 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
 
     private static final Log log = LogFactory.getLog(URLBasedAxisConfigurator.class);
     private URL axis2xml;
-    private URL repositoy;
+    private URL repository;
 
-    public URLBasedAxisConfigurator(URL axis2xml, URL repositoy) throws AxisFault {
+    public URLBasedAxisConfigurator(URL axis2xml, URL repository) throws AxisFault {
         this.axis2xml = axis2xml;
-        this.repositoy = repositoy;
+        this.repository = repository;
     }
 
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
@@ -51,7 +51,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 axis2xmlStream = axis2xml.openStream();
             }
             axisConfig = populateAxisConfiguration(axis2xmlStream);
-            if (repositoy == null) {
+            if (repository == null) {
                 Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
                 if (axis2repoPara != null) {
                     String repoValue = (String) axis2repoPara.getValue();
@@ -69,7 +69,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     loadFromClassPath();
                 }
             } else {
-                loadRepositoryFromURL(repositoy);
+                loadRepositoryFromURL(repository);
             }
 
         } catch (IOException e) {
@@ -81,7 +81,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
     //to load services
     public void loadServices() {
         try {
-            if (repositoy == null) {
+            if (repository == null) {
                 Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
                 if (axis2repoPara != null) {
                     String repoValue = (String) axis2repoPara.getValue();
@@ -96,7 +96,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     }
                 }
             } else {
-                loadServicesFromUrl(repositoy);
+                loadServicesFromUrl(repository);
             }
         } catch (MalformedURLException e) {
             log.info(e);

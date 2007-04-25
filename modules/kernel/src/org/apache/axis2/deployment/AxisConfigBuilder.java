@@ -248,28 +248,29 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         while (deployerItr.hasNext()) {
             OMElement element = (OMElement) deployerItr.next();
             String directory = element.getAttributeValue(new QName(DIRECTORY));
-            if (directory != null) {
-                String extension = element.getAttributeValue(new QName(EXTENSION));
-                if (extension != null) {
-                    try {
-                        String deployerValue = element.getAttributeValue(new QName(TAG_CLASS_NAME));
-                        Class deployerClass;
-                        deployerClass = Loader.loadClass(deployerValue);
-                        Deployer deployer =
-                                (Deployer) deployerClass.newInstance();
-                        deployer.setDirectory(directory);
-                        deployer.setExtension(extension);
-                        directoryToExtensionMappingMap.put(directory, extension);
-                        extensionToDeployerMappingMap.put(extension, deployer);
-                    } catch (ClassNotFoundException e) {
-                        log.error(e);
-                    } catch (InstantiationException e) {
-                        log.error(e);
-                    } catch (IllegalAccessException e) {
-                        log.error(e);
-                    }
-                }
+            if (directory == null) {
+                log.error("Deployer missing 'directory' attribute : " + element.toString());
             }
+
+            String extension = element.getAttributeValue(new QName(EXTENSION));
+            if (extension == null) {
+                log.error("Deployer missing 'extension' attribute : " + element.toString());
+                return;
+            }
+            String deployerClassName = element.getAttributeValue(new QName(TAG_CLASS_NAME));
+            Deployer deployer;
+            try {
+                Class deployerClass = Loader.loadClass(deployerClassName);
+                deployer = (Deployer) deployerClass.newInstance();
+            } catch (Exception e) {
+                log.error(e);
+                return;
+            }
+            deployer.setDirectory(directory);
+            deployer.setExtension(extension);
+            if (directory != null)
+                directoryToExtensionMappingMap.put(directory, extension);
+            extensionToDeployerMappingMap.put(extension, deployer);
         }
         if (deploymentEngine != null) {
             deploymentEngine.setDirectoryToExtensionMappingMap(directoryToExtensionMappingMap);
@@ -384,7 +385,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
-                HandlerDescription handler = processHandler(omElement, axisConfig);
+                HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
 
                 handler.getRules().setPhaseName(phaseName);
                 Utils.loadHandler(axisConfig.getSystemClassLoader(), handler);

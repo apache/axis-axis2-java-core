@@ -17,24 +17,38 @@
 
 package org.apache.axis2.deployment.repository.util;
 
+import org.apache.axis2.deployment.Deployer;
+
 public class WSInfo {
     private String fileName;
     private long lastModifiedDate;
 
+    public static final int TYPE_SERVICE = 0;
+    public static final int TYPE_MODULE = 1;
+
     /**
      * To check whether the file is a module or a servise
      */
-    private String type;
+    private int type = TYPE_SERVICE;
+
+    private Deployer deployer;
 
     public WSInfo(String filename, long lastmodifieddate) {
         this.fileName = filename;
         this.lastModifiedDate = lastmodifieddate;
     }
 
-    public WSInfo(String filename, long lastmodifieddate, String type) {
-        this.fileName = filename;
-        this.lastModifiedDate = lastmodifieddate;
+
+    public WSInfo(String fileName, long lastModifiedDate, int type) {
+        this.fileName = fileName;
+        this.lastModifiedDate = lastModifiedDate;
         this.type = type;
+    }
+
+    public WSInfo(String fileName, long lastModifiedDate, Deployer deployer) {
+        this.fileName = fileName;
+        this.lastModifiedDate = lastModifiedDate;
+        this.deployer = deployer;
     }
 
     public String getFileName() {
@@ -45,7 +59,7 @@ public class WSInfo {
         return lastModifiedDate;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
@@ -55,5 +69,9 @@ public class WSInfo {
 
     public void setLastModifiedDate(long lastmodifieddate) {
         this.lastModifiedDate = lastmodifieddate;
+    }
+    
+    public Deployer getDeployer() {
+        return deployer;
     }
 }

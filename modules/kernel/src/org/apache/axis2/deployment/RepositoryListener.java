@@ -49,9 +49,8 @@ public class RepositoryListener implements DeploymentConstants {
      * then creates a WSInfoList to store information about available modules and services.
      *
      * @param deploymentEngine reference to engine registry for updates
+     * @param isClasspath true if this RepositoryListener should scan the classpath for Modules
      */
-
-    //The constructor , which loads modules from class path
     public RepositoryListener(DeploymentEngine deploymentEngine, boolean isClasspath) {
         this.deploymentEngine = deploymentEngine;
         wsInfoList = new WSInfoList(deploymentEngine);
@@ -78,11 +77,11 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
                     }
                 }
             }
@@ -119,7 +118,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
                     }
                 }
             }
@@ -144,7 +143,7 @@ public class RepositoryListener implements DeploymentConstants {
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
-                            wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                            addFileToDeploy(file, deploymentEngine.getModuleDeployer());
                         }
                     }
                 }
@@ -214,18 +213,20 @@ public class RepositoryListener implements DeploymentConstants {
 
     private void findFileForGivenDirectory(String dir, String extension) {
         try {
-            File fileTobeSearch = new File(deploymentEngine.getRepositoryDir(), dir);
-            if (fileTobeSearch.exists()) {
-                File[] files = fileTobeSearch.listFiles();
+            File directory = new File(deploymentEngine.getRepositoryDir(), dir);
+            if (directory.exists()) {
+                File[] files = directory.listFiles();
                 if (files != null && files.length > 0) {
                     for (int i = 0; i < files.length; i++) {
                         File file = files[i];
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        if (!file.isDirectory() && DeploymentFileData.getFileExtension(
-                                file.getName()).equals(extension)) {
-                            wsInfoList.addWSInfoItem(file, extension);
+                        // TODO: Should this allow expanded directories like services/modules do?
+                        if (!file.isDirectory() && extension.equals(
+                                DeploymentFileData.getFileExtension(file.getName()))) {
+                            addFileToDeploy(file,
+                                            deploymentEngine.getDeployerForExtension(extension));
                         }
                     }
                 }
@@ -248,16 +249,23 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
+                    } else {
+                        String ext = DeploymentFileData.getFileExtension(file.getName());
+                        Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
+                        // If we found a deployer for this type of file, use it.  Otherwise
+                        // ignore the file.
+                        if (deployer != null) {
+                            addFileToDeploy(file, deployer);
+                        }
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
                     }
                 }
             }
         }
-        wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
     }
 
     /** Method invoked from the scheduler to start the listener. */
@@ -277,4 +285,7 @@ public class RepositoryListener implements DeploymentConstants {
         update();
     }
 
+    public void addFileToDeploy(File file, Deployer deployer) {
+        wsInfoList.addWSInfoItem(file, deployer);
+    }
 }

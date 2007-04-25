@@ -219,8 +219,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 .getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
         while (msgBuilders.hasNext()) {
             OMElement msgBuilderElement = (OMElement) msgBuilders.next();
-            OMElement tempMsgBuilder = msgBuilderElement;
-            OMAttribute builderName = tempMsgBuilder.getAttribute(new QName(TAG_CLASS_NAME));
+            OMAttribute builderName = msgBuilderElement.getAttribute(new QName(TAG_CLASS_NAME));
             String className = builderName.getAttributeValue();
             Class builderClass = null;
             Builder builderObject;
@@ -397,7 +396,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         if (name_attribute == null) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER, "Name missing"));
+                    DeploymentErrorMsgs.INVALID_HANDLER, "Unknown", "Name missing"));
         } else {
             handler.setName(name_attribute.getAttributeValue());
         }
@@ -408,7 +407,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         if (class_attribute == null) {
             throw new DeploymentException((Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,
+                    DeploymentErrorMsgs.INVALID_HANDLER, name_attribute.getAttributeValue(),
                     "class name is missing")));
         } else {
             handler.setClassName(class_attribute.getAttributeValue());
@@ -423,7 +422,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             if (containingPhase == null) {
                 // TODO : Include more information (which handler?) in message!
                 throw new DeploymentException((Messages.getMessage(
-                        DeploymentErrorMsgs.INVALID_HANDLER,
+                        DeploymentErrorMsgs.INVALID_HANDLER, name_attribute.getAttributeValue(),
                         "phase rule has not been specified")));
             }
             rules.setPhaseName(containingPhase);

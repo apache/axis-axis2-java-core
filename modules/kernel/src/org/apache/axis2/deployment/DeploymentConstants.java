@@ -31,10 +31,6 @@ public interface DeploymentConstants {
     public static String MODULE_PATH = "modules";
     public static String MODULE_DRI_PATH = "ModulesDirectory";
 
-    String TYPE_SERVICE = "service";                // is it a service
-    String TYPE_DEFAULT = "none";                // is it a service
-    String TYPE_MODULE = "module";                // is it a module
-
     String TAG_AXISCONFIG = "axisconfig";
     String TAG_PHASE_ORDER = "phaseOrder";
     String TAG_PHASE = "phase";

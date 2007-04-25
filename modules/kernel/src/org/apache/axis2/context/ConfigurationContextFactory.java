@@ -165,13 +165,17 @@ public class ConfigurationContextFactory {
      * @param axis2xml : location of the axis2.xml (configuration) , you can not give
      *                 axis2xml relative to repository.
      * @return Returns the built ConfigurationContext.
-     * @throws DeploymentException
+     * @throws AxisFault in case of problems
      */
     public static ConfigurationContext createConfigurationContextFromFileSystem(
             String path,
             String axis2xml) throws AxisFault {
-    	
         return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
+    }
+
+    public static ConfigurationContext createConfigurationContextFromFileSystem(String path)
+            throws AxisFault {
+        return createConfigurationContextFromFileSystem(path, null);
     }
 
     public static ConfigurationContext createConfigurationContextFromURIs(

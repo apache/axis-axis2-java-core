@@ -27,15 +27,36 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
  * a service or a module.
  */
 public interface Deployer {
-    //To initialize the deployer
+    /**
+     * Initialize the Deployer
+     * @param configCtx our ConfigurationContext
+     */
     void init(ConfigurationContext configCtx);
 
-    //Will process the file and add that to axisConfig
+    /**
+     * Process a file and add it to the configuration
+     * @param deploymentFileData the DeploymentFileData object to deploy
+     * @throws DeploymentException if there is a problem
+     */
     void deploy(DeploymentFileData deploymentFileData) throws DeploymentException;
 
+    /**
+     * Set the directory
+     * @param directory directory name
+     */
     void setDirectory(String directory);
 
+    /**
+     * Set the extension to look for
+     * TODO: Support multiple extensions?
+     * @param extension the file extension associated with this Deployer
+     */
     void setExtension(String extension);
 
+    /**
+     * Remove a given file from the configuration
+     * @param fileName name of item to remove
+     * @throws DeploymentException if there is a problem
+     */
     void unDeploy(String fileName) throws DeploymentException;
 }

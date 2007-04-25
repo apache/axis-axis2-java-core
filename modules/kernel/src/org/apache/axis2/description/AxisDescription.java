@@ -51,7 +51,6 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public void addParameter(Parameter param) throws AxisFault {
-
         if (param == null) {
             return;
         }
@@ -62,6 +61,10 @@ public abstract class AxisDescription implements ParameterInclude,
         }
 
         parameterInclude.addParameter(param);
+    }
+
+    public void addParameter(String name, Object value) throws AxisFault {
+        addParameter(new Parameter(name, value));
     }
 
     public void removeParameter(Parameter param) throws AxisFault {

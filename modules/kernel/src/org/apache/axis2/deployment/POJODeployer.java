@@ -64,7 +64,7 @@ public class POJODeployer implements Deployer {
         ClassLoader threadClassLoader = null;
         try {
             threadClassLoader = Thread.currentThread().getContextClassLoader();
-            String extension = deploymentFileData.getType();
+            String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
             if (".class".equals(extension)) {
                 File file = deploymentFileData.getFile();
                 if (file != null) {

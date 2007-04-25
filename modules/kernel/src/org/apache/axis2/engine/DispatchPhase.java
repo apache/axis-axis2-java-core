@@ -1,16 +1,30 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.RequestResponseTransport;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.om.OMElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -44,13 +58,36 @@ public class DispatchPhase extends Phase {
         if (msgContext.getAxisService() == null) {
             throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
                                                     ((toEPR != null) ? toEPR.getAddress() : "")));
-        } else if (msgContext.getAxisOperation() == null) {
+        }
+
+        AxisService service = msgContext.getAxisService();
+        AxisOperation operation = msgContext.getAxisOperation();
+        // If we're configured to do so, check the service for a single op...
+        if (operation == null &&
+                JavaUtils.isTrue(service.getParameterValue("supportSingleOperation"))) {
+            Iterator ops = service.getOperations();
+            // If there's exactly one, that's the one we want.  If there's more, forget it.
+            if (ops.hasNext()) {
+                operation = (AxisOperation)ops.next();
+                if (ops.hasNext()) {
+                    operation = null;
+                }
+            }
+        }
+
+        // If we still don't have an operation, fault.
+        if (operation == null) {
             throw new AxisFault(Messages.getMessage("operationnotfoundforepr",
                                                     ((toEPR != null) ? toEPR.getAddress()
                                                             : ""), msgContext.getWSAAction()));
         }
 
+        msgContext.setAxisOperation(operation);
+        
         validateTransport(msgContext);
+
+        loadContexts(service, msgContext);
+
         if (msgContext.getOperationContext() == null) {
             throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
         }
@@ -59,6 +96,7 @@ public class DispatchPhase extends Phase {
             throw new AxisFault(Messages.getMessage("cannotBeNullServiceContext"));
         }
 
+        // TODO - review this
         if ((msgContext.getAxisOperation() == null) && (msgContext.getOperationContext() != null)) {
             msgContext.setAxisOperation(msgContext.getOperationContext().getAxisOperation());
         }
@@ -96,6 +134,59 @@ public class DispatchPhase extends Phase {
         msgContext.setExecutionChain((ArrayList) operationChain.clone());
     }
 
+    private void loadContexts(AxisService service, MessageContext msgContext) throws AxisFault {
+        String scope = service == null ? null : service.getScope();
+        ServiceContext serviceContext = msgContext.getServiceContext();
+
+        if ((msgContext.getOperationContext() != null)
+                && (serviceContext != null)) {
+            msgContext.setServiceGroupContextId(
+                    ((ServiceGroupContext) serviceContext.getParent()).getId());
+            return;
+        }
+        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
+            fillContextsFromSessionContext(msgContext);
+        }
+
+        AxisOperation axisOperation = msgContext.getAxisOperation();
+        if (axisOperation == null) {
+            return;
+        }
+        OperationContext operationContext =
+                axisOperation.findForExistingOperationContext(msgContext);
+
+        if (operationContext != null) {
+            // register operation context and message context
+//            axisOperation.registerOperationContext(msgContext, operationContext);
+            axisOperation.registerMessageContext(msgContext, operationContext);
+
+            serviceContext = (ServiceContext) operationContext.getParent();
+            ServiceGroupContext serviceGroupContext =
+                    (ServiceGroupContext) serviceContext.getParent();
+
+            msgContext.setServiceContext(serviceContext);
+            msgContext.setServiceGroupContext(serviceGroupContext);
+            msgContext.setServiceGroupContextId(serviceGroupContext.getId());
+        } else {    // 2. if null, create new opCtxt
+            operationContext = ContextFactory.createOperationContext(axisOperation, serviceContext);
+
+            axisOperation.registerMessageContext(msgContext, operationContext);
+            if (serviceContext != null) {
+                // no need to added to configuration conetxt , since we are happy in
+                //  storing in session context
+                operationContext.setParent(serviceContext);
+            } else {
+                // fill the service group context and service context info
+                msgContext.getConfigurationContext().fillServiceContextAndServiceGroupContext(
+                        msgContext);
+            }
+        }
+        serviceContext = msgContext.getServiceContext();
+        if (serviceContext != null) {
+            serviceContext.setMyEPR(msgContext.getTo());
+        }
+    }
+
     /**
      * To check wether the incoming request has come in valid transport , simpley the transports
      * that service author wants to expose
@@ -119,5 +210,57 @@ public class DispatchPhase extends Phase {
         EndpointReference toEPR = msgctx.getTo();
         throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
                                                 ((toEPR != null) ? toEPR.getAddress() : "")));
+    }
+
+    private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
+        AxisService service = msgContext.getAxisService();
+        if (service == null) {
+            throw new AxisFault(Messages.getMessage("unabletofindservice"));
+        }
+        SessionContext sessionContext = msgContext.getSessionContext();
+        if (sessionContext == null) {
+            TransportListener listener = msgContext.getTransportIn().getReceiver();
+            sessionContext = listener.getSessionContext(msgContext);
+            if (sessionContext == null) {
+                createAndFillContexts(service, msgContext, sessionContext);
+                return;
+            }
+        }
+        String serviceGroupName = msgContext.getAxisServiceGroup().getServiceGroupName();
+        ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
+                serviceGroupName);
+        if (serviceGroupContext != null) {
+            //setting service group context
+            msgContext.setServiceGroupContext(serviceGroupContext);
+            // setting Service conetxt
+            msgContext.setServiceContext(
+                    ContextFactory.createServiceContext(serviceGroupContext, service));
+        } else {
+            createAndFillContexts(service, msgContext, sessionContext);
+        }
+        ServiceContext serviceContext = sessionContext.getServiceContext(service);
+        //found the serviceContext from session context , so adding that into msgContext
+        if (serviceContext != null) {
+            msgContext.setServiceContext(serviceContext);
+            serviceContext.setProperty(HTTPConstants.COOKIE_STRING, sessionContext.getCookieID());
+        }
+    }
+
+    private void createAndFillContexts(AxisService service,
+                                       MessageContext msgContext,
+                                       SessionContext sessionContext) throws AxisFault {
+        ServiceGroupContext serviceGroupContext;
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
+        serviceGroupContext = ContextFactory.createServiceGroupContext(
+                msgContext.getConfigurationContext(), axisServiceGroup);
+
+        msgContext.setServiceGroupContext(serviceGroupContext);
+        ServiceContext serviceContext =
+                ContextFactory.createServiceContext(serviceGroupContext, service);
+        msgContext.setServiceContext(serviceContext);
+        if (sessionContext != null) {
+            sessionContext.addServiceContext(serviceContext);
+            sessionContext.addServiceGroupContext(serviceGroupContext);
+        }
     }
 }

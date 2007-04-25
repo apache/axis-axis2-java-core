@@ -19,12 +19,14 @@ package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.Deployer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 public class WSInfoList implements DeploymentConstants {
 
@@ -36,22 +38,22 @@ public class WSInfoList implements DeploymentConstants {
     /**
      * All the currently updated jars
      */
-    public List currentJars = new ArrayList();
+    public Set currentJars = new HashSet();
 
     /**
      * Reference to DeploymentEngine to make update
      */
-    private DeploymentEngine deployer;
+    private final DeploymentEngine deploymentEngine;
 
     private boolean check;
 
     public WSInfoList(DeploymentEngine deploy_engine) {
-        deployer = deploy_engine;
+        deploymentEngine = deploy_engine;
     }
 
     /**
      * First checks whether the file is already available by the
-     * system call isFileExist. If it is not deployed yet then adds to the jarList
+     * system call fileExists. If it is not deployed yet then adds to the jarList
      * and to the deployment engine as a new service or module.
      * While adding new item to jarList, first creates the WSInfo object and
      * then adds to the jarlist and actual jar file is added to DeploymentEngine.
@@ -61,76 +63,21 @@ public class WSInfoList implements DeploymentConstants {
      * DeploymentEngine - one for new deployment and other for undeployment.
      *
      * @param file actual jar files for either Module or service
-     * @param type indicate either Service or Module
      */
-    public synchronized void addWSInfoItem(File file, String type) {
-        if (TYPE_SERVICE.equals(type)) {
-            if (!isFileExist(file.getName())) {    // checking whether the file is already deployed
-                WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), TYPE_SERVICE);
-                jarList.add(wsInfo);
-                DeploymentFileData deploymentFileData =
-                        new DeploymentFileData(file, TYPE_SERVICE);
-                deployer.addWSToDeploy(
-                        deploymentFileData);    // inform that new web service is deployed
-            } else {
-                if (deployer.isHotUpdate()) {
-                    WSInfo tempWSInfo = getFileItem(file.getName());
-                    if (isModified(file, tempWSInfo)) {    // check whether file is updated
-                        tempWSInfo.setLastModifiedDate(file.lastModified());
-                        WSInfo wsInfo = new WSInfo(tempWSInfo.getFileName(),
-                                                   tempWSInfo.getLastModifiedDate(), TYPE_SERVICE);
-                        deployer.addWSToUndeploy(wsInfo);           // add entry to undeploy list
-                        DeploymentFileData deploymentFileData = new DeploymentFileData(file,
-                                                                                       TYPE_SERVICE);
-                        deployer.addWSToDeploy(deploymentFileData);    // add entry to deploylist
-                    }
-                }
-            }
-        } else if (TYPE_MODULE.equals(type)) {
-            if (!isFileExist(file.getName()))
-            {                     // checking whether the file is already deployed
-                WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), TYPE_MODULE);
-                jarList.add(wsInfo);
-                DeploymentFileData deploymentFileData =
-                        new DeploymentFileData(file, TYPE_MODULE);
-                deployer.addWSToDeploy(
-                        deploymentFileData);    // inform that new web service is deployed
-            }
-        } else {
-            if (file != null) {
-                String extension = DeploymentFileData.getFileExtension(file.getName());
-                if (!isFileExist(file.getName())) {
-                    WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), extension);
-                    jarList.add(wsInfo);
-                    DeploymentFileData deploymentFileData =
-                            new DeploymentFileData(file, extension);
-                    deployer.addWSToDeploy(
-                            deploymentFileData);    // inform that new web service is deployed
-                } else {
-                    if (deployer.isHotUpdate()) {
-                        WSInfo tempWSInfo = getFileItem(file.getName());
-                        if (isModified(file, tempWSInfo)) {    // check whether file is updated
-                            tempWSInfo.setLastModifiedDate(file.lastModified());
-                            WSInfo wsInfo = new WSInfo(tempWSInfo.getFileName(),
-                                                       tempWSInfo.getLastModifiedDate(), extension);
-                            deployer.addWSToUndeploy(
-                                    wsInfo);           // add entry to undeploy list
-                            DeploymentFileData deploymentFileData = new DeploymentFileData(file,
-                                                                                           extension);
-                            deployer.addWSToDeploy(
-                                    deploymentFileData);    // add entry to deploylist
-                        }
-                    }
-                }
-            } else {
-                check = true;
-            }
+    public synchronized void addWSInfoItem(File file, Deployer deployer) {
+        WSInfo info = getFileItem(file.getName());
+        if (info == null) {
+            info = new WSInfo(file.getName(), file.lastModified(), deployer);
+            jarList.add(info);
+            DeploymentFileData fileData = new DeploymentFileData(file, deployer);
+            deploymentEngine.addWSToDeploy(fileData);
+        } else if (deploymentEngine.isHotUpdate() && isModified(file, info)) {
+            info.setLastModifiedDate(file.lastModified());
+            WSInfo wsInfo = new WSInfo(info.getFileName(), info.getLastModifiedDate(), deployer);
+            deploymentEngine.addWSToUndeploy(wsInfo);           // add entry to undeploy list
+            DeploymentFileData deploymentFileData = new DeploymentFileData(file, deployer);
+            deploymentEngine.addWSToDeploy(deploymentFileData);    // add entry to deploylist
         }
-        if (file != null) {
-            String jarname = file.getName();
-            currentJars.add(jarname);
-        }
-        check = true;
     }
 
     /**
@@ -147,33 +94,18 @@ public class WSInfoList implements DeploymentConstants {
         }
 
         Iterator iter = jarList.listIterator();
-        int size = currentJars.size();
         List tempvector = new ArrayList();
-
-        tempvector.clear();
-
-        String filename;
-        boolean exist;
 
         while (iter.hasNext()) {
             WSInfo fileitem = (WSInfo) iter.next();
-            if (TYPE_MODULE.equals(fileitem.getType())) {
+            if (fileitem.getType() == WSInfo.TYPE_MODULE) {
                 continue;
             }
-            exist = false;
-            for (int i = 0; i < size; i++) {
-                filename = (String) currentJars.get(i);
-                if (filename.equals(fileitem.getFileName())) {
-                    exist = true;
-                    break;
-                }
-            }
-            if (!exist) {
+            String itemName = fileitem.getFileName();
+            if (!currentJars.contains(itemName)) {
                 tempvector.add(fileitem);
-                WSInfo wsInfo = new WSInfo(fileitem.getFileName(), fileitem.getLastModifiedDate(),
-                                           fileitem.getType());
-
-                deployer.addWSToUndeploy(wsInfo);    // this is to be undeployed
+                WSInfo wsInfo = new WSInfo(fileitem.getFileName(), fileitem.getLastModifiedDate());
+                deploymentEngine.addWSToUndeploy(wsInfo);    // this is to be undeployed
             }
         }
         for (int i = 0; i < tempvector.size(); i++) {
@@ -195,10 +127,10 @@ public class WSInfoList implements DeploymentConstants {
      *
      */
     public void update() {
-        synchronized (deployer) {
+        synchronized (deploymentEngine) {
             checkForUndeployedServices();
-            deployer.unDeploy();
-            deployer.doDeploy();
+            deploymentEngine.unDeploy();
+            deploymentEngine.doDeploy();
         }
     }
 
@@ -217,15 +149,6 @@ public class WSInfoList implements DeploymentConstants {
             }
         }
         return null;
-    }
-
-    /**
-     * Checks whether the file already exists in the list.
-     *
-     * @param filename
-     */
-    private boolean isFileExist(String filename) {
-        return !(getFileItem(filename) == null);
     }
 
     /**

@@ -67,15 +67,19 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
                         repoLocation + "'");
             }
         }
+
         // Deal with the config file.  If a filename was specified as an
         // arg to this constructor, just respect it.
         if (axis2xml == null) {
             // If not, check for a system property setting
             axis2xml = System.getProperty(Constants.AXIS2_CONF);
 
-            // And if not that, try at the root of the repository
+            // And if not that, try at the root of the repository if we have one.
+            // It might be nice to default the repository to the current directory, but we don't yet
             if (axis2xml == null) {
-                axis2xml = repoLocation + File.separator + Constants.AXIS2_CONF;
+                if (repoLocation != null) {
+                    axis2xml = repoLocation + File.separator + Constants.AXIS2_CONF;
+                }
             }
 
             // In either case, check that the file exists... if not
@@ -99,15 +103,15 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
      * @throws AxisFault
      */
     public synchronized AxisConfiguration getAxisConfiguration() throws AxisFault {
-        InputStream axis2xmlSream;
+        InputStream configStream;
         try {
             if (axis2xml != null && !"".equals(axis2xml)) {
-                axis2xmlSream = new FileInputStream(axis2xml);
+                configStream = new FileInputStream(axis2xml);
             } else {
-                axis2xmlSream =
+                configStream =
                         Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
-            axisConfig = populateAxisConfiguration(axis2xmlSream);
+            axisConfig = populateAxisConfiguration(configStream);
         } catch (FileNotFoundException e) {
             throw new AxisFault("System can not find the given axis2.xml " + axis2xml);
         }

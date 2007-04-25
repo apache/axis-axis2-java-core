@@ -18,8 +18,9 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.i18n.Messages;
 
@@ -36,17 +37,15 @@ public class DeploymentFileData {
     private ClassLoader classLoader;
     private String messageReceiver;
 
-    private String name;
-    private String type;
+    private Deployer deployer;
 
-    public DeploymentFileData(File file, String type) {
+    public DeploymentFileData(File file) {
         this.file = file;
-        this.type = type;
     }
 
-    public DeploymentFileData(String type, String name) {
-        this.type = type;
-        this.name = name;
+    public DeploymentFileData(File file, Deployer deployer) {
+        this.file = file;
+        this.deployer = deployer;
     }
 
     public String getAbsolutePath() {
@@ -77,12 +76,8 @@ public class DeploymentFileData {
         if (file != null) {
             return file.getName();
         } else {
-            return name;
+            return null;
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public static boolean isModuleArchiveFile(String filename) {
@@ -92,7 +87,7 @@ public class DeploymentFileData {
     /**
      * Checks whether a given file is a jar or an aar file.
      *
-     * @param filename
+     * @param filename file to check
      * @return Returns boolean.
      */
     public static boolean isServiceArchiveFile(String filename) {
@@ -101,7 +96,7 @@ public class DeploymentFileData {
 
     public static String getFileExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
-        return fileName.substring(index);
+        return fileName.substring(index + 1);
     }
 
     public void setClassLoader(ClassLoader classLoader) {
@@ -136,5 +131,18 @@ public class DeploymentFileData {
 
     public void setMessageReceiver(String messageReceiver) {
         this.messageReceiver = messageReceiver;
+    }
+
+
+    public Deployer getDeployer() {
+        return deployer;
+    }
+
+    public void setDeployer(Deployer deployer) {
+        this.deployer = deployer;
+    }
+
+    public void deploy() throws DeploymentException {
+        deployer.deploy(this);
     }
 }

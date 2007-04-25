@@ -94,6 +94,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     protected String modulesPath = null;
     protected File modulesDir = null;
     private File repositoryDir = null;
+
     //to deploy service (both aar and expanded)
     protected ServiceDeployer serviceDeployer;
     //To deploy modules (both mar and expanded)
@@ -235,10 +236,10 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     private void populateModule(AxisModule module, URL moduleUrl) throws DeploymentException {
         try {
-            ClassLoader classLoadere = module.getModuleClassLoader();
-            InputStream moduleStream = classLoadere.getResourceAsStream("META-INF/module.xml");
+            ClassLoader classLoader = module.getModuleClassLoader();
+            InputStream moduleStream = classLoader.getResourceAsStream("META-INF/module.xml");
             if (moduleStream == null) {
-                moduleStream = classLoadere.getResourceAsStream("meta-inf/module.xml");
+                moduleStream = classLoader.getResourceAsStream("meta-inf/module.xml");
             }
             if (moduleStream == null) {
                 throw new DeploymentException(
@@ -571,27 +572,13 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             if (wsToDeploy.size() > 0) {
                 for (int i = 0; i < wsToDeploy.size(); i++) {
-                    DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
-                    String type = currentDeploymentFile.getType();
-                    if (TYPE_SERVICE.equals(type)) {
-                        try {
-                            serviceDeployer.deploy(currentDeploymentFile);
-                        } catch (DeploymentException e) {
-                            log.debug(e);
-                        }
-                    } else if (TYPE_MODULE.equals(type)) {
-                        moduleDeployer.deploy(currentDeploymentFile);
-                    } else {
-                        Deployer deployer = (Deployer) extensionToDeployerMappingMap.get(type);
-                        if (deployer != null) {
-                            try {
-                                deployer.deploy(currentDeploymentFile);
-                            } catch (DeploymentException e) {
-                                log.debug(e);
-                            }
-                        }
+                    DeploymentFileData fileToDeploy = (DeploymentFileData) wsToDeploy.get(i);
+                    try {
+                        fileToDeploy.deploy();
+                    } catch (DeploymentException e) {
+                        // TODO : This probably isn't sufficient.  Maybe provide an option to stop?
+                        log.info(e);
                     }
-
                 }
             }
         } finally {
@@ -629,6 +616,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      *
      * @param in : InputStream to axis2.xml
      * @throws DeploymentException : If something goes wrong
+     * @return a populated AxisConfiguration
      */
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
         axisConfig = new AxisConfiguration();
@@ -661,8 +649,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
-                    String fileType = wsInfo.getType();
-                    if (TYPE_SERVICE.equals(fileType)) {
+                    if (wsInfo.getType() == WSInfo.TYPE_SERVICE) {
                         if (isHotUpdate()) {
                             serviceDeployer.unDeploy(wsInfo.getFileName());
                         } else {
@@ -670,8 +657,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                         }
                     } else {
                         if (isHotUpdate()) {
-                            Deployer deployer =
-                                    (Deployer) extensionToDeployerMappingMap.get(fileType);
+                            Deployer deployer = wsInfo.getDeployer();
                             if (deployer != null) {
                                 deployer.unDeploy(wsInfo.getFileName());
                             }
@@ -698,7 +684,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * Retrieves service name from the archive file name.
      * If the archive file name is service1.aar , then axis2 service name would be service1
      *
-     * @param fileName
+     * @param fileName the archive file name
      * @return Returns String.
      */
     public static String getAxisServiceName(String fileName) {
@@ -741,7 +727,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * SCL  : Service class loader
      *
      * @param axis2repoURI : The repository folder of Axis2
-     * @throws DeploymentException
+     * @throws DeploymentException if there's a problem
      */
     protected void setClassLoaders(String axis2repoURI) throws DeploymentException {
         ClassLoader sysClassLoader =
@@ -794,7 +780,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     /**
      * Creates directories for modules/services, copies configuration xml from class loader if necessary
      *
-     * @param repositoryName
+     * @param repositoryName the pathname of the repository
      */
 
     protected void prepareRepository(String repositoryName) {
@@ -884,23 +870,31 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Builds ModuleDescription for a given module archive file. This does not
+     * Builds an AxisModule for a given module archive file. This does not
      * called the init method since there is no reference to configuration context
      * so who ever create module using this has to called module.init if it is
      * required
      *
      * @param modulearchive : Actual module archive file
      * @param config        : AxisConfiguration : for get classloaders etc..
-     * @throws org.apache.axis2.deployment.DeploymentException
+     * @throws org.apache.axis2.deployment.DeploymentException if there's a problem
      *
+     * @return a complete AxisModule read from the file.
      */
     public static AxisModule buildModule(File modulearchive,
                                          AxisConfiguration config)
             throws DeploymentException {
+        final String MODULE_DEPLOYER = "moduleDeployer";
         AxisModule axismodule;
+        ModuleDeployer deployer = (ModuleDeployer)config.getParameterValue(MODULE_DEPLOYER);
         try {
+            if (deployer == null) {
+                deployer = new ModuleDeployer(config);
+                config.addParameter(MODULE_DEPLOYER, deployer);
+            }
+
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(modulearchive,
-                                                                              DeploymentConstants.TYPE_MODULE);
+                                                                              deployer);
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
@@ -944,24 +938,17 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * Loads all the required class and builds the chains, finally adds the
      * servicecontext to EngineContext and axisservice into EngineConfiguration.
      *
-     * @param serviceInputStream
-     * @param classLoader
+     * @param serviceInputStream InputStream containing configuration data
+     * @param configCtx the ConfigurationContext in which we're deploying
      * @return Returns AxisService.
-     * @throws DeploymentException
+     * @throws DeploymentException if there's a problem
      */
     public static AxisService buildService(InputStream serviceInputStream,
-                                           ClassLoader classLoader,
                                            ConfigurationContext configCtx)
             throws DeploymentException {
         AxisService axisService = new AxisService();
         try {
-            DeploymentFileData currentDeploymentFile = new DeploymentFileData(
-                    DeploymentConstants.TYPE_SERVICE, "");
-            currentDeploymentFile.setClassLoader(classLoader);
-
-            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, configCtx,
-                                                        axisService);
-
+            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, configCtx, axisService);
             builder.populateService(builder.buildOM());
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
@@ -976,10 +963,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * To build a AxisServiceGroup for a given services.xml
      * You have to add the created group into AxisConfig
      *
-     * @param servicesxml      : inpupstream create using services.xml
-     * @param classLoader      : corresponding class loader to load the class
-     * @param serviceGroupName : name of the service group
-     * @throws AxisFault
+     * @param servicesxml InputStream created from services.xml or equivalent
+     * @param classLoader ClassLoader to use
+     * @param serviceGroupName name of the service group
+     * @param configCtx the ConfigurationContext in which we're deploying
+     * @param archiveReader the ArchiveReader we're working with
+     * @param wsdlServices Map of existing WSDL services
+     * @throws AxisFault if there's a problem
+     * @return a fleshed-out AxisServiceGroup
      */
     public static AxisServiceGroup buildServiceGroup(InputStream servicesxml,
                                                      ClassLoader classLoader,
@@ -987,8 +978,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                      ConfigurationContext configCtx,
                                                      ArchiveReader archiveReader,
                                                      HashMap wsdlServices) throws AxisFault {
-        DeploymentFileData currentDeploymentFile = new DeploymentFileData(
-                DeploymentConstants.TYPE_SERVICE, "");
+        DeploymentFileData currentDeploymentFile = new DeploymentFileData(null, null);
         currentDeploymentFile.setClassLoader(classLoader);
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupClassLoader(classLoader);
@@ -1034,5 +1024,18 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     public RepositoryListener getRepoListener() {
         return repoListener;
+    }
+
+
+    public ServiceDeployer getServiceDeployer() {
+        return serviceDeployer;
+    }
+
+    public ModuleDeployer getModuleDeployer() {
+        return moduleDeployer;
+    }
+
+    public Deployer getDeployerForExtension(String extension) {
+        return (Deployer)extensionToDeployerMappingMap.get(extension);
     }
 }

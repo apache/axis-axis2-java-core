@@ -22,17 +22,13 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.stream.XMLStreamException;
 
 public class DeploymentTotalTest extends TestCase {
     AxisConfiguration er;
 
-    public void testparseService1() throws PhaseException,
-            DeploymentException,
-            AxisFault,
-            XMLStreamException {
+    public void testparseService1() throws AxisFault, XMLStreamException {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
         er = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")

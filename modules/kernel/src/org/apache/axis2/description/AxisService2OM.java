@@ -133,13 +133,13 @@ public class AxisService2OM implements Java2WSDLConstants {
         soap12 = ele.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
         http = ele.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
         mime = ele.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
-        String prefix = WSDLSerializationUtil.getPrefix(axisService.getTargetNamespace(), namespaceMap);
+        String prefix = WSDLSerializationUtil.getPrefix(axisService.getTargetNamespace(),
+                                                        namespaceMap);
         if (prefix == null || "".equals(prefix)) {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
         }
 
-        namespaceMap.put(prefix,
-                                           axisService.getTargetNamespace());
+        namespaceMap.put(prefix, axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
         // adding documentation element

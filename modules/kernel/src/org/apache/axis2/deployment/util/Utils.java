@@ -490,8 +490,7 @@ public class Utils {
                     File inputFile = Utils.createTempFile(servicename,
                             fin,
                             (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
-                    DeploymentFileData filedata = new DeploymentFileData(inputFile,
-                                                                         DeploymentConstants.TYPE_SERVICE);
+                    DeploymentFileData filedata = new DeploymentFileData(inputFile);
 
                     filedata.setClassLoader(false,
                                             moduleClassLoader,
@@ -509,8 +508,7 @@ public class Utils {
                         }
                     }
                     AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
-                    serviceGroup.setServiceGroupClassLoader(
-                            filedata.getClassLoader());
+                    serviceGroup.setServiceGroupClassLoader(filedata.getClassLoader());
                     ArrayList serviceList = archiveReader.processServiceGroup(
                             filedata.getAbsolutePath(), filedata,
                             serviceGroup, false, wsdlservice,
