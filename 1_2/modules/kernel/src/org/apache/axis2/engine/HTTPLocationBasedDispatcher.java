@@ -96,13 +96,15 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             }
         }
 
-        index = service.indexOf("/");
-        if (-1 != index) {
-            service = service.substring(index);
-        } else {
-            int queryIndex = path.indexOf("?");
-            if (queryIndex != -1) {
-                service = service.substring(queryIndex);
+        if (service != null) {
+            index = service.indexOf("/");
+            if (-1 != index) {
+                service = service.substring(index);
+            } else {
+                int queryIndex = path.indexOf("?");
+                if (queryIndex != -1) {
+                    service = service.substring(queryIndex);
+                }
             }
         }
         return service;
