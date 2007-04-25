@@ -219,15 +219,10 @@ public class MessageContextSaveCTest extends TestCase {
         SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
         smbd.initDispatcher();
 
-        InstanceDispatcher id = new InstanceDispatcher();
-        id.init(new HandlerDescription(new String("InstanceDispatcher")));
-
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
-        dispatchPhase.addHandler(id);
-
 
         saveAxisConfiguration = new AxisConfiguration();
         saveConfigurationContext = new ConfigurationContext(saveAxisConfiguration);

@@ -244,22 +244,12 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.RequestURIOperationDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-            <handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
@@ -280,32 +270,18 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.RequestURIOperationDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-            <handler name="InstanceDispatcher"
-                     class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="PostDispatch"/>
-            </handler>
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>

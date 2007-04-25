@@ -184,14 +184,10 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
         smbd.initDispatcher();
 
-        InstanceDispatcher id = new InstanceDispatcher();
-        id.init(new HandlerDescription(new String("InstanceDispatcher")));
-
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
-        dispatchPhase.addHandler(id);
 
         cfgContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
 

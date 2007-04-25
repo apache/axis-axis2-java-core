@@ -46,7 +46,7 @@ public class EnginePausingTest extends TestCase {
 
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
-    private ConfigurationContext configConetxt;
+    private ConfigurationContext configContext;
 
     private TransportOutDescription transportOut;
     private TransportInDescription transportIn;
@@ -57,9 +57,9 @@ public class EnginePausingTest extends TestCase {
         super(arg0);
         executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisConfiguration();
-        configConetxt = new ConfigurationContext(engineRegistry);
-        configConetxt.setServicePath(Constants.DEFAULT_SERVICES_PATH);
-        configConetxt.setContextRoot("axis2");
+        configContext = new ConfigurationContext(engineRegistry);
+        configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
+        configContext.setContextRoot("axis2");
         transportOut = new TransportOutDescription("null");
         transportOut.setSender(new CommonsHTTPTransportSender());
         transportIn = new TransportInDescription("null");
@@ -69,10 +69,10 @@ public class EnginePausingTest extends TestCase {
     protected void setUp() throws Exception {
 
         AxisService service = new AxisService(serviceName.getLocalPart());
-        configConetxt.getAxisConfiguration().addService(service);
-        configConetxt.getAxisConfiguration().addMessageReceiver(
+        configContext.getAxisConfiguration().addService(service);
+        configContext.getAxisConfiguration().addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
-        configConetxt.getAxisConfiguration().addMessageReceiver(
+        configContext.getAxisConfiguration().addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
 
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -95,15 +95,11 @@ public class EnginePausingTest extends TestCase {
 
         smbd.initDispatcher();
 
-        InstanceDispatcher id = new InstanceDispatcher();
-
-        id.init(new HandlerDescription("InstanceDispatcher"));
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
-        dispatchPhase.addHandler(id);
-        configConetxt.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        configContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {
@@ -126,7 +122,7 @@ public class EnginePausingTest extends TestCase {
 
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
-        mc = ContextFactory.createMessageContext(configConetxt);
+        mc = ContextFactory.createMessageContext(configContext);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 
@@ -184,7 +180,7 @@ public class EnginePausingTest extends TestCase {
         mc.setTo(
                 new EndpointReference("/axis2/services/NullService"));
         mc.setWSAAction("DummyOp");
-        AxisEngine engine = new AxisEngine(configConetxt);
+        AxisEngine engine = new AxisEngine(configContext);
         engine.receive(mc);
         assertEquals(14, executedHandlers.size());
         for (int i = 0; i < 14; i++) {
