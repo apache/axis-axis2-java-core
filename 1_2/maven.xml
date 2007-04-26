@@ -783,6 +783,7 @@
                 <include name="quickstartadb/**/*.*"/>
                 <include name="quickstartxmlbeans/**/*.*"/>
                 <include name="quickstartjibx/**/*.*"/>
+                <include name="jaxws-calculator/**/*.*"/>
             </ant:fileset>
         </ant:copy>
 
