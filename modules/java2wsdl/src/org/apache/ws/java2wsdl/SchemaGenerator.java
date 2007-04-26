@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.lang.reflect.Modifier;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -195,6 +196,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
                 for (int i = 0; i < methods.length; i++) {
                     JMethod jMethod = methods[i];
+                    // Skip methods with volatile/bridge modifier
+                    if(Modifier.isVolatile(jMethod.getModifiers())) {
+                        continue;
+                    }
                     JAnnotation methodAnnon = jMethod.getAnnotation(AnnotationConstants.WEB_METHOD);
                     if (methodAnnon != null) {
                         if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
