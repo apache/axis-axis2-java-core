@@ -21,7 +21,7 @@
 	<groupId>org.apache.axis2.samples</groupId>
 	<artifactId>jaxws-calculator</artifactId>
 	<packaging>aar</packaging>
-	<version>SNAPSHOT</version>
+	<version>1.2</version>
 	<name>JAXWS Calculator Service</name>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-jaxws</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 	<repositories>
