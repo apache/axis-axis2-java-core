@@ -63,6 +63,15 @@
     <!--<parameter name="servicePath">services</parameter>-->
     <!--<parameter name="restPath">rest</parameter>-->
 
+    <!--==============================================================-->
+    <!--                     Custom Deplyers                           -->
+    <!--==============================================================-->
+     <!--To have POJO (Service as only one class file , class can be annotated one or not)
+     support uncomment the following XML tag-->
+    <!--<deployer class="org.apache.axis2.deployment.POJODeployer" extension=".class" directory="pojo"/>-->
+    <!--To have POJO (Service as more than one class , so a jar file) support uncomment the following XML tag-->
+    <!--<deployer class="org.apache.axis2.deployment.POJODeployer" extension=".jar" directory="pojo"/>-->
+
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
 
