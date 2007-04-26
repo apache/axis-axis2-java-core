@@ -767,7 +767,6 @@
                 <include name="yahoorestsearch/**/*.*"/>
 		<include name="yahoojsonsearch/**/*.*"/>
                 <include name="databinding/**/*.*"/>
-                <include name="googlespellcheck/**/*.*"/>
                 <include name="faulthandling/**/*.*"/>
                 <include name="mtom/**/*.*"/>
                 <include name="soapwithattachments/**/*.*"/>
@@ -775,7 +774,6 @@
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="wsdl/*.*"/>
                 <include name="pojo/**/*.*"/>
-		<include name="ping/**/*.*"/>
                 <!-- Docs related samples -->
                 <include name="userguide/**/*.*"/>
                 <include name="pojoguide/**/*.*"/>
