@@ -404,8 +404,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             // adding this type to the table
             typeTable.addComplexSchema(name, eltOuter.getQName());
+             // adding this type's package to the table, to support inheritance.
+            typeTable.addComplexSchema(javaType.getContainingPackage().getQualifiedName(),
+                    eltOuter.getQName());
 
-	    JClass tempClass = javaType;
+
+        JClass tempClass = javaType;
 	    Set propertiesSet = new HashSet();
 	    Set propertiesNames = new HashSet() ;
 	  
