@@ -20,6 +20,16 @@
     <parameter name="userName" locked="false">admin</parameter>
     <parameter name="password" locked="false">axis2</parameter>
 
+    <!--==============================================================-->
+    <!--                     Custom Deplyers                           -->
+    <!--==============================================================-->
+     <!--To have POJO (Service as only one class file , class can be annotated one or not)
+     support uncomment the following XML tag-->
+    <!--<deployer class="org.apache.axis2.deployment.POJODeployer" extension=".class" directory="pojo"/>-->
+    <!--To have POJO (Service as more than one class , so a jar file) support uncomment the following XML tag-->
+    <!--<deployer class="org.apache.axis2.deployment.POJODeployer" extension=".jar" directory="pojo"/>-->
+
+
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
     <!--<parameter name="ServicesDirectory" locked="false">service</parameter>-->
     <!--To override repository/modules you need to uncomment following parameter and value SHOULD be absolute file path-->
