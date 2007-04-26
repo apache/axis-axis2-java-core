@@ -1,14 +1,18 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
+import java.util.concurrent.Future;
+import javax.jws.HandlerChain;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 
 
@@ -19,6 +23,7 @@ import javax.xml.ws.ResponseWrapper;
  * 
  */
 @WebService(name = "AddNumbersHandlerPortType", targetNamespace = "http://org/test/addnumbershandler")
+//@HandlerChain(file="META-INF/AddNumbersClientHandlers.xml", name="")
 public interface AddNumbersHandlerPortType {
 
 
@@ -42,6 +47,25 @@ public interface AddNumbersHandlerPortType {
         throws AddNumbersHandlerFault_Exception
     ;
 
+    /**
+     * 
+     * @param asyncHandler
+     * @param arg0
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addNumbersHandler", targetNamespace = "http://org/test/addnumbershandler", className = "org.test.addnumbershandler.AddNumbersHandler")
+    @ResponseWrapper(localName = "addNumbersHandlerResponse", targetNamespace = "http://org/test/addnumbershandler", className = "org.test.addnumbershandler.AddNumbersHandlerResponse")
+    public Future<?> addNumbersHandlerAsync(
+            @WebParam(name = "arg0", targetNamespace = "http://org/test/addnumbershandler")
+            int arg0,
+            @WebParam(name = "arg1", targetNamespace = "http://org/test/addnumbershandler")
+            int arg1,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AddNumbersHandlerResponse> asyncHandler);
+
+    
     /**
      * 
      * @param arg0

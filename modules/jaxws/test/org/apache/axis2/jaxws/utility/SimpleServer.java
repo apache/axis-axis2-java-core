@@ -18,6 +18,7 @@
 package org.apache.axis2.jaxws.utility;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
@@ -34,10 +35,10 @@ public class SimpleServer {
     public void init() {
         repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository");
 //        repositoryDir = "target/test-classes"; 
-        System.out.println(">> repositoryDir = " + repositoryDir);
+        TestLogger.logger.debug(">> repositoryDir = " + repositoryDir);
         
         String axis2xml = System.getProperty("axis2.config");
-        System.out.println(">> axis2.xml     = " + axis2xml);
+        TestLogger.logger.debug(">> axis2.xml     = " + axis2xml);
         
         try {
             ConfigurationContext config = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
@@ -49,7 +50,7 @@ public class SimpleServer {
     }
     
     public void start() {
-        System.out.println("------------ starting server ---------------");
+        TestLogger.logger.debug("------------ starting server ---------------");
         init();
         if (server != null) {
             try {
@@ -58,15 +59,15 @@ public class SimpleServer {
                 e.printStackTrace();
             }
         }
-        System.out.println("------------------ done --------------------");
+        TestLogger.logger.debug("------------------ done --------------------");
     }
     
     public void stop() {
-        System.out.println("------------ stopping server ---------------");
+        TestLogger.logger.debug("------------ stopping server ---------------");
         if (server != null) {
             server.stop();
         }
-        System.out.println("------------------ done --------------------");
+        TestLogger.logger.debug("------------------ done --------------------");
     }
     
     public static void main(String[] args) throws Exception {

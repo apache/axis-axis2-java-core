@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider.source;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -38,8 +40,8 @@ public class SourceProvider implements Provider<Source> {
     
     // Same logic as StringProvider
     public Source invoke(Source source) {
-        
-    	System.out.println(">> SourceProvider: Request received.\n");
+
+        TestLogger.logger.debug(">> SourceProvider: Request received.\n");
     	if (source == null) {
     	    return source;
         }
@@ -59,7 +61,7 @@ public class SourceProvider implements Provider<Source> {
             throw new WebServiceException(e);
         }
     	String text = writer.getBuffer().toString();
-    	System.out.println(">> Source Request on Server: \n"+ text);
+        TestLogger.logger.debug(">> Source Request on Server: \n" + text);
     	
     	if (text != null && text.contains("throwWebServiceException")) {
     	    throw new WebServiceException("provider");

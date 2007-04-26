@@ -151,7 +151,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         endpointDesc = mc.getEndpointDescription();
         mc.setOperationDescription(getOperationDescription(mc));
-        //methodMarshaller = null;
+        String bindingType = endpointDesc.getBindingType();
+        if (bindingType != null) {
+            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                mc.getMessage().setMTOMEnabled(true);
+            }
+        }
     }
 
     /*
@@ -188,19 +194,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 
         return op;
     }
-
-    /*
-    private ServiceDescription getServiceDescription(MessageContext mc){
-        return mc.getServiceDescription();
-    }
-
-    private EndpointDescription getEndpointDescription(MessageContext mc){
-        ServiceDescription sd = mc.getServiceDescription();
-        EndpointDescription[] eds = sd.getEndpointDescriptions();
-        EndpointDescription ed = eds[0];
-        return ed;
-    }
-    */
 
     private MethodMarshaller getMethodMarshaller(Protocol protocol,
                                                  OperationDescription operationDesc) {

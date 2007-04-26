@@ -16,6 +16,7 @@ import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
 import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtom1.Invoke;
 import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
+import org.apache.axis2.jaxws.TestLogger;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 import com.sun.xml.bind.v2.runtime.unmarshaller.Base64Data;
@@ -33,8 +34,8 @@ public class MtomSampleByteArrayTests extends TestCase {
      * Using SOAP11
      */
     public void testAttachmentByteArrayAPI11() throws Exception {
-    	System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
     	
       	String imageResourceDir = IMAGE_DIR;
       		
@@ -70,8 +71,8 @@ public class MtomSampleByteArrayTests extends TestCase {
      * Using SOAP11
      */
     public void testAttachmentByteArrayAPI11_ClientSendsNonOptimizedMTOM() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
             
@@ -106,8 +107,8 @@ public class MtomSampleByteArrayTests extends TestCase {
      * property for MTOM.
      */
     public void testAttachmentByteArrayProperty11() throws Exception {
-    	System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
     	
       	String imageResourceDir = IMAGE_DIR;
       		

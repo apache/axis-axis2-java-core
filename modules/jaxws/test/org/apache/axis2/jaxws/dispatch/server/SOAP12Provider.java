@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.dispatch.server;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.BindingType;
@@ -35,8 +37,8 @@ public class SOAP12Provider implements Provider<String> {
         "</test:echoStringResponse>";
     
     public String invoke(String obj) {
-        System.out.println(">> request received");
-        System.out.println(obj);
+        TestLogger.logger.debug(">> request received");
+        TestLogger.logger.debug(obj);
         return sampleResponse;
     }
 

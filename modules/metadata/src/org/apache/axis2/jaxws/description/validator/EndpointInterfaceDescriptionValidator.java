@@ -66,9 +66,11 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
         if (portType != null) {
             // TODO: Need more validation here, including: operation name, parameters, faults
             List wsdlOperationList = portType.getOperations();
-            OperationDescription[] opDescArray = epInterfaceDesc.getOperations();
 
-            if (wsdlOperationList.size() != opDescArray.length) {
+            OperationDescription[] dispatchableOpDescArray = 
+                epInterfaceDesc.getDispatchableOperations();
+    
+            if (wsdlOperationList.size() != dispatchableOpDescArray.length) {
                 addValidationFailure(this, "The number of operations in the WSDL " +
                         "portType does not match the number of methods in the SEI or " +
                         "Web service implementation class.");
@@ -76,8 +78,7 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
             }
 
             // If they are the same size, let's check to see if the operation names match
-
-            if (!checkOperationsMatchMethods(wsdlOperationList, opDescArray)) {
+            if (!checkOperationsMatchMethods(wsdlOperationList, dispatchableOpDescArray)) {
                 addValidationFailure(this, "The operation names in the WSDL portType " +
                         "do not match the method names in the SEI or Web service i" +
                         "mplementation class.");

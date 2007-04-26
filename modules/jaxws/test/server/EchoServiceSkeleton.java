@@ -6,6 +6,8 @@
  */
 package server;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 /**
  *  EchoServiceSkeleton java skeleton for the axisService
  */
@@ -16,10 +18,12 @@ public class EchoServiceSkeleton {
      * @param param0
      */
     public  server.EchoStringResponse echoString(server.EchoString input) {
-        System.out.println(">> Entering method [EchoStringResponse EchoServiceSkeleton.echoString(EchoString)]");
-        System.out.println(">> Endpoint received input [" + input.getInput() + "]");
-        System.out.println(">> Returning string [ECHO:" + input.getInput() + "]");
-        System.out.println("<< Done with method [EchoStringResponse EchoServiceSkeleton.echoString(EchoString)]");
+        TestLogger.logger
+                .debug(">> Entering method [EchoStringResponse EchoServiceSkeleton.echoString(EchoString)]");
+        TestLogger.logger.debug(">> Endpoint received input [" + input.getInput() + "]");
+        TestLogger.logger.debug(">> Returning string [ECHO:" + input.getInput() + "]");
+        TestLogger.logger
+                .debug("<< Done with method [EchoStringResponse EchoServiceSkeleton.echoString(EchoString)]");
         EchoStringResponse output = new EchoStringResponse();
         output.setEchoStringReturn("ECHO:" + input.getInput());
         return output;

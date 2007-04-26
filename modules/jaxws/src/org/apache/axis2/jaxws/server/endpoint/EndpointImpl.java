@@ -18,36 +18,63 @@
  */
 package org.apache.axis2.jaxws.server.endpoint;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.binding.BindingUtils;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.transport.http.HTTPWorkerFactory;
+import org.apache.axis2.transport.http.server.SimpleHttpServer;
+import org.apache.axis2.transport.http.server.WorkerFactory;
 
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 public class EndpointImpl extends javax.xml.ws.Endpoint {
 
+    private boolean published;
     private Object implementor;
     private EndpointDescription endpointDesc;
     private Binding binding;
+    private SimpleHttpServer server;
 
     public EndpointImpl(Object o) {
         implementor = o;
         initialize();
     }
 
-    public EndpointImpl(Object o, EndpointDescription ed) {
+    public EndpointImpl(Object o, Binding bnd, EndpointDescription ed) {
         implementor = o;
         endpointDesc = ed;
         initialize();
     }
 
     private void initialize() {
-        if (endpointDesc != null) {
-            binding = new BindingImpl(endpointDesc.getBindingType());
+        if (implementor == null) {
+            throw ExceptionFactory.makeWebServiceException("The implementor object cannot be null");
         }
+        
+        // If we don't have the necessary metadata, let's go ahead and
+        // create it.
+        if (endpointDesc == null) {        
+            ServiceDescription sd = DescriptionFactory.createServiceDescription(implementor.getClass());
+            endpointDesc = sd.getEndpointDescriptions_AsCollection().iterator().next();
+        }
+        
+        if (endpointDesc != null && binding == null) {
+            binding = BindingUtils.createBinding(endpointDesc);
+        }
+        
+        published = false;
     }
 
     /*
@@ -111,7 +138,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#isPublished()
      */
     public boolean isPublished() {
-        return false;
+        return published;
     }
 
     /*
@@ -127,7 +154,31 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.String)
      */
     public void publish(String s) {
+        ConfigurationContext ctx = endpointDesc.getServiceDescription().getAxisConfigContext();
 
+        try {
+            // For some reason the AxisService has not been added to the ConfigurationContext
+            // at this point, so we need to do it for the service to be available.
+            AxisService svc = endpointDesc.getAxisService();
+            ctx.getAxisConfiguration().addService(svc);
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }        
+
+        // Remove the default "axis2" context root.
+        ctx.setContextRoot("/");
+                    
+        WorkerFactory wf = new HTTPWorkerFactory();
+
+        try {
+            server = new SimpleHttpServer(ctx, wf, 8080);  //TODO: Add a configurable port
+            server.init();            
+            server.start();
+        } catch (IOException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+
+        published = true;      
     }
 
     /*
@@ -143,7 +194,12 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#stop()
      */
     public void stop() {
-
+        try {
+            server.destroy();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-
 }

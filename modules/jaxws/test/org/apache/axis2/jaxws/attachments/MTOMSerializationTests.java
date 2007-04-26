@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -58,8 +59,8 @@ public class MTOMSerializationTests extends TestCase {
      * binary data that should be optimized when serialized.  
      */
     public void testPlainOMSerialization() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         OMElement payload = createPayload();
         
@@ -69,10 +70,10 @@ public class MTOMSerializationTests extends TestCase {
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         payload.serializeAndConsume(baos, format);
-        
-        System.out.println("==================================");
-        System.out.println(baos.toString());
-        System.out.println("==================================");
+
+        TestLogger.logger.debug("==================================");
+        TestLogger.logger.debug(baos.toString());
+        TestLogger.logger.debug("==================================");
     }
     
     /*
@@ -81,8 +82,8 @@ public class MTOMSerializationTests extends TestCase {
      * optimized when serialized.  
      */
     public void testSoapOMSerialization() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         OMElement payload = createPayload();
         
@@ -98,15 +99,15 @@ public class MTOMSerializationTests extends TestCase {
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         env.serializeAndConsume(baos, format);
-        
-        System.out.println("==================================");
-        System.out.println(baos.toString());
-        System.out.println("==================================");
+
+        TestLogger.logger.debug("==================================");
+        TestLogger.logger.debug(baos.toString());
+        TestLogger.logger.debug("==================================");
     }
     
     public void testMTOMAttachmentWriter() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -141,10 +142,10 @@ public class MTOMSerializationTests extends TestCase {
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapOM.serializeAndConsume(baos, format);
-        
-        System.out.println("==================================");
-        System.out.println(baos.toString());
-        System.out.println("==================================");
+
+        TestLogger.logger.debug("==================================");
+        TestLogger.logger.debug(baos.toString());
+        TestLogger.logger.debug("==================================");
     }
     
     private OMElement createPayload() {

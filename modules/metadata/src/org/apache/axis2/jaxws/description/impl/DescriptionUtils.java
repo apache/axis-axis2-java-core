@@ -28,8 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.concurrent.Future;
 
 /** Utilities used throughout the Description package. */
 class DescriptionUtils {
@@ -313,5 +316,26 @@ class DescriptionUtils {
         return configStream;
     }
 
+    /**
+     * Determine is this method is an async method
+     * @param method - The method to examine
+     * @return
+     */
+    public static boolean isAsync(Method method) {
 
+        if (method == null) {
+            return false;
+        }
+
+        String methodName = method.getName();
+        Class returnType = method.getReturnType();
+
+        if (methodName.endsWith("Async")
+            && (returnType.isAssignableFrom(javax.xml.ws.Response.class) || returnType
+                .isAssignableFrom(java.util.concurrent.Future.class))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

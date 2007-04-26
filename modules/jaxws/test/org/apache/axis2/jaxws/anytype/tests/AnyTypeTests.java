@@ -21,19 +21,20 @@ package org.apache.axis2.jaxws.anytype.tests;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class AnyTypeTests extends TestCase {
 	
 	public void testAnyTypeElementinWrappedWSDL(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			AnyTypeMessageService service = new AnyTypeMessageService();
 			AnyTypeMessagePortType portType = service.getAnyTypePort();
 			String req = new String("Request as String");
 			Object response = portType.echoMessage(req);
 			assertTrue(response instanceof String);
-			System.out.println("Response =" + response);
+            TestLogger.logger.debug("Response =" + response);
 			System.out.print("---------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();

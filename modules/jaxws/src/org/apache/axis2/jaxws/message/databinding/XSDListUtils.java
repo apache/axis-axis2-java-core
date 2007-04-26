@@ -77,7 +77,7 @@ public class XSDListUtils {
             IllegalArgumentException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
         // TODO only supports arrays right now.  Need to implement this for List
-        if (container.getClass().isArray()) {
+    	if (container !=null && container.getClass().isArray()) {
             String xsdString = "";
             for (int i = 0; i < Array.getLength(container); i++) {
                 Object component = Array.get(container, i);
@@ -87,7 +87,20 @@ public class XSDListUtils {
                 xsdString += getAsText(component);
             }
             return xsdString;
-        } else {
+            
+        } else if(container!=null && List.class.isAssignableFrom(container.getClass())){
+            String xsdString = "";
+            List containerAsList = (List)container;
+            for (Object component:containerAsList) {
+                if (xsdString.length() != 0) {
+                    xsdString += " ";
+                }
+                xsdString += getAsText(component);
+            }
+            return xsdString;
+            
+        }
+        else {
             throw new IllegalArgumentException(container.getClass().toString());
         }
     }
@@ -129,7 +142,7 @@ public class XSDListUtils {
             }
             Object array = Array.newInstance(arrayType, list.size());
             return list.toArray((Object[])array);
-        } else {
+        }else {
             throw new IllegalArgumentException(type.toString());
         }
     }

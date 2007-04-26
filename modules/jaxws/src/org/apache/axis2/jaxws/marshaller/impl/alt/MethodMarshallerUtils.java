@@ -33,9 +33,11 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
+import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
@@ -57,6 +59,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,7 +68,9 @@ import java.math.BigInteger;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -146,7 +151,24 @@ public class MethodMarshallerUtils {
                 // Create an Element rendering
                 Element element = null;
                 if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
-                    element = new Element(value, qName, formalType);
+                    /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
+                     * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List and recreate
+                     * the JAXBElements for the same.
+                     */
+                    if(pd.isListType()){
+                        
+                       List<Object> list= new ArrayList<Object>();
+                       if(formalType.isArray()){
+                            for(int count = 0; count < Array.getLength(value); count++){
+                                Object obj = Array.get(value, count);
+                                list.add(obj);
+                            }
+                            element = new Element(list, qName, List.class);
+                        }
+                      }
+                    else{
+                        element = new Element(value, qName, formalType);
+                    }
                 } else {
                     element = new Element(value, qName);
                 }
@@ -162,20 +184,21 @@ public class MethodMarshallerUtils {
 
     /**
      * Return the list of PDElements that is unmarshalled from the wire
-     *
-     * @param params              ParameterDescription for this operation
-     * @param message             Message
-     * @param packages            set of packages needed to unmarshal objects for this operation
-     * @param isInput             indicates if input or output  params (input on server, output on
-     *                            client)
-     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios
-     *                            that require unmarshalling by java type
+     * 
+     * @param params ParameterDescription for this operation
+     * @param message Message
+     * @param packages set of packages needed to unmarshal objects for this operation
+     * @param isInput indicates if input or output  params (input on server, output on client)
+     * @param hasReturnInBody if isInput=false, then this parameter indicates whether a 
+     * return value is expected in the body.
+     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios that require unmarshalling by java type
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params,
                                          Message message,
                                          TreeSet<String> packages,
                                          boolean isInput,
+                                         boolean hasReturnInBody, 
                                          Class[] unmarshalByJavaType) throws XMLStreamException {
 
         List<PDElement> pdeList = new ArrayList<PDElement>();
@@ -194,7 +217,11 @@ public class MethodMarshallerUtils {
             }
         }
 
-        int index = 0;
+        if (!isInput && hasReturnInBody) {
+            totalBodyBlocks++;
+        }
+            
+        int index = (!isInput && hasReturnInBody) ? 1 : 0;
         for (int i = 0; i < params.length; i++) {
             ParameterDescription pd = params[i];
 
@@ -409,7 +436,7 @@ public class MethodMarshallerUtils {
                                        block);
             } else {
                 // Body block
-                if (totalBodyBlocks <= 1) {
+                if (totalBodyBlocks < 1) {
                     // If there is only one block, use the following "more performant" method
                     message.setBodyBlock(block);
                 } else {
@@ -469,6 +496,7 @@ public class MethodMarshallerUtils {
      * @param isHeader
      * @param headerNS                 (only needed if isHeader)
      * @param headerLocalPart          (only needed if isHeader)
+     * @param hasOutputBodyParams (true if the method has out or inout params other than the return value)
      * @return Element
      * @throws WebService
      * @throws XMLStreamException
@@ -478,7 +506,9 @@ public class MethodMarshallerUtils {
                                     Class unmarshalByJavaTypeClass,  // normally null
                                     boolean isHeader,
                                     String headerNS,
-                                    String headerLocalPart)
+                                    String headerLocalPart,
+                                    boolean hasOutputBodyParams)
+
             throws WebServiceException, XMLStreamException {
 
         // The return object is the first block in the body
@@ -490,7 +520,13 @@ public class MethodMarshallerUtils {
         if (isHeader) {
             block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
         } else {
-            block = message.getBodyBlock(context, factory);
+            if (hasOutputBodyParams) {
+                block = message.getBodyBlock(0, context, factory);
+            } else {
+                // If there is only 1 block, we can use the get body block method
+                // that streams the whole block content.
+                block = message.getBodyBlock(context, factory);
+            }
         }
 
         // Get the business object.  We want to return the object that represents the type.
@@ -517,6 +553,7 @@ public class MethodMarshallerUtils {
             log.debug("Marshal Throwable =" + throwable.getClass().getName());
             log.debug("  rootCause =" + t.getClass().getName());
             log.debug("  exception=" + t.toString());
+            log.debug("  stack=" + stackToString(t));
         }
 
         XMLFault xmlfault = null;
@@ -570,7 +607,7 @@ public class MethodMarshallerUtils {
                 if (faultBeanObject == t ||
                         (context.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE
                                 .BY_CONTEXT_PATH &&
-                                isJAXBBasicType(faultBeanObject.getClass()))) {
+                                isNotJAXBRootElement(faultBeanObject.getClass(), marshalDesc))) {
                     context.setProcessType(faultBeanObject.getClass());
                 }
 
@@ -789,7 +826,7 @@ public class MethodMarshallerUtils {
 
             // Use "by java type" marshalling if necessary
             if (blockContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
-                    isJAXBBasicType(faultBeanFormalClass)) {
+                    isNotJAXBRootElement(faultBeanFormalClass, marshalDesc)) {
                 blockContext.setProcessType(faultBeanFormalClass);
             }
 
@@ -823,6 +860,25 @@ public class MethodMarshallerUtils {
         return exception;
     }
 
+    
+    /**
+     * @param pds
+     * @return Number of inout or out parameters
+     */
+    static int numOutputBodyParams(ParameterDescription[] pds) {
+        int count = 0;
+        for (int i=0; i<pds.length; i++) {
+            // TODO Need to change this to also detect not attachment
+            if (!pds[i].isHeader()) {
+                if (pds[i].getMode() == Mode.INOUT ||
+                        pds[i].getMode() == Mode.OUT) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
 
     /**
      * @param value
@@ -854,8 +910,7 @@ public class MethodMarshallerUtils {
     static <T> Holder<T> createHolder(Class paramType, T value)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (Holder.class.isAssignableFrom(paramType)) {
-            Class holderClazz = loadClass(paramType.getName());
-            Holder<T> holder = (Holder<T>)holderClazz.newInstance();
+            Holder holder = (Holder) paramType.newInstance();
             holder.value = value;
             return holder;
         }
@@ -1037,11 +1092,11 @@ public class MethodMarshallerUtils {
      * This probably should be available from the ParameterDescription
      *
      * @param cls
+     * @param marshalDesc
      * @return true if primitive, wrapper, java.lang.String. Calendar (or GregorianCalendar),
      *         BigInteger etc or anything other java type that is mapped by the basic schema types
      */
-    static boolean isJAXBBasicType(Class cls) {
-        // TODO : Others ?  Look at default JAXBContext
+    static boolean isNotJAXBRootElement(Class cls, MarshalServiceRuntimeDescription marshalDesc) {
         if (cls == String.class ||
                 cls.isPrimitive() ||
                 cls == Calendar.class ||
@@ -1053,8 +1108,25 @@ public class MethodMarshallerUtils {
 
             return true;
         }
-        return false;
-
-
+        AnnotationDesc aDesc = marshalDesc.getAnnotationDesc(cls);
+        if (aDesc != null) {
+            // XmlRootElementName returns null if @XmlRootElement is not specified
+            return (aDesc.getXmlRootElementName() == null);
+        }
+        return true;  
+    }
+    
+    /**
+     * Get a string containing the stack of the specified exception   
+     * @param e   
+     * @return    
+     */   
+    public static String stackToString(Throwable e) {       
+        java.io.StringWriter sw= new java.io.StringWriter();        
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);       
+        java.io.PrintWriter pw= new java.io.PrintWriter(bw);       
+        e.printStackTrace(pw);       
+        pw.close();       
+        return sw.getBuffer().toString();      
     }
 }

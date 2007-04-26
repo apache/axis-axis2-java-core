@@ -1,26 +1,37 @@
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
+import java.io.ByteArrayOutputStream;
+import java.io.StringBufferInputStream;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.axis2.jaxws.handler.SoapMessageContext;
+import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
-public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHandler {
+public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
+    private int deduction = 1;
+    
     public void close(MessageContext messagecontext) {
-        // TODO Auto-generated method stub
         
     }
+    
+    @PostConstruct
+    public void postConstruct() {
+        deduction = 2;
+    }
 
-    public boolean handleFault(MessageContext messagecontext) {
-        Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-        if (outbound) {  // outbound response if we're on the server
-            SOAPMessage msg = ((SoapMessageContext)messagecontext).getMessage();
-            SOAPPart part = msg.getSOAPPart();
-            part.getFirstChild().getFirstChild().getFirstChild().setTextContent("a handler was here");
-        }
+    public boolean handleFault(LogicalMessageContext messagecontext) {
         return true;
     }
 
@@ -32,28 +43,57 @@ public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHan
      * So the client app should expect a sum 2 less than a sum without this handler manipulating
      * the SOAP message.
      */
-    public boolean handleMessage(MessageContext messagecontext) {
+    public boolean handleMessage(LogicalMessageContext messagecontext) {
         Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound request if we're on the server
-            SOAPMessage msg = ((SoapMessageContext)messagecontext).getMessage();
-            SOAPPart part = msg.getSOAPPart();
-            // hack-ish change, but it's for testing, so who cares.
-            String txt = part.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getTextContent();
-            if (txt.equals("99")) {
+            LogicalMessage msg = messagecontext.getMessage();
+            String st = getStringFromSourcePayload(msg.getPayload());
+            if (st.contains("<arg0>99</arg0>"))
                 throw new ProtocolException("I don't like the value 99");
-            }
-            txt = String.valueOf(Integer.valueOf(txt) - 1);
-            part.getFirstChild().getFirstChild().getFirstChild().getFirstChild().setTextContent(txt);
-            return true;
+            String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - 1);
+            st = replaceFirstArg(st, txt);
+            msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
+            
         } else { // outbound response if we're on the server
-            SOAPMessage msg = ((SoapMessageContext)messagecontext).getMessage();
-            SOAPPart part = msg.getSOAPPart();
-            // hack-ish change, but it's for testing, so who cares.
-            String txt = part.getFirstChild().getFirstChild().getFirstChild().getTextContent();
-            txt = String.valueOf(Integer.valueOf(txt) - 1);
-            part.getFirstChild().getFirstChild().getFirstChild().getFirstChild().setTextContent(txt);
-            return true;
+            LogicalMessage msg = messagecontext.getMessage();
+            String st = getStringFromSourcePayload(msg.getPayload());
+            String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - deduction);
+            st = replaceFirstArg(st, txt);
+            msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
+        }
+        return true;
+    }
+    
+    private static String getFirstArg(String payloadString) {
+        StringTokenizer st = new StringTokenizer(payloadString, ">");
+        st.nextToken();  // skip first token.
+        st.nextToken();  // skip second
+        String tempString = st.nextToken();
+        String returnString = new StringTokenizer(tempString, "<").nextToken();
+        return returnString;
+    }
+    
+    private static String replaceFirstArg(String payloadString, String newArg) {
+        String firstArg = getFirstArg(payloadString);
+        payloadString = payloadString.replaceFirst(firstArg, newArg);
+        return payloadString;
+    }
+    
+    private static String getStringFromSourcePayload(Source payload) {
+        try {
+
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer trans = factory.newTransformer();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            StreamResult result = new StreamResult(baos);
+
+            trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            trans.transform(payload, result);
+
+            return new String(baos.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
-
 }

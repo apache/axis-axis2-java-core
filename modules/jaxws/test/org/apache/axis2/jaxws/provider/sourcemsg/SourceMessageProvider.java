@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider.sourcemsg;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -36,7 +38,7 @@ import javax.xml.ws.WebServiceProvider;
 public class SourceMessageProvider implements Provider<Source> {
     String responseAsString = new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>some response</return_str></ns2:ReturnType></soapenv:Body></soapenv:Envelope>");
     public Source invoke(Source source) {
-    	System.out.println(">> SourceMessageProvider: Request received.");
+        TestLogger.logger.debug(">> SourceMessageProvider: Request received.");
     	//System.out.println(">> Source toString: \n"+source.toString());
     	
     	try{
@@ -44,7 +46,8 @@ public class SourceMessageProvider implements Provider<Source> {
 	        Transformer t = TransformerFactory.newInstance().newTransformer();
 	        Result result = new StreamResult(writer);
 	        t.transform(source, result);
-	        System.out.println(">> Source Request on Server: \n"+writer.getBuffer().toString());
+            TestLogger.logger
+                    .debug(">> Source Request on Server: \n" + writer.getBuffer().toString());
 	        
 	    	byte[] bytes = responseAsString.getBytes();
 	        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);

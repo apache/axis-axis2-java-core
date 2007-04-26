@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.OMContainerEx;
+import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -44,11 +45,13 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -499,9 +502,31 @@ class XMLSpineImpl implements XMLSpine {
 
             // We want to set the om element and its parents to complete to 
             // shutdown the parsing.  
-            // TODO It would also be nice to close the input XMLStreamReader connected
-            // to the builder.
             if (setComplete) {
+                
+                // Get the root of the document
+                OMElementImpl root = (OMElementImpl) om;
+                while(root.getParent() instanceof OMElementImpl) {
+                    root = (OMElementImpl) root.getParent();
+                }
+                
+                try {   
+                    if (!root.isComplete() && root.getBuilder() != null && !root.getBuilder().isCompleted()) {
+                        // Forward the parser to the end so it will close
+                        while (root.getBuilder().next() != XMLStreamConstants.END_DOCUMENT) {
+                            //do nothing
+                        }                    
+                    }
+                } catch (Exception e) {
+                    // Log and continue
+                    if (log.isDebugEnabled()) {
+                        log.debug("Builder next error:" + e.getMessage());
+                        log.debug(JavaUtils.stackToString(e));
+                    }
+                    
+                }
+                
+
                 OMContainer o = om;
                 while (o != null && o instanceof OMContainerEx) {
                     ((OMContainerEx)o).setComplete(true);

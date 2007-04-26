@@ -30,6 +30,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -90,8 +91,8 @@ public class JAXBProviderTests extends ProviderTestCase {
      * @throws Exception
      */
     public void testMTOMAttachmentString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(stringDS);
@@ -112,12 +113,12 @@ public class JAXBProviderTests extends ProviderTestCase {
         ObjectFactory factory = new ObjectFactory();
         SendImage request = factory.createSendImage();
         request.setInput(imageDepot);
-        
-        System.out.println(">> Invoking Dispatch<Object> JAXBProviderService");
+
+        TestLogger.logger.debug(">> Invoking Dispatch<Object> JAXBProviderService");
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-        
-        System.out.println(">> Response [" + response.toString() + "]");
+
+        TestLogger.logger.debug(">> Response [" + response.toString() + "]");
     }
     
     /**
@@ -125,8 +126,8 @@ public class JAXBProviderTests extends ProviderTestCase {
      * @throws Exception
      */
     public void testMTOMAttachmentImage() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         //Create a DataHandler with the String DataSource object
         DataHandler dataHandler = new DataHandler(imageDS);
@@ -147,11 +148,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         ObjectFactory factory = new ObjectFactory();
         SendImage request = factory.createSendImage();
         request.setInput(imageDepot);
-        
-        System.out.println(">> Invoking Dispatch<Object> JAXBProviderService");
+
+        TestLogger.logger.debug(">> Invoking Dispatch<Object> JAXBProviderService");
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-        
-        System.out.println(">> Response [" + response.toString() + "]");
+
+        TestLogger.logger.debug(">> Response [" + response.toString() + "]");
     }
 }

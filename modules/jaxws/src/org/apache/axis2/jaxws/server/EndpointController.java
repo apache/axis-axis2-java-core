@@ -22,6 +22,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -33,6 +34,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -57,6 +59,7 @@ import javax.xml.ws.http.HTTPBinding;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 
 /**
  * The EndpointController is the server side equivalent to the InvocationController on the client
@@ -93,6 +96,21 @@ public class EndpointController {
         EndpointDescription endpointDesc = getEndpointDescription(requestMsgCtx, implClass);
         requestMsgCtx.setEndpointDescription(endpointDesc);
 
+        /*
+         * TODO: review: make sure the handlers are set on the InvocationContext
+         * This implementation of the JAXWS runtime does not use Endpoint, which
+         * would normally be the place to initialize and store the handler list.
+         * In lieu of that, we will have to intialize and store them on the 
+         * InvocationContext.  also see the InvocationContextFactory.  On the client
+         * side, the binding is not yet set when we call into that factory, so the
+         * handler list doesn't get set on the InvocationContext object there.  Thus
+         * we gotta do it here.
+         * 
+         * Since we're on the server, and there apparently is no Binding object
+         * anywhere to be found...
+         */
+        ic.setHandlers(new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc.getPortInfo()));
+        
         if (!bindingTypesMatch(requestMsgCtx, endpointDesc.getServiceDescription())) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
             // only if protocol is soap12 and MISmatches the endpoint do we halt processing
@@ -138,6 +156,7 @@ public class EndpointController {
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
             boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx,
+                    ic.getHandlers(),
                                                                         requestMsgCtx.getEndpointDescription(),
                                                                         HandlerChainProcessor.MEP.REQUEST,
                                                                         isOneWay(
@@ -154,12 +173,20 @@ public class EndpointController {
                     requestMsgCtx.getMessage().setPostPivot();
                 }
 
+                // The response MessageContext should be set on the InvocationContext
+                ic.setResponseMessageContext(responseMsgContext);
+
                 // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
                 // always exactly one EndpointDescription on a server invoke
+                // Also, if the message is oneWay, don't bother with response handlers.  The responseMsgContext is probably NULL
+                // anyway, and would cause an NPE.
+                if (!isOneWay(requestMsgCtx.getAxisMessageContext())) {
                 HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext,
+                        ic.getHandlers(),
                                                            requestMsgCtx.getEndpointDescription(),
                                                            HandlerChainProcessor.MEP.RESPONSE,
                                                            false);
+                }
             } else
             { // the inbound handler chain must have had a problem, and we've reversed directions
                 responseMsgContext =
@@ -175,8 +202,8 @@ public class EndpointController {
             restoreRequestMessage(requestMsgCtx);
         }
 
-        // The response MessageContext should be set on the InvocationContext
-        ic.setResponseMessageContext(responseMsgContext);
+		// The response MessageContext should be set on the InvocationContext
+		ic.setResponseMessageContext(responseMsgContext);
 
         return ic;
     }
@@ -272,6 +299,14 @@ public class EndpointController {
             EndpointDescription ed = (EndpointDescription)param.getValue();
             return ed;
         } else {
+            // TODO: This is using a deprecated factory method to create the ServiceDescription.
+            // The correct way to fix this is to create the ServiceDescriptions (and the AxisService
+            // and associated descritpion hierahcy) at startup.  However, that is currently not done
+            // in the Axis2 testing environment.  So, for testing, we create a Description hierachy
+            // on the fly and attach the AxisService to it.  This should be changed to not used the
+            // deprecated factory method.  HOWEVER doing so currently causes testcase failures in 
+            // JAXWS and or Metadata
+//            ServiceDescription sd = DescriptionFactory.createServiceDescription(implClass);
             ServiceDescription sd =
                     DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
             EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
@@ -289,11 +324,12 @@ public class EndpointController {
     private boolean bindingTypesMatch(MessageContext requestMsgCtx,
                                       ServiceDescription serviceDesc) {
         // compare soap versions and respond appropriately under SOAP 1.2 Appendix 'A'
-        EndpointDescription[] eds = serviceDesc.getEndpointDescriptions();
+        Collection<EndpointDescription> eds = serviceDesc.getEndpointDescriptions_AsCollection();
         // dispatch endpoints do not have SEIs, so watch out for null or empty array
-        if ((eds != null) && (eds.length > 0)) {
+        if ((eds != null) && (eds.size() > 0)) {
+            EndpointDescription ed = eds.iterator().next();
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
-            String endpointBindingType = eds[0].getBindingType();
+            String endpointBindingType = ed.getBindingType();
             if (protocol.equals(Protocol.soap11)) {
                 return (SOAPBinding.SOAP11HTTP_BINDING.equalsIgnoreCase(endpointBindingType)) ||
                         (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(endpointBindingType));
@@ -395,7 +431,9 @@ public class EndpointController {
             if (mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) ||
                     mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||
                     mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                    mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)) {
+                    mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)||
+                    mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY)||
+                    mep.equals(WSDL2Constants.MEP_URI_IN_ONLY)) {
                 return true;
             }
         }

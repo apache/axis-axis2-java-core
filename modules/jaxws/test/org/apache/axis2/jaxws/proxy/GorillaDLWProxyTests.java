@@ -34,6 +34,7 @@ import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class GorillaDLWProxyTests extends TestCase {
 
@@ -88,7 +89,7 @@ public class GorillaDLWProxyTests extends TestCase {
            
             String response = proxy.echoString(request);
             assertTrue(response != null);
-            assert(response.equals(request));
+            assertEquals(response, request);
             
         }catch(Exception e){ 
             e.printStackTrace(); 
@@ -369,7 +370,7 @@ public class GorillaDLWProxyTests extends TestCase {
     
     private boolean compareLists(List in, List out) {
         if (in.size() != out.size()) {
-            System.out.println("Size mismatch " + in.size() + "!=" + out.size());
+            TestLogger.logger.debug("Size mismatch " + in.size() + "!=" + out.size());
             return false;
         }
         for (int i=0; i<in.size(); i++) {
@@ -377,7 +378,7 @@ public class GorillaDLWProxyTests extends TestCase {
             Object outItem = out.get(i);
             if (inItem != null && !inItem.equals(outItem) ||
                 (inItem == null && inItem != outItem)) {
-                System.out.println("Item " + i + " mismatch " + inItem + "!=" + outItem);
+                TestLogger.logger.debug("Item " + i + " mismatch " + inItem + "!=" + outItem);
                 return false;
             }
                 
@@ -387,7 +388,7 @@ public class GorillaDLWProxyTests extends TestCase {
     
     private boolean compareArrays(String[] in, String[] out) {
         if (in.length != out.length) {
-            System.out.println("Size mismatch " + in.length + "!=" + out.length);
+            TestLogger.logger.debug("Size mismatch " + in.length + "!=" + out.length);
             return false;
         }
         for (int i=0; i<in.length; i++) {
@@ -395,7 +396,7 @@ public class GorillaDLWProxyTests extends TestCase {
             Object outItem = out[i];
             if (inItem != null && !inItem.equals(outItem) ||
                 (inItem == null && inItem != outItem)) {
-                System.out.println("Item " + i + " mismatch " + inItem + "!=" + outItem);
+                TestLogger.logger.debug("Item " + i + " mismatch " + inItem + "!=" + outItem);
                 return false;
             }
                 

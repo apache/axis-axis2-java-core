@@ -29,6 +29,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class StringDispatch extends TestCase {
 
@@ -36,8 +37,8 @@ public class StringDispatch extends TestCase {
      * Invoke a sync Dispatch<String> in PAYLOAD mode
      */
     public void testSyncPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -46,11 +47,11 @@ public class StringDispatch extends TestCase {
                 String.class, Service.Mode.PAYLOAD);
         
         // Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch");
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
         String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -66,8 +67,8 @@ public class StringDispatch extends TestCase {
      * WebServiceException.
      */
     public void testSyncPayloadMode_exception() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -76,7 +77,7 @@ public class StringDispatch extends TestCase {
                 String.class, Service.Mode.PAYLOAD);
         
         // Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch");
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
         Exception e = null;
         try {
             // The _bad string passes "THROW EXCEPTION", which causes the echo function on the
@@ -95,8 +96,8 @@ public class StringDispatch extends TestCase {
      * Invoke a sync Dispatch<String> in MESSAGE mode
      */
     public void testSyncWithMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -105,11 +106,11 @@ public class StringDispatch extends TestCase {
                 String.class, Service.Mode.MESSAGE);
         
         // Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch");
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
         String response = dispatch.invoke(DispatchTestConstants.sampleSoapMessage);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(response.contains("soap"));
@@ -122,8 +123,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> using the async callback API in PAYLOAD mode
 	 */
     public void testAsyncCallbackPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -133,18 +134,18 @@ public class StringDispatch extends TestCase {
 
         // Create the callback for async responses
         AsyncCallback<String> callback = new AsyncCallback<String>();
-        
-        System.out.println(">> Invoking async (callback) Dispatch");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent, callback);
 	        
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         String response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -157,8 +158,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> using the async callback API in MESSAGE mode
      */
     public void testAsyncCallbackMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -168,18 +169,18 @@ public class StringDispatch extends TestCase {
 
         // Create the callback for async responses
         AsyncCallback<String> callback = new AsyncCallback<String>();
-        
-        System.out.println(">> Invoking async (callback) Dispatch with Message Mode");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         String response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(response.contains("soap"));
@@ -192,8 +193,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> using the async polling API in PAYLOAD mode
      */
     public void testAsyncPollingPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -201,17 +202,17 @@ public class StringDispatch extends TestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.PAYLOAD);
 
-        System.out.println(">> Invoking async (polling) Dispatch");
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         String response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -224,8 +225,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> using the async polling API in MESSAGE mode
      */
     public void testAsyncPollingMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -233,17 +234,17 @@ public class StringDispatch extends TestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.MESSAGE);
 
-        System.out.println(">> Invoking async (polling) Dispatch with Message Mode");
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch with Message Mode");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage);
     
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         String response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(response.contains("soap"));
@@ -256,8 +257,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> one-way in PAYLOAD mode 
      */
     public void testOneWayPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -265,7 +266,7 @@ public class StringDispatch extends TestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.PAYLOAD);
 
-        System.out.println(">> Invoking one-way Dispatch");
+        TestLogger.logger.debug(">> Invoking one-way Dispatch");
         dispatch.invokeOneWay(DispatchTestConstants.sampleBodyContent);
     }
     
@@ -273,8 +274,8 @@ public class StringDispatch extends TestCase {
      * Invoke a Dispatch<String> one-way in MESSAGE mode 
 	 */
     public void testOneWayMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -282,14 +283,14 @@ public class StringDispatch extends TestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.MESSAGE);
 
-        System.out.println(">> Invoking one-way Dispatch");
+        TestLogger.logger.debug(">> Invoking one-way Dispatch");
         dispatch.invokeOneWay(DispatchTestConstants.sampleSoapMessage);
 	}
     
     
     public void testSyncPayloadMode_badHostName() {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -300,7 +301,7 @@ public class StringDispatch extends TestCase {
         // Invoke the Dispatch
         Throwable ttemp = null;
         try {
-            System.out.println(">> Invoking sync Dispatch");
+            TestLogger.logger.debug(">> Invoking sync Dispatch");
             String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
         } catch (Throwable t) {
             assertTrue(t instanceof WebServiceException);
@@ -312,8 +313,8 @@ public class StringDispatch extends TestCase {
     }
     
     public void testAsyncCallbackMessageMode_badHostName() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -323,12 +324,12 @@ public class StringDispatch extends TestCase {
 
         // Create the callback for async responses
         AsyncCallback<String> callback = new AsyncCallback<String>();
-        
-        System.out.println(">> Invoking async (callback) Dispatch with Message Mode");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
         Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
     
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -351,8 +352,8 @@ public class StringDispatch extends TestCase {
     }
     
     public void testAsyncPollingPayloadMode_badHostName() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -360,11 +361,11 @@ public class StringDispatch extends TestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.PAYLOAD);
 
-        System.out.println(">> Invoking async (polling) Dispatch");
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
             
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         

@@ -18,8 +18,12 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
+import java.util.concurrent.Future;
 import javax.jws.WebService;
 import javax.jws.HandlerChain;
+import javax.xml.ws.AsyncHandler;
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
+import org.apache.axis2.jaxws.TestLogger;
 
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType")
@@ -30,15 +34,24 @@ public class AddNumbersHandlerPortTypeImpl implements AddNumbersHandlerPortType 
 	 * @see org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType#addNumbersHandler(int, int)
 	 */
 	public int addNumbersHandler(int arg0, int arg1) throws AddNumbersHandlerFault_Exception {
-	    System.out.println(">> Received addNumbersHandler request for " + arg0 + " and " + arg1);
+        TestLogger.logger
+                .debug(">> Received addNumbersHandler request for " + arg0 + " and " + arg1);
+        if (arg0 == 101)
+            throw new RuntimeException("blarg");
         return arg0+arg1;
 	}
+
+	public Future<?> addNumbersHandlerAsync(int arg0, int arg1, AsyncHandler<AddNumbersHandlerResponse> asyncHandler) {
+        return null;
+    }
+
+
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType#oneWayInt(int)
 	 */
 	public void oneWayInt(int arg0) {
-	    System.out.println(">> Received one-way request.");
+        TestLogger.logger.debug(">> Received one-way request.");
         return;
 	}
 

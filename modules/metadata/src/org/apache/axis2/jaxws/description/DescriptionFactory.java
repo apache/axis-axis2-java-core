@@ -167,7 +167,6 @@ public class DescriptionFactory {
      *         implementation class and tied via properties to the existing AxisService object.
      * @deprecated Use {@link #createServiceDescriptionFromDBCMap(HashMap)}
      */
-    // TODO: Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
     public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass,
                                                                              AxisService axisService) {
         return DescriptionFactoryImpl

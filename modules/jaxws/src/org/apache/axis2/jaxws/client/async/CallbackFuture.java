@@ -21,12 +21,14 @@ package org.apache.axis2.jaxws.client.async;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.WebServiceException;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
@@ -47,6 +49,9 @@ public class CallbackFuture extends Callback {
     private CallbackFutureTask cft;
     private Executor executor;
     private FutureTask task;
+    
+    private InvocationContext invocationCtx;
+    
     /*
      * There are two Async Callback Future.cancel scenario that we address
      * 1) Client app creates request and call Async Operation. Now before the request is submitted
@@ -67,10 +72,16 @@ public class CallbackFuture extends Callback {
      */
 
     @SuppressWarnings("unchecked")
-    public CallbackFuture(AsyncResponse response, AsyncHandler handler, Executor exec) {
-        cft = new CallbackFutureTask(response, handler);
+    public CallbackFuture(InvocationContext ic, AsyncHandler handler) {
+        cft = new CallbackFutureTask(ic.getAsyncResponseListener(), handler);
         task = new FutureTask(cft);
-        executor = exec;
+        executor = ic.getExecutor();
+        
+        /*
+         * TODO review.  We need to save the invocation context so we can set it on the
+         * response (or fault) context so the FutureCallback has access to the handler list.
+         */
+        invocationCtx = ic;
     }
 
     public Future<?> getFutureTask() {
@@ -86,6 +97,7 @@ public class CallbackFuture extends Callback {
         MessageContext response = null;
         try {
             response = AsyncUtils.createJAXWSMessageContext(result);
+            response.setInvocationContext(invocationCtx);
         } catch (WebServiceException e) {
             cft.setError(e);
             if (debug) {
@@ -111,8 +123,8 @@ public class CallbackFuture extends Callback {
             AxisFault fault = (AxisFault)e;
             MessageContext faultMessageContext = null;
             try {
-                faultMessageContext =
-                        AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
+                faultMessageContext  = AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
+                faultMessageContext.setInvocationContext(invocationCtx);
             }
             catch (WebServiceException wse) {
                 cft.setError(wse);

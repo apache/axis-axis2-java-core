@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,21 +55,26 @@ public class PropertyDescriptorMapBuilder {
      * @param ap                 ArtifactProcessor which found the artifact classes
      * @return PropertyDescriptor Map
      */
-    public static Map<Class, Map<String, PropertyDescriptorPlus>> getPropertyDescMaps(
+    /**
+     * @param serviceDescription ServiceDescription
+     * @param ap ArtifactProcessor which found the artifact classes
+     * @return PropertyDescriptor Map
+     */
+    public static Map<Class,Map<String, PropertyDescriptorPlus>> getPropertyDescMaps(
             ServiceDescription serviceDesc,
             ArtifactProcessor ap) {
-        Map<Class, Map<String, PropertyDescriptorPlus>> map =
-                new HashMap<Class, Map<String, PropertyDescriptorPlus>>();
-        EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
-
+        Map<Class,Map<String, PropertyDescriptorPlus>> map = new HashMap<Class,Map<String, PropertyDescriptorPlus>>();
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
+        
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
-            for (int i = 0; i < endpointDescs.length; i++) {
-                getPropertyDescMaps(endpointDescs[i], ap, map);
+            for (EndpointDescription ed:endpointDescs) {
+                getPropertyDescMaps(ed, ap, map);
             }
         }
         return map;
     }
+
 
 
     /**

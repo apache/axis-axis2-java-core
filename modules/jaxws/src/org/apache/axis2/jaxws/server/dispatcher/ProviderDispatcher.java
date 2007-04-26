@@ -104,6 +104,16 @@ public class ProviderDispatcher extends JavaDispatcher {
         Object requestParamValue = null;
         Message message = mc.getMessage();
         if (message != null) {
+            
+            // Enable MTOM if indicated by the binding
+            String bindingType = endpointDesc.getBindingType();
+            if (bindingType != null) {
+                if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                        bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                    message.setMTOMEnabled(true);
+                }
+            }
+
             // Save off the protocol info so we can use it when creating the response message.
             messageProtocol = message.getProtocol();
             // Determine what type blocks we want to create (String, Source, etc) based on Provider Type
@@ -117,7 +127,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                     // We can get the SOAPMessage directly from the message itself
                     if (log.isDebugEnabled()) {
                         log.debug("Provider Type is SOAPMessage.");
-                        log.debug("Number Message attachments=" + message.getAttachments().size());
+                        log.debug("Number Message attachments=" + message.getAttachmentIDs().size());
                     }
                 }
 

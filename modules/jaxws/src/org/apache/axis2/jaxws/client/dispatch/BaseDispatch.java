@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client.dispatch;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
@@ -54,7 +55,9 @@ public abstract class BaseDispatch<T> extends BindingProvider
     private Log log = LogFactory.getLog(BaseDispatch.class);
 
     protected InvocationController ic;
+
     protected ServiceClient serviceClient;
+
     protected Mode mode;
 
     protected BaseDispatch(ServiceDelegate svcDelgate, EndpointDescription epDesc) {
@@ -110,7 +113,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -143,11 +146,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Object returnObj = getValueFromMessage(responseMsg);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
@@ -185,7 +184,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -201,11 +200,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ic.invokeOneWay(invocationContext);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("One-way invocation completed: BaseDispatch.invokeOneWay()");
@@ -243,7 +238,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -270,11 +265,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");
@@ -312,7 +303,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (isValidInvocationParam(obj)) {
                 requestMsg = createMessageFromValue(obj);
             } else {
-                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
             setupMessageProperties(requestMsg);
@@ -339,11 +330,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Response asyncResponse = ic.invokeAsync(invocationContext);
 
             //Check to see if we need to maintain session state
-            if (requestMsgCtx.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        invocationContext.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(requestMsgCtx, invocationContext);
 
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous (polling) invocation sent: BaseDispatch.invokeAsync()");
@@ -449,20 +436,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
         // but only in PAYLOAD mode per JAX-WS Section 4.3.2.
         if (!bindingId.equals(HTTPBinding.HTTP_BINDING)) {
             if (mode.equals(Mode.MESSAGE) && object == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchNullParamMessageMode");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchNullParamMessageMode"));
             }
         } else {
             // In all cases (PAYLOAD and MESSAGE) we must throw a WebServiceException
             // if the parameter is null.
             if (object == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchNullParamHttpBinding");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchNullParamHttpBinding"));
             }
         }
 
         if (object instanceof DOMSource) {
             DOMSource ds = (DOMSource)object;
             if (ds.getNode() == null && ds.getSystemId() == null) {
-                throw ExceptionFactory.makeWebServiceException("dispatchBadDOMSource");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchBadDOMSource"));
             }
         }
 

@@ -24,9 +24,11 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -60,7 +62,7 @@ public class RPCLitImpl implements RPCLit {
      * Echo the input
      */
     public String testSimple(String simpleIn) {
-        assert(simpleIn != null);  // According to JAX-WS an RPC service should never receive a null
+        assertTrue(simpleIn != null);  // According to JAX-WS an RPC service should never receive a null
         
         // Test to ensure that returning null causes the proper exception 
         if (simpleIn.contains("returnNull")) {
@@ -146,7 +148,7 @@ public class RPCLitImpl implements RPCLit {
     private void assertTrue(boolean value) throws RuntimeException {
         if (!value) {
             RuntimeException re = new RuntimeException();
-            System.out.println("Test FAILURE=" +re);
+            TestLogger.logger.debug("Test FAILURE=" + re);
             throw re;
         }
     }
@@ -158,4 +160,9 @@ public class RPCLitImpl implements RPCLit {
     public void testFault() throws RPCFault {
         throw new RPCFault("Throw RPCFault", 123);
     }
+
+    public String testSimpleInOut(Holder<String> simpleInOut) {
+        return simpleInOut.value;
+    }
+
 }

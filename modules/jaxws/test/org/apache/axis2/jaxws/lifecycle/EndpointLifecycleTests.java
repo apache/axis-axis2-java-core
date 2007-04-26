@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.resourceinjection.ResourceInjectionPortTypeImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class EndpointLifecycleTests extends TestCase {
 	Object endpointInstance = new ResourceInjectionPortTypeImpl();
@@ -41,60 +42,60 @@ public class EndpointLifecycleTests extends TestCase {
 	}
 	
 	public void testPostConstruct(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
 			assertNotNull(elmf);
 			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
 			assertNotNull(elmf);
 			elm.invokePostConstruct();
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			fail(e.getMessage());
 		}
 	}
 
 	public void testPreDestroy(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
 			assertNotNull(elmf);
 			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
 			assertNotNull(elm);
 			elm.invokePreDestroy();
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			fail(e.getMessage());
 		}
 	}
 	
 	public void testBadPostConstruct(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
 			assertNotNull(elmf);
 			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
 			assertNotNull(elmf);
 			elm.invokePostConstruct();
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			fail(e.getMessage());
 		}
 	}
 
 	public void testBadPreDestroy(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try{
 			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
 			assertNotNull(elmf);
 			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
 			assertNotNull(elm);
 			elm.invokePreDestroy();
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			fail(e.getMessage());
 		}

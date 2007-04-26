@@ -8,13 +8,14 @@ import javax.xml.ws.BindingProvider;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.BareDocLitService;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.log4j.BasicConfigurator;
 
 public class BareTests extends TestCase {
 	
 	public void testTwoWaySync(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		
 		try{
 			
@@ -26,8 +27,8 @@ public class BareTests extends TestCase {
 	            p.getRequestContext().put(
 	                    BindingProvider.SOAPACTION_URI_PROPERTY, "twoWaySimple");
 			String response = proxy.twoWaySimple(10);
-			System.out.println("Sync Response =" + response);
-			System.out.println("------------------------------");
+            TestLogger.logger.debug("Sync Response =" + response);
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();
@@ -35,16 +36,16 @@ public class BareTests extends TestCase {
 	}
 	
     public void testTwoWaySyncWithBodyRouting(){
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         
         try{
             
             BareDocLitService service = new BareDocLitService();
             DocLitBarePortType proxy = service.getBareDocLitPort();
             String response = proxy.twoWaySimple(10);
-            System.out.println("Sync Response =" + response);
-            System.out.println("------------------------------");
+            TestLogger.logger.debug("Sync Response =" + response);
+            TestLogger.logger.debug("------------------------------");
         }catch(Exception e){
             e.printStackTrace();
             fail();
@@ -52,8 +53,8 @@ public class BareTests extends TestCase {
     }
 
     public void testOneWayEmpty(){
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		
 		try{
 			
@@ -66,8 +67,8 @@ public class BareTests extends TestCase {
 	            p.getRequestContext().put(
 	                    BindingProvider.SOAPACTION_URI_PROPERTY, "oneWayEmpty");
 			proxy.oneWayEmpty();
-			
-			System.out.println("------------------------------");
+
+            TestLogger.logger.debug("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
 			fail();

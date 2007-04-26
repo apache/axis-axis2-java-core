@@ -1,6 +1,8 @@
 
 package org.apache.axis2.jaxws.sample.mtom1;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.jws.WebService;
 import java.rmi.RemoteException;
 import javax.xml.ws.WebServiceException;
@@ -36,16 +38,16 @@ public class SendImageService implements SendImageInterface {
      */
     public ImageDepot invoke(ImageDepot request) throws WebServiceException
     {
-       System.out.println("--------------------------------------");
-       System.out.println("SendImageService");
+        TestLogger.logger.debug("--------------------------------------");
+        TestLogger.logger.debug("SendImageService");
 
        if (request == null) {
            throw new WebServiceException("Null input received.");
        } else if (request.getImageData() == null) {
            throw new WebServiceException("Image is null");
-       } 
-       
-       System.out.println("SendImageService: Request received.");
+       }
+
+        TestLogger.logger.debug("SendImageService: Request received.");
        return request;
     }
 }

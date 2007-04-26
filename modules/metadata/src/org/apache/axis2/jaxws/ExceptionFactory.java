@@ -259,14 +259,17 @@ public class ExceptionFactory {
                 // Skip over this cause
                 nextCause = getCause(t);
                 if (nextCause == null) {
+                    logRootCause(t);
                     return t;
                 }
                 t = nextCause;
             } else {
                 // This is the root cause
+                logRootCause(t);
                 return t;
             }
         }
+        logRootCause(t);
         return t;
     }
 
@@ -290,6 +293,31 @@ public class ExceptionFactory {
             return Messages.getMessage("JABGraphProblem");
 
         return null;
+    }
+    /**
+     * Log the root cause
+     * @param t
+     */
+    private static void logRootCause(Throwable t) {
+        // TODO Should certain throwables be logged elsewhere
+        if (log.isDebugEnabled()) {
+            log.debug("Root Cause:" +  t.toString());
+            log.debug("stack:" + stackToString(t));
+        }
+    }
+    
+    /**
+     * Get a string containing the stack of the specified exception
+     * @param e
+     * @return
+     */
+    public static String stackToString(Throwable e) {
+        java.io.StringWriter sw= new java.io.StringWriter(); 
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
+        java.io.PrintWriter pw= new java.io.PrintWriter(bw); 
+        e.printStackTrace(pw);
+        pw.close();
+        return sw.getBuffer().toString();
     }
 
 }

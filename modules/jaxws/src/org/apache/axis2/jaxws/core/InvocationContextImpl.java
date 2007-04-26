@@ -52,8 +52,8 @@ public class InvocationContextImpl implements InvocationContext {
      *
      * @param list
      */
-    public void setHandlers(List<Handler> list) {
-        handlers = list;
+    public void setHandlers(List<Handler> handlers) {
+        this.handlers = handlers;
     }
 
     /** @see InvocationContext#setRequestMessageContext(MessageContext) */

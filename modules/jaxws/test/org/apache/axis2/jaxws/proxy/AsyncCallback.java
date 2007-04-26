@@ -24,6 +24,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import org.test.proxy.doclitwrapped.ReturnType;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  *
@@ -42,15 +43,15 @@ public class AsyncCallback implements AsyncHandler {
             Object obj = response.get();
             if(obj instanceof ReturnType){
                 ReturnType type = (ReturnType)obj;
-                System.out.println(">>Return String = "+type.getReturnStr());
+                TestLogger.logger.debug(">>Return String = " + type.getReturnStr());
                 return;
             }
             if(obj instanceof org.test.proxy.doclitnonwrapped.ReturnType){
                 org.test.proxy.doclitnonwrapped.ReturnType returnType = (org.test.proxy.doclitnonwrapped.ReturnType)obj;
-                System.out.println(">>Return String = "+returnType.getReturnStr());
+                TestLogger.logger.debug(">>Return String = " + returnType.getReturnStr());
                 return;
             }
-            System.out.println("Response.get should have been ReturnType" );
+            TestLogger.logger.debug("Response.get should have been ReturnType");
             
         }catch(ExecutionException e){
             e.printStackTrace();

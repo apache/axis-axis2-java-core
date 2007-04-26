@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.sample.parallelasync.common;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
@@ -40,8 +42,8 @@ public class KillerThread extends Thread{
 
     public void run(){
         Executor e = svc.getExecutor();
-        
-        System.out.println("KillerThread: " + e.getClass().getName());
+
+        TestLogger.logger.debug("KillerThread: " + e.getClass().getName());
         ExecutorService es = (ExecutorService) e;
         
 
@@ -49,11 +51,11 @@ public class KillerThread extends Thread{
         while (i > 0 && !interrupt){
                     
             try {
-                System.out.println("KillerThread: going to sleep");
+                TestLogger.logger.debug("KillerThread: going to sleep");
                 Thread.sleep(1000);
                 i --;
             } catch (InterruptedException e1) {
-                System.out.println("KillerThread: interrupted");
+                TestLogger.logger.debug("KillerThread: interrupted");
             }
         }
         

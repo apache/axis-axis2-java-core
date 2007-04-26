@@ -22,6 +22,7 @@ import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.Service;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.rpclit.schema.ElementString;
 
 import junit.framework.TestCase;
@@ -29,15 +30,15 @@ import junit.framework.TestCase;
 
 public class RPCLitEnumTests extends TestCase {
     public void testEnumSimpleType(){
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
         try{
                 Service service = new Service();
                 PortType portType = service.getPort();
                 Holder<ElementString> pString = new Holder<ElementString>(ElementString.A);
                 portType.echoString(pString);
                 ElementString es = pString.value;
-                System.out.println("Response =" + es);
+            TestLogger.logger.debug("Response =" + es);
                 System.out.print("---------------------------------");
         }catch(Exception e){
                 e.printStackTrace();

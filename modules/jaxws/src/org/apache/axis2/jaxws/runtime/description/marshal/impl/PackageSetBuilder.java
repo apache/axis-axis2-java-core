@@ -49,6 +49,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -94,10 +95,10 @@ public class PackageSetBuilder {
         //read wsdlLocation from @WebService Annotation.
         ServiceDescriptionWSDL sdw = (ServiceDescriptionWSDL)serviceDesc;
         Definition wsdlDefinition = sdw.getWSDLDefinition();
-        EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
         if (endpointDescs != null) {
-            for (int i = 0; i < endpointDescs.length; i++) {
-                EndpointDescription ed = (EndpointDescription)endpointDescs[i];
+            for (EndpointDescription ed:endpointDescs) {
+
                 if (wsdlDefinition == null) {
                     // TODO I don't think we should be trying to load the wsdlDefinition here.
 
@@ -131,12 +132,12 @@ public class PackageSetBuilder {
     public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc,
                                                              MarshalServiceRuntimeDescription msrd) {
         TreeSet<String> set = new TreeSet<String>();
-        EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
-
+        Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
+        
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
-            for (int i = 0; i < endpointDescs.length; i++) {
-                set.addAll(getPackagesFromAnnotations(endpointDescs[i], msrd));
+            for (EndpointDescription endpointDesc: endpointDescs) {
+                set.addAll(getPackagesFromAnnotations(endpointDesc, msrd));
             }
         }
         return set;
@@ -261,7 +262,21 @@ public class PackageSetBuilder {
                                                    MarshalServiceRuntimeDescription msrd) {
 
         FaultBeanDesc faultBeanDesc = msrd.getFaultBeanDesc(faultDesc);
+        if(faultBeanDesc == null){
+        	if(log.isDebugEnabled()){
+        		log.debug("faultBeanDesc from MarshallServiceRuntimeDescription is null");
+        	}
+        	//NO FaultBeanDesc found nothing we can do.
+        	return;
+        }
         String faultBeanName = faultBeanDesc.getFaultBeanClassName();
+        if(faultBeanName == null){
+        	if(log.isDebugEnabled()){
+        		log.debug("FaultBeanName is null");
+        	}
+        	//We cannot load the faultBeanName
+        	return;
+        }
         Class faultBean = loadClass(faultBeanName);
         if (faultBean != null) {
             setTypeAndElementPackages(faultBean, faultBeanDesc.getFaultBeanNamespace(),
@@ -417,26 +432,27 @@ public class PackageSetBuilder {
         return null;
     }
 
-    private static Definition getWSDLDefinition(String wsdlLocation) {
+    private static Definition getWSDLDefinition(String wsdlLoc){
         Definition wsdlDefinition = null;
+        final String wsdlLocation = wsdlLoc;
         if (wsdlLocation != null && wsdlLocation.trim().length() > 0) {
             try {
-                String baseDir = new File(System.getProperty("basedir", ".")).getCanonicalPath();
-                wsdlLocation = new File(baseDir + File.separator + wsdlLocation).getAbsolutePath();
-                File file = new File(wsdlLocation);
-                URL url = file.toURL();
-                if (log.isDebugEnabled()) {
-                    log.debug("Reading WSDL from URL:" + url.toString());
-                }
-                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
-                wsdlDefinition = wsdlWrapper.getDefinition();
-
-            } catch (MalformedURLException e) {
-                ExceptionFactory.makeWebServiceException(e);
-            } catch (IOException e) {
-                ExceptionFactory.makeWebServiceException(e);
-            } catch (WSDLException e) {
-                ExceptionFactory.makeWebServiceException(e);
+                wsdlDefinition = (Definition) AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws MalformedURLException, IOException, WSDLException {
+                                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                                String wsdlLocationPath = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
+                                File file = new File(wsdlLocationPath);
+                                URL url = file.toURL();
+                                if(log.isDebugEnabled()){
+                                    log.debug("Reading WSDL from URL:" +url.toString());
+                                }
+                                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+                                return wsdlWrapper.getDefinition();
+                            }
+                        });
+            } catch (PrivilegedActionException e) {
+                ExceptionFactory.makeWebServiceException(e.getException());
             }
         }
 

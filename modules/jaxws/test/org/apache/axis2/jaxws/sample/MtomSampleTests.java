@@ -18,6 +18,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -36,8 +37,8 @@ public class MtomSampleTests extends TestCase {
      * Using SOAP11
      */
     public void testSendImageAttachmentAPI11() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -80,8 +81,8 @@ public class MtomSampleTests extends TestCase {
      * property for MTOM.
      */
     public void testSendImageAttachmentProperty11() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -121,8 +122,8 @@ public class MtomSampleTests extends TestCase {
      * property for MTOM and the Binding API
      */
     public void testSendImageAttachmentAPIProperty11() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -170,8 +171,8 @@ public class MtomSampleTests extends TestCase {
      * 
      */
     public void testSendImageAttachmentProperty12() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         
@@ -221,8 +222,8 @@ public class MtomSampleTests extends TestCase {
      * 
      */
     public void testSendImageAttachmentAPI12() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         String imageResourceDir = IMAGE_DIR;
         

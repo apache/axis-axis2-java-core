@@ -30,6 +30,7 @@ import javax.xml.ws.Service;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ObjectFactory;
 import org.test.proxy.doclitnonwrapped.ReturnType;
@@ -58,9 +59,9 @@ public class ProxyNonWrappedTests extends TestCase {
     }
     
     public void testInvoke(){
-        System.out.println("-----------------------------------");
-        System.out.println("test: " + getName());
-        System.out.println(">>Testing Sync Inovoke on Proxy DocLit non-wrapped");
+        TestLogger.logger.debug("-----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        TestLogger.logger.debug(">>Testing Sync Inovoke on Proxy DocLit non-wrapped");
         ObjectFactory factory = new ObjectFactory();
         Invoke invokeObj = factory.createInvoke();
         invokeObj.setInvokeStr("test request for twoWay Operation");
@@ -72,15 +73,33 @@ public class ProxyNonWrappedTests extends TestCase {
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
         ReturnType response = proxy.invoke(invokeObj);
         assertNotNull(response);
-        System.out.println(">>Response =" +response.getReturnStr());
-        
-        System.out.println("-------------------------------------");
+        TestLogger.logger.debug(">>Response =" + response.getReturnStr());
+
+        TestLogger.logger.debug("-------------------------------------");
+    }
+    
+    public void testNullInvoke(){
+        TestLogger.logger.debug("-----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        TestLogger.logger.debug(">>Testing Sync Invoke on Proxy DocLit bare with a null parameter");
+        ObjectFactory factory = new ObjectFactory();
+        Invoke invokeObj = null;
+        Service service = Service.create(null, serviceName);
+        assertNotNull(service);
+        DocLitnonWrappedProxy proxy = service.getPort(portName, DocLitnonWrappedProxy.class);
+        assertNotNull(proxy);
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+        ReturnType response = proxy.invoke(invokeObj);
+        assertNull(response);
+
+        TestLogger.logger.debug("-------------------------------------");
     }
     
     public void testInvokeAsyncCallback(){
-        try{ 
-            System.out.println("---------------------------------------");
-            System.out.println("DocLitNonWrapped test case: " + getName());
+        try{
+            TestLogger.logger.debug("---------------------------------------");
+            TestLogger.logger.debug("DocLitNonWrapped test case: " + getName());
             //Create wsdl url
             File wsdl= new File(wsdlLocation); 
             URL wsdlUrl = wsdl.toURL(); 
@@ -91,19 +110,19 @@ public class ProxyNonWrappedTests extends TestCase {
             //Create Service
             ProxyDocLitUnwrappedService service = new ProxyDocLitUnwrappedService(wsdlUrl, serviceName);
             //Create proxy
-            DocLitnonWrappedProxy proxy = service.getProxyDocLitnonWrappedPort(); 
-            System.out.println(">>Invoking Binding Provider property");
+            DocLitnonWrappedProxy proxy = service.getProxyDocLitnonWrappedPort();
+            TestLogger.logger.debug(">>Invoking Binding Provider property");
             //Setup Endpoint url -- optional.
             BindingProvider p = (BindingProvider)proxy;
                 p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
-            System.out.println(">> Invoking Proxy Asynchronous Callback");
+            TestLogger.logger.debug(">> Invoking Proxy Asynchronous Callback");
             AsyncHandler<ReturnType> handler = new AsyncCallback();
             //Invoke operation Asynchronously.
             Future<?> monitor = proxy.invokeAsync(invokeObj, handler);
             while(!monitor.isDone()){
                 Thread.sleep(1000);
             }
-            System.out.println("---------------------------------------");
+            TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);

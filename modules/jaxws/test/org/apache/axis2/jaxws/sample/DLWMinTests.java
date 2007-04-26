@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
+import org.apache.axis2.jaxws.TestLogger;
 
 import junit.framework.TestCase;
 
@@ -92,9 +93,9 @@ public class DLWMinTests extends TestCase {
             "<pre:greetMe xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
             "<pre:requestType>Scheu</pre:requestType>" +
             "</pre:greetMe>";
-        System.out.println("Doc/Lit Wrapped Minimal Request =" + request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);
-        System.out.println("Doc/Lit Wrapped Minimal Response =" + response);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
         
         assertTrue(response.contains("Hello Scheu"));
         assertTrue(response.contains("dlwmin:greetMeResponse"));
@@ -128,9 +129,9 @@ public class DLWMinTests extends TestCase {
             "<pre:unqualifiedTestResponse xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
             "<unqualifiedRequest>hello world</unqualifiedRequest>" +
             "</pre:unqualifiedTestResponse>";
-        System.out.println("Doc/Lit Wrapped Minimal Request =" + request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);
-        System.out.println("Doc/Lit Wrapped Minimal Response =" + response);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
         
         assertTrue(response.contains("hello world"));
         assertTrue(response.contains("dlwmin:testUnqualifiedResponse"));

@@ -95,6 +95,9 @@
             <includes>
                 <include>**/*Tests.java</include>
             </includes>
+            <excludes>
+                <exclude>**/AnnotationServiceImplDescriptionTests.java</exclude>
+            </excludes>
 
             <resources>
                 <resource>

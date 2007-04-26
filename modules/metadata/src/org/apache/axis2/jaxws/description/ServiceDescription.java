@@ -78,5 +78,7 @@ public interface ServiceDescription {
     public ServiceRuntimeDescription getServiceRuntimeDesc(String name);
 
     public void setServiceRuntimeDesc(ServiceRuntimeDescription ord);
+    
+    public boolean isServerSide();
 
 }

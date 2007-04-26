@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.client.soapaction.BookStore;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * A suite of SOAPAction related tests for the dynamic proxy client 
@@ -32,14 +33,14 @@ public class ProxySoapActionTests extends TestCase {
     }
     
     public void testSendRequestWithSoapAction() {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
         BookStoreService service = new BookStoreService();
         BookStore bs = service.getBookStorePort();
         
         float price = bs.getPriceWithAction("test item");
-        System.out.println("return value [" + price + "]");
+        TestLogger.logger.debug("return value [" + price + "]");
         //assertTrue("The return value was invalid", price > 0);
     }
 
