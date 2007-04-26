@@ -21,6 +21,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.OMElement;
@@ -28,6 +29,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.neethi.Policy;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -201,5 +203,33 @@ public class AxisBinding extends AxisDescription {
             bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap));
         }
         return bindingElement;
+    }
+    
+    public Policy getEffectivePolicy() {
+        ArrayList policyList = new ArrayList();
+        policyList.addAll(getPolicyInclude().getAttachedPolicies());
+     
+        // AxisEndpoint
+        AxisEndpoint axisEndpoint = (AxisEndpoint) getParent();
+        
+        if (axisEndpoint != null) {
+            policyList.addAll(axisEndpoint.getPolicyInclude()
+                    .getAttachedPolicies());
+        }
+        
+        AxisService service = null;
+        
+        if (axisEndpoint != null) {
+            service = (AxisService) axisEndpoint.getParent();
+        }
+        
+        if (service != null) {
+            Policy effectivePolicy = service.getPolicyInclude().getEffectivePolicy();
+            if (effectivePolicy != null) {
+                policyList.add(effectivePolicy);
+            }
+        }
+        
+        return PolicyUtil.getMergedPolicy(policyList,  this);
     }
 }

@@ -25,6 +25,7 @@ import org.apache.neethi.PolicyRegistryImpl;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 public class PolicyInclude {
 
@@ -294,5 +295,16 @@ public class PolicyInclude {
 
     public void removeAllPolicyElements() {
         wrapperElements.clear();
+    }
+    
+    public List getAttachedPolicies() {
+    
+        ArrayList  arrayList = new ArrayList();
+        
+        for (Iterator iterator = wrapperElements.values().iterator(); iterator.hasNext();) {
+            arrayList.add(((Wrapper) iterator.next()).value);
+        }
+        
+        return arrayList;
     }
 }
