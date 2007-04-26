@@ -20,6 +20,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -27,6 +28,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.neethi.Policy;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -215,5 +217,42 @@ public class AxisBindingOperation extends AxisDescription {
 
         return bindingOpElement;
     }
+    
+    public Policy getEffectivePolicy() {
+        ArrayList policyList = new ArrayList();
 
+        PolicyInclude policyInclude;
+
+        // AxisBindingOperation policies
+        policyInclude = getPolicyInclude();
+        policyList.addAll(policyInclude.getAttachedPolicies());
+
+        // AxisBinding
+        AxisBinding axisBinding = (AxisBinding) getParent();
+        if (axisBinding != null) {    
+            policyList.addAll(axisBinding.getPolicyInclude()
+                    .getAttachedPolicies());
+        }
+
+        // AxisEndpoint
+        AxisEndpoint axisEndpoint = null;
+        if (axisBinding != null) {
+            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+        }
+
+        if (axisEndpoint != null) {
+            policyList.addAll(axisEndpoint.getPolicyInclude()
+                    .getAttachedPolicies());
+        }
+
+        // AxisOperation
+        Policy axisOperationPolicy = axisOperation.getPolicyInclude()
+                .getEffectivePolicy();
+        
+        if (axisOperationPolicy != null) {
+            policyList.add(axisOperationPolicy);
+        }
+        
+        return PolicyUtil.getMergedPolicy(policyList,  this);
+    }
 }

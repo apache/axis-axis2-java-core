@@ -249,13 +249,13 @@ public abstract class AxisDescription implements ParameterInclude,
         if (this instanceof AxisMessage) {
             return;
         }
-
+        
         AxisConfiguration configuration = getAxisConfiguration();
         if (configuration == null) {
             return; // CHECKME: May be we need to throw an Exception ??
         }
 
-        Policy effPolicy = getPolicyInclude().getEffectivePolicy();
+        Policy effPolicy = getApplicablePolicy(this);
 
         if (effPolicy != null) {
 
@@ -395,4 +395,55 @@ public abstract class AxisDescription implements ParameterInclude,
 //    public abstract boolean isEngaged(QName moduleName);
 
     public abstract boolean isEngaged(String moduleName);
+    
+    
+    private Policy getApplicablePolicy(AxisDescription axisDescription) {
+        
+        if (axisDescription instanceof AxisOperation) {
+            AxisOperation operation = (AxisOperation) axisDescription;
+            AxisService service = (AxisService) operation.getParent();
+            
+            if (service != null) {
+                
+                AxisEndpoint axisEndpoint = service.getEndpoint(service.getEndpointName());
+                
+                AxisBinding axisBinding = null;
+                
+                if (axisEndpoint != null) {
+                    axisBinding = axisEndpoint.getBinding();
+                }
+                
+                AxisBindingOperation axisBindingOperation = null;
+                
+                if (axisBinding != null) {
+                    axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(operation.getName());
+                }
+                
+                if (axisBindingOperation != null) {
+                    return axisBindingOperation.getEffectivePolicy();
+                }
+            } 
+            
+            return operation.getPolicyInclude().getEffectivePolicy();
+            
+        } else if (axisDescription instanceof AxisService) {
+            AxisService service = (AxisService) axisDescription;
+            
+            AxisEndpoint axisEndpoint = service.getEndpoint(service.getEndpointName());
+            AxisBinding axisBinding = null;
+            
+            if (axisEndpoint != null) {
+                axisBinding = axisEndpoint.getBinding();
+            }
+            
+            if (axisBinding != null) {
+                return axisBinding.getEffectivePolicy();
+            }
+            
+            return service.getPolicyInclude().getEffectivePolicy();
+            
+        } else {
+            return axisDescription.getPolicyInclude().getEffectivePolicy();
+        }
+    }
 }

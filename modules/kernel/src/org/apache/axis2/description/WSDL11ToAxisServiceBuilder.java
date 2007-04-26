@@ -287,6 +287,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setName(wsdl4jService.getQName().getLocalPart());
             populateEndpoints(binding, wsdl4jService);
 
+            processPoliciesInDefintion(wsdl4jDefinition);
+            axisService.getPolicyInclude().setPolicyRegistry(registry);
             return axisService;
         } catch (WSDLException e) {
             log.error(e);
@@ -335,6 +337,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     } else {
                         populateEndpoint(axisEndpoint, port, false);
                     }
+                    
+                    axisEndpoint.setParent(axisService);
                     axisService.addEndpoint(port.getName(), axisEndpoint);
                 }
             }
@@ -363,7 +367,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         Binding wsdl4jBinding = wsdl4jDefinition.getBinding(wsdl4jPort.getBinding().getQName());
 
         axisBinding.setName(wsdl4jBinding.getQName());
+        axisBinding.setParent(axisEndpoint);
         axisEndpoint.setBinding(axisBinding);
+        
 
         populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
 
@@ -527,7 +533,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     addQNameReference(faultMessage, wsdl4jFault.getMessage());
                 }
             }
-
+            
+            axisBindingOperation.setParent(axisBinding);
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
         }
         axisBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationMap);
@@ -558,15 +565,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // process the imports
         WSDL4JImportedWSDLHelper.processImports(wsdl4jDefinition, new ArrayList());
 
-        // Adding the policies in the Definition to the the PolicyRegistry
-        processPoliciesInDefintion(wsdl4jDefinition);
-
         // setup the schemaMap
         schemaMap = getSchemaMap(wsdl4jDefinition.getTypes());
         
-        
         setPolicyRegistryFromService(axisService);
-        processPoliciesInDefintion(wsdl4jDefinition);
         
         setupComplete = true; // if any part of setup fails, don't mark
         // setupComplete        
@@ -2139,50 +2141,34 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private int getPolicyAttachmentPoint(AxisDescription description,
                                          String originOfExtensibilityElements) {
         int result = -1; // Attachment Point Not Identified
-        if (description instanceof AxisService || description instanceof AxisEndpoint || description instanceof AxisBinding) {
-            // wsdl:service
-            if (SERVICE.equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.SERVICE_POLICY;
-                // wsdl:service -> wsdl:port
-            } else if (PORT.equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.PORT_POLICY;
-                // wsdl:binding
-            } else if (BINDING.equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.BINDING_POLICY;
-            }
-            // TODO policy for wsdl:portType ?
-        } else if (description instanceof AxisOperation) {
-            // wsdl:portType -> wsdl:operation
-            if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.OPERATION_POLICY;
-                // wsdl:binding -> wsdl:operation
-            } else {
-                result = PolicyInclude.BINDING_POLICY;
-            }
-        } else {
-            // wsdl:portType -> wsdl:operation -> wsdl:input
-
-            if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.INPUT_POLICY;
-                // wsdl:binding -> wsdl:operation -> wsdl:input
-            } else if (BINDING_OPERATION_INPUT
-                    .equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.BINDING_INPUT_POLICY;
-                // wsdl:portType -> wsdl:operation -> wsdl:put
-            } else if (PORT_TYPE_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.OUTPUT_POLICY;
-                // wsdl:binding -> wsdl:operation -> wsdl:output
-            } else if (BINDING_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                result = PolicyInclude.BINDING_OUTPUT_POLICY;
-            }
-            // TODO Faults ..
-        }
+        
+        if (SERVICE.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.SERVICE_POLICY;
+        } else if (PORT.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.PORT_POLICY;
+        } else if (BINDING.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.BINDING_POLICY;
+        } else if (BINDING_OPERATION.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.BINDING_OPERATION_POLICY;
+        } else if (BINDING_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.BINDING_INPUT_POLICY;
+        } else if (BINDING_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.BINDING_OUTPUT_POLICY;
+        } else if (PORT_TYPE.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.PORT_TYPE_POLICY;
+        } else if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.OPERATION_POLICY;
+        } else if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.INPUT_POLICY;
+        } else if (PORT_TYPE_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
+            result = PolicyInclude.OUTPUT_POLICY;
+        } 
+        
         if (isTraceEnabled) {
             log.trace("getPolicyAttachmentPoint:: axisDescription=" + description +
                     " extensibilityPoint=" + originOfExtensibilityElements + " result=" + result);
         }
+        
         return result;
     }
 
@@ -2391,6 +2377,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     if ((key = policy.getName()) != null
                             || (key = policy.getId()) != null) {
                         registry.register(key, policy);
+                        registry.register("#" + key, policy);
                     }
 
                 }

@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
-             http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,6 +19,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
@@ -29,6 +30,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.neethi.Policy;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -45,7 +47,8 @@ public class AxisBindingMessage extends AxisDescription {
 
     private AxisMessage axisMessage;
 
-    // Used to indicate whether this message is a fault or not. Needed for the WSDL 2.0 serializer
+    // Used to indicate whether this message is a fault or not. Needed for the
+    // WSDL 2.0 serializer
     private boolean fault = false;
 
     public boolean isFault() {
@@ -84,13 +87,13 @@ public class AxisBindingMessage extends AxisDescription {
         options = new HashMap();
     }
 
-
     public void setProperty(String name, Object value) {
         options.put(name, value);
     }
 
     /**
-     * @param name name of the property to search for
+     * @param name
+     *            name of the property to search for
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
@@ -102,98 +105,167 @@ public class AxisBindingMessage extends AxisDescription {
         return null;
     }
 
-
     public Object getKey() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null; // To change body of implemented methods use File |
+                        // Settings | File Templates.
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig)
+            throws AxisFault {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 
     public boolean isEngaged(String moduleName) {
-        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
+        throw new UnsupportedOperationException(
+                "axisMessage.isEngaged() is not supported");
 
     }
 
     /**
-     * Generates the bindingMessage element (can be input, output, infault or outfault)
-     * @param tns - The targetnamespace
-     * @param wsoap - The SOAP namespace (WSDL 2.0)
-     * @param whttp - The HTTP namespace (WSDL 2.0)
-     * @param nameSpaceMap - The namespacemap of the service
+     * Generates the bindingMessage element (can be input, output, infault or
+     * outfault)
+     * 
+     * @param tns -
+     *            The targetnamespace
+     * @param wsoap -
+     *            The SOAP namespace (WSDL 2.0)
+     * @param whttp -
+     *            The HTTP namespace (WSDL 2.0)
+     * @param nameSpaceMap -
+     *            The namespacemap of the service
      * @return The generated bindingMessage element
      */
-    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                              Map nameSpaceMap) {
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
+            OMNamespace wsoap, OMNamespace whttp, Map nameSpaceMap) {
         String property;
         ArrayList list;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingMessageElement;
 
-        // If this is a fault, create a fault element and add fault specific properties
+        // If this is a fault, create a fault element and add fault specific
+        // properties
         if (this.isFault()) {
 
             if (this.getParent() instanceof AxisBinding) {
-                bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
-            } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
-                bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
+            } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
+                    .getDirection())) {
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
             } else {
-                bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
+                bindingMessageElement = omFactory.createOMElement(
+                        WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
             }
             bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + this.name));
+                    WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
+                            + this.name));
             // Fault specific properties
-            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_CODE);
+            property = (String) this.options
+                    .get(WSDL2Constants.ATTR_WSOAP_CODE);
             if (property != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_CODE, wsoap, property));
             }
-            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
+            property = (String) this.options
+                    .get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
             if (property != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, property));
             }
-            Integer code = (Integer) this.options.get(WSDL2Constants.ATTR_WHTTP_CODE);
+            Integer code = (Integer) this.options
+                    .get(WSDL2Constants.ATTR_WHTTP_CODE);
             if (code != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_CODE, whttp, code.toString()));
             }
 
-            //Checks whether the message is an input message
-        } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
-            bindingMessageElement =
-                    omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
+            // Checks whether the message is an input message
+        } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this
+                .getDirection())) {
+            bindingMessageElement = omFactory.createOMElement(
+                    WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
 
-            //Message should be an output message
+            // Message should be an output message
         } else {
-            bindingMessageElement =
-                    omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
+            bindingMessageElement = omFactory.createOMElement(
+                    WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
         }
 
-
         // Populate common properties
-        property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
+        property = (String) this.options
+                .get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
         if (property != null) {
-            bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING, whttp, property));
+            bindingMessageElement
+                    .addAttribute(omFactory.createOMAttribute(
+                            WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING, whttp,
+                            property));
         }
         list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WHTTP_HEADER);
         if (list != null && list.size() > 0) {
-            WSDLSerializationUtil.addHTTPHeaderElements(omFactory, list, whttp, bindingMessageElement, nameSpaceMap);
+            WSDLSerializationUtil.addHTTPHeaderElements(omFactory, list, whttp,
+                    bindingMessageElement, nameSpaceMap);
         }
         list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_HEADER);
         if (list != null && list.size() > 0) {
-            WSDLSerializationUtil.addSOAPHeaderElements(omFactory, list, wsoap, bindingMessageElement, nameSpaceMap);
+            WSDLSerializationUtil.addSOAPHeaderElements(omFactory, list, wsoap,
+                    bindingMessageElement, nameSpaceMap);
         }
         list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
         if (list != null && list.size() > 0) {
-            WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap, bindingMessageElement);
+            WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap,
+                    bindingMessageElement);
         }
         return bindingMessageElement;
     }
-}
 
+    public Policy getEffectivePolicy() {
+        ArrayList policyList = new ArrayList();
+
+        PolicyInclude policyInclude;
+
+        // AxisBindingMessage policies
+        policyInclude = getPolicyInclude();
+        policyList.addAll(policyInclude.getAttachedPolicies());
+
+        // AxisBindingOperation policies
+        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) getParent();
+        if (axisBindingOperation != null) {
+            policyList.add(axisBindingOperation.getPolicyInclude()
+                    .getAttachedPolicies());
+        }
+
+        // AxisBinding policies
+        AxisBinding axisBinding = null;
+        if (axisBindingOperation != null) {
+            axisBinding = (AxisBinding) axisBindingOperation.getParent();
+        }
+        
+        if (axisBinding != null) {
+                policyList.addAll(axisBinding.getPolicyInclude()
+                        .getAttachedPolicies());
+        }
+
+        // AxisEndpoint
+        AxisEndpoint axisEndpoint = null;
+        if (axisBinding != null) {
+            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+        }
+
+        if (axisEndpoint != null) {
+            policyList.addAll(axisEndpoint.getPolicyInclude()
+                    .getAttachedPolicies());
+        }
+
+        // AxisMessage
+        Policy axisOperationPolicy = axisMessage.getPolicyInclude()
+                .getEffectivePolicy();
+
+        if (axisOperationPolicy != null) {
+            policyList.add(axisOperationPolicy);
+        }
+        
+        return PolicyUtil.getMergedPolicy(policyList, this);
+    }
+
+}
