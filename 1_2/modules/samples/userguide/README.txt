@@ -56,6 +56,9 @@ If you go to http://localhost:8080/axis2/, you should see MyService, MyServiceWi
 
 Running the Clients
 ===================
+Type the following ant command to generate sample-logging module before running clients.
+* "ant generate.module"
+This will create sample-logging.mar and which should be copied to ..repository/modules directory.
 
 Type the following ant commands from Axis2_HOME/samples/userguide to run the clients one by one.
 
