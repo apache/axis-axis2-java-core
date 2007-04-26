@@ -11,6 +11,7 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class ClientConfigTests extends TestCase {
 
@@ -47,7 +48,7 @@ public class ClientConfigTests extends TestCase {
         } catch (WebServiceException e) {
             // We should only get a WebServiceException here.  Anything else
             // is a failure.
-            System.out.println("[pass] - the proper fault type was thrown");
+            TestLogger.logger.debug("[pass] - the proper fault type was thrown");
         }
     }
 }

@@ -52,6 +52,7 @@ import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -918,7 +919,7 @@ public class BlockTests extends TestCase {
 	        // To check that the output is correct, get the String contents of the 
 	        // reader
 	        String newText = baos.toString();
-	        System.out.println(newText);
+            TestLogger.logger.debug(newText);
 	        assertTrue(block.isConsumed());
 		}catch(Exception e){
 			e.printStackTrace();
@@ -982,7 +983,7 @@ public class BlockTests extends TestCase {
         DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
         Document domTree = domBuilder.parse(bais);
         Node node = domTree.getDocumentElement();
-        System.out.println(node.toString());
+        TestLogger.logger.debug(node.toString());
         
         // Create a DOMSource object from the DOM tree
         DOMSource ds = new DOMSource(node);

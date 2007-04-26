@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client.async;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,9 +33,16 @@ public class PollingFuture extends Callback {
     private static final Log log = LogFactory.getLog(PollingFuture.class);
 
     private AsyncResponse response;
-
-    public PollingFuture(AsyncResponse ar) {
-        response = ar;
+    private InvocationContext invocationCtx;
+    
+    public PollingFuture(InvocationContext ic) {
+        response = ic.getAsyncResponseListener();
+        
+        /*
+         * TODO review.  We need to save the invocation context so we can set it on the
+         * response (or fault) context so the FutureCallback has access to the handler list.
+         */
+        invocationCtx = ic;
     }
 
     @Override
@@ -47,6 +55,7 @@ public class PollingFuture extends Callback {
         MessageContext responseMsgCtx = null;
         try {
             responseMsgCtx = AsyncUtils.createJAXWSMessageContext(result);
+            responseMsgCtx.setInvocationContext(invocationCtx);
         } catch (WebServiceException e) {
             response.onError(e, null);
             if (debug) {
@@ -73,6 +82,7 @@ public class PollingFuture extends Callback {
             try {
                 faultMessageContext =
                         AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
+                faultMessageContext.setInvocationContext(invocationCtx);
             }
             catch (WebServiceException wse) {
                 response.onError(wse, null);

@@ -8,6 +8,7 @@ import javax.xml.ws.WebServiceException;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class NonAnonymousComplexTypeTests extends TestCase {
 
@@ -27,14 +28,14 @@ public class NonAnonymousComplexTypeTests extends TestCase {
 		// TODO Auto-generated constructor stub
 	}
 	public void testSimpleProxy() {
-		System.out.println("------------------------------");
-		System.out.println("Test : "+getName());
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
 		try {
 			String msg = "Hello Server";
 		    EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
 		    String response = myPort.echoMessage(msg);
-		    System.out.println(response);
-		    System.out.println("------------------------------");
+            TestLogger.logger.debug(response);
+            TestLogger.logger.debug("------------------------------");
 		} catch (WebServiceException webEx) {
 			webEx.printStackTrace();
 			fail();

@@ -27,6 +27,7 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.ws.Service;
 
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * 
@@ -51,7 +52,9 @@ public class DescriptionTestUtils2 {
         try {
             wsdlURL = new URL(urlString);
         } catch (Exception e) {
-            System.out.println("Caught exception creating WSDL URL :" + urlString + "; exception: " + e.toString());
+            TestLogger.logger.debug(
+                    "Caught exception creating WSDL URL :" + urlString + "; exception: " +
+                            e.toString());
         }
         return wsdlURL;
     }
@@ -64,7 +67,9 @@ public class DescriptionTestUtils2 {
             wsdlDefinition = reader.readWSDL(wsdlURL.toString());
         }
         catch (Exception e) {
-            System.out.println("*** ERROR ***: Caught exception trying to create WSDL Definition: " + e);
+            TestLogger.logger
+                    .debug("*** ERROR ***: Caught exception trying to create WSDL Definition: " +
+                            e);
             e.printStackTrace();
         }
 

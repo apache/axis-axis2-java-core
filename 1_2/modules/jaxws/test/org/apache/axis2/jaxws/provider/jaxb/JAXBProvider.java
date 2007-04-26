@@ -30,6 +30,7 @@ import javax.xml.ws.WebServiceProvider;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
 import org.test.mtom.SendImageResponse;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * A JAXWS Source Provider implementation
@@ -44,7 +45,7 @@ public class JAXBProvider implements Provider<Source> {
      * @return
      */
     public Source invoke(Source obj) {
-        System.out.println(">> JAXB Provider Service: Request received.\n");
+        TestLogger.logger.debug(">> JAXB Provider Service: Request received.\n");
         SendImage siRequest = null;
         SendImageResponse siResponse = null;
         StreamSource streamSource = null;

@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -59,10 +61,10 @@ public class SourceMessageProviderTests extends ProviderTestCase {
         	Service svc = Service.create(serviceName);
         	svc.addPort(portName,null, endpointUrl);
         	Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
-        	System.out.println(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
         	Source response = dispatch.invoke(xmlStreamSource);
 
-        	System.out.println(">> Response [" + response.toString() + "]");
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
         	
         }catch(Exception e){
         	e.printStackTrace();

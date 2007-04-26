@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.handler;
 
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
 
 import javax.xml.ws.LogicalMessage;
 
@@ -29,6 +30,8 @@ import javax.xml.ws.LogicalMessage;
 public class LogicalMessageContext extends ProtectedMessageContext
         implements javax.xml.ws.handler.LogicalMessageContext {
 
+    private LogicalMessage message;
+    
     public LogicalMessageContext() {
         super();
     }
@@ -38,10 +41,10 @@ public class LogicalMessageContext extends ProtectedMessageContext
     }
 
     public LogicalMessage getMessage() {
-        return null;
-    }
-
-    public LogicalMessage getSource() {
-        return null;
+        if (message == null) {
+            Message msg = getMessageObject();
+            message = new LogicalMessageImpl(msg);
+        }
+        return message;
     }
 }

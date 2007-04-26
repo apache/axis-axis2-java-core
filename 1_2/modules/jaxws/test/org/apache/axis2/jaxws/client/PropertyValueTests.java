@@ -28,6 +28,7 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * A suite to test the validation of the client request/response context properties
@@ -51,7 +52,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
 
         try {
@@ -59,7 +60,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
         
         try {
@@ -67,7 +68,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
 
         try {
@@ -75,7 +76,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
         
         try {
@@ -83,7 +84,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
 
         try {
@@ -91,7 +92,7 @@ public class PropertyValueTests extends TestCase {
             fail();
         }
         catch (WebServiceException wse) {
-            System.out.println("[pass] - exception thrown as expected");
+            TestLogger.logger.debug("[pass] - exception thrown as expected");
         }
     }
 

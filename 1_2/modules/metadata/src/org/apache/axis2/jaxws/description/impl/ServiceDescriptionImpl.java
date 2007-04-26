@@ -30,6 +30,8 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -47,6 +49,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -155,7 +158,12 @@ class ServiceDescriptionImpl
         String serviceImplName = this.composite.getClassName();
 
         this.dbcMap = dbcMap;
-//TODO: How to we get this when called from server side, create here for now
+        //TODO: How to we get this when called from server side, create here for now
+        //REVIEW: The value being set here is used later in validation checking to
+        //        validation that should occur separately on server and client. If
+        //        at some point this constructor is ever called by the client side,
+        //        then we'll have to get smarter about how we determine server/client
+        //        validation
         this.isServerSide = true;
 
         //capture the WSDL, if there is any...to be used for later processing
@@ -252,13 +260,13 @@ class ServiceDescriptionImpl
                     // This guards against the case where an addPort was done previously and now a getPort is done on it.
                     // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
-                                    portQName != null ? portQName.toString() : "not specified");
+                        "ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
+                        (portQName != null ? portQName.toString() : "not specified"));
                 } else if (sei == null) {
                     // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " +
-                                    portQName != null ? portQName.toString() : "not specified");
+                        "ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " +
+                        (portQName != null ? portQName.toString() : "not specified"));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
@@ -315,10 +323,13 @@ class ServiceDescriptionImpl
 
     private Class getEndpointSEI(QName portQName) {
         Class endpointSEI = null;
-        EndpointInterfaceDescription endpointInterfaceDesc =
-                getEndpointDescription(portQName).getEndpointInterfaceDescription();
-        if (endpointInterfaceDesc != null) {
-            endpointSEI = endpointInterfaceDesc.getSEIClass();
+        EndpointDescription endpointDesc = getEndpointDescription(portQName);
+        if (endpointDesc != null) {
+            EndpointInterfaceDescription endpointInterfaceDesc = 
+                endpointDesc.getEndpointInterfaceDescription();
+            if (endpointInterfaceDesc != null ) {
+                endpointSEI = endpointInterfaceDesc.getSEIClass();
+            }
         }
         return endpointSEI;
     }
@@ -489,6 +500,9 @@ class ServiceDescriptionImpl
                 throw ExceptionFactory.makeWebServiceException(
                         Messages.getMessage("connectionRefused", e.getMessage()), e);
             }
+            catch(IOException e) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("urlStream", e.getMessage()), e);
+            }
             catch (WSDLException e) {
                 throw ExceptionFactory.makeWebServiceException(
                         Messages.getMessage("wsdlException", e.getMessage()), e);
@@ -542,8 +556,28 @@ class ServiceDescriptionImpl
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getServiceClient(javax.xml.namespace.QName)
     */
     public ServiceClient getServiceClient(QName portQName) {
-        // TODO: RAS if no portQName found
-        return getEndpointDescription(portQName).getServiceClient();
+        ServiceClient returnServiceClient = null;
+        if (!DescriptionUtils.isEmpty(portQName)) {
+            EndpointDescription endpointDesc = getEndpointDescription(portQName);
+            if (endpointDesc != null) {
+                returnServiceClient = endpointDesc.getServiceClient();
+            }
+            else {
+                // Couldn't find Endpoint Description for port QName
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not find portQName: " + portQName 
+                            + " under ServiceDescription: " + toString());
+                }
+            }
+        }
+        else {
+            // PortQName is empty
+            if (log.isDebugEnabled()) {
+                log.debug("PortQName agrument is invalid; it can not be null or an empty string: " + portQName);
+            }
+        }
+        
+        return returnServiceClient;
     }
 
     /* (non-Javadoc)
@@ -560,7 +594,7 @@ class ServiceDescriptionImpl
     }
 
 
-    boolean isServerSide() {
+    public boolean isServerSide() {
         return isServerSide;
     }
 
@@ -904,7 +938,8 @@ class ServiceDescriptionImpl
            *	compiler will take care of everything else.
            */
 
-        HashMap compositeHashMap = new HashMap();
+        HashMap<String, MethodDescriptionComposite> compositeHashMap = 
+            new HashMap<String, MethodDescriptionComposite>();
         Iterator<MethodDescriptionComposite> compIterator =
                 composite.getMethodDescriptionsList().iterator();
         while (compIterator.hasNext()) {
@@ -914,7 +949,8 @@ class ServiceDescriptionImpl
         // Add methods declared in the implementation's superclass
         addSuperClassMethods(compositeHashMap, composite);
 
-        HashMap seiMethodHashMap = new HashMap();
+        HashMap<String, MethodDescriptionComposite> seiMethodHashMap = 
+            new HashMap<String, MethodDescriptionComposite>();
         Iterator<MethodDescriptionComposite> seiMethodIterator =
                 seic.getMethodDescriptionsList().iterator();
         while (seiMethodIterator.hasNext()) {
@@ -930,16 +966,179 @@ class ServiceDescriptionImpl
                 seiMethodHashMap.values().iterator();
         while (verifySEIIterator.hasNext()) {
             MethodDescriptionComposite mdc = verifySEIIterator.next();
-            // REVIEW:  Only the names are checked; this isn't checking signatures
-            if (compositeHashMap.get(mdc.getMethodName()) == null) {
+            // TODO: This does not take into consideration overloaded java methods!
+            MethodDescriptionComposite implMDC = compositeHashMap.get(mdc.getMethodName());
+            
+            if (implMDC == null) {
                 // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
                         "Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
                                 + composite.getClassName() + "; missing method name: " +
                                 mdc.getMethodName() + "; endpointInterface: " +
                                 seic.getClassName());
+            } else {
+                //At least we found it, now make sure that signatures match up
+                
+                //Check for exception and signature matching
+                validateMethodExceptions(mdc, implMDC, seic.getClassName());
+                validateMethodReturnValue(mdc, implMDC, seic.getClassName());
+                validateMethodParameters(mdc, implMDC, seic.getClassName());
             }
         }
+    }
+
+    private void validateMethodParameters(MethodDescriptionComposite seiMDC,
+        MethodDescriptionComposite implMDC, String className) {
+        List<ParameterDescriptionComposite> seiPDCList = seiMDC
+            .getParameterDescriptionCompositeList();
+        List<ParameterDescriptionComposite> implPDCList = implMDC
+            .getParameterDescriptionCompositeList();
+        if ((seiPDCList == null || seiPDCList.isEmpty())
+            && (implPDCList == null || implPDCList.isEmpty())) {
+            // There are no parameters on the SEI or the impl; all is well
+        } else if ((seiPDCList == null || seiPDCList.isEmpty())
+            && !(implPDCList == null || implPDCList.isEmpty())) {
+            String message = "Validation error: SEI indicates no parameters but implementation method specifies parameters: "
+                + implPDCList
+                + "; Implementation class: "
+                + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if ((seiPDCList != null && !seiPDCList.isEmpty())
+            && !(implPDCList != null && !implPDCList.isEmpty())) {
+            String message = "Validation error: SEI indicates parameters " + seiPDCList
+                + " but implementation method specifies no parameters; Implementation class: "
+                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
+                + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (seiPDCList.size() != implPDCList.size()) {
+            String message = "Validation error: The number of parameters on the SEI method ("
+                + seiPDCList.size()
+                + ") does not match the number of parameters on the implementation ( "
+                + implPDCList.size() + "); Implementation class: " + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+
+        } else {
+            // Make sure the order and type of parameters match
+            // REVIEW: This checks for strict equality of the fully qualified
+            // type. It does not
+            // take into consideration object hierachy. For example foo(Animal)
+            // will not equal bar(Zebra)
+            boolean parametersMatch = true;
+            String failingMessage = null;
+            for (int paramNumber = 0; paramNumber < seiPDCList.size(); paramNumber++) {
+                String seiParamType = seiPDCList.get(paramNumber).getParameterType();
+                String implParamType = implPDCList.get(paramNumber).getParameterType();
+                if (!seiParamType.equals(implParamType)) {
+                    parametersMatch = false;
+                    failingMessage = "Validation error: SEI and implementation parameters do not match.  Parameter number "
+                        + paramNumber
+                        + " on the SEI is "
+                        + seiParamType
+                        + "; on the implementation it is "
+                        + implParamType
+                        + "; Implementation class: "
+                        + composite.getClassName()
+                        + "; Method name: "
+                        + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+                    break;
+                }
+            }
+            if (!parametersMatch) {
+                throw ExceptionFactory.makeWebServiceException(failingMessage);
+            }
+        }
+    }
+
+    private void validateMethodReturnValue(MethodDescriptionComposite seiMDC,
+        MethodDescriptionComposite implMDC, String className) {
+        String seiReturnValue = seiMDC.getReturnType();
+        String implReturnValue = implMDC.getReturnType();
+
+        if (seiReturnValue == null && implReturnValue == null) {
+            // Neither specify a return value; all is well
+        } else if (seiReturnValue == null && implReturnValue != null) {
+            String message = "Validation error: SEI indicates no return value but implementation method specifies return value: "
+                + implReturnValue
+                + "; Implementation class: "
+                + composite.getClassName()
+                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (seiReturnValue != null && implReturnValue == null) {
+            String message = "Validation error: SEI indicates return value " + seiReturnValue
+                + " but implementation method specifies no return value; Implementation class: "
+                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
+                + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        } else if (!seiReturnValue.equals(implReturnValue)) {
+            String message = "Validation error: SEI return value " + seiReturnValue
+                + " does not match implementation method return value " + implReturnValue
+                + "; Implementation class: " + composite.getClassName() + "; Method name: "
+                + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+            throw ExceptionFactory.makeWebServiceException(message);
+        }
+
+    }
+
+    private void validateMethodExceptions ( MethodDescriptionComposite seiMDC, 
+        MethodDescriptionComposite implMDC,
+        String className) {
+
+        String[] seiExceptions = seiMDC.getExceptions();
+        String[] implExceptions = implMDC.getExceptions();
+
+        // An impl can choose to throw fewer checked exceptions than declared on the SEI, but not more.
+        // This is analagous to the Java rules for interfaces.
+        if (seiExceptions == null) {
+            if (implExceptions == null) {
+                return;
+            } else {
+                // SEI delcares no checked exceptions, but the implementation has checked exceptions, which is an error
+                throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions than SEI method signature (0): Implementation class: "
+                    + composite.getClassName() 
+                    + "; method name: " + seiMDC.getMethodName() 
+                    + "; endpointInterface: " + className);
+            }
+        } else if (implExceptions == null) {
+            // Implementation throws fewer checked exceptions than SEI, which is OK.
+            return;
+        }
+        
+        // Check the list length; An implementation can not declare more exceptions than the SEI
+        if (seiExceptions.length < implExceptions.length) {
+            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions ("
+                + implExceptions.length + ") than SEI method signature ("
+                + seiExceptions.length + "): Implementation class: "
+                + composite.getClassName() 
+                + "; method name: " + seiMDC.getMethodName() 
+                + "; endpointInterface: " + className);
+        }
+        
+        // Make sure that each checked exception declared by the 
+        // implementation is on the SEI also
+        if (implExceptions.length > 0) {                
+            for (String implException : implExceptions) {
+                boolean foundIt = false;
+                if (seiExceptions.length > 0) {         
+                    for (String seiException : seiExceptions) {
+                        if (seiException.equals(implException)) {
+                            foundIt = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!foundIt) {
+                    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature throws exception " 
+                        + implException + "which is not declared on the SEI method signature: Implementation class: "
+                        + composite.getClassName() 
+                        + "; method name: " + seiMDC.getMethodName() 
+                        + "; endpointInterface: " + className);
+                }
+            }
+        }
+
     }
 
     /**
@@ -1046,7 +1245,7 @@ class ServiceDescriptionImpl
 
         //This will perform validation for all methods, regardless of WebMethod annotations
         //It is called for the SEI, and an impl. class that does not specify an endpointInterface
-        validateMethods();
+        validateMethods(seic.getMethodDescriptionsList());
     }
 
     /** @return Returns TRUE if we find just one WebMethod Annotation */
@@ -1077,10 +1276,21 @@ class ServiceDescriptionImpl
     }
 
 
-    /**
-     */
-    private void validateMethods() {
-        //TODO: Fill this out to validate all MethodDescriptionComposite (and their inclusive
+    private void validateMethods(List<MethodDescriptionComposite> mdcList) {
+        if (mdcList != null && !mdcList.isEmpty()) {
+            for (MethodDescriptionComposite mdc : mdcList) {
+                String returnType = mdc.getReturnType();
+                if (returnType != null
+                                && (returnType.equals(RETURN_TYPE_FUTURE) || returnType
+                                                .equals(RETURN_TYPE_RESPONSE))) {
+                    throw ExceptionFactory.makeWebServiceException(Messages
+                                    .getMessage("serverSideAsync", mdc.getDeclaringClass(), mdc
+                                                    .getMethodName()));
+                }
+            }
+        }
+        // TODO: Fill this out to validate all MethodDescriptionComposite (and
+        // their inclusive
         //      annotations on this SEI (SEI is assumed here)
         //check oneway
         //
@@ -1173,8 +1383,8 @@ class ServiceDescriptionImpl
         // Go through the list of Endpoints that have been created and add any
         // not already in the list.  This will include ports added to the Service
         // via getPort(...) and addPort(...)
-        EndpointDescription[] endpointDescArray = getEndpointDescriptions();
-        for (EndpointDescription endpointDesc : endpointDescArray) {
+        Collection<EndpointDescription> endpointDescs = getEndpointDescriptions_AsCollection();
+        for (EndpointDescription endpointDesc : endpointDescs) {
             QName endpointPortQName = endpointDesc.getPortQName();
             if (!portList.contains(endpointPortQName)) {
                 portList.add(endpointPortQName);
@@ -1272,11 +1482,12 @@ class ServiceDescriptionImpl
             // string.append("ConfigurationContext: " + getAxisConfigContext());
             // EndpointDescriptions
             string.append(newline);
-            EndpointDescription[] endpointDescs = getEndpointDescriptions();
+            Collection<EndpointDescription> endpointDescs = getEndpointDescriptions_AsCollection();
             if (endpointDescs == null) {
                 string.append("EndpointDescription array is null");
-            } else {
-                string.append("Number of EndpointDescrptions: " + endpointDescs.length);
+            }
+            else {
+                string.append("Number of EndpointDescrptions: " + endpointDescs.size());
                 string.append(newline);
                 for (EndpointDescription endpointDesc : endpointDescs) {
                     string.append(endpointDesc.toString());

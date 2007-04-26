@@ -18,6 +18,7 @@ import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.sample.faultsservice.FaultsServicePortType;
 import org.apache.axis2.jaxws.sample.faultsservice.InvalidTickerFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.SimpleFault;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.polymorphicfaults.BaseFault;
 import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
@@ -54,8 +55,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (ComplexFault_Exception e) {
             fail("Should not get ComplexFault_Exception in this testcase");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
@@ -79,8 +80,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (ComplexFault_Exception e) {
             fail("Should not get ComplexFault_Exception in this testcase");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
@@ -105,8 +106,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (ComplexFault_Exception e) {
             fail("Should not get ComplexFault_Exception in this testcase");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         Object fault = ((BaseFault_Exception)exception).getFaultInfo();
@@ -133,8 +134,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (ComplexFault_Exception e) {
             exception = e;
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         Object fault = ((ComplexFault_Exception)exception).getFaultInfo();
@@ -276,8 +277,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Did not get a SOAPFaultException");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
@@ -305,8 +306,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Did not get a SOAPFaultException");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
@@ -339,8 +340,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Did not get a SOAPFaultException");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
@@ -366,8 +367,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Did not get a SOAPFaultException");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;
@@ -393,8 +394,8 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Did not get a SOAPFaultException");
         }
-        
-        System.out.println("----------------------------------");
+
+        TestLogger.logger.debug("----------------------------------");
         
         assertNotNull(exception);
         SOAPFaultException sfe = (SOAPFaultException) exception;

@@ -30,6 +30,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.TestLogger;
 
 import test.EchoString;
 import test.EchoStringResponse;
@@ -67,12 +68,12 @@ public class DispatchXPayloadJAXB extends TestCase {
        request.setInput("SYNC JAXB XML PAYLOAD TEST");
        
        // Invoke the Dispatch<Object>
-       System.out.println(">> Invoking sync Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
        EchoString response = (EchoString) dispatch.invoke(request);
        
        assertNotNull(response);
-       
-       System.out.println(">> Response content: " + response.getInput());
+
+        TestLogger.logger.debug(">> Response content: " + response.getInput());
        
        assertTrue("[ERROR] - Response object was null", response != null);
        assertTrue("[ERROR] - No content in response object", response.getInput() != null);

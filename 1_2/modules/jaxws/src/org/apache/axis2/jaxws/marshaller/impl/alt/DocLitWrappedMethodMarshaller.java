@@ -313,7 +313,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds = operationDesc.getParameterDescriptions();
 
             // Create the message 
-            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            MessageFactory mf = marshalDesc.getMessageFactory();
             Message m = mf.create(protocol);
 
             // In usage=WRAPPED, there will be a single block in the body.
@@ -412,7 +412,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds = operationDesc.getParameterDescriptions();
 
             // Create the message 
-            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            MessageFactory mf = marshalDesc.getMessageFactory();
             Message m = mf.create(protocol);
 
             // In usage=WRAPPED, there will be a single block in the body.

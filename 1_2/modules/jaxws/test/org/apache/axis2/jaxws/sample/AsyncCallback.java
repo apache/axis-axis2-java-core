@@ -10,7 +10,7 @@ import javax.xml.ws.Response;
 
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWayHolder;
-
+import org.apache.axis2.jaxws.TestLogger;
 
 
 public class AsyncCallback implements AsyncHandler {
@@ -31,13 +31,13 @@ public class AsyncCallback implements AsyncHandler {
 			Object obj = response.get();
 			if(obj instanceof ReturnType){
 				ReturnType type = (ReturnType)obj;
-				System.out.println(">>Return String = "+type.getReturnStr());
+                TestLogger.logger.debug(">>Return String = " + type.getReturnStr());
 				return;
 			}
 			if(obj instanceof TwoWayHolder){
 				TwoWayHolder twh = (TwoWayHolder)obj;
-				System.out.println("AsyncCallback Holder string ="+twh.getTwoWayHolderStr());
-				System.out.println("AsyncCallback Holder int ="+twh.getTwoWayHolderInt());
+                TestLogger.logger.debug("AsyncCallback Holder string =" + twh.getTwoWayHolderStr());
+                TestLogger.logger.debug("AsyncCallback Holder int =" + twh.getTwoWayHolderInt());
 			}
 			
 		}catch(ExecutionException e){

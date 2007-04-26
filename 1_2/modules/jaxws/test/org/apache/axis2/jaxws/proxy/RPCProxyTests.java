@@ -30,6 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
@@ -37,6 +38,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -90,6 +92,26 @@ public class RPCProxyTests extends TestCase {
             String response = proxy.testSimple(request);
             assertTrue(response != null);
             assertTrue(response.equals(request));
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testSimpleInOut() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+            String request = "This is a test...";
+            Holder<String> requestParam = new Holder<String>();
+            requestParam.value = request;
+           
+            String response = proxy.testSimpleInOut(requestParam);
+            assertTrue(response != null);
+            assertTrue(response.equals(request));
+            assertTrue(requestParam.value.equals(request));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -159,7 +181,7 @@ public class RPCProxyTests extends TestCase {
             fail("RPC/LIT should throw webserviceException when operation is invoked with null input parameter");
         }catch(Exception e){ 
             assertTrue(e instanceof WebServiceException);
-            System.out.println(e.getMessage());
+            TestLogger.logger.debug(e.getMessage());
         }
     }
     
@@ -174,7 +196,7 @@ public class RPCProxyTests extends TestCase {
             fail("RPC/LIT should throw webserviceException when operation is invoked with null out parameter");
         }catch(Exception e){ 
             assertTrue(e instanceof WebServiceException);
-            System.out.println(e.getMessage());
+            TestLogger.logger.debug(e.getMessage());
         }
     }
     
@@ -191,7 +213,7 @@ public class RPCProxyTests extends TestCase {
         String response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -219,7 +241,7 @@ public class RPCProxyTests extends TestCase {
         
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -244,7 +266,7 @@ public class RPCProxyTests extends TestCase {
         
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));
@@ -288,7 +310,7 @@ public class RPCProxyTests extends TestCase {
         String response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
+        TestLogger.logger.debug(response);
         
         // Check to make sure the content is correct
         assertTrue(!response.contains("soap"));

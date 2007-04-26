@@ -7,6 +7,7 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.sample.wrap.FinancialOperation;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
@@ -33,7 +34,7 @@ public class DocLitWrapImpl implements DocLitWrap {
 	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#oneWayVoid()
 	 */
 	public void oneWayVoid() {
-		System.out.println("OneWayVoid with no parameters called");
+        TestLogger.logger.debug("OneWayVoid with no parameters called");
 
 	}
 

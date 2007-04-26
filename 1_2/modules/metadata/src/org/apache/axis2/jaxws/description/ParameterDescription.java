@@ -59,7 +59,10 @@ public interface ParameterDescription {
     public String getPartName();
 
     public boolean isHolderType();
-
+    
+    // Indicates whether or not an @XMLList annotation was found on a parameter
+    public boolean isListType();
+    
     public Class getParameterType();
 
     public Class getParameterActualType();

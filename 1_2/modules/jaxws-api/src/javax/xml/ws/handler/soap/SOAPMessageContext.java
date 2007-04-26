@@ -30,5 +30,5 @@ public interface SOAPMessageContext
 
     public abstract Object[] getHeaders(QName qname, JAXBContext jaxbcontext, boolean flag);
 
-    public abstract Set<java.net.URI> getRoles();
+    public abstract Set<String> getRoles();
 }

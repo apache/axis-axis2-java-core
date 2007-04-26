@@ -16,6 +16,8 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     private String declaringClass; //the class/interface that actually declares this method
 
     boolean oneWayAnnotated;
+	// boolean that indicates if an @XmlList annotation was found on the method
+	private boolean 				isListType = false;
     private WebMethodAnnot webMethodAnnot;
     private WebResultAnnot webResultAnnot;
     private WebServiceContextAnnot webServiceContextAnnot;
@@ -337,6 +339,14 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
         }
     }
 
+	public void setIsListType(boolean isListType) {
+		this.isListType = isListType;
+	}
+	
+	public boolean isListType() {
+		return isListType;
+	}
+	
     /**
      * Convenience method for unit testing. We will print all of the
      * data members here.

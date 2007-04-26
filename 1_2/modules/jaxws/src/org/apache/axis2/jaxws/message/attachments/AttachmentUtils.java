@@ -22,10 +22,10 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMNavigator;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
@@ -203,9 +203,9 @@ public class AttachmentUtils {
      * @param data
      * @return
      */
-    public static OMText makeBinaryOMNode(OMElement xop, Attachment data) {
+    public static OMText makeBinaryOMNode(OMElement xop, DataHandler dh) {
         OMFactory factory = xop.getOMFactory();
-        OMText binaryNode = factory.createOMText(data.getDataHandler(), true);
+        OMText binaryNode = factory.createOMText(dh, true);
         return binaryNode;
     }
 

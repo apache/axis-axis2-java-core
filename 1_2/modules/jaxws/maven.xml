@@ -259,6 +259,15 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
     	</java>
+    	
+    	<ant:echo>Generating java from StringList.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/StringList.wsdl"/>
+    	</java>
+    	
     	<!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
         <javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
@@ -640,6 +649,17 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/BareDocLitMinService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/sample/doclitbaremin/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/doclitbaremin">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
 		<ant:copy toDir="target/test-classes/services/EchoMessageService/">
 			<ant:fileset dir="target/test-classes">
 			   <ant:include name="org/apache/axis2/jaxws/nonanonymous/complextype/**"/>
@@ -697,7 +717,17 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>	
-
+		<ant:copy toDir="target/test-classes/services/StringListService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/stringlist//**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/stringlist">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>	
 		
 
 	</postGoal>

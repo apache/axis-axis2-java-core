@@ -43,4 +43,7 @@ public class MDQConstants {
 
     // Java string that represents a class constructor
     public static final String CONSTRUCTOR_METHOD = "<init>";
+
+    public static final String RETURN_TYPE_FUTURE = "java.util.concurrent.Future";
+    public static final String RETURN_TYPE_RESPONSE = "javax.xml.ws.Response";
 }

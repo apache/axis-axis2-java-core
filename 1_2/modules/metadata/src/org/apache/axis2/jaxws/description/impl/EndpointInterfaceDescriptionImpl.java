@@ -319,9 +319,14 @@ class EndpointInterfaceDescriptionImpl
                     for (OperationDescription checkOpDesc : updateOpDesc) {
                         if (checkOpDesc.getSEIMethod() == null) {
                             // TODO: Should this be checking (somehow) that the signature matches?  Probably not an issue until overloaded WSDL ops are supported.
-                            ((OperationDescriptionImpl)checkOpDesc).setSEIMethod(seiMethod);
-                            addOpDesc = false;
-                            break;
+                            
+                            //Make sure that this is not one of the 'async' methods associated with
+                            //this operation. If it is, let it be created as its own opDesc.
+                            if (!DescriptionUtils.isAsync(seiMethod)) {
+                                ((OperationDescriptionImpl) checkOpDesc).setSEIMethod(seiMethod);
+                                addOpDesc = false;
+                                break;
+                            }
                         }
                     }
                     if (addOpDesc) {
@@ -434,6 +439,26 @@ class EndpointInterfaceDescriptionImpl
                 }
             }
 
+            if (dispatchableOperations.size() > 0) {
+                returnOperations = dispatchableOperations.toArray(new OperationDescription[0]);
+            }
+        }
+        return returnOperations;
+    }
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperations()
+     */
+    public OperationDescription[] getDispatchableOperations() {
+        OperationDescription[] returnOperations = null;
+        OperationDescription[] allMatchingOperations = getOperations();
+        if (allMatchingOperations != null && allMatchingOperations.length > 0) {
+            ArrayList<OperationDescription> dispatchableOperations = new ArrayList<OperationDescription>();
+            for (OperationDescription operation : allMatchingOperations) {
+                if (!operation.isJAXWSAsyncClientMethod()) {
+                    dispatchableOperations.add(operation);
+                }
+            }
+            
             if (dispatchableOperations.size() > 0) {
                 returnOperations = dispatchableOperations.toArray(new OperationDescription[0]);
             }
@@ -844,7 +869,9 @@ class EndpointInterfaceDescriptionImpl
         if (wsdlDefn != null) {
             String tns = getEndpointDescription().getTargetNamespace();
             String localPart = getEndpointDescription().getName();
-            portType = wsdlDefn.getPortType(new QName(tns, localPart));
+            if (localPart != null) {
+                portType = wsdlDefn.getPortType(new QName(tns, localPart));
+            }
         }
         return portType;
     }

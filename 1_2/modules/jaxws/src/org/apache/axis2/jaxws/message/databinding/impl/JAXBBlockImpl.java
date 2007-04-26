@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
@@ -43,6 +44,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.security.PrivilegedAction;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
@@ -56,8 +61,7 @@ import java.util.List;
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
-    private static final String XMLNS = "xmlns=\"\" xmlns:xmlns=\"http://www.w3.org/2000/xmlns/\"";
-
+    
     /**
      * Called by JAXBBlockFactory
      *
@@ -97,18 +101,15 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // TODO Re-evaluate Unmarshall construction w/ MTOM
             Unmarshaller u = JAXBUtils.getJAXBUnmarshaller(ctx.getJAXBContext());
 
-            // If MTOM is enabled, add in the AttachmentUnmarshaller
-            if (isMTOMEnabled()) {
-                if (log.isDebugEnabled())
-                    log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
-
-                Message msg = getParent();
-
-                // TODO Pool ?
-                JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller();
-                aum.setMessage(msg);
-                u.setAttachmentUnmarshaller(aum);
+            if (log.isDebugEnabled()) {
+                log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
             }
+            
+            Message msg = getParent();
+            
+            JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller(msg);
+            u.setAttachmentUnmarshaller(aum);
+            
             Object jaxb = null;
 
             // Unmarshal into the business object.
@@ -119,15 +120,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 jaxb = unmarshalByType(u, reader, ctx.getProcessType());
             }
 
-            /* QNAME should already be known at this point
-            QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);
-            if (qName != null) {  // qname should always be non-null
-                setQName(qName); 
-            }
-            */
-
             // Successfully unmarshalled the object
-            // TODO remove attachment unmarshaller ?
             JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(), u);
             reader.close();
             return jaxb;
@@ -141,45 +134,35 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             throw ExceptionFactory.makeWebServiceException(je);
         }
     }
+    
+    /**
+     * @param busObj
+     * @param busContext
+     * @return
+     * @throws XMLStreamException
+     * @throws WebServiceException
+     */
+    private byte[] _getBytesFromBO(Object busObj, Object busContext, String encoding)
+        throws XMLStreamException, WebServiceException {
+        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
+        
+        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(baos, encoding);
+        
+        // Write the business object to the writer
+        _outputFromBO(busObj, busContext, writer);
+        
+        // Flush the writer
+        writer.flush();
+        writer.close();
+        return baos.toByteArray();
+    }
+
 
     @Override
     protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
             throws XMLStreamException, WebServiceException {
-        // TODO Review and determine if there is a better solution
-
-        // This is hard because JAXB does not expose a reader from the business object.
-        // The solution is to write out the object and use a reader to read it back in.
-        // First create an XMLStreamWriter backed by a writer
-        StringWriter sw = new StringWriter();
-        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
-
-        // Write the business object to the writer
-        _outputFromBO(busObj, busContext, writer);
-
-        // Flush the writer and get the String
-        writer.flush();
-        sw.flush();
-        String str = sw.toString();
-
-        // REVIEW ALERT
-        // Sometimes JAXB emits xmlns="" xmlns:xmlns..., which is invalid.
-        // The following lines of code removes this attribute.
-        // This seems to be related to MTOM..it has never failed in
-        // other cases
-        if (isMTOMEnabled()) {
-            if (log.isDebugEnabled()) {
-                log.debug("JAXB marshalled the xml as: " + str);
-            }
-            str = JavaUtils.replace(str, XMLNS, "");
-            if (log.isDebugEnabled()) {
-                log.debug("XML text after inspection: " + str);
-            }
-        }
-        writer.close();
-
-        // Return a reader backed by the string
-        StringReader sr = new StringReader(str);
-        return StAXUtils.createXMLStreamReader(sr);
+        ByteArrayInputStream baos = new ByteArrayInputStream(_getBytesFromBO(busObj, busContext, "utf-8"));
+        return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
 
     @Override
@@ -190,34 +173,27 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // Very easy, use the Context to get the Marshaller.
             // Use the marshaller to write the object.
             Marshaller m = JAXBUtils.getJAXBMarshaller(ctx.getJAXBContext());
-
-            // TODO Should MTOM be inside getMarshaller ?
-            // If MTOM is enabled, add in the AttachmentMarshaller.
-            if (isMTOMEnabled()) {
-                if (log.isDebugEnabled())
-                    log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
-
-                Message msg = getParent();
-
-                // Pool
-                JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
-                am.setMessage(msg);
-                m.setAttachmentMarshaller(am);
+            
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
             }
-
-            // Wrap the writer in our JAXBXMLStreamWriterFilter.
-            // This is necessary to correct any JAXB xml marshalling problems
-            JAXBXMLStreamWriterFilter filter = new JAXBXMLStreamWriterFilter(writer);
-
+            
+            Message msg = getParent();
+            
+            // Pool
+            JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller(msg, writer);
+            m.setAttachmentMarshaller(am);
+            
+            
             // Marshal the object
             if (ctx.getProcessType() == null) {
-                marshalByElement(busObject, m, filter);
+                marshalByElement(busObject, m, writer);
             } else {
-                marshalByType(busObject, m, filter, ctx.getProcessType());
+                marshalByType(busObject, m, writer, ctx.getProcessType());
             }
 
             // Successfully marshalled the data
-            // TODO remove attachment marshaller ?
             JAXBUtils.releaseJAXBMarshaller(ctx.getJAXBContext(), m);
         } catch (JAXBException je) {
             if (log.isDebugEnabled()) {
@@ -242,14 +218,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         QName qName = jbi.getElementName(jaxb);
         JAXBUtils.releaseJAXBIntrospector(ctx.getJAXBContext(), jbi);
         return qName;
-    }
-
-    private boolean isMTOMEnabled() {
-        Message msg = getParent();
-        if (msg != null && msg.isMTOMEnabled()) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -278,11 +246,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @return Object that represents an element
      * @throws WebServiceException
      */
-    private static Object unmarshalByElement(Unmarshaller u, XMLStreamReader reader)
+    private static Object unmarshalByElement(final Unmarshaller u, final XMLStreamReader reader)
             throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
-            return u.unmarshal(reader);
+        	 if(log.isDebugEnabled()){
+        	    log.debug("Invoking unMarshalByElement");
+        	 }
+        	 return AccessController.doPrivileged(new PrivilegedAction() {
+        		 public Object run() {
+        			 try {
+        				 return u.unmarshal(reader);
+        			 } catch (Exception e) {
+        				 throw ExceptionFactory.makeWebServiceException(e);
+        			 }
+        		 }
+        	 });
+
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -423,4 +403,5 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         }
         return obj;
     }
+    
 }

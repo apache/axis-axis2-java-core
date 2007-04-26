@@ -48,12 +48,15 @@ public class EndpointDescriptionValidator extends Validator {
             return VALID;
         }
 
-        if (!validateWSDLPort()) {
-            return INVALID;
-        }
-
-        if (!validateWSDLBindingType()) {
-            return INVALID;
+        //The following phase II validation can only happen on the server side
+        if (endpointDesc.getServiceDescription().isServerSide()) {
+            if (!validateWSDLPort()) {
+                return INVALID;
+            }
+            
+            if (!validateWSDLBindingType()) {
+                return INVALID;
+            }
         }
 
         if (!validateEndpointInterface()) {

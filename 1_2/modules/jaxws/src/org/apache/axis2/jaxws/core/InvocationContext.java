@@ -33,6 +33,8 @@ public interface InvocationContext {
 
     public List<Handler> getHandlers();
 
+    public void setHandlers(List<Handler> list);
+    
     public MessageContext getRequestMessageContext();
 
     public void setRequestMessageContext(MessageContext ctx);

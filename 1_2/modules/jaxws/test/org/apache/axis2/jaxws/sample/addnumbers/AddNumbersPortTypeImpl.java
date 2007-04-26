@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbers;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.jws.WebService;
 
 
@@ -28,7 +30,7 @@ public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 	 * @see org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType#addNumbers(int, int)
 	 */
 	public int addNumbers(int arg0, int arg1) throws AddNumbersFault_Exception {
-	    System.out.println(">> Received addNumbers request for " + arg0 + " and " + arg1);
+        TestLogger.logger.debug(">> Received addNumbers request for " + arg0 + " and " + arg1);
         return arg0+arg1;
 	}
 
@@ -36,7 +38,7 @@ public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 	 * @see org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType#oneWayInt(int)
 	 */
 	public void oneWayInt(int arg0) {
-	    System.out.println(">> Received one-way request.");
+        TestLogger.logger.debug(">> Received one-way request.");
         return;
 	}
 

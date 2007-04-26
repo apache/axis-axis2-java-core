@@ -21,19 +21,23 @@ package org.apache.axis2.jaxws.spi;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.spi.ServiceDelegate;
+
+import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
+
 import java.net.URL;
 
 public class Provider extends javax.xml.ws.spi.Provider {
 
     @Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
-        return null;
+        Endpoint ep = new EndpointImpl(obj);
+        ep.publish(s);
+        return ep;
     }
 
     @Override
-    public Endpoint createEndpoint(String s, Object obj) {
-        // TODO Auto-generated method stub
-        return null;
+    public Endpoint createEndpoint(String binding, Object obj) {
+        return new EndpointImpl(obj);
     }
 
     @Override

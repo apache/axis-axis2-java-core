@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -39,17 +41,17 @@ public class StringMessageProviderTests extends ProviderTestCase {
     }
     
     public void testProviderString() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, endpointUrl);
         
         Dispatch<String> dispatch = svc
                 .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
-        
-        System.out.println(">> Invoking Dispatch<String> StringMessageProviderService");
+
+        TestLogger.logger.debug(">> Invoking Dispatch<String> StringMessageProviderService");
         String retVal = dispatch.invoke(xmlString);
-        System.out.println(">> Response [" + retVal + "]");
+        TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
 }

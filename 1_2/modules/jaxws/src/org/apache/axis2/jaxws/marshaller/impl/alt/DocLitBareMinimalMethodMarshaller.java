@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -84,10 +85,11 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // Use "byJavaType" unmarshalling if necessary
                 Class byJavaType = null;
-                if (MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
                 // If the webresult is in the header, we need the name of the header so that we can find it.
@@ -96,21 +98,23 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils
                             .getReturnElement(packages, message, byJavaType, true,
                                               operationDesc.getResultTargetNamespace(),
-                                              operationDesc.getResultName());
+                                              operationDesc.getResultName(),
+                                              MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, byJavaType, false, null, null);
+                            .getReturnElement(packages, message, byJavaType, false, null, null,
+                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
                 }
                 //TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
                 returnValue = returnElement.getTypeValue();
-                if (returnValue == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-                }
+                if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                	returnValue = ConvertUtils.convert(returnValue, returnType);
+                }               
             }
 
             // We want to use "by Java Type" unmarshalling for 
@@ -119,7 +123,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
                 }
             }
@@ -129,6 +133,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          javaTypes); // byJavaType unmarshalling
 
             // Populate the response Holders
@@ -171,15 +176,10 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (int i = 0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
-                // If it is a JAXB basic type or it has no annotations
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                // If it is not a JAXB Root Element
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     javaTypes[i] = type;
-                } else {
-                    Annotation annos[] = type.getAnnotations();
-                    if (annos == null || annos.length == 0) {
-                        javaTypes[i] = type;
-                    }
-                }
+                } 
             }
 
             // Unmarshal the ParamValues from the message
@@ -187,26 +187,11 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          javaTypes); // never unmarshal by type for doc/lit bare
 
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
-
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (sigArguments != null) {
-                for (Object argument : sigArguments) {
-                    if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                "doc/lit"));
-
-                    }
-                }
-            }
             return sigArguments;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -258,20 +243,10 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-
-                }
 
                 // Use byJavaType marshalling if necessary
                 Class byJavaType = null;
-                if (MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc)) {
                     byJavaType = returnType;
                 }
 
@@ -301,7 +276,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }
@@ -343,27 +318,6 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (pds.length > 0) {
-                if (signatureArguments == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-                }
-                if (signatureArguments != null) {
-                    for (Object argument : signatureArguments) {
-                        if (argument == null) {
-                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                    "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                    "doc/lit"));
-                        }
-                    }
-                }
-            }
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
@@ -382,7 +336,7 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (PDElement pde : pdeList) {
                 ParameterDescription pd = pde.getParam();
                 Class type = pd.getParameterActualType();
-                if (MethodMarshallerUtils.isJAXBBasicType(type)) {
+                if (MethodMarshallerUtils.isNotJAXBRootElement(type, marshalDesc)) {
                     pde.setByJavaTypeClass(type);
                 }
             }

@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.xml.sax.InputSource;
 
@@ -38,7 +40,11 @@ public class URIResolverImpl implements URIResolver {
 
     private final String FILE_PROTOCOL = "file";
 
+    private final String JAR_PROTOCOL = "jar";
+
     private ClassLoader classLoader;
+    
+    private static final Log log = LogFactory.getLog(URIResolverImpl.class);
 
     public URIResolverImpl() {
     }
@@ -49,35 +55,61 @@ public class URIResolverImpl implements URIResolver {
 
     public InputSource resolveEntity(String namespace, String schemaLocation,
                                      String baseUri) {
-
+        //TODO: Temporary, please change the following log.info to log.debug
+        log.info("resolveEntity: ["+ namespace + "]["+ schemaLocation + "][ " + baseUri+ "]");
+        
         InputStream is = null;
         URI pathURI = null;
+        String pathURIStr = null;
+        if(log.isDebugEnabled()) {
+            log.debug("Import location: " + schemaLocation + " parent document: " + 
+                    baseUri);
+        }
         if (baseUri != null) {
             try {
                 // if the location is an absolute path, build a URL directly
                 // from it
 
                 if (isAbsolute(schemaLocation)) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Retrieving input stream for absolute schema location: "
+                                + schemaLocation);
+                    }
                     is = getInputStreamForURI(schemaLocation);
                 }
 
-                // Try baseURI + relavtive schema path combo
                 else {
                     pathURI = new URI(baseUri);
-                    String pathURIStr = schemaLocation;
+                    pathURIStr = schemaLocation;
                     // If this is absolute we need to resolve the path without the 
                     // scheme information
                     if (pathURI.isAbsolute()) {
+                        if(log.isDebugEnabled()) {
+                            log.debug("Parent document is at absolute location: " + 
+                                    pathURI.toString());
+                        }
                         URL url = new URL(baseUri);
                         if (url != null) {
                             URI tempURI = new URI(url.getPath());
                             URI resolvedURI = tempURI.resolve(schemaLocation);
                             // Add back the scheme to the resolved path
                             pathURIStr = constructPath(url, resolvedURI);
+                            if(log.isDebugEnabled()) {
+                                log.debug("Resolved this path to imported document: " + 
+                                        pathURIStr);
+                            }
                         }
                     } else {
+                        if(log.isDebugEnabled()) {
+                            log.debug("Parent document is at relative location: " + 
+                                    pathURI.toString());
+                        }
                         pathURI = pathURI.resolve(schemaLocation);
                         pathURIStr = pathURI.toString();
+                        if(log.isDebugEnabled()) {
+                            log.debug("Resolved this path to imported document: " + 
+                                    pathURIStr);
+                        }
                     }
                     // If path is absolute, build URL directly from it
                     if (isAbsolute(pathURIStr)) {
@@ -95,10 +127,32 @@ public class URIResolverImpl implements URIResolver {
                     }
                 }
             } catch (Exception e) {
-
+                if(log.isDebugEnabled()) {
+                    log.debug(e);
+                }
             }
         }
-        return new InputSource(is);
+        if(is == null) {
+            if(log.isDebugEnabled()) {
+                log.debug("XSD input stream is null after resolving import for: " + 
+                        schemaLocation + " from parent document: " + baseUri);
+            }
+        }
+        else {
+            if(log.isDebugEnabled()) {
+                log.debug("XSD input stream is not null after resolving import for: " + 
+                        schemaLocation + " from parent document: " + baseUri);
+            }
+        }
+
+        InputSource returnInputSource = new InputSource(is);
+        // We need to set the systemId.  XmlSchema will use this value to maintain a collection of
+        // imported XSDs that have been read.  If this value is null, then circular XSDs will 
+        // cause infinite recursive reads.
+        returnInputSource.setSystemId(pathURIStr != null ? pathURIStr : schemaLocation);
+        //TODO: Temporary, please change the following log.info to log.debug
+        log.info("returnInputSource :" + returnInputSource.getSystemId());
+        return returnInputSource;
     }
 
     /**
@@ -169,10 +223,21 @@ public class URIResolverImpl implements URIResolver {
                     HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
                               resolvedURI.toString());
+                importLocation = url.toString();
             }
             // Check for file
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+                importLocation = url.toString();
+            }
+            // Check for jar
+            else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(JAR_PROTOCOL)) {
+                importLocation = resolvedURI.toString();  
+                if(importLocation.startsWith(":")){
+                  importLocation = "jar" + importLocation; 
+                } else {
+                  importLocation = "jar:" + importLocation; 
+                }
             }
         }
         catch (MalformedURLException e) {
@@ -181,12 +246,11 @@ public class URIResolverImpl implements URIResolver {
                                                                                baseURL.toString()),
                                                            e);
         }
-        if (url == null) {
+        if (importLocation == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
                                                                                resolvedURI.toString(),
                                                                                baseURL.toString()));
         }
-        importLocation = url.toString();
         return importLocation;
     }
 

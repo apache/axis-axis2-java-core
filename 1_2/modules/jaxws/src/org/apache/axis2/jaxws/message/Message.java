@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 import javax.activation.DataHandler;
@@ -23,6 +24,7 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Message
@@ -52,54 +54,49 @@ public interface Message extends XMLPart {
     public SOAPMessage getAsSOAPMessage() throws WebServiceException;
 
     /**
-     * Adds an attachment part to the message
-     *
-     * @param Attachment - the content to add
-     */
-    public void addAttachment(Attachment a);
-
-    /**
-     * Create an Attachment. After the Attachment is created, it must be added with addAttachment()
-     *
+     * Add Attachment
      * @param dh DataHandler (type of Attachment is inferred from dh.getContentType)
-     * @param id String which is the Attachment id
-     * @return Attachment
+     * @param id String which is the Attachment content id
      * @see addAttachment(Attachment)
      */
-    public Attachment createAttachment(DataHandler dh, String id);
-
+    public void addDataHandler(DataHandler dh, String id);
+    
     /**
-     * Get the list of attachments for the message
-     *
-     * @return List<Attachments>
+     * Get the list of attachment content ids for the message
+     * @return Set<String>
      */
-    public List<Attachment> getAttachments();
-
+    public Set<String> getAttachmentIDs();
+    
     /**
-     * Get the attachment identified by the contentID
-     *
+     * Get the attachment identified by the contentID 
      * @param cid
      * @return
      */
-    public Attachment getAttachment(String cid);
-
-    /**
+    public DataHandler getDataHandler(String cid);
+    
+    /** 
      * Get the attachment and remove it from the Message
-     *
      * @param cid
-     * @return
      */
-    public Attachment removeAttachment(String cid);
-
-    /** @return if this is an MTOM message */
+    public DataHandler removeDataHandler(String cid);
+    
+    /**
+     * A message is MTOM enabled if the 
+     * associated dispatch/client/impl/provider has a binding type 
+     * that enables MTOM.
+     * @return if this is an MTOM message
+     */
     public boolean isMTOMEnabled();
 
-    /**
+    /** 
+     * A message is MTOM enabled if the 
+     * associated dispatch/client/impl/provider has a binding type 
+     * that enables MTOM.
      * Indicate whether this is an MTOM message
-     *
      * @param b
      */
     public void setMTOMEnabled(boolean b);
+    
 
     /** @return get the MimeHeaders */
     public MimeHeaders getMimeHeaders();
@@ -119,6 +116,17 @@ public interface Message extends XMLPart {
 
     /** @return true if post pivot */
     public boolean isPostPivot();
+
+    /**
+     * JAX-WS Message Context that owns the Message
+     * @param messageContext
+     */
+    public void setMessageContext(MessageContext messageContext);
+    
+    /**
+     * @return JAX-WS MessageContext
+     */
+    public MessageContext getMessageContext();
 
     /* 
     * Get the entire message rendered in a certain type of value (i.e. String, Source, SOAPMessage, etc.)

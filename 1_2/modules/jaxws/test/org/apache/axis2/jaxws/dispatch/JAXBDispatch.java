@@ -27,6 +27,7 @@ import javax.xml.ws.Service;
 
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
+import org.apache.axis2.jaxws.TestLogger;
 
 import junit.framework.TestCase;
 import test.EchoString;
@@ -59,8 +60,8 @@ public class JAXBDispatch extends TestCase {
     }
     
     public void testSyncPayload() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -68,12 +69,12 @@ public class JAXBDispatch extends TestCase {
         request.setInput("SYNC JAXB PAYLOAD TEST");
         
         // Invoke the Dispatch<Object>
-        System.out.println(">> Invoking sync Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
         EchoStringResponse response = (EchoStringResponse) dispatchPayload.invoke(request);
         
         assertNotNull(response);
-        
-        System.out.println(">> Response content: " + response.getEchoStringReturn());
+
+        TestLogger.logger.debug(">> Response content: " + response.getEchoStringReturn());
         
         assertTrue("[ERROR] - Response object was null", response != null);
         assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
@@ -81,8 +82,8 @@ public class JAXBDispatch extends TestCase {
     }
     
     public void testAysncPayload() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -93,18 +94,18 @@ public class JAXBDispatch extends TestCase {
         JAXBCallbackHandler<Object> callback = new JAXBCallbackHandler<Object>();
         
         // Invoke the Dispatch<Object> asynchronously
-        System.out.println(">> Invoking async(callback) Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         Future<?> monitor = dispatchPayload.invokeAsync(request, callback);
         
         while (!monitor.isDone()) {
-             System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
              Thread.sleep(1000);
         }
         
         EchoStringResponse response = (EchoStringResponse) callback.getData();
         assertNotNull(response);
-        
-        System.out.println(">> Response content: " + response.getEchoStringReturn());
+
+        TestLogger.logger.debug(">> Response content: " + response.getEchoStringReturn());
         
         assertTrue("[ERROR] - Response object was null", response != null);
         assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
@@ -113,8 +114,8 @@ public class JAXBDispatch extends TestCase {
     }
     
     public void testOneWayPayload() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -122,13 +123,13 @@ public class JAXBDispatch extends TestCase {
         request.setInput("ONE-WAY JAXB PAYLOAD TEST");
         
         // Invoke the Dispatch<Object> one-way
-        System.out.println(">> Invoking one-way Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
         dispatchPayload.invokeOneWay(request);
     }
     
     public void testSyncMessage() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -141,7 +142,7 @@ public class JAXBDispatch extends TestCase {
         jbc.createMarshaller().marshal(request,System.out);
         
         // Invoke the Dispatch<Object>
-        System.out.println(">> Invoking sync Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
         JAXBElement<Envelope> jaxbResponse = (JAXBElement<Envelope>) dispatchMessage.invoke(request);
         
         assertNotNull(jaxbResponse);
@@ -149,15 +150,15 @@ public class JAXBDispatch extends TestCase {
         assertNotNull(response);
         assertNotNull(response.getBody());
         EchoStringResponse echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
-        
-        System.out.println(">> Response content: " + echoStringResponse.getEchoStringReturn());
+
+        TestLogger.logger.debug(">> Response content: " + echoStringResponse.getEchoStringReturn());
         assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
         assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
     }
     
     public void testAysncMessage() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -172,11 +173,11 @@ public class JAXBDispatch extends TestCase {
         JAXBCallbackHandler<Object> callback = new JAXBCallbackHandler<Object>();
         
         // Invoke the Dispatch<Object> asynchronously
-        System.out.println(">> Invoking async(callback) Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
         Future<?> monitor = dispatchMessage.invokeAsync(request, callback);
         
         while (!monitor.isDone()) {
-             System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
              Thread.sleep(1000);
         }
         
@@ -188,8 +189,8 @@ public class JAXBDispatch extends TestCase {
         assertNotNull(response);
         assertNotNull(response.getBody());
         EchoStringResponse echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
-        
-        System.out.println(">> Response content: " + echoStringResponse.getEchoStringReturn());
+
+        TestLogger.logger.debug(">> Response content: " + echoStringResponse.getEchoStringReturn());
         assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
         assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
 
@@ -197,8 +198,8 @@ public class JAXBDispatch extends TestCase {
     }
     
     public void testOneWayMessge() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
@@ -209,7 +210,7 @@ public class JAXBDispatch extends TestCase {
         request.getValue().getBody().getAny().add(echoString);
         
         // Invoke the Dispatch<Object> one-way
-        System.out.println(">> Invoking one-way Dispatch with JAX-B Parameter");
+        TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
         dispatchMessage.invokeOneWay(request);
     }
     

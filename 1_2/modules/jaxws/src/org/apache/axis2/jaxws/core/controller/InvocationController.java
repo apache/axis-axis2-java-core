@@ -20,6 +20,8 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
@@ -27,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -87,22 +90,39 @@ public abstract class InvocationController {
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
 
         // Invoke outbound handlers.
-        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success =
-                true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
+                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
 
         if (success) {
             prepareRequest(request);
             response = doInvoke(request);
             prepareResponse(response);
 
+            /*
+             * TODO TODO TODO review
+             * 
+             * In most cases we are adding the endpointDesc to the
+             * MessageContext. Notice here that the "response" object is set by
+             * the call to doInvoke. It's a new context we are now working with.
+             * The invokeInboundHandlers uses that context way down in
+             * createMessageContext --> ContextUtils.addProperties()
+             * 
+             * This may also occur in the AsyncResponse class when calling
+             * invokeInboundHandlers
+             * 
+             * For now, make sure the endpointDesc is set on the response
+             * context.
+             */
+            response.setEndpointDescription(request.getEndpointDescription());
+
             // Invoke inbound handlers.
-            // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-            //HandlerInvokerUtils.invokeInboundHandlers(response, request.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
-        } else
-        { // the outbound handler chain must have had a problem, and we've reversed directions
-            response = MessageContextUtils.createResponseMessageContext(request);
-            // since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+            HandlerInvokerUtils.invokeInboundHandlers(response, ic.getHandlers(), request
+                            .getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+        } else { // the outbound handler chain must have had a problem, and
+                    // we've reversed directions
+            response = MessageContextUtils.createMinimalResponseMessageContext(request);
+            // since we've reversed directions, the message has "become a
+            // response message" (section 9.3.2.1, footnote superscript 2)
             response.setMessage(request.getMessage());
         }
         ic.setResponseMessageContext(response);
@@ -137,9 +157,7 @@ public abstract class InvocationController {
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
 
         // Invoke outbound handlers.
-        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success =
-                true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
 
         if (success) {
             prepareRequest(request);
@@ -180,8 +198,7 @@ public abstract class InvocationController {
 
         // Invoke outbound handlers.
         // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success =
-                true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
         if (success) {
             prepareRequest(request);
             resp = doInvokeAsync(request);
@@ -223,12 +240,12 @@ public abstract class InvocationController {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
         }
         if ((ic.getExecutor() != null) && (ic.getExecutor() instanceof ExecutorService)) {
-            ExecutorService es = (ExecutorService)ic.getExecutor();
+            ExecutorService es = (ExecutorService) ic.getExecutor();
             if (es.isShutdown()) {
                 // the executor service is shutdown and won't accept new tasks
                 // so return an error back to the client
-                throw ExceptionFactory
-                        .makeWebServiceException(Messages.getMessage("ExecutorShutdown"));
+                throw ExceptionFactory.makeWebServiceException(Messages
+                                .getMessage("ExecutorShutdown"));
             }
         }
 
@@ -238,21 +255,29 @@ public abstract class InvocationController {
         Future<?> future = null;
 
         // Invoke outbound handlers.
-        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success =
-                true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
+                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
         if (success) {
             prepareRequest(request);
             future = doInvokeAsync(request, asyncHandler);
-        } else
-        { // the outbound handler chain must have had a problem, and we've reversed directions
-            // since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+        } else { // the outbound handler chain must have had a problem, and
+                    // we've reversed directions
+            // since we've reversed directions, the message has "become a
+            // response message" (section 9.3.2.1, footnote superscript 2)
 
-            // TODO we know the message is a fault message, we should
-            // convert it to an exception and throw it.
-            // something like:
+            // TODO: how do we deal with this? The response message may or may
+            // not be a fault
+            // message. We do know that the direction has reversed, so somehow
+            // we need to
+            // flow immediately out of the async and give the exception and/or
+            // response object
+            // back to the client app without calling
+            // AsyncResponse.processResponse or processFault
 
-            //throw new AxisFault(request.getMessage());
+            throw ExceptionFactory
+                            .makeWebServiceException("A client outbound handler cause a message flow direction reversal.  This case is not yet implemented.");
+
+            // throw new AxisFault(request.getMessage());
         }
         return future;
     }

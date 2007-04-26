@@ -22,6 +22,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class DispatchXPayloadString extends TestCase {
 
@@ -48,9 +49,9 @@ public class DispatchXPayloadString extends TestCase {
     public void testSimple() throws Exception {
         Dispatch<String> dispatch = getDispatch();
         String request = XML_TEXT;
-        System.out.println("Request  = " + request);
+        TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
-        System.out.println("Response = " + response);
+        TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
     }
@@ -62,9 +63,9 @@ public class DispatchXPayloadString extends TestCase {
     public void _testEmpty() throws Exception {
         Dispatch<String> dispatch = getDispatch();
         String request = "";
-        System.out.println("Request  = " + request);
+        TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
-        System.out.println("Response = " + response);
+        TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
     }
@@ -76,9 +77,9 @@ public class DispatchXPayloadString extends TestCase {
     public void _testNull() throws Exception {
         Dispatch<String> dispatch = getDispatch();
         String request = null;
-        System.out.println("Request  = " + request);
+        TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
-        System.out.println("Response = " + response);
+        TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
     }
@@ -90,9 +91,9 @@ public class DispatchXPayloadString extends TestCase {
     public void _testException() throws Exception {
         Dispatch<String> dispatch = getDispatch();
         String request = XML_TEXT_NPE;
-        System.out.println("Request  = " + request);
+        TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
-        System.out.println("Response = " + response);
+        TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
     }

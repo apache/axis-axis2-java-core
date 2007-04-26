@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
+import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
@@ -32,7 +33,9 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,7 +79,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
     //Reference to ServiceDelegate instance that was used to create the Proxy
     protected ServiceDescription serviceDesc = null;
+
     private Class seiClazz = null;
+
     private Method method = null;
 
     public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
@@ -163,6 +168,22 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 requestMsg.setMTOMEnabled(true);
             }
         }
+        
+        /*
+         * TODO: review: make sure the handlers are set on the InvocationContext
+         * This implementation of the JAXWS runtime does not use Endpoint, which
+         * would normally be the place to initialize and store the handler list.
+         * In lieu of that, we will have to intialize and store them on the 
+         * InvocationContext.  also see the InvocationContextFactory.  On the client
+         * side, the binding is not yet set when we call into that factory, so the
+         * handler list doesn't get set on the InvocationContext object there.  Thus
+         * we gotta do it here.
+         */
+        
+        // be sure to use whatever handlerresolver is registered on the Service
+        //HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
+        //bnd.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
+        requestIC.setHandlers(bnd.getHandlerChain());
 
         // Before we invoke, copy all of the properties from the client request
         // context to the MessageContext
@@ -175,6 +196,12 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // TODO: Change this to some form of factory so that we can change the IC to
         // a more simple one for marshaller/unmarshaller testing.
         InvocationController controller = new AxisInvocationController();
+        
+        // Migrate the properties from the client request context bag to
+        // the request MessageContext.
+        ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                getRequestContext(), request);
 
         // Check if the call is OneWay, Async or Sync
         if (operationDesc.isOneWay()) {
@@ -184,12 +211,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             controller.invokeOneWay(requestIC);
 
             // Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call.  This could probably
-                //make use of the property migrator mentioned above.
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
         }
 
         if (method.getReturnType() == Future.class) {
@@ -231,11 +253,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             return future;
         }
@@ -251,11 +269,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             Response response = controller.invokeAsync(requestIC);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             return response;
         }
@@ -264,13 +278,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
             InvocationContext responseIC = controller.invoke(requestIC);
 
             //Check to see if we need to maintain session state
-            if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
-                setupSessionContext(
-                        requestIC.getServiceClient().getServiceContext().getProperties());
-            }
+            checkMaintainSessionState(request, requestIC);
 
             MessageContext responseContext = responseIC.getResponseMessageContext();
+            
+            // Migrate the properties from the response MessageContext back
+            // to the client response context bag.
+            ApplicationContextMigratorUtil.performMigrationFromMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getResponseContext(), responseContext);
+            
             Object responseObj = createResponse(method, args, responseContext, operationDesc);
             return responseObj;
         }

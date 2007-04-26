@@ -193,6 +193,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          javaTypes);  // sigh...unmarshal by type because there is no wrapper
 
             // Build the signature arguments
@@ -379,6 +380,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
@@ -390,7 +392,9 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                                                                            true,  // is a header
                                                                            operationDesc.getResultTargetNamespace(),
                                                                            // header ns
-                                                                           operationDesc.getResultPartName());       // header local part
+                                                                           operationDesc.getResultPartName(),     // header local part
+                                                                           MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils.getReturnElement(packages,
                                                                            message,
@@ -398,7 +402,10 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                                                                            // Force Unmarshal by type
                                                                            false,
                                                                            null,
-                                                                           null);
+                                                                           null,
+                                                                           MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
+
                 }
                 returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
@@ -426,6 +433,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          javaTypes); // unmarshal by type
 
             // TODO Should we check for null output body values?  Should we check for null output header values ?

@@ -30,12 +30,15 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import java.lang.reflect.Array;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class DocLitBareMethodMarshaller implements MethodMarshaller {
@@ -78,6 +81,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
+            boolean hasReturnInBody = false;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
@@ -85,21 +89,20 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     returnElement =
                             MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                                                                    operationDesc.getResultTargetNamespace(),
-                                                                   operationDesc.getResultName());
+                                                                   operationDesc.getResultName(),
+                                                                   MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, null, false, null, null);
+                            .getReturnElement(packages, message, null, false, null, null,
+                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
+                    hasReturnInBody = true;
                 }
-                //TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
                 returnValue = returnElement.getTypeValue();
-                if (returnValue == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
+                if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                	returnValue = ConvertUtils.convert(returnValue, returnType);
                 }
+                
             }
 
             // Unmarshall the ParamValues from the Message
@@ -107,6 +110,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          false, // output
+                                                                         hasReturnInBody,
                                                                          null); // always unmarshal with "by element" mode
 
             // Populate the response Holders
@@ -148,26 +152,12 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                                                                          message,
                                                                          packages,
                                                                          true, // input
+                                                                         false,
                                                                          null); // always unmarshal using "by element" mode
 
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (sigArguments != null) {
-                for (Object argument : sigArguments) {
-                    if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                "doc/lit"));
-
-                    }
-                }
-            }
             return sigArguments;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -219,23 +209,28 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
-                // TODO should we allow null if the return is a header?
-                //Validate input parameters for operation and make sure no input parameters are null.
-                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-                //to a method then an implementation MUST throw WebServiceException.
-                if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "doc/lit"));
-
-                }
                 Element returnElement = null;
                 QName returnQName = new QName(operationDesc.getResultTargetNamespace(),
                                               operationDesc.getResultName());
                 if (marshalDesc.getAnnotationDesc(returnType).hasXmlRootElement()) {
                     returnElement = new Element(returnObject, returnQName);
                 } else {
-                    returnElement = new Element(returnObject, returnQName, returnType);
+                    /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
+                     * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List.
+                     */
+                    if(operationDesc.isListType()){
+                       List list= new ArrayList();
+                       if(returnType.isArray()){
+                            for(int count = 0; count < Array.getLength(returnObject); count++){
+                                Object obj = Array.get(returnObject, count);
+                                list.add(obj);
+                            }
+                            returnElement = new Element(list, returnQName, List.class);
+                        }
+                      }
+                    else{
+                        returnElement = new Element(returnObject, returnQName, returnType);
+                    }
                 }
                 MethodMarshallerUtils.toMessage(returnElement, returnType,
                                                 marshalDesc, m,

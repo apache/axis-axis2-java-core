@@ -68,6 +68,9 @@ public interface OperationDescription {
     public ParameterDescription getParameterDescription(String parameterName);
 
     public ParameterDescription[] getParameterDescriptions();
+    
+    // indicates whether or not an @XmlList annotation was found on the method
+    public boolean isListType();
 
     public abstract AxisOperation getAxisOperation();
 

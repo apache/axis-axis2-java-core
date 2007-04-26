@@ -68,6 +68,9 @@ public class MessageContext {
         if (mc != null) {
             axisMsgCtx = mc;
             message = MessageUtils.getMessageFromMessageContext(mc);
+            if (message != null) {
+                message.setMessageContext(this);
+            }
         } else {
             axisMsgCtx = new org.apache.axis2.context.MessageContext();
         }
@@ -121,6 +124,7 @@ public class MessageContext {
 
     public void setMessage(Message msg) {
         message = msg;
+        msg.setMessageContext(this);
     }
 
     public Message getMessage() {

@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
@@ -186,7 +187,7 @@ public class MessageTests extends TestCase {
         env.serializeAndConsume(baos, new OMOutputFormat());
         
 		String newText = baos.toString();
-		System.out.println(newText);
+        TestLogger.logger.debug(newText);
 		assertTrue(newText.contains(sampleText));
 		assertTrue(newText.contains("soap"));
 		assertTrue(newText.contains("Envelope"));
@@ -247,7 +248,7 @@ public class MessageTests extends TestCase {
 		// To check that the output is correct, get the String contents of the 
 		// reader
         String newText = baos.toString();
-		System.out.println(newText);
+        TestLogger.logger.debug(newText);
 		assertTrue(newText.contains(sampleText));
 		assertTrue(newText.contains("soap"));
 		assertTrue(newText.contains("Envelope"));
@@ -312,7 +313,7 @@ public class MessageTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
         assertTrue(newText.contains("Body"));
@@ -376,7 +377,7 @@ public class MessageTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
@@ -679,7 +680,7 @@ public class MessageTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleJAXBText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
@@ -751,7 +752,7 @@ public class MessageTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleJAXBText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));

@@ -220,7 +220,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     if (blkContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE
                             .BY_CONTEXT_PATH) {
                         Class actualType = pd.getParameterActualType();
-                        if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                        if (MethodMarshallerUtils.isNotJAXBRootElement(actualType, marshalDesc)) {
                             blkContext.setProcessType(actualType);
                         }
                     }
@@ -249,7 +249,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     Element returnElement =
                             MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                                                                    operationDesc.getResultTargetNamespace(),
-                                                                   operationDesc.getResultPartName());
+                                                                   operationDesc.getResultPartName(),
+                                                                   false);
                     returnValue = returnElement.getTypeValue();
                 }
                 // returnValue may be incompatible with JAX-WS signature
@@ -372,7 +373,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     if (blkContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE
                             .BY_CONTEXT_PATH) {
                         Class actualType = pd.getParameterActualType();
-                        if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                        if (MethodMarshallerUtils.isNotJAXBRootElement(actualType, marshalDesc)) {
                             blkContext.setProcessType(actualType);
                         } else {
                             Annotation annos[] = actualType.getAnnotations();
@@ -504,7 +505,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     }
 
                     Class byJavaType =
-                            MethodMarshallerUtils.isJAXBBasicType(returnType) ? returnType : null;
+                            MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc) ? returnType : null;
 
                     MethodMarshallerUtils.toMessage(returnElement, returnType,
                                                     marshalDesc, m,
@@ -543,7 +544,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 // Use "by java type" marshalling if necessary
                 for (PDElement pde : headerPDEList) {
                     Class actualType = pde.getParam().getParameterActualType();
-                    if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                    if (MethodMarshallerUtils.isNotJAXBRootElement(actualType, marshalDesc)) {
                         pde.setByJavaTypeClass(actualType);
                     }
                 }
@@ -658,7 +659,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 // Use "by java type" marshalling if necessary
                 for (PDElement pde : headerPDEList) {
                     Class actualType = pde.getParam().getParameterActualType();
-                    if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                    if (MethodMarshallerUtils.isNotJAXBRootElement(actualType, marshalDesc)) {
                         pde.setByJavaTypeClass(actualType);
                     }
                 }

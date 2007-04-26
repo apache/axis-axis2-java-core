@@ -34,6 +34,7 @@ import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.TestLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -46,8 +47,8 @@ public class DOMSourceDispatch extends TestCase{
     private static final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
     
     public void testSyncPayloadMode() throws Exception {
-		System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -57,14 +58,14 @@ public class DOMSourceDispatch extends TestCase{
         
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
-        
-		System.out.println(">> Invoking sync Dispatch");
+
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
 		Source response = dispatch.invoke(request);
 		assertNotNull("dispatch invoke returned null",response);
 		
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -74,8 +75,8 @@ public class DOMSourceDispatch extends TestCase{
 	}
 
 	public void testSyncMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -85,14 +86,14 @@ public class DOMSourceDispatch extends TestCase{
         
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
-        
-        System.out.println(">> Invoking sync Dispatch");
+
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
         Source response = dispatch.invoke(request);
         assertNotNull("dispatch invoke returned null",response);
         
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -102,8 +103,8 @@ public class DOMSourceDispatch extends TestCase{
 	}
 
     public void testAsyncCallbackPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -116,12 +117,12 @@ public class DOMSourceDispatch extends TestCase{
 
         // Setup the callback for async responses
         AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
-        
-        System.out.println(">> Invoking async (callback) Dispatch");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
             
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -129,8 +130,8 @@ public class DOMSourceDispatch extends TestCase{
         assertNotNull(response);
         
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -140,8 +141,8 @@ public class DOMSourceDispatch extends TestCase{
     }
     
     public void testAsyncCallbackMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -154,12 +155,12 @@ public class DOMSourceDispatch extends TestCase{
 
         // Setup the callback for async responses
         AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
-        
-        System.out.println(">> Invoking async (callback) Dispatch");
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
 	        
         while (!monitor.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -167,8 +168,8 @@ public class DOMSourceDispatch extends TestCase{
         assertNotNull(response);
         
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -178,8 +179,8 @@ public class DOMSourceDispatch extends TestCase{
 	}
     
     public void testAsyncPollingPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -190,11 +191,11 @@ public class DOMSourceDispatch extends TestCase{
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
 
-        System.out.println(">> Invoking async (polling) Dispatch");
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
         Response<Source> asyncResponse = dispatch.invokeAsync(request);
             
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -202,8 +203,8 @@ public class DOMSourceDispatch extends TestCase{
         assertNotNull(response);
         
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(!responseText.contains("soap"));
@@ -213,8 +214,8 @@ public class DOMSourceDispatch extends TestCase{
     }
     
     public void testAsyncPollingMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -225,11 +226,11 @@ public class DOMSourceDispatch extends TestCase{
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
 
-        System.out.println(">> Invoking async (callback) Dispatch");
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
         Response<Source> asyncResponse = dispatch.invokeAsync(request);
             
         while (!asyncResponse.isDone()) {
-            System.out.println(">> Async invocation still not complete");
+            TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
@@ -237,8 +238,8 @@ public class DOMSourceDispatch extends TestCase{
         assertNotNull(response);
         
         // Turn the Source into a String so we can check it
-        String responseText = createStringFromSource(response);        
-        System.out.println(responseText);
+        String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
         assertTrue(responseText.contains("soap"));
@@ -248,8 +249,8 @@ public class DOMSourceDispatch extends TestCase{
     }
     
     public void testOneWayPayloadMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -260,13 +261,13 @@ public class DOMSourceDispatch extends TestCase{
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
 
-        System.out.println(">> Invoking One Way Dispatch");
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
         dispatch.invokeOneWay(request);
     }
     
     public void testOneWayMessageMode() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -277,13 +278,13 @@ public class DOMSourceDispatch extends TestCase{
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
 
-        System.out.println(">> Invoking One Way Dispatch");
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
         dispatch.invokeOneWay(request);
 	}
     
     public void testBadDOMSource() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
@@ -298,7 +299,7 @@ public class DOMSourceDispatch extends TestCase{
             dispatch.invokeOneWay(request);
             fail("WebServiceException was expected");
         } catch (WebServiceException e) {
-            System.out.println("A Web Service Exception was expected: " + e.toString());
+            TestLogger.logger.debug("A Web Service Exception was expected: " + e.toString());
             assertTrue(e.getMessage() != null);
         } catch (Exception e) {
             fail("WebServiceException was expected, but received " + e);

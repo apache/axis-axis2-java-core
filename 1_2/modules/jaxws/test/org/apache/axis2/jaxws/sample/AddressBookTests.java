@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.sample.addressbook.AddEntryResponse;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBook;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBookEntry;
 import org.apache.axis2.jaxws.sample.addressbook.ObjectFactory;
+import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * This tests the AddressBook same service that exists under
@@ -50,8 +51,8 @@ public class AddressBookTests extends TestCase {
     
     public void testAddressBookWithDispatch() throws Exception {
         try {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
         
         JAXBContext jbc = JAXBContext.newInstance("org.apache.axis2.jaxws.sample.addressbook");
         
@@ -79,8 +80,8 @@ public class AddressBookTests extends TestCase {
         // Validate the results
         assertNotNull(response);
         assertTrue(response.isStatus());
-        System.out.println("[pass]     - valid response received");
-        System.out.println("[response] - " + response.isStatus());
+            TestLogger.logger.debug("[pass]     - valid response received");
+            TestLogger.logger.debug("[response] - " + response.isStatus());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -93,8 +94,8 @@ public class AddressBookTests extends TestCase {
      * a simple type.
      */
     public void testAddEntry() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
@@ -120,8 +121,8 @@ public class AddressBookTests extends TestCase {
      * returns a complex type.
      */
     public void testFindEntryByName() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);

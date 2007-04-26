@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -41,8 +42,8 @@ import java.util.List;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice minOccurs="0">
- *           &lt;element name="service-name-pattern" type="{http://java.sun.com/xml/ns/javaee}qname-pattern"/>
- *           &lt;element name="port-name-pattern" type="{http://java.sun.com/xml/ns/javaee}qname-pattern"/>
+ *           &lt;element name="service-name-pattern" type="{http://www.w3.org/2001/XMLSchema}QName"/>
+ *           &lt;element name="port-name-pattern" type="{http://www.w3.org/2001/XMLSchema}QName"/>
  *           &lt;element name="protocol-bindings" type="{http://java.sun.com/xml/ns/javaee}protocol-bindingListType"/>
  *         &lt;/choice>
  *         &lt;element name="handler" type="{http://java.sun.com/xml/ns/javaee}handlerType"
@@ -64,11 +65,9 @@ import java.util.List;
 public class HandlerChainType {
 
     @XmlElement(name = "service-name-pattern", namespace = "http://java.sun.com/xml/ns/javaee")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String serviceNamePattern;
+    protected QName serviceNamePattern;
     @XmlElement(name = "port-name-pattern", namespace = "http://java.sun.com/xml/ns/javaee")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected java.lang.String portNamePattern;
+    protected QName portNamePattern;
     @XmlList
     @XmlElement(name = "protocol-bindings", namespace = "http://java.sun.com/xml/ns/javaee")
     protected List<java.lang.String> protocolBindings;
@@ -84,7 +83,7 @@ public class HandlerChainType {
      *
      * @return possible object is {@link java.lang.String }
      */
-    public java.lang.String getServiceNamePattern() {
+    public QName getServiceNamePattern() {
         return serviceNamePattern;
     }
 
@@ -93,7 +92,7 @@ public class HandlerChainType {
      *
      * @param value allowed object is {@link java.lang.String }
      */
-    public void setServiceNamePattern(java.lang.String value) {
+    public void setServiceNamePattern(QName value) {
         this.serviceNamePattern = value;
     }
 
@@ -102,7 +101,7 @@ public class HandlerChainType {
      *
      * @return possible object is {@link java.lang.String }
      */
-    public java.lang.String getPortNamePattern() {
+    public QName getPortNamePattern() {
         return portNamePattern;
     }
 
@@ -111,7 +110,7 @@ public class HandlerChainType {
      *
      * @param value allowed object is {@link java.lang.String }
      */
-    public void setPortNamePattern(java.lang.String value) {
+    public void setPortNamePattern(QName value) {
         this.portNamePattern = value;
     }
 

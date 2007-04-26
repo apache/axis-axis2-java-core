@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +48,7 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
@@ -61,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -94,6 +97,9 @@ class OperationDescriptionImpl
     private Oneway onewayAnnotation;
     private Boolean onewayIsOneway;
 
+    // ANNOTATION: @XmlList
+    private boolean 			isListType = false;
+    
     // ANNOTATION: @RequestWrapper
     private RequestWrapper requestWrapperAnnotation;
     private String requestWrapperTargetNamespace;
@@ -162,7 +168,7 @@ class OperationDescriptionImpl
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
         setSEIMethod(method);
-
+		checkForXmlListAnnotation(method.getAnnotations());
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
@@ -190,6 +196,7 @@ class OperationDescriptionImpl
 
         parameterDescriptions = createParameterDescriptions();
         faultDescriptions = createFaultDescriptions();
+		isListType = mdc.isListType();
 
         //If an AxisOperation was already created for us by populateService then just use that one
         //Otherwise, create it
@@ -261,13 +268,13 @@ class OperationDescriptionImpl
                         // QName based on this parameter then break out of the loop.
                         AxisMessage axisMessage =
                                 newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        String partLocalName = paramDesc.getPartName();
+                        String elementName = paramDesc.getParameterName();
                         String partNamespace = paramDesc.getTargetNamespace();
                         if (log.isDebugEnabled()) {
                             log.debug("Setting up annotation based Doc/Lit/Bare operation: " +
                                     newAxisOperation.getName()
-                                    + "; axisMessage: " + axisMessage + "; partLocalName: "
-                                    + partLocalName + "; partTNS: " + partNamespace);
+                                    + "; axisMessage: " + axisMessage + "; name: "
+                                    + elementName + "; partTNS: " + partNamespace);
                         }
                         if (axisMessage == null) {
                             // TODO: RAS & NLS
@@ -277,12 +284,16 @@ class OperationDescriptionImpl
                             // TODO: RAS & NLS
                             throw ExceptionFactory.makeWebServiceException(
                                     "Could not setup Doc/Lit/Bare operation because part namespace is empty");
-                        } else if (DescriptionUtils.isEmpty(partLocalName)) {
+                        } else if (DescriptionUtils.isEmpty(elementName)) {
                             // TODO: RAS & NLS
                             throw ExceptionFactory.makeWebServiceException(
-                                    "Could not setup Doc/Lit/Bare operation because part local name is empty");
+                                    "Could not setup Doc/Lit/Bare operation because name is empty");
                         } else {
-                            QName partQName = new QName(partNamespace, partLocalName);
+                            QName partQName = new QName(partNamespace, elementName);
+                            if(log.isDebugEnabled()) {
+                                log.debug("Setting AxisMessage element QName for bare mapping: " +
+                                        partQName);
+                            }
                             axisMessage.setElementQName(partQName);
                         }
                         break;
@@ -346,6 +357,16 @@ class OperationDescriptionImpl
     }
 
     public AxisOperation getAxisOperation() {
+        // Note that only the sync operations, and not the JAX-WS async client versions of an 
+        // operation, will have an AxisOperation associated with it.  For those async operations, 
+        // get the AxisOperation associated with the sync method and return that.
+        if (axisOperation == null) {
+            OperationDescription opDesc = getSyncOperation();
+            if (opDesc != null && opDesc != this) {
+                return getSyncOperation().getAxisOperation();
+            }
+        } 
+        
         return axisOperation;
     }
 
@@ -1190,7 +1211,7 @@ class OperationDescriptionImpl
 
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapBindingParameterStyle == null) {
-            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
+            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
                 soapBindingParameterStyle = getAnnoSoapBinding().parameterStyle();
             } else {
                 // Per JSR-181 MR Sec 4.7, pg 28: if not specified, use the Type value.
@@ -1488,6 +1509,18 @@ class OperationDescriptionImpl
         runtimeDescMap.put(ord.getKey(), ord);
     }
 
+    private void checkForXmlListAnnotation(Annotation[] annotations) {
+    	for(Annotation annotation : annotations) {
+    		if(annotation.annotationType() == XmlList.class) {
+    			isListType = true;
+    		}
+    	}
+    }
+    
+    public boolean isListType() {
+    	return isListType;
+    }
+    
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";

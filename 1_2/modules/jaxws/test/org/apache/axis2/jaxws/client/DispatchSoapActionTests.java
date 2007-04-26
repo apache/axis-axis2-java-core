@@ -28,6 +28,7 @@ import javax.xml.ws.Service.Mode;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceResponseType;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceType;
@@ -47,8 +48,8 @@ public class DispatchSoapActionTests extends TestCase {
      * ourselves for the invoke.
      */
     public void testSendRequestWithSoapAction() throws Exception {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
         
         BookStoreService service = new BookStoreService();
         
@@ -74,7 +75,7 @@ public class DispatchSoapActionTests extends TestCase {
         assertNotNull("The response was null", value);
         
         float price = value.getPrice();
-        System.out.println("return value [" + price + "]");
+        TestLogger.logger.debug("return value [" + price + "]");
         //assertTrue("The return value was invalid", price > 0);
     }
 

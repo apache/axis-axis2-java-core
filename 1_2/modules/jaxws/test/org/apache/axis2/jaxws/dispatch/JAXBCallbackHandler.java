@@ -22,6 +22,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import test.EchoStringResponse;
+import org.apache.axis2.jaxws.TestLogger;
 
 public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
 
@@ -29,7 +30,7 @@ public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
     public void handleResponse(Response response) {
         try {
             data = (T) response.get();
-            System.out.println(">> Async response received: " + data);
+            TestLogger.logger.debug(">> Async response received: " + data);
         } catch (Exception e) {
             e.printStackTrace();
         }

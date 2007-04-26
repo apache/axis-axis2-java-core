@@ -28,6 +28,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
@@ -42,10 +43,10 @@ import org.apache.axis2.util.MessageContextBuilder;
 public class SOAPActionTestsMessageReceiver implements MessageReceiver {
     
     public void receive(MessageContext request) throws AxisFault {
-        System.out.println("[server] SOAPActionTestsMessageReceiver: new request received");
+        TestLogger.logger.debug("[server] SOAPActionTestsMessageReceiver: new request received");
         
-        SOAPEnvelope env = request.getEnvelope();        
-        System.out.println("[server] request message [" + env + "]");
+        SOAPEnvelope env = request.getEnvelope();
+        TestLogger.logger.debug("[server] request message [" + env + "]");
         
         // Get the first child element
         Iterator itr = env.getBody().getChildElements();
@@ -64,11 +65,11 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
             float status = 0;
             if (checkOperation("getPrice", request) &&
                 checkSOAPAction("", request)) {
-                System.out.println("[server] all checks passed");
+                TestLogger.logger.debug("[server] all checks passed");
                 status = 1;
             }
             else {
-                System.out.println("[server] some checks failed");
+                TestLogger.logger.debug("[server] some checks failed");
             }
             
             responseBodyContent = sf.createOMElement(new QName("http://jaxws.axis2.apache.org/client/soapaction", "getPriceWithActionResponse"), responseEnv.getBody());
@@ -80,11 +81,11 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
             float status = 0;
             if (checkOperation("getPriceWithAction", request) &&
                 checkSOAPAction("http://jaxws.axis2.apache.org/client/soapaction/getPrice", request)) {
-                System.out.println("[server] all checks passed");
+                TestLogger.logger.debug("[server] all checks passed");
                 status = 1;
             }
             else {
-                System.out.println("[server] some checks failed");
+                TestLogger.logger.debug("[server] some checks failed");
             }
             
             responseBodyContent = sf.createOMElement(new QName("http://jaxws.axis2.apache.org/client/soapaction", "getPriceWithActionResponse"), responseEnv.getBody());
@@ -112,8 +113,8 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
         MessageContext response = MessageContextBuilder.createOutMessageContext(request);
         responseEnv.getBody().addChild(responseBodyContent);
         response.setEnvelope(responseEnv);
-        
-        System.out.println("[server] response message [" + responseEnv.toString() + "]");
+
+        TestLogger.logger.debug("[server] response message [" + responseEnv.toString() + "]");
         
         response.getOperationContext().addMessageContext(response);
         AxisEngine engine = new AxisEngine(response.getConfigurationContext());
@@ -126,13 +127,14 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
      */
     private boolean checkOperation(String expectedOperationName, MessageContext mc) {
         AxisOperation op = mc.getAxisOperation();
-        System.out.println("[server] checking expected operation [" + expectedOperationName + "] against resolved operation [" + op.getName() + "]");
+        TestLogger.logger.debug("[server] checking expected operation [" + expectedOperationName +
+                "] against resolved operation [" + op.getName() + "]");
         if (op.getName().getLocalPart().equals(expectedOperationName)) {
-            System.out.println("[server] operation name is correct");
+            TestLogger.logger.debug("[server] operation name is correct");
             return true;
         }
         else {
-            System.out.println("[server] operation name is incorrect");
+            TestLogger.logger.debug("[server] operation name is incorrect");
             return false;
         }
     }
@@ -143,13 +145,14 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
      */
     private boolean checkSOAPAction(String expectedAction, MessageContext mc) {
        String action = mc.getSoapAction();
-       System.out.println("[server] checking expected action [" + expectedAction + "] against received action [" + action + "]");
+        TestLogger.logger.debug("[server] checking expected action [" + expectedAction +
+                "] against received action [" + action + "]");
        if (action != null && action.equals(expectedAction)) {
-           System.out.println("[server] soap action is correct");
+           TestLogger.logger.debug("[server] soap action is correct");
            return true;
        }           
        else {
-           System.out.println("[server] soap action is incorrect");
+           TestLogger.logger.debug("[server] soap action is incorrect");
            return false;
        }   
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.provider.stringmsg;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
@@ -30,12 +32,12 @@ public class StringMessageProvider implements Provider<String> {
     public String invoke(String obj) {
         if (obj != null) {
             String str = (String) obj;
-            System.out.println(">> StringMessageProvider received a new request");
-            System.out.println(">> request [" + str + "]");
+            TestLogger.logger.debug(">> StringMessageProvider received a new request");
+            TestLogger.logger.debug(">> request [" + str + "]");
             
             return responseGood;
         }
-        System.out.println(">> ERROR:null request received");
+        TestLogger.logger.debug(">> ERROR:null request received");
         return responseBad;
     }
 }

@@ -28,6 +28,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.Response;
 
 import org.apache.axis2.jaxws.sample.parallelasync.common.Constants;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.parallelasync.AnotherResponse;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.InvokeAsyncResponse;
@@ -124,8 +125,8 @@ public class DocLitWrappedPortImpl implements AsyncPort {
 
             while (sec > 0 && !doCancell) {
                 if (DEBUG)
-                    System.out.println(title + "Sleeping on " 
-                            + " threadID ["+ threadID + "]" 
+                    TestLogger.logger.debug(title + "Sleeping on "
+                            + " threadID [" + threadID + "]"
                             + " timeLeft=" + sec);
                 sec--;
 
@@ -136,16 +137,16 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         } 
         catch (InterruptedException e) {
 
-            System.out.println(title + "Sleep interrupted on " 
-                                     + " threadID ["+ threadID + "]"
-                                     + " timeLeft=["+sec+"]");  
+            TestLogger.logger.debug(title + "Sleep interrupted on "
+                    + " threadID [" + threadID + "]"
+                    + " timeLeft=[" + sec + "]");
 
         } 
         finally {
 
             if (DEBUG)
-                System.out.println(title + "final processing for " 
-                                         + " threadID ["+ threadID + "]"); 
+                TestLogger.logger.debug(title + "final processing for "
+                        + " threadID [" + threadID + "]");
 
             // remove this request from the list
             sleepers.remove(key);
@@ -177,7 +178,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         if (sleepers.isEmpty())
         {
             if (DEBUG)
-                System.out.println(title + tid + " Not sleeping");
+                TestLogger.logger.debug(title + tid + " Not sleeping");
             return null;
         }
 
@@ -186,13 +187,13 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         if (value == null)
         {
             if (DEBUG)
-                System.out.println(title + tid + " Not sleeping");
+                TestLogger.logger.debug(title + tid + " Not sleeping");
 
             return null;
         }
 
         if (DEBUG)
-            System.out.println(title + tid + " sleeping on ["+request+"]");
+            TestLogger.logger.debug(title + tid + " sleeping on [" + request + "]");
 
         return request;
     }
@@ -207,7 +208,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         if (sleepers.isEmpty())
         {
             if (DEBUG)
-                System.out.println(title + tid + " No one to wake up");
+                TestLogger.logger.debug(title + tid + " No one to wake up");
 
             return null;
         }
@@ -217,14 +218,14 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         if (value == null)
         {
             if (DEBUG)
-                System.out.println(title + tid + " Thread not available. No one to wake up.");
+                TestLogger.logger.debug(title + tid + " Thread not available. No one to wake up.");
 
             return null;
         }
 
         if (DEBUG)
-            System.out.println(title + tid + " Interrupting " 
-                                     + " threadID ["+ value.getId() + "]"); 
+            TestLogger.logger.debug(title + tid + " Interrupting "
+                    + " threadID [" + value.getId() + "]");
 
         // interrupt the sleeper
         try
@@ -234,8 +235,9 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         catch (Exception e)
         {
             if (DEBUG)
-                System.out.println(title + tid + " Interrupting " 
-                                         + " threadID ["+ value.getId() + "]  got Exception ["+e.getClass().getName()+"]   ["+e.getMessage()+"]"); 
+                TestLogger.logger.debug(title + tid + " Interrupting "
+                        + " threadID [" + value.getId() + "]  got Exception [" +
+                        e.getClass().getName() + "]   [" + e.getMessage() + "]");
         }
 
         return request;
@@ -251,7 +253,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"invokeAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return request;
     }
@@ -260,7 +262,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"customeAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return request + "from customAsync method";
     }
@@ -269,7 +271,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"another("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return request;
     }
@@ -278,7 +280,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"ping("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return request;
     }
@@ -289,7 +291,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"remapped("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return request;
     }
@@ -302,7 +304,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+"anotherAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -312,7 +314,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Future<?> anotherAsyncAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -322,7 +324,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Response<AnotherResponse> anotherAsyncAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -332,7 +334,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Future<?> invokeAsyncAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -342,7 +344,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Response<InvokeAsyncResponse> invokeAsyncAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -352,7 +354,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Future<?> pingAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -362,7 +364,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Response<PingResponse> pingAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -372,7 +374,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Future<?> remappedAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -382,7 +384,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Response<CustomAsyncResponse> remappedAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -392,7 +394,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Future<?> sleepAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }
@@ -402,7 +404,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
         String title = myClassName+" Response<SleepResponse> sleepAsync("+request+") : ";
         String tid = " threadID ["+ Thread.currentThread().getId() + "]";
         if (DEBUG)
-            System.out.println(title + "Enter" + tid);
+            TestLogger.logger.debug(title + "Enter" + tid);
 
         return null;
     }

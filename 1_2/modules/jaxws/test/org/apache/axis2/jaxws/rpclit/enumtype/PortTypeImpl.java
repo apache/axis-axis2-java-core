@@ -20,6 +20,7 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
+import org.apache.axis2.jaxws.TestLogger;
 import org.test.rpclit.schema.ElementString;
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.rpclit.enumtype.PortTypeImpl")
@@ -31,9 +32,9 @@ public class PortTypeImpl implements PortType {
     public void echoString(Holder<ElementString> pString) {
        ElementString es = pString.value;
        if(es == es.A){
-           System.out.println("Enum A");
+           TestLogger.logger.debug("Enum A");
        }
-       System.out.println("resetting Enum to B");
+        TestLogger.logger.debug("resetting Enum to B");
        es = es.B;
        pString.value = es;
     }

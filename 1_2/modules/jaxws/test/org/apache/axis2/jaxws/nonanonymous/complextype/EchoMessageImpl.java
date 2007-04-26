@@ -6,6 +6,7 @@ package org.apache.axis2.jaxws.nonanonymous.complextype;
 import javax.jws.WebService;
 
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
+import org.apache.axis2.jaxws.TestLogger;
 
 @WebService(targetNamespace="http://testApp.jaxws",
             endpointInterface="org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType")
@@ -25,7 +26,7 @@ public class EchoMessageImpl implements EchoMessagePortType {
 	 */
 	public String echoMessage(String request) {
 		String response = null;
-		System.out.println("echoMessage received: " + request);
+        TestLogger.logger.debug("echoMessage received: " + request);
         response = request.replaceAll("Server", "Client");
         return response;
 

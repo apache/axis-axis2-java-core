@@ -64,33 +64,33 @@ public class ContextUtils {
 
         EndpointDescription description = jaxwsMessageContext.getEndpointDescription();
         if (description !=null) {
-        // Set the WSDL properties
-        ServiceDescription sd =
+            // Set the WSDL properties
+            ServiceDescription sd =
                     description.getServiceDescription();
-        if (sd != null) {
-            URL wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
-            if (wsdlLocation != null && !"".equals(wsdlLocation)) {
-                URI wsdlLocationURI = null;
-                try {
-                    wsdlLocationURI = wsdlLocation.toURI();
+            if (sd != null) {
+                URL wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
+                if (wsdlLocation != null && !"".equals(wsdlLocation)) {
+                    URI wsdlLocationURI = null;
+                    try {
+                        wsdlLocationURI = wsdlLocation.toURI();
+                    }
+                    catch (URISyntaxException ex) {
+                        // TODO: NLS/RAS
+                        log.warn("Unable to convert WSDL location URL to URI.  URL: " +
+                                wsdlLocation.toString() + "; Service: " + sd.getServiceQName(), ex);
+                    }
+                    soapMessageContext
+                            .put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
+                    soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION,
+                                                Scope.APPLICATION);
                 }
-                catch (URISyntaxException ex) {
-                    // TODO: NLS/RAS
-                    log.warn("Unable to convert WSDL location URL to URI.  URL: " +
-                            wsdlLocation.toString() + "; Service: " + sd.getServiceQName(), ex);
-                }
+    
                 soapMessageContext
-                        .put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
-                soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION,
-                                            Scope.APPLICATION);
-            }
-
-            soapMessageContext
-                    .put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
-            soapMessageContext
-                    .setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, Scope.APPLICATION);
-            if (log.isDebugEnabled()) {
-                log.debug("WSDL_SERVICE :" + sd.getServiceQName());
+                        .put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
+                soapMessageContext
+                        .setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, Scope.APPLICATION);
+                if (log.isDebugEnabled()) {
+                    log.debug("WSDL_SERVICE :" + sd.getServiceQName());
                 }
             }
         }
