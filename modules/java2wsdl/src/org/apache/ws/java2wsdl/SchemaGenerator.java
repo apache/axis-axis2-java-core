@@ -12,6 +12,8 @@ import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.bytecode.MethodTable;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JField;
@@ -54,6 +56,8 @@ import java.lang.reflect.Modifier;
 */
 
 public class SchemaGenerator implements Java2WSDLConstants {
+
+    private static final Log log = LogFactory.getLog(SchemaGenerator.class);
 
     public static final String NAME_SPACE_PREFIX = "ax2";// axis2 name space
 
@@ -196,10 +200,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
                 for (int i = 0; i < methods.length; i++) {
                     JMethod jMethod = methods[i];
-                    // Skip methods with volatile/bridge modifier
-                    if(Modifier.isVolatile(jMethod.getModifiers())) {
-                        continue;
-                    }
                     JAnnotation methodAnnon = jMethod.getAnnotation(AnnotationConstants.WEB_METHOD);
                     if (methodAnnon != null) {
                         if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
@@ -214,8 +214,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     }
 
                     if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
-                        throw new Exception(
-                                " Sorry we don't support methods overloading !!!! ");
+                        log.warn("We don't support methods overloading. Ignoring [" + jMethod.getQualifiedName() + "]");
+                        continue;
                     }
 
                     if (!jMethod.isPublic()) {
