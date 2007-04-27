@@ -19,7 +19,7 @@ The lib directory contains;
 8. axis2-tools-@axisVersion@.jar
 9. axis2-xmlbeans-@axisVersion@.jar
 10. axis2-saaj-@axisVersion@.jar
-11. axis2-soapmonitor-1.1-RC2.jar
+11. axis2-soapmonitor-1.2.jar
 
 and all 3rd party distributable dependencies of the above jars.
 
