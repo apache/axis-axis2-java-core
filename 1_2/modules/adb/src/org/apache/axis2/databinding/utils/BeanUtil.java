@@ -30,6 +30,8 @@ import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;
@@ -57,6 +59,8 @@ import java.util.Locale;
 public class BeanUtil {
 
     private static int nsCount = 1;
+
+    private static final Log log = LogFactory.getLog(BeanUtil.class);
 
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
@@ -323,6 +327,7 @@ public class BeanUtil {
                 try {
                     beanClass = Class.forName(instanceTypeName);
                 } catch (ClassNotFoundException ce) {
+                    log.warn(ce);
                     // This breaks samples , and Need to improve a bit to fully 
                     // support this so , Exception just ignore here, we can fix
                     // that later
