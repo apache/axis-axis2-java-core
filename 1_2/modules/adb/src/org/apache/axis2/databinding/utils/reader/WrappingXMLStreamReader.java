@@ -106,7 +106,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public String getAttributePrefix(int i) {
-        return reader.getAttributeLocalName(i);
+        return reader.getAttributePrefix(i);
     }
 
     public String getAttributeType(int i) {
