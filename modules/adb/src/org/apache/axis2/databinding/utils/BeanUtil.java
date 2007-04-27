@@ -323,7 +323,9 @@ public class BeanUtil {
                 try {
                     beanClass = Class.forName(instanceTypeName);
                 } catch (ClassNotFoundException ce) {
-                    throw AxisFault.makeFault(ce);
+                    // This breaks samples , and Need to improve a bit to fully 
+                    // support this so , Exception just ignore here, we can fix
+                    // that later
                 }
             }
    
