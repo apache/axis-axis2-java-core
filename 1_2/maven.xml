@@ -537,7 +537,7 @@
             </ant:fileset>
         </ant:copy>
 
-        <ant:war destfile="target/dist/axis2-${pom.currentVersion}.war"
+        <ant:war destfile="target/dist/axis2.war"
                  webxml="modules/webapp/conf/web.xml">
             <ant:lib dir="target/temp/war/lib">
                 <ant:include name="**"/>
@@ -813,36 +813,47 @@
         <ant:echo>| Creating: Axis2 Standard Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="src.temp.dir" value="target/temp/src/axis2-${pom.currentVersion}/src"/>
+        <ant:property name="src.temp.dir" value="target/temp/src/axis2-${pom.currentVersion}"/>
         <ant:mkdir dir="target/temp/src"/>
         <ant:mkdir dir="target/temp/src/axis2-${pom.currentVersion}"/>
         <ant:mkdir dir="${src.temp.dir}"/>
 
         <ant:copy toDir="${src.temp.dir}">
             <ant:fileset dir=".">
-                <ant:include name="**/etc/**"/>
-                <ant:include name="**/modules/java2wsdl/**"/>
-                <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
                 <ant:include name="**/modules/adb-codegen/**"/>
-                <ant:include name="**/modules/codegen/**"/>
-                <ant:include name="**/modules/webapp/**"/>
-                <ant:include name="**/modules/xmlbeans/**"/>
-                <ant:include name="**/modules/jibx/**"/>
-                <ant:include name="**/modules/jaxbri/**"/>
                 <ant:include name="**/modules/addressing/**"/>
+                <ant:include name="**/modules/codegen/**"/>
+                <ant:include name="**/modules/fastinfoset/**"/>
+                <ant:include name="**/modules/java2wsdl/**"/>
+                <ant:include name="**/modules/jaxbri/**"/>
+                <ant:include name="**/modules/jaxws/**"/>                			
+                <ant:include name="**/modules/jaxws-api/**"/>
+                <ant:include name="**/modules/jibx/**"/>
+                <ant:include name="**/modules/json/**"/>
+                <ant:include name="**/modules/kernel/**"/>
+                <ant:include name="**/modules/metadata/**"/>
+                <ant:include name="**/modules/mtompolicy/**"/>
+		<ant:include name="**/modules/parent/**"/>
                 <ant:include name="**/modules/saaj/**"/>
+                <ant:include name="**/modules/saaj-api/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:include name="**/modules/soapmonitor/**"/>
                 <ant:include name="**/modules/spring/**"/>
                 <ant:include name="**/modules/tool/**"/>
+                <ant:include name="**/modules/webapp/**"/>
+                <ant:include name="**/modules/xmlbeans/**"/>
+                <ant:include name="**/etc/**"/>
+
+
+
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
                 <ant:exclude name="**/modules/samples/eventing/**"/>
                 <ant:exclude name="**/modules/samples/security/**"/>
                 <ant:exclude name="xdocs/**"/>
-                <ant:exclude name="**/*class*/**"/>
+                <ant:exclude name="**/*.class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
                 <ant:exclude name="**/bin/**"/>
                 <ant:exclude name="**/*.log"/>
@@ -857,10 +868,11 @@
 
         <!-- Copy the master maven files for the standard src distro -->
         <ant:copy toFile="${src.temp.dir}/maven.xml">
-            <ant:fileset file="release-docs/maven-scripts/maven-std.xml"/>
+            <ant:fileset file="maven.xml"/>
         </ant:copy>
         <ant:copy toDir="${src.temp.dir}">
             <ant:fileset file="project.xml"/>
+            <ant:fileset file="pom.xml"/>
         </ant:copy>
 
         <!-- Copy the release documents -->
