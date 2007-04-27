@@ -275,7 +275,7 @@ public class BeanUtil {
             // For some reason, using QName(Constants.XSI_NAMESPACE, "type", "xsi") does not generate
             // an xsi:type attribtue properly for inner objects. So just using a simple QName("type").
             ArrayList objectAttributes = new ArrayList();
-            objectAttributes.add(new QName("type"));
+            objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
             objectAttributes.add(beanObject.getClass().getName());
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), objectAttributes.toArray(),
                                               typeTable, qualified);
@@ -317,7 +317,8 @@ public class BeanUtil {
             // to support polymorphism in POJO approach.
             // Retrieve the type name of the instance from the 'type' attribute
             // and retrieve the class.
-            String instanceTypeName = beanElement.getAttributeValue(new QName("type"));
+            String instanceTypeName = beanElement.getAttributeValue(
+                    new QName(Constants.XSI_NAMESPACE,"type","xsi"));
             if ((instanceTypeName != null) && (! beanClass.isArray())) {
                 try {
                     beanClass = Class.forName(instanceTypeName);
