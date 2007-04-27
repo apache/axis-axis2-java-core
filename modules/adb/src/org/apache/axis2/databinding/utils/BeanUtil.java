@@ -278,10 +278,10 @@ public class BeanUtil {
             // support polymorphism in POJO approach.
             // For some reason, using QName(Constants.XSI_NAMESPACE, "type", "xsi") does not generate
             // an xsi:type attribtue properly for inner objects. So just using a simple QName("type").
-            ArrayList objectAttributes = new ArrayList();
-            objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
-            objectAttributes.add(beanObject.getClass().getName());
-            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), objectAttributes.toArray(),
+//            ArrayList objectAttributes = new ArrayList();
+//            objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
+//            objectAttributes.add(beanObject.getClass().getName());
+            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null,
                                               typeTable, qualified);
 
         } catch (java.io.IOException e) {
@@ -321,18 +321,18 @@ public class BeanUtil {
             // to support polymorphism in POJO approach.
             // Retrieve the type name of the instance from the 'type' attribute
             // and retrieve the class.
-            String instanceTypeName = beanElement.getAttributeValue(
-                    new QName(Constants.XSI_NAMESPACE,"type","xsi"));
-            if ((instanceTypeName != null) && (! beanClass.isArray())) {
-                try {
-                    beanClass = Class.forName(instanceTypeName);
-                } catch (ClassNotFoundException ce) {
-                    log.warn(ce);
+//            String instanceTypeName = beanElement.getAttributeValue(
+//                    new QName(Constants.XSI_NAMESPACE,"type","xsi"));
+//            if ((instanceTypeName != null) && (! beanClass.isArray())) {
+//                try {
+//                    beanClass = Class.forName(instanceTypeName);
+//                } catch (ClassNotFoundException ce) {
+//                    log.warn(ce);
                     // This breaks samples , and Need to improve a bit to fully 
                     // support this so , Exception just ignore here, we can fix
                     // that later
-                }
-            }
+//                }
+//            }
    
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
@@ -367,16 +367,16 @@ public class BeanUtil {
                     PropertyDescriptor proprty = propDescs[i];
                     properties.put(proprty.getName(), proprty);
                 }
-
+                 beanObj = objectSupplier.getObject(beanClass);
                 boolean tuched = false;
                 Iterator elements = beanElement.getChildren();
                 while (elements.hasNext()) {
                     // the beanClass could be an abstract one.
                     // so create an instance only if there are elements, in
                     // which case a concrete subclass is available to instantiate.
-                    if (beanObj == null) {
-                        beanObj = objectSupplier.getObject(beanClass);
-                    }
+//                    if (beanObj == null) {
+//                        beanObj = objectSupplier.getObject(beanClass);
+//                    }
                     OMElement parts;
                     Object objValue = elements.next();
                     if (objValue instanceof OMElement) {
