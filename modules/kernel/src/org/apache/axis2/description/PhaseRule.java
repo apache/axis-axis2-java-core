@@ -17,6 +17,8 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axis2.phaseresolver.PhaseException;
+
 import java.io.Serializable;
 
 /**
@@ -53,14 +55,9 @@ public class PhaseRule implements Serializable {
      * Constructor PhaseRule.
      */
     public PhaseRule() {
-        this.before = "";
-        this.after = "";
-        this.phaseName = "";
     }
 
     public PhaseRule(String phaseName) {
-        this.before = "";
-        this.after = "";
         this.phaseName = phaseName;
     }
 
@@ -110,27 +107,29 @@ public class PhaseRule implements Serializable {
     }
 
     /**
-     * Method setAfter.
+     * Set the "after" name for this rule.
      *
-     * @param after
+     * @param after the name of the "after" handler
      */
     public void setAfter(String after) {
+        if ("".equals(after)) after = null;
         this.after = after;
     }
 
     /**
-     * Method setBefore.
+     * Set the "before" name for this rule.
      *
-     * @param before
+     * @param before the name of the "before" handler
      */
     public void setBefore(String before) {
+        if ("".equals(before)) before = null;
         this.before = before;
     }
 
     /**
      * Method setPhaseFirst.
      *
-     * @param phaseFirst
+     * @param phaseFirst true if this rule defines the first Handler in a Phase
      */
     public void setPhaseFirst(boolean phaseFirst) {
         this.phaseFirst = phaseFirst;
@@ -139,7 +138,7 @@ public class PhaseRule implements Serializable {
     /**
      * Method setPhaseLast.
      *
-     * @param phaseLast
+     * @param phaseLast true if this rule defines the last Handler in a Phase
      */
     public void setPhaseLast(boolean phaseLast) {
         this.phaseLast = phaseLast;
@@ -148,9 +147,27 @@ public class PhaseRule implements Serializable {
     /**
      * Method setPhaseName.
      *
-     * @param phaseName
+     * @param phaseName the name of the Phase
      */
     public void setPhaseName(String phaseName) {
         this.phaseName = phaseName;
+    }
+
+    /**
+     * Validate "sane" rules - cannot have both phaseFirst/phaseLast and before/after
+     *
+     * @throws PhaseException if phaseFirst/phaseLast is set along with before/after
+     */
+    public void validate() throws PhaseException {
+        if (before != null || after != null) {
+            if (phaseFirst) {
+                throw new PhaseException(
+                        "Invalid PhaseRule (phaseFirst is set along with before/after)");
+            }
+            if (phaseLast) {
+                throw new PhaseException(
+                        "Invalid PhaseRule (phaseLast is set along with before/after)");
+            }
+        }
     }
 }

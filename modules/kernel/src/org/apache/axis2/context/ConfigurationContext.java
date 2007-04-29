@@ -101,11 +101,7 @@ public class ConfigurationContext extends AbstractContext {
 
     private static boolean shouldClusterBeInitiated(ClusterManager clusterManager) {
         Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
-        if (param != null && JavaUtils.isTrueExplicitly(param.getValue())) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(param != null && JavaUtils.isTrueExplicitly(param.getValue()));
     }
 
     protected void finalize() throws Throwable {

@@ -19,6 +19,7 @@ package org.apache.axis2.phaseresolver;
 
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 
@@ -51,7 +52,12 @@ public class PhaseHolder {
      * @throws PhaseException
      */
     public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
-        String phaseName = handlerDesc.getRules().getPhaseName();
+        PhaseRule rule = handlerDesc.getRules();
+
+        // Make sure this rule makes sense (throws PhaseException if not)
+        rule.validate();
+
+        String phaseName = rule.getPhaseName();
         if (Phase.ALL_PHASES.equals(phaseName)) {
             handlerDesc.getRules().setBefore("");
             handlerDesc.getRules().setAfter("");

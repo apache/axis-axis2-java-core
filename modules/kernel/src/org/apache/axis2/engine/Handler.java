@@ -23,7 +23,11 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 
 /**
- * Interface Handler
+ * A Handler represents a piece of message processing functionality in Axis2.
+ *
+ * Handlers are combined into chains and phases in order to provide customizable functionality
+ * such as security, reliability, etc.  Handlers must be multi-thread safe and should keep all
+ * their state in Context objects (see the org.apache.axis2.context package).
  */
 public interface Handler {
 
@@ -35,11 +39,11 @@ public interface Handler {
     public void cleanup();
 
     /**
-     * Method init.
+     * Initialize a Handler.
      *
-     * @param handlerdesc
+     * @param handlerDesc the HandlerDescription for this Handler
      */
-    public void init(HandlerDescription handlerdesc);
+    public void init(HandlerDescription handlerDesc);
 
     /**
      * This method will be called on each registered handler when a message
@@ -76,24 +80,24 @@ public interface Handler {
     public void flowComplete(MessageContext msgContext);
 
     /**
-     * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
+     * Gets the HandlerDescription of a handler.
      *
      * @return Returns HandlerDescription.
      */
     public HandlerDescription getHandlerDesc();
 
     /**
-     * Method getName.
+     * Return the name of this Handler
      *
-     * @return Returns String
+     * @return the handler's name as a String
      */
     public String getName();
 
     /**
-     * Method getParameter.
+     * Get a Parameter from this Handler
      *
-     * @param name
-     * @return Returns Parameter.
+     * @param name the name of the desired value
+     * @return the Parameter, or null.
      */
     public Parameter getParameter(String name);
 

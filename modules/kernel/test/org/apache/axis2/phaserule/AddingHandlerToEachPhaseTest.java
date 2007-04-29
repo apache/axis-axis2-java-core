@@ -28,20 +28,16 @@ import java.util.ArrayList;
 */
 
 public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
-
-    AddingHandlerToEachPhaseTest phaserul;
-    AxisConfiguration axisSytem;
+    AxisConfiguration axisConfig;
 
     public AddingHandlerToEachPhaseTest(String testName) {
         super(testName);
     }
 
     public void testPhaseRules() throws Exception {
-        super.setUp();
         //TODO fix me
-        phaserul = new AddingHandlerToEachPhaseTest("");
-        axisSytem = new AxisConfiguration();
-        ArrayList inPhase = axisSytem.getGlobalInFlow();
+        axisConfig = new AxisConfiguration();
+        ArrayList inPhase = axisConfig.getGlobalInFlow();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -80,9 +76,8 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
     public void testPhaseRulesWithPhaseFirst() throws Exception {
         super.setUp();
         //TODO fix me
-        phaserul = new AddingHandlerToEachPhaseTest("");
-        axisSytem = new AxisConfiguration();
-        ArrayList inPhase = axisSytem.getGlobalInFlow();
+        axisConfig = new AxisConfiguration();
+        ArrayList inPhase = axisConfig.getGlobalInFlow();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -114,11 +109,9 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
     }
 
     public void testPhaseRulesWithAfter() throws Exception {
-        super.setUp();
         //TODO fix me
-        phaserul = new AddingHandlerToEachPhaseTest("");
-        axisSytem = new AxisConfiguration();
-        ArrayList inPhase = axisSytem.getGlobalInFlow();
+        axisConfig = new AxisConfiguration();
+        ArrayList inPhase = axisConfig.getGlobalInFlow();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -134,7 +127,6 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
         hm.setHandler(h1);
         hm.getRules().setPhaseName("*");
         hm.getRules().setPhaseFirst(true);
-        hm.getRules().setAfter("nothing");
 
         PhaseHolder ph = new PhaseHolder(inPhase);
         ph.addHandler(hm);
@@ -142,7 +134,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
             Phase phase = (Phase) inPhase.get(i);
             ArrayList hnadles = phase.getHandlers();
             Handler handler = (Handler) hnadles.get(0);
-            assertEquals("", handler.getHandlerDesc().getRules().getAfter());
+            assertNull(handler.getHandlerDesc().getRules().getAfter());
         }
     }
 }
