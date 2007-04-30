@@ -161,7 +161,8 @@ public class JAXWSTest extends TestCase {
         // This test fails only on Solaris
         //suite.addTestSuite(MtomSampleByteArrayTests.class);
         suite.addTestSuite(BareTests.class);
-        suite.addTestSuite(DocLitBareMinTests.class);
+        // Intermittent failure, logged bug AXIS2-2605
+        //suite.addTestSuite(DocLitBareMinTests.class);
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WSGenTests.class);
         suite.addTestSuite(WrapTests.class);
