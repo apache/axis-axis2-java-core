@@ -54,7 +54,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription pre = new HandlerDescription();
         pre.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h1 = new PhaseRuleHandlers();
+        Handler h1 = new PhaseRuleHandler();
         h1.init(pre);
         pre.setHandler(h1);
         pre.setName("pre-H1");
@@ -65,7 +65,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription pre2 = new HandlerDescription();
         pre2.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h2 = new PhaseRuleHandlers();
+        Handler h2 = new PhaseRuleHandler();
         h2.init(pre2);
         pre2.setHandler(h2);
         pre2.setName("dispatch");
@@ -77,7 +77,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h3 = new PhaseRuleHandlers();
+        Handler h3 = new PhaseRuleHandler();
         h3.init(hm);
         hm.setHandler(h3);
         hm.setName("pre-H2");
@@ -89,7 +89,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm1 = new HandlerDescription();
         hm1.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h4 = new PhaseRuleHandlers();
+        Handler h4 = new PhaseRuleHandler();
         h4.init(hm1);
         hm1.setHandler(h4);
         hm1.setName("pre-H3");
@@ -101,7 +101,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
         HandlerDescription hm2 = new HandlerDescription();
         hm2.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h5 = new PhaseRuleHandlers();
+        Handler h5 = new PhaseRuleHandler();
         h5.init(hm2);
         hm2.setHandler(h5);
         hm2.setName("H3");

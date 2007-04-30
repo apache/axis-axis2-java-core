@@ -49,7 +49,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
 
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h1 = new PhaseRuleHandlers();
+        Handler h1 = new PhaseRuleHandler();
         hm.setHandler(h1);
         hm.getRules().setPhaseName("*");
 
@@ -89,7 +89,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
 
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h1 = new PhaseRuleHandlers();
+        Handler h1 = new PhaseRuleHandler();
         hm.setHandler(h1);
         hm.getRules().setPhaseName("*");
         hm.getRules().setPhaseFirst(true);
@@ -123,7 +123,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
 
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h1 = new PhaseRuleHandlers();
+        Handler h1 = new PhaseRuleHandler();
         hm.setHandler(h1);
         hm.getRules().setPhaseName("*");
         hm.getRules().setPhaseFirst(true);

@@ -2,29 +2,27 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.ContextFactory;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.AxisService;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.om.OMElement;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -141,7 +139,7 @@ public class DispatchPhase extends Phase {
         if ((msgContext.getOperationContext() != null)
                 && (serviceContext != null)) {
             msgContext.setServiceGroupContextId(
-                    ((ServiceGroupContext) serviceContext.getParent()).getId());
+                    ((ServiceGroupContext)serviceContext.getParent()).getId());
             return;
         }
         if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
@@ -149,9 +147,9 @@ public class DispatchPhase extends Phase {
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
-        if (axisOperation == null) {
-            return;
-        }
+//        if (axisOperation == null) {
+//            return;
+//        }
         OperationContext operationContext =
                 axisOperation.findForExistingOperationContext(msgContext);
 

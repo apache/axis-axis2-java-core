@@ -60,7 +60,7 @@ public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
 
     public static void addHandler(Flow flow, Handler handler, String phaseName) {
-        HandlerDescription handlerDesc = new HandlerDescription();
+        HandlerDescription handlerDesc = new HandlerDescription(handler.getName());
         PhaseRule rule = new PhaseRule(phaseName);
 
         handlerDesc.setRules(rule);

@@ -122,8 +122,8 @@ public class Phase implements Handler {
         }
 
         if (isOneHandler) {
-            throw new PhaseException(this.getPhaseName()
-                    + "can only have one handler, since there is a "
+            throw new PhaseException("Phase '" + this.getPhaseName()
+                    + "' can only have one handler, since there is a "
                     + "handler with both phaseFirst and phaseLast true ");
         }
 
@@ -222,10 +222,15 @@ public class Phase implements Handler {
 
             if ((afterName != null) && (afterIndex == -1)) {
                 if (tempHandler.getName().equals(afterName)) {
-                    // Found the "before" handler
+                    // Found the "after" handler
                     afterIndex = i;
                 }
             }
+        }
+
+        if ((beforeIndex > -1) && (afterIndex >= beforeIndex)) {
+            throw new PhaseException("Can't insert handler because " + beforeName + " is before " +
+                    afterName + " in Phase '" + phaseName + "'");
         }
 
         if (phaseFirstSet && beforeIndex == 0) {
@@ -380,10 +385,9 @@ public class Phase implements Handler {
         if (phaseFirstSet) {
             throw new PhaseException("PhaseFirst has been set already, cannot have two"
                     + " phaseFirst Handlers for Phase '" + this.getPhaseName() + "'");
-        } else {
-            handlers.add(0, handler);
-            phaseFirstSet = true;
         }
+        handlers.add(0, handler);
+        phaseFirstSet = true;
     }
 
     /**
@@ -400,12 +404,7 @@ public class Phase implements Handler {
                     + this.getPhaseName());
         }
 
-        if (handlers.size() == 0) {
-            handlers.add(handler);
-        } else {
-            handlers.add(handlers.size() - 1, handler);
-        }
-
+        handlers.add(handler);
         phaseLastSet = true;
     }
 

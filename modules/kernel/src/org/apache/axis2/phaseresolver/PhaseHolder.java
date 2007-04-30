@@ -66,7 +66,7 @@ public class PhaseHolder {
                 phase.addHandler(handlerDesc);
             }
         } else {
-            if (isPhaseExist(phaseName)) {
+            if (phaseExists(phaseName)) {
                 getPhase(phaseName).addHandler(handlerDesc);
             } else {
                 throw new PhaseException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE,
@@ -93,11 +93,12 @@ public class PhaseHolder {
     }
 
     /**
-     * Method isPhaseExist
+     * Check if a named Phase exists in this holder.
      *
-     * @param phaseName
+     * @param phaseName name to check
+     * @return true if a Phase matching the name was found, false otherwise
      */
-    private boolean isPhaseExist(String phaseName) {
+    private boolean phaseExists(String phaseName) {
         for (int i = 0; i < phaseList.size(); i++) {
             Phase phase = (Phase) phaseList.get(i);
 

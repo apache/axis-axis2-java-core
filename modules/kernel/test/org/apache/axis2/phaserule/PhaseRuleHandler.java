@@ -24,14 +24,16 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
+public class PhaseRuleHandler extends AbstractHandler {
+    private static final Log log = LogFactory.getLog(PhaseRuleHandler.class);
+    private String name;
 
-public class PhaseRuleHandlers extends AbstractHandler implements Handler {
+    public PhaseRuleHandler() {
+    }
 
-    private static final long serialVersionUID = 2941436920684525811L;
-
-    private static final Log log = LogFactory.getLog(PhaseRuleHandlers.class);
-    private QName name;
+    public PhaseRuleHandler(String name) {
+        this.name = name;
+    }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + name + " Handler Running :)");
@@ -42,7 +44,7 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
         log.info("I am " + name + " Handler Running :)");
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

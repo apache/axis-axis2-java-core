@@ -388,18 +388,17 @@ public class DescriptionBuilder implements DeploymentConstants {
                                                 ParameterInclude parent,
                                                 String containingPhase)
             throws DeploymentException {
-        HandlerDescription handler = new HandlerDescription();
 
         // Setting handler name
         OMAttribute name_attribute = handler_element.getAttribute(new QName(
                 ATTRIBUTE_NAME));
 
-        if (name_attribute == null) {
+        if (name_attribute == null || name_attribute.getAttributeValue().equals("")) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.INVALID_HANDLER, "Unknown", "Name missing"));
-        } else {
-            handler.setName(name_attribute.getAttributeValue());
         }
+
+        HandlerDescription handler = new HandlerDescription(name_attribute.getAttributeValue());
 
         // Setting handler class name
         OMAttribute class_attribute = handler_element.getAttribute(new QName(
