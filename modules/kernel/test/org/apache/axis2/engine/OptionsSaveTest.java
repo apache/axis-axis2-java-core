@@ -26,6 +26,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -35,6 +37,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class OptionsSaveTest extends TestCase {
+    protected static final Log log = LogFactory.getLog(OptionsSaveTest.class);
 
     private transient QName serviceName = new QName("NullService");
     private transient QName operationName = new QName("DummyOp");
@@ -71,7 +74,7 @@ public class OptionsSaveTest extends TestCase {
         ConfigurationContext configurationContext = new ConfigurationContext(axisConfiguration);
 
 
-        System.out.println("OptionsSaveTest:testSaveAndRestore():  BEGIN ---------------");
+        log.debug("OptionsSaveTest:testSaveAndRestore():  BEGIN ---------------");
 
         // ---------------------------------------------------------
         // setup an options object to use
@@ -131,13 +134,11 @@ public class OptionsSaveTest extends TestCase {
         try {
             theFile = File.createTempFile("optionsSave", null);
             theFilename = theFile.getName();
-            System.out.println(
-                    "OptionsSaveTest:testSaveAndRestore(): temp file = [" + theFilename + "]");
+            log.debug("OptionsSaveTest:testSaveAndRestore(): temp file = [" + theFilename + "]");
         }
         catch (Exception ex) {
-            System.out.println(
-                    "OptionsSaveTest:testSaveAndRestore(): error creating temp file = [" +
-                            ex.getMessage() + "]");
+            log.debug("OptionsSaveTest:testSaveAndRestore(): error creating temp file = [" +
+                    ex.getMessage() + "]");
             theFile = null;
         }
 
@@ -154,7 +155,7 @@ public class OptionsSaveTest extends TestCase {
                 ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
                 // try to save the message context
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): saving .....");
+                log.debug("OptionsSaveTest:testSaveAndRestore(): saving .....");
                 saved = false;
                 outObjStream.writeObject(options);
 
@@ -165,22 +166,21 @@ public class OptionsSaveTest extends TestCase {
                 outStream.close();
 
                 saved = true;
-                System.out.println(
+                log.debug(
                         "OptionsSaveTest:testSaveAndRestore(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): file size after save [" +
+                log.debug("OptionsSaveTest:testSaveAndRestore(): file size after save [" +
                         filesize + "]   temp file = [" + theFilename + "]");
             }
             catch (Exception ex2) {
                 if (saved != true) {
-                    System.out.println("OptionsSaveTest:testSaveAndRestore(): error during save [" +
+                    log.debug("OptionsSaveTest:testSaveAndRestore(): error during save [" +
                             ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
                 } else {
-                    System.out.println(
-                            "OptionsSaveTest:testSaveAndRestore(): error during restore [" +
-                                    ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
+                    log.debug("OptionsSaveTest:testSaveAndRestore(): error during restore [" +
+                            ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
                 }
             }
@@ -199,7 +199,7 @@ public class OptionsSaveTest extends TestCase {
                 ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
                 // try to restore the options
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): restoring .....");
+                log.debug("OptionsSaveTest:testSaveAndRestore(): restoring .....");
                 restored = false;
                 Options options_restored = (Options) inObjStream.readObject();
                 inObjStream.close();
@@ -208,15 +208,15 @@ public class OptionsSaveTest extends TestCase {
                 options_restored.activate(configurationContext);
 
                 restored = true;
-                System.out.println(
+                log.debug(
                         "OptionsSaveTest:testSaveAndRestore(): ....restored operation completed.....");
 
                 comparesOk = options_restored.isEquivalent(options);
-                System.out.println("OptionsSaveTest:testSaveAndRestore():   Options equivalency [" +
+                log.debug("OptionsSaveTest:testSaveAndRestore():   Options equivalency [" +
                         comparesOk + "]");
             }
             catch (Exception ex2) {
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): error during restore [" +
+                log.debug("OptionsSaveTest:testSaveAndRestore(): error during restore [" +
                         ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
@@ -244,7 +244,7 @@ public class OptionsSaveTest extends TestCase {
         // this is false when there are problems with the temporary file
         assertTrue(done);
 
-        System.out.println("OptionsSaveTest:testSaveAndRestore():  END ---------------");
+        log.debug("OptionsSaveTest:testSaveAndRestore():  END ---------------");
     }
 
 

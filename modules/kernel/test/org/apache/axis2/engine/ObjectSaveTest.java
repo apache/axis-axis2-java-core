@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.Externalizable;
@@ -37,7 +39,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ObjectSaveTest extends TestCase {
-	private String testArg = null;
+    protected static final Log log = LogFactory.getLog(ObjectSaveTest.class);
+    
+    private String testArg = null;
 
 	// simple constructor needed for nested class Externalizable interface
 	public ObjectSaveTest() {
@@ -59,8 +63,7 @@ public class ObjectSaveTest extends TestCase {
 		boolean restored = false;
 		boolean done = false;
 
-		System.out
-				.println("ObjectSaveTest:testObjectSerializable():  BEGIN ---------------");
+        log.debug("ObjectSaveTest:testObjectSerializable():  BEGIN ---------------");
 
 		// ---------------------------------------------------------
 		// setup an object to use
@@ -73,13 +76,11 @@ public class ObjectSaveTest extends TestCase {
 		try {
 			theFile = File.createTempFile("objectTest", null);
 			theFilename = theFile.getName();
-			System.out
-					.println("ObjectSaveTest:testObjectSerializable(): temp file = ["
-							+ theFilename + "]");
+            log.debug("ObjectSaveTest:testObjectSerializable(): temp file = ["
+                    + theFilename + "]");
 		} catch (Exception ex) {
-			System.out
-					.println("ObjectSaveTest:testObjectSerializable(): error creating temp file = ["
-							+ ex.getMessage() + "]");
+            log.debug("ObjectSaveTest:testObjectSerializable(): error creating temp file = ["
+                    + ex.getMessage() + "]");
 			theFile = null;
 		}
 
@@ -97,8 +98,7 @@ public class ObjectSaveTest extends TestCase {
 						outStream);
 
 				// try to save
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): saving .....");
+                log.debug("ObjectSaveTest:testObjectSerializable(): saving .....");
 				saved = false;
 				ObjectStateUtils.writeObject(outObjStream, obj,
 						"testObject:Serializable");
@@ -110,22 +110,20 @@ public class ObjectSaveTest extends TestCase {
 				outStream.close();
 
 				saved = true;
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): ....save operation completed.....");
+                log.debug(
+                        "ObjectSaveTest:testObjectSerializable(): ....save operation completed.....");
 
 				long filesize = theFile.length();
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): file size after save ["
-								+ filesize
-								+ "]   temp file = ["
-								+ theFilename
-								+ "]");
+                log.debug("ObjectSaveTest:testObjectSerializable(): file size after save ["
+                        + filesize
+                        + "]   temp file = ["
+                        + theFilename
+                        + "]");
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): error during save ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testObjectSerializable(): error during save ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -143,8 +141,7 @@ public class ObjectSaveTest extends TestCase {
 				ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
 				// try to restore the options
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): restoring .....");
+                log.debug("ObjectSaveTest:testObjectSerializable(): restoring .....");
 				restored = false;
 				MetaDataEntry restored_obj = (MetaDataEntry) ObjectStateUtils
 						.readObject(inObjStream, "testObject:serializable");
@@ -152,15 +149,14 @@ public class ObjectSaveTest extends TestCase {
 				inStream.close();
 
 				restored = true;
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): ....restored operation completed.....");
+                log.debug(
+                        "ObjectSaveTest:testObjectSerializable(): ....restored operation completed.....");
 
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): error during restore ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testObjectSerializable(): error during restore ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -184,8 +180,7 @@ public class ObjectSaveTest extends TestCase {
 		// this is false when there are problems with the temporary file
 		assertTrue(done);
 
-		System.out
-				.println("ObjectSaveTest:testObjectSerializable():  END ---------------");
+        log.debug("ObjectSaveTest:testObjectSerializable():  END ---------------");
 	}
 
 	public void testObjectNotSerializable() throws Exception {
@@ -196,8 +191,7 @@ public class ObjectSaveTest extends TestCase {
 		boolean expected_exception = false;
 		boolean done = false;
 
-		System.out
-				.println("ObjectSaveTest:testObjectNotSerializable():  BEGIN ---------------");
+        log.debug("ObjectSaveTest:testObjectNotSerializable():  BEGIN ---------------");
 
 		// ---------------------------------------------------------
 		// setup an object to use
@@ -210,13 +204,11 @@ public class ObjectSaveTest extends TestCase {
 		try {
 			theFile = File.createTempFile("objectTest", null);
 			theFilename = theFile.getName();
-			System.out
-					.println("ObjectSaveTest:testObjectNotSerializable(): temp file = ["
-							+ theFilename + "]");
+            log.debug("ObjectSaveTest:testObjectNotSerializable(): temp file = ["
+                    + theFilename + "]");
 		} catch (Exception ex) {
-			System.out
-					.println("ObjectSaveTest:testObjectNotSerializable(): error creating temp file = ["
-							+ ex.getMessage() + "]");
+            log.debug("ObjectSaveTest:testObjectNotSerializable(): error creating temp file = ["
+                    + ex.getMessage() + "]");
 			theFile = null;
 		}
 
@@ -235,23 +227,21 @@ public class ObjectSaveTest extends TestCase {
 				outObjStream = new ObjectOutputStream(outStream);
 
 				// try to save
-				System.out
-						.println("ObjectSaveTest:testObjectNotSerializable(): saving .....");
+                log.debug("ObjectSaveTest:testObjectNotSerializable(): saving .....");
 				saved = false;
 				ObjectStateUtils.writeObject(outObjStream, obj,
 						"testObject:NotSerializable");
 
 				saved = true;
-				System.out
-						.println("ObjectSaveTest:testObjectNotSerializable(): ....save operation completed.....");
+                log.debug(
+                        "ObjectSaveTest:testObjectNotSerializable(): ....save operation completed.....");
 
 				long filesize = theFile.length();
-				System.out
-						.println("ObjectSaveTest:testObjectNotSerializable(): file size after save ["
-								+ filesize
-								+ "]   temp file = ["
-								+ theFilename
-								+ "]");
+                log.debug("ObjectSaveTest:testObjectNotSerializable(): file size after save ["
+                        + filesize
+                        + "]   temp file = ["
+                        + theFilename
+                        + "]");
 			} catch (Exception ex2) {
 				// expect an error here
 				// ObjectStateUtils catches the NotSerializableException and
@@ -259,11 +249,10 @@ public class ObjectSaveTest extends TestCase {
 				if (ex2 instanceof NotSerializableException) {
 					expected_exception = true;
 				} else {
-					System.out
-							.println("ObjectSaveTest:testObjectNotSerializable():  save ["
-									+ ex2.getClass().getName()
-									+ " : "
-									+ ex2.getMessage() + "]");
+                    log.debug("ObjectSaveTest:testObjectNotSerializable():  save ["
+                            + ex2.getClass().getName()
+                            + " : "
+                            + ex2.getMessage() + "]");
 				}
 			}
 			// close out the streams
@@ -284,8 +273,7 @@ public class ObjectSaveTest extends TestCase {
 				ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
 				// try to restore the options
-				System.out
-						.println("ObjectSaveTest:testObjectSerializable(): restoring .....");
+                log.debug("ObjectSaveTest:testObjectSerializable(): restoring .....");
 				restored = false;
 				Object restored_obj = ObjectStateUtils.readObject(inObjStream,
 						"testObject:NotSerializable");
@@ -293,15 +281,14 @@ public class ObjectSaveTest extends TestCase {
 				inStream.close();
 
 				restored = true;
-				System.out
-						.println("ObjectSaveTest:testObjectNotSerializable(): ....restored operation completed.....");
+                log.debug(
+                        "ObjectSaveTest:testObjectNotSerializable(): ....restored operation completed.....");
 
 			} catch (Exception ex) {
-				System.out
-						.println("ObjectSaveTest:testObjectNotSerializable(): error during restore ["
-								+ ex.getClass().getName()
-								+ " : "
-								+ ex.getMessage() + "]");
+                log.debug("ObjectSaveTest:testObjectNotSerializable(): error during restore ["
+                        + ex.getClass().getName()
+                        + " : "
+                        + ex.getMessage() + "]");
 				ex.printStackTrace();
 			}
 
@@ -321,8 +308,7 @@ public class ObjectSaveTest extends TestCase {
 			assertTrue(expected_exception);
 		}
 
-		System.out
-				.println("ObjectSaveTest:testObjectNotSerializable():  END ---------------");
+        log.debug("ObjectSaveTest:testObjectNotSerializable():  END ---------------");
 	}
 
 	public void testArrayList() throws Exception {
@@ -333,8 +319,7 @@ public class ObjectSaveTest extends TestCase {
 		boolean done = false;
 		boolean comparesOK = false;
 
-		System.out
-				.println("ObjectSaveTest:testArrayList():  BEGIN ---------------");
+        log.debug("ObjectSaveTest:testArrayList():  BEGIN ---------------");
 
 		// ---------------------------------------------------------
 		// setup the object to use
@@ -358,12 +343,11 @@ public class ObjectSaveTest extends TestCase {
 		try {
 			theFile = File.createTempFile("arraylistTest", null);
 			theFilename = theFile.getName();
-			System.out.println("ObjectSaveTest:testArrayList(): temp file = ["
-					+ theFilename + "]");
+            log.debug("ObjectSaveTest:testArrayList(): temp file = ["
+                    + theFilename + "]");
 		} catch (Exception ex) {
-			System.out
-					.println("ObjectSaveTest:testArrayList(): error creating temp file = ["
-							+ ex.getMessage() + "]");
+            log.debug("ObjectSaveTest:testArrayList(): error creating temp file = ["
+                    + ex.getMessage() + "]");
 			theFile = null;
 		}
 
@@ -381,8 +365,7 @@ public class ObjectSaveTest extends TestCase {
 						outStream);
 
 				// try to save
-				System.out
-						.println("ObjectSaveTest:testArrayList(): saving .....");
+                log.debug("ObjectSaveTest:testArrayList(): saving .....");
 				saved = false;
 				ObjectStateUtils.writeArrayList(outObjStream, obj,
 						"testObject:ArrayList");
@@ -394,22 +377,19 @@ public class ObjectSaveTest extends TestCase {
 				outStream.close();
 
 				saved = true;
-				System.out
-						.println("ObjectSaveTest:testArrayList(): ....save operation completed.....");
+                log.debug("ObjectSaveTest:testArrayList(): ....save operation completed.....");
 
 				long filesize = theFile.length();
-				System.out
-						.println("ObjectSaveTest:testArrayList(): file size after save ["
-								+ filesize
-								+ "]   temp file = ["
-								+ theFilename
-								+ "]");
+                log.debug("ObjectSaveTest:testArrayList(): file size after save ["
+                        + filesize
+                        + "]   temp file = ["
+                        + theFilename
+                        + "]");
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testArrayList(): error during save ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testArrayList(): error during save ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -429,8 +409,7 @@ public class ObjectSaveTest extends TestCase {
 				ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
 				// try to restore the options
-				System.out
-						.println("ObjectSaveTest:testArrayList(): restoring .....");
+                log.debug("ObjectSaveTest:testArrayList(): restoring .....");
 				restored = false;
 				restored_obj = ObjectStateUtils.readArrayList(inObjStream,
 						"testObject:ArrayList");
@@ -438,15 +417,13 @@ public class ObjectSaveTest extends TestCase {
 				inStream.close();
 
 				restored = true;
-				System.out
-						.println("ObjectSaveTest:testArrayList(): ....restored operation completed.....");
+                log.debug("ObjectSaveTest:testArrayList(): ....restored operation completed.....");
 
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testArrayList(): error during restore ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testArrayList(): error during restore ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -481,8 +458,7 @@ public class ObjectSaveTest extends TestCase {
 		// this is false when there are problems with the temporary file
 		assertTrue(done);
 
-		System.out
-				.println("ObjectSaveTest:testArrayList():  END ---------------");
+        log.debug("ObjectSaveTest:testArrayList():  END ---------------");
 	}
 
 	public void testHashMap() throws Exception {
@@ -493,8 +469,7 @@ public class ObjectSaveTest extends TestCase {
 		boolean done = false;
 		boolean comparesOK = false;
 
-		System.out
-				.println("ObjectSaveTest:testHashMap():  BEGIN ---------------");
+        log.debug("ObjectSaveTest:testHashMap():  BEGIN ---------------");
 
 		// ---------------------------------------------------------
 		// setup the object to use
@@ -520,12 +495,11 @@ public class ObjectSaveTest extends TestCase {
 		try {
 			theFile = File.createTempFile("hashmapTest", null);
 			theFilename = theFile.getName();
-			System.out.println("ObjectSaveTest:testHashMap(): temp file = ["
-					+ theFilename + "]");
+            log.debug("ObjectSaveTest:testHashMap(): temp file = ["
+                    + theFilename + "]");
 		} catch (Exception ex) {
-			System.out
-					.println("ObjectSaveTest:testHashMap(): error creating temp file = ["
-							+ ex.getMessage() + "]");
+            log.debug("ObjectSaveTest:testHashMap(): error creating temp file = ["
+                    + ex.getMessage() + "]");
 			theFile = null;
 		}
 
@@ -543,8 +517,7 @@ public class ObjectSaveTest extends TestCase {
 						outStream);
 
 				// try to save
-				System.out
-						.println("ObjectSaveTest:testHashMap(): saving .....");
+                log.debug("ObjectSaveTest:testHashMap(): saving .....");
 				saved = false;
 				ObjectStateUtils.writeHashMap(outObjStream, obj,
 						"testObject:HashMap");
@@ -556,22 +529,19 @@ public class ObjectSaveTest extends TestCase {
 				outStream.close();
 
 				saved = true;
-				System.out
-						.println("ObjectSaveTest:testHashMap(): ....save operation completed.....");
+                log.debug("ObjectSaveTest:testHashMap(): ....save operation completed.....");
 
 				long filesize = theFile.length();
-				System.out
-						.println("ObjectSaveTest:testHashMap(): file size after save ["
-								+ filesize
-								+ "]   temp file = ["
-								+ theFilename
-								+ "]");
+                log.debug("ObjectSaveTest:testHashMap(): file size after save ["
+                        + filesize
+                        + "]   temp file = ["
+                        + theFilename
+                        + "]");
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testHashMap(): error during save ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testHashMap(): error during save ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -591,8 +561,7 @@ public class ObjectSaveTest extends TestCase {
 				ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
 				// try to restore the options
-				System.out
-						.println("ObjectSaveTest:testHashMap(): restoring .....");
+                log.debug("ObjectSaveTest:testHashMap(): restoring .....");
 				restored = false;
 				restored_obj = ObjectStateUtils.readHashMap(inObjStream,
 						"testObject:HashMap");
@@ -600,15 +569,13 @@ public class ObjectSaveTest extends TestCase {
 				inStream.close();
 
 				restored = true;
-				System.out
-						.println("ObjectSaveTest:testHashMap(): ....restored operation completed.....");
+                log.debug("ObjectSaveTest:testHashMap(): ....restored operation completed.....");
 
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testHashMap(): error during restore ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testHashMap(): error during restore ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -644,8 +611,7 @@ public class ObjectSaveTest extends TestCase {
 		// this is false when there are problems with the temporary file
 		assertTrue(done);
 
-		System.out
-				.println("ObjectSaveTest:testHashMap():  END ---------------");
+        log.debug("ObjectSaveTest:testHashMap():  END ---------------");
 	}
 
 	public void testLinkedList() throws Exception {
@@ -656,8 +622,7 @@ public class ObjectSaveTest extends TestCase {
 		boolean done = false;
 		boolean comparesOK = false;
 
-		System.out
-				.println("ObjectSaveTest:testLinkedList():  BEGIN ---------------");
+        log.debug("ObjectSaveTest:testLinkedList():  BEGIN ---------------");
 
 		// ---------------------------------------------------------
 		// setup the object to use
@@ -681,12 +646,11 @@ public class ObjectSaveTest extends TestCase {
 		try {
 			theFile = File.createTempFile("linkedlistTest", null);
 			theFilename = theFile.getName();
-			System.out.println("ObjectSaveTest:testLinkedList(): temp file = ["
-					+ theFilename + "]");
+            log.debug("ObjectSaveTest:testLinkedList(): temp file = ["
+                    + theFilename + "]");
 		} catch (Exception ex) {
-			System.out
-					.println("ObjectSaveTest:testLinkedList(): error creating temp file = ["
-							+ ex.getMessage() + "]");
+            log.debug("ObjectSaveTest:testLinkedList(): error creating temp file = ["
+                    + ex.getMessage() + "]");
 			theFile = null;
 		}
 
@@ -704,8 +668,7 @@ public class ObjectSaveTest extends TestCase {
 						outStream);
 
 				// try to save
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): saving .....");
+                log.debug("ObjectSaveTest:testLinkedList(): saving .....");
 				saved = false;
 				ObjectStateUtils.writeLinkedList(outObjStream, obj,
 						"testObject:LinkedList");
@@ -717,22 +680,19 @@ public class ObjectSaveTest extends TestCase {
 				outStream.close();
 
 				saved = true;
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): ....save operation completed.....");
+                log.debug("ObjectSaveTest:testLinkedList(): ....save operation completed.....");
 
 				long filesize = theFile.length();
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): file size after save ["
-								+ filesize
-								+ "]   temp file = ["
-								+ theFilename
-								+ "]");
+                log.debug("ObjectSaveTest:testLinkedList(): file size after save ["
+                        + filesize
+                        + "]   temp file = ["
+                        + theFilename
+                        + "]");
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): error during save ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testLinkedList(): error during save ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -752,8 +712,7 @@ public class ObjectSaveTest extends TestCase {
 				ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
 				// try to restore the options
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): restoring .....");
+                log.debug("ObjectSaveTest:testLinkedList(): restoring .....");
 				restored = false;
 				restored_obj = ObjectStateUtils.readLinkedList(inObjStream,
 						"testObject:LinkedList");
@@ -761,15 +720,13 @@ public class ObjectSaveTest extends TestCase {
 				inStream.close();
 
 				restored = true;
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): ....restored operation completed.....");
+                log.debug("ObjectSaveTest:testLinkedList(): ....restored operation completed.....");
 
 			} catch (Exception ex2) {
-				System.out
-						.println("ObjectSaveTest:testLinkedList(): error during restore ["
-								+ ex2.getClass().getName()
-								+ " : "
-								+ ex2.getMessage() + "]");
+                log.debug("ObjectSaveTest:testLinkedList(): error during restore ["
+                        + ex2.getClass().getName()
+                        + " : "
+                        + ex2.getMessage() + "]");
 				ex2.printStackTrace();
 			}
 
@@ -804,8 +761,7 @@ public class ObjectSaveTest extends TestCase {
 		// this is false when there are problems with the temporary file
 		assertTrue(done);
 
-		System.out
-				.println("ObjectSaveTest:testLinkedList():  END ---------------");
+        log.debug("ObjectSaveTest:testLinkedList():  END ---------------");
 	}
 
 	public class NotSerializableObject implements Externalizable {

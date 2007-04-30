@@ -43,6 +43,8 @@ import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -59,7 +61,7 @@ import java.util.LinkedHashMap;
  * Provides tests that focus on the message context object graph
  */
 public class MessageContextSaveCTest extends TestCase {
-    private String testArg = null;
+    protected static final Log log = LogFactory.getLog(MessageContextSaveCTest.class);
 
     private File persistentStore = null;
 
@@ -183,15 +185,13 @@ public class MessageContextSaveCTest extends TestCase {
 
     public MessageContextSaveCTest(String arg0) {
         super(arg0);
-        testArg = new String(arg0);
 
         try {
             prepare();
         }
         catch (Exception e) {
-            System.out.println(
-                    "MessageContextSaveCTest:constructor:  error in setting up object graph [" +
-                            e.getClass().getName() + " : " + e.getMessage() + "]");
+            log.debug("MessageContextSaveCTest:constructor:  error in setting up object graph [" +
+                    e.getClass().getName() + " : " + e.getMessage() + "]");
         }
     }
 
@@ -508,7 +508,7 @@ public class MessageContextSaveCTest extends TestCase {
         mc.setTransportOut(transportOut);
 
         mc.setServerSide(true);
-        mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
+//        mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
@@ -516,7 +516,7 @@ public class MessageContextSaveCTest extends TestCase {
         AxisOperation axisOperation = oc.getAxisOperation();
         String action = axisOperation.getName().getLocalPart();
         mc.setSoapAction(action);
-        System.out.flush();
+//        System.out.flush();
 
         mc.setMessageID(UUIDGenerator.getUUID());
 
@@ -546,29 +546,29 @@ public class MessageContextSaveCTest extends TestCase {
 
         MessageContext mc = msgCtx_A1_2_save;
         OperationContext oc = mc.getOperationContext();
-        System.out.println(title + "*** Original OperationContext message context table ****");
+        log.debug(title + "*** Original OperationContext message context table ****");
         showMCTable(oc);
 
         // run the message through the message processing
         // this causes the message context to get saved 
-        System.out.println(title + "- - - Save the message context from the engine - - - -");
+        log.debug(title + "- - - Save the message context from the engine - - - -");
         engineSave.receive(mc);
 
         LinkedHashMap original_object_graph = getObjectGraphInfo(mc);
-        System.out.println(title + "*** Originial object graph ****");
+        log.debug(title + "*** Originial object graph ****");
         showObjectGraphInfo(original_object_graph);
 
-        System.out.println(title +
+        log.debug(title +
                 "- - - Restore the message context on a separate engine  - - - - - - - - - - - - - - - -");
         AxisEngine engineRestore = new AxisEngine(restoreConfigurationContext);
         MessageContext mc2 = restoreMessageContext(persistentStore, restoreConfigurationContext);
 
         LinkedHashMap restored_object_graph = getObjectGraphInfo(mc2);
-        System.out.println(title + "*** Restored object graph ****");
+        log.debug(title + "*** Restored object graph ****");
         showObjectGraphInfo(restored_object_graph);
 
         OperationContext oc2 = mc2.getOperationContext();
-        System.out.println(title + "*** Restored OperationContext message context table ****");
+        log.debug(title + "*** Restored OperationContext message context table ****");
         showMCTable(oc2);
 
         boolean mcTableMatch = compareMCTable(oc, oc2);
@@ -577,12 +577,12 @@ public class MessageContextSaveCTest extends TestCase {
         // resume the restored paused message context on an engine that has the 
         // same setup as the engine where the save occurred
         // but doesn't have the Context objects
-        System.out.println(title +
+        log.debug(title +
                 "- - - Resume the restored message context - - - - - - - - - - - - - - - -");
         engineRestore.resume(mc2);
 
         LinkedHashMap resumed_object_graph = getObjectGraphInfo(mc2);
-        System.out.println(title + "*** Post Resumed object graph ****");
+        log.debug(title + "*** Post Resumed object graph ****");
         showObjectGraphInfo(resumed_object_graph);
 
         // compare object hashcodes - expect differences
@@ -608,20 +608,20 @@ public class MessageContextSaveCTest extends TestCase {
 
         // run the message through the message processing
         // this causes the message context to get saved 
-        System.out.println(title + "- - - Save the message context from the engine - - - -");
+        log.debug(title + "- - - Save the message context from the engine - - - -");
         engineSave.receive(mc);
 
         LinkedHashMap original_object_graph = getObjectGraphInfo(mc);
-        System.out.println(title + "*** Originial object graph ****");
+        log.debug(title + "*** Originial object graph ****");
         showObjectGraphInfo(original_object_graph);
 
-        System.out.println(title +
+        log.debug(title +
                 "- - - Restore the message context on a separate engine  - - - - - - - - - - - - - - - -");
         AxisEngine engineEquiv = new AxisEngine(equivConfigurationContext);
         MessageContext mc2 = restoreMessageContext(persistentStore, equivConfigurationContext);
 
         LinkedHashMap restored_object_graph = getObjectGraphInfo(mc2);
-        System.out.println(title + "*** Restored object graph ****");
+        log.debug(title + "*** Restored object graph ****");
         showObjectGraphInfo(restored_object_graph);
 
         // we don't use strict checking here since the engine where the 
@@ -644,12 +644,12 @@ public class MessageContextSaveCTest extends TestCase {
         // resume the restored paused message context on an engine that has the 
         // same setup as the engine where the save occurred
         // and save has the Service-level Context objects
-        System.out.println(title +
+        log.debug(title +
                 "- - - Resume the restored message context - - - - - - - - - - - - - - - -");
         engineEquiv.resume(mc2);
 
         LinkedHashMap resumed_object_graph = getObjectGraphInfo(mc2);
-        System.out.println(title + "*** Post Resumed object graph ****");
+        log.debug(title + "*** Post Resumed object graph ****");
         showObjectGraphInfo(resumed_object_graph);
 
         // there should be no changes in the object graph in our case after the resume
@@ -677,7 +677,7 @@ public class MessageContextSaveCTest extends TestCase {
 
         if ((theFile != null) && (theFile.exists())) {
             theFilename = theFile.getName();
-            System.out.println(title + "temp file = [" + theFilename + "]");
+            log.debug(title + "temp file = [" + theFilename + "]");
 
             // ---------------------------------------------------------
             // restore from the temporary file
@@ -691,7 +691,7 @@ public class MessageContextSaveCTest extends TestCase {
                 ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
                 // try to restore the message context
-                System.out.println(title + "restoring a message context.....");
+                log.debug(title + "restoring a message context.....");
                 restoredOk = false;
 
                 MessageContext msgContext2 = (MessageContext) inObjStream.readObject();
@@ -701,14 +701,14 @@ public class MessageContextSaveCTest extends TestCase {
                 msgContext2.activate(cfgCtx);
 
                 restoredOk = true;
-                System.out.println(title + "....restored message context.....");
+                log.debug(title + "....restored message context.....");
 
                 // now put the restored message context in the global
                 // variable for the test 
                 restoredMC = msgContext2;
             }
             catch (Exception ex2) {
-                System.out.println(title + "error with restoring message context = [" +
+                log.debug(title + "error with restoring message context = [" +
                         ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
                 restoredMessageContext = null;
@@ -840,7 +840,7 @@ public class MessageContextSaveCTest extends TestCase {
 
         if ((map1 != null) && (map2 != null)) {
             if (map1.size() != map2.size()) {
-                System.out.println(title + "Object graph info mappings are different sizes.");
+                log.debug(title + "Object graph info mappings are different sizes.");
                 return false;
             }
 
@@ -868,7 +868,7 @@ public class MessageContextSaveCTest extends TestCase {
 
                         if ((name1 != null) && (name2 != null)) {
                             if (name1.equals(name2) == false) {
-                                System.out.println(title + "name1 [" + name1 + "]  !=   name2 [" +
+                                log.debug(title + "name1 [" + name1 + "]  !=   name2 [" +
                                         name2 + "]");
                                 return false;
                             }
@@ -876,8 +876,7 @@ public class MessageContextSaveCTest extends TestCase {
                             // ok
                         } else {
                             // mismatch
-                            System.out.println(
-                                    title + "name1 [" + name1 + "]  !=   name2 [" + name2 + "]");
+                            log.debug(title + "name1 [" + name1 + "]  !=   name2 [" + name2 + "]");
                             return false;
                         }
 
@@ -890,7 +889,7 @@ public class MessageContextSaveCTest extends TestCase {
 
                             if ((code1 != null) && (code2 != null)) {
                                 if (code1.equals(code2) == false) {
-                                    System.out.println(title + "name [" + name1 + "]  code1 [" +
+                                    log.debug(title + "name [" + name1 + "]  code1 [" +
                                             code1 + "]  !=   code2 [" + code2 + "]");
                                     return false;
                                 }
@@ -898,7 +897,7 @@ public class MessageContextSaveCTest extends TestCase {
                                 // ok
                             } else {
                                 // mismatch
-                                System.out.println(title + "name [" + name1 + "]code1 [" + code1 +
+                                log.debug(title + "name [" + name1 + "]code1 [" + code1 +
                                         "]  !=   code2 [" + code2 + "]");
                                 return false;
                             }
@@ -907,8 +906,7 @@ public class MessageContextSaveCTest extends TestCase {
                         // ok
                     } else {
                         // mismatch
-                        System.out.println(
-                                title + "value1 [" + value1 + "]  !=   value2 [" + value2 + "]");
+                        log.debug(title + "value1 [" + value1 + "]  !=   value2 [" + value2 + "]");
                         return false;
                     }
                 }
@@ -919,7 +917,7 @@ public class MessageContextSaveCTest extends TestCase {
         } else if ((map1 == null) && (map2 == null)) {
             return true;
         } else {
-            System.out.println(title + "mismatch: one or more of the maps are null.  ");
+            log.debug(title + "mismatch: one or more of the maps are null.  ");
             return false;
         }
 
@@ -942,8 +940,7 @@ public class MessageContextSaveCTest extends TestCase {
                 String name = meta.getName();
                 String hashcode = meta.getExtraName();
 
-                System.out.println(
-                        "class[" + classname + "]  id[" + name + "]  hashcode" + hashcode + " ");
+                log.debug("class[" + classname + "]  id[" + name + "]  hashcode" + hashcode + " ");
             }
 
         }
@@ -964,7 +961,7 @@ public class MessageContextSaveCTest extends TestCase {
                     int size2 = mcTable2.size();
 
                     if (size1 != size2) {
-                        System.out.println(title +
+                        log.debug(title +
                                 " Return FALSE:  table sizes don't match   size1[" + size1 +
                                 "] != size2 [" + size2 + "] ");
                         return false;
@@ -984,7 +981,7 @@ public class MessageContextSaveCTest extends TestCase {
 
                             if ((id1 != null) && (id2 != null)) {
                                 if (!id1.equals(id2)) {
-                                    System.out.println(title +
+                                    log.debug(title +
                                             " Return FALSE:  message IDs don't match   id1[" + id1 +
                                             "] != id2 [" + id2 + "] ");
                                     return false;
@@ -993,7 +990,7 @@ public class MessageContextSaveCTest extends TestCase {
                                 // can't tell, keep going
                             } else {
                                 // mismatch
-                                System.out.println(title +
+                                log.debug(title +
                                         " Return FALSE:  message IDs don't match   id1[" + id1 +
                                         "] != id2 [" + id2 + "] ");
                                 return false;
@@ -1003,35 +1000,34 @@ public class MessageContextSaveCTest extends TestCase {
                             // entries match
                         } else {
                             // mismatch
-                            System.out.println(
+                            log.debug(
                                     title + " Return FALSE:  message context objects don't match ");
                             return false;
                         }
                     }
 
-                    System.out.println(title + " Return TRUE:  message context tables match");
+                    log.debug(title + " Return TRUE:  message context tables match");
                     return true;
 
                 } else if (mcTable1.isEmpty() && mcTable2.isEmpty()) {
-                    System.out.println(
-                            title + " Return TRUE:  message context tables are both empty ");
+                    log.debug(title + " Return TRUE:  message context tables are both empty ");
                     return true;
                 } else {
-                    System.out.println(title + " Return FALSE:  message context tables mismatch");
+                    log.debug(title + " Return FALSE:  message context tables mismatch");
                     return false;
                 }
             } else if ((mcTable1 == null) && (mcTable2 == null)) {
-                System.out.println(title + " Return TRUE:  message context tables are null");
+                log.debug(title + " Return TRUE:  message context tables are null");
                 return true;
             } else {
-                System.out.println(title + " Return FALSE:  message context tables don't match");
+                log.debug(title + " Return FALSE:  message context tables don't match");
                 return false;
             }
         } else if ((oc1 == null) && (oc2 == null)) {
-            System.out.println(title + " Return TRUE:  operation context objects are null ");
+            log.debug(title + " Return TRUE:  operation context objects are null ");
             return true;
         } else {
-            System.out.println(title + " Return FALSE:  operation context objects don't match ");
+            log.debug(title + " Return FALSE:  operation context objects don't match ");
             return false;
         }
 
@@ -1058,7 +1054,7 @@ public class MessageContextSaveCTest extends TestCase {
 
             if (mc != null) {
                 String id = mc.getMessageID();
-                System.out.println("message context table entry:   label [" + key +
+                log.debug("message context table entry:   label [" + key +
                         "]    message ID [" + id + "]    ");
             }
         }
@@ -1132,25 +1128,24 @@ public class MessageContextSaveCTest extends TestCase {
             savedOk = false;
 
             if (performSave == false) {
-                System.out.println(title + "Configured for no action to be performed.");
+                log.debug(title + "Configured for no action to be performed.");
                 return InvocationResponse.CONTINUE;
             }
 
 
-            System.out.println(title + "msgContext.pause()");
+            log.debug(title + "msgContext.pause()");
             msgContext.pause();
 
             if (theFile != null) {
                 try {
-                    System.out.println(title + "Resetting the file to use.");
+                    log.debug(title + "Resetting the file to use.");
                     theFile.delete();
                     theFile.createNewFile();
                     theFilename = theFile.getName();
-                    System.out.println(title + "temp file = [" + theFilename + "]");
+                    log.debug(title + "temp file = [" + theFilename + "]");
                 }
                 catch (Exception ex) {
-                    System.out
-                            .println(title + "error creating new file = [" + ex.getMessage() + "]");
+                    log.debug(title + "error creating new file = [" + ex.getMessage() + "]");
                 }
 
                 if (theFile.exists() == true) {
@@ -1166,7 +1161,7 @@ public class MessageContextSaveCTest extends TestCase {
                         ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
                         // try to save the message context
-                        System.out.println(title + "saving message context.....");
+                        log.debug(title + "saving message context.....");
                         savedOk = false;
                         outObjStream.writeObject(msgContext);
 
@@ -1177,15 +1172,15 @@ public class MessageContextSaveCTest extends TestCase {
                         outStream.close();
 
                         savedOk = true;
-                        System.out.println(title + "....saved message context.....");
+                        log.debug(title + "....saved message context.....");
 
                         long filesize = theFile.length();
-                        System.out.println(title + "file size after save [" + filesize +
+                        log.debug(title + "file size after save [" + filesize +
                                 "]   temp file = [" + theFilename + "]");
 
                     }
                     catch (Exception ex2) {
-                        System.out.println(title + "error with saving message context = [" +
+                        log.debug(title + "error with saving message context = [" +
                                 ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                         ex2.printStackTrace();
                     }
@@ -1195,7 +1190,7 @@ public class MessageContextSaveCTest extends TestCase {
                 }
             }
 
-            System.out.println(title + "executedHandlers.add(" + handlerID + ")");
+            log.debug(title + "executedHandlers.add(" + handlerID + ")");
             executedHandlers.add(handlerID);
 
             return InvocationResponse.SUSPEND;
@@ -1265,7 +1260,7 @@ public class MessageContextSaveCTest extends TestCase {
                 }
             }
 
-            System.out.println(title + "executedHandlers.add(" + handlerID + ")");
+            log.debug(title + "executedHandlers.add(" + handlerID + ")");
             executedHandlers.add(handlerID);
 
             return InvocationResponse.CONTINUE;

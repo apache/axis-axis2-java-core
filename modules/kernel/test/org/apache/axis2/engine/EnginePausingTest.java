@@ -128,7 +128,7 @@ public class EnginePausingTest extends TestCase {
 
         mc.setTransportOut(transportOut);
         mc.setServerSide(true);
-        mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
+//        mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
         mc.setEnvelope(omFac.getDefaultEnvelope());
 
@@ -172,7 +172,7 @@ public class EnginePausingTest extends TestCase {
 
         mc.setWSAAction(operationName.getLocalPart());
         mc.setSoapAction(operationName.getLocalPart());
-        System.out.flush();
+//        System.out.flush();
 
     }
 

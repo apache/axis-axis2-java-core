@@ -39,6 +39,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -49,6 +51,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class OperationContextSaveTest extends TestCase {
+    protected static final Log log = LogFactory.getLog(OperationContextSaveTest.class);
 
     private QName serviceName = new QName("TestService");
     private QName operationName = new QName("Operation_1");
@@ -81,9 +84,8 @@ public class OperationContextSaveTest extends TestCase {
             prepare();
         }
         catch (Exception e) {
-            System.out.println(
-                    "OperationContextSaveTest:constructor:  error in setting up object graph [" +
-                            e.getClass().getName() + " : " + e.getMessage() + "]");
+            log.debug("OperationContextSaveTest:constructor:  error in setting up object graph [" +
+                    e.getClass().getName() + " : " + e.getMessage() + "]");
         }
     }
 
@@ -232,7 +234,7 @@ public class OperationContextSaveTest extends TestCase {
         boolean done = false;
         boolean comparesOk = false;
 
-        System.out.println("OperationContextSaveTest:testSaveAndRestore():  BEGIN ---------------");
+        log.debug("OperationContextSaveTest:testSaveAndRestore():  BEGIN ---------------");
 
         // ---------------------------------------------------------
         // setup a temporary file to use
@@ -240,11 +242,11 @@ public class OperationContextSaveTest extends TestCase {
         try {
             theFile = File.createTempFile("OpCtxSave", null);
             theFilename = theFile.getName();
-            System.out.println("OperationContextSaveTest:testSaveAndRestore(): temp file = [" +
+            log.debug("OperationContextSaveTest:testSaveAndRestore(): temp file = [" +
                     theFilename + "]");
         }
         catch (Exception ex) {
-            System.out.println(
+            log.debug(
                     "OperationContextSaveTest:testSaveAndRestore(): error creating temp file = [" +
                             ex.getMessage() + "]");
             theFile = null;
@@ -263,7 +265,7 @@ public class OperationContextSaveTest extends TestCase {
                 ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
                 // try to save the message context
-                System.out.println("OperationContextSaveTest:testSaveAndRestore(): saving .....");
+                log.debug("OperationContextSaveTest:testSaveAndRestore(): saving .....");
                 saved = false;
                 outObjStream.writeObject(operationContext);
 
@@ -274,19 +276,17 @@ public class OperationContextSaveTest extends TestCase {
                 outStream.close();
 
                 saved = true;
-                System.out.println(
+                log.debug(
                         "OperationContextSaveTest:testSaveAndRestore(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println(
-                        "OperationContextSaveTest:testSaveAndRestore(): file size after save [" +
-                                filesize + "]   temp file = [" + theFilename + "]");
+                log.debug("OperationContextSaveTest:testSaveAndRestore(): file size after save [" +
+                        filesize + "]   temp file = [" + theFilename + "]");
 
             }
             catch (Exception ex2) {
-                System.out.println(
-                        "OperationContextSaveTest:testSaveAndRestore(): error during save [" +
-                                ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
+                log.debug("OperationContextSaveTest:testSaveAndRestore(): error during save [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -304,8 +304,7 @@ public class OperationContextSaveTest extends TestCase {
                 ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
                 // try to restore the context
-                System.out
-                        .println("OperationContextSaveTest:testSaveAndRestore(): restoring .....");
+                log.debug("OperationContextSaveTest:testSaveAndRestore(): restoring .....");
                 restored = false;
                 OperationContext opctx_restored = (OperationContext) inObjStream.readObject();
                 inObjStream.close();
@@ -314,35 +313,34 @@ public class OperationContextSaveTest extends TestCase {
                 opctx_restored.activate(configurationContext);
 
                 restored = true;
-                System.out.println(
+                log.debug(
                         "OperationContextSaveTest:testSaveAndRestore(): ....restored operation completed.....");
 
                 // compare to original
                 comparesOk = opctx_restored.isEquivalent(operationContext);
-                System.out.println(
+                log.debug(
                         "OperationContextSaveTest:testSaveAndRestore():  OperationContext equivalency [" +
                                 comparesOk + "]");
                 assertTrue(comparesOk);
 
                 ServiceContext restored_srvCtx = opctx_restored.getServiceContext();
                 comparesOk = restored_srvCtx.isEquivalent(serviceContext);
-                System.out.println(
+                log.debug(
                         "OperationContextSaveTest:testSaveAndRestore():  ServiceContext equivalency [" +
                                 comparesOk + "]");
                 assertTrue(comparesOk);
 
                 ServiceGroupContext restored_sgCtx = restored_srvCtx.getServiceGroupContext();
                 comparesOk = restored_sgCtx.isEquivalent(serviceGroupContext);
-                System.out.println(
+                log.debug(
                         "OperationContextSaveTest:testSaveAndRestore():  ServiceGroupContext equivalency [" +
                                 comparesOk + "]");
                 assertTrue(comparesOk);
 
             }
             catch (Exception ex2) {
-                System.out.println(
-                        "OperationContextSaveTest:testSaveAndRestore(): error during restore [" +
-                                ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
+                log.debug("OperationContextSaveTest:testSaveAndRestore(): error during restore [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -367,7 +365,7 @@ public class OperationContextSaveTest extends TestCase {
         // this is false when there are problems with the temporary file
         assertTrue(done);
 
-        System.out.println("OperationContextSaveTest:testSaveAndRestore():  END ---------------");
+        log.debug("OperationContextSaveTest:testSaveAndRestore():  END ---------------");
     }
 
 
@@ -388,7 +386,7 @@ public class OperationContextSaveTest extends TestCase {
         //-----------------------------------------------------------------
 
         public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-            System.out.println("TempHandler:invoke(): index = [" + index + "]");
+            log.debug("TempHandler:invoke(): index = [" + index + "]");
             executedHandlers.add(index);
             return InvocationResponse.CONTINUE;
         }

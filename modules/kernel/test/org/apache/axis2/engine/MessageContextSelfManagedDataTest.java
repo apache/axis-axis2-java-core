@@ -41,6 +41,8 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
@@ -55,7 +57,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MessageContextSelfManagedDataTest extends TestCase {
-
+    protected static final Log log = LogFactory.getLog(MessageContextSelfManagedDataTest.class);
+    
     private File theFile = null;
     boolean savedMessageContext = false;
     boolean restoredMessageContext = false;
@@ -126,7 +129,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             prepare();
         }
         catch (Exception e) {
-            System.out.println(
+            log.debug(
                     "MessageContextSelfManagedDataTest:initAll:  error in setting up object graph [" +
                             e.getClass().getName() + " : " + e.getMessage() + "]");
         }
@@ -329,7 +332,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test case for setting and removing data from a message context
      */
     public void testSelfManagedData01() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testSelfManagedData01()=======================================");
         try {
             ArrayList handlers = new ArrayList();
@@ -364,7 +367,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for setting, saving, restoring self managed data with no exceptions
      */
     public void testPause01_noExceptions() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause01_noExceptions()=======================================");
 
         try {
@@ -393,7 +396,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for verifying the self managed data used during the save and restore
      */
     public void testPause02_saveRestoreSelfManagedData() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause02_saveRestoreSelfManagedData()=======================================");
 
         try {
@@ -420,7 +423,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for save and restore of self managed data and the AxisOperation
      */
     public void testPause03_saveRestoreOperation() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause03_saveRestoreOperation()=======================================");
 
         try {
@@ -449,7 +452,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for save and restore of self managed data and the AxisService
      */
     public void testPause04_saveRestoreAxisService() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause04_saveRestoreAxisService()=======================================");
 
         try {
@@ -477,7 +480,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for save and restore of self managed data and the AxisServiceGroup
      */
     public void testPause05_saveRestoreAxisServiceGroup() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause05_saveRestoreAxisServiceGroup()=======================================");
 
         try {
@@ -506,7 +509,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for phases
      */
     public void testPause06_saveRestorePhases() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause06_saveRestorePhases()=======================================");
 
         TempHandler02 handlerA = new TempHandler02(666);
@@ -592,7 +595,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         // Notice we do currently have a subhandler in the subPhase object.
         // When axis2 decides to support nested handlers, the
         // first three assertEquals below will fail.
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause06_saveRestorePhases()::  invokecallcount [" +
                         invokecallcount + "]");
         assertEquals(11, invokecallcount);
@@ -601,7 +604,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         // handlerA in the executionChain, its serialize and deserialize 
         // should only be called once per unique instance in the list
         int count_s = handlerA.getSerializecallcount();
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause06_saveRestorePhases()::  handlerA serialize call count [" +
                         count_s + "]");
         assertEquals(11, count_s);
@@ -615,7 +618,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         // invoke is called in the executionChain.  Observing our phases, 
         // we see it is in slot #3.  11 - 3 = 8
         int count_d = handlerA.getDeserializecallcount();
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testPause06_saveRestorePhases()::  handlerA deserialize call count [" +
                         count_d + "]");
         assertEquals(8, count_d);
@@ -628,7 +631,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for save and restore of binary self managed data
      */
     public void testSelfManagedData07() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testSelfManagedData07()=======================================");
         try {
             ArrayList handlers = new ArrayList();
@@ -656,7 +659,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for handler04
      */
     public void testSelfManagedData08() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testSelfManagedData08()=======================================");
         try {
 
@@ -686,7 +689,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
      * Test for handler03 and handler04
      */
     public void testSelfManagedData09() {
-        System.out.println(
+        log.debug(
                 "MessageContextSelfManagedDataTest::testSelfManagedData09()=======================================");
         try {
 
@@ -731,14 +734,14 @@ public class MessageContextSelfManagedDataTest extends TestCase {
     private MessageContext saveAndRestore(MessageContext mc1, String fnprefix, String desc) {
         MessageContext msgContext2 = null;
         String title = "MessageContextSelfManagedDataTest::saveAndRestore::[" + desc + "]   ";
-        System.out.println(title);
+        log.debug(title);
 
         try {
             theFile = File.createTempFile(fnprefix, null);
-            System.out.println(title + "temp file = [" + theFile.getName() + "]");
+            log.debug(title + "temp file = [" + theFile.getName() + "]");
         }
         catch (Exception ex) {
-            System.out.println(title + "error creating temp file = [" + ex.getMessage() + "]");
+            log.debug(title + "error creating temp file = [" + ex.getMessage() + "]");
             theFile = null;
         }
 
@@ -752,7 +755,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
                 ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
                 // try to save the message context
-                System.out.println(title + "saving message context ....");
+                log.debug(title + "saving message context ....");
                 savedMessageContext = false;
 
                 outObjStream.writeObject(mc1);
@@ -762,7 +765,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
                 // no exceptions, set savedMessageContext to true
                 savedMessageContext = true;
 
-                System.out.println(title + "....saved message context .....");
+                log.debug(title + "....saved message context .....");
 
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
@@ -772,7 +775,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
                 ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
                 // try to restore the message context
-                System.out.println(title + "restoring message context .....");
+                log.debug(title + "restoring message context .....");
                 restoredMessageContext = false;
                 msgContext2 = (MessageContext) inObjStream.readObject();
                 inObjStream.close();
@@ -785,16 +788,16 @@ public class MessageContextSelfManagedDataTest extends TestCase {
                 // VERY IMPORTANT: replace testcase's messagecontext object with the new restored one
                 mc = msgContext2;
 
-                System.out.println(title + "....restored message context .....");
+                log.debug(title + "....restored message context .....");
 
             }
             catch (Exception ex2) {
                 if (savedMessageContext != true) {
-                    System.out.println(title + "Error with saving message context = [" +
+                    log.debug(title + "Error with saving message context = [" +
                             ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
                 } else {
-                    System.out.println(title + "Error with restoring message context = [" +
+                    log.debug(title + "Error with restoring message context = [" +
                             ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
                 }
@@ -859,24 +862,23 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String c2 = o2.getClass().getName();
 
             if (c1.equals(c2)) {
-                System.out.println("MessagecontextSelfManagedDataTest::compareHandlers:  class [" +
+                log.debug("MessagecontextSelfManagedDataTest::compareHandlers:  class [" +
                         c1 + "] match ");
 
                 int id1 = getHandlerID(o1);
                 int id2 = getHandlerID(o2);
 
                 if (id1 == id2) {
-                    System.out.println("MessagecontextSelfManagedDataTest::compareHandlers:  id [" +
+                    log.debug("MessagecontextSelfManagedDataTest::compareHandlers:  id [" +
                             id1 + "] match");
                     return true;
                 } else {
-                    System.out.println(
-                            "MessagecontextSelfManagedDataTest::compareHandlers:  id1 [" + id1 +
-                                    "] != id2 [" + id2 + "] ");
+                    log.debug("MessagecontextSelfManagedDataTest::compareHandlers:  id1 [" + id1 +
+                            "] != id2 [" + id2 + "] ");
                     return false;
                 }
             } else {
-                System.out.println("MessagecontextSelfManagedDataTest::compareHandlers:  class1 [" +
+                log.debug("MessagecontextSelfManagedDataTest::compareHandlers:  class1 [" +
                         c1 + "] != class2 [" + c2 + "]   ");
                 return false;
             }
@@ -1039,7 +1041,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             String desc = "TempHandler01[id=" + id + "].invoke()";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             String tmp = "whaaa?";
             _mc.setSelfManagedData(this.getClass(), key02, tmp);
@@ -1069,7 +1071,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             invokecallcount++;
 
-            System.out.println(title + ": Completed");
+            log.debug(title + ": Completed");
             return InvocationResponse.CONTINUE;
         }
 
@@ -1129,14 +1131,14 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         public InvocationResponse invoke(MessageContext _mc) throws AxisFault {
             String desc = "TempHandler02[id=" + id + "].invoke()";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             MessageContext msgContext2 = null;  // this will be the restored one
 
             _mc.setSelfManagedData(this.getClass(), Integer.toString(id),
                                    testData + Integer.toString(id));
 
-            System.out.println(title + ":   Setting self managed data using key [" +
+            log.debug(title + ":   Setting self managed data using key [" +
                     Integer.toString(id) + "]");
 
             msgContext2 = saveAndRestore(_mc, "TempHandler02_", desc);
@@ -1146,7 +1148,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             invokecallcount++;
 
-            System.out.println(title + ": Completed");
+            log.debug(title + ": Completed");
             return InvocationResponse.CONTINUE;
         }
 
@@ -1158,7 +1160,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler02[id=" + id + "].deserializeSelfManagedData()   count [" +
                     deserializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             ObjectInputStream ois = new ObjectInputStream(data);
             testData = ois.readUTF().concat(" with extra text " + Integer.toString(id));
@@ -1178,12 +1180,12 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler02[id=" + id + "].serializeSelfManagedData()   count [" +
                     serializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             String storedTestData =
                     (String) _mc.getSelfManagedData(this.getClass(), Integer.toString(id));
             if (storedTestData == null) {
-                System.out.println(title + ":  No self managed data to serialize");
+                log.debug(title + ":  No self managed data to serialize");
                 return null;
             }
 
@@ -1194,9 +1196,9 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             int baos_size = baos.size();
             baos.close();
 
-            System.out.println(title + ": saved self managed data string length [" +
+            log.debug(title + ": saved self managed data string length [" +
                     storedTestData.length() + "]");
-            System.out.println(title +
+            log.debug(title +
                     ": saved self managed data byte array output stream (UTF) length [" +
                     baos_size + "]");
             return baos;
@@ -1255,14 +1257,14 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             String desc = "TempHandler03[id=" + id + "].invoke()";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             MessageContext msgContext2 = null;  // this will be the restored one
 
             // add the byte [] of data
             _mc.setSelfManagedData(this.getClass(), Integer.toString(id), testData03);
 
-            System.out.println(title + ":   Setting self managed data using key [" +
+            log.debug(title + ":   Setting self managed data using key [" +
                     Integer.toString(id) + "]");
 
             msgContext2 = saveAndRestore(_mc, "TempHandler03_", desc);
@@ -1272,7 +1274,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             invokecallcount++;
 
-            System.out.println(title + ": Completed");
+            log.debug(title + ": Completed");
             return InvocationResponse.CONTINUE;
         }
 
@@ -1285,7 +1287,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler03[id=" + id + "].deserializeSelfManagedData()   count [" +
                     deserializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             int expected = testData03.length;
 
@@ -1329,12 +1331,12 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler03[id=" + id + "].serializeSelfManagedData()   count [" +
                     serializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             byte [] tmp = (byte []) _mc.getSelfManagedData(this.getClass(), Integer.toString(id));
 
             if (tmp == null) {
-                System.out.println(title + ":  No self managed data to serialize");
+                log.debug(title + ":  No self managed data to serialize");
                 return null;
             }
 
@@ -1343,9 +1345,8 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             int baos_size = baos.size();
             baos.close();
 
-            System.out.println(
-                    title + ": saved self managed data byte [] length [" + tmp.length + "]");
-            System.out.println(title +
+            log.debug(title + ": saved self managed data byte [] length [" + tmp.length + "]");
+            log.debug(title +
                     ": saved self managed data byte array output stream length [" + baos_size +
                     "]");
             return baos;
@@ -1406,14 +1407,14 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             String desc = "TempHandler04[id=" + id + "].invoke()";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             MessageContext msgContext2 = null;  // this will be the restored one
 
             // add the byte [] of data
             _mc.setSelfManagedData(this.getClass(), Integer.toString(id), testData04);
 
-            System.out.println(title + ":   Setting self managed data using key [" +
+            log.debug(title + ":   Setting self managed data using key [" +
                     Integer.toString(id) + "]");
 
             msgContext2 = saveAndRestore(_mc, "TempHandler04_", desc);
@@ -1423,7 +1424,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
 
             invokecallcount++;
 
-            System.out.println(title + ": Completed");
+            log.debug(title + ": Completed");
             return InvocationResponse.CONTINUE;
         }
 
@@ -1436,7 +1437,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler04[id=" + id + "].deserializeSelfManagedData()   count [" +
                     deserializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             int expected = testData04.length;
 
@@ -1487,12 +1488,12 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             String desc = "TempHandler04[id=" + id + "].serializeSelfManagedData()   count [" +
                     serializecallcount + "]";
             String title = "MessageContextSelfManagedDataTest::" + desc;
-            System.out.println(title);
+            log.debug(title);
 
             long [] tmp = (long []) _mc.getSelfManagedData(this.getClass(), Integer.toString(id));
 
             if (tmp == null) {
-                System.out.println(title + ":  No self managed data to serialize");
+                log.debug(title + ":  No self managed data to serialize");
                 return null;
             }
 
@@ -1511,9 +1512,8 @@ public class MessageContextSelfManagedDataTest extends TestCase {
             int baos_size = baos.size();
             baos.close();
 
-            System.out.println(
-                    title + ": saved self managed data byte [] length [" + tmp.length + "]");
-            System.out.println(title +
+            log.debug(title + ": saved self managed data byte [] length [" + tmp.length + "]");
+            log.debug(title +
                     ": saved self managed data byte array output stream length [" + baos_size +
                     "]");
             return baos;

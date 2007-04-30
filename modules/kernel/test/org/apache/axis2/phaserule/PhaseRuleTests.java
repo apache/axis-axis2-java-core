@@ -38,8 +38,6 @@ import junit.framework.TestCase;
  */
 public class PhaseRuleTests extends TestCase {
 
-    AxisConfiguration axisConfig;
-    
     // Some shared Handlers and HandlerDescriptions
     // TODO : Factor out shared data for these tests
 
@@ -546,45 +544,6 @@ public class PhaseRuleTests extends TestCase {
             fail("This should be faild with Phaselast already has been set, cannot have two " +
                     "phaseLast Handler for same phase ");
         } catch (AxisFault axisFault) {
-        }
-    }
-
-    public void testInvalidPhaseRule() {
-        try {
-            axisConfig = new AxisConfiguration();
-            ArrayList inPhase = axisConfig.getGlobalInFlow();
-
-            inPhase.add("global");
-            axisConfig.setInFaultPhases(inPhase);
-            axisConfig.setOutFaultPhases(inPhase);
-            axisConfig.setGlobalOutPhase(inPhase);
-
-            Handler han = null;
-            PhaseHolder ph = new PhaseHolder(inPhase);
-
-            HandlerDescription hm = new HandlerDescription();
-            hm.setClassName("org.apache.axis2.phaserule.PhaseRuleHandler");
-            hm.setHandler(han);
-            hm.setName("H1");
-            PhaseRule rule = new PhaseRule();
-            rule.setPhaseName("global");
-            rule.setPhaseFirst(true);
-            rule.setPhaseLast(true);
-            hm.setRules(rule);
-            ph.addHandler(hm);
-
-            HandlerDescription hm1 = new HandlerDescription();
-            hm1.setClassName("org.apache.axis2.phaserule.PhaseRuleHandler");
-            hm1.setHandler(han);
-            hm1.setName("H2");
-            PhaseRule rule1 = new PhaseRule();
-            rule1.setPhaseName("global");
-            rule1.setAfter("H1");
-            hm1.setRules(rule1);
-            ph.addHandler(hm1);
-
-            fail("this must failed gracefully with PhaseException ");
-        } catch (Exception e) {
         }
     }
 
