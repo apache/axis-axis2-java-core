@@ -32,7 +32,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.mex.MexException;
 import org.apache.axis2.mex.MexConstants;
-import org.apache.axis2.mex.OM.Metadata;
+import org.apache.axis2.mex.om.Metadata;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.description.Parameter;

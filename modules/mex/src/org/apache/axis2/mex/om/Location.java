@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.mex.OM;
+package org.apache.axis2.mex.om;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;

@@ -14,29 +14,19 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.mex.OM;
+package org.apache.axis2.mex.om;
 
-import org.apache.axis2.mex.MexException;
+import org.apache.axiom.om.OMElement;
 
 /**
- * An Exception to report problem from implementation classes for the 
- * WS-MetadataExchange data elements.
- *
+ * Base interface for objects implemented for elements defined in 
+ * the WS-MEX spec.
  */
-public class MexOMException extends MexException {
+public interface IMexOM {
+    public OMElement toOM() throws MexOMException;
+   
+    public String getNamespaceValue();
 
-	private static final long serialVersionUID = 1L;
+    public boolean isNamespaceSupported (String namespaceName);
+}
 
-	protected MexOMException(String message) {
-		super(message);
-	}
-
-	protected MexOMException(Exception e) {
-		super(e);
-	}
-
-	protected MexOMException(String message, Exception e) {
-		super(message, e);
-	}
-
-}

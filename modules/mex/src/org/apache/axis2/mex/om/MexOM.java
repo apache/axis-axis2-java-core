@@ -14,19 +14,30 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.mex.OM;
+package org.apache.axis2.mex.om;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.mex.MexConstants;
 
 /**
- * Base interface for objects implemented for elements defined in 
+ * Base class for objects implemented for elements defined in 
  * the WS-MEX spec.
  */
-public interface IMexOM {
-    public OMElement toOM() throws MexOMException;
-   
-    public String getNamespaceValue();
 
-    public boolean isNamespaceSupported (String namespaceName);
+public abstract class MexOM implements IMexOM {
+
+	
+	public OMElement toOM() throws MexOMException {
+		return null;
+	}
+	
+	public String getNamespaceValue(){
+		return MexConstants.Spec_2004_09.NS_URI;
+	}
+
+	public boolean isNamespaceSupported (String namespaceName) {
+		boolean supported = false;
+		supported = MexConstants.Spec_2004_09.NS_URI.equals(namespaceName);
+		return supported;
+	}
 }
-

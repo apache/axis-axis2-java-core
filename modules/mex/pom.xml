@@ -24,7 +24,7 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>mex</artifactId>
-	<packaging>mar</packaging>
+	<packaging>jar</packaging>
 	<name>Apache Axis 2.0 - MEX</name>
 	<description>WS-Metadata Exchange implementation</description>
 	<dependencies>
@@ -69,7 +69,7 @@
 					<skip>false</skip>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<groupId>org.apache.axis2</groupId>
 				<artifactId>axis2-mar-maven-plugin</artifactId>
 				<version>${version}</version>
@@ -77,7 +77,7 @@
 				<configuration>
 					<includeDependencies>false</includeDependencies>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
 </project>
