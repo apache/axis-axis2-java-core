@@ -24,12 +24,10 @@ import org.apache.axis2.AxisFault;
  *
  */
 public class MexException extends AxisFault {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-	public MexException(String message) {
+	private static final long serialVersionUID = 3398692344266837690L;
+
+    public MexException(String message) {
 		super(message);
 	}
 

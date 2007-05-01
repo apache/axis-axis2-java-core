@@ -21,11 +21,16 @@
     <extend>../../etc/project.xml</extend>
 
     <name>Apache Axis 2.0 - Metadata Exchange</name>
-    <id>mex-impl</id>
+    <id>axis2-mex</id>
     <groupId>org.apache.axis2</groupId>
-    <description>WS-MetadataExchange implementation</description>
+    <description>WS-MetadataExchange : Axis2 module </description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>mex-impl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>

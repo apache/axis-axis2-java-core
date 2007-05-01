@@ -23,16 +23,21 @@
 		<version>SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>mex-impl</artifactId>
-	<packaging>jar</packaging>
-	<name>Apache Axis 2.0 - MEX</name>
-	<description>WS-Metadata Exchange implementation</description>
+	<artifactId>mex</artifactId>
+	<packaging>mar</packaging>
+	<name>Apache Axis 2.0 - MEX-Module</name>
+	<description>WS-Metadata Exchange : Axis2 Module</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
 			<version>${version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>mex-impl</artifactId>
+			<version>${version}</version>
+		</dependency>		
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -67,6 +72,15 @@
 				<inherited>true</inherited>
 				<configuration>
 					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.axis2</groupId>
+				<artifactId>axis2-mar-maven-plugin</artifactId>
+				<version>${version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<includeDependencies>false</includeDependencies>
 				</configuration>
 			</plugin>
 		</plugins>
