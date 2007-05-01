@@ -628,10 +628,12 @@ class OperationDescriptionImpl
                 //searching for opDesc of sync operation.
                 OperationDescription[] ods = null;
                 ods = eid.getOperationForJavaMethod(webMethodAnnoName);
-                for (OperationDescription od : ods) {
-                    if (od.getJavaMethodName().equals(webMethodAnnoName)) {
-                        opDesc = od;
-                        break;
+                if (ods != null) {
+                    for (OperationDescription od : ods) {
+                        if (od.getJavaMethodName().equals(webMethodAnnoName)) {
+                            opDesc = od;
+                            break;
+                        }
                     }
                 }
             }
