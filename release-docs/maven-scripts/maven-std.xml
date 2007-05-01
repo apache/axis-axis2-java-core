@@ -626,9 +626,9 @@
             </ant:fileset>
         </ant:copy>
 
-        <!-- copy contents of the webapp module to webapp/axis2-web directory -->
-        <ant:copy toDir="${std.bin.temp.dir}/webapp/axis2-web">
-            <ant:fileset dir="modules/webapp">
+        <!-- copy contents of the webapp module -->
+        <ant:copy toDir="${std.bin.temp.dir}/webapp">
+            <ant:fileset dir="modules/webapp/src/main/webapp">
                 <ant:exclude name="project.xml"/>
                 <ant:exclude name="**/*.iml"/>
                 <ant:exclude name="**/.*"/>
