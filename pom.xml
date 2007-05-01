@@ -38,7 +38,7 @@
 		<module>modules/jibx</module>
 		<module>modules/json</module>
 		<module>modules/kernel</module>
-		<!--<module>modules/mex</module>-->
+		<module>modules/mex</module>
 		<module>modules/mtompolicy</module>
 		<module>modules/parent</module>
 		<module>modules/ping</module>
