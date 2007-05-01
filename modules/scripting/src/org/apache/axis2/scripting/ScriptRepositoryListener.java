@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.RepositoryListener;
+import org.apache.axis2.deployment.repository.util.WSInfo;
 
 /**
  * An Axis2 RepositoryListener subclass for dealing with script services
@@ -42,11 +43,11 @@ public class ScriptRepositoryListener extends RepositoryListener {
 
         if (files != null && files.length > 0) {
             for (int i = 0; i < files.length; i++) {
-                wsInfoList.addWSInfoItem(files[i], TYPE_SERVICE);
+                wsInfoList.addWSInfoItem(files[i], deploymentEngine.getModuleDeployer());
             }
         }
 
-        wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
+        wsInfoList.addWSInfoItem(null, deploymentEngine.getModuleDeployer());
     }
 
     /*
