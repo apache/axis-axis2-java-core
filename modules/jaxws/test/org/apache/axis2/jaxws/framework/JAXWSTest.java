@@ -54,6 +54,7 @@ import org.apache.axis2.jaxws.misc.NS2PkgTest;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
 import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.JAXBProviderTests;
+import org.apache.axis2.jaxws.provider.SOAPFaultProviderTests;
 import org.apache.axis2.jaxws.provider.SoapMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceProviderTests;
@@ -141,6 +142,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(JaxwsMessageBundleTests.class);
         
         suite.addTestSuite(StringProviderTests.class);
+        suite.addTestSuite(SOAPFaultProviderTests.class);
         suite.addTestSuite(StringMessageProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);
         suite.addTestSuite(SourceMessageProviderTests.class);

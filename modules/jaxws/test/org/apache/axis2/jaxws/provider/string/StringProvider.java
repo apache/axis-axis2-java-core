@@ -27,8 +27,26 @@ public class StringProvider implements Provider<String> {
     
     public String invoke(String text) {
         TestLogger.logger.debug("StringProvider invoke received the message [" + text + "]");
-        if (text != null && text.contains("throwWebServiceException")) {
+        if (text == null) {
+            return null;
+        } else if (text.contains("throwWebServiceException")) {
             throw new WebServiceException("provider");
+        } else if (text.contains("<Code>") && text.contains("SOAPFaultProviderTests")) { 
+            // Make sure the received fault has the Reason string
+            if (text.contains("<Reason>")) {
+                return null;
+            }
+            else {
+                throw new UnsupportedOperationException("Test failed: No <Reason> element");
+            }
+        } else if (text.contains("<faultcode>") && text.contains("SOAPFaultProviderTests")) { 
+            // Make sure the received fault has the Reason string
+            if (text.contains("<faultstring>")) {
+                return null;
+            }
+            else {
+                throw new UnsupportedOperationException("Test failed: No <faultstring> element");
+            }
         } else {
             // Echo the input
             return text;

@@ -26,6 +26,7 @@ import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -162,6 +163,14 @@ public class MessageUtils {
                     String value = (String)headerMap.get(key);
                     mhs.addHeader(key, value);
                 }
+            }
+            // TODO: This is a WORKAROUND for missing SOAPFault data.  If we do a toString on the
+            // SOAPEnvelope, then all the data will be available to the provider.  Otherwise, it
+            // will be missing the <Reason> element corresponding to the <faultstring> element.  
+            // The SOAPFaultProviderTests will check for this failure.
+            SOAPBody soapBody = soapEnv.getBody();
+            if (soapBody.hasFault()) {
+                soapEnv.toString();
             }
 
             if (false) {
