@@ -42,7 +42,7 @@
 		<module>modules/mtompolicy</module>
 		<module>modules/parent</module>
 		<module>modules/ping</module>
-		<module>modules/scripting</module>
+		<!--<module>modules/scripting</module>-->
 		<!--<module>modules/soapmonitor</module>-->
 		<module>modules/spring</module>
 		<module>modules/tool/axis2-aar-maven-plugin</module>
