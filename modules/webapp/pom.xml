@@ -36,6 +36,11 @@
             <artifactId>axis2-json</artifactId>
             <version>${version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>addressing</artifactId>
+            <version>${version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2</finalName>
