@@ -9,7 +9,7 @@
     </parent>
     <artifactId>axis2-webapp</artifactId>
     <packaging>war</packaging>
-    <name>Axis2 Web Application module</name>
+    <name>Apache Axis 2.0 - Web Application module</name>
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
