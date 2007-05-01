@@ -77,7 +77,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>conf</directory>
+                            <directory>${basedir}/conf</directory>
                             <targetPath>WEB-INF</targetPath>
                             <includes>
                                 <include>web.xml</include>
