@@ -16,19 +16,20 @@
 
 package org.apache.axis2.json;
 
-import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMOutputFormat;
-import org.codehaus.jettison.mapped.MappedXMLInputFactory;
-import org.json.JSONTokener;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMOutputFormat;
+import org.codehaus.jettison.json.JSONTokener;
+import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 
 /**
  * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in

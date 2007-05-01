@@ -177,6 +177,13 @@
     <reports/>
     <!-- add the build properties-->
     <build>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        
+        </unitTest>
         <resources>
             <resource>
                 <directory>src</directory>
