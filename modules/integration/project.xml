@@ -358,6 +358,7 @@
                 <exclude>**/*Abstract*.class</exclude>
                 <exclude>**/*Util*.class</exclude>
                 <exclude>**/*InteropStubTest.class</exclude>
+                <exclude>**/*ServiceGroupContextTest.class</exclude>
                 <exclude>**/*EchoRawSwAFileInputTest.class</exclude>
                 <exclude>**org/apache/axis2/mail/*.class</exclude>
 		<exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.class</exclude>
