@@ -34,12 +34,12 @@
           <copy file="../../NOTICE.txt"
             tofile="target/classes/META-INF/NOTICE.txt" overwrite="true"/>
         <mkdir dir="target/modules"/>
-        <jar jarfile="target/metadataExchange-${mex_version}.mar" basedir="target/classes">
+        <jar jarfile="target/mex-${mex_version}.mar" basedir="target/classes">
             <include name="**"/>
         </jar>
-        <copy file="target/metadataExchange-${mex_version}.mar"
-            tofile="target/modules/metadataExchange-${mex_version}.mar"/>
-        <copy file="target/metadataExchange-${mex_version}.mar" 
-            tofile="${maven.repo.local}/org.apache.axis2/mars/metadataExchange-${mex_version}.mar"/>
+        <copy file="target/mex-${mex_version}.mar"
+            tofile="target/modules/mex-${mex_version}.mar"/>
+        <copy file="target/mex-${mex_version}.mar" 
+            tofile="${maven.repo.local}/org.apache.axis2/mars/mex-${mex_version}.mar"/>
     </postGoal>
    </project>
