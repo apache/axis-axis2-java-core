@@ -30,7 +30,6 @@
 		<dependency>
 			<groupId>com.sun.xml.fastinfoset</groupId>
 			<artifactId>FastInfoset</artifactId>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>stax</groupId>
@@ -57,10 +56,6 @@
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -92,7 +87,7 @@
 			<artifactId>annogen</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>httpcomponents-httpcore</groupId>
+			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>jakarta-httpcore</artifactId>
 		</dependency>
 		<dependency>

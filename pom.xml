@@ -32,6 +32,7 @@
 		<module>modules/adb</module>
 		<module>modules/addressing</module>
 		<module>modules/codegen</module>
+		<module>modules/fastinfoset</module>
 		<!--<module>modules/integration</module>-->
 		<module>modules/java2wsdl</module>
 		<module>modules/jibx</module>
@@ -40,6 +41,7 @@
 		<module>modules/mtompolicy</module>
 		<module>modules/parent</module>
 		<module>modules/ping</module>
+		<!--<module>modules/scripting</module>-->
 		<module>modules/spring</module>
 		<module>modules/tool/axis2-aar-maven-plugin</module>
 		<module>modules/tool/axis2-ant-plugin</module>
