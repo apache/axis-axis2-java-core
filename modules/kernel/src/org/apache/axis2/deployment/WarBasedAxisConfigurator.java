@@ -121,6 +121,13 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                             .getResourceAsStream("/WEB-INF/conf/axis2.xml");
                     log.debug("trying to load axis2.xml from module: /WEB-INF/conf/axis2.xml");
                 }
+
+                if (axis2Stream == null) {
+                    // Simple deployment, no need for conf directory either
+                    axis2Stream = config.getServletContext()
+                            .getResourceAsStream("/WEB-INF/axis2.xml");
+                    log.debug("trying to load axis2.xml from module: /WEB-INF/conf/axis2.xml");
+                }
             } // try
             catch (Exception e) {
                 log.error(e, e);
@@ -130,6 +137,8 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             } // catch
 
             if (axis2Stream == null) {
+                log.info("Could not find axis2.xml, loading default "
+                        + DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE + " from classpath");
                 axis2Stream =
                         Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
