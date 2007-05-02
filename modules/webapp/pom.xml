@@ -299,6 +299,54 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>version</artifactId>
+            <version>${version}</version>
+            <type>aar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant-launcher</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>avalon-framework</groupId>
+                    <artifactId>avalon-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>logkit</groupId>
+                    <artifactId>logkit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.xml.bind</groupId>
+                  <artifactId>jsr173_api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${version}</finalName>
@@ -324,6 +372,13 @@
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>soapmonitor*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/../samples/version/target</directory>
+                            <targetPath>WEB-INF/services</targetPath>
+                            <includes>
+                                <include>version*.aar</include>
                             </includes>
                         </resource>
                         <resource>
@@ -367,15 +422,15 @@
                         <resource>
                             <directory>${basedir}/conf</directory>
                             <targetPath>WEB-INF/services</targetPath>
-							<filtering>true</filtering>
-							<includes>
-								<include>services.list</include>
-							</includes>
-						</resource>
-						<resource>
-							<directory>${basedir}/conf</directory>
-							<targetPath>WEB-INF/modules</targetPath>
-							<filtering>true</filtering>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>services.list</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/conf</directory>
+                            <targetPath>WEB-INF/modules</targetPath>
+                            <filtering>true</filtering>
                             <includes>
                                 <include>modules.list</include>
                             </includes>
