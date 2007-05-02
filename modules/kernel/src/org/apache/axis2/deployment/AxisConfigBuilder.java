@@ -173,6 +173,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             axisConfig.addMessageBuilder("application/soap+xml", new SOAPBuilder());
             axisConfig.addMessageBuilder("text/xml", new SOAPBuilder());
             axisConfig.addMessageBuilder("application/xop+xml", new MTOMBuilder());
+            axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
+            axisConfig.addMessageBuilder("application/x-www-form-urlencoded",
+                                         new XFormURLEncodedBuilder());
             // process MessageBuilders
             OMElement messageBuildersElement =
                     config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
@@ -184,9 +187,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addMessageBuilder(key, (Builder) builderSelector.get(key));
                 }
             }
-            axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
-            axisConfig.addMessageBuilder("application/x-www-form-urlencoded",
-                                         new XFormURLEncodedBuilder());
+            
 
             //process dataLocator configuration
             OMElement dataLocatorElement =

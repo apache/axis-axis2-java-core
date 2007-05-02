@@ -18,6 +18,7 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.ServiceDeployer;
 
 public class WSInfo {
     private String fileName;
@@ -49,6 +50,10 @@ public class WSInfo {
         this.fileName = fileName;
         this.lastModifiedDate = lastModifiedDate;
         this.deployer = deployer;
+        //TODO: This is a temporary fix for the hot update in custom deployers
+        if (!(deployer instanceof ServiceDeployer)) {
+           this.type=2;
+        }
     }
 
     public String getFileName() {
