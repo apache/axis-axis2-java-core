@@ -623,6 +623,11 @@
 				<version>${commons.httpclient.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons.io.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>jakarta-httpcore</artifactId>
 				<version>${jakarta.httpcore.version}</version>
