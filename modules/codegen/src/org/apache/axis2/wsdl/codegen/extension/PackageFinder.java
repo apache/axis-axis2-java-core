@@ -38,7 +38,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
                 // i.e. user have not given any ns2p information for this name space
                 packageName = URLProcessor.makePackageName(configuration.getTargetNamespace());
                 if (packageName != null) {
-                    configuration.setPackageName(packageName.toLowerCase());
+                    packageName = packageName.toLowerCase();
                 }
             }
 
@@ -47,6 +47,8 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
         if ((packageName == null) || "".equals(packageName)) {
             packageName = URLProcessor.DEFAULT_PACKAGE;
         }
+
+        configuration.setPackageName(packageName);
     }
 
 
