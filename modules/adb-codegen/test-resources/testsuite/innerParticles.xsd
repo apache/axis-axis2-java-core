@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://mynamespace.com/testinnerparticle"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:test1="http://mynamespace.com/testinnerparticle"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            version="1.0">
+    <xsd:element name="TestInnerParticle1">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="param1" type="xsd:string"/>
+                <xsd:sequence>
+                    <xsd:element name="param2" type="xsd:string"/>
+                    <xsd:element name="param3" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:element name="param4" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TestInnerParticle2">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="param1" type="xsd:string"/>
+                <xsd:choice>
+                    <xsd:element name="param2" type="xsd:string"/>
+                    <xsd:element name="param3" type="xsd:string"/>
+                </xsd:choice>
+                <xsd:element name="param4" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TestInnerParticle3">
+        <xsd:complexType>
+            <xsd:choice>
+                <xsd:element name="param1" type="xsd:string"/>
+                <xsd:choice>
+                    <xsd:element name="param2" type="xsd:string"/>
+                    <xsd:element name="param3" type="xsd:string"/>
+                </xsd:choice>
+                <xsd:element name="param4" type="xsd:string"/>
+            </xsd:choice>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="TestInnerParticle4">
+        <xsd:complexType>
+            <xsd:choice>
+                <xsd:element name="param1" type="xsd:string"/>
+                <xsd:sequence>
+                    <xsd:element name="param2" type="xsd:string"/>
+                    <xsd:element name="param3" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:element name="param4" type="xsd:string"/>
+            </xsd:choice>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="TestInnerParticle5">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="param1" type="xsd:string"/>
+                <xsd:sequence>
+                    <xsd:element name="param2" type="xsd:string"/>
+                    <xsd:element name="param3" type="xsd:string"/>
+                    <xsd:sequence>
+                        <xsd:element name="param4" type="xsd:string"/>
+                        <xsd:element name="param5" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:sequence>
+                <xsd:element name="param6" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

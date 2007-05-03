@@ -69,7 +69,7 @@ public interface BeanWriter {
      * @return Returns String.
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf)
+    public String write(QName qname, Map typeMap, BeanWriterMetaInfoHolder metainf)
             throws SchemaCompilationException;
 
     /**

@@ -19,12 +19,13 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import test.axis2.apache.org.TestInnerSequence1;
-import test.axis2.apache.org.TestInnerSequence2;
-import test.axis2.apache.org.TestInnerSequence3;
+import test.axis2.apache.org.*;
 
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
+
+import com.mynamespace.testinnerparticle.TestInnerParticle1Sequence_type0;
 
 public class InnerChoiceTest extends TestCase {
 
@@ -32,8 +33,11 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence1 testSequence = new TestInnerSequence1();
         testSequence.setSequence1("test sequence");
         testSequence.setSequence2(3);
-        testSequence.setChoice1("test choice");
-        testSequence.setChoice2(5);
+
+        TestInnerSequence1Choice_type2 testInnerSequence1Choice_type2 = new TestInnerSequence1Choice_type2();
+        testInnerSequence1Choice_type2.setChoice1("test choice");
+        testInnerSequence1Choice_type2.setChoice2(5);
+        testSequence.setTestInnerSequence1Choice_type2(testInnerSequence1Choice_type2);
 
         OMElement omElement = testSequence.getOMElement(TestInnerSequence1.MY_QNAME,
                 OMAbstractFactory.getSOAP12Factory());
@@ -44,7 +48,14 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence1 result = TestInnerSequence1.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "test sequence");
             assertEquals(result.getSequence2(), 3);
-            assertEquals(result.getChoice2(), 5);
+            assertEquals(result.getTestInnerSequence1Choice_type2().getChoice2(), 5);
+
+            // writtig result back
+            XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(System.out);
+            result.serialize(new javax.xml.namespace.QName("org.apache.axis2.test", "TestInnerSequence1", "foo")
+                    , OMAbstractFactory.getSOAP11Factory(), xmlStreamWriter);
+            xmlStreamWriter.flush();
+
         } catch (Exception e) {
             fail();
         }
@@ -54,7 +65,9 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence2 testSequence = new TestInnerSequence2();
         testSequence.setSequence1("sequence");
         testSequence.setSequence2(3);
-        testSequence.setChoice1(new String[]{"choice1", "choice2"});
+        TestInnerSequence2Choice_type1 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type1();
+        testInnerSequence2Choice_type1.setChoice1(new String[]{"choice1", "choice2"});
+        testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
 
         OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
                 OMAbstractFactory.getSOAP12Factory());
@@ -65,7 +78,7 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence2 result = TestInnerSequence2.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "sequence");
             assertEquals(result.getSequence2(), 3);
-            assertTrue(isEqual(result.getChoice1(), new String[]{"choice1", "choice2"}));
+            assertTrue(isEqual(result.getTestInnerSequence2Choice_type1().getChoice1(), new String[]{"choice1", "choice2"}));
         } catch (Exception e) {
             fail();
         }
@@ -75,7 +88,9 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence2 testSequence = new TestInnerSequence2();
         testSequence.setSequence1("sequence");
         testSequence.setSequence2(3);
-        testSequence.setChoice2(new int[]{2, 4});
+        TestInnerSequence2Choice_type1 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type1();
+        testInnerSequence2Choice_type1.setChoice2(new int[]{2, 4});
+        testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
 
         OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
                 OMAbstractFactory.getSOAP12Factory());
@@ -86,7 +101,7 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence2 result = TestInnerSequence2.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "sequence");
             assertEquals(result.getSequence2(), 3);
-            assertTrue(isEqual(result.getChoice2(), new int[]{2, 4}));
+            assertTrue(isEqual(result.getTestInnerSequence2Choice_type1().getChoice2(), new int[]{2, 4}));
         } catch (Exception e) {
             fail();
         }
@@ -96,7 +111,9 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence3 testSequence = new TestInnerSequence3();
         testSequence.setSequence1("sequence");
         testSequence.setSequence2(3);
-        testSequence.setChoice1(new String[]{"choice1",null, "choice2"});
+        TestInnerSequence3Choice_type0 testInnerSequence3Choice_type0 = new TestInnerSequence3Choice_type0();
+        testInnerSequence3Choice_type0.setChoice1(new String[]{"choice1", null, "choice2"});
+        testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
         OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
                 OMAbstractFactory.getSOAP12Factory());
@@ -107,32 +124,35 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence3 result = TestInnerSequence3.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "sequence");
             assertEquals(result.getSequence2(), 3);
-            assertTrue(isEqual(result.getChoice1(), new String[]{"choice1",null, "choice2"}));
+            assertTrue(isEqual(result.getTestInnerSequence3Choice_type0().getChoice1(), new String[]{"choice1", null, "choice2"}));
         } catch (Exception e) {
             fail();
         }
     }
 
     public void testInnerChoice32() {
-            TestInnerSequence3 testSequence = new TestInnerSequence3();
-            testSequence.setSequence1("sequence");
-            testSequence.setSequence2(3);
-            testSequence.setChoice2(new int[]{2,Integer.MIN_VALUE,6});
+        TestInnerSequence3 testSequence = new TestInnerSequence3();
+        testSequence.setSequence1("sequence");
+        testSequence.setSequence2(3);
+        TestInnerSequence3Choice_type0 testInnerSequence3Choice_type0 = new TestInnerSequence3Choice_type0();
+        testInnerSequence3Choice_type0.setChoice2(new int[]{2, Integer.MIN_VALUE, 6});
+        testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
-            OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
-                    OMAbstractFactory.getSOAP12Factory());
-            try {
-                String omElementString = omElement.toStringWithConsume();
-                System.out.println("OMelement ==> " + omElementString);
-                XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-                TestInnerSequence3 result = TestInnerSequence3.Factory.parse(xmlReader);
-                assertEquals(result.getSequence1(), "sequence");
-                assertEquals(result.getSequence2(), 3);
-                assertTrue(isEqual(result.getChoice2(), new int[]{2,Integer.MIN_VALUE,6}));
-            } catch (Exception e) {
-                fail();
-            }
+
+        OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
+                OMAbstractFactory.getSOAP12Factory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OMelement ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnerSequence3 result = TestInnerSequence3.Factory.parse(xmlReader);
+            assertEquals(result.getSequence1(), "sequence");
+            assertEquals(result.getSequence2(), 3);
+            assertTrue(isEqual(result.getTestInnerSequence3Choice_type0().getChoice2(), new int[]{2, Integer.MIN_VALUE, 6}));
+        } catch (Exception e) {
+            fail();
         }
+    }
 
 
     private boolean isEqual(String[] test1, String[] test2) {
