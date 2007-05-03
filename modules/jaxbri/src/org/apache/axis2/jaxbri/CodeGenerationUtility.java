@@ -18,6 +18,7 @@ package org.apache.axis2.jaxbri;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.writer.FileCodeWriter;
+import com.sun.tools.xjc.api.ErrorListener;
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
@@ -28,9 +29,12 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
@@ -43,6 +47,7 @@ import java.util.Map;
 import java.util.Vector;
 
 public class CodeGenerationUtility {
+    private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
 
     /**
      * @param additionalSchemas
@@ -96,10 +101,31 @@ public class CodeGenerationUtility {
                 }
                 sc.setDefaultPackageName(pkg);
 
+                sc.setErrorListener(new ErrorListener(){
+                    public void error(SAXParseException saxParseException) {
+                        log.error(saxParseException.getMessage(), saxParseException);
+                    }
+
+                    public void fatalError(SAXParseException saxParseException) {
+                        log.error(saxParseException.getMessage(), saxParseException);
+                    }
+
+                    public void warning(SAXParseException saxParseException) {
+                        log.warn(saxParseException.getMessage(), saxParseException);
+                    }
+
+                    public void info(SAXParseException saxParseException) {
+                        log.info(saxParseException.getMessage(), saxParseException);
+                    }
+                });
                 sc.parseSchema((InputSource)xmlObjectsVector.elementAt(i));
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
+
+                if(jaxbModel == null){
+                    throw new RuntimeException("Unable to generate code using jaxbri");
+                }
 
                 // Emit the code artifacts
                 JCodeModel codeModel = jaxbModel.generateCode(null, null);
