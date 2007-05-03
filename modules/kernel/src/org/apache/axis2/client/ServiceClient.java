@@ -160,13 +160,13 @@ public class ServiceClient {
 
     /**
      * This is WSDL4J based constructor to configure the Service Client/
-     * We are going to make this policy aware
+     * TODO: make this policy aware
      *
-     * @param configContext
-     * @param wsdl4jDefinition
-     * @param wsdlServiceName
-     * @param portName
-     * @throws AxisFault
+     * @param configContext active ConfigurationContext
+     * @param wsdl4jDefinition the WSDL we're going to be using to configure ourselves
+     * @param wsdlServiceName QName of the WSDL service we'd like to access
+     * @param portName name of the WSDL port we'd like to access
+     * @throws AxisFault in case of error
      */
 
     public ServiceClient(ConfigurationContext configContext, Definition wsdl4jDefinition,
@@ -223,7 +223,7 @@ public class ServiceClient {
      * Create a service client by assuming an anonymous service and any other
      * necessary information.
      *
-     * @throws AxisFault
+     * @throws AxisFault in case of error
      */
     public ServiceClient() throws AxisFault {
         this(null, null);
@@ -291,7 +291,7 @@ public class ServiceClient {
      * each client, with the standard values for the client still used for any
      * values not set in the override configuration.
      *
-     * @param overrideOptions
+     * @param overrideOptions the Options to use
      */
     public void setOverrideOptions(Options overrideOptions) {
         this.overrideOptions = overrideOptions;
@@ -310,7 +310,7 @@ public class ServiceClient {
     /**
      * Engage a module for this service client.
      *
-     * @deprecate Please use String version instead
+     * @deprecated Please use String version instead
      * @param moduleName name of the module to engage
      * @throws AxisFault if something goes wrong
      */
@@ -338,8 +338,8 @@ public class ServiceClient {
     /**
      * Disengage a module for this service client
      *
-     * @deprecate Please use String version instead
-     * @param moduleName
+     * @deprecated Please use String version instead
+     * @param moduleName name of Module to disengage
      */
     public void disengageModule(QName moduleName) {
         disengageModule(moduleName.getLocalPart());
@@ -348,7 +348,7 @@ public class ServiceClient {
     /**
      * Disengage a module for this service client
      *
-     * @param moduleName
+     * @param moduleName name of Module to disengage
      */
     public void disengageModule(String moduleName) {
         AxisModule module = axisConfig.getModule(moduleName);
@@ -393,20 +393,18 @@ public class ServiceClient {
 
 
     /**
-     * Add a simple header consisting of some text (and a header name; duh) to
-     * be sent with interactions.
+     * Add a simple header containing some text to be sent with interactions.
      *
-     * @param headerName
-     * @param headerText
-     * @throws AxisFault
+     * @param headerName name of header to add
+     * @param headerText text content for header
+     * @throws AxisFault in case of error
      */
     public void addStringHeader(QName headerName, String headerText) throws AxisFault {
         if (headerName.getNamespaceURI() == null || "".equals(headerName.getNamespaceURI())) {
             throw new AxisFault(
-                    "Failed to add string header , you have to have namespaceURI for the QName");
+                    "Failed to add string header, you have to have namespaceURI for the QName");
         }
-        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(
-                headerName, null);
+        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(headerName, null);
         omElement.setText(headerText);
         addHeader(omElement);
     }
@@ -491,9 +489,9 @@ public class ServiceClient {
      * can instead create a client for the operation and use that client to
      * execute the exchange.
      *
-     * @param elem
+     * @param elem the data to send (becomes the content of SOAP body)
      * @return response
-     * @throws AxisFault
+     * @throws AxisFault in case of error
      * @see #createClient(QName)
      */
     public OMElement sendReceive(OMElement elem) throws AxisFault {
@@ -507,9 +505,9 @@ public class ServiceClient {
      * the exchange.
      *
      * @param operationQName name of operationQName to be invoked (non-<code>null</code>)
-     * @param xmlPayload
-     * @return response
-     * @throws AxisFault
+     * @param xmlPayload the data to send (becomes the content of SOAP body)
+     * @return response OMElement
+     * @throws AxisFault in case of error
      */
     public OMElement sendReceive(QName operationQName, OMElement xmlPayload)
             throws AxisFault {
@@ -530,9 +528,9 @@ public class ServiceClient {
      * create a client for the operation and use that client to execute the
      * exchange.
      *
-     * @param elem
-     * @param callback
-     * @throws AxisFault
+     * @param elem the data to send (becomes the content of SOAP body)
+     * @param callback a Callback which will be notified upon completion
+     * @throws AxisFault in case of error
      * @see #createClient(QName)
      */
     public void sendReceiveNonBlocking(OMElement elem, Callback callback)
@@ -548,9 +546,9 @@ public class ServiceClient {
      * exchange.
      *
      * @param operation name of operation to be invoked (non-<code>null</code>)
-     * @param elem
-     * @param callback
-     * @throws AxisFault
+     * @param elem the data to send (becomes the content of SOAP body)
+     * @param callback a Callback which will be notified upon completion
+     * @throws AxisFault in case of error
      * @see #createClient(QName)
      */
     public void sendReceiveNonBlocking(QName operation, OMElement elem,
@@ -638,7 +636,7 @@ public class ServiceClient {
     /**
      * Add all configured headers to a SOAP envelope.
      *
-     * @param envelope
+     * @param envelope the SOAPEnvelope in which to write the headers
      */
     public void addHeadersToEnvelope(SOAPEnvelope envelope) {
         if (headers != null) {
@@ -655,7 +653,7 @@ public class ServiceClient {
      *
      * @param transport transport name (non-<code>null</code>)
      * @return local endpoint
-     * @throws AxisFault
+     * @throws AxisFault in case of error
      */
     public EndpointReference getMyEPR(String transport) throws AxisFault {
         return serviceContext.getMyEPR(transport);
@@ -673,7 +671,7 @@ public class ServiceClient {
     /**
      * Set the endpoint reference for the service.
      *
-     * @param targetEpr
+     * @param targetEpr the EPR this ServiceClient should target
      */
     public void setTargetEPR(EndpointReference targetEpr) {
         serviceContext.setTargetEPR(targetEpr);
@@ -682,6 +680,8 @@ public class ServiceClient {
 
     /**
      * Gets the last OperationContext
+     *
+     * @return the last OperationContext that was invoked by this ServiceClient
      */
     public OperationContext getLastOperationContext() {
         return serviceContext.getLastOperationContext();
@@ -689,6 +689,8 @@ public class ServiceClient {
 
     /**
      * Sets whether or not to cache the last OperationContext
+     *
+     * @param cachingOpContext true if we should hold onto the last active OperationContext
      */
     public void setCachingOperationContext(boolean cachingOpContext) {
         serviceContext.setCachingOperationContext(cachingOpContext);
@@ -714,7 +716,7 @@ public class ServiceClient {
      * you're done using the client, in order to discard any associated
      * resources.
      *
-     * @throws AxisFault
+     * @throws AxisFault in case of error
      */
     public void cleanup() throws AxisFault {
         // if a configuration context was created for this client there'll also

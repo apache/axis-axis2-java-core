@@ -64,13 +64,16 @@ public abstract class OperationClient {
     */
     protected boolean completed;
 
-    protected OperationClient(AxisOperation axisOp, ServiceContext sc,
-                              Options options) {
+    protected OperationClient(AxisOperation axisOp, ServiceContext sc, Options options) {
         this.axisOp = axisOp;
         this.sc = sc;
         this.options = new Options(options);
-        this.completed = false;
-        this.oc = ContextFactory.createOperationContext(axisOp, this.sc);
+        completed = false;
+        oc = ContextFactory.createOperationContext(axisOp, sc);
+        
+        if (sc.isCachingOperationContext()) {
+            sc.setLastOperationContext(oc);
+        }
     }
 
     /**
