@@ -35,16 +35,20 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.StringReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 public class CodeGenerationUtility {
     private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
@@ -53,7 +57,7 @@ public class CodeGenerationUtility {
      * @param additionalSchemas
      * @throws RuntimeException
      */
-    public static TypeMapper processSchemas(List schemas,
+    public static TypeMapper processSchemas(final List schemas,
                                             Element[] additionalSchemas,
                                             CodeGenConfiguration cgconfig)
             throws RuntimeException {
@@ -67,12 +71,12 @@ public class CodeGenerationUtility {
                 return new DefaultTypeMapper();
             }
 
-            Vector xmlObjectsVector = new Vector();
+            final ArrayList xmlObjectsVector = new ArrayList();
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
 
-            String baseURI = cgconfig.getBaseURI();
+            final String baseURI = cgconfig.getBaseURI();
 
             for (int i = 0; i < schemas.size(); i++) {
                 XmlSchema schema = (XmlSchema)schemas.get(i);
@@ -86,6 +90,20 @@ public class CodeGenerationUtility {
             outputDir.mkdir();
 
             Map nsMap = cgconfig.getUri2PackageNameMap();
+            EntityResolver resolver = new EntityResolver() {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                    for (int i = 0; i < schemas.size(); i++) {
+                        XmlSchema schema = (XmlSchema) schemas.get(i);
+                        if(schema.getTargetNamespace().equals(publicId)){
+                            InputSource inputSource =
+                                    new InputSource(new StringReader(getSchemaAsString(schema)));
+                            inputSource.setSystemId(baseURI);
+                            return inputSource;
+                        }
+                    }
+                    return null;
+                }
+            };
 
             for (int i = 0; i < xmlObjectsVector.size(); i++) {
 
@@ -100,6 +118,8 @@ public class CodeGenerationUtility {
                     pkg = extractNamespace(schema);
                 }
                 sc.setDefaultPackageName(pkg);
+
+                sc.setEntityResolver(resolver);
 
                 sc.setErrorListener(new ErrorListener(){
                     public void error(SAXParseException saxParseException) {
@@ -118,7 +138,7 @@ public class CodeGenerationUtility {
                         log.info(saxParseException.getMessage(), saxParseException);
                     }
                 });
-                sc.parseSchema((InputSource)xmlObjectsVector.elementAt(i));
+                sc.parseSchema((InputSource)xmlObjectsVector.get(i));
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
