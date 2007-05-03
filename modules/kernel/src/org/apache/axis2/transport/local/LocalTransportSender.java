@@ -27,6 +27,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +37,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
+    protected static final Log log = LogFactory.getLog(LocalTransportSender.class);
+
     private ByteArrayOutputStream response;
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
@@ -66,6 +70,12 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
 
         OutputStream out;
         EndpointReference epr = msgContext.getTo();
+
+        if (log.isDebugEnabled()) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            TransportUtils.writeMessage(msgContext, os);
+            log.debug("Sending - " + new String(os.toByteArray()));
+        }
 
         if (epr != null) {
             if (!epr.hasNoneAddress()) {

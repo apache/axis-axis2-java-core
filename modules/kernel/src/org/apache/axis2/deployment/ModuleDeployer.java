@@ -37,7 +37,6 @@ import java.net.MalformedURLException;
 public class ModuleDeployer implements Deployer {
 
     private static final Log log = LogFactory.getLog(ModuleDeployer.class);
-    private ConfigurationContext configCtx;
     private AxisConfiguration axisConfig;
 
 
@@ -50,7 +49,6 @@ public class ModuleDeployer implements Deployer {
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
-        this.configCtx = configCtx;
         this.axisConfig = configCtx.getAxisConfiguration();
     }
     //Will process the file and add that to axisConfig

@@ -27,13 +27,18 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * LocalResponder
  */
 public class LocalResponder extends AbstractHandler implements TransportSender {
+    protected static final Log log = LogFactory.getLog(LocalResponder.class);
+    
     LocalTransportSender sender;
 
     public LocalResponder(LocalTransportSender sender) {
@@ -70,6 +75,12 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
             epr = msgContext.getTo();
         }
 
+        if (log.isDebugEnabled()) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            TransportUtils.writeMessage(msgContext, os);
+            log.debug("Response - " + new String(os.toByteArray()));
+        }
+        
         if (epr != null) {
             if (!epr.hasNoneAddress()) {
                 out = sender.getResponse();

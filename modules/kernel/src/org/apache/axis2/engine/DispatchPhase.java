@@ -19,7 +19,10 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,6 +74,7 @@ public class DispatchPhase extends Phase {
                     operation = null;
                 }
             }
+            msgContext.setAxisOperation(operation);
         }
 
         // If we still don't have an operation, fault.
@@ -80,8 +84,6 @@ public class DispatchPhase extends Phase {
                                                             : ""), msgContext.getWSAAction()));
         }
 
-        msgContext.setAxisOperation(operation);
-        
         validateTransport(msgContext);
 
         loadContexts(service, msgContext);
@@ -144,6 +146,8 @@ public class DispatchPhase extends Phase {
         }
         if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             fillContextsFromSessionContext(msgContext);
+        } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
+            extractServiceGroupContextId(msgContext);
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
@@ -261,4 +265,19 @@ public class DispatchPhase extends Phase {
             sessionContext.addServiceGroupContext(serviceGroupContext);
         }
     }
+
+    private static final QName SERVICE_GROUP_QNAME = new QName(Constants.AXIS2_NAMESPACE_URI,
+                                                               Constants.SERVICE_GROUP_ID,
+                                                               Constants.AXIS2_NAMESPACE_PREFIX);
+
+    private void extractServiceGroupContextId(MessageContext msgContext) throws AxisFault {
+        SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
+        if (soapHeader != null) {
+            OMElement serviceGroupId = soapHeader.getFirstChildWithName(SERVICE_GROUP_QNAME);
+            if (serviceGroupId != null) {
+                msgContext.setServiceGroupContextId(serviceGroupId.getText());
+            }
+        }
+    }
+
 }

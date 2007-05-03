@@ -22,6 +22,8 @@ import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.ModuleDeployer;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
@@ -37,6 +39,7 @@ import javax.xml.namespace.QName;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.*;
+import java.io.File;
 
 /**
  * Class AxisConfiguration
@@ -212,6 +215,15 @@ public class AxisConfiguration extends AxisDescription {
         // Registering the policy assertions that are local to the system
         registerLocalPolicyAssertions(module);
 
+    }
+
+    public void deployModule(String moduleFileName) throws DeploymentException {
+        File moduleFile = new File(moduleFileName);
+        if (!moduleFile.exists()) {
+            throw new DeploymentException("Module archive '" + moduleFileName + "' doesn't exist");
+        }
+        DeploymentFileData dfd = new DeploymentFileData(moduleFile, new ModuleDeployer(this));
+        dfd.deploy();
     }
 
     /**

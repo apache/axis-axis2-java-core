@@ -365,7 +365,7 @@ public class EndpointReference implements Serializable {
      * @param localName
      * @param prefix
      * @throws AxisFault
-     * @deprecated use {@link EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
+     * @deprecated use EndpointReferenceHelper#toOM(EndpointReference, QName, String) instead.
      */
     public OMElement toOM(String nsurl, String localName, String prefix) throws AxisFault {
         OMFactory fac = OMAbstractFactory.getOMFactory();
