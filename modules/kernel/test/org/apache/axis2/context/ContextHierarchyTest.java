@@ -29,14 +29,10 @@ import javax.xml.namespace.QName;
 
 public class ContextHierarchyTest extends TestCase {
     private AxisOperation axisOperation;
-
     private AxisService axisService;
-
     private AxisConfiguration axisConfiguration;
-
-    public ContextHierarchyTest(String arg0) {
-        super(arg0);
-    }
+    private ConfigurationContext configurationContext;
+    private MessageContext msgctx;
 
     protected void setUp() throws Exception {
         axisOperation = new InOutAxisOperation(new QName("Temp"));
@@ -44,16 +40,15 @@ public class ContextHierarchyTest extends TestCase {
         axisConfiguration = new AxisConfiguration();
         axisService.addOperation(axisOperation);
         axisConfiguration.addService(axisService);
+        configurationContext = new ConfigurationContext(axisConfiguration);
+        msgctx = ContextFactory.createMessageContext(configurationContext);
     }
 
-    public void testCompleteHiracy() throws AxisFault {
-        ConfigurationContext configurationContext = new ConfigurationContext(
-                axisConfiguration);
+    public void testCompleteHierarchy() throws AxisFault {
         ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(
                 configurationContext, (AxisServiceGroup) axisService.getParent());
         ServiceContext serviceContext =
                 ContextFactory.createServiceContext(serviceGroupContext, axisService);
-        MessageContext msgctx = ContextFactory.createMessageContext(configurationContext);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                                                                         serviceContext);
         axisOperation.registerOperationContext(msgctx, opContext);
@@ -69,6 +64,7 @@ public class ContextHierarchyTest extends TestCase {
         String value2 = "value2";
         String key2 = "key2";
         String value3 = "value";
+        String key3 = "key3";
 
         configurationContext.setProperty(key1, value1);
         assertEquals(value1, msgctx.getProperty(key1));
@@ -78,16 +74,12 @@ public class ContextHierarchyTest extends TestCase {
 
         opContext.setProperty(key1, value3);
         assertEquals(value3, msgctx.getProperty(key1));
-        opContext.getConfigurationContext();
 
+        serviceContext.setProperty(key3, value3);
+        assertEquals(value3, msgctx.getProperty(key3));
     }
 
-    public void testDisconntectedHiracy() throws AxisFault {
-        ConfigurationContext configurationContext = new ConfigurationContext(
-                axisConfiguration);
-
-        MessageContext msgctx = ContextFactory.createMessageContext(configurationContext);
-
+    public void testDisconntectedHierarchy() throws AxisFault {
         // test the complete Hierarchy built
         assertEquals(msgctx.getParent(), null);
 
@@ -102,8 +94,4 @@ public class ContextHierarchyTest extends TestCase {
         axisConfiguration.addParameter(new Parameter(key2, value2));
         assertEquals(value2, msgctx.getParameter(key2).getValue());
     }
-
-    protected void tearDown() throws Exception {
-    }
-
 }
