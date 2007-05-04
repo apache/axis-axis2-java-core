@@ -151,10 +151,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     public OperationContext createOperationContext(AxisOperation axisOp) {
         OperationContext ctx = ContextFactory.createOperationContext(axisOp, this);
-        if (cachingOperationContext) {
-            // Squirrel this away for anyone who wants it later
-            lastOperationContext = ctx;
-        }
         return ctx;
     }
 

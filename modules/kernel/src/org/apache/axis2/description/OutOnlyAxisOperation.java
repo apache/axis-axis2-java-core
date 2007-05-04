@@ -236,7 +236,7 @@ class OutOnlyAxisOperationClient extends OperationClient {
      *              client. IGNORED BY THIS MEP CLIENT.
      * @throws AxisFault if something goes wrong during the execution of the MEP.
      */
-    public void execute(boolean block) throws AxisFault {
+    public void executeImpl(boolean block) throws AxisFault {
         if (completed) {
             throw new AxisFault(Messages.getMessage("mepiscomplted"));
         }

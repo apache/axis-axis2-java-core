@@ -70,10 +70,6 @@ public abstract class OperationClient {
         this.options = new Options(options);
         completed = false;
         oc = ContextFactory.createOperationContext(axisOp, sc);
-        
-        if (sc.isCachingOperationContext()) {
-            sc.setLastOperationContext(oc);
-        }
     }
 
     /**
@@ -132,6 +128,24 @@ public abstract class OperationClient {
     public abstract void setCallback(Callback callback);
 
     /**
+     * Execute the MEP.  This method is final and only serves to set (if appropriate)
+     * the lastOperationContext on the ServiceContext, and then it calls
+     * executeImpl(), which does the actual work.
+     *
+     * @param block Indicates whether execution should block or return ASAP. What
+     *              block means is of course a function of the specific operation
+     *              client.
+     * @throws AxisFault if something goes wrong during the execution of the operation
+     *                   client.
+     */
+    public final void execute(boolean block) throws AxisFault {
+        if (sc.isCachingOperationContext()) {
+            sc.setLastOperationContext(oc);
+        }
+        executeImpl(block);
+    }
+
+    /**
      * Execute the MEP. What this does depends on the specific operation client.
      * The basic idea is to have the operation client execute and do something
      * with the messages that have been added to it so far. For example, if its
@@ -145,7 +159,7 @@ public abstract class OperationClient {
      * @throws AxisFault if something goes wrong during the execution of the operation
      *                   client.
      */
-    public abstract void execute(boolean block) throws AxisFault;
+    public abstract void executeImpl(boolean block) throws AxisFault;
 
     /**
      * Reset the operation client to a clean status after the MEP has completed.
