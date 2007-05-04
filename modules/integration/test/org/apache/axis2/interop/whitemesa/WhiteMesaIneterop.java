@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.interop.whitemesa;
+package org.apache.axis2.interop.whitemesa;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
@@ -35,6 +35,8 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+
+import test.interop.whitemesa.WhiteMesaConstants;
 
 public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants {
 

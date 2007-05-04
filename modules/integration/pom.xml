@@ -15,265 +15,500 @@
 	! See the License for the specific language governing permissions and
 	! limitations under the License.
 	!-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-parent</artifactId>
-		<version>SNAPSHOT</version>
-		<relativePath>../parent/pom.xml</relativePath>
-	</parent>
-	<artifactId>axis2-integration</artifactId>
-	<name>Apache Axis 2.0 - Integration</name>
-	<description>Axis2 Integration</description>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-clustering</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-jaxbri</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-jaxws-api</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<version>${version}</version>
-			<artifactId>axis2-jaxws</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<version>${version}</version>
-			<artifactId>axis2-jibx</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-json</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-metadata</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-mtompolicy</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-saaj-api</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-saaj</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-spring</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-xmlbeans</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jsr173</artifactId>
-					<groupId>javax.xml</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-xjc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jsr173</artifactId>
-					<groupId>javax.xml</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>conf</directory>
-				<includes>
-					<include>**/*.properties</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src</directory>
-				<includes>
-					<include>**/*.properties</include>
-					<include>**/*.xml</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>test</directory>
-				<includes>
-					<include>**/*.xml</include>
-					<include>**/*.wsdl</include>
-					<include>**/*.properties</include>
-				</includes>
-			</testResource>
-		</testResources>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>gen-ts</id>
-						<phase>generate-test-sources</phase>
-						<configuration>
-							<tasks>
-								<!-- TODO -->
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-repo</id>
-						<phase>test-compile</phase>
-						<configuration>
-							<tasks>
-								<!-- TODO -->
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-test-source</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${basedir}/target/schema/src</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<inherited>true</inherited>
-				<configuration>
-					<skip>false</skip>
-					<forkMode>once</forkMode>
-					<argLine>-Xms256m -Xmx512m</argLine>
-					<!-- Enable the next 2 lines if you want to attach a debugger
-  			<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
-					<includes>
-						<include>**/*Test.java</include>
-					</includes>
-					<systemProperties>
-						<property>
-							<name>build.repository</name>
-							<value>./target/test-classes</value>
-						</property>
-					</systemProperties>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>axis2-integration</artifactId>
+    <name>Apache Axis 2.0 - Integration</name>
+    <description>Axis2 Integration</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-clustering</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxbri</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws-api</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <version>${version}</version>
+            <artifactId>axis2-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <version>${version}</version>
+            <artifactId>axis2-jibx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-json</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-metadata</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-mtompolicy</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj-api</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-xmlbeans</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr173</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr173</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.wsdl</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>${junit.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>gen-ts</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- Set a property that can be picked up from the ant build.xml's -->
+                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
+
+                                <!-- copy the mars so that they are available on the test classpath -->
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-classes/modules/addressing-${version}.mar"/>
+
+                                <property name="axis2.home" value="${basedir}/target"/>
+
+                                <!-- compiling some custom wsdl files -->
+                                <property name="wsdl.source.dir" value="test-resources/wsdl"/>
+                                <property name="wsdl.output.base.dir" value="target/wsdl"/>
+                                <!-- make the dirs -->
+                                <mkdir dir="${wsdl.output.base.dir}"/>
+
+                                <echo>Compiling DocumentUnwrappingTest.wsdl</echo>
+                                <mkdir dir="${wsdl.output.base.dir}/documentunwrapping"/>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-o target/wsdl/documentunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/wsdl/documentunwrapping"/>
+
+                                <echo>Compiling RPCUnwrappingTest.wsdl</echo>
+                                <mkdir dir="${wsdl.output.base.dir}/rpcunwrapping"/>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/wsdl/rpcunwrapping"/>
+
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>
+                                </java>
+                                <copy overwrite="yes" todir="target/perf/src/samples/wsdl/perf">
+                                    <fileset dir="test/samples/wsdl/perf">
+                                        <include name="*Skeleton.java"/>
+                                    </fileset>
+                                </copy>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
+                                     target="make.repo"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
+                                     target="jar.client"/>
+                                <move file="target/perf/build/lib/Services-test-client.jar"
+                                      tofile="target/perf/build/lib/PerfSoapService-test-client.jar"/>
+
+                                <move file="target/perf/build/lib/Services.aar"
+                                      tofile="target/perf/build/lib/PerfSoapService.aar"/>
+
+                                <path id="samples.wsdl.perf.client.jar"
+                                      location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
+
+                                <!-- TODO
+                                <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/> 
+                                -->
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
+                                </java>
+                                <copy overwrite="yes" todir="target/perf2/src/samples/wsdl/perf2">
+                                    <fileset dir="test/samples/wsdl/perf2">
+                                        <include name="*Skeleton.java"/>
+                                    </fileset>
+                                </copy>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
+                                     target="make.repo"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
+                                     target="jar.client"/>
+                                <move file="target/perf2/build/lib/Services-test-client.jar"
+                                      tofile="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
+                                <path id="samples.wsdl.perf2.client.jar"
+                                      location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
+
+                                <!-- TODO
+                                <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf2.client.jar"/>
+                                -->
+
+                                <!-- compile the schema for XMLbeans -->
+                                <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-src target/xmlbeans-src -d target/classes test-resources/xsd/type-test.xsd"/>
+                                </java>
+
+                                <echo>Running codegen RPC WSDLs - take 1</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/rpc-test1 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test1"
+                                     target="jar.client"/>
+
+                                <echo>Running codegen RPC WSDLs - take 2</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/rpc-test2 -uri test-resources/rpc/test-rpc-3.wsdl -uw"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test2"
+                                     target="jar.client"/>
+
+
+                                <echo>Running codegen RPC WSDLs - take 3</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3"
+                                     target="jar.client"/>
+
+                                <echo>Running codegen RPC WSDLs - take 4</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
+                                     target="jar.server"/>
+
+                                <echo>Running codegen RPC WSDLs with helper mode - take 1</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/helper-test1 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test1"
+                                     target="jar.client"/>
+
+                                <echo>Running codegen RPC WSDLs with helper mode - take 2</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/helper-test2 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test2"
+                                     target="jar.client"/>
+
+                                <!-- codegen for the enterprise wsdl -->
+                                <echo>Running codegen for Enterprise WSDL - take 1</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-d xmlbeans -o target/enterprise-test1 -s -uri test-resources/enterprise.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/enterprise-test1"
+                                     target="jar.client"/>
+                                <echo>Running codegen for Enterprise WSDL - take 2</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-o target/enterprise-test2 -s -uri test-resources/enterprise.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/enterprise-test2"
+                                     target="jar.client"/>
+
+
+                                <echo>Running codegen for Enterprise WSDL - take 3</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-d xmlbeans -ss -sd -g -o target/enterprise-test3 -s -uri test-resources/enterprise.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/enterprise-test3"
+                                     target="jar.server"/>
+
+                                <echo>Running codegen for Enterprise WSDL - take 4</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-ns2p urn:sobject.enterprise.soap.sforce.com=com.salesforce -d xmlbeans -ss -sd -g -o target/enterprise-test4 -s -uri test-resources/enterprise.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="target/enterprise-test4"
+                                     target="jar.server"/>
+                                <echo>Running codegen for eBaySvc WSDL</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-ss -sd -g -u -ssi -o target/eBaySvc -uri test-resources/eBaySvc.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvc"
+                                     target="jar.server"/>
+                                <echo>Running codegen for eBaySvc WSDL Back word compatibiliy</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-ss -sd -g -u -ssi -b -s -o target/eBaySvcB -uri test-resources/eBaySvc.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcB"
+                                     target="jar.server"/>
+                                <echo>Running codegen for eBaySvc WSDL with un wrapping</echo>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <arg line="-ss -sd -ssi -u -g -uw  -o target/eBaySvcUW -uri test-resources/eBaySvc.wsdl"/>
+                                </java>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
+                                     target="jar.server"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-repo</id>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <tasks>
+                                <!-- TODO -->
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/schema/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <skip>false</skip>
+                    <forkMode>once</forkMode>
+                    <argLine>-Xms256m -Xmx512m</argLine>
+                    <!-- Enable the next 2 lines if you want to attach a debugger
+                   <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <systemProperties>
+                        <property>
+                            <name>build.repository</name>
+                            <value>./target/test-classes</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
