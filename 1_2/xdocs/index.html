@@ -267,13 +267,12 @@ target="_blank">Download Tool Plug-ins</a>]</p>
 
 <h2>Known Issues and Limitations</h2>
 <ul>
-  <li>ADB does not support unwrapping of response messages(coming in 1.2)</li>
-  <li>JSR 181/183 Annotation support (coming in 1.2)</li>
-  <li>JaxMe and JAXBRI data binding support is experimental</li>
-  <li>Simple Axis Server does not support POX/REST</li>
-  <li>RPC Message Receiver does not validate a request against the schema
-    (AXIS2-1943)</li>
-  <li>Axis2 Idea plugin shows random behavior when XMLBeans is used</li>
+  <li>Xml-beans databinding does not support response unwrapping</li>
+  <li>ADB databinding does not support minOccurs and maxOccurs attributes in
+    sequence and choice elements (i.e., <code>&lt;sequence minOccurs="0"
+    maxOccurs="unbounded"&gt;&lt;/sequence&gt;</code>)</li>
+  <li>Unable to produce original WSDL in the case of WSDL 2.0, therefore the
+    AxisService is serialized to produce ?wsdl2.</li>
 </ul>
 
 <h2>Archived News</h2>
