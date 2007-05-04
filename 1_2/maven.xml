@@ -959,6 +959,7 @@
 		    -->
 	            <ant:exclude name="**/*.gif"/>
 	            <ant:exclude name="**/*.jpg"/>
+				<ant:exclude name="**/*.png"/>
      	    </ant:fileset>
         </ant:copy>
 
@@ -968,6 +969,7 @@
 		<ant:exclude name="@axis2_version_dir@/**"/>
 		<ant:include name="**/*.gif"/>
 		<ant:include name="**/*.jpg"/>
+		<ant:include name="**/*.png"/>
 	    </ant:fileset>
         </ant:copy>
 
