@@ -13,8 +13,8 @@ This document explains how to send and receive SOAP messages via TCP in Axis2.
 <p><i>Send your feedback or questions to: <a
 href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>.
 Prefix subject with [Axis2]. Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>. <a
-href="http://ws.apache.org/axis2/mail-lists.html"></a></p>
+href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.
+</p>
 
 <h2>Content</h2>
 <ul>
@@ -28,9 +28,9 @@ href="http://ws.apache.org/axis2/mail-lists.html"></a></p>
 
 <h2>Introduction</h2>
 
-<p>Axis2 supports TCP as a transport. It supports both send and receive SOAP
+<p>Axis2 supports TCP as a transport. It supports both sending and receiving SOAP
 messages via TCP. A TCP transport does not have any application level headers
-and the SOAP message that is sent should be self contained. This makes the
+and the SOAP message that is sent should be self-contained. This makes the
 interaction fast and simple. However, since there are no application headers,
 it does not have the privilege of having a request URI, and Service
 dispatching should be done by an alternative method. Thus,
@@ -54,7 +54,7 @@ org.apache.axis2.transport.tcp.TCPServer with two parameters - <a
 href="../faq.html#c5">repository</a> and port number, as arguments. This
 class needs all the Axis dependency JARs in the classpath. New services can
 be added in the usual way by dropping the archives to the repository (See <a
-href="adv-userguide.html">Advance User's Guide</a> for more information)</p>
+href="adv-userguide.html">Advanced User's Guide</a> for more information)</p>
 <!--<p>Alternatively the TCP Server can run with tcp-server.bat/ tcp-server.sh
 file in the bin directory of the Binary distribution of TCP Server.</p>-->
 <a name="send"></a>
@@ -62,14 +62,14 @@ file in the bin directory of the Binary distribution of TCP Server.</p>-->
 <h2>How to Send SOAP Messages Using TCP Transport</h2>
 
 <p>TCP transport can be enabled easily from the call API. The following code
-segment demonstrates how it can be done.</p>
+segment demonstrates how this can be done.</p>
 <source><pre>OMElement payload = ...
 ServiceClient serviceClient = new ServiceClient();
 Options options = new Options();
 options.setTo(targetEPR);
 <!--options.useSeperateListener(false);-->
 
-<!--commented off as their is an error: "The method useSeperateListener(boolean)is undefined for the type Options"-->
+<!--commented off as there is an error: "The method useSeperateListener(boolean)is undefined for the type Options"-->
 
 serviceClient.setOptions(options);
 
@@ -105,12 +105,8 @@ AXIS2_HOME/lib directory.</p>
 <p>The Axis2 TCP transport has two components, a transport Listener for
 receiving the messages and a transport Sender to send the SOAP Messages. The
 Axis2 installation has both the components built into itself by default. In
-the axis2.xml configuration file, the two TCP transport components would look
-as follows.</p>
-
-<p>If the TCP server is started manually, this configuration does not take
-effect. In return, this affects the transport Listener's start by Axis2.
-(e.g. Listener started by the Complete Async interaction)</p>
+the axis2.xml configuration file, the two TCP transport components can be 
+configured as shown below.</p>
 
 <p>The following XML lines initialize the TCPTransport Receiver:</p>
 <source><pre>&lt;transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer"&gt;
@@ -119,5 +115,11 @@ effect. In return, this affects the transport Listener's start by Axis2.
 </source>
 <p>The following XML lines add the TCPTransport Sender:</p>
 <source><pre>&lt;transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/&gt;</pre>
-</source></body>
+</source>
+
+<p>Note: If the TCP server is started manually, this configuration does not take
+effect. In return, this affects the transport Listener's start by Axis2.
+(e.g. Listener started by the Complete Async interaction)</p>
+
+</body>
 </html>

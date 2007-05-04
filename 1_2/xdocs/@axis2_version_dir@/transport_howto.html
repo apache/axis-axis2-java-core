@@ -17,7 +17,7 @@ description.</p>
 
 <p></p>
 <ul>
-  <li><b>HTTP</b> - In the HTTP transport, the transport Listener is a
+  <li><b>HTTP</b> - In the HTTP transport, the transport Listener is either a
     Servlet or a Simple HTTP server provided by Axis2. The transport Sender
     uses sockets to connect and send the SOAP message. Currently we have the
     commons-httpclient based HTTP Transport sender as the default
@@ -44,18 +44,17 @@ is stripped out of the incoming message and inserted into the MessageContext.
 In the outgoing message, all transport specific information, like headers,
 are added and sent.</p>
 
-<p>To write your own transport, you will need to primarily write two classes:
+<p>To write your own transport, you will primarily need to write two classes:
 one is the TransportSender and the other is the TransportReceiver. To
-register a transport with Axis2 you will need to put two entries in the
-axis2.xml file. One for the transport receiver and the other for the
-transport sender. I will take you through the process of adding the entries
-in the relevent sections.</p>
+register a transport with Axis2 you will need to put entries corresponding
+to these two classes in the axis2.xml file. I will take you through the 
+process of adding the entries in the relevant sections.</p>
 
 <h2>Transport Receiver</h2>
 
 <p>Any message that is coming into Axis2 needs to go through a transport
 receiver. All information about how the message is received at the Axis2
-server from the wire (or via an e-mail ) is isolated inside the transport
+server from the wire (or via an e-mail) is isolated inside the transport
 receiver. It extracts the data that is coming on the wire and transforms it
 into a state that the Axis2 server understands.</p>
 
@@ -66,7 +65,7 @@ building our own transport.</p>
 <p></p>
 
 <p>To get things stared, you will first need to extend from the
-org.apache.Axis2.transport.TransportListener class and write you own
+org.apache.Axis2.transport.TransportListener class and write your own
 transport listener. To create an engine to process the MessageContext, we
 need a configuration context. The following code fragment will do this. This
 should ideally be only done once for the lifetime of the Transport
@@ -163,7 +162,7 @@ also be done through the axis2.xml file.</p>
 </source>
 <p>By using a code fragment like
 <code>Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER))</code>
-we can extract the parameters that we insert into the axis2.xml file.</p>
+we can extract the parameters that we inserted into the axis2.xml file.</p>
 
 <p>As you can see, getting a new transport receiver up and running is a task
 that requires very little effort.</p>
@@ -176,7 +175,7 @@ org.apache.Axis2.transport.AbstractTransportSender class.</p>
 
 <p>The following bit of code from the abstract transport sender will call the
 Transport Sender that you wrote.</p>
-<source><pre>// If an EPR is present then the message is going on a diffrent channel.
+<source><pre>// If an EPR is present then the message is going on a different channel.
 if (epr != null) {
         out = openTheConnection(epr, msgContext);
         OutputStream newOut = startSendWithToAddress(msgContext, out);
@@ -203,7 +202,7 @@ a sub-set of the methods from the abstract class.</p>
 
 <p>After implementing the necessary methods, you can let Axis2 know about
 your new transport sender by adding an entry to the axis2.xml file, like you
-did for the Transport Receiver.</p>
+did for the transport receiver.</p>
 <source><pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME" locked="false"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2" locked="false"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;

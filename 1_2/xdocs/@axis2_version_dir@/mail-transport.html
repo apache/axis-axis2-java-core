@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Invoking a service using a mail</title>
+  <title>Invoking a service using mail</title>
   <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
   media="all">
 </head>
@@ -47,7 +47,7 @@ asynchronous messaging through mail.</p>
 
 <p>First, you need to go through the <a href="mail-configuration.html"
 target="_blank">Mail Transport Configuration</a> document. It provides first
-hand experience in setting up the mail transports to co-exist with Axis2.</p>
+hand experience in setting up the mail transports to operate with Axis2.</p>
 
 <p>Broadly speaking, there are three ways of calling a service through
 mail.</p>
@@ -86,7 +86,7 @@ server side. <br>
 <source><pre>        // Start the mail server using the default configurations.
         ConfigurationContext configContext = UtilsMailServer.start();
 
-        // Start the default mail listener. It will starting poling for mail
+        // Start the default mail listener. It will starting polling for mail
         // using the configuration from the XML file.
         SimpleMailListener ml = new SimpleMailListener();
         ml.init(configContext,
@@ -172,7 +172,7 @@ and operationName need to be QNames.</p>
 
 <h2>2. Using a Generic Mail Server</h2>
 
-<p>First you need two email accounts that work with POP/SMTP. One will act as
+<p>First you will need two email accounts that work with POP/SMTP. One will act as
 a server and the other will act as the client. For the time being, we will
 use server@somewhere.org and client@somewhere.org as the server and the
 client email addresses. Now that we have the email addresses, you will have
