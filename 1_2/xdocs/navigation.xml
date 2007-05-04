@@ -28,8 +28,8 @@
 			   <item name="Web Administrator's Guide" href="@axis2_version_dir@/webadminguide.html" />
 			   <item name="Migration Guide (from Axis1)" href="@axis2_version_dir@/migration.html" />
 			</item>
-			<item name="Version 1.0" href="/1_1_1/index.html" />
-			<item name="Version 1.0" href="/1_1/index.html" />
+			<item name="Version 1.1.1" href="/1_1_1/index.html" />
+			<item name="Version 1.1" href="/1_1/index.html" />
 			<item name="Version 1.0" href="/1_0/index.html" />
 			<item name="Version 0.95" href="/0_95/index.html" />
 			<item name="Version 0.94" href="/0_94/index.html" />
