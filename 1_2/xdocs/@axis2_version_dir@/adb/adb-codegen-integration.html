@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>ADB Integration With Axis2</h1>
-<p>This document will assist you to write an extension using the
+<p>This document will assist you in writing an extension using the
 integrator in order to integrate ADB with Axis2.</p>
 <h2>Content</h2>
 <ul>
@@ -27,8 +27,8 @@ codegen-config.properties file.</p>
 <a name="select_modes" id="select_modes"></a>
 <h2>Selection of Generation Modes for ADB</h2>
 <p>The extension sets the options for the code generator via the
-CompilerOptions, depending on the users settings. The following
-table summarizes the use of options. Please refer the <a href=
+CompilerOptions, depending on the user's settings. The following
+table summarizes the use of options. Please refer to the <a href=
 "adb-howto.html" target="_blank">ADB-How to document</a> for the
 different generation modes and their descriptions.</p>
 <table border="1">
@@ -38,7 +38,7 @@ different generation modes and their descriptions.</p>
 <td><strong>Selected code generation parameters</strong></td>
 </tr>
 <tr>
-<td>None (no other parameter than the mandatory ones)</td>
+<td>None (no parameter other than mandatory ones)</td>
 <td>wrapClasses=false,writeClasses=false</td>
 </tr>
 <tr>
@@ -51,9 +51,8 @@ different generation modes and their descriptions.</p>
 </tr>
 </tbody>
 </table>
-<p>If the users want to override these settings manually, they need
-to use the following parameters in the command line (prefixed with
--E)</p>
+<p>The following parameters (prefixed with -E) can be used to 
+override these settings manually:</p>
 <table border="1">
 <tbody>
 <tr>
@@ -70,24 +69,24 @@ by ADB</td>
 <tr>
 <td>w</td>
 <td>true, false</td>
-<td>Sets the packing flag. if true the classes will be packed.</td>
+<td>Sets the wrapping flag. if true the classes will be wrapped.</td>
 </tr>
 </tbody>
 </table>
-<p>Note that these parameters have no relevant long names and MUST
+<p>Note that these parameters have no corresponding long names and MUST
 be prefixed with a -E to be processed by the code generator. For
-example</p>
+example:</p>
 <pre>
 WSDL2Java .... -Er true
 </pre>
 <a name="remember" id="remember"></a>
 <h2>Things to Remember</h2>
 <ol>
-<li>SimpleDBExtension is made to process requests only when the
-databinding framework is specified as ADB (using the switch -d adb
-). In the most recent release, the default has been set as ADB and
-hence if the -d option is missing then the databinding framework
-will be ADB.</li>
+<li>SimpleDBExtension is for the ADB databinding framework only and
+will process requests only when this framework is specified during
+code generation (using the switch -d adb). In the most recent 
+release, the default has been set as ADB and hence if the -d option
+is missing then the databinding framework will be ADB.</li>
 </ol>
 <hr />
 </body>

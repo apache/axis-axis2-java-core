@@ -21,8 +21,8 @@ for Another Language</a></li>
 </ul>
 <a name="intro" id="intro"></a>
 <h2>Introduction</h2>
-<p>ADB is written with future extensions in mind, with a clear and
-flexible way to extend or modify it's functionality. Available
+<p>ADB was written with future extensibility in mind, with a clear and
+flexible way to extend or modify its functionality. Available
 mechanisms to extend ADB and possibly adopt it to compile schemas
 to support other languages are described below.</p>
 <a name="config" id="config"></a>
@@ -43,7 +43,7 @@ the specified instance of the BeanWriter.</p>
 <p>This specifies the template to be used in the BeanWriter. The
 BeanWriter author is free to use any mechanism to write the classes
 but the default mechanism is to use a xsl template. This property
-may be left blank if the BeanWriter implementation does not require
+may be left blank if the BeanWriter implementation does not use
 a template.</p>
 </li>
 <li>schema.bean.typemap
@@ -59,7 +59,7 @@ QName to Class name string mapping.</p>
 <p>The first, most simple tweak for the code generator could be to
 switch to plain bean generation. The default behavior of the ADB
 framework is to generate ADBBeans, but most users, if they want to
-use ADB as a standalone compiler, would love to have plain java
+use ADB as a standalone compiler, would prefer to have plain java
 beans. This can in fact be done by simply changing the template
 used.</p>
 <p>The template for plain java beans is already available in the
@@ -79,14 +79,14 @@ templates to generate code in their own formats.</p>
 <a name="advanced_tweak" id="advanced_tweak"></a>
 <h2>A More Advanced Tweak - Generate Code for Another Language</h2>
 <p>To generate code for another language, there are two main
-components to be written.</p>
+components that need to be written.</p>
 <ul>
 <li>The BeanWriter
 <p>Implement the BeanWriter interface for this class. A nice
 example is the
 <strong>org.apache.axis2.schema.writer.JavaBeanWriter</strong>
-which has a lot of reusable code. In fact if the language is OOP
-based (such as C# or even C++), one would even be able to extend
+which has a lot of reusable code. In fact if the target language 
+is object-oriented (such as C# or even C++), one would even be able to extend
 the JavaBeanWriter itself.</p>
 </li>
 <li>The TypeMap
@@ -98,12 +98,12 @@ fairly sufficient and only the type names would need to change to
 support another language.</p>
 </li>
 </ul>
-<p>Surprisingly, this is enough to have other language support for
+<p>Surprisingly, this is all that needs to be done to have other language support for
 ADB. Change the configuration and you are ready to generate code
 for other languages!</p>
 <p>This tweaking guide is supposed to be a simple guideline for
 anyone who wishes to dig deep into the mechanics of the ADB code
-generator. Users are free experiment with it and modify the schema
+generator. Users are free to experiment with it and modify the schema
 compiler accordingly to their needs. Also note that the intention
 of this section is <em>not</em> to be a step by step guide to
 custom code generation. Anyone who wish to do so would need to dig

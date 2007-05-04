@@ -9,21 +9,21 @@
 <h1>Advanced Axis2 Databinding Framework Features</h1>
 
 <p>The aim of this section is provide an insight into the newly added
-advanced features of Axis2 Databinding (ADB) Framework.</p>
+advanced features of the Axis2 Databinding (ADB) Framework.</p>
 
 <h2>Content</h2>
 <ul>
   <li><a href="#typeSupport">xsi:type Support</a></li>
   <li><a href="#helper">Helper Mode</a></li>
-  <li><a href="#more">More Stuff on ADB?</a></li>
+  <li><a href="#more">Additional ADB Topics</a></li>
 </ul>
 <a name="typeSupport"></a>
 <h2>xsi:type Support</h2>
 
-<p>This is implemented by adding a extension maping class. The code that
+<p>This is implemented by adding a extension mapping class. The code that
 calls the extension mapper is generated inside the Factory.parse method of
-the beans and gets active when the xsi:type attribute is present. The
-following code fragment shows how the generated type mapper looks like : </p>
+the beans and gets activated when the xsi:type attribute is present. The
+following code fragment shows what the generated type mapper looks like : </p>
 <pre>            public static java.lang.Object getTypeObject(java.lang.String namespaceURI,
                                 java.lang.String typeName,
                                 javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
@@ -38,10 +38,10 @@ following code fragment shows how the generated type mapper looks like : </p>
 
 <p>Inside every Factory.parse method, the extension mapper gets called when a
 xsi:type attribute is encountered <strong>and</strong> that type is not the
-type that is being parsed.</p>
+type that is currently being parsed.</p>
 
 <p>The following code fragment shows how the ADB deserialize method calls the
-mapper class : </p>
+mapper class: </p>
 <pre>
 	     if (reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","type")!=null){
                   java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
@@ -61,11 +61,13 @@ mapper class : </p>
                   }
 	      }</pre>
 
-<p>This should make the xsi:type based parsing possible and should
-result in proper xsi:type based serializations at runtime.</p>
+<p>This makes xsi:type based parsing possible and results 
+in proper xsi:type based serializations at runtime.</p>
 
-<p>This is automatically done but the package name for the mapper class can
-be set as an CompilerOption.</p>
+<p>By default, the mapping package is derived from the targetnamespace of the
+first schema that is encountered.  The package name can also be explicitly set
+by a CompilerOption:</p>
+
 <pre>   
 	CompilerOptions compilerOptions = new CompilerOptions();
         compilerOptions.setWriteOutput(true);
@@ -81,16 +83,13 @@ be set as an CompilerOption.</p>
         }
 </pre>
 
-<p>When the mapping package is not specified it is derived from the
-targetnamespace of the first schema that is encountered.</p>
-
 <a name="helper"></a>
 <h2>Helper mode</h2>
 
 <p>Helper mode is a fairly new feature. In the helper mode, the beans are
 plain Java beans and all the deserialization/serialization code is moved to a
 helper class. For example, the simple schema mentioned in the ADB-howto
-document will yield four classes for the two that has been previously seen.</p>
+document will yield four classes instead of the two previously generated:</p>
 <ol>
   <li>MyElement.java</li>
   <li>MyElementHelper.java</li>
@@ -98,17 +97,18 @@ document will yield four classes for the two that has been previously seen.</p>
   <li>SOAPStructHelper.java</li>
 </ol>
 
-<p>The helpers basically contain all the code that went into the ADBBeans.
-Hence the beans in the helper mode are pretty much readable than the rest.
-Also note that the helper mode is available only if you are in the unpacked
-mode. The code generator by default does not expand the classes.</p>
+<p>The helpers basically contain all the serialization code that otherwise
+would go into the ADBBeans. Hence the beans in the helper mode are much
+more simplified.  Also note that the helper mode is available only if you 
+are in unpacked mode. The code generator by default does not expand 
+the classes.</p>
 
 <p>Helper mode can be switched on by using the setHelperMode method  
-in CompilerOptions : </p>
+in CompilerOptions: </p>
 <pre><strong>compilerOptions.setHelperMode(true);</strong></pre>
 
 <a name="more"></a>
-<h2>More Stuff on ADB?</h2>
+<h2>Additional ADB Topics</h2>
 <ul>
   <li><a href="adb-tweaking.html">Tweaking the ADB Code Generator</a>-
     explains available mechanisms to extend ADB and possibly adopt it to
