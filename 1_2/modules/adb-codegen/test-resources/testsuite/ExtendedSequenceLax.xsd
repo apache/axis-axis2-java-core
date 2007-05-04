@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:p="http://www.w3.org/2002/ws/databinding/patterns/6/09/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://www.w3.org/2002/ws/databinding/examples/6/09/" targetNamespace="http://www.w3.org/2002/ws/databinding/examples/6/09/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:element xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/" name="extendedSequenceLax" type="ex:ExtendedSequenceLax"/>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/" name="ExtendedSequenceLax">
+            <xs:sequence>
+               <xs:element name="firstName" type="xs:string"/>
+               <xs:element name="lastName" type="xs:string"/>
+               <xs:element name="extension" type="ex:LaxExtension" minOccurs="0"/>
+            </xs:sequence>
+         </xs:complexType>
+   <xs:complexType xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/" xmlns:soap11enc="http://schemas.xmlsoap.org/soap/encoding/" name="LaxExtension">
+            <xs:sequence>
+               <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" namespace="##targetNamespace"/>
+            </xs:sequence>
+         </xs:complexType>
+</xs:schema>

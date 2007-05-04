@@ -869,9 +869,11 @@ public class SchemaCompiler {
      * @param complexType
      * @throws SchemaCompilationException
      */
-    private void processAnonymousComplexSchemaType(XmlSchemaElement elt, XmlSchemaComplexType complexType, XmlSchema parentSchema)
+    private void processAnonymousComplexSchemaType(XmlSchemaElement elt,
+                                                   XmlSchemaComplexType complexType,
+                                                   XmlSchema parentSchema)
             throws SchemaCompilationException {
-        BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType, parentSchema);
+        BeanWriterMetaInfoHolder metaInfHolder = processComplexType(elt.getQName(),complexType, parentSchema);
 
         //since this is a special case (an unnamed complex type) we'll put the already processed
         //metainf holder in a special map to be used later
@@ -883,7 +885,8 @@ public class SchemaCompiler {
      *
      * @param complexType
      */
-    private void processNamedComplexSchemaType(XmlSchemaComplexType complexType, XmlSchema parentSchema) throws SchemaCompilationException {
+    private void processNamedComplexSchemaType(XmlSchemaComplexType complexType,
+                                               XmlSchema parentSchema) throws SchemaCompilationException {
 
         if (processedTypemap.containsKey(complexType.getQName())
                 || baseSchemaTypeMap.containsKey(complexType.getQName())) {
@@ -898,7 +901,7 @@ public class SchemaCompiler {
         complexType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                 fullyQualifiedClassName);
 
-        BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType, parentSchema);
+        BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType.getQName(),complexType, parentSchema);
         //add this information to the metainfo holder
         metaInfHolder.setOwnQname(complexType.getQName());
         metaInfHolder.setOwnClassName(fullyQualifiedClassName);
@@ -918,8 +921,25 @@ public class SchemaCompiler {
      */
     private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        String javaClassName = writer.write(complexType, processedTypemap, metaInfHolder);
+        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder);
         processedTypeMetaInfoMap.put(complexType.getQName(), metaInfHolder);
+        return javaClassName;
+    }
+
+
+    /**
+     * Writes complex Sequence,Choice, all elements
+     * @param qname complex type qname
+     * @param metaInfHolder
+     * @return  written java class name
+     * @throws SchemaCompilationException
+     */
+
+
+    private String writeComplexParticle(QName qname,BeanWriterMetaInfoHolder metaInfHolder)
+            throws SchemaCompilationException {
+       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder);
+        processedTypeMetaInfoMap.put(qname, metaInfHolder);
         return javaClassName;
     }
 
@@ -936,12 +956,15 @@ public class SchemaCompiler {
         processedTypeMetaInfoMap.put(simpleType.getQName(), metaInfHolder);
     }
 
-    private BeanWriterMetaInfoHolder processComplexType(XmlSchemaComplexType complexType, XmlSchema parentSchema) throws SchemaCompilationException {
+    private BeanWriterMetaInfoHolder processComplexType(
+            QName parentElementQName,
+            XmlSchemaComplexType complexType,
+            XmlSchema parentSchema) throws SchemaCompilationException {
         XmlSchemaParticle particle = complexType.getParticle();
         BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
         if (particle != null) {
             //Process the particle
-            processParticle(particle, metaInfHolder, parentSchema);
+            processParticle(parentElementQName, particle, metaInfHolder, parentSchema);
         }
 
         //process attributes - first look for the explicit attributes
@@ -1029,7 +1052,7 @@ public class SchemaCompiler {
 
             //process the particle of this node
             if (extension.getParticle() != null) {
-                processParticle(extension.getParticle(), metaInfHolder, parentSchema);
+                processParticle(null,extension.getParticle(), metaInfHolder, parentSchema);
             }
 
             // process attributes
@@ -1085,7 +1108,7 @@ public class SchemaCompiler {
             copyMetaInfoHierarchy(metaInfHolder, restriction.getBaseTypeName(), parentSchema);
 
             //process the particle of this node
-            processParticle(restriction.getParticle(), metaInfHolder, parentSchema);
+            processParticle(null,restriction.getParticle(), metaInfHolder, parentSchema);
 
             //process attributes - first look for the explicit attributes
             XmlSchemaObjectCollection attribs = restriction.getAttributes();
@@ -1630,39 +1653,115 @@ public class SchemaCompiler {
 
     /**
      * Process a particle- A particle may be a sequence,all or a choice
-     *
-     * @param particle
-     * @param metainfHolder
+     * @param parentElementQName - this can either be parent element QName or parent Complex type qname
+     * @param particle - particle being processed
+     * @param metainfHolder -
+     * @param parentSchema
      * @throws SchemaCompilationException
      */
-    private void processParticle(XmlSchemaParticle particle, //particle being processed
-                                 BeanWriterMetaInfoHolder metainfHolder // metainf holder
+    private void processParticle(QName parentElementQName,
+                                 XmlSchemaParticle particle,
+                                 BeanWriterMetaInfoHolder metainfHolder
             , XmlSchema parentSchema) throws SchemaCompilationException {
+
         if (particle instanceof XmlSchemaSequence) {
-            XmlSchemaObjectCollection items = ((XmlSchemaSequence) particle).getItems();
-            if (options.isBackwordCompatibilityMode()) {
-                process(items, metainfHolder, false, parentSchema);
-            } else {
-                process(items, metainfHolder, true, parentSchema);
+            XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+
+            //remove this : only for testing
+            if (parentElementQName != null) {
+                QName qname = new QName("http://mynamespace.com/testparticlemaxoccurs", "TestCustomType");
+                if (!qname.equals(parentElementQName)) {
+                    if (parentElementQName.getNamespaceURI().equals("http://mynamespace.com/testparticlemaxoccurs")) {
+                        xmlSchemaSequence.setMaxOccurs(5);
+                        xmlSchemaSequence.setMinOccurs(0);
+                    }
+                }
             }
+
+
+            XmlSchemaObjectCollection items = xmlSchemaSequence.getItems();
+            //TODO: support parentElementQName null instances. i.e for extensions
+            if ((xmlSchemaSequence.getMaxOccurs() > 1) && (parentElementQName != null)) {
+                // we have to process many sequence types
+                BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                process(parentElementQName, items, beanWriterMetaInfoHolder, true, parentSchema);
+                beanWriterMetaInfoHolder.setParticleClass(true);
+                QName sequenceQName = new QName(parentElementQName.getNamespaceURI(),
+                         parentElementQName.getLocalPart() + "Sequence");
+                String javaClassName = writeComplexParticle(sequenceQName,beanWriterMetaInfoHolder);
+                processedTypemap.put(sequenceQName, javaClassName);
+
+                // add this as an array to the original class
+                metainfHolder.registerMapping(sequenceQName,
+                        sequenceQName,
+                        findClassName(sequenceQName,true),
+                        SchemaConstants.ARRAY_TYPE);
+                metainfHolder.setOrdered(true);
+                metainfHolder.registerQNameIndex(sequenceQName,metainfHolder.getOrderStartPoint() + 1);
+                metainfHolder.setHasParticleType(true);
+                metainfHolder.addtStatus(sequenceQName,SchemaConstants.PARTICLE_TYPE_ELEMENT);
+                metainfHolder.addMaxOccurs(sequenceQName,xmlSchemaSequence.getMaxOccurs());
+                metainfHolder.addMinOccurs(sequenceQName,xmlSchemaSequence.getMinOccurs());
+
+
+            } else {
+                if (options.isBackwordCompatibilityMode()) {
+                    process(parentElementQName,items, metainfHolder, false, parentSchema);
+                } else {
+                    process(parentElementQName,items, metainfHolder, true, parentSchema);
+                }
+            }
+
         } else if (particle instanceof XmlSchemaAll) {
             XmlSchemaObjectCollection items = ((XmlSchemaAll) particle).getItems();
-            process(items, metainfHolder, false, parentSchema);
+            process(parentElementQName,items, metainfHolder, false, parentSchema);
         } else if (particle instanceof XmlSchemaChoice) {
+            XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) particle;
             XmlSchemaObjectCollection items = ((XmlSchemaChoice) particle).getItems();
-            metainfHolder.setChoice(true);
-            process(items, metainfHolder, false, parentSchema);
+
+            if ((xmlSchemaChoice.getMaxOccurs() > 1)) {
+                // we have to process many sequence types
+                BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                beanWriterMetaInfoHolder.setChoice(true);
+                process(parentElementQName,items, beanWriterMetaInfoHolder, false, parentSchema);
+                beanWriterMetaInfoHolder.setParticleClass(true);
+                QName choiceQName = new QName(parentElementQName.getNamespaceURI(),
+                         parentElementQName.getLocalPart() + "Choice");
+                String javaClassName = writeComplexParticle(choiceQName,beanWriterMetaInfoHolder);
+                processedTypemap.put(choiceQName, javaClassName);
+
+                // add this as an array to the original class
+                metainfHolder.registerMapping(choiceQName,
+                        choiceQName,
+                        findClassName(choiceQName,true),
+                        SchemaConstants.ARRAY_TYPE);
+                metainfHolder.setOrdered(true);
+                metainfHolder.setHasParticleType(true);
+                metainfHolder.registerQNameIndex(choiceQName,metainfHolder.getOrderStartPoint() + 1);
+                metainfHolder.addtStatus(choiceQName,SchemaConstants.PARTICLE_TYPE_ELEMENT);
+                metainfHolder.addMaxOccurs(choiceQName,xmlSchemaChoice.getMaxOccurs());
+                metainfHolder.addMinOccurs(choiceQName,xmlSchemaChoice.getMinOccurs());
+
+            } else {
+                metainfHolder.setChoice(true);
+                process(parentElementQName,items, metainfHolder, false, parentSchema);
+            }
+
 
         }
     }
 
     /**
+     *
+     * @param parentElementQName - this could either be the complex type parentElementQName or element parentElementQName
      * @param items
      * @param metainfHolder
      * @param order
+     * @param parentSchema
      * @throws SchemaCompilationException
      */
-    private void process(XmlSchemaObjectCollection items,
+    private void process(QName parentElementQName,
+                         XmlSchemaObjectCollection items,
                          BeanWriterMetaInfoHolder metainfHolder,
                          boolean order,
                          XmlSchema parentSchema) throws SchemaCompilationException {
@@ -1670,6 +1769,8 @@ public class SchemaCompiler {
         Map processedElementArrayStatusMap = new LinkedHashMap();
         Map processedElementTypeMap = new LinkedHashMap();
         List localNillableList = new ArrayList();
+
+        Map particleQNameMap = new HashMap();
 
         // this list is used to keep the details of the
         // elements within a choice withing sequence
@@ -1704,6 +1805,53 @@ public class SchemaCompiler {
                 }
                 //we do not register the array status for the any type
                 processedElementArrayStatusMap.put(any, isArray(any) ? Boolean.TRUE : Boolean.FALSE);
+            } else if (item instanceof XmlSchemaSequence) {
+                // we have to process many sequence types
+
+                XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) item;
+                if (xmlSchemaSequence.getItems().getCount() > 0) {
+                    BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                    process(parentElementQName, xmlSchemaSequence.getItems(), beanWriterMetaInfoHolder, true, parentSchema);
+                    beanWriterMetaInfoHolder.setParticleClass(true);
+                    QName sequenceQName = new QName(parentElementQName.getNamespaceURI(),
+                            parentElementQName.getLocalPart() + "Sequence" + getNextTypeSuffix());
+                    String javaClassName = writeComplexParticle(sequenceQName, beanWriterMetaInfoHolder);
+                    processedTypemap.put(sequenceQName, javaClassName);
+
+                    //put the partical to array
+                    Boolean isArray = xmlSchemaSequence.getMaxOccurs() > 1 ? Boolean.TRUE : Boolean.FALSE;
+                    processedElementArrayStatusMap.put(item, isArray);
+                    particleQNameMap.put(item, sequenceQName);
+
+                    if (order) {
+                        elementOrderMap.put(item, new Integer(sequenceCounter));
+                    }
+                }
+
+            } else if (item instanceof XmlSchemaChoice) {
+                // we have to process many sequence types
+
+                XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) item;
+                if (xmlSchemaChoice.getItems().getCount() > 0) {
+                    BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                    beanWriterMetaInfoHolder.setChoice(true);
+                    process(parentElementQName, xmlSchemaChoice.getItems(), beanWriterMetaInfoHolder, false, parentSchema);
+                    beanWriterMetaInfoHolder.setParticleClass(true);
+                    QName choiceQName = new QName(parentElementQName.getNamespaceURI(),
+                            parentElementQName.getLocalPart() + "Choice" + getNextTypeSuffix());
+                    String javaClassName = writeComplexParticle(choiceQName, beanWriterMetaInfoHolder);
+                    processedTypemap.put(choiceQName, javaClassName);
+
+                    //put the partical to array
+                    Boolean isArray = xmlSchemaChoice.getMaxOccurs() > 1 ? Boolean.TRUE : Boolean.FALSE;
+                    processedElementArrayStatusMap.put(item, isArray);
+                    particleQNameMap.put(item, choiceQName);
+
+                    if (order) {
+                        elementOrderMap.put(item, new Integer(sequenceCounter));
+                    }
+                }
+
             } else if (order && (item instanceof XmlSchemaChoice)) {
 
                 // this is a tempory patch for process only inner sequence choices
@@ -1849,6 +1997,52 @@ public class SchemaCompiler {
                     //record the order in the metainf holder for the any
                     Integer integer = (Integer) elementOrderMap.get(any);
                     metainfHolder.registerQNameIndex(anyElementFieldName,
+                            startingItemNumberOrder + integer.intValue());
+                }
+            } else if (child instanceof XmlSchemaSequence) {
+                XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) child;
+                QName sequenceQName = (QName) particleQNameMap.get(child);
+                boolean isArray = xmlSchemaSequence.getMaxOccurs() > 1;
+
+                // add this as an array to the original class
+                metainfHolder.registerMapping(sequenceQName,
+                        sequenceQName,
+                        findClassName(sequenceQName, isArray));
+                if (isArray) {
+                    metainfHolder.addtStatus(sequenceQName, SchemaConstants.ARRAY_TYPE);
+                }
+                metainfHolder.addtStatus(sequenceQName, SchemaConstants.PARTICLE_TYPE_ELEMENT);
+                metainfHolder.addMaxOccurs(sequenceQName, xmlSchemaSequence.getMaxOccurs());
+                metainfHolder.addMinOccurs(sequenceQName, xmlSchemaSequence.getMinOccurs());
+                metainfHolder.setHasParticleType(true);
+
+                if (order) {
+                    //record the order in the metainf holder for the any
+                    Integer integer = (Integer) elementOrderMap.get(child);
+                    metainfHolder.registerQNameIndex(sequenceQName,
+                            startingItemNumberOrder + integer.intValue());
+                }
+            } else if (child instanceof XmlSchemaChoice) {
+                XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) child;
+                QName choiceQName = (QName) particleQNameMap.get(child);
+                boolean isArray = xmlSchemaChoice.getMaxOccurs() > 1;
+
+                // add this as an array to the original class
+                metainfHolder.registerMapping(choiceQName,
+                        choiceQName,
+                        findClassName(choiceQName, isArray));
+                if (isArray) {
+                    metainfHolder.addtStatus(choiceQName, SchemaConstants.ARRAY_TYPE);
+                }
+                metainfHolder.addtStatus(choiceQName, SchemaConstants.PARTICLE_TYPE_ELEMENT);
+                metainfHolder.addMaxOccurs(choiceQName, xmlSchemaChoice.getMaxOccurs());
+                metainfHolder.addMinOccurs(choiceQName, xmlSchemaChoice.getMinOccurs());
+                metainfHolder.setHasParticleType(true);
+
+                if (order) {
+                    //record the order in the metainf holder for the any
+                    Integer integer = (Integer) elementOrderMap.get(child);
+                    metainfHolder.registerQNameIndex(choiceQName,
                             startingItemNumberOrder + integer.intValue());
                 }
             }

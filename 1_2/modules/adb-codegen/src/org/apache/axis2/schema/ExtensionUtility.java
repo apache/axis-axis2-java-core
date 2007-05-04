@@ -328,7 +328,7 @@ public class ExtensionUtility {
                     //populate the map with the partname - class name
                     //attached to the schema element
                     XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
-                    boolean isArray = (xmlSchemaElement.getMaxOccurs() - xmlSchemaElement.getMinOccurs()) > 1;
+                    boolean isArray = xmlSchemaElement.getMaxOccurs() > 1;
 
                     XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
                     String partName = null;
@@ -352,7 +352,7 @@ public class ExtensionUtility {
                     // for it for now
 
                     XmlSchemaAny xmlSchemaAny = (XmlSchemaAny) item;
-                    boolean isArray = xmlSchemaAny.getMaxOccurs() - xmlSchemaAny.getMinOccurs() > 1;
+                    boolean isArray = xmlSchemaAny.getMaxOccurs() > 1;
 
                     QName partQName = WSDLUtil.getPartQName(opName,
                             qnameSuffix,

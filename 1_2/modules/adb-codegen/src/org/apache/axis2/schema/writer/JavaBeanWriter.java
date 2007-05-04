@@ -9,7 +9,6 @@ import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
 import org.apache.axis2.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.axiom.om.OMElement;
@@ -227,13 +226,12 @@ public class JavaBeanWriter implements BeanWriter {
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType,
      *      java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap,
+    public String write(QName qName, Map typeMap,
                         BeanWriterMetaInfoHolder metainf)
             throws SchemaCompilationException {
 
         try {
             // determine the package for this type.
-            QName qName = complexType.getQName();
             return process(qName, metainf, typeMap, false);
 
         } catch (SchemaCompilationException e) {
@@ -243,6 +241,8 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
     }
+
+
 
     /**
      * @throws Exception
@@ -476,8 +476,7 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "name", className, rootElt);
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
-        XSLTUtils
-                .addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
+        XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
         XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
                 .getNamespaceURI(), qName.getPrefix()), rootElt);
 
@@ -532,6 +531,14 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (isElement && metainf.isNillable(qName)) {
             XSLTUtils.addAttribute(model, "nillable", "yes", rootElt);
+        }
+
+        if (metainf.isParticleClass()) {
+            XSLTUtils.addAttribute(model, "particleClass", "yes", rootElt);
+        }
+
+        if (metainf.isHasParticleType()){
+            XSLTUtils.addAttribute(model, "hasParticleType", "yes", rootElt);
         }
 
         // populate all the information
@@ -715,6 +722,11 @@ public class JavaBeanWriter implements BeanWriter {
 
                 XSLTUtils.addAttribute(model, "restricted", "yes", property);
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
+            }
+
+            // set the is particle class
+            if (metainf.getParticleTypeStatusForQName(name)){
+                XSLTUtils.addAttribute(model, "particleClassType", "yes", property);
             }
 
             // what happed if this contain attributes

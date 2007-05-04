@@ -48,6 +48,8 @@
         <xsl:variable name="extension" select="@extension"/>
         <xsl:variable name="restriction" select="@restriction"/>
         <xsl:variable name="mapperClass" select="@mapperClass"/>
+        <xsl:variable name="particleClass" select="@particleClass"/>
+        <xsl:variable name="hasParticleType" select="@hasParticleType"/>
     <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
@@ -793,27 +795,36 @@
             </xsl:when>
 
             <xsl:when test="@type or @anon">
-                <!-- For a type write the passed in QName first-->
+                <!-- For a type write the passed in QName first
+                 we create special particle classes for Sequence,Choice and all elements to
+                 handle maxOccurs correctly. So these classes should not write parent Qname-->
 
-                java.lang.String prefix = parentQName.getPrefix();
-                java.lang.String namespace = parentQName.getNamespaceURI();
 
-                if (namespace != null) {
-                    java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
-                    if (writerPrefix != null) {
-                        xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
-                    } else {
-                        if (prefix == null) {
-                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                java.lang.String prefix = null;
+                java.lang.String namespace = null;
+                <xsl:if test="not($particleClass)">
+
+                    prefix = parentQName.getPrefix();
+                    namespace = parentQName.getNamespaceURI();
+
+                    if (namespace != null) {
+                        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
+                        if (writerPrefix != null) {
+                            xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
+                        } else {
+                            if (prefix == null) {
+                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                            }
+
+                            xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
+                            xmlWriter.writeNamespace(prefix, namespace);
+                            xmlWriter.setPrefix(prefix, namespace);
                         }
-
-                        xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
-                        xmlWriter.writeNamespace(prefix, namespace);
-                        xmlWriter.setPrefix(prefix, namespace);
+                    } else {
+                        xmlWriter.writeStartElement(parentQName.getLocalPart());
                     }
-                } else {
-                    xmlWriter.writeStartElement(parentQName.getLocalPart());
-                }
+                </xsl:if>
+
 
                 <!-- write the type attribute if needed -->
                <xsl:if test="$extension">
@@ -915,6 +926,7 @@
 
                     <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
                     <xsl:variable name="propertyBaseType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
+                    <xsl:variable name="particleClassType" select="@particleClassType"></xsl:variable>
 
                     <xsl:if test="$min=0 or $choice or (@innerchoice='yes')"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
@@ -953,89 +965,126 @@
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    if (<xsl:value-of select="$varName"/>==null){
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                    }
-                                   <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                       factory,xmlWriter);
+                                    <xsl:choose>
+                                        <xsl:when test="$particleClassType">
+                                            if (<xsl:value-of select="$varName"/>==null){
+                                                 throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                            }
+                                           <xsl:value-of select="$varName"/>.serialize(null,factory,xmlWriter);
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            if (<xsl:value-of select="$varName"/>==null){
+                                                 throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                            }
+                                           <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                               factory,xmlWriter);
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:when test="@ours and @array and not(@default)">
-                             if (<xsl:value-of select="$varName"/>!=null){
-                                    for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                                        if (<xsl:value-of select="$varName"/>[i] != null){
-                                         <xsl:value-of select="$varName"/>[i].serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                   factory,xmlWriter);
-                                        } else {
-                                           <xsl:choose>
-                                            <xsl:when test="@nillable">
-                                                    // write null attribute
-                                                    java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                                    if (! namespace2.equals("")) {
-                                                        java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+                             <xsl:choose>
+                                 <xsl:when test="$particleClassType">
+                                     <!-- if it is a particle clase that can only be minOccurs zero or not -->
+                                      if (<xsl:value-of select="$varName"/>!=null){
+                                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                                                if (<xsl:value-of select="$varName"/>[i] != null){
+                                                 <xsl:value-of select="$varName"/>[i].serialize(null,factory,xmlWriter);
+                                                } else {
+                                                   <xsl:choose>
+                                                    <xsl:when test="$min=0">
+                                                        // we don't have to do any thing since minOccures is zero
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                                }
 
-                                                        if (prefix2 == null) {
-                                                            prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                            }
+                                     } else {
+                                        throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                     }
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                       if (<xsl:value-of select="$varName"/>!=null){
+                                            for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                                                if (<xsl:value-of select="$varName"/>[i] != null){
+                                                 <xsl:value-of select="$varName"/>[i].serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                                           factory,xmlWriter);
+                                                } else {
+                                                   <xsl:choose>
+                                                    <xsl:when test="@nillable">
+                                                            // write null attribute
+                                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
+                                                            if (! namespace2.equals("")) {
+                                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
-                                                            xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                            xmlWriter.writeNamespace(prefix2, namespace2);
-                                                            xmlWriter.setPrefix(prefix2, namespace2);
+                                                                if (prefix2 == null) {
+                                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-                                                        } else {
-                                                            xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                        }
+                                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+                                                                    xmlWriter.writeNamespace(prefix2, namespace2);
+                                                                    xmlWriter.setPrefix(prefix2, namespace2);
+
+                                                                } else {
+                                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
+                                                                }
+
+                                                            } else {
+                                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                                                            }
+
+                                                           // write the nil attribute
+                                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                                           xmlWriter.writeEndElement();
+                                                    </xsl:when>
+                                                    <xsl:when test="$min=0">
+                                                        // we don't have to do any thing since minOccures is zero
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                                }
+
+                                            }
+                                     } else {
+                                        <xsl:choose>
+                                        <xsl:when test="@nillable">
+                                                // write null attribute
+                                                java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
+                                                if (! namespace2.equals("")) {
+                                                    java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+
+                                                    if (prefix2 == null) {
+                                                        prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+
+                                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+                                                        xmlWriter.writeNamespace(prefix2, namespace2);
+                                                        xmlWriter.setPrefix(prefix2, namespace2);
 
                                                     } else {
-                                                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                                                        xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
                                                     }
 
-                                                   // write the nil attribute
-                                                   writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
-                                                   xmlWriter.writeEndElement();
-                                            </xsl:when>
-                                            <xsl:when test="$min=0">
-                                                // we don't have to do any thing since minOccures is zero
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                   throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                        }
+                                                } else {
+                                                    xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                                                }
 
+                                               // write the nil attribute
+                                               writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                               xmlWriter.writeEndElement();
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                     }
-                             } else {
-                                <xsl:choose>
-                                <xsl:when test="@nillable">
-                                        // write null attribute
-                                        java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                        if (! namespace2.equals("")) {
-                                            java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+                                 </xsl:otherwise>
+                             </xsl:choose>
 
-                                            if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-
-                                                xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                xmlWriter.writeNamespace(prefix2, namespace2);
-                                                xmlWriter.setPrefix(prefix2, namespace2);
-
-                                            } else {
-                                                xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                            }
-
-                                        } else {
-                                            xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                        }
-
-                                       // write the nil attribute
-                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
-                                       xmlWriter.writeEndElement();
-                                </xsl:when>
-                                <xsl:otherwise>
-                                       throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            }
                         </xsl:when>
 
                         <xsl:when test="@default and @array">
@@ -1478,7 +1527,9 @@
 
                 </xsl:for-each>
                    <!-- write the end element for the type-->
-               xmlWriter.writeEndElement();
+               <xsl:if test="not($particleClass)">
+                    xmlWriter.writeEndElement();
+               </xsl:if>
             <!-- end of when for type & anon -->
             </xsl:when>
 
@@ -2445,7 +2496,7 @@
                 </xsl:for-each>
 
 
-                <xsl:if test="($isType or $anon) and not($simple)">
+                <xsl:if test="($isType or $anon) and not($simple) and not($particleClass)">
                     <!-- Skip the outer start element in order to process the subelements. -->
                     reader.next();
                 </xsl:if>
@@ -2459,7 +2510,7 @@
                 </xsl:for-each>
 
                 <xsl:if test="property[not(@attribute)]">
-                <xsl:if test="$unordered">   <!-- Properties can be in any order -->
+                <xsl:if test="$unordered and not($particleClass)">   <!-- Properties can be in any order -->
                 while(!reader.isEndElement()) {
                     if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if>){
                 </xsl:if>
@@ -2481,11 +2532,12 @@
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
+                            <xsl:variable name="particleClassType" select="@particleClassType"></xsl:variable>
 
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
                            <xsl:choose>
-                                <xsl:when test="$unordered">  <!-- One property per iteration if unordered -->
+                                <xsl:when test="$unordered and not($choice and $hasParticleType)">  <!-- One property per iteration if unordered -->
                                     <xsl:if test="position()>1">
                                         else
                                     </xsl:if>
@@ -2502,7 +2554,12 @@
                                    if (reader.isStartElement()){
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
+                                    <xsl:if test="$particleClassType and ($choice or ($min=0))">
+                                        <!-- since we can not validate the parser before going to next class
+                                         we have to sollow an excpetions : todo find a better solsution-->
+                                         try{
+                                    </xsl:if>
+                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple) and not($particleClassType)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
                                 </xsl:otherwise>
                             </xsl:choose>
 
@@ -2515,58 +2572,85 @@
                                     <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                                     <xsl:choose>
                                         <xsl:when test="@ours">
-                                             <xsl:if test="@nillable">
-                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
-                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
-                                                  <xsl:value-of select="$listName"/>.add(null);
-                                                  reader.next();
-                                              } else {
-                                            </xsl:if>
-                                                <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
-                                            <xsl:if test="@nillable">}</xsl:if>
-                                            //loop until we find a start element that is not part of this array
-                                            boolean <xsl:value-of select="$loopBoolName"/> = false;
-                                            while(!<xsl:value-of select="$loopBoolName"/>){
-                                                // We should be at the end element, but make sure
-                                                while (!reader.isEndElement())
-                                                    reader.next();
-                                                // Step out of this element
-                                                reader.next();
-                                                // Step to next element event.
-                                                while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
-                                                    reader.next();
-                                                if (reader.isEndElement()){
-                                                    //two continuous end elements means we are exiting the xml structure
-                                                    <xsl:value-of select="$loopBoolName"/> = true;
-                                                } else {
-                                                    if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
-                                                        <xsl:if test="@nillable">
+                                             <xsl:choose>
+                                                 <xsl:when test="$particleClassType">
+                                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                        //loop until we find a start element that is not part of this array
+                                                        boolean <xsl:value-of select="$loopBoolName"/> = false;
+                                                        while(!<xsl:value-of select="$loopBoolName"/>){
+
+                                                            // Step to next element event.
+                                                            while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
+                                                                reader.next();
+                                                            if (reader.isEndElement()){
+                                                                //two continuous end elements means we are exiting the xml structure
+                                                                <xsl:value-of select="$loopBoolName"/> = true;
+                                                            } else {
+                                                                <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                            }
+                                                        }
+                                                        // call the converter utility  to convert and set the array
+                                                        object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                                <xsl:value-of select="$basePropertyType"/>.class,
+                                                                <xsl:value-of select="$listName"/>));
+
+                                                 </xsl:when>
+                                                 <xsl:otherwise>
+                                                      <xsl:if test="@nillable">
                                                           nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
                                                           if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           } else {
                                                         </xsl:if>
-                                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
                                                         <xsl:if test="@nillable">}</xsl:if>
-                                                    }else{
-                                                        <xsl:value-of select="$loopBoolName"/> = true;
-                                                    }
-                                                }
-                                            }
-                                            // call the converter utility  to convert and set the array
-                                            <xsl:choose>
-                                                <xsl:when test="$basePropertyType='java.lang.String'">
-                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
-                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                            object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
-                                                org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                    <xsl:value-of select="$basePropertyType"/>.class,
-                                                    <xsl:value-of select="$listName"/>));
-                                                </xsl:otherwise>
-                                            </xsl:choose>
+                                                        //loop until we find a start element that is not part of this array
+                                                        boolean <xsl:value-of select="$loopBoolName"/> = false;
+                                                        while(!<xsl:value-of select="$loopBoolName"/>){
+                                                            // We should be at the end element, but make sure
+                                                            while (!reader.isEndElement())
+                                                                reader.next();
+                                                            // Step out of this element
+                                                            reader.next();
+                                                            // Step to next element event.
+                                                            while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
+                                                                reader.next();
+                                                            if (reader.isEndElement()){
+                                                                //two continuous end elements means we are exiting the xml structure
+                                                                <xsl:value-of select="$loopBoolName"/> = true;
+                                                            } else {
+                                                                if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                                                                    <xsl:if test="@nillable">
+                                                                      nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                                      if ("true".equals(nillableValue) || "1".equals(nillableValue)){
+                                                                          <xsl:value-of select="$listName"/>.add(null);
+                                                                          reader.next();
+                                                                      } else {
+                                                                    </xsl:if>
+                                                                    <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                                    <xsl:if test="@nillable">}</xsl:if>
+                                                                }else{
+                                                                    <xsl:value-of select="$loopBoolName"/> = true;
+                                                                }
+                                                            }
+                                                        }
+                                                        // call the converter utility  to convert and set the array
+                                                        <xsl:choose>
+                                                            <xsl:when test="$basePropertyType='java.lang.String'">
+                                                                object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                                    <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                        object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                                <xsl:value-of select="$basePropertyType"/>.class,
+                                                                <xsl:value-of select="$listName"/>));
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>
+                                                 </xsl:otherwise>
+                                             </xsl:choose>
                                         </xsl:when>
                                         <!-- End of Array handling of ADB classes -->
 
@@ -2947,7 +3031,7 @@
                                       }else{
                                     </xsl:if>
                                         object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
-                                    <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
+                                    <xsl:if test="($isType or $anon) and not($particleClassType)">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
                                     <xsl:if test="@nillable">}</xsl:if>
@@ -3174,26 +3258,35 @@
                                     throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
                                 }
                             </xsl:if>
+                            <xsl:if test="$particleClassType and ($choice or ($min=0))">
+                                <!-- since we can not validate the parser before going to next class
+                                 we have to sollow an excpetions : todo find a better solsution-->
+                                 } catch (java.lang.Exception e) {}
+                            </xsl:if>
                         </xsl:for-each>
 
                         <xsl:if test="$ordered">  <!-- pick up trailing cruft after final property before outer endElement and verify no trailing properties -->
                             while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                                 reader.next();
-                            if (reader.isStartElement())
+                            <xsl:if test="not($particleClass)">
+                                if (reader.isStartElement())
                                 // A start element we are not expecting indicates a trailing invalid property
                                 throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                            </xsl:if>
                         </xsl:if>
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
-                        <xsl:if test="$unordered">
-                          <xsl:if test="not(property/enumFacet)">
+                        <xsl:if test="$unordered and not($particleClass)">
+                          <xsl:if test="not(property/enumFacet) and not($choice and $hasParticleType)">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
                                         throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
                              }
                           </xsl:if>
-                             } else reader.next();  <!-- At neither a start nor an end element, skip it -->
-                            }  // end of while loop
+                             } else {
+                                reader.next();
+                             }  <!-- At neither a start nor an end element, skip it -->
+                           }  // end of while loop
                         </xsl:if>
                         </xsl:if>
 

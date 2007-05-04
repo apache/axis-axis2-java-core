@@ -63,6 +63,10 @@ public class BeanWriterMetaInfoHolder {
     protected boolean isUnion;
     protected boolean isList;
 
+    protected boolean isParticleClass;
+    // keep whether this class has a partical class type variable
+    protected boolean hasParticleType;
+
     protected List nillableQNameList = new ArrayList();
 
     //the parent metainfo holder, useful in handling extensions and
@@ -407,6 +411,18 @@ public class BeanWriterMetaInfoHolder {
         Integer state = (Integer) specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
+    }
+
+    /**
+     *
+     * @param qName
+     * @return whether the attribute is a partical class or not
+     */
+
+    public boolean getParticleTypeStatusForQName(QName qName){
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.PARTICLE_TYPE_ELEMENT);
     }
 
     /**
@@ -794,8 +810,6 @@ public class BeanWriterMetaInfoHolder {
         this.memberTypes.put(qname,className);
     }
 
-
-
     public boolean isList() {
         return isList;
     }
@@ -820,5 +834,20 @@ public class BeanWriterMetaInfoHolder {
         this.itemTypeClassName = itemTypeClassName;
     }
 
+    public boolean isParticleClass() {
+        return isParticleClass;
+    }
+
+    public void setParticleClass(boolean particleClass) {
+        isParticleClass = particleClass;
+    }
+
+    public boolean isHasParticleType() {
+        return hasParticleType;
+    }
+
+    public void setHasParticleType(boolean hasParticleType) {
+        this.hasParticleType = hasParticleType;
+    }
 
 }

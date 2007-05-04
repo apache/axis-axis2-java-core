@@ -181,12 +181,11 @@ public class CStructWriter implements BeanWriter {
      *
      * @see org.apache.axis2.schema.writer.BeanWriter
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf)
+    public String write(QName qName, Map typeMap, BeanWriterMetaInfoHolder metainf)
             throws SchemaCompilationException {
 
         try {
             //determine the package for this type.
-            QName qName = complexType.getQName();
             return process(qName, metainf, typeMap, false);
 
         } catch (SchemaCompilationException e) {

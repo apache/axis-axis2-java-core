@@ -81,14 +81,15 @@ public class SchemaConstants {
     public static final QName XSD_TOKEN = new QName(URI_DEFAULT_SCHEMA_XSD, "token");
 
     //bit patterns for the types
-    public static final int ATTRIBUTE_TYPE = 0x01;
-    public static final int ELEMENT_TYPE = 0x02;
-    public static final int ARRAY_TYPE = 0x04;
-    public static final int ANY_TYPE = 0x08;
-    public static final int BINARY_TYPE = 0x10;
-    public static final int OPTIONAL_TYPE = 0x20;
-    public static final int SIMPLE_TYPE_OR_CONTENT = 0x40;
-    public static final int INNER_CHOICE_ELEMENT = 0x80;
+    public static final int ATTRIBUTE_TYPE = 0x0001;
+    public static final int ELEMENT_TYPE = 0x0002;
+    public static final int ARRAY_TYPE = 0x0004;
+    public static final int ANY_TYPE = 0x0008;
+    public static final int BINARY_TYPE = 0x0010;
+    public static final int OPTIONAL_TYPE = 0x0020;
+    public static final int SIMPLE_TYPE_OR_CONTENT = 0x0040;
+    public static final int INNER_CHOICE_ELEMENT = 0x0080;
+    public static final int PARTICLE_TYPE_ELEMENT = 0x0100;
 
     public static class SchemaPropertyNames{
 
