@@ -9,14 +9,15 @@
     <property name="jar.dir" location="${root}/target/Repository/modules/"/>
 
     <path id="axis.test.classpath">
-        <path refid="maven.dependency.classpath"></path>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${maven.class.path}"/>
         <pathelement location="../../../target/classes"/>
     </path>
 
     <target name="compile" depends="init" unless="jars.uptodate">
         <mkdir dir="${build.classes}"/>
         <mkdir dir="${build.lib}"/>
-        <javac destdir="${build.classes}" debug="on">
+        <javac fork="true" destdir="${build.classes}" debug="on">
             <classpath refid="axis.test.classpath"/>
             <src path="${src}"/>
         </javac>

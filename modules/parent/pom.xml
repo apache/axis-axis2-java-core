@@ -77,7 +77,8 @@
 		<annogen.version>0.1.0</annogen.version>
 		<ant.version>1.7.0</ant.version>
 		<antlr.version>2.7.4</antlr.version>
-		<axiom.version>1.2.3</axiom.version>
+        <activemq.version>4.1.0-incubator</activemq.version>
+        <axiom.version>1.2.3</axiom.version>
 		<backport.util.concurrent.version>2.2</backport.util.concurrent.version>
 		<bcel.version>5.2</bcel.version>
 		<bcprov.version>jdk13-133</bcprov.version>
@@ -387,6 +388,10 @@
 		<repository>
 			<id>apache-ibiblio-rsync</id>
 			<url>http://people.apache.org/repo/m2-ibiblio-rsync-repository/</url>
+		</repository>
+		<repository>
+			<id>apache-incubating</id>
+			<url>http://people.apache.org/repo/m2-incubating-repository/</url>
 		</repository>
 		<repository>
 			<id>eclipse-repo</id>
@@ -775,6 +780,11 @@
                 <groupId>bsf</groupId>
                 <artifactId>bsf</artifactId>
                 <version>${bsf.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.activemq</groupId>
+              <artifactId>apache-activemq</artifactId>
+              <version>${activemq.version}</version>
             </dependency>
 		</dependencies>
 	</dependencyManagement>

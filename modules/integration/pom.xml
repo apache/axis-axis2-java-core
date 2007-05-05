@@ -442,6 +442,15 @@
                                 </java>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
                                      target="jar.server"/>
+
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -453,7 +462,170 @@
                         <phase>test-compile</phase>
                         <configuration>
                             <tasks>
-                                <!-- TODO -->
+                                <mkdir dir="target/test-resources/samples/modules"/>
+                                <mkdir dir="target/test-resources/samples/conf"/>
+                                <mkdir dir="target/test-resources/repository-client/modules"/>
+                                <mkdir dir="target/test-resources/repository-client/conf"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/samples/modules/addressing-${version}.mar"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/test-resources/samples/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/repository-client/modules/addressing-${version}.mar"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/test-resources/repository-client/conf/axis2.xml"/>
+                                <mkdir dir="target/toWar/services/"/>
+
+                                <!-- Create Chunked enabled Repository -->
+                                <mkdir dir="target/test-resources/chunking-enabledRepository"/>
+                                <mkdir dir="target/test-resources/chunking-enabledRepository/conf"/>
+                                <copy file="test/org/apache/axis2/engine/chunking-enabled-axis2.xml"
+                                      tofile="target/test-resources/chunking-enabledRepository/conf/axis2.xml"/>
+
+                                <!-- Create Chunked disabled Repository -->
+                                <mkdir dir="target/test-resources/chunking-disabledRepository"/>
+                                <mkdir dir="target/test-resources/chunking-disabledRepository/conf"/>
+                                <copy file="test/org/apache/axis2/engine/chunking-disabled-axis2.xml"
+                                      tofile="target/test-resources/chunking-disabledRepository/conf/axis2.xml"/>
+
+                                <!-- Create JMS enabled Server Repository -->
+                                <mkdir dir="target/test-resources/jms-enabled-server-repository"/>
+                                <mkdir dir="target/test-resources/jms-enabled-server-repository/conf"/>
+                                <mkdir dir="target/test-resources/jms-enabled-server-repository/modules"/>
+                                <copy file="test/org/apache/axis2/jms/jms-enabled-server-axis2.xml"
+                                      tofile="target/test-resources/jms-enabled-server-repository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/jms-enabled-server-repository/modules/addressing-${version}.mar"/>
+
+                                <!-- Create JMS enabled Client Repository -->
+                                <mkdir dir="target/test-resources/jms-enabled-client-repository"/>
+                                <mkdir dir="target/test-resources/jms-enabled-client-repository/conf"/>
+                                <mkdir dir="target/test-resources/jms-enabled-client-repository/modules"/>
+                                <copy file="test/org/apache/axis2/jms/jms-enabled-client-axis2.xml"
+                                      tofile="target/test-resources/jms-enabled-client-repository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/jms-enabled-client-repository/modules/addressing-${version}.mar"/>
+
+                                <!-- Create Mail Client transport enabled Repository -->
+                                <mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>
+                                <mkdir dir="target/test-resources/mail-transport-client-enabledRepository/conf"/>
+                                <mkdir dir="target/test-resources/mail-transport-client-enabledRepository/modules"/>
+                                <copy file="test/org/apache/axis2/mail/mail-enabled-client-axis2.xml"
+                                      tofile="target/test-resources/mail-transport-client-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <!-- Create Mail Server transport enabled Repository -->
+                                <mkdir dir="target/test-resources/mail-transport-server-enabledRepository"/>
+                                <mkdir dir="target/test-resources/mail-transport-server-enabledRepository/conf"/>
+                                <mkdir dir="target/test-resources/mail-transport-server-enabledRepository/modules"/>
+                                <copy file="test/org/apache/axis2/mail/mail-enabled-server-axis2.xml"
+                                      tofile="target/test-resources/mail-transport-server-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <mkdir dir="target/test-resources/MessageContextInjectionRepo"/>
+                                <mkdir dir="target/test-resources/integrationRepo/modules"/>
+                                <mkdir dir="target/test-resources/integrationRepo/conf"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/integrationRepo/modules/addressing-${version}.mar"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/test-resources/integrationRepo/conf/axis2.xml"/>
+
+
+                                <!-- Commons transport enabled enabled Repository -->
+                                <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
+                                <mkdir dir="target/test-resources/commons-http-enabledRepository/conf"/>
+                                <copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
+                                      tofile="target/test-resources/commons-http-enabledRepository/conf/axis2.xml"/>
+
+                                <!-- MTOM enabled Repository -->
+                                <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
+                                <mkdir dir="target/test-resources/MTOM-enabledRepository/conf"/>
+                                <mkdir dir="target/test-resources/MTOM-enabledRepository/modules"/>
+                                <copy file="test-resources/mtom/MTOM-enabled-axis2.xml"
+                                      tofile="target/test-resources/MTOM-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/MTOM-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <!-- MTOM file cache enabled Repository -->
+                                <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository"/>
+                                <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository/conf"/>
+                                <copy file="test-resources/mtom/MTOM-fileCache-enabled-axis2.xml"
+                                      tofile="target/test-resources/MTOM-fileCache-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/MTOM-fileCache-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <!-- SwA enabled Repository -->
+                                <mkdir dir="target/test-resources/SwA-enabledRepository"/>
+                                <mkdir dir="target/test-resources/SwA-enabledRepository/conf"/>
+                                <copy file="test-resources/swa/SwA-enabled-axis2.xml"
+                                      tofile="target/test-resources/SwA-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/SwA-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <!-- SwA file cache enabled Repository -->
+                                <mkdir dir="target/test-resources/SwA-fileCache-enabledRepository"/>
+                                <mkdir dir="target/test-resources/SwA-fileCache-enabledRepository/conf"/>
+                                <copy file="test-resources/swa/SwA-fileCache-enabled-axis2.xml"
+                                      tofile="target/test-resources/SwA-fileCache-enabledRepository/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/SwA-fileCache-enabledRepository/modules/addressing-${version}.mar"/>
+
+                                <!-- Groovy repository -->
+                                <mkdir dir="target/groovyRepo"/>
+                                <mkdir dir="target/groovyRepo/conf"/>
+                                <mkdir dir="target/groovyRepo/services"/>
+                                <mkdir dir="target/groovyRepo/modules"/>
+                                <copy file="../samples/target/groovy/groovyService.aar"
+                                      tofile="target/groovyRepo/services/groovyService.aar"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/groovyRepo/modules/addressing-${version}.mar"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/groovyRepo/conf/axis2.xml"/>
+
+                                <!-- Spring resources -->
+                                <mkdir dir="target/test-resources/spring"/>
+                                <copy file="../spring/test-resources/applicationContext.xml"
+                                      tofile="target/test-classes/spring/applicationContext.xml"/>
+
+                                <!-- Test with target resolver  -->
+                                <mkdir dir="target/test-resources/deployment_repo"/>
+                                <mkdir dir="target/test-resources/deployment_repo/conf"/>
+                                <mkdir dir="target/test-resources/deployment_repo/services"/>
+                                <mkdir dir="target/test-resources/deployment_repo/modules"/>
+
+                                <copy file="test-resources/deployment/deployment.both.axis2.xml"
+                                      tofile="target/test-resources/deployment_repo/conf/axis2.xml"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/test-resources/deployment_repo/modules/addressing-${version}.mar"/>
+
+
+                                <!-- Standard repository -->
+                                <mkdir dir="target/Repository"/>
+                                <mkdir dir="target/Repository/conf"/>
+                                <mkdir dir="target/Repository/services"/>
+                                <mkdir dir="target/Repository/modules"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/Repository/modules/addressing-${version}.mar"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/Repository/conf/axis2.xml"/>
+
+                                <mkdir dir="target/perf2/build/repo/conf"/>
+                                <mkdir dir="target/perf/build/repo/conf"/>
+
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/perf2/build/repo/conf/axis2.xml"/>
+                                <copy file="conf/axis2.xml"
+                                      tofile="target/perf/build/repo/conf/axis2.xml"/>
+
+                                <mkdir dir="target/perf2/build/repo/modules"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/perf2/build/repo/modules/addressing-${version}.mar"/>
+
+                                <mkdir dir="target/perf/build/repo/modules"/>
+                                <copy file="../addressing/target/addressing-${version}.mar"
+                                      tofile="target/perf/build/repo/modules/addressing-${version}.mar"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -490,9 +662,21 @@
                     <argLine>-Xms256m -Xmx512m</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                    <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
+                   <includes>
+                       <include>**/*Test.java</include>
+                   </includes>
+                   <excludes>
+                       <exclude>**/*Abstract*.java</exclude>
+                       <exclude>**/*Util*.java</exclude>
+                       <exclude>**/*InteropStubTest.java</exclude>
+                       <exclude>**/*ServiceGroupContextTest.java</exclude>
+                       <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
+                       <exclude>**org/apache/axis2/mail/*.java</exclude>
+                       <exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.java</exclude>
+                       <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
+                       <exclude>**/ScenarioST1Test.java</exclude>
+                       <exclude>**/samples/wsdl/perf2/*.java</exclude>
+                    </excludes>
                     <systemProperties>
                         <property>
                             <name>build.repository</name>

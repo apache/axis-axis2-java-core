@@ -207,6 +207,16 @@
 				 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
 							 target="jar.server"/>
             </j:if>
+            <j:jelly xmlns="jelly:ant">
+                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
+                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                         dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
+                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                         dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
+                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
+            </j:jelly>
         </j:if>
     </preGoal>
 
@@ -378,17 +388,6 @@
            <mkdir dir="target/perf/build/repo/modules"/>
                         <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/perf/build/repo/modules/addressing-${addressing_version}.mar"/>
-
-            <j:jelly xmlns="jelly:ant">
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
-            </j:jelly>
         </j:if>
     </postGoal>
 </project>
