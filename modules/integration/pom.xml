@@ -154,6 +154,10 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>apache-activemq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
@@ -305,10 +309,8 @@
 
                                 <path id="samples.wsdl.perf.client.jar"
                                       location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
+                                <delete file="target/perf/src/samples/wsdl/perf/PerfPortTypeSkeleton.java"/>
 
-                                <!-- TODO
-                                <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/> 
-                                -->
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
@@ -326,10 +328,7 @@
                                       tofile="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
                                 <path id="samples.wsdl.perf2.client.jar"
                                       location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
-
-                                <!-- TODO
-                                <maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf2.client.jar"/>
-                                -->
+                                <delete file="target/perf2/src/samples/wsdl/perf2/PerfPortTypeSkeleton.java"/>
 
                                 <!-- compile the schema for XMLbeans -->
                                 <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
@@ -475,7 +474,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/schema/src</source>
+                                <source>${basedir}/target/perf2/src/</source>
+                                <source>${basedir}/target/perf/src/</source>
                             </sources>
                         </configuration>
                     </execution>
