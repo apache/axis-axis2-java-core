@@ -31,11 +31,13 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.AxisServiceGroup;
 
 public class TestUtils {
 
@@ -44,8 +46,7 @@ public class TestUtils {
 
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(xml));
             StAXOMBuilder builder = new StAXOMBuilder(reader);
-            OMElement omElement = builder.getDocumentElement();
-            return omElement;
+            return builder.getDocumentElement();
 
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -59,9 +60,17 @@ public class TestUtils {
         omDoc.addChild(envelope);
         envelope.getBody().addChild(TestUtils.createOMElement(payload));
         inMC.setEnvelope(envelope);
+        AxisConfiguration axisConfig = new AxisConfiguration();
         AxisService as = new AxisService();
-        as.addParameter(new Parameter("script.js", "function invoke(inMC, outMC) { outMC.setPayloadXML(" + payload + ")}"));
-        inMC.setServiceContext(new ServiceContext(as, new ServiceGroupContext(null, null)));
+        AxisServiceGroup asg = new AxisServiceGroup(axisConfig);
+        asg.addService(as);
+        as.addParameter(new Parameter("script.js",
+                                      "function invoke(inMC, outMC) { outMC.setPayloadXML(" +
+                                              payload + ")}"));
+        ConfigurationContext cfgCtx = new ConfigurationContext(axisConfig);
+        ServiceGroupContext sgc = cfgCtx.createServiceGroupContext(asg);
+        inMC.setAxisService(as);
+        inMC.setServiceContext(sgc.getServiceContext(as));
         return inMC;
     }
 }

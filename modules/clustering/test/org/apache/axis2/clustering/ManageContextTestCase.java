@@ -15,19 +15,14 @@
  */
 
 package org.apache.axis2.clustering;
-import java.util.Iterator;
 
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
-import org.apache.axis2.cluster.context.ContextManagerListener;
-import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
-import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Iterator;
 
 
 public abstract class ManageContextTestCase extends ClusterManagerTestCase {
@@ -43,11 +38,12 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 		}
 		
 		//Adding contexts to the Node1
-		ServiceGroupContext serviceGroupContext1 = ContextFactory.createServiceGroupContext(configurationContext1, serviceGroup1);
+		ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
 		String sgcID = UUIDGenerator.getUUID();
 		serviceGroupContext1.setId(sgcID);
 		
-		ServiceContext serviceContext1 = ContextFactory.createServiceContext(serviceGroupContext1, service1);
+		ServiceContext serviceContext1 = serviceGroupContext1.getServiceContext(service1);
 		
 		//adding the Contexts to the first configContext 
 		clusterManager1.getContextManager().addContext(serviceGroupContext1);

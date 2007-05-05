@@ -21,26 +21,25 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 
 import javax.xml.namespace.QName;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
-    private AxisConfiguration engineRegistry;
     private QName serviceName = new QName("axis2/services/NullService");
     private QName operationName = new QName("NullOperation");
-    private AxisService service;
     private ConfigurationContext configContext;
-    private AxisOperation axisOp;
 
     public EngineWithoutPhaseResolvingTest() {
     }
@@ -51,16 +50,16 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
     protected void setUp() throws Exception {
 
-        engineRegistry = new AxisConfiguration();
+        AxisConfiguration engineRegistry = new AxisConfiguration();
         configContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription("null");
         transport.setSender(new CommonsHTTPTransportSender());
 
         TransportInDescription transportIn = new TransportInDescription("null");
-        axisOp = new InOutAxisOperation(operationName);
+        AxisOperation axisOp = new InOutAxisOperation(operationName);
 
-        service = new AxisService(serviceName.getLocalPart());
+        AxisService service = new AxisService(serviceName.getLocalPart());
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) throws AxisFault {
                 // TODO Auto-generated method stub
@@ -70,13 +69,17 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineRegistry.addService(service);
         service.addOperation(axisOp);
 
-        mc = ContextFactory.createMessageContext(configContext);
+        mc = configContext.createMessageContext();
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transport);
 
-        OperationContext opCOntext = ContextFactory.createOperationContext(axisOp, null);
+        ServiceGroupContext sgc = configContext.createServiceGroupContext(
+                (AxisServiceGroup)service.getParent());
+        ServiceContext sc = sgc.getServiceContext(service);
 
-        mc.setOperationContext(opCOntext);
+        OperationContext opContext = sc.createOperationContext(axisOp);
+
+        mc.setOperationContext(opContext);
         mc.setTransportOut(transport);
         mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         mc.setServerSide(true);

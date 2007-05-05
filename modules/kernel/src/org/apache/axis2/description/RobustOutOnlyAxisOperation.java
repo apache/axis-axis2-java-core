@@ -21,7 +21,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
@@ -62,8 +61,8 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
             // create the responseMessageContext
-            MessageContext responseMessageContext = ContextFactory.createMessageContext(
-                    msgctx.getConfigurationContext());
+            MessageContext responseMessageContext =
+                    msgctx.getConfigurationContext().createMessageContext();
 
             // This is a hack - Needs to change
             responseMessageContext.setOptions(options);

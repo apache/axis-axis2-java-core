@@ -24,7 +24,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -58,7 +57,7 @@ public class LocalTransportReceiver {
 
             tOut.setSender(new LocalResponder(sender));
 
-            MessageContext msgCtx = ContextFactory.createMessageContext(confContext);
+            MessageContext msgCtx = confContext.createMessageContext();
             msgCtx.setTransportIn(tIn);
             msgCtx.setTransportOut(tOut);
 

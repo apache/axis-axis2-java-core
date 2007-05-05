@@ -19,7 +19,6 @@ package org.apache.axis2.util;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 
@@ -29,8 +28,7 @@ public class ThreadContextMigratorTest extends TestCase {
     private MessageContext messageContext;
 
     public void setUp() {
-        messageContext = ContextFactory.createMessageContext(
-                new ConfigurationContext(new AxisConfiguration()));
+        messageContext = new ConfigurationContext(new AxisConfiguration()).createMessageContext();
     }
 
     public void testEmptyMigratorStructure()

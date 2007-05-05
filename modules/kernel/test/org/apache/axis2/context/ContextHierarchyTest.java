@@ -41,14 +41,13 @@ public class ContextHierarchyTest extends TestCase {
         axisService.addOperation(axisOperation);
         axisConfiguration.addService(axisService);
         configurationContext = new ConfigurationContext(axisConfiguration);
-        msgctx = ContextFactory.createMessageContext(configurationContext);
+        msgctx = configurationContext.createMessageContext();
     }
 
     public void testCompleteHierarchy() throws AxisFault {
-        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(
-                configurationContext, (AxisServiceGroup) axisService.getParent());
-        ServiceContext serviceContext =
-                ContextFactory.createServiceContext(serviceGroupContext, axisService);
+        ServiceGroupContext serviceGroupContext = configurationContext.createServiceGroupContext(
+                (AxisServiceGroup) axisService.getParent());
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                                                                         serviceContext);
         axisOperation.registerOperationContext(msgctx, opContext);

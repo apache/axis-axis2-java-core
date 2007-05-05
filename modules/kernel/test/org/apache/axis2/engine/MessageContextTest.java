@@ -22,7 +22,6 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 
@@ -40,7 +39,7 @@ public class MessageContextTest extends AbstractTestCase {
 
         ConfigurationContext engineContext = new ConfigurationContext(er);
 
-        MessageContext msgctx = ContextFactory.createMessageContext(engineContext);
+        MessageContext msgctx = engineContext.createMessageContext();
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

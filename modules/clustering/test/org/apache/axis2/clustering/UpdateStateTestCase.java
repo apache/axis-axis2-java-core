@@ -19,12 +19,6 @@ package org.apache.axis2.clustering;
 import java.util.Iterator;
 
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
-import org.apache.axis2.cluster.context.ContextManagerListener;
-import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
-import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.commons.logging.Log;
@@ -63,11 +57,10 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 		sgcID = UUIDGenerator.getUUID();
 
 		//Adding contexts to the Node1
-		serviceGroupContext1 = ContextFactory.createServiceGroupContext(configurationContext1,
-				serviceGroup1);
+		serviceGroupContext1 = configurationContext1.createServiceGroupContext(serviceGroup1);
 		serviceGroupContext1.setId(sgcID);
 
-		serviceContext1 = ContextFactory.createServiceContext(serviceGroupContext1, service1);
+		serviceContext1 = serviceGroupContext1.getServiceContext(service1);
 		serviceGroupContext1.addServiceContext(serviceContext1);
 
 		configurationContext1.setProperty(key1, val1);

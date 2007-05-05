@@ -39,7 +39,6 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -66,8 +65,8 @@ public class MessageContextBuilder {
      */
     private static MessageContext createResponseMessageContext(MessageContext inMessageContext)
             throws AxisFault {
-        MessageContext newmsgCtx = ContextFactory.createMessageContext(
-                inMessageContext.getConfigurationContext());
+        MessageContext newmsgCtx =
+                inMessageContext.getConfigurationContext().createMessageContext();
 
         newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());

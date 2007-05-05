@@ -315,7 +315,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         .getTransportOut(org.apache.axis2.Constants.TRANSPORT_MAIL);
         if ((transportIn != null) && (transportOut != null)) {
             // create Message Context
-            msgContext = ContextFactory.createMessageContext(configurationContext);
+            msgContext = configurationContext.createMessageContext();
             msgContext.setTransportIn(transportIn);
             msgContext.setTransportOut(transportOut);
             msgContext.setServerSide(true);

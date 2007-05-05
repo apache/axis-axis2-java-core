@@ -123,8 +123,7 @@ public class ConfigurationContext extends AbstractContext {
      * @param messageContext : MessageContext
      * @throws org.apache.axis2.AxisFault : If something goes wrong
      */
-    public void fillServiceContextAndServiceGroupContext(
-            MessageContext messageContext)
+    public void fillServiceContextAndServiceGroupContext(MessageContext messageContext)
             throws AxisFault {
         // by this time service group context id must have a value. Either from transport or from addressing
         ServiceGroupContext serviceGroupContext;
@@ -146,8 +145,8 @@ public class ConfigurationContext extends AbstractContext {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                         messageContext.setAxisServiceGroup(axisServiceGroup);
                     }
-                    serviceGroupContext = ContextFactory.createServiceGroupContext(
-                            messageContext.getConfigurationContext(), axisServiceGroup);
+                    ConfigurationContext cfgCtx = messageContext.getConfigurationContext();
+                    serviceGroupContext = cfgCtx.createServiceGroupContext(axisServiceGroup);
                     applicationSessionServiceGroupContextTable
                             .put(serviceGroupName, serviceGroupContext);
 
@@ -160,8 +159,8 @@ public class ConfigurationContext extends AbstractContext {
                     }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                messageContext.setServiceContext(ContextFactory.createServiceContext(
-                        serviceGroupContext, axisService));
+                messageContext.setServiceContext(
+                        serviceGroupContext.getServiceContext(axisService));
             } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
                 String serviceGroupContextId = messageContext.getServiceGroupContextId();
                 if (serviceGroupContextId != null) {
@@ -173,10 +172,8 @@ public class ConfigurationContext extends AbstractContext {
                     }
                 } else {
                     AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                    serviceGroupContext =
-                            ContextFactory.createServiceGroupContext(this, axisServiceGroup);
-                    serviceContext =
-                            ContextFactory.createServiceContext(serviceGroupContext, axisService);
+                    serviceGroupContext = createServiceGroupContext(axisServiceGroup);
+                    serviceContext = serviceGroupContext.getServiceContext(axisService);
                     // set the serviceGroupContextID
                     serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
@@ -194,16 +191,13 @@ public class ConfigurationContext extends AbstractContext {
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(
-                        ContextFactory.createServiceContext(serviceGroupContext, axisService));
+                        serviceGroupContext.getServiceContext(axisService));
             } else if (Constants.SCOPE_REQUEST.equals(scope)) {
                 AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                serviceGroupContext =
-                        ContextFactory.createServiceGroupContext(this, axisServiceGroup);
+                serviceGroupContext = createServiceGroupContext(axisServiceGroup);
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                serviceContext =
-                        ContextFactory.createServiceContext(serviceGroupContext, axisService);
+                serviceContext = serviceGroupContext.getServiceContext(axisService);
                 messageContext.setServiceContext(serviceContext);
-                messageContext.getOperationContext().setParent(serviceContext);
             }
         }
         if (messageContext.getOperationContext() != null) {
@@ -335,6 +329,56 @@ public class ConfigurationContext extends AbstractContext {
         // if we got here, we did not find an operation context
         // that fits the criteria
         return null;
+    }
+
+    protected ArrayList contextListeners;
+
+    /**
+     * Register a ContextListener to be notified of all sub-context creation events.
+     * Note that we currently only support a single listener.
+     *
+     * @param contextListener a ContextListener
+     */
+    public void registerContextListener(ContextListener contextListener) {
+        if (contextListeners == null) contextListeners = new ArrayList();
+        contextListeners.add(contextListener);
+    }
+
+    /**
+     * Inform any listeners of a new context
+     *
+     * @param context the just-created subcontext
+     */
+    void contextCreated(AbstractContext context) {
+        if (contextListeners == null) return;
+        for (Iterator i = contextListeners.iterator(); i.hasNext();) {
+            ContextListener listener = (ContextListener)i.next();
+            listener.contextCreated(context);
+        }
+    }
+
+    /**
+     * Create a MessageContext, and notify any registered ContextListener.
+     * 
+     * @return a new MessageContext
+     */
+    public MessageContext createMessageContext() {
+        MessageContext msgCtx = new MessageContext(this);
+        contextCreated(msgCtx);
+        return msgCtx;
+    }
+
+    /**
+     * Create a ServiceGroupContext for the specified service group, and notify any
+     * registered ContextListener.
+     *
+     * @param serviceGroup an AxisServiceGroup
+     * @return a new ServiceGroupContext
+     */
+    public ServiceGroupContext createServiceGroupContext(AxisServiceGroup serviceGroup) {
+        ServiceGroupContext sgCtx = new ServiceGroupContext(this, serviceGroup);
+        contextCreated(sgCtx);
+        return sgCtx;
     }
 
     /**

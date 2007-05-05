@@ -17,12 +17,14 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -42,11 +44,13 @@ public class RelatesToBasedOperationDispatcherTest extends TestCase {
         as1.addOperation(operation2);
 
         ConfigurationContext cc = new ConfigurationContext(ac);
-        OperationContext oc1 = ContextFactory.createOperationContext(operation1, null);
-        OperationContext oc2 = ContextFactory.createOperationContext(operation2, null);
+        ServiceGroupContext sgc = cc.createServiceGroupContext((AxisServiceGroup)as1.getParent());
+        ServiceContext serviceContext = sgc.getServiceContext(as1);
+        OperationContext oc1 = serviceContext.createOperationContext(operation1);
+        OperationContext oc2 = serviceContext.createOperationContext(operation2);
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:123", oc1);
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:456", oc2);
-        messageContext = ContextFactory.createMessageContext(cc);
+        messageContext = cc.createMessageContext();
         messageContext
                 .addRelatesTo(new RelatesTo("urn:org.apache.axis2.dispatchers.messageid:456"));
         messageContext.setAxisService(as1);

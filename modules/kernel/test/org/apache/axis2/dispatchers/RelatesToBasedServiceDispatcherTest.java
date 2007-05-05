@@ -17,13 +17,14 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -36,16 +37,16 @@ public class RelatesToBasedServiceDispatcherTest extends TestCase {
 
         AxisConfiguration ac = new AxisConfiguration();
         ConfigurationContext cc = new ConfigurationContext(ac);
-
         AxisService as1 = new AxisService("Service1");
-        ServiceContext sc1 =
-                new ServiceContext(as1, ContextFactory.createServiceGroupContext(cc, null));
+        AxisServiceGroup sg = new AxisServiceGroup(ac);
+        sg.addService(as1);
+        ServiceGroupContext sgc = cc.createServiceGroupContext(sg);
+
+        ServiceContext sc1 = sgc.getServiceContext(as1);
 
         AxisService as2 = new AxisService("Service2");
-
-        ServiceContext sc2 =
-                new ServiceContext(as2, ContextFactory.createServiceGroupContext(cc, null));
-
+        sg.addService(as2);
+        ServiceContext sc2 = sgc.getServiceContext(as2);
 
         ac.addService(as1);
         ac.addService(as2);
@@ -56,12 +57,12 @@ public class RelatesToBasedServiceDispatcherTest extends TestCase {
         as2.addOperation(operation2);
 
 
-        OperationContext oc1 = ContextFactory.createOperationContext(operation1, sc1);
-        OperationContext oc2 = ContextFactory.createOperationContext(operation2, sc2);
+        OperationContext oc1 = sc1.createOperationContext(operation1);
+        OperationContext oc2 = sc2.createOperationContext(operation2);
 
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:123", oc1);
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:456", oc2);
-        messageContext = ContextFactory.createMessageContext(cc);
+        messageContext = cc.createMessageContext();
         messageContext
                 .addRelatesTo(new RelatesTo("urn:org.apache.axis2.dispatchers.messageid:456"));
 

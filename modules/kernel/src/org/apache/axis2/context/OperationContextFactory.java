@@ -38,7 +38,7 @@ public class OperationContextFactory implements WSDLConstants {
                 || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) ||
                 (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
                 || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
-            return ContextFactory.createOperationContext(axisOp, serviceContext);
+            return serviceContext.createOperationContext(axisOp);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }

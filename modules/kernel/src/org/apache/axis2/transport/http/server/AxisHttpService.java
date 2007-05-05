@@ -39,7 +39,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -114,7 +113,7 @@ public class AxisHttpService {
         this.configurationContext = configurationContext;
         this.worker = worker;
 
-        this.msgContext = ContextFactory.createMessageContext(configurationContext);
+        this.msgContext = configurationContext.createMessageContext();
         this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
     }
 

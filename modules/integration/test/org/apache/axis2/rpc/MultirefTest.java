@@ -34,7 +34,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
@@ -118,11 +117,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -171,11 +170,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -219,11 +218,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -271,11 +270,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-            ConfigurationContext configConetxt = ConfigurationContextFactory
+            ConfigurationContext configContext = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(null, null);
-            RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+            RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
             rpcClient.setOptions(options);
-            MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+            MessageContext reqMessageContext = configContext.createMessageContext();;
             OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
             opClinet.setOptions(options);
             reqMessageContext.setEnvelope(envelope);
@@ -333,11 +332,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -395,11 +394,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();;
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -458,11 +457,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();;
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -527,11 +526,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -595,11 +594,11 @@ public class MultirefTest extends UtilServerBasedTestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
 
-        ConfigurationContext configConetxt = ConfigurationContextFactory
+        ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
+        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = configContext.createMessageContext();
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);

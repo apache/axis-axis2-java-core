@@ -23,7 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -67,7 +66,7 @@ public class TCPWorker implements Runnable {
             if ((transportOut != null) && (transportIn != null)) {
 
                 // create the Message Context and fill in the values
-                msgContext = ContextFactory.createMessageContext(configurationContext);
+                msgContext = configurationContext.createMessageContext();
                 msgContext.setIncomingTransportName(Constants.TRANSPORT_TCP);
                 msgContext.setTransportIn(transportIn);
                 msgContext.setTransportOut(transportOut);

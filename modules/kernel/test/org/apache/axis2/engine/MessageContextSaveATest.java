@@ -23,7 +23,6 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -159,13 +158,11 @@ public class MessageContextSaveATest extends TestCase {
 
         //-----------------------------------------------------------------
 
-        serviceGroupContext = ContextFactory.createServiceGroupContext(configurationContext,
-                                                                       (AxisServiceGroup) axisService
-                                                                               .getParent());
+        serviceGroupContext = configurationContext.
+                createServiceGroupContext((AxisServiceGroup)axisService.getParent());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
-        ServiceContext serviceContext =
-                ContextFactory.createServiceContext(serviceGroupContext, axisService);
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
 
         operationContext = serviceContext.createOperationContext(operationName);
 
@@ -193,7 +190,7 @@ public class MessageContextSaveATest extends TestCase {
 
         //-----------------------------------------------------------------
 
-        mc = ContextFactory.createMessageContext(configurationContext);
+        mc = configurationContext.createMessageContext();
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 

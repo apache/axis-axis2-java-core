@@ -21,7 +21,6 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -245,7 +244,7 @@ class OutOnlyAxisOperationClient extends OperationClient {
         // setting message ID if it null
 
         // create the operation context for myself
-        OperationContext oc = ContextFactory.createOperationContext(axisOp, sc);
+        OperationContext oc = sc.createOperationContext(axisOp);
         oc.addMessageContext(mc);
         // ship it out
         AxisEngine engine = new AxisEngine(cc);

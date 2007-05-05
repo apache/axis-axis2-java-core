@@ -36,7 +36,6 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -227,7 +226,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         SOAPEnvelope envelope = factory.getDefaultEnvelope();
         envelope.getBody().addChild(method);
 
-        MessageContext requestContext = ContextFactory.createMessageContext(configContext);
+        MessageContext requestContext = configContext.createMessageContext();
         requestContext.setAxisService(clientService);
         requestContext.setAxisOperation(opdesc);
         requestContext.setEnvelope(envelope);

@@ -43,10 +43,9 @@ public class OperationContextTest extends AbstractTestCase {
 
         AxisService axisService = new AxisService("TempSC");
         configContext.getAxisConfiguration().addService(axisService);
-        ServiceGroupContext sgc = ContextFactory.createServiceGroupContext(configContext,
-                                                                           (AxisServiceGroup) axisService
-                                                                                   .getParent());
-        ServiceContext sessionContext = ContextFactory.createServiceContext(sgc, axisService);
+        ServiceGroupContext sgc = configContext.createServiceGroupContext(
+                (AxisServiceGroup) axisService.getParent());
+        ServiceContext sessionContext = sgc.getServiceContext(axisService);
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(UUIDGenerator.getUUID());
@@ -66,7 +65,7 @@ public class OperationContextTest extends AbstractTestCase {
     }
 
     public MessageContext getBasicMessageContext() throws AxisFault {
-        MessageContext messageContext = ContextFactory.createMessageContext(configContext);
+        MessageContext messageContext = configContext.createMessageContext();
         messageContext.setTransportIn(new TransportInDescription("axis2"));
         messageContext.setTransportOut(new TransportOutDescription("axis2"));
 

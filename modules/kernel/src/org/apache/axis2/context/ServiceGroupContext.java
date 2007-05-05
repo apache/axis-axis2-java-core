@@ -144,6 +144,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
         if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
+            getRootContext().contextCreated(serviceContext);
             serviceContextMap.put(service.getName(), serviceContext);
 
             ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();

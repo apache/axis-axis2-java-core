@@ -29,8 +29,8 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.handlers.util.TestUtil;
 
 import javax.xml.namespace.QName;
@@ -70,8 +70,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
 
-        MessageContext msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext configCtx = 
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        MessageContext msgCtxt = configCtx.createMessageContext();
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
         msgCtxt.setTo(epr);
         msgCtxt.setReplyTo(replyTo);
@@ -104,8 +105,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
-        msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
 
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         epr.addReferenceParameter(new QName("Reference2"),
@@ -145,8 +147,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testMustUnderstandSupport() throws Exception {
-        msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
 
         msgCtxt.setProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS,
                             Boolean.TRUE);
@@ -194,8 +197,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         EndpointReference duplicateEpr = new EndpointReference("http://whatever.duplicate.org");
         RelatesTo reply = new RelatesTo("urn:id");
-        msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         msgCtxt.setEnvelope(defaultEnvelope);
@@ -227,8 +231,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         RelatesTo custom = new RelatesTo("urn:id", "customRelationship");
-        msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         OMNamespace addressingNamespace =
@@ -269,8 +274,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         RelatesTo custom = new RelatesTo("urn:id", "customRelationship");
-        msgCtxt = ContextFactory.createMessageContext(
-                ConfigurationContextFactory.createDefaultConfigurationContext());
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         OMNamespace addressingNamespace =

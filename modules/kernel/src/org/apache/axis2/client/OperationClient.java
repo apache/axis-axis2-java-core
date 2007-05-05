@@ -22,7 +22,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -69,7 +68,7 @@ public abstract class OperationClient {
         this.sc = sc;
         this.options = new Options(options);
         completed = false;
-        oc = ContextFactory.createOperationContext(axisOp, sc);
+        oc = sc.createOperationContext(axisOp);
     }
 
     /**

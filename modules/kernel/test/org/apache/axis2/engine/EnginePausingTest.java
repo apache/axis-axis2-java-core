@@ -23,7 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisBinding;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -122,7 +121,7 @@ public class EnginePausingTest extends TestCase {
 
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
-        mc = ContextFactory.createMessageContext(configContext);
+        mc = configContext.createMessageContext();
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 
@@ -177,8 +176,7 @@ public class EnginePausingTest extends TestCase {
     }
 
     public void testReceive() throws Exception {
-        mc.setTo(
-                new EndpointReference("/axis2/services/NullService"));
+        mc.setTo(new EndpointReference("/axis2/services/NullService"));
         mc.setWSAAction("DummyOp");
         AxisEngine engine = new AxisEngine(configContext);
         engine.receive(mc);

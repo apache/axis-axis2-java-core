@@ -26,7 +26,6 @@ import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -143,13 +142,12 @@ public class Utils {
                                                                            ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext =
-                ContextFactory.createServiceGroupContext(configurationContext,
-                                                         (AxisServiceGroup) axisService
-                                                                 .getParent());
+                configurationContext.createServiceGroupContext((AxisServiceGroup)axisService
+                        .getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
-        ServiceContext serviceContext = new ServiceContext(axisService, serviceGroupContext);
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
 
         ClusterManager clusterManager =
                 configurationContext.getAxisConfiguration().getClusterManager();

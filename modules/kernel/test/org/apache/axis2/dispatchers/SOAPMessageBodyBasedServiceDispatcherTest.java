@@ -20,7 +20,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -35,7 +34,7 @@ public class SOAPMessageBodyBasedServiceDispatcherTest extends TestCase {
         AxisConfiguration ac = cc.getAxisConfiguration();
         ac.addService(as1);
         ac.addService(as2);
-        messageContext = ContextFactory.createMessageContext(cc);
+        messageContext = cc.createMessageContext();
 
         SOAPEnvelope se = OMAbstractFactory.getSOAP11Factory().createSOAPEnvelope();
         SOAPBody sb = OMAbstractFactory.getSOAP11Factory().createSOAPBody(se);

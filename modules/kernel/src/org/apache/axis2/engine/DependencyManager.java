@@ -19,7 +19,6 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
@@ -79,8 +78,7 @@ public class DependencyManager {
         Iterator serviceItr = serviceGroup.getServices();
         while (serviceItr.hasNext()) {
             AxisService axisService = (AxisService) serviceItr.next();
-            ServiceContext serviceContext = ContextFactory.createServiceContext(
-                    serviceGroupContext, axisService);
+            ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
             AxisService service = serviceContext.getAxisService();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);

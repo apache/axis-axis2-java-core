@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
@@ -189,9 +188,9 @@ public class UtilServer {
         configContext.getAxisConfiguration().addService(service);
 
 
-        ServiceGroupContext serviceGroupContext = ContextFactory
-                .createServiceGroupContext(configContext, (AxisServiceGroup)service.getParent());
-        return ContextFactory.createServiceContext(serviceGroupContext, service);
+        ServiceGroupContext serviceGroupContext =
+                configContext.createServiceGroupContext((AxisServiceGroup)service.getParent());
+        return serviceGroupContext.getServiceContext(service);
     }
 
     static class AddressingFilter implements FilenameFilter {
@@ -245,9 +244,8 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
         ServiceGroupContext serviceGroupContext =
-                ContextFactory.createServiceGroupContext(configContext,
-                                                         (AxisServiceGroup)service.getParent());
-        return ContextFactory.createServiceContext(serviceGroupContext, service);
+                configContext.createServiceGroupContext((AxisServiceGroup)service.getParent());
+        return serviceGroupContext.getServiceContext(service);
     }
 
 }

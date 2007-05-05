@@ -29,7 +29,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -135,26 +134,41 @@ public class ServiceClient {
 
     private void configureServiceClient(ConfigurationContext configContext, AxisService axisService)
             throws AxisFault {
-        initializeTransports(configContext);
-        // save the axisConfig and service
-        this.axisConfig = this.configContext.getAxisConfiguration();
-        if (axisService != null) {
-            this.axisService = axisService;
-        } else {
-            this.axisService = createAnonymousService();
+        if (configContext == null) {
+            if (ListenerManager.defaultConfigurationContext == null) {
+                configContext = ConfigurationContextFactory.
+                        createConfigurationContextFromFileSystem(null, null);
+                createConfigCtx = true;
+            } else {
+                configContext = ListenerManager.defaultConfigurationContext;
+            }
         }
-        if (this.axisConfig.getService(this.axisService.getName()) == null) {
-            this.axisService.setClientSide(true);
-            this.axisConfig.addService(this.axisService);
+        this.configContext = configContext;
+
+        // Initialize transports
+        ListenerManager transportManager = configContext.getListenerManager();
+        if (transportManager == null) {
+            transportManager = new ListenerManager();
+            transportManager.init(this.configContext);
+        }
+
+        // save the axisConfig and service
+        axisConfig = configContext.getAxisConfiguration();
+        if (axisService == null) {
+            axisService = createAnonymousService();
+        }
+        this.axisService = axisService;
+        if (axisConfig.getService(axisService.getName()) == null) {
+            axisService.setClientSide(true);
+            axisConfig.addService(axisService);
         } else {
             throw new AxisFault(Messages.getMessage(
                     "twoservicecannothavesamename",
-                    this.axisService.getName()));
+                    axisService.getName()));
         }
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
-        ServiceGroupContext sgc = ContextFactory.createServiceGroupContext(this.configContext,
-                                                                           axisServiceGroup);
-        this.serviceContext = ContextFactory.createServiceContext(sgc, this.axisService);
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup)axisService.getParent();
+        ServiceGroupContext sgc = configContext.createServiceGroupContext(axisServiceGroup);
+        serviceContext = sgc.getServiceContext(axisService);
     }
 
 
@@ -195,28 +209,6 @@ public class ServiceClient {
                                                                                       wsdlServiceName,
                                                                                       portName,
                                                                                       options));
-    }
-
-    private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
-        ListenerManager transportManager;
-        if (configContext != null) {
-            this.configContext = configContext;
-            transportManager = configContext.getListenerManager();
-            if (transportManager == null) {
-                transportManager = new ListenerManager();
-                transportManager.init(this.configContext);
-            }
-        } else {
-            if (ListenerManager.defaultConfigurationContext == null) {
-                this.configContext = ConfigurationContextFactory.
-                        createConfigurationContextFromFileSystem(null, null);
-                transportManager = new ListenerManager();
-                transportManager.init(this.configContext);
-                createConfigCtx = true;
-            } else {
-                this.configContext = ListenerManager.defaultConfigurationContext;
-            }
-        }
     }
 
     /**
@@ -756,9 +748,7 @@ public class ServiceClient {
 
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
         ServiceGroupContext serviceGroupContext =
-                ContextFactory.createServiceGroupContext(configContext,
-                                                         axisServiceGroup);
-        this.serviceContext = ContextFactory.createServiceContext(
-                serviceGroupContext, this.axisService);
+                configContext.createServiceGroupContext(axisServiceGroup);
+        this.serviceContext = serviceGroupContext.getServiceContext(axisService);
     }
 }

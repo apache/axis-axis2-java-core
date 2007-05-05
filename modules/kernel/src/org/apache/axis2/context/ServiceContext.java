@@ -131,16 +131,22 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     // end MetaData section
     //----------------------------------------------------------------
 
-    // simple constructor
+    /**
+     * Public constructor (only here because this class is Externalizable)
+     */
     public ServiceContext() {
-        super(null);
     }
 
-
-    public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
+    /**
+     * Constructor (package access, should only be used by ServiceGroupContext)
+     *
+     * @param axisService the AxisService for which to create a context
+     * @param serviceGroupContext the parent ServiceGroupContext
+     */
+    ServiceContext(AxisService axisService, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
-        this.axisService = serviceConfig;
+        this.axisService = axisService;
         this.configContext = (ConfigurationContext) parent.getParent();
     }
 
@@ -150,7 +156,8 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     }
 
     public OperationContext createOperationContext(AxisOperation axisOp) {
-        OperationContext ctx = ContextFactory.createOperationContext(axisOp, this);
+        OperationContext ctx = new OperationContext(axisOp, this);
+        configContext.contextCreated(ctx);
         return ctx;
     }
 

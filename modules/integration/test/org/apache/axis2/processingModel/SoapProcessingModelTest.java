@@ -33,7 +33,6 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
@@ -80,7 +79,7 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
                     .getNewConfigurationContext(Constants.TESTING_REPOSITORY);
             serviceClient = new ServiceClient(configContext, clientService);
 
-            MessageContext msgctx = ContextFactory.createMessageContext(configContext);
+            MessageContext msgctx = configContext.createMessageContext();
 
             msgctx.setEnvelope(envelope);
 

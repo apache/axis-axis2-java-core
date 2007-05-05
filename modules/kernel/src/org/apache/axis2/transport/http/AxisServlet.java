@@ -29,7 +29,6 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.SessionContext;
@@ -600,7 +599,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected MessageContext createMessageContext(HttpServletRequest request,
                                                   HttpServletResponse response,
                                                   boolean invocationType) throws IOException {
-        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
+        MessageContext msgContext = configContext.createMessageContext();
         String requestURI = request.getRequestURI();
 
         String trsPrefix = request.getRequestURL().toString();

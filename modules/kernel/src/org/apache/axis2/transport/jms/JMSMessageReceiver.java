@@ -22,7 +22,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.MessageContextBuilder;
@@ -128,7 +127,7 @@ public class JMSMessageReceiver implements MessageListener {
         InputStream in = JMSUtils.getInputStream(message);
 
         try {
-            MessageContext msgContext = ContextFactory.createMessageContext(axisConf);
+            MessageContext msgContext = axisConf.createMessageContext();
 
             // get destination and create correct EPR
             Destination dest = message.getJMSDestination();

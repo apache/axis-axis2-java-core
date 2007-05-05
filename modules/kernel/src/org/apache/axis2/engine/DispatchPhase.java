@@ -4,12 +4,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -170,30 +170,25 @@ public class DispatchPhase extends Phase {
             msgContext.setServiceGroupContext(serviceGroupContext);
             msgContext.setServiceGroupContextId(serviceGroupContext.getId());
         } else {    // 2. if null, create new opCtxt
-            operationContext = ContextFactory.createOperationContext(axisOperation, serviceContext);
-
-            axisOperation.registerMessageContext(msgContext, operationContext);
-            if (serviceContext != null) {
-                // no need to added to configuration conetxt , since we are happy in
-                //  storing in session context
-                operationContext.setParent(serviceContext);
-            } else {
+            if (serviceContext == null) {
                 // fill the service group context and service context info
-                msgContext.getConfigurationContext().fillServiceContextAndServiceGroupContext(
-                        msgContext);
+                msgContext.getConfigurationContext().
+                        fillServiceContextAndServiceGroupContext(msgContext);
+                serviceContext = msgContext.getServiceContext();
             }
+            operationContext = serviceContext.createOperationContext(axisOperation);
+            axisOperation.registerMessageContext(msgContext, operationContext);
         }
-        serviceContext = msgContext.getServiceContext();
-        if (serviceContext != null) {
-            serviceContext.setMyEPR(msgContext.getTo());
-        }
+
+        serviceContext.setMyEPR(msgContext.getTo());
     }
 
     /**
      * To check wether the incoming request has come in valid transport , simpley the transports
      * that service author wants to expose
      *
-     * @param msgctx
+     * @param msgctx the current MessageContext
+     * @throws AxisFault in case of error
      */
     private void validateTransport(MessageContext msgctx) throws AxisFault {
         AxisService service = msgctx.getAxisService();
@@ -229,14 +224,13 @@ public class DispatchPhase extends Phase {
             }
         }
         String serviceGroupName = msgContext.getAxisServiceGroup().getServiceGroupName();
-        ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
-                serviceGroupName);
+        ServiceGroupContext serviceGroupContext =
+                sessionContext.getServiceGroupContext(serviceGroupName);
         if (serviceGroupContext != null) {
             //setting service group context
             msgContext.setServiceGroupContext(serviceGroupContext);
-            // setting Service conetxt
-            msgContext.setServiceContext(
-                    ContextFactory.createServiceContext(serviceGroupContext, service));
+            // setting Service context
+            msgContext.setServiceContext(serviceGroupContext.getServiceContext(service));
         } else {
             createAndFillContexts(service, msgContext, sessionContext);
         }
@@ -253,12 +247,11 @@ public class DispatchPhase extends Phase {
                                        SessionContext sessionContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext;
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
-        serviceGroupContext = ContextFactory.createServiceGroupContext(
-                msgContext.getConfigurationContext(), axisServiceGroup);
+        ConfigurationContext configCtx = msgContext.getConfigurationContext();
+        serviceGroupContext = configCtx.createServiceGroupContext(axisServiceGroup);
 
         msgContext.setServiceGroupContext(serviceGroupContext);
-        ServiceContext serviceContext =
-                ContextFactory.createServiceContext(serviceGroupContext, service);
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(service);
         msgContext.setServiceContext(serviceContext);
         if (sessionContext != null) {
             sessionContext.addServiceContext(serviceContext);

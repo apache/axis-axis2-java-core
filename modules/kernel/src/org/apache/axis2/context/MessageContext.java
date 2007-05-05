@@ -501,6 +501,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
         options = new Options();
     }
 
+    /**
+     * Constructor has package access
+     *
+     * @param configContext the associated ConfigurationContext
+     */
+    MessageContext(ConfigurationContext configContext) {
+        this();
+        setConfigurationContext(configContext);
+    }
+
     public String toString() {
         return getLogIDString();
     }
