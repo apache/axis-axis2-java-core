@@ -2867,7 +2867,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         // TransportOutDescription transportOut
         if (transportOut != null) {
-            metaTransportOut = new MetaDataEntry(transportOut.getName(), null);
+            metaTransportOut = new MetaDataEntry(null, transportOut.getName());
         } else {
             metaTransportOut = null;
         }
