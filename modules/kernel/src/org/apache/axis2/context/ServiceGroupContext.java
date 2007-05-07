@@ -127,9 +127,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * There is no need to store service context inside serviceGroup
      * context as well.
      *
-     * @param service
+     * @param service the AxisService for which to get a context
      * @return Returns ServiceContext.
-     * @throws AxisFault
+     * @throws AxisFault if something goes wrong
      */
     public ServiceContext getServiceContext(AxisService service) throws AxisFault {
         AxisService axisService = axisServiceGroup.getService(service.getName());
@@ -226,6 +226,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * of service contexts for this service group
      * context.
      *
+     * @param axisSrv the AxisService whose context we're looking for
      * @return The ServiceContext associated with the AxisService
      *         or null, if none can be found
      */
@@ -450,6 +451,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * we have a configurationContext.  This method checks to see
      * if additional work needs to be done in order to complete
      * the object reconstitution.
+     *
+     * @param cc the active ConfigurationContext
      */
     public void activate(ConfigurationContext cc) {
         // see if there's any work to do

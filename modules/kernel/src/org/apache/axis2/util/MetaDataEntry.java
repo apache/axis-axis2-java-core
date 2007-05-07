@@ -45,7 +45,7 @@ public class MetaDataEntry implements Externalizable {
 
     // list of MetaDataEntry objects that are owned by the
     // original object referred to by this MetaDataEntry
-    private ArrayList list = null;
+    private ArrayList children = null;
 
     // marker to indicate end-of-list
     public static String END_OF_LIST = "LAST_ENTRY";
@@ -58,28 +58,36 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Constructor
+     * @param className name of the object class
+     * @param qnameAsString an expanded version of the QName of this object
      */
-    public MetaDataEntry(String c, String n) {
-        className = c;
-        qnameAsString = n;
+    public MetaDataEntry(String className, String qnameAsString) {
+        this.className = className;
+        this.qnameAsString = qnameAsString;
     }
 
     /**
      * Constructor
+     * @param className name of the object class
+     * @param qnameAsString an expanded version of the QName of this object
+     * @param extraName an additional name associated withe the object
      */
-    public MetaDataEntry(String c, String n, String e) {
-        className = c;
-        qnameAsString = n;
-        extraName = e;
+    public MetaDataEntry(String className, String qnameAsString, String extraName) {
+        this.className = className;
+        this.qnameAsString = qnameAsString;
+        this.extraName = extraName;
     }
 
     /**
      * Constructor
+     * @param className name of the object class
+     * @param qnameAsString an expanded version of the QName of this object
+     * @param children an ArrayList containing MetaDataEntries for owned objects
      */
-    public MetaDataEntry(String c, String n, ArrayList l) {
-        className = c;
-        qnameAsString = n;
-        list = l;
+    public MetaDataEntry(String className, String qnameAsString, ArrayList children) {
+        this.className = className;
+        this.qnameAsString = qnameAsString;
+        this.children = children;
     }
 
 
@@ -174,7 +182,7 @@ public class MetaDataEntry implements Externalizable {
     /**
      * Set the additional name associated with the object
      *
-     * @param c the extra name string
+     * @param e the extra name string
      */
     public void setExtraName(String e) {
         extraName = e;
@@ -187,11 +195,7 @@ public class MetaDataEntry implements Externalizable {
      * @return false for a non-empty list, true for an empty list
      */
     public boolean isListEmpty() {
-        if (list == null) {
-            return true;
-        }
-
-        return list.isEmpty();
+        return children == null || children.isEmpty();
     }
 
 
@@ -200,8 +204,8 @@ public class MetaDataEntry implements Externalizable {
      *
      * @return the array list
      */
-    public ArrayList getList() {
-        return list;
+    public ArrayList getChildren() {
+        return children;
     }
 
 
@@ -210,8 +214,8 @@ public class MetaDataEntry implements Externalizable {
      *
      * @param L the ArrayList of MetaDataEntry objects
      */
-    public void setList(ArrayList L) {
-        list = L;
+    public void setChildren(ArrayList L) {
+        children = L;
     }
 
     /**
@@ -220,17 +224,17 @@ public class MetaDataEntry implements Externalizable {
      * @param e the MetaDataEntry object to add to the list
      */
     public void addToList(MetaDataEntry e) {
-        if (list == null) {
-            list = new ArrayList();
+        if (children == null) {
+            children = new ArrayList();
         }
-        list.add(e);
+        children.add(e);
     }
 
     /**
      * Remove the list
      */
     public void removeList() {
-        list = null;
+        children = null;
     }
 
 
@@ -265,7 +269,7 @@ public class MetaDataEntry implements Externalizable {
         ObjectStateUtils.writeString(out, className, "MetaDataEntry.className");
         ObjectStateUtils.writeString(out, qnameAsString, "MetaDataEntry.qnameAsString");
         ObjectStateUtils.writeString(out, extraName, "MetaDataEntry.extraName");
-        ObjectStateUtils.writeArrayList(out, list, "MetaDataEntry.list");
+        ObjectStateUtils.writeArrayList(out, children, "MetaDataEntry.list");
 
     }
 
@@ -306,7 +310,7 @@ public class MetaDataEntry implements Externalizable {
         className = ObjectStateUtils.readString(in, "MetaDataEntry.className");
         qnameAsString = ObjectStateUtils.readString(in, "MetaDataEntry.qnameAsString");
         extraName = ObjectStateUtils.readString(in, "MetaDataEntry.extraName");
-        list = ObjectStateUtils.readArrayList(in, "MetaDataEntry.list");
+        children = ObjectStateUtils.readArrayList(in, "MetaDataEntry.list");
 
     }
 

@@ -1333,17 +1333,21 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     /**
-     * @param reference
+     * Add a RelatesTo
+     *
+     * @param reference RelatesTo describing how we relate to another message
      */
     public void addRelatesTo(RelatesTo reference) {
         options.addRelatesTo(reference);
     }
 
     /**
-     * @param referance
+     * Set ReplyTo destination
+     *
+     * @param reference the ReplyTo EPR
      */
-    public void setReplyTo(EndpointReference referance) {
-        options.setReplyTo(referance);
+    public void setReplyTo(EndpointReference reference) {
+        options.setReplyTo(reference);
     }
 
     /**
@@ -1721,10 +1725,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return TRUE if the key exists, FALSE otherwise
      */
     public boolean containsSelfManagedDataKey(Class clazz, Object key) {
-        if (selfManagedDataMap != null) {
-            return selfManagedDataMap.containsKey(generateSelfManagedDataKey(clazz, key));
+        if (selfManagedDataMap == null) {
+            return false;
         }
-        return false;
+        return selfManagedDataMap.containsKey(generateSelfManagedDataKey(clazz, key));
     }
 
     /**
@@ -2855,7 +2859,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         // TransportInDescription transportIn
         if (transportIn != null) {
-            metaTransportIn = new MetaDataEntry(null, transportIn.getName().toString());
+            metaTransportIn = new MetaDataEntry(null, transportIn.getName());
         } else {
             metaTransportIn = null;
         }
@@ -2863,7 +2867,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         // TransportOutDescription transportOut
         if (transportOut != null) {
-            metaTransportOut = new MetaDataEntry(null, transportOut.getName().toString());
+            metaTransportOut = new MetaDataEntry(transportOut.getName(), null);
         } else {
             metaTransportOut = null;
         }
@@ -3168,7 +3172,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 // get the class name, then add it to the list
                 String tmpClassNameStr;
                 String tmpQNameAsStr;
-                String tmpHasList = "no list";
 
                 if (mdObj != null) {
                     tmpClassNameStr = mdObj.getClassName();
@@ -3182,11 +3185,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
                         tmpQNameAsStr = mdObj.getQNameAsString();
 
-                        if (!mdObj.isListEmpty()) {
-                            tmpHasList = "has list";
-                        }
-
                         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                            String tmpHasList = mdObj.isListEmpty() ? "no children" : "has children";
+
                             log.trace(logCorrelationIDString +
                                     ":readExternal(): meta data class [" + tmpClassNameStr +
                                     "] qname [" + tmpQNameAsStr + "]  index [" + count + "]   [" +

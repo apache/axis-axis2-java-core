@@ -22,7 +22,6 @@ import java.io.File;
 
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.RepositoryListener;
-import org.apache.axis2.deployment.repository.util.WSInfo;
 
 /**
  * An Axis2 RepositoryListener subclass for dealing with script services
