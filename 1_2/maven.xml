@@ -909,9 +909,10 @@
     <ant:filter filtersfile="target/xdocs-original/dynamic-labels.properties" />
         <ant:copy toDir="xdocs" filtering="on" overwrite="true" >
             <ant:fileset dir="target/xdocs-original">
-        <exclude name="images/**"/>
-        <exclude name="@axis2_version_dir@/images/**"/>
-        </ant:fileset>
+	            <ant:exclude name="**/*.gif"/>
+	            <ant:exclude name="**/*.jpg"/>
+		    <ant:exclude name="**/*.png"/>
+            </ant:fileset>
         </ant:copy>
 
     <ant:move toDir="xdocs/${maven.xdoc.axis_doc_folder_name}">
