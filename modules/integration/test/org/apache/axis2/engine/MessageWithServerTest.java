@@ -30,6 +30,7 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.FileInputStream;
 import java.net.Socket;
 
 public class MessageWithServerTest extends UtilServerBasedTestCase {
@@ -59,16 +61,19 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
 
     protected void setUp() throws Exception {
+        AxisConfiguration config = new AxisConfiguration();
+
         AxisService service = Utils.createSimpleService(serviceName,
                                                         Echo.class.getName(),
                                                         operationName);
+        config.addService(service);
 
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         AxisModule m1 = new AxisModule("A Module 1");
         m1.setInFlow(new MockFlow("service module inflow", 4));
+
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
-        AxisConfiguration config = new AxisConfiguration();
         config.addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         config.addMessageReceiver(
@@ -105,8 +110,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         config.getGlobalInFlow().add(dispatchPhase);
         service.engageModule(m1);
 
-        AxisOperation axisOperation = new OutInAxisOperation(
-        );
+        AxisOperation axisOperation = new OutInAxisOperation();
         axisOperation.setName(operationName);
         service.addOperation(axisOperation);
 
@@ -119,6 +123,10 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
     public void testEchoStringServer() throws Exception {
         InputStream in = cl.getResourceAsStream("soap/soapmessage.txt");
+
+        if (in == null) {
+            in = new FileInputStream(AbstractTestCase.basedir + "/test-resources/soap/soapmessage.txt");
+        }
 
         Socket socket = new Socket("127.0.0.1", UtilServer.TESTING_PORT);
         OutputStream out = socket.getOutputStream();
