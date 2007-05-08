@@ -30,7 +30,6 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.AbstractTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
