@@ -418,7 +418,13 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String values[] = msg.getHeader(headerName);
 
             if (values != null) {
-                return values[0];
+                String tmp = values[0];
+                if (tmp != null) {
+                    if (tmp.length() > 1 && tmp.startsWith("\"") && tmp.endsWith("\"")) {
+                        tmp = tmp.substring(1, tmp.length() - 1);
+                    }
+                }
+                return tmp;
             } else {
                 return null;
             }
