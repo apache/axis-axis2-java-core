@@ -154,8 +154,7 @@ public class WSDLBasedPolicyProcessor {
             moduleName = axisModule.getName();
 
             if (!axisDescription.isEngaged(moduleName)) {
-                axisDescription.engageModule(axisModule, axisDescription
-                        .getAxisConfiguration());
+                axisDescription.engageModule(axisModule);
                 (axisModule.getModule()).engageNotify(axisDescription);
             }
         }

@@ -150,7 +150,7 @@ public class ModuleDisengagementTest extends TestCase {
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        service.engageModule(module, er);
+        service.engageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
         service.disengageModule(module);
@@ -175,7 +175,7 @@ public class ModuleDisengagementTest extends TestCase {
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        service.engageModule(module, er);
+        service.engageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
         operation.disengageModule(module);
@@ -200,7 +200,7 @@ public class ModuleDisengagementTest extends TestCase {
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        operation.engageModule(module, er);
+        operation.engageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
         operation.disengageModule(module);

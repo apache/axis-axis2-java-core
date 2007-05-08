@@ -320,7 +320,7 @@ public class ServiceClient {
         synchronized (this) {
             AxisModule module = axisConfig.getModule(moduleName);
             if (module != null) {
-                axisService.engageModule(module, axisConfig);
+                axisService.engageModule(module);
             } else {
                 throw new AxisFault("Unable to engage module : " + moduleName);
             }

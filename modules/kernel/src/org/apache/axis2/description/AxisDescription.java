@@ -245,7 +245,7 @@ public abstract class AxisDescription implements ParameterInclude,
     /**
      * Applies the policies on the Description Hierarchy recursively.
      *
-     * @throws AxisFault
+     * @throws AxisFault an error occurred applying the policy
      */
     public void applyPolicy() throws AxisFault {
 
@@ -359,7 +359,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
             if (!(module == null || description.isEngaged(axisModule.getName()))) {
                 // engages the module to AxisDescription
-                description.engageModule(axisModule, getAxisConfiguration());
+                description.engageModule(axisModule);
                 // notifies the module about the engagement
                 axisModule.getModule().engageNotify(description);
             }
@@ -382,13 +382,11 @@ public abstract class AxisDescription implements ParameterInclude,
     public abstract Object getKey();
 
     /**
-     * Engaging a module to different level
+     * Engage a Module at this level
      *
-     * @param axisModule
-     * @param axisConfig
+     * @param axisModule the Module to engage
      */
-    public abstract void engageModule(AxisModule axisModule,
-                                      AxisConfiguration axisConfig) throws AxisFault;
+    public abstract void engageModule(AxisModule axisModule) throws AxisFault;
 
 //    /**
 //     * @deprecate Please use String version instead

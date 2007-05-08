@@ -148,9 +148,9 @@ public abstract class AxisOperation extends AxisDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public final void engageModule(AxisModule moduleref, AxisConfiguration axisConfig)
+    public final void engageModule(AxisModule moduleref)
             throws AxisFault {
-        ArrayList moduleOperations = engageModuleToOperation(moduleref, axisConfig);
+        ArrayList moduleOperations = engageModuleToOperation(moduleref);
         AxisService service = (AxisService) getParent();
         if (service != null) {
             for (int i = 0; i < moduleOperations.size(); i++) {
@@ -160,7 +160,7 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    private ArrayList engageModuleToOperation(AxisModule moduleref, AxisConfiguration axisConfig)
+    private ArrayList engageModuleToOperation(AxisModule moduleref)
             throws AxisFault {
         if (moduleref == null) {
             return null;
@@ -176,6 +176,7 @@ public abstract class AxisOperation extends AxisDescription
                 return new ArrayList();
             }
         }
+        AxisConfiguration axisConfig = getAxisConfiguration();
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
         phaseResolver.engageModuleToOperation(this, moduleref);
         Module module = moduleref.getModule();

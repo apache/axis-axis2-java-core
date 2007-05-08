@@ -452,7 +452,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             AxisModule module = axisConfig.getModule(moduleName);
 
             if (module != null) {
-                serviceGroup.engageModule(axisConfig.getModule(moduleName), axisConfig);
+                serviceGroup.engageModule(axisConfig.getModule(moduleName));
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
@@ -484,7 +484,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     ((QName) list.get(i)).getLocalPart()));
                 }
 
-                axisService.engageModule(module, axisConfig);
+                axisService.engageModule(module);
             }
 
             for (Iterator iterator = axisService.getOperations(); iterator.hasNext();) {
@@ -496,7 +496,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
-                        opDesc.engageModule(module, axisConfig);
+                        opDesc.engageModule(module);
                     } else {
                         throw new DeploymentException(
                                 Messages.getMessage(

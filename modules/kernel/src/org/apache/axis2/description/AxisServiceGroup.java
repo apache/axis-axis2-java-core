@@ -66,9 +66,9 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     /**
-     * Adds module configuration , if there is moduleConfig tag in service.
+     * Adds module configuration, if there is moduleConfig tag in service.
      *
-     * @param moduleConfiguration
+     * @param moduleConfiguration the ModuleConfiguration to add
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         if (moduleConfigmap == null) {
@@ -109,7 +109,7 @@ public class AxisServiceGroup extends AxisDescription {
                         // notyfying module for service engagement
                         moduleImpl.engageNotify(service);
                     }
-                    service.engageModule(axisModule, axisConfig);
+                    service.engageModule(axisModule);
                 } else {
                     throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
                 }
@@ -141,7 +141,7 @@ public class AxisServiceGroup extends AxisDescription {
                         // notyfying module for service engagement
                         moduleImpl.engageNotify(service);
                     }
-                    service.engageModule(axisModule, axisConfig);
+                    service.engageModule(axisModule);
                 } else {
                     throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
                 }
@@ -176,7 +176,7 @@ public class AxisServiceGroup extends AxisDescription {
         engagedModules.remove(moduleName);
     }
 
-    public void engageModule(AxisModule module, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule module) throws AxisFault {
         String moduleName = module.getName();
         boolean isEngagable;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
@@ -188,7 +188,7 @@ public class AxisServiceGroup extends AxisDescription {
         }
         for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
-            axisService.engageModule(module, axisConfig);
+            axisService.engageModule(module);
         }
         addToengagedModules(moduleName);
     }

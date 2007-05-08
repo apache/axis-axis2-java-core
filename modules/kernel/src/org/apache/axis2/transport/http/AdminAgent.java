@@ -314,8 +314,7 @@ public class AdminAgent extends AbstractAgent {
                         serviceName).getOperation(new QName(operationName));
 
                 od.engageModule(
-                        configContext.getAxisConfiguration().getModule(moduleName),
-                        configContext.getAxisConfiguration());
+                        configContext.getAxisConfiguration().getModule(moduleName));
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                               moduleName
                                                       +
@@ -348,8 +347,7 @@ public class AdminAgent extends AbstractAgent {
         if ((serviceName != null) && (moduleName != null)) {
             try {
                 configContext.getAxisConfiguration().getService(serviceName).engageModule(
-                        configContext.getAxisConfiguration().getModule(moduleName),
-                        configContext.getAxisConfiguration());
+                        configContext.getAxisConfiguration().getModule(moduleName));
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                               moduleName
                                                       +
@@ -384,8 +382,7 @@ public class AdminAgent extends AbstractAgent {
 
         if ((serviceName != null) && (moduleName != null)) {
             configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
-                    configContext.getAxisConfiguration().getModule(moduleName),
-                    configContext.getAxisConfiguration());
+                    configContext.getAxisConfiguration().getModule(moduleName));
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                           moduleName
                                                   +

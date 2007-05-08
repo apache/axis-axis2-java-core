@@ -21,16 +21,11 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.SOAPModuleMessage;
-import org.apache.axis2.wsdl.HTTPHeaderMessage;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -107,7 +102,7 @@ public class AxisBindingMessage extends AxisDescription {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule axisModule) throws AxisFault {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 

@@ -18,7 +18,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.ws.commons.schema.*;
 
@@ -164,7 +163,7 @@ public class AxisMessage extends AxisDescription {
         return soapHeaders;
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule axisModule) throws AxisFault {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 

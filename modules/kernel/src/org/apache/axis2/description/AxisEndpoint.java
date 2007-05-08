@@ -19,7 +19,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
@@ -103,7 +102,7 @@ public class AxisEndpoint extends AxisDescription {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(AxisModule axisModule) throws AxisFault {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 

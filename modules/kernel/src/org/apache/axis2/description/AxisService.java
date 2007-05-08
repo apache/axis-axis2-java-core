@@ -470,8 +470,7 @@ public class AxisService extends AxisDescription {
      *
      * @param module
      */
-    public void addModuleOperations(AxisModule module, AxisConfiguration axisConfig)
-            throws AxisFault {
+    public void addModuleOperations(AxisModule module) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
@@ -514,11 +513,6 @@ public class AxisService extends AxisDescription {
         while (modules.hasNext()) {
             AxisModule module = (AxisModule) modules.next();
             AxisServiceGroup parent = (AxisServiceGroup) getParent();
-            AxisConfiguration axisConfig = null;
-
-            if (parent != null) {
-                axisConfig = (AxisConfiguration) parent.getParent();
-            }
 
             try {
                 Module moduleImpl = module.getModule();
@@ -526,7 +520,7 @@ public class AxisService extends AxisDescription {
                     // notifying module for service engagement
                     moduleImpl.engageNotify(axisOperation);
                 }
-                axisOperation.engageModule(module, axisConfig);
+                axisOperation.engageModule(module);
             } catch (AxisFault axisFault) {
                 log.info(Messages.getMessage("modulealredyengagetoservice", module.getName()));
             }
@@ -660,7 +654,7 @@ public class AxisService extends AxisDescription {
      *
      * @param axisModule
      */
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig)
+    public void engageModule(AxisModule axisModule)
             throws AxisFault {
         if (axisModule == null) {
             throw new AxisFault(Messages.getMessage("modulenf"));
@@ -683,13 +677,13 @@ public class AxisService extends AxisDescription {
             moduleImpl.engageNotify(this);
         }
         // adding module operations
-        addModuleOperations(axisModule, axisConfig);
+        addModuleOperations(axisModule);
 
         Iterator operations = getOperations();
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            axisOperation.engageModule(axisModule, axisConfig);
+            axisOperation.engageModule(axisModule);
         }
         engagedModules.add(axisModule);
     }
@@ -761,7 +755,6 @@ public class AxisService extends AxisDescription {
                                     + " named " + axisOperation.getName());
                 }
             }
-            return;
         } else {
             operationsAliasesMap.put(action, axisOperation);
         }
@@ -854,7 +847,7 @@ public class AxisService extends AxisDescription {
             }
         } else {
             String[] eprArray = getEPRs(requestIP);
-            getWSDL(out, eprArray, servicePath);
+            getWSDL(out, eprArray);
         }
     }
 
@@ -963,7 +956,7 @@ public class AxisService extends AxisDescription {
         } else {
             setWsdlFound(true);
             //pick the endpointName and take it as the epr for the WSDL
-            getWSDL(out, new String[]{this.endpointName}, "services");
+            getWSDL(out, new String[]{this.endpointName});
         }
     }
 
@@ -993,8 +986,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    private void getWSDL(OutputStream out, String[] serviceURL,
-                         String servicePath) throws AxisFault {
+    private void getWSDL(OutputStream out, String[] serviceURL) throws AxisFault {
         // Retrieve WSDL using the same data retrieval path for GetMetadata request.
         DataRetrievalRequest request = new DataRetrievalRequest();
         request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
@@ -2127,7 +2119,7 @@ public class AxisService extends AxisDescription {
     public Data[] getData(DataRetrievalRequest request,
                           MessageContext msgContext) throws AxisFault {
 
-        Data[] data = null;
+        Data[] data;
         String dialect = request.getDialect();
         AxisDataLocator dataLocator = null;
         int nextDataLocatorIndex = 0;
@@ -2139,6 +2131,8 @@ public class AxisService extends AxisDescription {
                 break;
             }
         }
+
+        if (dataLocator == null) return null;
 
         data = dataLocator.getData(request, msgContext);
         // Null means Data Locator not understood request. Automatically find
@@ -2200,7 +2194,7 @@ public class AxisService extends AxisDescription {
     */
     private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect)
             throws AxisFault {
-        AxisDataLocator locator = null;
+        AxisDataLocator locator;
         if (locatorType == LocatorType.SERVICE_DIALECT) {
             locator = getServiceDataLocator(dialect);
         } else if (locatorType == LocatorType.SERVICE_LEVEL) {
@@ -2238,7 +2232,7 @@ public class AxisService extends AxisDescription {
     */
     private AxisDataLocator getServiceDataLocator(String dialect)
             throws AxisFault {
-        AxisDataLocator locator = null;
+        AxisDataLocator locator;
         locator = (AxisDataLocator) dataLocators.get(dialect);
         if (locator == null) {
             String className = (String) dataLocatorClassNames.get(dialect);
@@ -2283,7 +2277,7 @@ public class AxisService extends AxisDescription {
     protected AxisDataLocator loadDataLocator(String className)
             throws AxisFault {
 
-        AxisDataLocator locator = null;
+        AxisDataLocator locator;
 
         try {
             Class dataLocator;

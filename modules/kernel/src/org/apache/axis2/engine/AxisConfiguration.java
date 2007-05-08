@@ -297,7 +297,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
             String moduleName = (String) enModule.next();
-            axisServiceGroup.engageModule(getModule(moduleName), this);
+            axisServiceGroup.engageModule(getModule(moduleName));
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -427,12 +427,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig)
-            throws AxisFault {
-        engageModule(axisModule);
-    }
-
-    private void engageModule(AxisModule module) throws AxisFault {
+    public void engageModule(AxisModule module) throws AxisFault {
         boolean isEngagable;
         if (module != null) {
             String moduleName = module.getName();
@@ -452,7 +447,7 @@ public class AxisConfiguration extends AxisDescription {
         while (servicegroups.hasNext()) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups
                     .next();
-            serviceGroup.engageModule(module, this);
+            serviceGroup.engageModule(module);
         }
         engagedModules.add(module.getName());
     }
