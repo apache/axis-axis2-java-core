@@ -125,7 +125,8 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         InputStream in = cl.getResourceAsStream("soap/soapmessage.txt");
 
         if (in == null) {
-            in = new FileInputStream(AbstractTestCase.basedir + "/test-resources/soap/soapmessage.txt");
+            in = new FileInputStream(System.getProperty("basedir", ".") +
+                    "/test-resources/soap/soapmessage.txt");
         }
 
         Socket socket = new Socket("127.0.0.1", UtilServer.TESTING_PORT);
