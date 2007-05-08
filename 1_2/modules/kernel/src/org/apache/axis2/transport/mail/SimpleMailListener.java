@@ -418,13 +418,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String values[] = msg.getHeader(headerName);
 
             if (values != null) {
-                String tmp = values[0];
-                if (tmp != null) {
-                    if (tmp.length() > 1 && tmp.startsWith("\"") && tmp.endsWith("\"")) {
-                        tmp = tmp.substring(1, tmp.length() - 1);
-                    }
-                }
-                return tmp;
+                return parseHeaderForQuotes(values[0]);
             } else {
                 return null;
             }
@@ -433,12 +427,22 @@ public class SimpleMailListener implements Runnable, TransportListener {
         }
     }
 
+    private String parseHeaderForQuotes(String value) {
+        if (value != null) {
+            if (value.length() > 1 && value.startsWith("\"") && value.endsWith("\"")) {
+                value = value.substring(1, value.length() - 1);
+            }
+
+        }
+        return value;
+    }
+
     private String getMailHeaderFromPart(Part part, String headerName) throws AxisFault {
         try {
             String values[] = part.getHeader(headerName);
 
             if (values != null) {
-                return values[0];
+                return parseHeaderForQuotes(values[0]);
             } else {
                 return null;
             }
