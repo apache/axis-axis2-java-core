@@ -40,7 +40,20 @@ public class AxisService2WSDL2 implements WSDL2Constants {
 
         Map nameSpacesMap = axisService.getNameSpacesMap();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
-        OMElement descriptionElement = omFactory.createOMElement(WSDL2Constants.DESCRIPTION, null);
+        OMNamespace wsdl;
+
+        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
+            wsdl = omFactory
+                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
+                                       WSDLSerializationUtil.getPrefix(
+                                               WSDL2Constants.WSDL_NAMESPACE, nameSpacesMap));
+        } else {
+            wsdl = omFactory
+                    .createOMNamespace(WSDL2Constants.WSDL_NAMESPACE,
+                                       WSDL2Constants.DEFAULT_WSDL_NAMESPACE_PREFIX);
+        }
+
+        OMElement descriptionElement = omFactory.createOMElement(WSDL2Constants.DESCRIPTION, wsdl);
 
         // Declare all the defined namespaces in the document
         WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
@@ -62,10 +75,10 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         OMNamespace tns = omFactory
                 .createOMNamespace(axisService.getTargetNamespace(),
                                    axisService.getTargetNamespacePrefix());
-        if (!nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
+        if (nameSpacesMap != null && !nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
             descriptionElement.declareDefaultNamespace(WSDL2Constants.WSDL_NAMESPACE);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
+        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
             wsoap = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
                                        WSDLSerializationUtil.getPrefix(
@@ -74,7 +87,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             wsoap = descriptionElement
                     .declareNamespace(WSDL2Constants.URI_WSDL2_SOAP, WSDL2Constants.SOAP_PREFIX);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
+        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_HTTP)) {
             whttp = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_HTTP,
                                        WSDLSerializationUtil.getPrefix(
@@ -83,7 +96,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             whttp = descriptionElement
                     .declareNamespace(WSDL2Constants.URI_WSDL2_HTTP, WSDL2Constants.HTTP_PREFIX);
         }
-        if (nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
+        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_EXTENSIONS)) {
             wsdlx = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
                                        WSDLSerializationUtil.getPrefix(
@@ -96,14 +109,14 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         // Add the documentation element
         String description;
         OMElement documentationElement =
-                omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, null);
+                omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
         if ((description = axisService.getServiceDescription()) != null) {
             documentationElement.setText(description);
         }
         descriptionElement.addChild(documentationElement);
 
         // Add types element
-        OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, null);
+        OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);
         axisService.populateSchemaMappings();
         ArrayList schemas = axisService.getSchema();
         for (int i = 0; i < schemas.size(); i++) {
@@ -136,7 +149,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         }
 
         // Add the interface element
-        descriptionElement.addChild(getInterfaceEmelent(tns, wsdlx, omFactory, interfaceName));
+        descriptionElement.addChild(getInterfaceEmelent(wsdl, tns, wsdlx, omFactory, interfaceName));
 
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
@@ -146,13 +159,13 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             if (eprs == null) {
                 eprs = new String[]{axisService.getName()};
             }
-            OMElement serviceElement = getServiceElement(tns, omFactory, interfaceName);
+            OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
             while (iterator.hasNext()) {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
-                serviceElement.addChild(axisEndpoint.toWSDL20(tns, whttp, eprs[0]));
+                serviceElement.addChild(axisEndpoint.toWSDL20(wsdl, tns, whttp, eprs[0]));
 
-                descriptionElement.addChild(axisEndpoint.getBinding().toWSDL20(tns, wsoap, whttp,
+                descriptionElement.addChild(axisEndpoint.getBinding().toWSDL20(wsdl, tns, wsoap, whttp,
                                                                                interfaceName,
                                                                                axisService.getNameSpacesMap(),
                                                                                axisService.getWSAddressingFlag()));
@@ -163,15 +176,15 @@ public class AxisService2WSDL2 implements WSDL2Constants {
 
             // There are no andpoints defined hence generate default bindings and endpoints
             descriptionElement.addChild(
-                    WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsoap,
+                    WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
             descriptionElement.addChild(
-                    WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsoap,
+                    WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
             descriptionElement.addChild(
-                    WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, whttp, tns));
+                    WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl, whttp, tns));
             descriptionElement
-                    .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, tns,
+                    .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
                                                                            axisService));
         }
 
@@ -187,10 +200,10 @@ public class AxisService2WSDL2 implements WSDL2Constants {
      * @param interfaceName - The name of the interface
      * @return - The generated interface element
      */
-    private OMElement getInterfaceEmelent(OMNamespace tns, OMNamespace wsdlx,
+    private OMElement getInterfaceEmelent(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
                                           OMFactory fac, String interfaceName) {
 
-        OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, null);
+        OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, wsdl);
         interfaceElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
                                                             interfaceName));
         Iterator iterator = axisService.getOperations();
@@ -199,7 +212,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         int i = 0;
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
-            interfaceOperations.add(i, axisOperation.toWSDL20(tns, wsdlx));
+            interfaceOperations.add(i, axisOperation.toWSDL20(wsdl, tns, wsdlx));
             i++;
             Iterator faultsIterator = axisOperation.getFaultMessages().iterator();
             while (faultsIterator.hasNext()) {
@@ -207,7 +220,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 String name = faultMessage.getName();
                 if (!interfaceFaults.contains(name)) {
                     OMElement faultElement =
-                            fac.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, null);
+                            fac.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
                     faultElement.addAttribute(
                             fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, name));
                     faultElement.addAttribute(fac.createOMAttribute(
@@ -233,10 +246,10 @@ public class AxisService2WSDL2 implements WSDL2Constants {
      * @param interfaceName - The name of the interface
      * @return - The generated service element
      */
-    private OMElement getServiceElement(OMNamespace tns, OMFactory omFactory,
+    private OMElement getServiceElement(OMNamespace wsdl, OMNamespace tns, OMFactory omFactory,
                                         String interfaceName) {
         OMElement serviceElement =
-                omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, null);
+                omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
         serviceElement.addAttribute(
                 omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
                                             axisService.getName()));

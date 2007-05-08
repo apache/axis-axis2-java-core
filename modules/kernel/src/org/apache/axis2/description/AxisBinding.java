@@ -114,12 +114,12 @@ public class AxisBinding extends AxisDescription {
      * @param nameSpaceMap - The namespacemap of the service
      * @return The generated binding element
      */
-    public OMElement toWSDL20(OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                              String interfaceName,  Map nameSpaceMap, String addressingFlag) {
+public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
+                          String interfaceName,  Map nameSpaceMap, String addressingFlag) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingElement;
-        bindingElement = omFactory.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, null);
+        bindingElement = omFactory.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
         bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
                                                                 this.name.getLocalPart()));
         bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME, null,
@@ -188,7 +188,7 @@ public class AxisBinding extends AxisDescription {
             Iterator iterator = faults.values().iterator();
             while (iterator.hasNext()) {
                 AxisBindingMessage axisBindingFault = (AxisBindingMessage) iterator.next();
-                bindingElement.addChild(axisBindingFault.toWSDL20(tns, wsoap, whttp, nameSpaceMap));
+                bindingElement.addChild(axisBindingFault.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
             }
         }
 
@@ -196,7 +196,7 @@ public class AxisBinding extends AxisDescription {
         Iterator iterator = this.getChildren();
         while (iterator.hasNext()) {
             AxisBindingOperation axisBindingOperation = (AxisBindingOperation) iterator.next();
-            bindingElement.addChild(axisBindingOperation.toWSDL20(tns, wsoap, whttp, type, nameSpaceMap));
+            bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap));
         }
         return bindingElement;
     }

@@ -114,12 +114,12 @@ public class AxisBindingOperation extends AxisDescription {
      * @param nameSpaceMap - The namespacemap of the service
      * @return The generated binding element
      */
-    public OMElement toWSDL20(OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
                               String type,  Map nameSpaceMap) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingOpElement =
-                omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, null);
+                omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
         bindingOpElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF,
                                                                   null, tns.getPrefix() + ":" +
                 this.name.getLocalPart()));
@@ -192,14 +192,14 @@ public class AxisBindingOperation extends AxisDescription {
         AxisBindingMessage inMessage =
                 (AxisBindingMessage) this.getChild(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         if (inMessage != null) {
-            bindingOpElement.addChild(inMessage.toWSDL20(tns, wsoap, whttp, nameSpaceMap));
+            bindingOpElement.addChild(inMessage.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
         }
 
         // Add the output element
         AxisBindingMessage outMessage =
                 (AxisBindingMessage) this.getChild(WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
         if (outMessage != null) {
-            bindingOpElement.addChild(outMessage.toWSDL20(tns, wsoap, whttp, nameSpaceMap));
+            bindingOpElement.addChild(outMessage.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
         }
 
         // Add any fault elements
@@ -208,7 +208,7 @@ public class AxisBindingOperation extends AxisDescription {
             Iterator iterator = faultValues.iterator();
             while (iterator.hasNext()) {
                 AxisBindingMessage faultMessage = (AxisBindingMessage) iterator.next();
-                bindingOpElement.addChild(faultMessage.toWSDL20(tns, wsoap, whttp, nameSpaceMap));
+                bindingOpElement.addChild(faultMessage.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
             }
         }
 

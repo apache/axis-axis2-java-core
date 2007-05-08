@@ -119,7 +119,7 @@ public class AxisBindingMessage extends AxisDescription {
      * @param nameSpaceMap - The namespacemap of the service
      * @return The generated bindingMessage element
      */
-    public OMElement toWSDL20(OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
                               Map nameSpaceMap) {
         String property;
         ArrayList list;
@@ -131,13 +131,13 @@ public class AxisBindingMessage extends AxisDescription {
 
             if (this.getParent() instanceof AxisBinding) {
                 bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, null);
+                        omFactory.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
             } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
                 bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, null);
+                        omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
             } else {
                 bindingMessageElement =
-                        omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, null);
+                        omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
             }
             bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + this.name));
@@ -161,12 +161,12 @@ public class AxisBindingMessage extends AxisDescription {
             //Checks whether the message is an input message
         } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
             bindingMessageElement =
-                    omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, null);
+                    omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
 
             //Message should be an output message
         } else {
             bindingMessageElement =
-                    omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, null);
+                    omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
         }
 
 

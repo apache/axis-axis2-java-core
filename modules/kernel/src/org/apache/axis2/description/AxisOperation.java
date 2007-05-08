@@ -642,10 +642,10 @@ public abstract class AxisOperation extends AxisDescription
      * @param wsdlx - The WSDL extentions namespace (WSDL 2.0)
      * @return The generated binding element
      */
-    public OMElement toWSDL20(OMNamespace tns, OMNamespace wsdlx) {
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx) {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
-                omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, null);
+                omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
         axisOperationElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                       null,
                                                                       this.getName().getLocalPart()));
@@ -662,7 +662,7 @@ public abstract class AxisOperation extends AxisDescription
         // Add the input element
         AxisMessage inMessage = (AxisMessage) getChild(WSDLConstants.WSDL_MESSAGE_IN_MESSAGE);
         if (inMessage != null) {
-            OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, null);
+            OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
             inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, getInputAction());
             axisOperationElement.addChild(inMessageElement);
@@ -671,7 +671,7 @@ public abstract class AxisOperation extends AxisDescription
         // Add the output element
         AxisMessage outMessage = (AxisMessage) getChild(WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE);
         if (outMessage != null) {
-            OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, null);
+            OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
             outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, getOutputAction());
             axisOperationElement.addChild(outMessageElement);
@@ -685,9 +685,9 @@ public abstract class AxisOperation extends AxisDescription
                 AxisMessage faultMessage = (AxisMessage) iterator.next();
                 OMElement faultElement;
                 if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(faultMessage.getDirection())) {
-                    faultElement = omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, null);
+                    faultElement = omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
                 } else {
-                    faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, null);
+                    faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
                 }
                 faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
                 WSDLSerializationUtil.addWSAWActionAttribute(faultElement, getFaultAction(faultMessage.getName()));

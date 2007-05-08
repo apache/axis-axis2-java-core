@@ -69,6 +69,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Comparator;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -420,7 +421,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // Capture all the binding specific properties
 
-        Map httpLocationTable = new TreeMap();
+        // Set a comparator so tha httpLocations are stored in decending order
+        Map httpLocationTable = new TreeMap(new Comparator(){
+            public int compare(Object o1, Object o2) {
+                return (-1 * ((Comparable)o1).compareTo(o2));
+            }
+        });
         SOAPBindingExtensionsImpl soapBindingExtensions = null;
         try {
             soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
@@ -640,7 +646,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throws AxisFault {
 
 
-        Map httpLocationTable = new TreeMap();
+        // Set a comparator so tha httpLocations are stored in decending order
+        Map httpLocationTable = new TreeMap(new Comparator(){
+            public int compare(Object o1, Object o2) {
+                return (-1 * ((Comparable)o1).compareTo(o2));
+            }
+        });
         // Capture all the binding specific properties
 
         HTTPBindingExtensionsImpl httpBindingExtensions = null;

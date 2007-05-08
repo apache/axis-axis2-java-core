@@ -166,7 +166,17 @@ public class URLTemplatingUtil {
      */
     private static String getOMElementValue(String elementName, OMElement parentElement) {
 
-        OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
+        OMElement httpURLParam = null;
+        Iterator children = parentElement.getChildElements();
+
+        while (children.hasNext()) {
+            OMElement child = (OMElement) children.next();
+            QName qName = child.getQName();
+            if (elementName.equals(qName.getLocalPart())) {
+                httpURLParam = child;
+                break;
+            }
+        }
 
         if (httpURLParam != null) {
             httpURLParam.detach();
@@ -209,14 +219,15 @@ public class URLTemplatingUtil {
 
         }
                 URI targetURI;
+                URI appendedURI;
                 if (replacedQuery.charAt(0) == '?') {
-                    targetURI = new URI(targetURL.toString());
+                    appendedURI = new URI(targetURL.toString () + replacedQuery);
                 } else {
                     targetURI = new URI(targetURL.toString() + "/");
+                    appendedURI = targetURI.resolve(replacedQuery);
                 }
                 
-                URI appendedURI = targetURI.resolve(replacedQuery);
-                targetURL = appendedURI.toURL(); 
+                targetURL = appendedURI.toURL();
 
             } catch (MalformedURLException e) {
                 throw new AxisFault("An error occured while trying to create request URL");
