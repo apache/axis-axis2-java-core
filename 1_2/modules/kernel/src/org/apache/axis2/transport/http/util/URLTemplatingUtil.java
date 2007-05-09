@@ -17,20 +17,18 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocationTemplate;
 
 import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 
 
@@ -223,7 +221,13 @@ public class URLTemplatingUtil {
                 if (replacedQuery.charAt(0) == '?') {
                     appendedURI = new URI(targetURL.toString() + replacedQuery);
                 } else {
-                    targetURI = new URI(targetURL.toString() + "/");
+
+                    String uriString = targetURL.toString();
+                    if (!uriString.endsWith("/")) {
+                    targetURI = new URI(uriString + "/");
+                    } else {
+                        targetURI = new URI(uriString);
+                    }
                     appendedURI = targetURI.resolve(replacedQuery);
                 }
                 
