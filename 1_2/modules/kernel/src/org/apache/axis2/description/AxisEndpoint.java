@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.woden.wsdl20.extensions.http.HTTPAuthenticationScheme;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -119,9 +120,9 @@ public class AxisEndpoint extends AxisDescription {
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, this.getName()));
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":" + getBinding().getName().getLocalPart()));
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
-        property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
-        if (property != null) {
-           endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp, property));
+        HTTPAuthenticationScheme authenticationScheme = (HTTPAuthenticationScheme) this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
+        if (authenticationScheme != null) {
+           endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp, authenticationScheme.toString()));
         }
         property = (String)options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM);
         if (property != null) {
