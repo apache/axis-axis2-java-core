@@ -25,7 +25,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.woden.wsdl20.extensions.soap.SOAPFaultCode;
+import org.apache.woden.wsdl20.extensions.soap.SOAPFaultSubcodes;
 
+import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -142,15 +145,20 @@ public class AxisBindingMessage extends AxisDescription {
             bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + this.name));
             // Fault specific properties
-            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_CODE);
-            if (property != null) {
+            SOAPFaultCode faultCode = (SOAPFaultCode) this.options
+                    .get(WSDL2Constants.ATTR_WSOAP_CODE);
+            if (faultCode != null && faultCode.getQName() != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_CODE, wsoap, property));
+                        WSDL2Constants.ATTRIBUTE_CODE, wsoap, faultCode.getQName().getLocalPart()));
             }
-            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
-            if (property != null) {
+            SOAPFaultSubcodes soapFaultSubcodes = (SOAPFaultSubcodes) this.options
+                    .get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
+            QName faultCodes [];
+            if (soapFaultSubcodes != null && (faultCodes = soapFaultSubcodes.getQNames()) != null) {
+                for (int i=0 ; i < faultCodes.length; i++) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, property));
+                        WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, faultCodes[0].getLocalPart()));
+                }
             }
             Integer code = (Integer) this.options.get(WSDL2Constants.ATTR_WHTTP_CODE);
             if (code != null) {
