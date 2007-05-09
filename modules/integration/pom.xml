@@ -193,6 +193,49 @@
             </exclusions>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>enterprise</id>
+            <build>
+                <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>junit</groupId>
+                            <artifactId>junit</artifactId>
+                            <version>${junit.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>gen-enterprise-ts</id>
+                            <phase>generate-test-sources</phase>
+                            <configuration>
+                                <tasks>
+                                    <!-- Set a property that can be picked up from the ant build.xml's -->
+                                    <property name="maven.class.path" refid="maven.runtime.classpath"/>
+                                    <echo>Building enterprise WSDLs...</echo>
+                                    <property name="axis2.home" value="${basedir}/target"/>
+                                    <property name="maven.junit.jvmargs" value=""/>
+                                    <path id="maven.dependency.classpath">
+                                        <path refid="maven.compile.classpath"/>
+                                    </path>
+                                    <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
+                                         dir="." target="enterprise-wsdl-codegen"/>
+                                </tasks>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -341,8 +384,6 @@
 
 								<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
 			    	        	     dir="." target="rpc-wsdl-codegen"/>
-			    	        	<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-							    	 dir="." target="enterprise-wsdl-codegen"/>
 
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
