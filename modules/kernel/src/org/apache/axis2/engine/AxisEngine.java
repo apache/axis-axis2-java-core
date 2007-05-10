@@ -114,13 +114,18 @@ public class AxisEngine {
             log.trace(msgContext.getLogIDString() + " receive:" + msgContext.getMessageID());
         }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
-        ArrayList preCalculatedPhases =
-                confContext.getAxisConfiguration().getGlobalInFlow();
+        ArrayList preCalculatedPhases;
+        if (msgContext.isFault()) {
+            preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlow();
+            msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
+        } else {
+            preCalculatedPhases = confContext.getAxisConfiguration().getGlobalInFlow();
+            msgContext.setFLOW(MessageContext.IN_FLOW);
+        }
         // Set the initial execution chain in the MessageContext to a *copy* of what
         // we got above.  This allows individual message processing to change the chain without
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
-        msgContext.setFLOW(MessageContext.IN_FLOW);
         try {
             InvocationResponse pi = invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
 
@@ -320,61 +325,6 @@ public class AxisEngine {
         }
 
         return pi;
-    }
-
-    /**
-     * This is invoked when a SOAP Fault is received from a Other SOAP Node
-     * Receives a SOAP fault from another SOAP node.
-     *
-     * @param msgContext
-     * @throws AxisFault
-     */
-    public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
-        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug(
-                    msgContext.getLogIDString() + " " + Messages.getMessage("receivederrormessage",
-                                                                            msgContext.getMessageID()));
-        }
-        ConfigurationContext confContext = msgContext.getConfigurationContext();
-        ArrayList preCalculatedPhases =
-                confContext.getAxisConfiguration().getInFaultFlow();
-        // Set the initial execution chain in the MessageContext to a *copy* of what
-        // we got above.  This allows individual message processing to change the chain without
-        // affecting later messages.
-        msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
-        msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
-
-        try {
-            InvocationResponse pi = invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
-
-            if (pi.equals(InvocationResponse.CONTINUE)) {
-                if (msgContext.isServerSide()) {
-                    // invoke the Message Receivers
-                    checkMustUnderstand(msgContext);
-
-                    MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
-
-                    receiver.receive(msgContext);
-                }
-                flowComplete(msgContext, true);
-            } else if (pi.equals(InvocationResponse.SUSPEND)) {
-                return pi;
-            } else if (pi.equals(InvocationResponse.ABORT)) {
-                flowComplete(msgContext, true);
-                return pi;
-            } else {
-                String errorMsg =
-                        "Unrecognized InvocationResponse encountered in AxisEngine.receiveFault()";
-                log.error(msgContext.getLogIDString() + " " + errorMsg);
-                throw new AxisFault(errorMsg);
-            }
-        }
-        catch (AxisFault e) {
-            flowComplete(msgContext, true);
-            throw e;
-        }
-
-        return InvocationResponse.CONTINUE;
     }
 
     /**

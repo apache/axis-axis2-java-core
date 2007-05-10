@@ -18,6 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.StAXUtils;
@@ -4563,5 +4564,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
         return configurationContext;
     }
 
-
+    public boolean isFault() {
+        try {
+            return getEnvelope().getBody().hasFault();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

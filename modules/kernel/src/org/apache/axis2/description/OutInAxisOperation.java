@@ -163,8 +163,7 @@ class OutInAxisOperationClient extends OperationClient {
         ConfigurationContext cc = sc.getConfigurationContext();
 
         // copy interesting info from options to message context.
-        MessageContext mc = oc
-                .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        MessageContext mc = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
         if (mc == null) {
             throw new AxisFault(Messages.getMessage("outmsgctxnull"));
         }
@@ -192,101 +191,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
 
         if (useAsync || options.isUseSeparateListener()) {
-            if (log.isDebugEnabled()) {
-                log.debug("useAsync=" + useAsync + ", seperateListener=" +
-                        options.isUseSeparateListener());
-            }
-            /**
-             * We are following the async path. If the user hasn't set a callback object then we must
-             * block until the whole MEP is complete, as they have no other way to get their reply message.
-             */
-            CallbackReceiver callbackReceiver = null;
-            if (axisOp.getMessageReceiver() != null &&
-                    axisOp.getMessageReceiver() instanceof CallbackReceiver) {
-                callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Creating new callback receiver");
-                }
-                callbackReceiver = new CallbackReceiver();
-                axisOp.setMessageReceiver(callbackReceiver);
-            }
-
-            SyncCallBack internalCallback = null;
-            if (callback != null) {
-                callbackReceiver.addCallback(mc.getMessageID(), callback);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Creating internal callback");
-                }
-                internalCallback = new SyncCallBack();
-                callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
-            }
-
-            /**
-             * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
-             * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the 
-             * response message.
-             */
-            Boolean useCustomListener =
-                    (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
-            if (useAsync) {
-                useCustomListener = Boolean.TRUE;
-            }
-            if (useCustomListener == null || !useCustomListener.booleanValue()) {
-
-                EndpointReference replyToFromTransport =
-                        mc.getConfigurationContext().getListenerManager().
-                                getEPRforService(sc.getAxisService().getName(),
-                                                 axisOp.getName().getLocalPart(), mc
-                                        .getTransportIn().getName());
-
-                if (mc.getReplyTo() == null) {
-                    mc.setReplyTo(replyToFromTransport);
-                } else {
-                    mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
-                }
-            }
-
-            //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
-            mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
-            AxisEngine engine = new AxisEngine(cc);
-            mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
-            engine.send(mc);
-
-            if (internalCallback != null) {
-                long timeout = options.getTimeOutInMilliSeconds();
-                long waitTime = timeout;
-                long startTime = System.currentTimeMillis();
-
-                synchronized (internalCallback) {
-                    while (! internalCallback.isComplete() && waitTime >= 0) {
-                        try {
-                            internalCallback.wait(timeout);
-                        } catch (InterruptedException e) {
-                            // We were interrupted for some reason, keep waiting
-                            // or throw new AxisFault( "Callback was interrupted by someone?" );
-                        }
-                        // The wait finished, compute remaining time
-                        // - wait can end prematurely, see Object.wait( int timeout )
-                        waitTime = timeout - (System.currentTimeMillis() - startTime);
-                    }
-                }
-                // process the result of the invocation
-                if (internalCallback.envelope != null) {
-                    // The call ended normally, so there is nothing to do
-                } else {
-                    if (internalCallback.error instanceof AxisFault) {
-                        throw (AxisFault) internalCallback.error;
-                    } else if (internalCallback.error != null) {
-                        throw AxisFault.makeFault(internalCallback.error);
-                    } else if (! internalCallback.isComplete()) {
-                        throw new AxisFault(Messages.getMessage("responseTimeOut"));
-                    } else {
-                        throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
-                    }
-                }
-            }
+            sendAsync(useAsync, mc, cc);
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
@@ -295,6 +200,105 @@ class OutInAxisOperationClient extends OperationClient {
             } else {
                 sc.getConfigurationContext().getThreadPool().execute(
                         new NonBlockingInvocationWorker(callback, mc));
+            }
+        }
+    }
+
+    private void sendAsync(boolean useAsync, MessageContext mc, ConfigurationContext cc)
+            throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("useAsync=" + useAsync + ", seperateListener=" +
+                    options.isUseSeparateListener());
+        }
+        /**
+             * We are following the async path. If the user hasn't set a callback object then we must
+         * block until the whole MEP is complete, as they have no other way to get their reply message.
+         */
+        CallbackReceiver callbackReceiver = null;
+        if (axisOp.getMessageReceiver() != null &&
+                axisOp.getMessageReceiver() instanceof CallbackReceiver) {
+            callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating new callback receiver");
+            }
+            callbackReceiver = new CallbackReceiver();
+            axisOp.setMessageReceiver(callbackReceiver);
+        }
+
+        SyncCallBack internalCallback = null;
+        if (callback != null) {
+            callbackReceiver.addCallback(mc.getMessageID(), callback);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating internal callback");
+            }
+            internalCallback = new SyncCallBack();
+            callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
+        }
+
+        /**
+             * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
+         * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the
+         * response message.
+         */
+        Boolean useCustomListener =
+                (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
+        if (useAsync) {
+            useCustomListener = Boolean.TRUE;
+        }
+        if (useCustomListener == null || !useCustomListener.booleanValue()) {
+
+            EndpointReference replyToFromTransport =
+                    mc.getConfigurationContext().getListenerManager().
+                            getEPRforService(sc.getAxisService().getName(),
+                                             axisOp.getName().getLocalPart(), mc
+                                    .getTransportIn().getName());
+
+            if (mc.getReplyTo() == null) {
+                mc.setReplyTo(replyToFromTransport);
+            } else {
+                mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+            }
+        }
+
+        //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
+        mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
+        AxisEngine engine = new AxisEngine(cc);
+        mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
+        engine.send(mc);
+
+        if (internalCallback != null) {
+            long timeout = options.getTimeOutInMilliSeconds();
+            long waitTime = timeout;
+            long startTime = System.currentTimeMillis();
+
+            synchronized (internalCallback) {
+                while (! internalCallback.isComplete() && waitTime >= 0) {
+                    try {
+                        internalCallback.wait(timeout);
+                    } catch (InterruptedException e) {
+                        // We were interrupted for some reason, keep waiting
+                        // or throw new AxisFault( "Callback was interrupted by someone?" );
+                    }
+                    // The wait finished, compute remaining time
+                    // - wait can end prematurely, see Object.wait( int timeout )
+                    waitTime = timeout - (System.currentTimeMillis() - startTime);
+                }
+            }
+            // process the result of the invocation
+            if (internalCallback.envelope != null) {
+                // The call ended normally, so there is nothing to do
+            } else {
+                if (internalCallback.error instanceof AxisFault) {
+                    throw (AxisFault) internalCallback.error;
+                } else if (internalCallback.error != null) {
+                    throw AxisFault.makeFault(internalCallback.error);
+                } else if (! internalCallback.isComplete()) {
+                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                } else {
+                    throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
+                }
             }
         }
     }
@@ -362,21 +366,15 @@ class OutInAxisOperationClient extends OperationClient {
         }
         SOAPEnvelope resenvelope = responseMessageContext.getEnvelope();
         if (resenvelope != null) {
+            engine = new AxisEngine(msgctx.getConfigurationContext());
+            engine.receive(responseMessageContext);
+            if (responseMessageContext.getReplyTo() != null) {
+                sc.setTargetEPR(responseMessageContext.getReplyTo());
+            }
             if (resenvelope.getBody().hasFault()) {
-                SOAPFault soapFault = resenvelope.getBody().getFault();
-                //we need to call engine.receiveFault
-                engine = new AxisEngine(msgctx.getConfigurationContext());
-                engine.receiveFault(responseMessageContext);
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
-                    AxisFault af = Utils.getInboundFaultFromMessageContext(responseMessageContext);
-                    throw af;
-                }
-            } else {
-                engine = new AxisEngine(msgctx.getConfigurationContext());
-                engine.receive(responseMessageContext);
-                if (responseMessageContext.getReplyTo() != null) {
-                    sc.setTargetEPR(responseMessageContext.getReplyTo());
+                    throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
                 }
             }
         }

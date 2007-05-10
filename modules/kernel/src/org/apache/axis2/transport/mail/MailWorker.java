@@ -48,12 +48,7 @@ public class MailWorker implements Runnable {
         while (true) {
             try {
                 msgContext = (MessageContext) messageQueue.take();
-                if (msgContext.getEnvelope().getBody().hasFault()) {
-                    engine.receiveFault(msgContext);
-                } else {
-                    engine.receive(msgContext);
-                }
-
+                engine.receive(msgContext);
             } catch (Exception e) {
                 try {
                     if (msgContext != null) {

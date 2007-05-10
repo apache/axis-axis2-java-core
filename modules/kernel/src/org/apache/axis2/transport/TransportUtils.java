@@ -75,13 +75,7 @@ public class TransportUtils {
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
             return createSOAPMessage(msgContext, inStream, contentType);
-        } catch (AxisFault e) {
-            throw e;
-        } catch (OMException e) {
-            throw AxisFault.makeFault(e);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        } catch (FactoryConfigurationError e) {
+        } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }

@@ -82,12 +82,7 @@ public class TCPWorker implements Runnable {
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
                 msgContext.setEnvelope(envelope);
-
-                if (envelope.getBody().hasFault()) {
-                    engine.receiveFault(msgContext);
-                } else {
-                    engine.receive(msgContext);
-                }
+                engine.receive(msgContext);
             } else {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
                                                         Constants.TRANSPORT_TCP));

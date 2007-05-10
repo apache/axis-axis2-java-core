@@ -239,22 +239,13 @@ public class JMSMessageReceiver implements MessageListener {
             AxisEngine engine = new AxisEngine(msgCtx.getConfigurationContext());
             try {
                 log.debug("Delegating JMS message for processing to the Axis engine");
-                if (msgCtx.getEnvelope().getBody().hasFault()) {
-                    log.debug("Fault Message received. Processing the SOAP fault");
-                    engine.receiveFault(msgCtx);
-                    
-                } else {
-                    try {
-                        log.debug("SOAP message received. Processing the SOAP message");
-                        engine.receive(msgCtx);
-                        
-                    } catch (AxisFault e) {
-                        log.debug("Exception occured when receiving the SOAP message", e);
-                        if (msgCtx.isServerSide()) {
-                            
-                            MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgCtx, e);
-                            engine.sendFault(faultContext);
-                        }
+                try {
+                    engine.receive(msgCtx);
+                } catch (AxisFault e) {
+                    log.debug("Exception occured when receiving the SOAP message", e);
+                    if (msgCtx.isServerSide()) {
+                        MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgCtx, e);
+                        engine.sendFault(faultContext);
                     }
                 }
             } catch (AxisFault af) {

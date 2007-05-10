@@ -273,11 +273,7 @@ public class HTTPTransportUtils {
             msgContext.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
 
-            if (envelope.getBody().hasFault()) {
-                pi = engine.receiveFault(msgContext);
-            } else {
-                pi = engine.receive(msgContext);
-            }
+            pi = engine.receive(msgContext);
 
             return pi;
         } catch (SOAPProcessingException e) {

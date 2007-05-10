@@ -73,11 +73,7 @@ public class LocalTransportReceiver {
 
             AxisEngine engine = new AxisEngine(confContext);
 
-            if (envelope.getBody().hasFault()) {
-                engine.receiveFault(msgCtx);
-            } else {
-                engine.receive(msgCtx);
-            }
+            engine.receive(msgCtx);
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {

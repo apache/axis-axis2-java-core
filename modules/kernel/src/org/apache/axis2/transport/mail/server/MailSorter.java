@@ -128,12 +128,7 @@ public class MailSorter {
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgContext.setEnvelope(envelope);
-
-            if (envelope.getBody().hasFault()) {
-                engine.receiveFault(msgContext);
-            } else {
-                engine.receive(msgContext);
-            }
+            engine.receive(msgContext);
         } catch (Exception e) {
             try {
                 if (msgContext != null) {
