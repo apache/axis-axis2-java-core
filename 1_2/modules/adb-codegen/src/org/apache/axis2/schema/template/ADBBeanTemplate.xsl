@@ -59,8 +59,10 @@
             * This file was auto-generated from WSDL
             * by the Apache Axis2 version: #axisVersion# #today#
             */
+            <xsl:if test="string-length(normalize-space(@package)) > 0">
+                package <xsl:value-of select="@package"/>;
+            </xsl:if>
 
-            package <xsl:value-of select="@package"/>;
             /**
             *  <xsl:value-of select="$name"/> bean class
             */
