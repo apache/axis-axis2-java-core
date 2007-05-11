@@ -118,6 +118,12 @@
 				<inherited>true</inherited>
 				<configuration>
 					<skip>false</skip>
+					<excludes>
+						<exclude>**/FastInfosetInputOutputTest.java</exclude>
+					</excludes>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>

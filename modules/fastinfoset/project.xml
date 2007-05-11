@@ -37,6 +37,14 @@
             <url>https://maven-repository.dev.java.net/nonav/repository/</url>
         </dependency>
         <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>com.sun.xml.fastinfoset</groupId>
             <artifactId>FastInfoset</artifactId>
             <version>1.1.1</version><!-- Version for JVM 1.4.x -->
@@ -183,5 +191,33 @@
                 </includes>
             </resource>
         </resources>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/FastInfosetInputOutputTest.java</exclude>
+            </excludes>
+
+            <resources>
+                <resource>
+                    <directory>${basedir}/test-resources</directory>
+                </resource>
+                <resource>
+                    <directory>conf</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>src</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                        <include>**/*.xml</include>
+                    </includes>
+                </resource>
+            </resources>
+        </unitTest>
     </build>
 </project>
