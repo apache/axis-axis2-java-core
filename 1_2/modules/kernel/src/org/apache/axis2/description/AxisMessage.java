@@ -103,6 +103,9 @@ public class AxisMessage extends AxisDescription {
         ArrayList schemas = service.getSchema();
         for (Iterator schemaIter = schemas.iterator(); schemaIter.hasNext();){
             xmlSchemaElement = getSchemaElement((XmlSchema) schemaIter.next());
+            if (xmlSchemaElement != null){
+                break;
+            }
         }
         return xmlSchemaElement;
     }
