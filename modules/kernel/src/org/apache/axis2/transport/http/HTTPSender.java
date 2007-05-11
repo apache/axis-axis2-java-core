@@ -21,6 +21,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
@@ -32,6 +33,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -105,9 +107,16 @@ public class HTTPSender extends AbstractHTTPSender {
         } catch (IOException e) {
             log.info("Unable to sendViaGet to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
+        } finally {
+            cleanup(msgContext, getMethod);
         }
+    }
 
-
+    private void cleanup(MessageContext msgContext, HttpMethod method) {
+        Object autoClose = msgContext.getOptions().getProperty(HTTPConstants.AUTO_RELEASE_CONNECTION);
+        if (autoClose != null && JavaUtils.isTrueExplicitly(autoClose)) {
+            method.releaseConnection();
+        }
     }
 
     /**
@@ -131,8 +140,9 @@ public class HTTPSender extends AbstractHTTPSender {
         } catch (IOException e) {
             log.info("Unable to sendViaDelete to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
+        } finally {
+            cleanup(msgContext, deleteMethod);
         }
-
     }
 
     /**
@@ -183,8 +193,9 @@ public class HTTPSender extends AbstractHTTPSender {
         } catch (IOException e) {
             log.info("Unable to sendViaPost to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
+        } finally {
+            cleanup(msgContext, postMethod);
         }
-
     }
 
     /**
@@ -236,6 +247,8 @@ public class HTTPSender extends AbstractHTTPSender {
         } catch (IOException e) {
             log.info("Unable to sendViaPut to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
+        } finally {
+            cleanup(msgContext, putMethod);
         }
     }
 

@@ -490,6 +490,11 @@ public class HTTPConstants {
     public static final String OMIT_SOAP_12_ACTION = "OmitSOAP12Action";
     public static final String CUSTOM_PROTOCOL_HANDLER = "CUSTOM_PROTOCOL_HANDLER";
 
+    /*
+     * Automatically release connections.
+     */
+    public static final String AUTO_RELEASE_CONNECTION = "AutoReleaseConnection" ;
+
     /**
      * Method getBytes.
      *

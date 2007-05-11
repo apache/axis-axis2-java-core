@@ -18,6 +18,7 @@
 package org.apache.axis2.util.threadpool;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
@@ -99,53 +100,59 @@ public class ThreadPool implements ThreadFactory {
     protected ThreadPoolExecutor createDefaultExecutor(final String name,
                                                        final int priority,
                                                        final boolean daemon) {
-        ThreadPoolExecutor rc = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 10,
-                                                       TimeUnit.SECONDS, new SynchronousQueue(),
-                                                       new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
-                                                           public Thread newThread(
-                                                                   final Runnable runnable) {
-                                                               // do the following section as privileged
-                                                               // so that it will work even when java2 security
-                                                               // has been enabled
-                                                               Thread returnThread = null;
-                                                               try {
-                                                                   returnThread =
-                                                                           (Thread) AccessController
-                                                                                   .doPrivileged(
-                                                                                           new PrivilegedExceptionAction() {
-                                                                                               public Object run() {
-                                                                                                   Thread newThread =
-                                                                                                           new Thread(
-                                                                                                                   runnable,
-                                                                                                                   name);
-                                                                                                   newThread
-                                                                                                           .setDaemon(
-                                                                                                                   daemon);
-                                                                                                   newThread
-                                                                                                           .setPriority(
-                                                                                                                   priority);
-                                                                                                   return newThread;
-                                                                                               }
-                                                                                           }
-                                                                                   );
-                                                               }
-                                                               catch (PrivilegedActionException e) {
-                                                                   // note: inner class can't have its own static log variable
-                                                                   if (log.isDebugEnabled()) {
-                                                                       log.debug(
-                                                                               "ThreadPoolExecutor.newThread():   Exception from AccessController [" +
-                                                                                       e.getClass()
-                                                                                               .getName() +
-                                                                                       "]  for [" +
-                                                                                       e.getMessage() +
-                                                                                       "]", e);
-                                                                   }
-                                                               }
-                                                               return returnThread;
-
-                                                           }
-                                                       });
+        ThreadPoolExecutor rc;
+        if (maxPoolSize == Integer.MAX_VALUE) {
+            rc = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 10,
+                    TimeUnit.SECONDS, new SynchronousQueue(),
+                    new DefaultThreadFactory(name, daemon, priority));
+        } else {
+            rc = new ThreadPoolExecutor(corePoolSize, maxPoolSize, 10,
+                    TimeUnit.SECONDS, new LinkedBlockingQueue(),
+                    new DefaultThreadFactory(name, daemon, priority));
+        }
         rc.allowCoreThreadTimeOut(true);
         return rc;
+    }
+
+    private static class DefaultThreadFactory implements edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory {
+        private final String name;
+        private final boolean daemon;
+        private final int priority;
+
+        public DefaultThreadFactory(String name, boolean daemon, int priority) {
+            this.name = name;
+            this.daemon = daemon;
+            this.priority = priority;
+        }
+
+        public Thread newThread(
+                final Runnable runnable) {
+            // do the following section as privileged
+            // so that it will work even when java2 security
+            // has been enabled
+            Thread returnThread = null;
+            try {
+                returnThread = (Thread)
+                        AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                            public Object run() {
+                                Thread newThread =
+                                        new Thread(runnable, name);
+                                newThread.setDaemon(daemon);
+                                newThread.setPriority(priority);
+                                return newThread;
+                            }
+                        }
+                        );
+            }
+            catch (PrivilegedActionException e) {
+                // note: inner class can't have its own static log variable
+                if (log.isDebugEnabled()) {
+                    log.debug("ThreadPoolExecutor.newThread():   Exception from AccessController [" + e.getClass()
+                            .getName() + "]  for [" + e.getMessage() + "]", e);
+                }
+            }
+            return returnThread;
+
+        }
     }
 }
