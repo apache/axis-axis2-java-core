@@ -27,6 +27,11 @@
 	<name>Apache Axis 2.0 - Fast Infoset</name>
 	<description>Axis2 Fast Infoset module</description>
 	<dependencies>
+                <dependency>
+                        <groupId>xmlunit</groupId>
+                        <artifactId>xmlunit</artifactId>
+                        <scope>test</scope>
+                </dependency>
 		<dependency>
 			<groupId>com.sun.xml.fastinfoset</groupId>
 			<artifactId>FastInfoset</artifactId>
