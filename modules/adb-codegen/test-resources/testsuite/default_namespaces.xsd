@@ -1,0 +1,30 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://tempuri.org/defaultnamepaces"
+            targetNamespace="http://tempuri.org/defaultnamepaces"
+            elementFormDefault="qualified">
+
+    <!-- extension class -->
+    <xsd:simpleType name="TestSimpleUnion">
+        <xsd:union memberTypes="xsd:boolean xsd:QName"/>
+    </xsd:simpleType>
+    <xsd:element name="TestElement1" type="tns:TestParentType"/>
+    <xsd:complexType name="TestParentType">
+        <xsd:sequence>
+            <xsd:element name="param1" type="xsd:QName"/>
+            <xsd:element name="param2" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="TestChildType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:TestParentType">
+                <xsd:sequence>
+                    <xsd:element name="param3" type="xsd:QName"/>
+                    <xsd:element name="param4" type="xsd:string"/>
+                    <xsd:element name="param5" type="tns:TestSimpleUnion"/>
+                </xsd:sequence>
+                <xsd:attribute name="attribute1" type="xsd:string"/>
+                <xsd:attribute name="attribute2" type="xsd:QName"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>
