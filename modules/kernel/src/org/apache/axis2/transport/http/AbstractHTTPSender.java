@@ -41,6 +41,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,10 +64,10 @@ public abstract class AbstractHTTPSender {
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-    
+
     protected static final String PROTOCOL_HTTP = "http";
     protected static final String PROTOCOL_HTTPS = "https";
-    
+
     /**
      * proxydiscription
      */
@@ -149,11 +150,11 @@ public abstract class AbstractHTTPSender {
                     proxyCred = new UsernamePasswordCredentials("", "");
                 } else {
                     proxyCred = new UsernamePasswordCredentials(usrName,
-                                                                passwd);    // proxy
+                            passwd);    // proxy
                 }
             } else {
                 proxyCred = new NTCredentials(usrName, passwd, proxyHostName,
-                                              domain);    // NTLM authentication with additionals prams
+                        domain);    // NTLM authentication with additionals prams
             }
         }
 
@@ -219,29 +220,29 @@ public abstract class AbstractHTTPSender {
 
             Object contentType = header.getValue();
             Object charSetEnc = null;
-            
+
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc = headers[i].getParameterByName(
                         HTTPConstants.CHAR_SET_ENCODING);
                 if (charsetEnc != null) {
-                	charSetEnc = charsetEnc.getValue();    
+                    charSetEnc = charsetEnc.getValue();
                 }
             }
-            
+
             if (inMessageContext != null) {
                 inMessageContext
                         .setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
                 inMessageContext
-                	.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                        .setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
             } else {
-            	
-            	//Transport details will be stored in a HashMap so that anybody interested can retriece them
-            	HashMap transportInfoMap = new HashMap ();
-            	transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
-            	transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-            	
-            	//the HashMap is stored in the outgoing message.
-            	msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
+
+                //Transport details will be stored in a HashMap so that anybody interested can retriece them
+                HashMap transportInfoMap = new HashMap();
+                transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
+                transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+
+                //the HashMap is stored in the outgoing message.
+                msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
             }
         }
 
@@ -319,21 +320,29 @@ public abstract class AbstractHTTPSender {
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
-        String protocal = targetURL.getProtocol();
+        String protocol = targetURL.getProtocol();
         if (port == -1) {
-            if (PROTOCOL_HTTP.equals(protocal)) {
+            if (PROTOCOL_HTTP.equals(protocol)) {
                 port = 80;
-            } else if (PROTOCOL_HTTPS.equals(protocal)){
-                port = 443;                
+            } else if (PROTOCOL_HTTPS.equals(protocol)) {
+                port = 443;
             }
-            
+
         }
 
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
+        // one might need to set his own socket factory. Let's allow that case as well.
+        Protocol protocolHandler = (Protocol) msgCtx.getOptions().getProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
+
         // setting the real host configuration
-        config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+        // I assume the 90% case, or even 99% case will be no protocol handler case. 
+        if (protocolHandler == null) {
+            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+        } else {
+            config.setHost(targetURL.getHost(), port, protocolHandler);
+        }
 
         if (isAuthenticationEnabled) {
             // Basic, Digest, NTLM and custom authentications. 
@@ -420,7 +429,7 @@ public abstract class AbstractHTTPSender {
                         }
                     }
                     agent.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY,
-                                                   authPrefs);
+                            authPrefs);
                 }
 
             } else {
@@ -539,6 +548,7 @@ public abstract class AbstractHTTPSender {
     protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
                                  HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
+
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
 
         // set the custom headers, if available
@@ -547,12 +557,12 @@ public abstract class AbstractHTTPSender {
         // add compression headers if needed
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_ACCEPT_GZIP)) {
             method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
-                                    HTTPConstants.COMPRESSION_GZIP);
+                    HTTPConstants.COMPRESSION_GZIP);
         }
 
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
             method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                    HTTPConstants.COMPRESSION_GZIP);
+                    HTTPConstants.COMPRESSION_GZIP);
         }
 
         httpClient.executeMethod(config, method);
