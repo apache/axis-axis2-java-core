@@ -79,7 +79,6 @@ public class AxisHttpService {
     private final HttpProcessor httpProcessor;
     private final ConnectionReuseStrategy connStrategy;
     private final HttpResponseFactory responseFactory;
-    private final MessageContext msgContext;
     private final ConfigurationContext configurationContext;
     private final Worker worker;
 
@@ -113,8 +112,6 @@ public class AxisHttpService {
         this.configurationContext = configurationContext;
         this.worker = worker;
 
-        this.msgContext = configurationContext.createMessageContext();
-        this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
     }
 
     public HttpParams getParams() {
@@ -128,11 +125,14 @@ public class AxisHttpService {
     public void handleRequest(final AxisHttpConnection conn, final HttpContext context) 
             throws IOException, HttpException { 
         
+        MessageContext msgContext = configurationContext.createMessageContext();
+        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+
         if (conn instanceof HttpInetConnection) {
             HttpInetConnection inetconn = (HttpInetConnection) conn;
-            this.msgContext.setProperty(MessageContext.REMOTE_ADDR, 
+            msgContext.setProperty(MessageContext.REMOTE_ADDR,
                     inetconn.getRemoteAddress().getHostAddress());
-            this.msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
+            msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
                     inetconn.getLocalAddress().getHostAddress());
 
             if (LOG.isDebugEnabled()) {
@@ -180,7 +180,7 @@ public class AxisHttpService {
             axisreq.prepare();
             
             // Run the service
-            doService(axisreq, axisres, context);
+            doService(axisreq, axisres, context, msgContext);
             
             // Make sure the request content is fully consumed
             InputStream instream = conn.getInputStream();
@@ -232,7 +232,8 @@ public class AxisHttpService {
     protected void doService(
             final AxisHttpRequest request, 
             final AxisHttpResponse response,
-            final HttpContext context) throws HttpException, IOException {
+            final HttpContext context,
+            final MessageContext msgContext) throws HttpException, IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Request method: " + request.getMethod());
             LOG.debug("Target URI: " + request.getRequestURI());
@@ -245,11 +246,11 @@ public class AxisHttpService {
                     .getTransportIn(Constants.TRANSPORT_HTTP);
 
             String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
-            this.msgContext.setTransportIn(transportIn);
-            this.msgContext.setTransportOut(transportOut);
-            this.msgContext.setServerSide(true);
-            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
-            this.msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, 
+            msgContext.setTransportIn(transportIn);
+            msgContext.setTransportOut(transportOut);
+            msgContext.setServerSide(true);
+            msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
+            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL,
                     request.getRequestURI());
 
             // set the transport Headers
@@ -258,20 +259,20 @@ public class AxisHttpService {
                 Header header = (Header) it.next();
                 headerMap.put(header.getName(), header.getValue());
             }
-            this.msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, 
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
                     headerMap);
-            this.msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, 
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,
                     request.getContentType());
             
-            this.msgContext.setProperty(MessageContext.TRANSPORT_OUT, 
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT,
                     response.getOutputStream());
-            this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, 
+            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                     response);
-            this.msgContext.setTo(new EndpointReference(request.getRequestURI()));
-            this.msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
+            msgContext.setTo(new EndpointReference(request.getRequestURI()));
+            msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
                                  new SimpleHTTPRequestResponseTransport());
             
-            this.worker.service(request, response, this.msgContext);
+            this.worker.service(request, response, msgContext);
         } catch (SocketException ex) {
             // Socket is unreliable. 
             throw ex;
@@ -282,15 +283,15 @@ public class AxisHttpService {
 
             AxisEngine engine = new AxisEngine(this.configurationContext);
 
-            this.msgContext.setProperty(MessageContext.TRANSPORT_OUT, 
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT,
                     response.getOutputStream());
-            this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, 
+            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                     response);
 
             MessageContext faultContext =
                     MessageContextBuilder.createFaultMessageContext(msgContext, e);
             // If the fault is not going along the back channel we should be 202ing
-            if (AddressingHelper.isFaultRedirected(this.msgContext)) {
+            if (AddressingHelper.isFaultRedirected(msgContext)) {
                 response.setStatus(HttpStatus.SC_ACCEPTED);
             } else {
                 response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal server error");
