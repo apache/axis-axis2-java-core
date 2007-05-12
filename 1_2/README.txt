@@ -45,6 +45,6 @@ Jira:
     http://issues.apache.org/jira/secure/BrowseProject.jspa?id=10611
 
 
-Thank you for using Axis2!
+Thank you for using Axis2!!
 
 The Axis2 Team. 
