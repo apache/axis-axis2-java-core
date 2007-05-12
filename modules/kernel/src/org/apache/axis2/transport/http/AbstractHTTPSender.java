@@ -21,6 +21,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
@@ -39,6 +41,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -63,7 +66,6 @@ public abstract class AbstractHTTPSender {
     protected boolean chunked = false;
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
-    int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     protected static final String PROTOCOL_HTTP = "http";
     protected static final String PROTOCOL_HTTPS = "https";
@@ -73,7 +75,6 @@ public abstract class AbstractHTTPSender {
      */
     protected TransportOutDescription proxyOutSetting = null;
     protected OMOutputFormat format = new OMOutputFormat();
-    int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     /**
      * isAllowedRetry will be using to check where the
@@ -452,34 +453,98 @@ public abstract class AbstractHTTPSender {
     }
 
     /**
+     * Method used to copy all the common properties
+     *
+     * @param msgContext       - The messageContext of the request message
+     * @param url              - The target URL
+     * @param httpMethod       - The http method used to send the request
+     * @param httpClient       - The httpclient used to send the request
+     * @param soapActionString - The soap action atring of the request message
+     * @return MessageFormatter - The messageFormatter for the relavent request message
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    protected MessageFormatter populateCommonProperties(MessageContext msgContext, URL url,
+                                                      HttpMethodBase httpMethod,
+                                                      HttpClient httpClient,
+                                                      String soapActionString)
+            throws AxisFault {
+
+        if (isAuthenticationEnabled(msgContext)) {
+            httpMethod.setDoAuthentication(true);
+        }
+
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
+                msgContext);
+
+        url = messageFormatter.getTargetAddress(msgContext, format, url);
+
+        httpMethod.setPath(url.getPath());
+
+        httpMethod.setQueryString(url.getQuery());
+
+        httpMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                                    messageFormatter.getContentType(msgContext, format,
+                                                                    soapActionString));
+
+        httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+
+        //setting the cookie in the out path
+        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
+
+        if (cookieString != null) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
+            buffer.append("=");
+            buffer.append(cookieString);
+            httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
+        }
+
+        if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+            httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
+        }
+        return messageFormatter;
+    }
+
+    /**
      * This is used to get the dynamically set time out values from the
      * message context. If the values are not available or invalid then
      * the default values or the values set by the configuration will be used
      *
      * @param msgContext the active MessageContext
+     * @param httpClient
      */
-    protected void getTimeoutValues(MessageContext msgContext) {
-        try {
+    protected void initializeTimeouts(MessageContext msgContext, HttpClient httpClient) {
+        // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+        // override the static config
+        Integer tempSoTimeoutProperty =
+                (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
+        Integer tempConnTimeoutProperty =
+                (Integer) msgContext
+                        .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
 
-            // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
-            // override the static config
-            Integer tempSoTimeoutProperty =
-                    (Integer) msgContext.getProperty(HTTPConstants.SO_TIMEOUT);
-            Integer tempConnTimeoutProperty =
-                    (Integer) msgContext
-                            .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
-
-            if (tempSoTimeoutProperty != null) {
-                soTimeout = tempSoTimeoutProperty.intValue();
+        if (tempConnTimeoutProperty != null) {
+            int connectionTimeout = tempConnTimeoutProperty.intValue();
+            // timeout for initial connection
+            httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+        } else {
+            // set timeout in client
+            if (timeout > 0) {
+                httpClient.getHttpConnectionManager().getParams().setConnectionTimeout((int) timeout);
             }
+        }
 
-            if (tempConnTimeoutProperty != null) {
-                connectionTimeout = tempConnTimeoutProperty.intValue();
+        if (tempSoTimeoutProperty != null) {
+            int soTimeout = tempSoTimeoutProperty.intValue();
+            // SO_TIMEOUT -- timeout for blocking reads
+            httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+            httpClient.getParams().setSoTimeout(soTimeout);
+        } else {
+            // set timeout in client
+            if (timeout > 0) {
+                httpClient.getHttpConnectionManager().getParams().setSoTimeout((int) timeout);
+                httpClient.getParams().setSoTimeout((int) timeout);
             }
-        } catch (NumberFormatException nfe) {
-
-            // If there's a problem log it and use the default values
-            log.error("Invalid timeout value format: not a number", nfe);
         }
     }
 
@@ -532,9 +597,15 @@ public abstract class AbstractHTTPSender {
     protected HttpClient getHttpClient(MessageContext msgContext) {
         HttpClient httpClient;
         Object reuse = msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
+        if (reuse == null) {
+            reuse = msgContext.getConfigurationContext().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
+        }
         if (reuse != null && JavaUtils.isTrueExplicitly(reuse)) {
-            httpClient = (HttpClient) msgContext.getConfigurationContext()
-                    .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+            httpClient = (HttpClient) msgContext.getOptions().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+            if (httpClient == null) {
+                httpClient = (HttpClient) msgContext.getConfigurationContext()
+                        .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+            }
             if (httpClient == null) {
                 MultiThreadedHttpConnectionManager connectionManager =
                         new MultiThreadedHttpConnectionManager();
@@ -547,13 +618,7 @@ public abstract class AbstractHTTPSender {
         }
 
         // Get the timeout values set in the runtime
-        getTimeoutValues(msgContext);
-
-        // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
-
-        // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
+        initializeTimeouts(msgContext, httpClient);
         return httpClient;
     }
 

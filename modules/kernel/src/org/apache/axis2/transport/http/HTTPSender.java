@@ -248,67 +248,6 @@ public class HTTPSender extends AbstractHTTPSender {
     }
 
     /**
-     * Method used to copy all the common properties
-     *
-     * @param msgContext       - The messageContext of the request message
-     * @param url              - The target URL
-     * @param httpMethod       - The http method used to send the request
-     * @param httpClient       - The httpclient used to send the request
-     * @param soapActionString - The soap action atring of the request message
-     * @return MessageFormatter - The messageFormatter for the relavent request message
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    private MessageFormatter populateCommonProperties(MessageContext msgContext, URL url,
-                                                      HttpMethodBase httpMethod,
-                                                      HttpClient httpClient,
-                                                      String soapActionString)
-            throws AxisFault {
-
-        if (isAuthenticationEnabled(msgContext)) {
-            httpMethod.setDoAuthentication(true);
-        }
-
-        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
-                msgContext);
-
-        url = messageFormatter.getTargetAddress(msgContext, format, url);
-
-        httpMethod.setPath(url.getPath());
-
-        httpMethod.setQueryString(url.getQuery());
-
-        httpMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                                    messageFormatter.getContentType(msgContext, format,
-                                                                    soapActionString));
-
-        httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
-
-        //setting the cookie in the out path
-        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
-
-        if (cookieString != null) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
-            buffer.append("=");
-            buffer.append(cookieString);
-            httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
-        }
-
-        if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-            httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-        }
-
-        // set timeout in client
-        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
-
-        if (timeout != 0) {
-            httpClient.getParams().setSoTimeout((int) timeout);
-        }
-
-        return messageFormatter;
-    }
-
-    /**
      * Used to handle the HTTP Response
      *
      * @param msgContext - The MessageContext of the message
