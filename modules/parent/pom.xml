@@ -335,68 +335,68 @@
 		</contributor>
 	</contributors>
 	<repositories>
+	<!--
+	    Checking repositores takes lots of time.
+	    Repositories which should NOT be put in here.
+	    
+	     http://people.apache.org/repo/m2-snapshot-repository/
+	     	Exists in the org.apache.apache parent pom
+	     	
+	     http://repo1.maven.org/maven2/ aka 'Central'
+	     	Exists in the maven 'Super POM' which all poms extend
+	     	
+	     http://people.apache.org/repo/m2-ibiblio-rsync-repository/
+	     	Everything in here should be in 'Central'
+	     	
+	    Checksum policy when not specified always defaults to 'warn'
+	    which is what we want.
+	 -->
 		<repository>
 			<releases>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>apache-snapshots</id>
-			<name>Apache Maven2 SNAPSHOTS</name>
-			<url>http://people.apache.org/repo/m2-snapshot-repository/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<id>apache-ws-snapshots2</id>
 			<name>Apache ws.zones - 2</name>
-			<url>http://ws.zones.apache.org/repository2/</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>maven2</id>
-			<name>Maven2 repo</name>
-			<url>http://repo1.maven.org/maven2/</url>
+			<url>http://ws.zones.apache.org/repository2</url>
 		</repository>
 		<repository>
 			<id>tomcat-repository</id>
 			<url>http://tomcat.apache.org/dev/dist/m2-repository</url>
-		</repository>
-		<repository>
-			<id>apache-ibiblio-rsync</id>
-			<url>http://people.apache.org/repo/m2-ibiblio-rsync-repository/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>apache-incubating</id>
-			<url>http://people.apache.org/repo/m2-incubating-repository/</url>
+			<url>http://people.apache.org/repo/m2-incubating-repository</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>eclipse-repo</id>
 			<name>eclipse maven repository</name>
 			<url>http://repo1.maven.org/eclipse</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>jibx</id>
@@ -407,20 +407,6 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>apache-m2</id>
-			<name>Apache M2 Repository</name>
-			<url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-			<layout>default</layout>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>ignore</checksumPolicy>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-		<pluginRepository>
 			<id>apache-snapshots</id>
 			<name>Apache Snapshots Repository</name>
 			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
@@ -428,7 +414,6 @@
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>ignore</checksumPolicy>
 			</snapshots>
 			<releases>
 				<enabled>false</enabled>
@@ -442,7 +427,6 @@
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>ignore</checksumPolicy>
 			</snapshots>
 			<releases>
 				<enabled>true</enabled>

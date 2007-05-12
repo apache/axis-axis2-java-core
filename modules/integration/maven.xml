@@ -101,22 +101,14 @@
 	  
 		<j:if test="${context.getVariable('skip.enterprise.tests') != 'true'}">	
 			<ant:ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-			    	        	                         dir="." target="rpc-wsdl-codegen"/>
+				dir="." target="rpc-wsdl-codegen"/>
 			<j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 				<ant:ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
-							    	        	                         dir="." target="enterprise-wsdl-codegen"/>
+					dir="." target="enterprise-wsdl-codegen"/>
 				
             </j:if>
-            <j:jelly xmlns="jelly:ant">
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
-                <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true"
-                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
-            </j:jelly>
+			<ant:ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
+				dir="." target="build-soap12-services"/>
         </j:if>
     </preGoal>
 

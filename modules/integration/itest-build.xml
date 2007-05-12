@@ -276,4 +276,14 @@
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	                  tofile="target/perf/build/repo/modules/addressing-${addressing_version}.mar"/>
 	</target>
+	<target name="build-soap12-services">
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
+		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		                         dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
+		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		                         dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
+		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
+	</target>
 </project>
