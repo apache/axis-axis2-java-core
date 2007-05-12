@@ -290,16 +290,6 @@
 			<arg file="${testsuite.source.dir}/default_namespaces.xsd"/>
 			<arg file="${schema.generated.src.dir}"/>
 		</java>
-
-		<!-- ################################################################### -->
-		<!-- Compile the generated classes -->
-		<javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
-			<classpath refid="maven.dependency.classpath">
-			</classpath>
-			<classpath location="${compiled.classes.dir}">
-			</classpath>
-		</javac>
-
 	</target>
 
 </project>

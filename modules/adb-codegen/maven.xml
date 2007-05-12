@@ -15,7 +15,21 @@
     </preGoal>
 
     <preGoal name="test:compile">
+    	<property name="compiled.classes.dir" value="target/classes"/>
+    			<!-- Theres got to be a better way to do this -->
+    			<property name="schema.source.dir" value="test-resources/xsd"/>
+    			<property name="testsuite.source.dir" value="test-resources/testsuite"/>
+    			<property name="schema.output.base.dir" value="target/schema"/>
+    			<property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
+    			<property name="schema.generated.classes.dir" value="${schema.output.base.dir}/classes"/>
     	<ant:ant antfile="sub-build.xml" inheritall="true" inheritrefs="true" dir="." target="main"/>
+    	<!-- Compile the generated classes -->
+    	<javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
+    		<classpath refid="maven.dependency.classpath">
+    		</classpath>
+    		<classpath location="${compiled.classes.dir}">
+    		</classpath>
+    	</javac>
         <ant:path id="schema.generated.classes.dir" location="target/schema/classes"/>
         <maven:addPath id="maven.dependency.classpath" refid="schema.generated.classes.dir"/>
     </preGoal>
