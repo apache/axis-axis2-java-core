@@ -17,23 +17,18 @@
 package org.apache.axis2.transport.http;
 
 
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -42,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HTTPSender extends AbstractHTTPSender {
@@ -50,7 +44,7 @@ public class HTTPSender extends AbstractHTTPSender {
     private static final Log log = LogFactory.getLog(HTTPSender.class);
 
     public void send(MessageContext msgContext, URL url, String soapActionString)
-            throws MalformedURLException, AxisFault, IOException {
+            throws IOException {
 
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
@@ -113,8 +107,7 @@ public class HTTPSender extends AbstractHTTPSender {
     }
 
     private void cleanup(MessageContext msgContext, HttpMethod method) {
-        Object autoClose = msgContext.getOptions().getProperty(HTTPConstants.AUTO_RELEASE_CONNECTION);
-        if (autoClose != null && JavaUtils.isTrueExplicitly(autoClose)) {
+        if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
             method.releaseConnection();
         }
     }
@@ -159,12 +152,14 @@ public class HTTPSender extends AbstractHTTPSender {
 
         HttpClient httpClient = getHttpClient(msgContext);
 
+/*  What's up with this, it never gets used anywhere?? --Glen
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
+*/
 
         PostMethod postMethod = new PostMethod();
         MessageFormatter messageFormatter =
@@ -212,14 +207,14 @@ public class HTTPSender extends AbstractHTTPSender {
 
         HttpClient httpClient = getHttpClient(msgContext);
 
+/*  Same deal - this value never gets used, why is it here? --Glen
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
-
-        // TODO - Do something with charEncoding???
+*/
 
         PutMethod putMethod = new PutMethod();
         MessageFormatter messageFormatter =

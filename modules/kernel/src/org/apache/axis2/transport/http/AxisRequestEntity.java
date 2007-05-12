@@ -74,8 +74,7 @@ public class AxisRequestEntity implements RequestEntity {
     }
 
     public void writeRequest(OutputStream outStream) throws IOException {
-        Object gzip = messageContext.getOptions().getProperty(
-                HTTPConstants.MC_GZIP_REQUEST);
+        Object gzip = messageContext.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
         if (gzip != null && JavaUtils.isTrueExplicitly(gzip) && chunked) {
             outStream = new GZIPOutputStream(outStream);
         }

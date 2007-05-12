@@ -114,8 +114,8 @@ public class TransportUtils {
                     if (msgContext.getSoapAction() == null) {
                         type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
                     }
-                } else if (msgContext.isDoingREST() && !JavaUtils.isTrueExplicitly(
-                        msgContext.getProperty(Constants.Configuration.SOAP_RESPONSE_MEP))) {
+                } else if (msgContext.isDoingREST() &&
+                        !msgContext.isPropertyTrue(Constants.Configuration.SOAP_RESPONSE_MEP)) {
                     type = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
                 }
             }

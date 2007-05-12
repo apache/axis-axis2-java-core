@@ -342,6 +342,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Check if a MessageContext property is true.
+     * @param messageContext the MessageContext
+     * @param propertyName the property name
+     * @return true if the property is Boolean.TRUE, "true", 1, etc. or false otherwise
+     * @deprecated please use MessageContext.isTrue(propertyName) instead
+     */
     public static boolean isExplicitlyTrue(MessageContext messageContext, String propertyName) {
         Object flag = messageContext.getProperty(propertyName);
         return JavaUtils.isTrueExplicitly(flag);

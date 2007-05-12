@@ -36,7 +36,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -49,7 +48,6 @@ import java.util.zip.GZIPOutputStream;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements
         TransportSender {
-
 
     protected static final String PROXY_HOST_NAME = "proxy_host";
 
@@ -240,8 +238,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         OutTransportInfo transportInfo = (OutTransportInfo) msgContext
                 .getProperty(Constants.OUT_TRANSPORT_INFO);
 
+        if (transportInfo == null) throw new AxisFault("No transport info in MessageContext");
+
         ServletBasedOutTransportInfo servletBasedOutTransportInfo = null;
-        if (transportInfo != null && transportInfo instanceof ServletBasedOutTransportInfo) {
+        if (transportInfo instanceof ServletBasedOutTransportInfo) {
             servletBasedOutTransportInfo =
                     (ServletBasedOutTransportInfo) transportInfo;
             List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
@@ -259,15 +259,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
         format.setAutoCloseWriter(true);
 
-        MessageFormatter messageFormatter = TransportUtils
-                .getMessageFormatter(msgContext);
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
+        if (messageFormatter == null) throw new AxisFault("No MessageFormatter in MessageContext");
+
         transportInfo.setContentType(
                 messageFormatter.getContentType(msgContext, format, findSOAPAction(msgContext)));
 
         Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
         if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
-            servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                                   HTTPConstants.COMPRESSION_GZIP);
+            if (servletBasedOutTransportInfo != null)
+                servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                                                       HTTPConstants.COMPRESSION_GZIP);
             try {
                 out = new GZIPOutputStream(out);
                 out.write(messageFormatter.getBytes(msgContext, format));

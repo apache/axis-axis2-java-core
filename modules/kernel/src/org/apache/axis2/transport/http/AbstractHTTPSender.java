@@ -102,11 +102,13 @@ public abstract class AbstractHTTPSender {
     }
 
     /**
-     * Helper method to Proxy and NTLM authentication
+     * Helper method for Proxy and NTLM authentication
      *
-     * @param client
-     * @param proxySetting
-     * @param config
+     * @param client HttpClient in which to place proxy config
+     * @param proxySetting TransportOutDescription
+     * @param config HostConfiguraiton in which to place proxy config
+     * @param msgCtx the active MessageContext
+     * @throws AxisFault in case of problems
      */
     protected void configProxyAuthentication(HttpClient client,
                                              TransportOutDescription proxySetting,
@@ -204,8 +206,9 @@ public abstract class AbstractHTTPSender {
     /**
      * Collect the HTTP header information and set them in the message context
      *
-     * @param method
-     * @param msgContext
+     * @param method HttpMethodBase from which to get information
+     * @param msgContext the MessageContext in which to place the information... OR NOT!
+     * @throws AxisFault if problems occur
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
                                                MessageContext msgContext) throws AxisFault {
@@ -236,13 +239,15 @@ public abstract class AbstractHTTPSender {
                         .setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
             } else {
 
-                //Transport details will be stored in a HashMap so that anybody interested can retriece them
+                // Transport details will be stored in a HashMap so that anybody interested can
+                // retrieve them
                 HashMap transportInfoMap = new HashMap();
                 transportInfoMap.put(Constants.Configuration.CONTENT_TYPE, contentType);
                 transportInfoMap.put(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
                 //the HashMap is stored in the outgoing message.
-                msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP, transportInfoMap);
+                msgContext.setProperty(Constants.Configuration.TRANSPORT_INFO_MAP,
+                                       transportInfoMap);
             }
         }
 
@@ -305,10 +310,16 @@ public abstract class AbstractHTTPSender {
     }
 
     public abstract void send(MessageContext msgContext, URL url, String soapActionString)
-            throws AxisFault, IOException;
+            throws IOException;
 
     /**
      * getting host configuration to support standard http/s, proxy and NTLM support
+     *
+     * @param client active HttpClient
+     * @param msgCtx active MessageContext
+     * @param targetURL the target URL
+     * @return a HostConfiguration set up with proxy information
+     * @throws AxisFault if problems occur
      */
     protected HostConfiguration getHostConfiguration(HttpClient client,
                                                      MessageContext msgCtx,
@@ -334,7 +345,8 @@ public abstract class AbstractHTTPSender {
         HostConfiguration config = new HostConfiguration();
 
         // one might need to set his own socket factory. Let's allow that case as well.
-        Protocol protocolHandler = (Protocol) msgCtx.getOptions().getProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
+        Protocol protocolHandler =
+                (Protocol)msgCtx.getOptions().getProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
 
         // setting the real host configuration
         // I assume the 90% case, or even 99% case will be no protocol handler case. 
@@ -442,9 +454,9 @@ public abstract class AbstractHTTPSender {
     /**
      * This is used to get the dynamically set time out values from the
      * message context. If the values are not available or invalid then
-     * teh default values or the values set by teh configuration will be used
+     * the default values or the values set by the configuration will be used
      *
-     * @param msgContext
+     * @param msgContext the active MessageContext
      */
     protected void getTimeoutValues(MessageContext msgContext) {
         try {
@@ -555,12 +567,12 @@ public abstract class AbstractHTTPSender {
         addCustomHeaders(method, msgContext);
 
         // add compression headers if needed
-        if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_ACCEPT_GZIP)) {
+        if (msgContext.isPropertyTrue(HTTPConstants.MC_ACCEPT_GZIP)) {
             method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
                     HTTPConstants.COMPRESSION_GZIP);
         }
 
-        if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
+        if (msgContext.isPropertyTrue(HTTPConstants.MC_GZIP_REQUEST)) {
             method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
                     HTTPConstants.COMPRESSION_GZIP);
         }

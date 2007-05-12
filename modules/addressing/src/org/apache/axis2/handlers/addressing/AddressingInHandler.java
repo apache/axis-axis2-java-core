@@ -29,7 +29,6 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +46,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
-        if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
+        if (msgContext.isPropertyTrue(IS_ADDR_INFO_ALREADY_PROCESSED)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(
                         "Another handler has processed the addressing headers. Nothing to do here.");
@@ -154,19 +153,19 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)addressingHeadersIt2.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
                 if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
+                    extractActionInformation(soapHeaderBlock, messageContext);
                 } else if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
                     extractToEPRInformation(soapHeaderBlock, messageContextOptions, header,
                                             namespace);
                 } else
                 if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
-                    extractMessageIDInformation(soapHeaderBlock, namespace, messageContext);
+                    extractMessageIDInformation(soapHeaderBlock, messageContext);
                 } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
                     extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
                     extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
-                    extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
+                    extractRelatesToInformation(soapHeaderBlock, messageContextOptions);
                 } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
                     extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
                 }
@@ -223,7 +222,6 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
 
     private void extractRelatesToInformation(SOAPHeaderBlock soapHeaderBlock,
-                                             String addressingNamespace,
                                              Options messageContextOptions) {
         String address = soapHeaderBlock.getText();
 
@@ -334,7 +332,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     //soapaction. We compare that action to the WS-Addressing action, and if they are
     //different we throw a fault.
     private void extractActionInformation(SOAPHeaderBlock soapHeaderBlock,
-                                          String addressingNamespace, MessageContext messageContext)
+                                          MessageContext messageContext)
             throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
         String soapAction = messageContextOptions.getAction();
@@ -373,7 +371,6 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     }
 
     private void extractMessageIDInformation(SOAPHeaderBlock soapHeaderBlock,
-                                             String addressingNamespace,
                                              MessageContext messageContext) throws AxisFault {
         messageContext.getOptions().setMessageId(soapHeaderBlock.getText());
 
@@ -388,9 +385,11 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     /**
      * Given the soap header block, this should extract the information within EPR.
      *
-     * @param headerBlock
-     * @param epr
-     * @param addressingNamespace
+     * @param headerBlock a SOAP header which is of type EndpointReference
+     * @param epr the EndpointReference to fill in with the extracted data
+     * @param addressingNamespace the WSA namespace URI
+     * @param messageContext the active MessageContext
+     * @throws AxisFault if there is a problem
      */
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr,
                                        String addressingNamespace, MessageContext messageContext)

@@ -69,7 +69,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
-        if (Utils.isExplicitlyTrue(msgContext, DISABLE_ADDRESSING_FOR_OUT_MESSAGES)) {
+        if (msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES)) {
             if (log.isTraceEnabled()) {
                 log.trace(msgContext.getLogIDString() +
                         " Addressing is disabled. Not adding WS-Addressing headers.");
@@ -87,21 +87,18 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
 
         // Determine whether to include optional addressing headers in the output.
-        boolean includeOptionalHeaders = this.includeOptionalHeaders;
-        Object includeHeadersPropery = msgContext.getProperty(INCLUDE_OPTIONAL_HEADERS);
-        if (includeHeadersPropery != null) {
-            includeOptionalHeaders = JavaUtils.isTrueExplicitly(includeHeadersPropery);
-        }
+        boolean includeOptionalHeaders = this.includeOptionalHeaders ||
+                                            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS);
 
         // Determine if a MustUnderstand attribute will be added to all headers in the
         // addressing namespace.
         boolean addMustUnderstandAttribute =
-                Utils.isExplicitlyTrue(msgContext, ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
+                msgContext.isPropertyTrue(ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
 
         // what if there are addressing headers already in the message. Do you replace that or not?
         // Lets have a parameter to control that. The default behavior is you won't replace addressing
         // headers if there are any (this was the case so far).
-        boolean replaceHeaders = Utils.isExplicitlyTrue(msgContext, REPLACE_ADDRESSING_HEADERS);
+        boolean replaceHeaders = msgContext.isPropertyTrue(REPLACE_ADDRESSING_HEADERS);
 
         WSAHeaderWriter writer = new WSAHeaderWriter(msgContext, isSubmissionNamespace,
                                                      addMustUnderstandAttribute, replaceHeaders,
@@ -251,8 +248,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                 " processWSAAction: No action to add to header");
                     }
                     // Fault unless validation has been explictily turned off
-                    if (!Utils.isExplicitlyTrue(messageContext,
-                                                AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION))
+                    if (!messageContext.isPropertyTrue(
+                            AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION))
                     {
                         throw new AxisFault(AddressingMessages.getMessage("outboundNoAction"));
                     }
@@ -457,7 +454,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         /**
          * This will add reference parameters and/or reference properties in to the message
          *
-         * @param referenceInformation
+         * @param referenceInformation a Map from QName -> OMElement
          * @param parent               is the element to which the referenceparameters should be
          *                             attached
          */

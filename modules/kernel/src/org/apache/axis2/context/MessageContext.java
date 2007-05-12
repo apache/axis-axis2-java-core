@@ -18,7 +18,6 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.StAXUtils;
@@ -49,6 +48,7 @@ import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.util.SelfManagedDataHolder;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -949,6 +949,29 @@ public class MessageContext extends AbstractContext implements Externalizable {
         return null;
     }
 
+    /**
+     * Check if a given property is true.  Will return false if the property
+     * does not exist or is not an explicit "true" value.
+     *
+     * @param name name of the property to check
+     * @return true if the property exists and is Boolean.TRUE, "true", 1, etc.
+     */
+    public boolean isPropertyTrue(String name) {
+        return isPropertyTrue(name, false);
+    }
+
+    /**
+     * Check if a given property is true.  Will return the passed default if the property
+     * does not exist.
+     *
+     * @param name name of the property to check
+     * @param defaultVal the default value if the property doesn't exist
+     * @return true if the property exists and is Boolean.TRUE, "true", 1, etc.
+     */
+    public boolean isPropertyTrue(String name, boolean defaultVal) {
+        return JavaUtils.isTrueExplicitly(getProperty(name), defaultVal);
+    }
+    
     /**
      * Retrieves all property values. The order of search is as follows: search in
      * my own options and then look in my context hierarchy. Since its possible
