@@ -167,8 +167,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         try {
             Options options = testMessageWithOmittedHeaders("noTo");
             EndpointReference epr = options.getTo();
+            String address = epr.getAddress();
 
-            assertNull("The To endpoint reference is not null.", epr);
+            assertEquals("The address of the To endpoint reference is not the anonymous URI.",
+                         AddressingConstants.Final.WSA_ANONYMOUS_URL, address);
         }
         catch (AxisFault af) {
             af.printStackTrace();
