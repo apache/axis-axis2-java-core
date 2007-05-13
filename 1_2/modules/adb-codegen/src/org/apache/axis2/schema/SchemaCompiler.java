@@ -1523,7 +1523,6 @@ public class SchemaCompiler {
     public void processAttribute(XmlSchemaAttribute att, BeanWriterMetaInfoHolder metainf, XmlSchema parentSchema)
             throws SchemaCompilationException {
 
-        //for now we assume (!!!) that attributes refer to standard types only
         QName schemaTypeName = att.getSchemaTypeName();
         if (schemaTypeName != null) {
             if (att.getQName() != null) {
@@ -1534,8 +1533,8 @@ public class SchemaCompiler {
 
                     // add optional attribute status if set
                     String use = att.getUse().getValue();
-                    if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)){
-                       metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                    if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
+                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                     }
 
                     String className = findClassName(schemaTypeName, false);
@@ -1569,48 +1568,32 @@ public class SchemaCompiler {
 
                     }
                 }
+            } else {
+                // this attribute has a type but does not have a name, seems to be invalid
             }
 
         } else if (att.getRefName() != null) {
             XmlSchema currentParentSchema = resolveParentSchema(att.getRefName(), parentSchema);
-            QName attrQname = generateAttributeQName(att.getRefName(), parentSchema);
+            QName attrQname = att.getRefName();
 
-            XmlSchemaObjectCollection items = currentParentSchema.getItems();
-            Iterator itemIterator = items.getIterator();
+            XmlSchemaObjectTable xmlSchemaObjectTable = currentParentSchema.getAttributes();
 
-            while (itemIterator.hasNext()) {
-                Object attr = itemIterator.next();
-
-                if (attr instanceof XmlSchemaAttribute) {
-                    XmlSchemaAttribute attribute = (XmlSchemaAttribute) attr;
-
-                    if (attribute.getName().equals(att.getRefName().getLocalPart())) {
-                        QName attrTypeName = attribute.getSchemaTypeName();
-
-                        Object type = baseSchemaTypeMap.get(attrTypeName);
-                        if (type == null) {
-                            XmlSchemaSimpleType simpleType = attribute.getSchemaType();
-                            if (simpleType != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction)
-                            {
-                                XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) simpleType.getContent();
-                                QName baseTypeName = restriction.getBaseTypeName();
-                                type = baseSchemaTypeMap.get(baseTypeName);
-                                attrQname = att.getRefName();
-                            }
-                            //TODO: Handle XmlSchemaSimpleTypeUnion and XmlSchemaSimpleTypeList
-                        }
-
-                        if (type != null) {
-                            metainf.registerMapping(attrQname, attrQname,
-                                    type.toString(), SchemaConstants.ATTRIBUTE_TYPE);
-                            // add optional attribute status if set
-                            String use = att.getUse().getValue();
-                            if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                                metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                            }
-                        }
-                    }
+            QName currentQName = null;
+            XmlSchemaAttribute xmlSchemaAttribute = null;
+            for (Iterator attributesIter = xmlSchemaObjectTable.getNames(); attributesIter.hasNext();) {
+                currentQName = (QName) attributesIter.next();
+                if (currentQName.getLocalPart().equals(attrQname.getLocalPart())) {
+                    xmlSchemaAttribute = (XmlSchemaAttribute) xmlSchemaObjectTable.getItem(currentQName);
+                    break;
                 }
+            }
+
+            if (xmlSchemaAttribute != null) {
+                // call recursively to process the schema
+                processAttribute(xmlSchemaAttribute, metainf, currentParentSchema);
+            } else {
+                throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
+                        attrQname);
             }
 
         } else {
@@ -1644,8 +1627,12 @@ public class SchemaCompiler {
                     }
                 } else {
                     // TODO: handle the case when no attribute type specifed
+                    log.warn("No attribute type has defined to the Attribute " + attributeQName);
                 }
 
+            } else {
+                throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
+                        attributeQName);
             }
 
         }

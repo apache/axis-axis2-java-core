@@ -5,7 +5,7 @@
 
     <xs:element name="TestElement1">
         <xs:complexType>
-            <xs:attribute name="attribute1" type="xs:int" />
+            <xs:attribute name="attribute1" type="xs:int"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="TestElement2">
@@ -20,12 +20,12 @@
     </xs:element>
     <xs:element name="TestElement4">
         <xs:complexType>
-            <xs:attribute name="attribute1"  type="xs:string"  use="required"/>
+            <xs:attribute name="attribute1" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="TestAttributeSimpleType">
         <xs:complexType>
-            <xs:attribute name="attribute1" >
+            <xs:attribute name="attribute1">
                 <xs:simpleType>
                     <xs:restriction base="xs:string"/>
                 </xs:simpleType>
@@ -36,7 +36,6 @@
         <xs:attribute name="Attribute1"/>
         <xs:attribute name="Attribute2"/>
     </xs:attributeGroup>
-
     <xs:element name="TestAttributeGroupElement">
         <xs:complexType>
             <xs:attributeGroup ref="tns:TestAttributeGroup"/>
@@ -49,5 +48,15 @@
             </xs:all>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="TestAttributeReferenceElement" type="tns:TestAttributeReferenceType"/>
+    <xs:attribute   name="TestAttribute1" type="xs:string"/>
+    <xs:complexType name="TestAttributeReferenceType">
+        <xs:sequence>
+            <xs:element name="param1" type="xs:string"/>
+            <xs:element name="param2" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute use="optional" ref="tns:TestAttribute1"/>
+    </xs:complexType>
 
 </xs:schema>

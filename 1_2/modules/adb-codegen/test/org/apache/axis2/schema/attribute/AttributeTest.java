@@ -162,4 +162,32 @@ public class AttributeTest extends TestCase {
             fail();
         }
     }
+
+    public void testAttributeReferenceElement(){
+        TestAttributeReferenceElement testAttributeReferenceElement = new TestAttributeReferenceElement();
+        TestAttributeReferenceType testAttributeReferenceType = new TestAttributeReferenceType();
+        testAttributeReferenceType.setParam1("param1");
+        testAttributeReferenceType.setParam2("param2");
+        testAttributeReferenceType.setTestAttribute1("attribute1");
+
+        testAttributeReferenceElement.setTestAttributeReferenceElement(testAttributeReferenceType);
+
+        OMElement omElement = testAttributeReferenceElement.getOMElement(TestAttributeReferenceElement.MY_QNAME,
+                    OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader =
+                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestAttributeReferenceElement result = TestAttributeReferenceElement.Factory.parse(xmlReader);
+
+            assertEquals(result.getTestAttributeReferenceElement().getParam1(),"param1");
+            assertEquals(result.getTestAttributeReferenceElement().getParam2(),"param2");
+            assertEquals(result.getTestAttributeReferenceElement().getTestAttribute1(),"attribute1");
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
 }
