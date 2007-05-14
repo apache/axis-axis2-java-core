@@ -827,6 +827,7 @@
                 <ant:include name="**/modules/fastinfoset/**"/>
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/jaxbri/**"/>
+                                <ant:include name="**/modules/ping/**"/>
                 <ant:include name="**/modules/jaxws/**"/>                			
                 <ant:include name="**/modules/jaxws-api/**"/>
                 <ant:include name="**/modules/jibx/**"/>
@@ -844,8 +845,9 @@
                 <ant:include name="**/modules/webapp/**"/>
                 <ant:include name="**/modules/xmlbeans/**"/>
                 <ant:include name="**/etc/**"/>
-
-
+                <ant:include name="**/legal/**"/>
+                <ant:include name="**/xdocs/**"/>
+                <ant:include name="**/release-docs/**"/>
 
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->

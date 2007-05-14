@@ -24,7 +24,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.axis2</groupId>
 	<artifactId>axis2</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<packaging>pom</packaging>
 	<name>Apache Axis 2.0 - Root</name>
 	<modules>

@@ -24,7 +24,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.axis2</groupId>
 	<artifactId>axis2-parent</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<packaging>pom</packaging>
 	<name>Apache Axis 2.0 - Parent</name>
 	<inceptionYear>2004</inceptionYear>
@@ -73,7 +73,7 @@
               element, and it will need to be changed manually before a release,
               as the maven-release-plugin will not update this value.
         -->
-		<version>1.2-SNAPSHOT</version>
+		<version>1.2</version>
 		<annogen.version>0.1.0</annogen.version>
 		<ant.version>1.7.0</ant.version>
 		<antlr.version>2.7.4</antlr.version>
@@ -105,7 +105,7 @@
 		<maven.assembly.version>2.2-SNAPSHOT</maven.assembly.version>
 		<maven.plugin.testing.version>1.0-beta-1</maven.plugin.testing.version>
 		<maven.version>2.0.6</maven.version>
-		<neethi.version>SNAPSHOT</neethi.version>
+		<neethi.version>2.0.1</neethi.version>
 		<plexus.utils.version>1.1</plexus.utils.version>
 		<servlet.api.version>2.3</servlet.api.version>
 		<spring.version>1.2.8</spring.version>
@@ -115,7 +115,7 @@
 		<stax.impl.version>3.2.1</stax.impl.version>
 		<stax_utils.version>20060915</stax_utils.version>
 		<tomcat.version>6.0.10</tomcat.version>
-		<woden.version>1.0-incubating-SNAPSHOT</woden.version>
+		<woden.version>1.0-incubating-M7a</woden.version>
 		<wsdl4j.version>1.6.2</wsdl4j.version>
 		<xalan.version>2.7.0</xalan.version>
 		<xbean.version>2.2.0</xbean.version>

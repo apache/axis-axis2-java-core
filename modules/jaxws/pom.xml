@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-parent</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.2</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>axis2-jaxws</artifactId>
@@ -796,6 +796,9 @@
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
+                               <excludes>
+						<exclude>**/*DocLitBareMinTests.java</exclude>
+					</excludes>
 					<systemProperties>
 						<property>
 							<name>build.repository</name>
