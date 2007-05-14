@@ -1,0 +1,3 @@
+<module name="script" 
+        class="org.apache.axis2.scripting.ScriptModule">
+</module>
