@@ -1,0 +1,63 @@
+<schema elementFormDefault="qualified"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="org.apache.axis2.test.group"
+        targetNamespace="org.apache.axis2.test.group">
+
+    <xs:element name="TestSequenceGroupElement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:string"/>
+                <xs:group ref="tns:TestSequenceGroup"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="TestSequenceGroup">
+        <xs:sequence>
+            <xs:element name="sequenceParam1" type="xs:string"/>
+            <xs:element name="sequenceParam2" type="xs:string"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:element name="TestChoiceGroupElement">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="param1" type="xs:string"/>
+                <xs:group ref="tns:TestChoiceGroup"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="TestChoiceGroup">
+        <xs:choice>
+            <xs:element name="choiceParam1" type="xs:string"/>
+            <xs:element name="choiceParam2" type="xs:string"/>
+        </xs:choice>
+    </xs:group>
+    <xs:element name="TestSequenceNestedGroupElement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:string"/>
+                <xs:group ref="tns:TestSequenceNestedGroup"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="TestSequenceNestedGroup">
+        <xs:sequence>
+            <xs:element name="nestedSequenceParam1" type="xs:string"/>
+            <xs:group ref="tns:TestSequenceGroup"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:element name="TestChoiceNestedGroupElement">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="param1" type="xs:string"/>
+                <xs:group ref="tns:TestChoiceNestedGroup"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="TestChoiceNestedGroup">
+        <xs:choice>
+            <xs:element name="nestedChoiceParam1" type="xs:string"/>
+            <xs:group ref="tns:TestChoiceGroup"/>
+        </xs:choice>
+    </xs:group>
+</schema>

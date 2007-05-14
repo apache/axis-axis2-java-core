@@ -1839,6 +1839,37 @@ public class SchemaCompiler {
                     }
                 }
 
+            } else if (item instanceof XmlSchemaGroupRef) {
+
+                XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) item;
+                QName groupQName = xmlSchemaGroupRef.getRefName();
+                if (groupQName != null){
+                    if (!processedTypemap.containsKey(groupQName)){
+                        // processe the schema here
+                        //TODO: get the xmlSchemaGroup correctly when it is in another schema.
+                        XmlSchemaObjectTable xmlSchemaObjectTable = parentSchema.getGroups();
+                        XmlSchemaGroup xmlSchemaGroup = null;
+                        for (Iterator groupsIter = xmlSchemaObjectTable.getValues(); groupsIter.hasNext();){
+                            xmlSchemaGroup = (XmlSchemaGroup) groupsIter.next();
+                            if (xmlSchemaGroup.getName().equals(groupQName.getLocalPart())){
+                                break;
+                            }
+                        }
+                        processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                    }
+
+                    Boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1 ? Boolean.TRUE : Boolean.FALSE;
+                    processedElementArrayStatusMap.put(item,isArray);
+                    particleQNameMap.put(item,groupQName);
+
+                    if (order){
+                        elementOrderMap.put(item, new Integer(sequenceCounter));
+                    }
+
+                } else {
+                    throw new SchemaCompilationException("Referenced name is null");
+                }
+
             } else if (order && (item instanceof XmlSchemaChoice)) {
 
                 // this is a tempory patch for process only inner sequence choices
@@ -2032,11 +2063,74 @@ public class SchemaCompiler {
                     metainfHolder.registerQNameIndex(choiceQName,
                             startingItemNumberOrder + integer.intValue());
                 }
+            } else if (child instanceof XmlSchemaGroupRef) {
+                XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) child;
+                QName groupQName = (QName) particleQNameMap.get(child);
+                boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1;
+
+                // add this as an array to the original class
+                metainfHolder.registerMapping(groupQName,
+                        groupQName,
+                        findClassName(groupQName, isArray));
+                if (isArray) {
+                    metainfHolder.addtStatus(groupQName, SchemaConstants.ARRAY_TYPE);
+                }
+                metainfHolder.addtStatus(groupQName, SchemaConstants.PARTICLE_TYPE_ELEMENT);
+                metainfHolder.addMaxOccurs(groupQName, xmlSchemaGroupRef.getMaxOccurs());
+                metainfHolder.addMinOccurs(groupQName, xmlSchemaGroupRef.getMinOccurs());
+                metainfHolder.setHasParticleType(true);
+
+                if (order) {
+                    //record the order in the metainf holder for the any
+                    Integer integer = (Integer) elementOrderMap.get(child);
+                    metainfHolder.registerQNameIndex(groupQName,
+                            startingItemNumberOrder + integer.intValue());
+                }
             }
         }
 
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
+    }
+
+    /**
+     *
+     * @param xmlSchemaGroup
+     * @param schemaGroupQName- we have to pass this since xml schema does not provide
+     * this properly
+     * @param parentSchema
+     * @throws SchemaCompilationException
+     */
+
+    private void processGroup(XmlSchemaGroup xmlSchemaGroup,
+                              QName schemaGroupQName,
+                              XmlSchema parentSchema) throws SchemaCompilationException {
+
+        // find the group base item
+        XmlSchemaGroupBase xmlSchemaGroupBase = xmlSchemaGroup.getParticle();
+        if (xmlSchemaGroupBase != null){
+            if (xmlSchemaGroupBase instanceof XmlSchemaSequence){
+                XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) xmlSchemaGroupBase;
+                if (xmlSchemaSequence.getItems().getCount() > 0) {
+                    BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                    process(schemaGroupQName, xmlSchemaSequence.getItems(), beanWriterMetaInfoHolder, true, parentSchema);
+                    beanWriterMetaInfoHolder.setParticleClass(true);
+                    String javaClassName = writeComplexParticle(schemaGroupQName, beanWriterMetaInfoHolder);
+                    processedTypemap.put(schemaGroupQName, javaClassName);
+                }
+
+            } else if (xmlSchemaGroupBase instanceof XmlSchemaChoice){
+                XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) xmlSchemaGroupBase;
+                if (xmlSchemaChoice.getItems().getCount() > 0) {
+                    BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
+                    beanWriterMetaInfoHolder.setChoice(true);
+                    process(schemaGroupQName, xmlSchemaChoice.getItems(), beanWriterMetaInfoHolder, false, parentSchema);
+                    beanWriterMetaInfoHolder.setParticleClass(true);
+                    String javaClassName = writeComplexParticle(schemaGroupQName, beanWriterMetaInfoHolder);
+                    processedTypemap.put(schemaGroupQName, javaClassName);
+                }
+            }
+        }
     }
 
     private XmlSchemaType getType(XmlSchema schema, QName schemaTypeName) throws SchemaCompilationException {
