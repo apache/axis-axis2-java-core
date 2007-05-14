@@ -93,12 +93,34 @@ public class TransportUtils {
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      */
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream,
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
+                                                 InputStream inStream,
                                                  String contentType)
             throws AxisFault, OMException, XMLStreamException,
             FactoryConfigurationError {
+        OMElement documentElement = createDocumentElement(contentType, msgContext, inStream);
+        return createSOAPEnvelope(documentElement);
+    }
+
+    public static SOAPEnvelope createSOAPEnvelope(OMElement documentElement) {
+        SOAPEnvelope envelope;
+        // Check whether we have received a SOAPEnvelope or not
+        if (documentElement instanceof SOAPEnvelope) {
+            envelope = (SOAPEnvelope) documentElement;
+        } else {
+            // If it is not a SOAPEnvelope we wrap that with a fake
+            // SOAPEnvelope.
+            SOAPFactory soapFactory = new SOAP11Factory();
+            envelope = soapFactory.getDefaultEnvelope();
+            envelope.getBody().addChild(documentElement);
+        }
+        return envelope;
+    }
+
+    public static OMElement createDocumentElement(String contentType,
+                                                  MessageContext msgContext,
+                                                  InputStream inStream) throws AxisFault, XMLStreamException {
         OMElement documentElement = null;
-        String charsetEncoding = null;
         if (contentType != null) {
             String type;
             int index = contentType.indexOf(';');
@@ -108,7 +130,7 @@ public class TransportUtils {
                 type = contentType;
             }
             // Some services send REST responces as text/xml. We should convert it to
-            // application/xml if its a REST response, if not it will try to use the SOAPMessageBuilder.         
+            // application/xml if its a REST response, if not it will try to use the SOAPMessageBuilder.
             if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(type)) {
                 if (msgContext.isServerSide()) {
                     if (msgContext.getSoapAction() == null) {
@@ -126,7 +148,7 @@ public class TransportUtils {
         }
         if (documentElement == null) {
             if (msgContext.isDoingREST()) {
-                StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, charsetEncoding);
+                StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, null);
                 documentElement = builder.getDocumentElement();
             } else {
                 // FIXME making soap defualt for the moment..might effect the
@@ -135,22 +157,9 @@ public class TransportUtils {
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 StAXBuilder builder = BuilderUtil.getSOAPBuilder(inStream, charSetEnc);
                 documentElement = builder.getDocumentElement();
-                charsetEncoding = builder.getDocument().getCharsetEncoding();
             }
         }
-
-        SOAPEnvelope envelope;
-        // Check whether we have received a SOAPEnvelope or not
-        if (documentElement instanceof SOAPEnvelope) {
-            envelope = (SOAPEnvelope) documentElement;
-        } else {
-            // If it is not a SOAPEnvelope we wrap that with a fake
-            // SOAPEnvelope.
-            SOAPFactory soapFactory = new SOAP11Factory();
-            envelope = soapFactory.getDefaultEnvelope();
-            envelope.getBody().addChild(documentElement);
-        }
-        return envelope;
+        return documentElement;
     }
 
     /**
