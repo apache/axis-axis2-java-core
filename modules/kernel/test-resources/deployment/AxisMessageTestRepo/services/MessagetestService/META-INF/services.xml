@@ -5,6 +5,7 @@
     </description>
     <parameter name="ServiceClass" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
     <operation name="echoString">
+        <module ref="module1"/>
         <message label="In">
             <parameter name="messageIN" locked="false">messageIN</parameter>
         </message>

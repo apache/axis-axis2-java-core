@@ -129,7 +129,7 @@ public abstract class AxisOperation extends AxisDescription
                                                 OperationContext opContext)
             throws AxisFault;
 
-    public void addModule(QName moduleName) {
+    public void addModule(String moduleName) {
         modulerefs.add(moduleName);
     }
 

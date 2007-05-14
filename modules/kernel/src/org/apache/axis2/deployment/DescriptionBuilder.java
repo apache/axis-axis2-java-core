@@ -484,7 +484,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
-                        operation.addModule(new QName(refName));
+                        operation.addModule(refName);
                     }
                 }
             }
