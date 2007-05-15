@@ -48,6 +48,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.Hashtable;
 
 public class EMailSender {
     private Properties properties;
@@ -229,15 +230,24 @@ public class EMailSender {
     }
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
+        storeMessageContext(msgContext,msgId);
         Object obj = msgContext.getProperty(Constants.MAIL_SYNC);
         if (obj == null) {
             return;
         }
-
         Options options = msgContext.getOptions();
 
         SynchronousMailListener listener =
                 new SynchronousMailListener(options.getTimeOutInMilliSeconds());
         listener.sendReceive(msgContext, msgId);
+    }
+
+    private void storeMessageContext(MessageContext msgContext, String msgId){
+        Hashtable mappingTable = (Hashtable) msgContext.getConfigurationContext().
+                getProperty(Constants.MAPPING_TABLE);
+        
+        if(mappingTable!=null){
+            mappingTable.put(msgId,msgContext.getMessageID());
+        }
     }
 }

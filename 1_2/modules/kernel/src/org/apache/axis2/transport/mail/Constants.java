@@ -80,4 +80,5 @@ public class Constants {
     public static final String MAIL_SYNC = "_MAIL_SYNC_";
     public static final String IN_REPLY_TO = "In-Reply-To";
     public static final String MAILTO = "mailto";
+    public static final String MAPPING_TABLE = "mappingTable";
 }

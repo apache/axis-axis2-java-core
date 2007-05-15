@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Hashtable;
 
 /**
  * This is the implementation for Mail Listener in Axis2. It has the full capability
@@ -165,7 +166,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
         receiver = new EmailReceiver();
         receiver.setPop3Properties(pop3Properties);
         receiver.setUrlName(urlName);
-
+        Hashtable mappingTable = new Hashtable();
+        configurationContext.setProperty(
+                org.apache.axis2.transport.mail.Constants.MAPPING_TABLE,mappingTable);
 
     }
 
@@ -345,8 +348,25 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo);
 
             buildSOAPEnvelope(msg, msgContext);
+            fillMessageContextFromAvaiableData(msgContext,inReplyTo);
         }
         return msgContext;
+    }
+
+    private void fillMessageContextFromAvaiableData(MessageContext msgContext , String messageID){
+        Hashtable mappingTable = (Hashtable) msgContext.getConfigurationContext().
+                getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
+
+        if(mappingTable!=null&&messageID!=null){
+            String messageConetextId= (String) mappingTable.get(messageID);
+            if(messageConetextId!=null){
+                OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
+                if(opContext!=null){
+                    msgContext.setOperationContext(opContext);
+                    msgContext.setServiceContext(opContext.getServiceContext());
+                }
+            }
+        }
     }
 
     private void buildSOAPEnvelope(MimeMessage msg, MessageContext msgContext)
