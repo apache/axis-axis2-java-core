@@ -96,7 +96,9 @@ public class BuilderUtil {
                 while (requestParamMapIter.hasNext()) {
                     String key = (String) requestParamMapIter.next();
                     String value = (String) requestParameterMap.get(key);
-                    soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                    if (value != null) {
+                        soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                    }
 
                 }
             }
