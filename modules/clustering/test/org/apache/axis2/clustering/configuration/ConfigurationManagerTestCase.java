@@ -54,7 +54,10 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		
 		assertNotNull(event);
-		assertEquals(event.getServiceGroupNames(), serviceGroupName);
+		
+		String[] serviceGroupNames = event.getServiceGroupNames();
+		assertNotNull(serviceGroupNames);
+		assertEquals(serviceGroupNames[0], serviceGroupName);
     }
     
     public void testUnloadServiceGroup ()  throws ClusteringFault {
@@ -76,7 +79,10 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		
 		assertNotNull(event);
-		assertEquals(event.getServiceGroupNames(), serviceGroupName);
+		
+		String[] serviceGroupNames = event.getServiceGroupNames();
+		assertNotNull(serviceGroupNames);
+		assertEquals(serviceGroupNames[0], serviceGroupName);
     }
     
     public void testApplyPolicy () throws ClusteringFault, XMLStreamException {
@@ -84,8 +90,15 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     	configurationManagerListener2.clearEventList();
     	
     	String serviceGroupName = "testService";
+    	clusterManager1.getConfigurationManager().loadServiceGroups(new String[]{serviceGroupName});
     	String policyID = "policy1";
     	
+    	try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
     	Policy policy = new Policy ();
     	policy.setId(policyID);
 
@@ -106,11 +119,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		
     	List eventList = configurationManagerListener2.getEventList();
     	assertNotNull(eventList);
-    	assertEquals(eventList.size(), 1);
-		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+    	assertEquals(eventList.size(), 2);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(1);
 		assertNotNull(event);
-		assertEquals(event.getServiceGroupNames(), serviceGroupName);
-		assertEquals(event.getPolicy(), policyID);
+		assertEquals(event.getServiceName(), serviceName);
+		assertNotNull (event.getPolicy());
 		
     }
     
