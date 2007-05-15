@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Hashtable;
+import java.io.Serializable;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -28,7 +30,7 @@ public class MultipleEntryHashMap {
     private Map table;
 
     public MultipleEntryHashMap() {
-        this.table = new HashMap(1);
+        this.table = new Hashtable(1);
     }
 
     /**
@@ -39,12 +41,12 @@ public class MultipleEntryHashMap {
      */
     public Object get(Object key) {
         ArrayList list = (ArrayList) table.get(key);
-        if (list != null) {
+        if (list != null && list.size() > 0) {
             Object o = list.get(0);
             list.remove(0);
-            if (list.size() == 0) {
-                table.remove(key);
-            }
+//            if (list.size() == 0) {
+//                table.remove(key);
+//            }
             return o;
         }
 
