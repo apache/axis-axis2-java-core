@@ -492,32 +492,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (contextRoot != null && contextRoot.trim().length() != 0) {
             return;
         }
-        boolean findContext = true;
-        String findContextParameter = servletConfig.getInitParameter("axis2.find.context");
-        if (findContextParameter != null) {
-            findContextParameter = findContextParameter.trim();
-            findContext = JavaUtils.isTrue(findContextParameter);
+        String contextPath = req.getContextPath();
+        //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
+        if (contextPath != null && contextPath.length() == 0) {
+           contextPath = "/";
         }
-        if (!findContext) {
-            if (contextRoot == null) {
-                contextRoot = configContext.getContextRoot();
-            }
-        }
-        if (contextRoot == null || contextRoot.trim().length() == 0) {
-            String[] parts = JavaUtils.split(req.getContextPath(), '/');
-            if (parts != null) {
-                for (int i = 0; i < parts.length; i++) {
-                    if (parts[i].length() > 0) {
-                        contextRoot = parts[i];
-                        break;
-                    }
-                }
-            }
-            if (contextRoot == null || req.getContextPath().equals("/")) {
-                contextRoot = "/";
-            }
-            configContext.setContextRoot(contextRoot);
-        }
+        this.contextRoot = contextPath;
+
+        configContext.setContextRoot(contextRoot);
     }
 
     /**
