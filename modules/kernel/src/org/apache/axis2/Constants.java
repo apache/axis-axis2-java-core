@@ -80,6 +80,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     //Parameter name for transport session managemntt
     public static final String MANAGE_TRANSPORT_SESSION = "manageTransportSession";
 
+    public static final String HTTP_RESPONSE_STATE = "axis2.http.response.state";
+    public static final String HTTP_BASIC_AUTH_REALM = "axis2.authentication.realm";
+
     /**
      * Field APPLICATION_SCOPE
      */
