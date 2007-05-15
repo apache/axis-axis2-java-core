@@ -71,14 +71,14 @@ public class ReplicationHandler extends AbstractHandler {
 			ServiceGroupContext serviceGroupContext = message.getServiceGroupContext();
 
 			
-			contextManager.updateState(configurationContext);
+			contextManager.updateContext(configurationContext);
 
 			if (serviceGroupContext != null) {
-				contextManager.updateState(serviceGroupContext);
+				contextManager.updateContext(serviceGroupContext);
 			}
 
 			if (serviceContext != null) {
-				contextManager.updateState(serviceContext);
+				contextManager.updateContext(serviceContext);
 			}
 
 		}

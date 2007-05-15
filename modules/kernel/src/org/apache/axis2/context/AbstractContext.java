@@ -185,7 +185,7 @@ public abstract class AbstractContext {
         if (clusterManager != null) {
         	ContextManager contextManager = clusterManager.getContextManager();
         	if (contextManager!=null && contextManager.isContextClusterable (this))
-        		contextManager.updateState(this);
+        		contextManager.updateContext(this);
         }
 
         //Other logic needed for flushing the contexts

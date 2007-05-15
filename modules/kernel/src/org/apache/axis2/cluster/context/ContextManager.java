@@ -26,7 +26,7 @@ public interface ContextManager extends ParameterInclude {
 
     public void removeContext(AbstractContext context) throws ClusteringFault;
 
-    public void updateState(AbstractContext context) throws ClusteringFault;
+    public void updateContext(AbstractContext context) throws ClusteringFault;
 
     public boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
 

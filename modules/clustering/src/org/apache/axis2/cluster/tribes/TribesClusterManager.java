@@ -16,10 +16,6 @@
 
 package org.apache.axis2.cluster.tribes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
@@ -41,156 +37,151 @@ import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class TribesClusterManager implements ClusterManager {
 
-	private TribesConfigurationManager configurationManager = null;
-	private TribesContextManager contextManager = null;
-	private ContextUpdater updater;
-	private static long timeout = 1000L; // this should be configured in the axis2.xml
-	private HashMap parameters = null;
-	Channel channel = null;
-	TransientTribesChannelInfo channelInfo = null;
-	TransientTribesMemberInfo memberInfo = null;
-	
+    private TribesConfigurationManager configurationManager;
+    private TribesContextManager contextManager;
+
+    private HashMap parameters = null;
+    private Channel channel = null;
+    private TransientTribesChannelInfo channelInfo = null;
+    private TransientTribesMemberInfo memberInfo = null;
+
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
-    public TribesClusterManager () {
-		contextManager = new TribesContextManager ();
-		configurationManager = new TribesConfigurationManager ();
-		parameters = new HashMap ();
+    public TribesClusterManager() {
+        parameters = new HashMap();
     }
 
-	public ContextManager getContextManager() {
-		return contextManager;
-	}
+    public ContextManager getContextManager() {
+        return contextManager;
+    }
 
-	public ConfigurationManager getConfigurationManager() {
-		return configurationManager;
-	}
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
+    }
 
-	public void init() throws ClusteringFault {
-		
-    	if (log.isDebugEnabled())
-			log.debug("Enter: TribesClusterManager::init");
-    	
-		ChannelSender sender = new ChannelSender ();
+    public void init() throws ClusteringFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: TribesClusterManager::init");
+        }
 
-        ChannelListener listener = new ChannelListener (configurationManager, contextManager);
+        ChannelSender sender = new ChannelSender();
 
-		channelInfo = new TransientTribesChannelInfo();
-		memberInfo = new TransientTribesMemberInfo();
+        ChannelListener listener = new ChannelListener(configurationManager, contextManager);
 
-		contextManager.setSender(sender);
+        channelInfo = new TransientTribesChannelInfo();
+        memberInfo = new TransientTribesMemberInfo();
+
+        contextManager.setSender(sender);
         configurationManager.setSender(sender);
 
         try {
-			ManagedChannel channel = new GroupChannel();
-			this.channel = channel;
-			channel.addChannelListener (listener);
-			channel.addChannelListener(channelInfo);
-			channel.addMembershipListener(memberInfo);
+            ContextUpdater updater = new ContextUpdater();
+            contextManager.setUpdater(updater);
+
+            ManagedChannel channel = new GroupChannel();
+            this.channel = channel;
+
+            channel.addChannelListener(listener);
+            channel.addChannelListener(channelInfo);
+            channel.addMembershipListener(memberInfo);
             channel.addMembershipListener(new TribesMembershipListener());
             channel.start(Channel.DEFAULT);
-			sender.setChannel(channel);
-			contextManager.setSender(sender);
-			configurationManager.setSender(sender);
+            sender.setChannel(channel);
+            contextManager.setSender(sender);
+            configurationManager.setSender(sender);
 
-			Member[] members = channel.getMembers();
-			TribesUtil.printMembers (members);
+            Member[] members = channel.getMembers();
+            TribesUtil.printMembers(members);
 
-			updater = new ContextUpdater ();
-			contextManager.setUpdater(updater);
+            listener.setUpdater(updater);
+            listener.setContextManager(contextManager);
 
-			listener.setUpdater(updater);
-			listener.setContextManager(contextManager);
+        } catch (ChannelException e) {
 
-		} catch (ChannelException e) {
-			
-	    	if (log.isDebugEnabled())
-				log.debug("Exit: TribesClusterManager::init");
-	    	
-			String message = "Error starting Tribes channel";
-			throw new ClusteringFault (message, e);
-		}
-		
-    	if (log.isDebugEnabled())
-			log.debug("Exit: TribesClusterManager::init");
-	}
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: TribesClusterManager::init");
+            }
 
-//	private void registerTribesInfoService(ConfigurationContext configContext2) throws ClusteringFault {
-//		try {
-//			AxisService service = AxisService.createService(
-//					"org.apache.axis2.cluster.tribes.info.TribesInfoWebService", configContext
-//							.getAxisConfiguration(), RPCMessageReceiver.class);
-//
-//			configContext.getAxisConfiguration().addService(service);
-//		} catch (AxisFault e) {
-//			String message = "Unable to create Tribes info web service";
-//			throw new ClusteringFault (message, e);
-//		}
-//	}
+            String message = "Error starting Tribes channel";
+            throw new ClusteringFault(message, e);
+        }
 
-	public void setConfigurationManager(ConfigurationManager configurationManager) {
-		this.configurationManager = (TribesConfigurationManager) configurationManager;
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: TribesClusterManager::init");
+        }
+    }
 
-	public void setContextManager(ContextManager contextManager) {
-		this.contextManager = (TribesContextManager) contextManager;
-	}
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = (TribesConfigurationManager) configurationManager;
+    }
 
-	public void addParameter(Parameter param) throws AxisFault {
-		parameters.put(param.getName(), param);
-	}
+    public void setContextManager(ContextManager contextManager) {
+        this.contextManager = (TribesContextManager) contextManager;
+    }
 
-	public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-		throw new UnsupportedOperationException ();
-	}
+    public void addParameter(Parameter param) throws AxisFault {
+        parameters.put(param.getName(), param);
+    }
 
-	public Parameter getParameter(String name) {
-		return (Parameter) parameters.get(name);
-	}
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        throw new UnsupportedOperationException();
+    }
 
-	public ArrayList getParameters() {
-		ArrayList list = new ArrayList ();
-		for (Iterator it=parameters.keySet().iterator();it.hasNext();) {
-			list.add(parameters.get(it.next()));
-		}
-		return list;
-	}
+    public Parameter getParameter(String name) {
+        return (Parameter) parameters.get(name);
+    }
 
-	public boolean isParameterLocked(String parameterName) {
+    public ArrayList getParameters() {
+        ArrayList list = new ArrayList();
+        for (Iterator it = parameters.keySet().iterator(); it.hasNext();) {
+            list.add(parameters.get(it.next()));
+        }
+        return list;
+    }
 
-		Parameter parameter = (Parameter) parameters.get(parameterName);
-		if (parameter!=null)
-			return parameter.isLocked();
+    public boolean isParameterLocked(String parameterName) {
 
-		return false;
-	}
+        Parameter parameter = (Parameter) parameters.get(parameterName);
+        if (parameter != null) {
+            return parameter.isLocked();
+        }
 
-	public void removeParameter(Parameter param) throws AxisFault {
-		parameters.remove(param.getName());
-	}
+        return false;
+    }
 
-	public void shutdown() throws ClusteringFault {
-		
-    	if (log.isDebugEnabled())
-			log.debug("Enter: TribesClusterManager::shutdown");
-    	
-		if (channel!=null) {
-			try {
-				channel.stop(Channel.DEFAULT);
-			} catch (ChannelException e) {
-				
-		    	if (log.isDebugEnabled())
-					log.debug("Exit: TribesClusterManager::shutdown");
-		    	
-				throw new ClusteringFault (e);
-			}
-		}
-		
-    	if (log.isDebugEnabled())
-			log.debug("Exit: TribesClusterManager::shutdown");
-	}
+    public void removeParameter(Parameter param) throws AxisFault {
+        parameters.remove(param.getName());
+    }
 
-	
+    public void shutdown() throws ClusteringFault {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: TribesClusterManager::shutdown");
+        }
+
+        if (channel != null) {
+            try {
+                channel.stop(Channel.DEFAULT);
+            } catch (ChannelException e) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: TribesClusterManager::shutdown");
+                }
+
+                throw new ClusteringFault(e);
+            }
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: TribesClusterManager::shutdown");
+        }
+    }
+
+
 }

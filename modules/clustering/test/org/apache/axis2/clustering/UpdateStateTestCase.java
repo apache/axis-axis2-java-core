@@ -70,9 +70,9 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 		clusterManager1.getContextManager().addContext(serviceGroupContext1);
 		clusterManager1.getContextManager().addContext(serviceContext1);
 
-		clusterManager1.getContextManager().updateState(configurationContext1);
-		clusterManager1.getContextManager().updateState(serviceGroupContext1);
-		clusterManager1.getContextManager().updateState(serviceContext1);
+		clusterManager1.getContextManager().updateContext(configurationContext1);
+		clusterManager1.getContextManager().updateContext(serviceGroupContext1);
+		clusterManager1.getContextManager().updateContext(serviceContext1);
 
 		Thread.sleep(1000);
 	}
@@ -121,8 +121,8 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 		serviceGroupContext1.getProperties().remove(key2);
 		serviceContext1.getProperties().remove(key3);
 
-		clusterManager1.getContextManager().updateState(serviceContext1);
-		clusterManager1.getContextManager().updateState(serviceGroupContext1);
+		clusterManager1.getContextManager().updateContext(serviceContext1);
+		clusterManager1.getContextManager().updateContext(serviceGroupContext1);
 
 		Thread.sleep(1000);
 
@@ -153,8 +153,8 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 		serviceGroupContext1.setProperty(key2, val3);
 		serviceContext1.setProperty(key3, val2);
 
-		clusterManager1.getContextManager().updateState(serviceContext1);
-		clusterManager1.getContextManager().updateState(serviceGroupContext1);
+		clusterManager1.getContextManager().updateContext(serviceContext1);
+		clusterManager1.getContextManager().updateContext(serviceGroupContext1);
 
 		Thread.sleep(1000);
 
