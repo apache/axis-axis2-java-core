@@ -69,7 +69,10 @@ public class TribesClusterManager implements ClusterManager {
 	}
 
 	public void init() throws ClusteringFault {
-		log.debug("Initializing tribes");
+		
+    	if (log.isDebugEnabled())
+			log.debug("Enter: TribesClusterManager::init");
+    	
 		ChannelSender sender = new ChannelSender ();
 
         ChannelListener listener = new ChannelListener (configurationManager, contextManager);
@@ -102,9 +105,16 @@ public class TribesClusterManager implements ClusterManager {
 			listener.setContextManager(contextManager);
 
 		} catch (ChannelException e) {
+			
+	    	if (log.isDebugEnabled())
+				log.debug("Exit: TribesClusterManager::init");
+	    	
 			String message = "Error starting Tribes channel";
 			throw new ClusteringFault (message, e);
 		}
+		
+    	if (log.isDebugEnabled())
+			log.debug("Exit: TribesClusterManager::init");
 	}
 
 //	private void registerTribesInfoService(ConfigurationContext configContext2) throws ClusteringFault {
@@ -162,13 +172,24 @@ public class TribesClusterManager implements ClusterManager {
 	}
 
 	public void shutdown() throws ClusteringFault {
+		
+    	if (log.isDebugEnabled())
+			log.debug("Enter: TribesClusterManager::shutdown");
+    	
 		if (channel!=null) {
 			try {
 				channel.stop(Channel.DEFAULT);
 			} catch (ChannelException e) {
+				
+		    	if (log.isDebugEnabled())
+					log.debug("Exit: TribesClusterManager::shutdown");
+		    	
 				throw new ClusteringFault (e);
 			}
 		}
+		
+    	if (log.isDebugEnabled())
+			log.debug("Exit: TribesClusterManager::shutdown");
 	}
 
 	

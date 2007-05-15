@@ -85,6 +85,10 @@ public class TribesContextManager implements ContextManager {
     }
 
     public void addContext(AbstractContext context) throws ClusteringFault {
+    	
+    	if (log.isDebugEnabled())
+			log.debug("Enter: TribesContextManager::addContext");
+    	
         ContextCommandMessage comMsg;
 
         String contextId = getContextID(context);
@@ -95,6 +99,10 @@ public class TribesContextManager implements ContextManager {
         if (context instanceof ServiceContext) {
 
             if (addedServiceCtxs.contains(parentContextId + contextId)) {
+            	
+            	if (log.isDebugEnabled())
+        			log.debug("Exit: TribesContextManager::addContext");
+            	
                 return; // this is a duplicate replication request
             }
 
@@ -128,6 +136,10 @@ public class TribesContextManager implements ContextManager {
         } else if (context instanceof ServiceGroupContext) {
 
             if (addedServiceGrpCtxs.contains(contextId)) {
+            	
+            	if (log.isDebugEnabled())
+        			log.debug("Exit: TribesContextManager::addContext");
+            	
                 return; // this is a duplicate replication request
             }
 
@@ -135,6 +147,10 @@ public class TribesContextManager implements ContextManager {
 
             // The new serialization code sets the service group name as it's id initially
             if (srvGrpCtx.getId().equals(srvGrpCtx.getDescription().getServiceGroupName())) {
+            	
+            	if (log.isDebugEnabled())
+        			log.debug("Exit: TribesContextManager::addContext");
+            	
                 return;
             }
 
@@ -166,9 +182,16 @@ public class TribesContextManager implements ContextManager {
                 orphanedServiceCtxs.remove(srvGrpCtx.getDescription().getServiceGroupName());
             }
         }
+        
+    	if (log.isDebugEnabled())
+			log.debug("Exit: TribesContextManager::addContext");
     }
 
     public void removeContext(AbstractContext context) throws ClusteringFault {
+    	
+    	if (log.isDebugEnabled())
+			log.debug("Enter: TribesContextManager::removeContext");
+    	
         ContextCommandMessage comMsg = null;
 
         String contextId = getContextID(context);
@@ -186,10 +209,16 @@ public class TribesContextManager implements ContextManager {
         }
 
         send(comMsg);
+        
+    	if (log.isDebugEnabled())
+			log.debug("Exit: TribesContextManager::removeContext");
     }
 
     public void updateState(AbstractContext context) throws ClusteringFault {
 
+    	if (log.isDebugEnabled())
+			log.debug("Enter: TribesContextManager::updateState");
+    	
         String contextId = getContextID(context);
         String parentContextId = getContextID(context.getParent());
 
@@ -221,6 +250,9 @@ public class TribesContextManager implements ContextManager {
                                                                  contextType);
 
         send(comMsg);
+        
+    	if (log.isDebugEnabled())
+			log.debug("Exit: TribesContextManager::updateState");
     }
 
     public boolean isContextClusterable(AbstractContext context) {

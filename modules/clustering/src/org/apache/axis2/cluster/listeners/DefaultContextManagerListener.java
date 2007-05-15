@@ -48,6 +48,9 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 
 	public void contextAdded(ContextEvent event) {
 		
+    	if (log.isDebugEnabled())
+			log.debug("Enter: DefaultContextManagerListener::contextAdded");
+    	
 		try {
 			
 			if (event.getContextType()==ContextType.SERVICE_GROUP_CONTEXT) {
@@ -69,6 +72,8 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 			e.printStackTrace();
 		}
 		
+    	if (log.isDebugEnabled())
+			log.debug("Exit: DefaultContextManagerListener::contextAdded");
 	}
 
 	public void contextRemoved(ContextEvent event) {
@@ -77,6 +82,9 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 
 	public void contextUpdated(ContextEvent event) {
 
+    	if (log.isDebugEnabled())
+			log.debug("Enter: DefaultContextManagerListener::contextUpdated");
+    	
 		if (event.getContextType()==ContextType.SERVICE_GROUP_CONTEXT) {
 			
 			ServiceGroupContext srvGrpCtx = configurationContext.getServiceGroupContext(
@@ -113,6 +121,9 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 			}
 
 		}
+		
+    	if (log.isDebugEnabled())
+			log.debug("Exit: DefaultContextManagerListener::contextUpdated");
 	}
 
 	public void setConfigurationContext(ConfigurationContext configurationContext) {
