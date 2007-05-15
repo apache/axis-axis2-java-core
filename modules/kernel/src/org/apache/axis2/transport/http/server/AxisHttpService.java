@@ -283,13 +283,13 @@ public class AxisHttpService {
             if (AddressingHelper.isFaultRedirected(msgContext)) {
                 response.setStatus(HttpStatus.SC_ACCEPTED);
             } else {
-                OperationContext opCtx = msgContext.getOperationContext();
-                String state = (String) opCtx.getProperty(Constants.HTTP_RESPONSE_STATE);
+                String state = (String) msgContext.getProperty(Constants.HTTP_RESPONSE_STATE);
                 if (state != null) {
                     int stateInt = Integer.parseInt(state);
                     response.setStatus(stateInt);
                     if (stateInt == HttpServletResponse.SC_UNAUTHORIZED) { // Unauthorized
-                        String realm = (String) opCtx.getProperty(Constants.HTTP_BASIC_AUTH_REALM);
+                        String realm =
+                                (String) msgContext.getProperty(Constants.HTTP_BASIC_AUTH_REALM);
                         response.addHeader("WWW-Authenticate",
                                            "basic realm=\"" + realm + "\"");
                     }

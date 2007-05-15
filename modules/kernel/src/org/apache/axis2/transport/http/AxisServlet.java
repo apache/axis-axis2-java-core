@@ -320,8 +320,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             } else {
 
                 String status =
-                        (String) msgContext.getOperationContext().
-                                getProperty(Constants.HTTP_RESPONSE_STATE);
+                        (String) msgContext.getProperty(Constants.HTTP_RESPONSE_STATE);
                 if (status == null) {
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
@@ -495,7 +494,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         String contextPath = req.getContextPath();
         //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
         if (contextPath != null && contextPath.length() == 0) {
-           contextPath = "/";
+            contextPath = "/";
         }
         this.contextRoot = contextPath;
 
@@ -711,12 +710,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     private void setResponseState(MessageContext messageContext, HttpServletResponse response) {
-        OperationContext opCtx = messageContext.getOperationContext();
-        String state = (String) opCtx.getProperty(Constants.HTTP_RESPONSE_STATE);
+        String state = (String) messageContext.getProperty(Constants.HTTP_RESPONSE_STATE);
         if (state != null) {
             int stateInt = Integer.parseInt(state);
             if (stateInt == HttpServletResponse.SC_UNAUTHORIZED) { // Unauthorized
-                String realm = (String) opCtx.getProperty(Constants.HTTP_BASIC_AUTH_REALM);
+                String realm = (String) messageContext.getProperty(Constants.HTTP_BASIC_AUTH_REALM);
                 response.addHeader("WWW-Authenticate",
                                    "basic realm=\"" + realm + "\"");
             }
