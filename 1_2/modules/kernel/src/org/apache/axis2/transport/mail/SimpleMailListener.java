@@ -278,13 +278,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
         }
 
         while (running) {
+            log.info("Info started polling");
             try {
                 receiver.connect();
 
                 Message[] msgs = receiver.receiveMessages();
 
                 if ((msgs != null) && (msgs.length > 0)) {
-                    log.info(msgs.length + " Message Found");
+                    log.info(msgs.length + " Message(s) Found");
 
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
@@ -294,7 +295,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
                                 messageQueue.add(mc);
                             }
                         } catch (Exception e) {
-                            log.error("Error in SimpleMailListener - processing mail " + e);
+                            e.printStackTrace();
+                            log.error("Error in SimpleMailListener - processing mail",e);
                         } finally {
                             // delete mail in any case
                             msg.setFlag(Flags.Flag.DELETED, true);
@@ -305,7 +307,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 receiver.disconnect();
 
             } catch (Exception e) {
-                log.error("Error in SimpleMailListener" + e);
+                log.error("Error in SimpleMailListener", e);
             } finally {
                 try {
                     Thread.sleep(listenerWaitInterval);

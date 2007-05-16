@@ -18,6 +18,7 @@ package org.apache.axis2.transport.mail;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -33,24 +34,25 @@ public class SynchronousMailListener {
     private static Log log = LogFactory.getLog(SynchronousMailListener.class);
 
     private long timeoutInMilliseconds = -1;
+    private LinkedBlockingQueue queue;
 
-    public SynchronousMailListener(long timeoutInMilliseconds) {
+    public SynchronousMailListener(long timeoutInMilliseconds,LinkedBlockingQueue queue) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
+        this.queue = queue;
     }
 
 
-    public void sendReceive(final MessageContext msgContext, final String msgId) throws AxisFault {
+    public SimpleMailListener sendReceive(final MessageContext msgContext, final String msgId) throws AxisFault {
         /**
          * This will be bloked invocation
          */
-        SimpleMailListener listener = new SimpleMailListener(new LinkedBlockingQueue()) {
+        return new SimpleMailListener(queue) {
             public void start() throws AxisFault {
                 long timeStatus;
-                LinkedBlockingQueue queue = getLinkedBlockingQueue();
                 while (true) {
                     long startTime = System.currentTimeMillis();
                     try {
-                        MessageContext msgCtx = (MessageContext) queue.take();
+                        MessageContext msgCtx = (MessageContext) getLinkedBlockingQueue().take();
                         MailBasedOutTransportInfo transportInfo = (MailBasedOutTransportInfo) msgCtx
                                 .getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
                         if (transportInfo.getInReplyTo() == null) {
@@ -59,13 +61,21 @@ public class SynchronousMailListener {
                             throw new AxisFault(error);
                         }
                         if (transportInfo.getInReplyTo().equals(msgId)) {
-                            //TODO do the correct operation dispatching here
-                            msgContext.getOperationContext()
-                                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)
+                            MessageContext messageContext = msgContext.getOperationContext()
+                                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                            if (messageContext == null) {
+                                messageContext = ContextFactory.createMessageContext(msgContext.getConfigurationContext());
+                                messageContext.setOperationContext(msgContext.getOperationContext());
+                                messageContext.setServiceContext(msgContext.getServiceContext());
+                                msgContext.getOperationContext().addMessageContext(messageContext);
+                            }
+                            messageContext
                                     .setEnvelope(msgCtx.getEnvelope());
+                            log.info("SOAP Message :: " + messageContext.getEnvelope());
                             log.info(SynchronousMailListener.class.getName() + " found the required message.");
                             break;
                         }
+                        getLinkedBlockingQueue().put(msgCtx);
 
                     } catch (InterruptedException e) {
                         log.warn(e);
@@ -85,17 +95,6 @@ public class SynchronousMailListener {
             }
         };
 
-        TransportInDescription transportIn = msgContext.getConfigurationContext()
-                .getAxisConfiguration().getTransportIn(org.apache.axis2.Constants.TRANSPORT_MAIL);
-
-        Object obj = msgContext.getProperty(Constants.MAIL_POP3);
-        if (obj != null) {
-            listener.initFromRuntime((Properties)obj,msgContext);
-        } else {
-            listener.init(msgContext.getConfigurationContext(), transportIn);
-        }
-        msgContext.getConfigurationContext().getThreadPool().execute(listener);
-        listener.start();
 
     }
 

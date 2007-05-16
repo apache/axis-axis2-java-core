@@ -17,6 +17,7 @@
 
 package org.apache.axis2.transport.mail;
 
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -24,7 +25,9 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -98,7 +101,7 @@ public class EMailSender {
 
 
             EndpointReference epr = null;
-            MailToInfo mailToInfo = null;
+            MailToInfo mailToInfo;
 
             if (messageContext.getTo() != null && !messageContext.getTo().hasAnonymousAddress()) {
                 epr = messageContext.getTo();
@@ -150,6 +153,8 @@ public class EMailSender {
 
             createMailMimeMessage(msg, mailToInfo, format);
             Transport.send(msg);
+
+            log.info("Message being send. [Action = ]" + messageContext.getOptions().getAction());
 
             sendReceive(messageContext, msg.getMessageID());
         } catch (AddressException e) {
@@ -223,11 +228,44 @@ public class EMailSender {
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
         storeMessageContext(msgContext, msgId);
+
+        ConfigurationContext cc = msgContext.getConfigurationContext();
+
+        SimpleMailListener simpleMailListener;
+
         Options options = msgContext.getOptions();
-        if (!options.isUseSeparateListener()) {
-            SynchronousMailListener listener =
-                    new SynchronousMailListener(options.getTimeOutInMilliSeconds());
-            listener.sendReceive(msgContext, msgId);
+        if (!options.isUseSeparateListener() && !msgContext.isServerSide()) {
+            Object obj = cc.getProperty(Constants.MAIL_SYNC);
+
+            if (obj == null) {
+                SynchronousMailListener synchronousMailListener =
+                        new SynchronousMailListener(options.getTimeOutInMilliSeconds(), new LinkedBlockingQueue());
+                cc.setProperty(Constants.MAIL_SYNC, synchronousMailListener);
+
+                simpleMailListener = synchronousMailListener.sendReceive(msgContext, msgId);
+
+                TransportInDescription transportIn = msgContext.getConfigurationContext()
+                        .getAxisConfiguration().getTransportIn(org.apache.axis2.Constants.TRANSPORT_MAIL);
+
+                Object mailPOP3Obj= msgContext.getProperty(Constants.MAIL_POP3);
+                if (mailPOP3Obj != null) {
+                    simpleMailListener.initFromRuntime((Properties) obj, msgContext);
+                } else {
+                    simpleMailListener.init(msgContext.getConfigurationContext(), transportIn);
+                }
+                msgContext.getConfigurationContext().getThreadPool().execute(simpleMailListener);
+
+                simpleMailListener.start();
+                log.info("Simple Mail Listener started for the first time and response received");
+
+
+            } else {
+               SynchronousMailListener synchronousMailListener = (SynchronousMailListener)obj;
+               synchronousMailListener.sendReceive(msgContext,msgId).start();
+                log.info("Simple mail listener started and response received");
+
+            }
+
         }
 
     }
@@ -240,7 +278,9 @@ public class EMailSender {
             mappingTable = new Hashtable();
             msgContext.setProperty(Constants.MAPPING_TABLE, mappingTable);
         }
-        mappingTable.put(msgId, msgContext.getMessageID());
+        if (msgContext.getMessageID() != null) {
+            mappingTable.put(msgId, msgContext.getMessageID());
+        }
 
     }
 }
