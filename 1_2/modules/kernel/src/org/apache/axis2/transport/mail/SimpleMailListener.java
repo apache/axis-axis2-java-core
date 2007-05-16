@@ -363,7 +363,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
         return msgContext;
     }
 
-    private void fillMessageContextFromAvaiableData(MessageContext msgContext , String messageID){
+    private void fillMessageContextFromAvaiableData(MessageContext msgContext , String messageID) throws AxisFault{
         Hashtable mappingTable = (Hashtable) msgContext.getConfigurationContext().
                 getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
 
@@ -373,6 +373,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
                 if(opContext!=null){
                     msgContext.setOperationContext(opContext);
+                    opContext.addMessageContext(msgContext);
                     msgContext.setServiceContext(opContext.getServiceContext());
                 }
             }
