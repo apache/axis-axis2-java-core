@@ -280,31 +280,32 @@ public class SimpleMailListener implements Runnable, TransportListener {
         while (running) {
             log.info("Info started polling");
             try {
-                receiver.connect();
+                synchronized (receiver) {
+                    receiver.connect();
 
-                Message[] msgs = receiver.receiveMessages();
+                    Message[] msgs = receiver.receiveMessages();
 
-                if ((msgs != null) && (msgs.length > 0)) {
-                    log.info(msgs.length + " Message(s) Found");
+                    if ((msgs != null) && (msgs.length > 0)) {
+                        log.info(msgs.length + " Message(s) Found");
 
-                    for (int i = 0; i < msgs.length; i++) {
-                        MimeMessage msg = (MimeMessage) msgs[i];
-                        try {
-                            MessageContext mc = createMessageContextToMailWorker(msg);
-                            if (mc != null) {
-                                messageQueue.add(mc);
+                        for (int i = 0; i < msgs.length; i++) {
+                            MimeMessage msg = (MimeMessage) msgs[i];
+                            try {
+                                MessageContext mc = createMessageContextToMailWorker(msg);
+                                if (mc != null) {
+                                    messageQueue.add(mc);
+                                }
+                            } catch (Exception e) {
+                                log.error("Error in SimpleMailListener - processing mail", e);
+                            } finally {
+                                // delete mail in any case
+                                msg.setFlag(Flags.Flag.DELETED, true);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            log.error("Error in SimpleMailListener - processing mail",e);
-                        } finally {
-                            // delete mail in any case
-                            msg.setFlag(Flags.Flag.DELETED, true);
                         }
                     }
-                }
 
-                receiver.disconnect();
+                    receiver.disconnect();
+                }
 
             } catch (Exception e) {
                 log.error("Error in SimpleMailListener", e);
