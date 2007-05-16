@@ -19,6 +19,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -36,7 +37,7 @@ public class SynchronousMailListener {
     private long timeoutInMilliseconds = -1;
     private LinkedBlockingQueue queue;
 
-    public SynchronousMailListener(long timeoutInMilliseconds,LinkedBlockingQueue queue) {
+    public SynchronousMailListener(long timeoutInMilliseconds, LinkedBlockingQueue queue) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
         this.queue = queue;
     }
@@ -56,22 +57,25 @@ public class SynchronousMailListener {
                         MailBasedOutTransportInfo transportInfo = (MailBasedOutTransportInfo) msgCtx
                                 .getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
                         if (transportInfo.getInReplyTo() == null) {
-                            String error = EMailSender.class.getName() +" Coudn't simulate request/response without In-Reply-To Mail header";
+                            String error = EMailSender.class.getName() + " Coudn't simulate request/response without In-Reply-To Mail header";
                             log.error(error);
                             throw new AxisFault(error);
                         }
                         if (transportInfo.getInReplyTo().equals(msgId)) {
-                            MessageContext messageContext = msgContext.getOperationContext()
-                                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                            OperationContext operationContext = msgContext.getOperationContext();
+                            MessageContext messageContext = operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                            //FIXME
                             if (messageContext == null) {
-                                messageContext = ContextFactory.createMessageContext(msgContext.getConfigurationContext());
-                                messageContext.setOperationContext(msgContext.getOperationContext());
-                                messageContext.setServiceContext(msgContext.getServiceContext());
-                                msgContext.getOperationContext().addMessageContext(messageContext);
+                                if (!operationContext.isComplete()) {
+                                    messageContext = ContextFactory.createMessageContext(msgContext.getConfigurationContext());
+                                    messageContext.setOperationContext(operationContext);
+                                    messageContext.setServiceContext(msgContext.getServiceContext());
+                                    msgContext.getOperationContext().addMessageContext(messageContext);
+                                    messageContext.setEnvelope(msgCtx.getEnvelope());
+                                }
+                            } else {
+                                messageContext.setEnvelope(msgCtx.getEnvelope());
                             }
-                            messageContext
-                                    .setEnvelope(msgCtx.getEnvelope());
-                            log.info("SOAP Message :: " + messageContext.getEnvelope());
                             log.info(SynchronousMailListener.class.getName() + " found the required message.");
                             break;
                         }
