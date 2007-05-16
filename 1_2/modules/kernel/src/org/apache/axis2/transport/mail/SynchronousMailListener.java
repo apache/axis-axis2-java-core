@@ -59,6 +59,7 @@ public class SynchronousMailListener {
                             throw new AxisFault(error);
                         }
                         if (transportInfo.getInReplyTo().equals(msgId)) {
+                            //TODO do the correct operation dispatching here
                             msgContext.getOperationContext()
                                     .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)
                                     .setEnvelope(msgCtx.getEnvelope());

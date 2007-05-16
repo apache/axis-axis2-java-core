@@ -22,8 +22,8 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,23 +32,15 @@ import javax.activation.CommandMap;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.MailcapCommandMap;
-import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.Properties;
 import java.util.Hashtable;
+import java.util.Properties;
 
 public class EMailSender {
     private Properties properties;
@@ -116,16 +108,16 @@ public class EMailSender {
                 if (!epr.hasNoneAddress()) {
                     mailToInfo = new MailToInfo(epr);
                     msg.addRecipient(Message.RecipientType.TO,
-                                     new InternetAddress(mailToInfo.getEmailAddress()));
+                            new InternetAddress(mailToInfo.getEmailAddress()));
 
                 } else {
                     if (from != null) {
                         mailToInfo = new MailToInfo(from);
                         msg.addRecipient(Message.RecipientType.TO,
-                                         new InternetAddress(mailToInfo.getEmailAddress()));
+                                new InternetAddress(mailToInfo.getEmailAddress()));
                     } else {
                         String error = EMailSender.class.getName() + "Couldn't countinue due to" +
-                                       " FROM addressing is NULL";
+                                " FROM addressing is NULL";
                         log.error(error);
                         throw new AxisFault(error);
                     }
@@ -135,10 +127,10 @@ public class EMailSender {
                 if (from != null) {
                     mailToInfo = new MailToInfo(from);
                     msg.addRecipient(Message.RecipientType.TO,
-                                     new InternetAddress(mailToInfo.getEmailAddress()));
+                            new InternetAddress(mailToInfo.getEmailAddress()));
                 } else {
                     String error = EMailSender.class.getName() + "Couldn't countinue due to" +
-                                   " FROM addressing is NULL and EPR is NULL";
+                            " FROM addressing is NULL and EPR is NULL";
                     log.error(error);
                     throw new AxisFault(error);
                 }
@@ -149,7 +141,7 @@ public class EMailSender {
 
             if (mailToInfo.isxServicePath()) {
                 msg.setHeader(Constants.X_SERVICE_PATH,
-                              "\"" + mailToInfo.getContentDescription() + "\"");
+                        "\"" + mailToInfo.getContentDescription() + "\"");
             }
 
             if (inReplyTo != null) {
@@ -191,24 +183,24 @@ public class EMailSender {
                 .addHeader("Content-Description", "\"" + mailToInfo.getContentDescription() + "\"");
 
         String contentType = format.getContentType() != null ? format.getContentType() :
-                             Constants.DEFAULT_CONTENT_TYPE;
+                Constants.DEFAULT_CONTENT_TYPE;
         if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader(Constants.HEADER_SOAP_ACTION,
-                                          messageContext.getSoapAction());
+                        messageContext.getSoapAction());
             }
         }
 
         if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader("Content-Type",
-                                          contentType + "; charset=" + format.getCharSetEncoding() +
-                                          " ; action=\"" + messageContext.getSoapAction() +
-                                          "\"");
+                        contentType + "; charset=" + format.getCharSetEncoding() +
+                                " ; action=\"" + messageContext.getSoapAction() +
+                                "\"");
             }
         } else {
             messageBodyPart.setHeader("Content-Type",
-                                      contentType + "; charset=" + format.getCharSetEncoding());
+                    contentType + "; charset=" + format.getCharSetEncoding());
         }
 
         multipart.addBodyPart(messageBodyPart);
@@ -230,24 +222,25 @@ public class EMailSender {
     }
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
-        storeMessageContext(msgContext,msgId);
-        Object obj = msgContext.getProperty(Constants.MAIL_SYNC);
-        if (obj == null) {
-            return;
-        }
+        storeMessageContext(msgContext, msgId);
         Options options = msgContext.getOptions();
+        if (!options.isUseSeparateListener()) {
+            SynchronousMailListener listener =
+                    new SynchronousMailListener(options.getTimeOutInMilliSeconds());
+            listener.sendReceive(msgContext, msgId);
+        }
 
-        SynchronousMailListener listener =
-                new SynchronousMailListener(options.getTimeOutInMilliSeconds());
-        listener.sendReceive(msgContext, msgId);
     }
 
-    private void storeMessageContext(MessageContext msgContext, String msgId){
+    private void storeMessageContext(MessageContext msgContext, String msgId) {
         Hashtable mappingTable = (Hashtable) msgContext.getConfigurationContext().
                 getProperty(Constants.MAPPING_TABLE);
-        
-        if(mappingTable!=null){
-            mappingTable.put(msgId,msgContext.getMessageID());
+
+        if (mappingTable == null) {
+            mappingTable = new Hashtable();
+            msgContext.setProperty(Constants.MAPPING_TABLE, mappingTable);
         }
+        mappingTable.put(msgId, msgContext.getMessageID());
+
     }
 }

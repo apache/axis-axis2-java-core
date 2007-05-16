@@ -166,9 +166,13 @@ public class SimpleMailListener implements Runnable, TransportListener {
         receiver = new EmailReceiver();
         receiver.setPop3Properties(pop3Properties);
         receiver.setUrlName(urlName);
-        Hashtable mappingTable = new Hashtable();
-        configurationContext.setProperty(
-                org.apache.axis2.transport.mail.Constants.MAPPING_TABLE,mappingTable);
+        Object obj = configurationContext.
+                getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
+        if (obj == null) {
+            configurationContext.setProperty(
+                    org.apache.axis2.transport.mail.Constants.MAPPING_TABLE, new Hashtable());
+        }
+
 
     }
 
@@ -214,6 +218,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
         receiver = new EmailReceiver();
         receiver.setPop3Properties(pop3Properties);
         receiver.setUrlName(urlName);
+        Object obj = configurationContext.
+                getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
+        if (obj == null) {
+            configurationContext.setProperty(
+                    org.apache.axis2.transport.mail.Constants.MAPPING_TABLE, new Hashtable());
+        }
     }
 
     /**
