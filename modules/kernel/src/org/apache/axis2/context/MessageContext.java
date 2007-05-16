@@ -4235,19 +4235,19 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //     Does it do a deep clone of the Handlers held there?  Does it matter?
         switch (FLOW) {
             case IN_FLOW:
-                existingHandlers = (ArrayList) axisConfig.getGlobalInFlow().clone();
+                existingHandlers = (ArrayList) axisConfig.getInFlowPhases().clone();
                 break;
 
             case OUT_FLOW:
-                existingHandlers = (ArrayList) axisConfig.getGlobalOutPhases().clone();
+                existingHandlers = (ArrayList) axisConfig.getOutFlowPhases().clone();
                 break;
 
             case IN_FAULT_FLOW:
-                existingHandlers = (ArrayList) axisConfig.getInFaultFlow().clone();
+                existingHandlers = (ArrayList) axisConfig.getInFaultFlowPhases().clone();
                 break;
 
             case OUT_FAULT_FLOW:
-                existingHandlers = (ArrayList) axisConfig.getOutFaultFlow().clone();
+                existingHandlers = (ArrayList) axisConfig.getOutFaultFlowPhases().clone();
                 break;
         }
 

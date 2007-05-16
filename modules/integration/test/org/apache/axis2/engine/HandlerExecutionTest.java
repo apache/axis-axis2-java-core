@@ -108,7 +108,7 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
             initDone = true;
 
             ArrayList globalInPhases =
-                    UtilServer.getConfigurationContext().getAxisConfiguration().getGlobalInFlow();
+                    UtilServer.getConfigurationContext().getAxisConfiguration().getInFlowPhases();
             for (int i = 0; i < globalInPhases.size(); i++) {
                 Phase globalInPhase = (Phase)globalInPhases.get(i);
                 if (PhaseMetadata.PHASE_PRE_DISPATCH.equals(globalInPhase.getPhaseName())) {

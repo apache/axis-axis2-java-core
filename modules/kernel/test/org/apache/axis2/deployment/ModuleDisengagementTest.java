@@ -54,7 +54,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
@@ -79,7 +79,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
@@ -113,7 +113,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
@@ -138,7 +138,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
@@ -163,7 +163,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
@@ -188,7 +188,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getGlobalInFlow();
+        ArrayList globalinflow = er.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);

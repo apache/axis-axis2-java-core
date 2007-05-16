@@ -31,7 +31,6 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -191,7 +190,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
 
-        cfgContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        cfgContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         //-----------------------------------------------------------------
 

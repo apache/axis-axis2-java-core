@@ -92,7 +92,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
         dispatchPhase.addHandler(id);
-        config.getGlobalInFlow().add(dispatchPhase);
+        config.getInFlowPhases().add(dispatchPhase);
         TransportInDescription tIn = new TransportInDescription(Constants.TRANSPORT_LOCAL);
         tIn.setReceiver(new TransportListener() {
 

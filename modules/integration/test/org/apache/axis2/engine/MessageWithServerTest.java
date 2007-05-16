@@ -106,7 +106,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
         dispatchPhase.addHandler(id);
-        config.getGlobalInFlow().add(dispatchPhase);
+        config.getInFlowPhases().add(dispatchPhase);
         service.engageModule(m1);
 
         AxisOperation axisOperation = new OutInAxisOperation();

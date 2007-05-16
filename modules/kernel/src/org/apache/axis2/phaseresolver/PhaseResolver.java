@@ -65,7 +65,7 @@ public class PhaseResolver {
 
                     if (axisConfig != null) {
                         Iterator itr_axis_config =
-                                axisConfig.getGlobalInFlow().iterator();
+                                axisConfig.getInFlowPhases().iterator();
 
                         while (itr_axis_config.hasNext()) {
                             Object o = itr_axis_config.next();
@@ -98,7 +98,7 @@ public class PhaseResolver {
                     }
 
                     if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getGlobalOutPhases().iterator();
+                        Iterator itr_axis_config = axisConfig.getOutFlowPhases().iterator();
 
                         while (itr_axis_config.hasNext()) {
                             Object o = itr_axis_config.next();
@@ -116,7 +116,7 @@ public class PhaseResolver {
                     ArrayList phases = new ArrayList();
 
                     if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getInFaultFlow().iterator();
+                        Iterator itr_axis_config = axisConfig.getInFaultFlowPhases().iterator();
 
                         while (itr_axis_config.hasNext()) {
                             Object o = itr_axis_config.next();
@@ -147,7 +147,7 @@ public class PhaseResolver {
                         phases.add(o);
                     }
                     if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getOutFaultFlow().iterator();
+                        Iterator itr_axis_config = axisConfig.getOutFaultFlowPhases().iterator();
                         while (itr_axis_config.hasNext()) {
                             Object o = itr_axis_config.next();
                             phases.add(o);
@@ -208,7 +208,7 @@ public class PhaseResolver {
         if (flow != null) {
             for (int j = 0; j < flow.getHandlerCount(); j++) {
                 HandlerDescription handler = flow.getHandler(j);
-                removeHandlerfromaPhase(handler, axisConfig.getGlobalInFlow());
+                removeHandlerfromaPhase(handler, axisConfig.getInFlowPhases());
             }
         }
         //OUTFLOW
@@ -216,7 +216,7 @@ public class PhaseResolver {
         if (flow != null) {
             for (int j = 0; j < flow.getHandlerCount(); j++) {
                 HandlerDescription handler = flow.getHandler(j);
-                removeHandlerfromaPhase(handler, axisConfig.getGlobalOutPhases());
+                removeHandlerfromaPhase(handler, axisConfig.getOutFlowPhases());
             }
         }
         //INFAULTFLOW
@@ -224,7 +224,7 @@ public class PhaseResolver {
         if (flow != null) {
             for (int j = 0; j < flow.getHandlerCount(); j++) {
                 HandlerDescription handler = flow.getHandler(j);
-                removeHandlerfromaPhase(handler, axisConfig.getInFaultFlow());
+                removeHandlerfromaPhase(handler, axisConfig.getInFaultFlowPhases());
             }
         }
         //OUTFAULTFLOW
@@ -232,7 +232,7 @@ public class PhaseResolver {
         if (flow != null) {
             for (int j = 0; j < flow.getHandlerCount(); j++) {
                 HandlerDescription handler = flow.getHandler(j);
-                removeHandlerfromaPhase(handler, axisConfig.getOutFaultFlow());
+                removeHandlerfromaPhase(handler, axisConfig.getOutFaultFlowPhases());
             }
         }
     }

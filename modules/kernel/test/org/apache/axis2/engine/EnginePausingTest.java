@@ -98,7 +98,7 @@ public class EnginePausingTest extends TestCase {
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
-        configContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        configContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {

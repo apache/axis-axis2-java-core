@@ -124,7 +124,7 @@ public class OperationContextSaveTest extends TestCase {
         dispatchPhase.addHandler(sabd);
         dispatchPhase.addHandler(smbd);
 
-        configurationContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        configurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         //-----------------------------------------------------------------
 

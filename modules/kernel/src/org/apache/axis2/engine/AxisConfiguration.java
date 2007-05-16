@@ -572,18 +572,18 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     // to get the out flow correpodning to the global out flow;
-    public ArrayList getGlobalOutPhases() {
+    public ArrayList getOutFlowPhases() {
         return this.outPhases;
     }
 
     /**
      * @return Returns ArrayList.
      */
-    public ArrayList getInFaultFlow() {
+    public ArrayList getInFaultFlowPhases() {
         return inFaultPhases;
     }
 
-    public ArrayList getGlobalInFlow() {
+    public ArrayList getInFlowPhases() {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
@@ -668,7 +668,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * @return Returns ArrayList.
      */
-    public ArrayList getOutFaultFlow() {
+    public ArrayList getOutFaultFlowPhases() {
         return outFaultPhases;
     }
 

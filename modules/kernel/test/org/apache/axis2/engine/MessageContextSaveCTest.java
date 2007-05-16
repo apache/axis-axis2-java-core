@@ -229,7 +229,7 @@ public class MessageContextSaveCTest extends TestCase {
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         saveConfigurationContext.getAxisConfiguration().addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
-        saveConfigurationContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        saveConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         restoreAxisConfiguration = new AxisConfiguration();
         restoreConfigurationContext = new ConfigurationContext(restoreAxisConfiguration);
@@ -237,7 +237,7 @@ public class MessageContextSaveCTest extends TestCase {
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         restoreConfigurationContext.getAxisConfiguration().addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
-        restoreConfigurationContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        restoreConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         equivAxisConfiguration = new AxisConfiguration();
         equivConfigurationContext = new ConfigurationContext(equivAxisConfiguration);
@@ -245,7 +245,7 @@ public class MessageContextSaveCTest extends TestCase {
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         equivConfigurationContext.getAxisConfiguration().addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
-        equivConfigurationContext.getAxisConfiguration().getGlobalInFlow().add(dispatchPhase);
+        equivConfigurationContext.getAxisConfiguration().getInFlowPhases().add(dispatchPhase);
 
         //----------------------------
         // transport-related objects

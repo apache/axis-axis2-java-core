@@ -116,10 +116,10 @@ public class AxisEngine {
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases;
         if (msgContext.isFault()) {
-            preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlow();
+            preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlowPhases();
             msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
         } else {
-            preCalculatedPhases = confContext.getAxisConfiguration().getGlobalInFlow();
+            preCalculatedPhases = confContext.getAxisConfiguration().getInFlowPhases();
             msgContext.setFLOW(MessageContext.IN_FLOW);
         }
         // Set the initial execution chain in the MessageContext to a *copy* of what
@@ -370,7 +370,7 @@ public class AxisEngine {
         ArrayList outPhases = new ArrayList();
         outPhases.addAll((ArrayList) executionChain.clone());
         outPhases.addAll((ArrayList) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getGlobalOutPhases().clone());
+                .getAxisConfiguration().getOutFlowPhases().clone());
         msgContext.setExecutionChain(outPhases);
         msgContext.setFLOW(MessageContext.OUT_FLOW);
         try {
@@ -462,7 +462,7 @@ public class AxisEngine {
         }
 
         msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getOutFaultFlow().clone());
+                .getAxisConfiguration().getOutFaultFlowPhases().clone());
         msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
         InvocationResponse pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
 

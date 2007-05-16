@@ -55,7 +55,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
     protected void setUp() throws Exception {
         ConfigurationContext configurationContext = UtilServer.getConfigurationContext();
         ArrayList inPhasesUptoAndIncludingPostDispatch =
-                configurationContext.getAxisConfiguration().getGlobalInFlow();
+                configurationContext.getAxisConfiguration().getInFlowPhases();
         Phase phaseOne = (Phase)inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());
     }

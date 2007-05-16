@@ -304,7 +304,7 @@ public class PhaseRuleTests extends TestCase {
 
     public void testPhaseRules() throws Exception {
         // TODO : What is this testing exactly?
-        ArrayList inPhase = new AxisConfiguration().getGlobalInFlow();
+        ArrayList inPhase = new AxisConfiguration().getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();

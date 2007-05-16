@@ -37,7 +37,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
     public void testPhaseRules() throws Exception {
         //TODO fix me
         axisConfig = new AxisConfiguration();
-        ArrayList inPhase = axisConfig.getGlobalInFlow();
+        ArrayList inPhase = axisConfig.getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -77,7 +77,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
         super.setUp();
         //TODO fix me
         axisConfig = new AxisConfiguration();
-        ArrayList inPhase = axisConfig.getGlobalInFlow();
+        ArrayList inPhase = axisConfig.getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
@@ -111,7 +111,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
     public void testPhaseRulesWithAfter() throws Exception {
         //TODO fix me
         axisConfig = new AxisConfiguration();
-        ArrayList inPhase = axisConfig.getGlobalInFlow();
+        ArrayList inPhase = axisConfig.getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();
