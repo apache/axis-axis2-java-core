@@ -373,7 +373,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String messageConetextId= (String) mappingTable.get(messageID);
             if(messageConetextId!=null){
                 OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
-                if(opContext!=null){
+                if(opContext!=null && !opContext.isComplete()){
+                    //FixME
                     msgContext.setOperationContext(opContext);
                     opContext.addMessageContext(msgContext);
                     msgContext.setServiceContext(opContext.getServiceContext());
