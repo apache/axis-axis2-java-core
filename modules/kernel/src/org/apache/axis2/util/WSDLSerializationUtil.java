@@ -38,6 +38,7 @@ import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Helps the AxisService to WSDL process
@@ -51,11 +52,14 @@ public class WSDLSerializationUtil {
      * @return - The prefix of the namespace
      */
     public static String getPrefix(String namespace, Map nameSpaceMap) {
-        Iterator keys = nameSpaceMap.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if (nameSpaceMap.get(key).equals(namespace)) {
-                return key;
+        Set keySet;
+        if (nameSpaceMap != null && (keySet = nameSpaceMap.keySet()) != null) {
+            Iterator keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                if (nameSpaceMap.get(key).equals(namespace)) {
+                    return key;
+                }
             }
         }
         return null;
