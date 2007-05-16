@@ -1,6 +1,4 @@
 /*
- * Copyright 2007 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,14 +56,14 @@ public class LocalTestCase extends TestCase {
         tOut.setSender(new LocalTransportSender());
         serverConfig.addTransportOut(tOut);
 
-        addInPhases(serverConfig.getGlobalInFlow());
-        DispatchPhase dp = (DispatchPhase)serverConfig.getGlobalInFlow().get(1);
+        addInPhases(serverConfig.getInFlowPhases());
+        DispatchPhase dp = (DispatchPhase)serverConfig.getInFlowPhases().get(1);
         dp.addHandler(new AddressingBasedDispatcher());
 
-        addInPhases(serverConfig.getInFaultFlow());
+        addInPhases(serverConfig.getInFaultFlowPhases());
 
-        addOutPhases(serverConfig.getGlobalOutPhases());
-        addOutPhases(serverConfig.getOutFaultFlow());
+        addOutPhases(serverConfig.getOutFlowPhases());
+        addOutPhases(serverConfig.getOutFaultFlowPhases());
 
         // NOTE : If you want addressing (which you probably do), we can do something
         // like this, or we can pull it off the classpath (better solution?)
