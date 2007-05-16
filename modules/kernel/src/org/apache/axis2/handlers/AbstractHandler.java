@@ -29,12 +29,6 @@ import org.apache.axis2.engine.Handler;
 public abstract class AbstractHandler implements Handler {
 
     /**
-     * Field EMPTY_HANDLER_METADATA
-     */
-    private static HandlerDescription EMPTY_HANDLER_METADATA =
-            new HandlerDescription(("default Handler"));
-
-    /**
      * Field handlerDesc
      */
     protected HandlerDescription handlerDesc;
@@ -43,7 +37,7 @@ public abstract class AbstractHandler implements Handler {
      * Constructor AbstractHandler.
      */
     public AbstractHandler() {
-        handlerDesc = EMPTY_HANDLER_METADATA;
+        handlerDesc = new HandlerDescription("DefaultHandler");
     }
 
     /**
