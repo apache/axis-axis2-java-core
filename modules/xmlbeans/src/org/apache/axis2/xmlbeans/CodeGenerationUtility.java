@@ -581,7 +581,7 @@ public class CodeGenerationUtility {
                 systemId = systemId.substring("project://local/".length());
             }
 
-            StringTokenizer pathElements = new StringTokenizer(systemId, File.separator);
+            StringTokenizer pathElements = new StringTokenizer(systemId, "/");
             Stack pathElementStack = new Stack();
             while (pathElements.hasMoreTokens()) {
                 String pathElement = pathElements.nextToken();
@@ -595,7 +595,7 @@ public class CodeGenerationUtility {
             }
             StringBuffer pathBuilder = new StringBuffer();
             for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
-                pathBuilder.append(File.separator + iter.next());
+                pathBuilder.append("/" + iter.next());
             }
             systemId = pathBuilder.toString().substring(1);
 
