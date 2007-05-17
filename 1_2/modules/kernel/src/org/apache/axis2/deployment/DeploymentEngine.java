@@ -1010,6 +1010,35 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         }
     }
 
+     public static AxisServiceGroup loadServiceGroup(File serviceFile ,
+                                                     ConfigurationContext configCtx) throws AxisFault {
+         try {
+             DeploymentFileData currentDeploymentFile = new DeploymentFileData(
+                     DeploymentConstants.TYPE_SERVICE, "");
+             DeploymentClassLoader classLoader = new DeploymentClassLoader(new URL[]{serviceFile.toURL()},
+                     new ArrayList(),
+                     Thread.currentThread().getContextClassLoader());
+             currentDeploymentFile.setClassLoader(classLoader);
+             AxisServiceGroup serviceGroup = new AxisServiceGroup();
+             serviceGroup.setServiceGroupClassLoader(classLoader);
+             serviceGroup.setServiceGroupName(serviceFile.getName());
+             AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+
+             HashMap wsdlServices = new HashMap();
+             ArchiveReader archiveReader = new ArchiveReader();
+             archiveReader.processFilesInFolder(serviceFile, wsdlServices);
+             InputStream serviceXml = classLoader.getResourceAsStream("META-INF/services.xml");
+             ArrayList serviceList = archiveReader.buildServiceGroup(serviceXml,
+                     currentDeploymentFile,
+                     serviceGroup,
+                     wsdlServices, configCtx);
+             fillServiceGroup(serviceGroup, serviceList, null, axisConfig);
+             return serviceGroup;
+         } catch (Exception e) {
+             throw new AxisFault(e);
+         }
+    }
+
     public File getServicesDir() {
         return servicesDir;
     }

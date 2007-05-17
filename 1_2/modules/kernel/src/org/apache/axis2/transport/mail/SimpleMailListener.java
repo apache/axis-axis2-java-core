@@ -25,13 +25,12 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.*;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
@@ -321,7 +320,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
     }
 
     private MessageContext createMessageContextToMailWorker(MimeMessage msg) throws Exception {
-
+        Object content = msg.getContent();
+        if(!(content instanceof Multipart)){
+            return null;
+        }
         MessageContext msgContext = null;
         TransportInDescription transportIn =
                 configurationContext.getAxisConfiguration()
@@ -375,8 +377,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if(messageConetextId!=null){
                 OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
                 if(opContext!=null && !opContext.isComplete()){
-                    //FixME
+                    AxisOperation axisOp = opContext.getAxisOperation();
+                    //TODO need to handle fault case as well ,
+                    //TODO  need to check whether the message contains fault , if so we need to get the fault message
+                    AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     msgContext.setOperationContext(opContext);
+                    msgContext.setAxisMessage(inMessage);
                     opContext.addMessageContext(msgContext);
                     msgContext.setServiceContext(opContext.getServiceContext());
                 }
