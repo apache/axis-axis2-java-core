@@ -16,26 +16,22 @@
 
 package org.apache.axis2.fastinfoset;
 
-import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
-import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.custommonkey.xmlunit.XMLTestCase;
+
+import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
+import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
 
 /**
  * @author : Eran Chinthaka (echintha@cs.indiana.edu)
@@ -53,45 +49,32 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
      * <p/>
      * Then the initial XML file and the last XML will be compared to see whether they are the same.
      */
-//    public void testInputOutput() {
-//        String inputFile = "maven.xml";
-//        File outputFile = new File("output.xml");
-//        File tempFile = new File("test.bin");
-//
-//        try {
-//            // first let's read the xml document in to Axiom
-//            OMElement element = new StAXOMBuilder(inputFile).getDocumentElement();
-//
-//            // output it using binary xml outputter
-//            XMLStreamWriter streamWriter = new StAXDocumentSerializer(new FileOutputStream(tempFile));
-//            element.serializeAndConsume(streamWriter);
-//
-//            // now let's read the binary file in to Axiom
-//            XMLStreamReader streamReader = new StAXDocumentParser(new FileInputStream(tempFile));
-//            StAXBuilder builder = new StAXSOAPModelBuilder(streamReader);
-//            builder.getDocumentElement().serialize(new FileWriter(outputFile));
-//
-//            // let's see this is the same that we fed in to this test initially
-//            assertXMLEqual(new FileReader(inputFile), new FileReader(outputFile));
-//
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();
-//            fail();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            fail();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            fail();
-//        } catch (ParserConfigurationException e) {
-//            e.printStackTrace();
-//            fail();
-//        } catch (SAXException e) {
-//            e.printStackTrace();
-//            fail();
-//        } finally {
-//            if (outputFile.exists()) outputFile.delete();
-//            if (tempFile.exists()) tempFile.delete();
-//        }
-//    }
+    public void testInputOutput() throws Exception {
+        String inputFile = "maven.xml";
+        File outputFile = new File("output.xml");
+        File tempFile = new File("test.bin");
+
+        try {
+            // first let's read the xml document in to Axiom
+            OMElement element = new StAXOMBuilder(inputFile).getDocumentElement();
+
+            // output it using binary xml outputter
+            XMLStreamWriter streamWriter = new StAXDocumentSerializer(new FileOutputStream(tempFile));
+            streamWriter.writeStartDocument();
+            element.serializeAndConsume(streamWriter);
+            streamWriter.writeEndDocument();
+
+            // now let's read the binary file in to Axiom
+            XMLStreamReader streamReader = new StAXDocumentParser(new FileInputStream(tempFile));
+            StAXBuilder builder = new StAXOMBuilder(streamReader);
+            builder.getDocumentElement().serialize(new FileWriter(outputFile));
+
+            // let's see this is the same that we fed in to this test initially
+            assertXMLEqual(new FileReader(inputFile), new FileReader(outputFile));
+
+        } finally {
+            if (outputFile.exists()) outputFile.delete();
+            if (tempFile.exists()) tempFile.delete();
+        }
+    }
 }

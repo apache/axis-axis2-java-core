@@ -32,8 +32,8 @@ import org.apache.commons.logging.LogFactory;
 import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
 
 /**
- * 
- *
+ * @author Sanjaya Karunasena (sanjayak@yahoo.com)
+ * @date Feb 06, 2007
  */
 public class FastInfosetBuilder implements Builder {
 

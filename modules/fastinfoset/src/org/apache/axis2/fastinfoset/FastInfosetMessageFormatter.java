@@ -36,6 +36,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
 
+/**
+ * @author Sanjaya Karunasena (sanjayak@yahoo.com)
+ * @date Feb 06, 2007
+ */
 public class FastInfosetMessageFormatter implements MessageFormatter {
 
 	private Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);

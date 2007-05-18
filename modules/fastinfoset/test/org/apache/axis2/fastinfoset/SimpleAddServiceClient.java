@@ -33,6 +33,10 @@ import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddIntsResponse;
 import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStrings;
 import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStringsResponse;
 
+/**
+ * @author Sanjaya Karunasena (sanjayak@yahoo.com)
+ * @date Feb 16, 2007
+ */
 public class SimpleAddServiceClient {
 	
 	private SimpleAddServiceStub serviceStub;
