@@ -28,6 +28,8 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -233,6 +235,12 @@ public class EMailSender {
         Options options = msgContext.getOptions();
         long outInMilliSeconds = options.getTimeOutInMilliSeconds();
         SynchronousMailListener synchronousMailListener = null;
+        //No need to stor the message context if the mep is out-only
+        AxisOperation axisOperation = msgContext.getAxisOperation();
+        if(axisOperation instanceof OutOnlyAxisOperation) {
+            return;
+        }
+
         if (!options.isUseSeparateListener() && !msgContext.isServerSide()) {
             if(!cc.getListenerManager().isListenerRunning(Constants.MAILTO)){
                 TransportInDescription mailTo=
