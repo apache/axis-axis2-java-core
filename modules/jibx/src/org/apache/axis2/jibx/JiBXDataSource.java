@@ -45,9 +45,15 @@ public class JiBXDataSource implements OMDataSource {
 
     /** Element name (only used with {@link #marshallerIndex}). */
     private final String elementName;
+    
+    /** Element namespace URI (only used with {@link #marshallerIndex}). */
+    private final String elementNamespace;
 
     /** Element namespace prefix (only used with {@link #marshallerIndex}). */
     private final String elementNamespacePrefix;
+    
+    /** Element namespace index (only used with {@link #marshallerIndex}). */
+    private final int elementNamespaceIndex;
 
     /** Indexes of namespaces to be opened (only used with {@link #marshallerIndex}). */
     private final int[] openNamespaceIndexes;
@@ -71,7 +77,8 @@ public class JiBXDataSource implements OMDataSource {
         marshallerIndex = -1;
         dataObject = obj;
         bindingFactory = factory;
-        elementName = elementNamespacePrefix = null;
+        elementName = elementNamespace = elementNamespacePrefix = null;
+        elementNamespaceIndex = -1;
         openNamespaceIndexes = null;
         openNamespacePrefixes = null;
     }
@@ -82,54 +89,105 @@ public class JiBXDataSource implements OMDataSource {
      * @param obj
      * @param index
      * @param name
+     * @param uri
      * @param prefix
      * @param nsindexes
      * @param nsprefixes
      * @param factory
      */
-    public JiBXDataSource(Object obj, int index, String name, String prefix,
+    public JiBXDataSource(Object obj, int index, String name, String uri, String prefix,
                           int[] nsindexes, String[] nsprefixes, IBindingFactory factory) {
         if (index < 0) {
             throw new
                     IllegalArgumentException("index value must be non-negative");
         }
         marshallerIndex = index;
-        elementName = name;
-        elementNamespacePrefix = prefix;
-        openNamespaceIndexes = nsindexes;
-        openNamespacePrefixes = nsprefixes;
         dataObject = obj;
         bindingFactory = factory;
+        boolean found = false;
+        String[] nss = factory.getNamespaces();
+        int nsidx = -1;
+        for (int i = 0; i < nsindexes.length; i++) {
+            if (uri.equals(nss[nsindexes[i]])) {
+                nsidx = nsindexes[i];
+                prefix = nsprefixes[i];
+                found = true;
+                break;
+            }
+        }
+        elementName = name;
+        elementNamespace = uri;
+        elementNamespacePrefix = prefix;
+        if (!found) {
+            for (int i = 0; i < nss.length; i++) {
+                if (uri.equals(nss[i])) {
+                    nsidx = i;
+                    break;
+                }
+            }
+            if (nsidx >= 0) {
+                int[] icpy = new int[nsindexes.length+1];
+                icpy[0] = nsidx;
+                System.arraycopy(nsindexes, 0, icpy, 1, nsindexes.length);
+                nsindexes = icpy;
+                String[] scpy = new String[nsprefixes.length+1];
+                scpy[0] = prefix;
+                System.arraycopy(nsprefixes, 0, scpy, 1, nsprefixes.length);
+                nsprefixes = scpy;
+            } else {
+                throw new IllegalStateException("Namespace not found");
+            }
+        }
+        elementNamespaceIndex = nsidx;
+        openNamespaceIndexes = nsindexes;
+        openNamespacePrefixes = nsprefixes;
     }
 
     /**
-     * Internal method to handle the actual marshalling.
-     *
+     * Internal method to handle the actual marshalling. If the source object is marshallable it's
+     * it's just marshalled directly, without worrying about redundant namespace declarations and
+     * such. If it needs to be handled with an abstract mapping, the handling is determined by the
+     * 'full' flag. When this is <code>true</code> all namespaces are declared directly, while if
+     * <code>false</code> the namespaces must have previously been declared on some enclosing
+     * element of the output. This allows the normal case of marshalling within the context of a
+     * SOAP message to be handled efficiently, while still generating correct XML if the element is
+     * marshalled directly (as when building the AXIOM representation for use by WS-Security).
+     * 
+     * @param full
      * @param ctx
      * @throws JiBXException
      */
-    private void marshal(IMarshallingContext ctx) throws JiBXException {
+    private void marshal(boolean full, IMarshallingContext ctx) throws JiBXException {
         try {
             
             if (marshallerIndex < 0) {
                 ((IMarshallable)dataObject).marshal(ctx);
             } else {
-    
-                // open namespaces from wrapper element
                 IXMLWriter wrtr = ctx.getXmlWriter();
-                wrtr.openNamespaces(openNamespaceIndexes, openNamespacePrefixes);
                 String name = elementName;
-                if (!"".equals(elementNamespacePrefix)) {
-                    name = elementNamespacePrefix + ':' + name;
+                int nsidx = 0;
+                if (full) {
+                    
+                    // declare all namespaces on start tag
+                    nsidx = elementNamespaceIndex;
+                    wrtr.startTagNamespaces(nsidx, name, openNamespaceIndexes, openNamespacePrefixes);
+                    
+                } else {
+        
+                    // configure writer with namespace declared in enclosing scope
+                    wrtr.openNamespaces(openNamespaceIndexes, openNamespacePrefixes);
+                    if (!"".equals(elementNamespacePrefix)) {
+                        name = elementNamespacePrefix + ':' + name;
+                    }
+                    wrtr.startTagOpen(0, name);
                 }
-                wrtr.startTagOpen(0, name);
-    
+                
                 // marshal object representation (may include attributes) into element
                 IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
                                                      bindingFactory
                                                              .getMappedClasses()[marshallerIndex]);
                 mrsh.marshal(dataObject, ctx);
-                wrtr.endTag(0, name);
+                wrtr.endTag(nsidx, name);
             }
             ctx.getXmlWriter().flush();
 
@@ -143,10 +201,12 @@ public class JiBXDataSource implements OMDataSource {
      */
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
+            
+            // marshal with all namespace declarations, since external state unknown
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output,
-                          format == null ? null : format.getCharSetEncoding());
-            marshal(ctx);
+            ctx.setOutput(output, format == null ? null : format.getCharSetEncoding());
+            marshal(true, ctx);
+            
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }
@@ -157,9 +217,12 @@ public class JiBXDataSource implements OMDataSource {
      */
     public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
         try {
+            
+            // marshal with all namespace declarations, since external state unknown
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
             ctx.setOutput(writer);
-            marshal(ctx);
+            marshal(true, ctx);
+            
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }
@@ -170,11 +233,31 @@ public class JiBXDataSource implements OMDataSource {
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
         try {
-            IXMLWriter writer = new StAXWriter(bindingFactory.getNamespaces(),
-                                               xmlWriter);
+            
+            // check if namespaces already declared for abstract mapping
+            boolean full = true;
+            String[] nss = bindingFactory.getNamespaces();
+            if (marshallerIndex >= 0) {
+                String prefix = xmlWriter.getPrefix(elementNamespace);
+                if (elementNamespacePrefix.equals(prefix)) {
+                    full = false;
+                    for (int i = 0; i < openNamespaceIndexes.length; i++) {
+                        String uri = nss[i];
+                        prefix = xmlWriter.getPrefix(uri);
+                        if (!openNamespacePrefixes[i].equals(prefix)) {
+                            full = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // marshal with all namespace declarations, since external state unknown
+            IXMLWriter writer = new StAXWriter(nss, xmlWriter);
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
             ctx.setXmlWriter(writer);
-            marshal(ctx);
+            marshal(full, ctx);
+            
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }

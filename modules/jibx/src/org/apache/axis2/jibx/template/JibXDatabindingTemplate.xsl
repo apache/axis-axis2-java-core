@@ -87,13 +87,7 @@
                 if (bindingFactory == null) {
                     throw new RuntimeException(bindingErrorMessage);
                 }
-                org.jibx.runtime.IMarshallable marshallable =
-                    (org.jibx.runtime.IMarshallable)param;
-                int index = marshallable.JiBX_getIndex();
-                org.apache.axis2.jibx.JiBXDataSource source =
-                    new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
-                org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
-                return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
+                return (mappedChild(param, factory));
             } else if (param == null) {
                 throw new RuntimeException("Cannot bind null value of type <xsl:value-of select="@type"/>");
             } else {
@@ -185,15 +179,15 @@
                           }
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@form='complex' and out-wrapper/return-element/@type-index=''">
-                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)result, bindingFactory);
+                          wrapper.addChild(mappedChild(result, factory));
               </xsl:when>
               <xsl:otherwise>
-                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
-              </xsl:otherwise>
-            </xsl:choose>
+                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
                           org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                           org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                           wrapper.addChild(child);
+              </xsl:otherwise>
+            </xsl:choose>
                       }
                   }
           </xsl:when>
@@ -257,15 +251,15 @@
                   }
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@form='complex' and out-wrapper/return-element/@type-index=''">
-                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)result, bindingFactory);
+                  wrapper.addChild(mappedChild(result, factory));
               </xsl:when>
               <xsl:otherwise>
-                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
-              </xsl:otherwise>
-            </xsl:choose>
+                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
                   org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                   org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                   wrapper.addChild(child);
+              </xsl:otherwise>
+            </xsl:choose>
               }
           </xsl:when>
           <xsl:otherwise>
@@ -615,15 +609,13 @@
         if (bindingFactory == null) {
             throw new RuntimeException(bindingErrorMessage);
         }
-        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource((org.jibx.runtime.IMarshallable)<xsl:call-template name="parameter-or-array-item"/>, bindingFactory);
-        org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
-        child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
+        child = mappedChild(<xsl:call-template name="parameter-or-array-item"/>, factory);
       </xsl:when>
       <xsl:when test="@form='complex'">
         if (bindingFactory == null) {
             throw new RuntimeException(bindingErrorMessage);
         }
-        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
         child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
       </xsl:when>
@@ -652,69 +644,69 @@
   -->
   <!-- Called by main template to create utility methods -->
   <xsl:template name="stub-utility-methods">
-        
-        private Exception convertException(Exception ex) throws java.rmi.RemoteException {
-            if (ex instanceof org.apache.axis2.AxisFault) {
-                org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault)ex;
-                org.apache.axiom.om.OMElement faultElt = f.getDetail();
-                if (faultElt != null) {
-                    if (faultExceptionNameMap.containsKey(faultElt.getQName())) {
-                        try {
-                            
-                            // first create the actual exception
-                            String exceptionClassName = (String)faultExceptionClassNameMap.get(faultElt.getQName());
-                            Class exceptionClass = Class.forName(exceptionClassName);
-                            Exception e = (Exception)exceptionClass.newInstance();
-                            
-                            // build the message object from the details
-                            String messageClassName = (String)faultMessageMap.get(faultElt.getQName());
-                            Class messageClass = Class.forName(messageClassName);
-                            Object messageObject = fromOM(faultElt, messageClass, null);
-                            java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
-                                new Class[] { messageClass });
-                            m.invoke(e, new Object[] { messageObject });
-                            return e;
-                            
-                        } catch (ClassCastException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (ClassNotFoundException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (NoSuchMethodException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.reflect.InvocationTargetException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (IllegalAccessException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (InstantiationException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        }
-                    } else {
+    
+    private Exception convertException(Exception ex) throws java.rmi.RemoteException {
+        if (ex instanceof org.apache.axis2.AxisFault) {
+            org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault)ex;
+            org.apache.axiom.om.OMElement faultElt = f.getDetail();
+            if (faultElt != null) {
+                if (faultExceptionNameMap.containsKey(faultElt.getQName())) {
+                    try {
+                        
+                        // first create the actual exception
+                        String exceptionClassName = (String)faultExceptionClassNameMap.get(faultElt.getQName());
+                        Class exceptionClass = Class.forName(exceptionClassName);
+                        Exception e = (Exception)exceptionClass.newInstance();
+                        
+                        // build the message object from the details
+                        String messageClassName = (String)faultMessageMap.get(faultElt.getQName());
+                        Class messageClass = Class.forName(messageClassName);
+                        Object messageObject = fromOM(faultElt, messageClass, null);
+                        java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                            new Class[] { messageClass });
+                        m.invoke(e, new Object[] { messageObject });
+                        return e;
+                        
+                    } catch (ClassCastException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
+                        throw f;
+                    } catch (ClassNotFoundException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
+                        throw f;
+                    } catch (NoSuchMethodException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
+                        throw f;
+                    } catch (java.lang.reflect.InvocationTargetException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
+                        throw f;
+                    } catch (IllegalAccessException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
+                        throw f;
+                    } catch (InstantiationException e) {
+                        // we cannot intantiate the class - throw the original
+                        // Axis fault
                         throw f;
                     }
                 } else {
                     throw f;
                 }
-                
-            } else if (ex instanceof RuntimeException) {
-                throw (RuntimeException)ex;
-            } else if (ex instanceof java.rmi.RemoteException) {
-                throw (java.rmi.RemoteException)ex;
             } else {
-                throw org.apache.axis2.AxisFault.makeFault(ex);
+                throw f;
             }
+            
+        } else if (ex instanceof RuntimeException) {
+            throw (RuntimeException)ex;
+        } else if (ex instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)ex;
+        } else {
+            throw org.apache.axis2.AxisFault.makeFault(ex);
         }
+    }
     
   </xsl:template>
   
@@ -726,110 +718,118 @@
   <!-- Called by main template to handle static binding data and methods. -->
   <xsl:template match="initialize-binding">
     <xsl:variable name="nscount" select="count(binding-namespace)"/>
-      private static final org.jibx.runtime.IBindingFactory bindingFactory;
-      private static final String bindingErrorMessage;
-      private static final int[] bindingNamespaceIndexes;
-      private static final String[] bindingNamespacePrefixes;
+    private static final org.jibx.runtime.IBindingFactory bindingFactory;
+    private static final String bindingErrorMessage;
+    private static final int[] bindingNamespaceIndexes;
+    private static final String[] bindingNamespacePrefixes;
     <xsl:apply-templates mode="generate-index-fields" select="abstract-type"/>
-        static {
-            org.jibx.runtime.IBindingFactory factory = null;
-            String message = null;
-            try {
+    static {
+        org.jibx.runtime.IBindingFactory factory = null;
+        String message = null;
+        try {
     <xsl:choose>
       <xsl:when test="string-length(normalize-space(@binding-name)) > 0">
-                factory = org.jibx.runtime.BindingDirectory.getFactory("<xsl:value-of select="@binding-name"/>", "<xsl:value-of select="@binding-package"/>", <xsl:choose><xsl:when test="string-length(normalize-space(/class/@name))>0"><xsl:value-of select="/class/@name"/></xsl:when><xsl:otherwise><xsl:value-of select="/interface/@name"/></xsl:otherwise></xsl:choose>.class.getClassLoader());
+            factory = org.jibx.runtime.BindingDirectory.getFactory("<xsl:value-of select="@binding-name"/>", "<xsl:value-of select="@binding-package"/>", <xsl:choose><xsl:when test="string-length(normalize-space(/class/@name))>0"><xsl:value-of select="/class/@name"/></xsl:when><xsl:otherwise><xsl:value-of select="/interface/@name"/></xsl:otherwise></xsl:choose>.class.getClassLoader());
       </xsl:when>
       <xsl:when test="string-length(normalize-space(@bound-class)) > 0">
-                factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
+            factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
       </xsl:when>
       <xsl:otherwise>
-                factory = new org.apache.axis2.jibx.NullBindingFactory();
+            factory = new org.apache.axis2.jibx.NullBindingFactory();
       </xsl:otherwise>
     </xsl:choose>
-                message = null;
-            } catch (Exception e) { message = e.getMessage(); }
-            bindingFactory = factory;
-            bindingErrorMessage = message;
+            message = null;
+        } catch (Exception e) { message = e.getMessage(); }
+        bindingFactory = factory;
+        bindingErrorMessage = message;
     <xsl:apply-templates mode="set-index-fields" select="abstract-type"/>
-            int[] indexes = null;
-            String[] prefixes = null;
-            if (factory != null) {
-                
-                // check for xsi namespace included
-                String[] nsuris = factory.getNamespaces();
-                int xsiindex = nsuris.length;
-                while (--xsiindex >= 0 &amp;&amp;
-                    !"http://www.w3.org/2001/XMLSchema-instance".equals(nsuris[xsiindex]));
-                
-                // get actual size of index and prefix arrays to be allocated
-                int nscount = <xsl:value-of select="$nscount"/>;
-                int usecount = nscount;
-                if (xsiindex >= 0) {
-                    usecount++;
-                }
-                
-                // allocate and initialize the arrays
-                indexes = new int[usecount];
-                prefixes = new String[usecount];
+        int[] indexes = null;
+        String[] prefixes = null;
+        if (factory != null) {
+            
+            // check for xsi namespace included
+            String[] nsuris = factory.getNamespaces();
+            int xsiindex = nsuris.length;
+            while (--xsiindex >= 0 &amp;&amp;
+                !"http://www.w3.org/2001/XMLSchema-instance".equals(nsuris[xsiindex]));
+            
+            // get actual size of index and prefix arrays to be allocated
+            int nscount = <xsl:value-of select="$nscount"/>;
+            int usecount = nscount;
+            if (xsiindex >= 0) {
+                usecount++;
+            }
+            
+            // allocate and initialize the arrays
+            indexes = new int[usecount];
+            prefixes = new String[usecount];
       <xsl:for-each select="binding-namespace">
         <xsl:variable name="nsindex" select="count(preceding-sibling::binding-namespace)"/>
-                indexes[<xsl:value-of select="$nsindex"/>] = nsIndex("<xsl:value-of select='@ns'/>", nsuris);
-                prefixes[<xsl:value-of select="$nsindex"/>] = "<xsl:value-of select='@prefix'/>";
+            indexes[<xsl:value-of select="$nsindex"/>] = nsIndex("<xsl:value-of select='@ns'/>", nsuris);
+            prefixes[<xsl:value-of select="$nsindex"/>] = "<xsl:value-of select='@prefix'/>";
       </xsl:for-each>
-                if (xsiindex >= 0) {
-                    indexes[nscount] = xsiindex;
-                    prefixes[nscount] = "xsi";
-                }
-                
+            if (xsiindex >= 0) {
+                indexes[nscount] = xsiindex;
+                prefixes[nscount] = "xsi";
             }
-            bindingNamespaceIndexes = indexes;
-            bindingNamespacePrefixes = prefixes;
+            
         }
-        
-        private static int nsIndex(String uri, String[] uris) {
-            for (int i = 0; i &lt; uris.length; i++) {
-                if (uri.equals(uris[i])) {
-                    return i;
-                }
-            }
-            throw new IllegalArgumentException("Namespace " + uri + " not found in binding directory information");
-        }
-        
-        private static void addMappingNamespaces(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement wrapper, String nsuri, String nspref) {
-            String[] nss = bindingFactory.getNamespaces();
-            for (int i = 0; i &lt; bindingNamespaceIndexes.length; i++) {
-                int index = bindingNamespaceIndexes[i];
-                String uri = nss[index];
-                String prefix = bindingNamespacePrefixes[i];
-                if (!nsuri.equals(uri) || !nspref.equals(prefix)) {
-                    wrapper.declareNamespace(factory.createOMNamespace(uri, prefix));
-                }
+        bindingNamespaceIndexes = indexes;
+        bindingNamespacePrefixes = prefixes;
+    }
+    
+    private static int nsIndex(String uri, String[] uris) {
+        for (int i = 0; i &lt; uris.length; i++) {
+            if (uri.equals(uris[i])) {
+                return i;
             }
         }
-        
-        private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
-            throws org.jibx.runtime.JiBXException {
-            if (bindingFactory == null) {
-                throw new RuntimeException(bindingErrorMessage);
-            }
-            org.jibx.runtime.impl.UnmarshallingContext ctx =
-                (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
-            org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
-            ctx.setDocument(reader);
-            ctx.toTag();
-            return ctx;
-        }
-        
-        <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
-        private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
-            java.util.Map extraNamespaces) {
-            try {
-                org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
-                return ctx.unmarshalElement(type);
-            } catch (Exception e) {
-                 throw new RuntimeException(e);
+        throw new IllegalArgumentException("Namespace " + uri + " not found in binding directory information");
+    }
+    
+    private static void addMappingNamespaces(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement wrapper, String nsuri, String nspref) {
+        String[] nss = bindingFactory.getNamespaces();
+        for (int i = 0; i &lt; bindingNamespaceIndexes.length; i++) {
+            int index = bindingNamespaceIndexes[i];
+            String uri = nss[index];
+            String prefix = bindingNamespacePrefixes[i];
+            if (!nsuri.equals(uri) || !nspref.equals(prefix)) {
+                wrapper.declareNamespace(factory.createOMNamespace(uri, prefix));
             }
         }
+    }
+    
+    private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
+        throws org.jibx.runtime.JiBXException {
+        if (bindingFactory == null) {
+            throw new RuntimeException(bindingErrorMessage);
+        }
+        org.jibx.runtime.impl.UnmarshallingContext ctx =
+            (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
+        org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
+        ctx.setDocument(reader);
+        ctx.toTag();
+        return ctx;
+    }
+    
+    private org.apache.axiom.om.OMElement mappedChild(Object value, org.apache.axiom.om.OMFactory factory) {
+        org.jibx.runtime.IMarshallable mrshable = (org.jibx.runtime.IMarshallable)value;
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(mrshable, bindingFactory);
+        int index = mrshable.JiBX_getIndex();
+        org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], "");
+        return factory.createOMElement(src, bindingFactory.getElementNames()[index], appns);
+    }
+    
+    <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
+    private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
+        java.util.Map extraNamespaces) {
+        try {
+            org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
+            return ctx.unmarshalElement(type);
+        } catch (Exception e) {
+             throw new RuntimeException(e);
+        }
+    }
   </xsl:template>
   
   <!-- Called by "initialize-binding" template to generate mapped class index fields. -->
