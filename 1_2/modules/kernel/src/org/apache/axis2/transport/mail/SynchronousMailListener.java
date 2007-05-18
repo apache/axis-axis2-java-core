@@ -15,91 +15,68 @@
  */
 package org.apache.axis2.transport.mail;
 
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Properties;
-/*
- * 
- */
-
 public class SynchronousMailListener {
 
     private static Log log = LogFactory.getLog(SynchronousMailListener.class);
+    private boolean complete = false;
+    //To store out going messageconext
+    private MessageContext outMessageContext;
+    private MessageContext inMessageContext;
 
     private long timeoutInMilliseconds = -1;
-    private LinkedBlockingQueue queue;
 
-    public SynchronousMailListener(long timeoutInMilliseconds, LinkedBlockingQueue queue) {
+
+    public SynchronousMailListener(MessageContext outMessageContext,
+                                   long timeoutInMilliseconds) {
+        this.outMessageContext = outMessageContext;
         this.timeoutInMilliseconds = timeoutInMilliseconds;
-        this.queue = queue;
     }
 
-
-    public SimpleMailListener sendReceive(final MessageContext msgContext, final String msgId) throws AxisFault {
-        /**
-         * This will be bloked invocation
-         */
-        return new SimpleMailListener(queue) {
-            public void start() throws AxisFault {
-                long timeStatus;
-                while (true) {
-                    long startTime = System.currentTimeMillis();
-                    try {
-                        MessageContext msgCtx = (MessageContext) getLinkedBlockingQueue().take();
-                        MailBasedOutTransportInfo transportInfo = (MailBasedOutTransportInfo) msgCtx
-                                .getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
-                        if (transportInfo.getInReplyTo() == null) {
-                            String error = EMailSender.class.getName() + " Coudn't simulate request/response without In-Reply-To Mail header";
-                            log.error(error);
-                            throw new AxisFault(error);
-                        }
-                        if (transportInfo.getInReplyTo().equals(msgId)) {
-                            OperationContext operationContext = msgContext.getOperationContext();
-                            MessageContext messageContext = operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                            //FIXME
-                            if (messageContext == null) {
-                                if (!operationContext.isComplete()) {
-                                    messageContext = ContextFactory.createMessageContext(msgContext.getConfigurationContext());
-                                    messageContext.setOperationContext(operationContext);
-                                    messageContext.setServiceContext(msgContext.getServiceContext());
-                                    msgContext.getOperationContext().addMessageContext(messageContext);
-                                    messageContext.setEnvelope(msgCtx.getEnvelope());
-                                }
-                            } else {
-                                messageContext.setEnvelope(msgCtx.getEnvelope());
-                            }
-                            log.info(SynchronousMailListener.class.getName() + " found the required message.");
-                            break;
-                        }
-                        getLinkedBlockingQueue().put(msgCtx);
-
-                    } catch (InterruptedException e) {
-                        log.warn(e);
-                        throw new AxisFault(e);
-                    }
-                    long endTime = System.currentTimeMillis();
-                    timeStatus = endTime - startTime;
-                    if (timeoutInMilliseconds != -1 && timeStatus > timeoutInMilliseconds) {
-                        /*TODO What should be the best default value for timeoutInMilliseconds ?*/
-                        /*log.info(SynchronousMailListener.class.getName() + " timeout");
-                        break;*/
-                    }
-
-                }
-
-
+    public void setInMessageContext(MessageContext inMessageContext) throws AxisFault{
+        OperationContext operationContext = outMessageContext.getOperationContext();
+        MessageContext msgCtx =
+                operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        if(msgCtx==null){
+            inMessageContext.setOperationContext(operationContext);
+            inMessageContext.setServiceContext(outMessageContext.getServiceContext());
+            if(!operationContext.isComplete()){
+                operationContext.addMessageContext(inMessageContext);
             }
-        };
-
-
+            AxisOperation axisOp = operationContext.getAxisOperation();
+            //TODO need to handle fault case as well ,
+            //TODO  need to check whether the message contains fault , if so we need to get the fault message
+            AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            inMessageContext.setAxisMessage(inMessage);
+            inMessageContext.setServerSide(false);
+        } else {
+            msgCtx.setOperationContext(operationContext);
+            msgCtx.setServiceContext(outMessageContext.getServiceContext());
+            AxisOperation axisOp = operationContext.getAxisOperation();
+            AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            msgCtx.setAxisMessage(inMessage);
+            msgCtx.setTransportIn(inMessageContext.getTransportIn());
+            msgCtx.setTransportOut(inMessageContext.getTransportOut());
+            msgCtx.setServerSide(false);
+            msgCtx.setProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
+                    inMessageContext.getProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE));
+            msgCtx.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
+            msgCtx.setEnvelope(inMessageContext.getEnvelope());
+            if(!operationContext.isComplete()){
+                operationContext.addMessageContext(msgCtx);
+            }
+        }
+        this.inMessageContext = inMessageContext;
+        log.info(" SynchronousMailListener found the required message.");
+        complete = true;
     }
 
     public long getTimeoutInMilliseconds() {
@@ -108,5 +85,13 @@ public class SynchronousMailListener {
 
     public void setTimeoutInMilliseconds(long timeoutInMilliseconds) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public MessageContext getInMessageContext() {
+        return inMessageContext;
     }
 }

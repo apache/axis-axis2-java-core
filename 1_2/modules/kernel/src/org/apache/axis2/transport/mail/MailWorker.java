@@ -25,17 +25,15 @@ import org.apache.axis2.util.MessageContextBuilder;
 
 public class MailWorker implements Runnable {
     private ConfigurationContext configContext = null;
-    private LinkedBlockingQueue messageQueue;
+    private MessageContext messageContext;
 
     /**
      * Constructor for MailWorker
      *
-     * @param messageQueue
-     * @param reg
      */
-    public MailWorker(ConfigurationContext reg, LinkedBlockingQueue messageQueue) {
+    public MailWorker(ConfigurationContext reg, MessageContext messageContext) {
         this.configContext = reg;
-        this.messageQueue = messageQueue;
+        this.messageContext = messageContext;
     }
 
     /**
@@ -43,27 +41,23 @@ public class MailWorker implements Runnable {
      */
     public void run() {
         AxisEngine engine = new AxisEngine(configContext);
-        MessageContext msgContext = null;
         // create and initialize a message context
-        while (true) {
-            try {
-                msgContext = (MessageContext) messageQueue.take();
-                if (msgContext.getEnvelope().getBody().hasFault()) {
-                    engine.receiveFault(msgContext);
-                } else {
-                    engine.receive(msgContext);
-                }
+        try {
+            if (messageContext.getEnvelope().getBody().hasFault()) {
+                engine.receiveFault(messageContext);
+            } else {
+                engine.receive(messageContext);
+            }
 
-            } catch (Exception e) {
-                try {
-                    if (msgContext != null) {
-                        MessageContext faultContext =
-                                MessageContextBuilder.createFaultMessageContext(msgContext, e);
-                        engine.sendFault(faultContext);
-                    }
-                } catch (Exception e1) {
-                    // Ignore errors that would possibly happen this catch
+        } catch (Exception e) {
+            try {
+                if (messageContext != null&&!messageContext.isServerSide()) {
+                    MessageContext faultContext =
+                            MessageContextBuilder.createFaultMessageContext(messageContext, e);
+                    engine.sendFault(faultContext);
                 }
+            } catch (Exception e1) {
+                // Ignore errors that would possibly happen this catch
             }
         }
 

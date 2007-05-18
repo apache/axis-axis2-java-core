@@ -74,6 +74,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
         } else {
             mep.put(MESSAGE_LABEL_IN_VALUE, msgContext);
             opContext.setComplete(true);
+             opContext.cleanup();
         }
     }
 

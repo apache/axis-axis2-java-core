@@ -17,12 +17,12 @@
 
 package org.apache.axis2.transport.mail;
 
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -228,46 +228,36 @@ public class EMailSender {
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
         storeMessageContext(msgContext, msgId);
-
         ConfigurationContext cc = msgContext.getConfigurationContext();
-
-        SimpleMailListener simpleMailListener;
-
+        //While sysncmial listner .not complete
         Options options = msgContext.getOptions();
+        long outInMilliSeconds = options.getTimeOutInMilliSeconds();
+        SynchronousMailListener synchronousMailListener = null;
         if (!options.isUseSeparateListener() && !msgContext.isServerSide()) {
-            Object obj = cc.getProperty(Constants.MAIL_SYNC);
-
-            if (obj == null) {
-                SynchronousMailListener synchronousMailListener =
-                        new SynchronousMailListener(options.getTimeOutInMilliSeconds(), new LinkedBlockingQueue());
-                cc.setProperty(Constants.MAIL_SYNC, synchronousMailListener);
-
-                simpleMailListener = synchronousMailListener.sendReceive(msgContext, msgId);
-
-                TransportInDescription transportIn = msgContext.getConfigurationContext()
-                        .getAxisConfiguration().getTransportIn(org.apache.axis2.Constants.TRANSPORT_MAIL);
-
-                Object mailPOP3Obj= msgContext.getProperty(Constants.MAIL_POP3);
-                if (mailPOP3Obj != null) {
-                    simpleMailListener.initFromRuntime((Properties) obj, msgContext);
-                } else {
-                    simpleMailListener.init(msgContext.getConfigurationContext(), transportIn);
+            if(!cc.getListenerManager().isListenerRunning(Constants.MAILTO)){
+                TransportInDescription mailTo=
+                        cc.getAxisConfiguration().getTransportIn(Constants.MAILTO);
+                if(mailTo==null){
+                    throw new AxisFault("Could not found transport for " +Constants.MAILTO );
                 }
-                msgContext.getConfigurationContext().getThreadPool().execute(simpleMailListener);
-
-                simpleMailListener.start();
-                log.info("Simple Mail Listener started for the first time and response received");
-
-
-            } else {
-               SynchronousMailListener synchronousMailListener = (SynchronousMailListener)obj;
-               synchronousMailListener.sendReceive(msgContext,msgId).start();
-                log.info("Simple mail listener started and response received");
-
+                cc.getListenerManager().addListener(mailTo,false);
             }
+            Hashtable callBackTable = (Hashtable) cc.getProperty(Constants.CALLBACK_TABLE);
 
+            if(callBackTable!=null){
+                synchronousMailListener =
+                        new SynchronousMailListener(messageContext, outInMilliSeconds);
+                callBackTable.put(msgId,synchronousMailListener);
+            }
+            while(!synchronousMailListener.isComplete()){
+                try {
+                    Thread.sleep(6000);
+                } catch (InterruptedException e) {
+                    throw new AxisFault(e);
+                }
+            }
+            callBackTable.remove(msgId);
         }
-
     }
 
     private void storeMessageContext(MessageContext msgContext, String msgId) {

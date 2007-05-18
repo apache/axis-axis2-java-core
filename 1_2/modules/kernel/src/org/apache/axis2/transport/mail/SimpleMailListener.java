@@ -18,8 +18,6 @@
 package org.apache.axis2.transport.mail;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -35,7 +33,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -70,7 +67,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
     /*This hold properties for pop3 or impa server connection*/
     private Properties pop3Properties = new Properties();
 
-    private EmailReceiver receiver = null;
+    private final EmailReceiver receiver ;
 
     /**
      * Time has been put from best guest. Let the default be 3 mins.
@@ -80,24 +77,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
      */
     private int listenerWaitInterval = 1000 * 60 * 3;
 
-    private ExecutorService workerPool;
-
-    private static final int WORKERS_MAX_THREADS = 5;
-    private static final long WORKER_KEEP_ALIVE = 60L;
-    private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
-
-    private LinkedBlockingQueue messageQueue;
-
     public SimpleMailListener() {
-    }
-
-    /**
-     * This constructor will be used in when Mail simulate the request/response
-     *
-     * @param messageQueue
-     */
-    public SimpleMailListener(LinkedBlockingQueue messageQueue) {
-        this.messageQueue = messageQueue;
+          receiver = new EmailReceiver();
     }
 
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
@@ -162,7 +143,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
             urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);
         }
 
-        receiver = new EmailReceiver();
         receiver.setPop3Properties(pop3Properties);
         receiver.setUrlName(urlName);
         Object obj = configurationContext.
@@ -170,6 +150,13 @@ public class SimpleMailListener implements Runnable, TransportListener {
         if (obj == null) {
             configurationContext.setProperty(
                     org.apache.axis2.transport.mail.Constants.MAPPING_TABLE, new Hashtable());
+        }
+
+        Object callBackTable = configurationContext.
+                getProperty(org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE);
+        if (callBackTable == null) {
+            configurationContext.setProperty(
+                    org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE, new Hashtable());
         }
 
 
@@ -214,7 +201,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
             urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);
         }
 
-        receiver = new EmailReceiver();
         receiver.setPop3Properties(pop3Properties);
         receiver.setUrlName(urlName);
         Object obj = configurationContext.
@@ -222,6 +208,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
         if (obj == null) {
             configurationContext.setProperty(
                     org.apache.axis2.transport.mail.Constants.MAPPING_TABLE, new Hashtable());
+        }
+        Object callBackTable = configurationContext.
+                getProperty(org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE);
+        if (callBackTable == null) {
+            configurationContext.setProperty(
+                    org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE, new Hashtable());
         }
     }
 
@@ -291,14 +283,16 @@ public class SimpleMailListener implements Runnable, TransportListener {
                             MimeMessage msg = (MimeMessage) msgs[i];
                             try {
                                 MessageContext mc = createMessageContextToMailWorker(msg);
-                                if (mc != null) {
-                                    messageQueue.add(mc);
+                                if(mc==null){
+                                    continue;
                                 }
+                                msg.setFlag(Flags.Flag.DELETED, true);
+                                MailWorker worker = new MailWorker(configurationContext,mc);
+                                this.configurationContext.getThreadPool().execute(worker);
                             } catch (Exception e) {
                                 log.error("Error in SimpleMailListener - processing mail", e);
                             } finally {
                                 // delete mail in any case
-                                msg.setFlag(Flags.Flag.DELETED, true);
                             }
                         }
                     }
@@ -363,13 +357,16 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo);
 
             buildSOAPEnvelope(msg, msgContext);
-            fillMessageContextFromAvaiableData(msgContext,inReplyTo);
+            if(!fillMessageContextFromAvaiableData(msgContext,inReplyTo)){
+                return null;
+            }
         }
         return msgContext;
     }
 
-    private void fillMessageContextFromAvaiableData(MessageContext msgContext , String messageID) throws AxisFault{
-        Hashtable mappingTable = (Hashtable) msgContext.getConfigurationContext().
+    private boolean fillMessageContextFromAvaiableData(MessageContext msgContext ,
+                                                    String messageID) throws AxisFault{
+        Hashtable mappingTable = (Hashtable) configurationContext.
                 getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
 
         if(mappingTable!=null&&messageID!=null){
@@ -388,6 +385,16 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 }
             }
         }
+        Hashtable callBackTable = (Hashtable) configurationContext.getProperty(
+                org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE);
+        if(messageID!=null&&callBackTable!=null){
+            SynchronousMailListener listener = (SynchronousMailListener) callBackTable.get(messageID);
+            if(listener!=null){
+                listener.setInMessageContext(msgContext);
+                return false;
+            }
+        }
+        return true;
     }
 
     private void buildSOAPEnvelope(MimeMessage msg, MessageContext msgContext)
@@ -496,21 +503,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * Start this listener
      */
     public void start() throws AxisFault {
-        workerPool = new ThreadPoolExecutor(1,
-                                            WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
-                                            new LinkedBlockingQueue(),
-                                            new DefaultThreadFactory(
-                                                    new ThreadGroup("Mail Worker thread group"),
-                                                    "MailWorker"));
-
-        messageQueue = new LinkedBlockingQueue();
-
         this.configurationContext.getThreadPool().execute(this);
-
-        MailWorkerManager mailWorkerManager = new MailWorkerManager(configurationContext,
-                                                                    messageQueue, workerPool,
-                                                                    WORKERS_MAX_THREADS);
-        mailWorkerManager.start();
     }
 
     /**
@@ -518,10 +511,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * <p/>
      */
     public void stop() {
-        running = true;
-        if (!workerPool.isShutdown()) {
-            workerPool.shutdown();
-        }
+        running = false;
         log.info("Stopping the mail listner");
     }
 
@@ -533,12 +523,13 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         return new EndpointReference[]{
                 new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
-                                      configurationContext.getServiceContextPath() + "/" +
-                                      serviceName),
-                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
                                       org.apache.axis2.transport.mail.Constants.X_SERVICE_PATH + "="
                                       + configurationContext.getServiceContextPath() + "/" +
-                                      serviceName)};
+                                      serviceName),
+                new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "?" +
+                                      configurationContext.getServiceContextPath() + "/" +
+                                      serviceName)
+                };
     }
 
 
@@ -548,9 +539,5 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public void destroy() {
         this.configurationContext = null;
-    }
-
-    public LinkedBlockingQueue getLinkedBlockingQueue() {
-        return messageQueue;
     }
 }
