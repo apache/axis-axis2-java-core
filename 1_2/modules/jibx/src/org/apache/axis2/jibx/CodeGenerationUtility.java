@@ -34,6 +34,8 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.jibx.binding.model.BindingElement;
 import org.jibx.binding.model.ElementBase;
@@ -764,7 +766,8 @@ public class CodeGenerationUtility {
                     nons = nons || itemname.getNamespaceURI().length() == 0;
                     param.setAttribute("ns", itemname.getNamespaceURI());
                     param.setAttribute("name", itemname.getLocalPart());
-                    param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
+                    String javaname = toJavaName(itemname.getLocalPart(), nameset);
+                    param.setAttribute("java-name", javaname);
                     param.setAttribute("nillable", Boolean.toString(element.isNillable()));
                     boolean optional = element.getMinOccurs() == 0;
                     param.setAttribute("optional", Boolean.toString(optional));
@@ -777,9 +780,24 @@ public class CodeGenerationUtility {
                         // simple type translates to format element in binding
                         FormatElement format = (FormatElement)simpleTypeMap.get(typename);
                         if (format == null) {
+                            
+                            // check for restriction with simple base, and treat as base if so
+                            XmlSchemaSimpleType stype = (XmlSchemaSimpleType)element.getSchemaType();
+                            XmlSchemaSimpleTypeContent content = stype.getContent();
+                            if (content instanceof XmlSchemaSimpleTypeRestriction) {
+                                QName tname = ((XmlSchemaSimpleTypeRestriction)content).getBaseTypeName();
+                                if (SCHEMA_NAMESPACE.equals(tname.getNamespaceURI())) {
+                                    format = (FormatElement)simpleTypeMap.get(tname);
+                                    if (format != null) {
+                                        typename = tname;
+                                    }
+                                }
+                            }
+                        }
+                        if (format == null) {
                             throw new RuntimeException("Cannot unwrap element " +
-                                    qname + ": no format definition found for type " +
-                                    typename + " (used by element " + itemname + ')');
+                                qname + ": no format definition found for type " +
+                                typename + " (used by element " + itemname + ')');
                         }
                         javatype = format.getTypeName();
                         param.setAttribute("form", "simple");
@@ -898,7 +916,7 @@ public class CodeGenerationUtility {
                     //  it's used here to fit into the ADB-based code generation model
                     QName partqname = WSDLUtil.getPartQName(opName.getLocalPart(),
                                                             WSDLConstants.INPUT_PART_QNAME_SUFFIX,
-                                                            itemname.getLocalPart());
+                                                            javaname);
                     partNameList.add(partqname);
 
                     // add type mapping so we look like ADB
@@ -1064,6 +1082,8 @@ public class CodeGenerationUtility {
                 bindingMap.put(format, binding);
 
             } else if (child.type() == ElementBase.MAPPING_ELEMENT) {
+                
+                // record only abstract mappings with type names, and mappings with names
                 MappingElement mapping = (MappingElement)child;
                 bindingMap.put(mapping, binding);
                 if (mapping.isAbstract() && mapping.getTypeQName() != null) {
@@ -1072,9 +1092,7 @@ public class CodeGenerationUtility {
                     registerElement(mapping.getTypeQName(), mapping,
                                     complexTypeMap);
 
-                } else if (mapping.getName() == null) {
-                    throw new RuntimeException("Non-abstract mapping for class " + mapping.getClassName() + " needs element name.");
-                } else {
+                } else if (mapping.getName() != null) {
 
                     // register concrete mappings as element conversions
                     String uri = mapping.getUri();
