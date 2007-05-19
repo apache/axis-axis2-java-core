@@ -174,6 +174,7 @@ public class HandlerDescription implements ParameterInclude {
      */
     public void setHandler(Handler handler) {
         this.handler = handler;
+        this.className = handler.getClass().getName();
     }
 
     /**
