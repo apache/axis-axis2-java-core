@@ -60,7 +60,8 @@ public abstract class AbstractContext {
 
     /**
      * @return The properties
-     * @deprecated
+     * @deprecated Use {@link #getPropertyNames()}, {@link #getProperty(String)},
+     *             {@link #setProperty(String, Object)} & {@link #removeProperty(String)}instead.
      */
     public Map getProperties() {
         if (this.properties == null) {
