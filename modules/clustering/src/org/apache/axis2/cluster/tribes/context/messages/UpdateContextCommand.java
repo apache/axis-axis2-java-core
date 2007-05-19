@@ -15,37 +15,11 @@
  */
 package org.apache.axis2.cluster.tribes.context.messages;
 
-import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.tribes.context.PropertyUpdater;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.PropertyDifference;
-
-import java.util.HashMap;
 
 /**
  * 
  */
-public class UpdateServiceGroupContextCommand
-        extends ServiceGroupContextCommand
-        implements UpdateContextCommand{
-
-    private PropertyUpdater propertyUpdater = new PropertyUpdater();
-
-    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        ServiceGroupContext sgCtx =
-                configurationContext.getServiceGroupContext(serviceGroupContextId);
-        propertyUpdater.updateProperties(sgCtx);
-    }
-
-    public int getMessageType() {
-        return UPDATE_SERVICE_GROUP_CONTEXT_MSG;
-    }
-
-    public void addProperty(PropertyDifference diff) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(diff);
-    }
+public interface UpdateContextCommand {
+    void addProperty(PropertyDifference diff);
 }

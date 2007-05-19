@@ -29,7 +29,9 @@ import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -50,12 +52,12 @@ public class ClusterBuilder extends DescriptionBuilder {
     /**
      * Populates service from corresponding OM.
      */
-    public void buildCluster(OMElement clusterElement)
-            throws DeploymentException {
+    public void buildCluster(OMElement clusterElement) throws DeploymentException {
 
         OMAttribute classNameAttr = clusterElement.getAttribute(new QName(TAG_CLASS_NAME));
         if (classNameAttr == null) {
-            throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_CLUSTER));
+            throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                              TAG_CLUSTER));
         }
 
         String className = classNameAttr.getAttributeValue();
@@ -65,103 +67,174 @@ public class ClusterBuilder extends DescriptionBuilder {
             clusterManager = (ClusterManager) clazz.newInstance();
 
             //loading the parameters.
-            Iterator params = clusterElement.getChildrenWithName(new QName(TAG_PARAMETER));
-            processParameters(params, clusterManager, null);
+            processParameters(clusterElement.getChildrenWithName(new QName(TAG_PARAMETER)),
+                              clusterManager,
+                              null);
 
             //loading the ConfigurationManager
-            OMElement configurationManagerElement = clusterElement.getFirstChildWithName(
-                    new QName(TAG_CONFIGURATION_MANAGER));
-            if (configurationManagerElement != null) {
-                classNameAttr = configurationManagerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                if (classNameAttr == null) {
-                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_CONFIGURATION_MANAGER));
-                }
-
-                className = classNameAttr.getAttributeValue();
-                clazz = Class.forName(className);
-
-                ConfigurationManager configurationManager = (ConfigurationManager) clazz
-                        .newInstance();
-                clusterManager.setConfigurationManager(configurationManager);
-
-                OMElement listenersElement = configurationManagerElement
-                        .getFirstChildWithName(new QName(TAG_LISTENERS));
-                if (listenersElement != null) {
-                    Iterator listenerElemIter = listenersElement.getChildrenWithName(new QName(
-                            TAG_LISTENER));
-                    while (listenerElemIter.hasNext()) {
-                        OMElement listenerElement = (OMElement) listenerElemIter.next();
-                        classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                        if (classNameAttr == null) {
-                            throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_LISTENER));
-                        }
-
-                        className = classNameAttr.getAttributeValue();
-                        clazz = Class.forName(className);
-                        ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
-                                .newInstance();
-                        listener.setConfigurationContext(configCtx);
-                        configurationManager.addConfigurationManagerListener(listener);
-                    }
-                }
-
-                //updating the ConfigurationManager with the new ConfigurationContext
-                configurationManager.setConfigurationContext(configCtx);
-
-                //loading the parameters.
-                processParameters(configurationManagerElement.getChildrenWithName(new QName(TAG_PARAMETER)),
-                                  configurationManager,
-                                  null);
-            }
+            loadConfigManager(clusterElement, clusterManager);
 
             // loading the ContextManager
-            OMElement contextManagerElement = clusterElement.getFirstChildWithName(
-                    new QName(TAG_CONTEXT_MANAGER));
-            if (contextManagerElement != null) {
-                classNameAttr = contextManagerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                if (classNameAttr == null) {
-                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_CONTEXT_MANAGER));
-                }
-
-                className = classNameAttr.getAttributeValue();
-
-                clazz = Class.forName(className);
-                ContextManager contextManager = (ContextManager) clazz.newInstance();
-                clusterManager.setContextManager(contextManager);
-
-                OMElement listenersElement = contextManagerElement.getFirstChildWithName(new QName(
-                        TAG_LISTENERS));
-                if (listenersElement != null) {
-                    Iterator listenerElemIter = listenersElement.getChildrenWithName(new QName(
-                            TAG_LISTENER));
-                    while (listenerElemIter.hasNext()) {
-                        OMElement listenerElement = (OMElement) listenerElemIter.next();
-                        classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                        if (classNameAttr == null) {
-                            throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_LISTENER));
-                        }
-
-                        className = classNameAttr.getAttributeValue();
-                        clazz = Class.forName(className);
-                        ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
-                        contextManager.addContextManagerListener(listener);
-                    }
-                }
-
-                //loading the parameters.
-                processParameters(contextManagerElement.getChildrenWithName(new QName(TAG_PARAMETER)),
-                                  contextManager,
-                                  null);
-            }
+            loadContextManager(clusterElement, clusterManager);
 
             axisConfig.setClusterManager(clusterManager);
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(Messages.getMessage("clusterImplNotFound"));
         } catch (InstantiationException e) {
-            e.printStackTrace();
             throw new DeploymentException(Messages.getMessage("cannotLoadClusterImpl"));
         } catch (IllegalAccessException e) {
             throw new DeploymentException(e);
+        }
+    }
+
+    private void loadContextManager(OMElement clusterElement,
+                                    ClusterManager clusterManager) throws DeploymentException,
+                                                                          ClassNotFoundException,
+                                                                          InstantiationException,
+                                                                          IllegalAccessException {
+        OMElement contextManagerEle =
+                clusterElement.getFirstChildWithName(new QName(TAG_CONTEXT_MANAGER));
+        if (contextManagerEle != null) {
+
+            // Load & set the ContextManager class
+            OMAttribute classNameAttr =
+                    contextManagerEle.getAttribute(new QName(ATTRIBUTE_CLASS));
+            if (classNameAttr == null) {
+                throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                                  TAG_CONTEXT_MANAGER));
+            }
+
+            String className = classNameAttr.getAttributeValue();
+
+            Class clazz = Class.forName(className);
+            ContextManager contextManager = (ContextManager) clazz.newInstance();
+            clusterManager.setContextManager(contextManager);
+
+            // Load & set the ContextManagerListener objects
+            OMElement listenersElement =
+                    contextManagerEle.getFirstChildWithName(new QName(TAG_LISTENERS));
+            if (listenersElement != null) {
+                for (Iterator iter = listenersElement.getChildrenWithName(new QName(TAG_LISTENER));
+                     iter.hasNext();) {
+                    OMElement listenerElement = (OMElement) iter.next();
+                    classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
+                    if (classNameAttr == null) {
+                        throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                                          TAG_LISTENER));
+                    }
+
+                    className = classNameAttr.getAttributeValue();
+                    clazz = Class.forName(className);
+                    ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
+                    contextManager.addContextManagerListener(listener);
+                }
+            }
+
+            //loading the parameters.
+            processParameters(contextManagerEle.getChildrenWithName(new QName(TAG_PARAMETER)),
+                              contextManager,
+                              null);
+
+            // Load the replication patterns to be excluded. We load the following structure.
+            /*<replication>
+                <defaults>
+                    <exclude name="foo.bar.*"/>
+                </defaults>
+                <context class="org.apache.axis2.context.ConfigurationContext">
+                    <exclude name="my.sandesha.*"/>
+                </context>
+                <context class="org.apache.axis2.context.ServiceGroupContext">
+                    <exclude name="my.sandesha.*"/>
+                </context>
+                <context class="org.apache.axis2.context.ServiceContext">
+                    <exclude name="my.sandesha.*"/>
+                </context>
+            </replication>*/
+            OMElement replicationEle =
+                    contextManagerEle.getFirstChildWithName(new QName(TAG_REPLICATION));
+            if (replicationEle != null) {
+                // Process defaults
+                OMElement defaultsEle =
+                        replicationEle.getFirstChildWithName(new QName(TAG_DEFAULTS));
+                if (defaultsEle != null) {
+                    List defaults = new ArrayList();
+                    for (Iterator iter = defaultsEle.getChildrenWithName(new QName(TAG_EXCLUDE));
+                         iter.hasNext();) {
+                        OMElement excludeEle = (OMElement) iter.next();
+                        OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
+                        defaults.add(nameAtt.getAttributeValue());
+                    }
+                    contextManager.setReplicationExcludePatterns(TAG_DEFAULTS, defaults);
+                }
+
+                // Process specifics
+                for (Iterator iter = replicationEle.getChildrenWithName(new QName(TAG_CONTEXT));
+                     iter.hasNext();) {
+                    OMElement contextEle = (OMElement) iter.next();
+                    String ctxClassName =
+                            contextEle.getAttribute(new QName(ATTRIBUTE_CLASS)).getAttributeValue();
+                    List excludes = new ArrayList();
+                    for (Iterator iter2 = contextEle.getChildrenWithName(new QName(TAG_EXCLUDE));
+                         iter2.hasNext();) {
+                        OMElement excludeEle = (OMElement) iter2.next();
+                        OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
+                        excludes.add(nameAtt.getAttributeValue());
+                    }
+                    contextManager.setReplicationExcludePatterns(ctxClassName, excludes);
+                }
+            }
+        }
+    }
+
+    private void loadConfigManager(OMElement clusterElement,
+                                   ClusterManager clusterManager) throws DeploymentException,
+                                                                         ClassNotFoundException,
+                                                                         InstantiationException,
+                                                                         IllegalAccessException {
+        OMElement configManagerEle =
+                clusterElement.getFirstChildWithName(new QName(TAG_CONFIGURATION_MANAGER));
+        if (configManagerEle != null) {
+            OMAttribute classNameAttr = configManagerEle.getAttribute(new QName(ATTRIBUTE_CLASS));
+            if (classNameAttr == null) {
+                throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                                  TAG_CONFIGURATION_MANAGER));
+            }
+
+            String className = classNameAttr.getAttributeValue();
+            Class clazz = Class.forName(className);
+
+            ConfigurationManager configurationManager =
+                    (ConfigurationManager) clazz.newInstance();
+            clusterManager.setConfigurationManager(configurationManager);
+
+            OMElement listenersElement =
+                    configManagerEle.getFirstChildWithName(new QName(TAG_LISTENERS));
+            if (listenersElement != null) {
+                Iterator listenerElemIter = listenersElement.getChildrenWithName(new QName(
+                        TAG_LISTENER));
+                while (listenerElemIter.hasNext()) {
+                    OMElement listenerElement = (OMElement) listenerElemIter.next();
+                    classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
+                    if (classNameAttr == null) {
+                        throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_LISTENER));
+                    }
+
+                    className = classNameAttr.getAttributeValue();
+                    clazz = Class.forName(className);
+                    ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
+                            .newInstance();
+                    listener.setConfigurationContext(configCtx);
+                    configurationManager.addConfigurationManagerListener(listener);
+                }
+            }
+
+            //updating the ConfigurationManager with the new ConfigurationContext
+            configurationManager.setConfigurationContext(configCtx);
+
+            //loading the parameters.
+            processParameters(configManagerEle.getChildrenWithName(new QName(TAG_PARAMETER)),
+                              configurationManager,
+                              null);
         }
     }
 }

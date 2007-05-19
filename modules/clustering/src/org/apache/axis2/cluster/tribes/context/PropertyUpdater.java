@@ -19,7 +19,6 @@ import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.PropertyDifference;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 

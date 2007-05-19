@@ -96,7 +96,12 @@ public interface DeploymentConstants {
     String TAG_CONFIGURATION_MANAGER = "configurationManager";
     String TAG_CONTEXT_MANAGER = "contextManager";
     String TAG_LISTENERS = "listeners";
-    
+    String TAG_REPLICATION = "replication";
+    String TAG_DEFAULTS = "defaults";
+    String TAG_CONTEXT = "context";
+    String TAG_EXCLUDE = "exclude";
+    String ATTRIBUTE_CLASS = "class";
+
     //Deployer related cons
     String DIRECTORY = "directory";
     String EXTENSION = "extension";
@@ -116,7 +121,7 @@ public interface DeploymentConstants {
     String ATTRIBUTE_DEFAULT_VERSION = "version";
     String ATTRIBUTE_SCOPE = "scope";
     String ATTRIBUTE_LOCKED = "locked";
-    
+
     // Whether to activate a deployed service.
     String ATTRIBUTE_ACTIVATE = "activate";
 

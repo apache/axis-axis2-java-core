@@ -45,6 +45,8 @@ public class TribesContextManager implements ContextManager {
     private ChannelSender sender;
     private ContextReplicationProcessor processor = new ContextReplicationProcessor();
 
+    private Map excludedReplicationPatterns = new HashMap();
+
     public void setSender(ChannelSender sender) {
         this.sender = sender;
     }
@@ -53,23 +55,17 @@ public class TribesContextManager implements ContextManager {
     }
 
     public void addContext(final AbstractContext context) throws ClusteringFault {
-        ContextCommandMessage message =
-                ContextCommandMessageFactory.getMessage(context,
-                                                        ContextCommandMessageFactory.CREATE);
-        processor.process(message);
+        processor.process(ContextCommandMessageFactory.getCreateMessage(context));
     }
 
     public void removeContext(AbstractContext context) throws ClusteringFault {
-        ContextCommandMessage message =
-                ContextCommandMessageFactory.getMessage(context,
-                                                        ContextCommandMessageFactory.DELETE);
-        processor.process(message);
+        processor.process(ContextCommandMessageFactory.getRemoveMessage(context));
     }
 
     public void updateContext(AbstractContext context) throws ClusteringFault {
         ContextCommandMessage message =
-                ContextCommandMessageFactory.getMessage(context,
-                                                        ContextCommandMessageFactory.UPDATE);
+                ContextCommandMessageFactory.getUpdateMessage(context,
+                                                              excludedReplicationPatterns);
         processor.process(message);
     }
 
@@ -117,6 +113,13 @@ public class TribesContextManager implements ContextManager {
                 listener.setConfigurationContext(configurationContext);
             }
         }
+    }
+
+    public void setReplicationExcludePatterns(String contextType, List patterns) {
+        System.out.println("### contextType=" + contextType);
+        System.out.println("### pattern=" + patterns);
+        //TODO: Method implementation
+        excludedReplicationPatterns.put(contextType, patterns);
     }
 
     // ---------------------- Methods from ParameterInclude ----------------------------------------

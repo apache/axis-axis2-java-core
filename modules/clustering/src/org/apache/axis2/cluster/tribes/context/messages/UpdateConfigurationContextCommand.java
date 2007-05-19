@@ -26,7 +26,10 @@ import java.util.HashMap;
 /**
  * 
  */
-public class UpdateConfigurationContextCommand extends ContextCommandMessage {
+public class UpdateConfigurationContextCommand
+        extends ContextCommandMessage
+        implements UpdateContextCommand {
+
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
@@ -37,14 +40,7 @@ public class UpdateConfigurationContextCommand extends ContextCommandMessage {
         return UPDATE_CONFIGURATION_CONTEXT_MSG;
     }
 
-    /*public void addConfigurationContextProperty(String key, Object value, int updateStatus) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(key, value, updateStatus);
-    }*/
-
-    public void addConfigurationContextProperty(PropertyDifference diff) {
+    public void addProperty(PropertyDifference diff) {
         if (propertyUpdater.getProperties() == null) {
             propertyUpdater.setProperties(new HashMap());
         }

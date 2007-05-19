@@ -21,6 +21,8 @@ import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
+import java.util.List;
+
 public interface ContextManager extends ParameterInclude {
     public void addContext(AbstractContext context) throws ClusteringFault;
 
@@ -33,4 +35,15 @@ public interface ContextManager extends ParameterInclude {
     public void addContextManagerListener(ContextManagerListener listener);
 
     public void setConfigurationContext(ConfigurationContext configurationContext);
+
+    /**
+     * All properties in the context with type <code>contextType</code> which have
+     * names that match the specified pattern will be excluded from replication.
+     *
+     * Generally, we can use the context class name as the context type.
+     *
+     * @param contextType
+     * @param patterns    The patterns
+     */
+    public void setReplicationExcludePatterns(String contextType, List patterns);
 }

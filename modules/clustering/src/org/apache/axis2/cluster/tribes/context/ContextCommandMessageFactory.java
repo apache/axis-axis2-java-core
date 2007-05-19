@@ -18,79 +18,138 @@ package org.apache.axis2.cluster.tribes.context;
 import org.apache.axis2.cluster.context.ContextCommandMessage;
 import org.apache.axis2.cluster.tribes.context.messages.*;
 import org.apache.axis2.context.*;
+import org.apache.axis2.deployment.DeploymentConstants;
 
-import java.util.Map;
-import java.util.Iterator;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
  */
 public final class ContextCommandMessageFactory {
-    public static final int CREATE = 0;
-    public static final int UPDATE = 1;
-    public static final int DELETE = 2;
 
-    public static ContextCommandMessage getMessage(AbstractContext abstractContext,
-                                                   int operationType) {
-        if (abstractContext instanceof ConfigurationContext && operationType == UPDATE) {
-            UpdateConfigurationContextCommand cmd = new UpdateConfigurationContextCommand();
-            Map diffs = abstractContext.getPropertyDifferences();
+    public static ContextCommandMessage getUpdateMessage(AbstractContext context,
+                                                         Map excludedPropertyPatterns) {
+
+        ContextCommandMessage cmd = null;
+        if (context instanceof ConfigurationContext) {
+            cmd = new UpdateConfigurationContextCommand();
+        } else if (context instanceof ServiceGroupContext) {
+            ServiceGroupContext sgCtx = (ServiceGroupContext) context;
+            cmd = new UpdateServiceGroupContextCommand();
+            UpdateServiceGroupContextCommand updateSgCmd = (UpdateServiceGroupContextCommand) cmd;
+
+            updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
+            updateSgCmd.setServiceGroupContextId(sgCtx.getId());
+
+            //TODO: impl
+        } else if (context instanceof ServiceContext) {
+            ServiceContext serviceCtx = (ServiceContext) context;
+            cmd = new UpdateServiceContextCommand();
+            UpdateServiceContextCommand updateServiceCmd = (UpdateServiceContextCommand) cmd;
+
+            // TODO impl
+            updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
+            updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
+        }
+
+        if (cmd != null) {
+            // Fill the properties
+            UpdateContextCommand updateCmd = (UpdateContextCommand) cmd;
+            Map diffs = context.getPropertyDifferences();
             for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                String key =  (String) iter.next();
-                Object prop = abstractContext.getProperty(key);
-//                if (prop instanceof Serializable) { //TODO: Handling only Strings now
-                if (prop instanceof String || prop instanceof Integer) { //TODO: Handling only Strings now
-                    System.err.println("..................... sending prop=" + key + "-" + prop);
-                    PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                    diff.setValue(prop);
+                String key = (String) iter.next();
+                Object prop = context.getProperty(key);
+                if (prop instanceof Serializable) { // First check whether it is serializable
 
-                    // TODO: Before adding it here, exclude all the properties with names matching the exclude patterns
-                    cmd.addConfigurationContextProperty(diff);
+                    // Next check whether it matches an excluded pattern
+                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        System.err.println("..................... sending prop=" + key + "-" + prop);
+                        PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                        diff.setValue(prop);
+                        updateCmd.addProperty(diff);
+                    }
                 }
             }
-            abstractContext.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
-            return cmd;
-        } else if (abstractContext instanceof ServiceGroupContext) {
-            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
-            ServiceGroupContextCommand cmd;
-            switch (operationType) {
-                case CREATE:
-                    cmd = new CreateServiceGroupContextCommand();
-                    break;
-                case UPDATE:
-                    cmd = new UpdateServiceGroupContextCommand();
+            context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
+        }
+        return cmd;
+    }
 
-                    // TODO: Need to get a diff between old & new properties
-                    // TODO call UpdateServiceGroupContextCommand#addServiceGroupContextProperty
-                    break;
-                case DELETE:
-                    cmd = new DeleteServiceGroupContextCommand();
-                    break;
-                default:
-                    return null;
+    private static boolean isExcluded(String propertyName,
+                                      String ctxClassName,
+                                      Map excludedPropertyPatterns) {
+
+        // First check in the default excludes
+        List defaultExcludes =
+                (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
+        if (isExcluded(defaultExcludes, propertyName)) {
+            return true;
+        } else {
+            // If not, check in the excludes list specific to the context
+            List specificExcludes =
+                    (List) excludedPropertyPatterns.get(ctxClassName);
+            return isExcluded(specificExcludes, propertyName);
+        }
+    }
+
+    private static boolean isExcluded(List list, String propertyName) {
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            String pattern = (String) iter.next();
+            if (pattern.startsWith("*")) {
+                pattern = pattern.replaceAll("\\*", "");
+                if (propertyName.endsWith(pattern)) {
+                    return true;
+                }
+            } else if (pattern.endsWith("*")) {
+                pattern = pattern.replaceAll("\\*", "");
+                if (propertyName.startsWith(pattern)) {
+                    return true;
+                }
+            } else if (pattern.equals(propertyName)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    public static ContextCommandMessage getCreateMessage(AbstractContext abstractContext) {
+        if (abstractContext instanceof ServiceGroupContext) {
+            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
+            ServiceGroupContextCommand cmd = new CreateServiceGroupContextCommand();
+            //TODO impl
             cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             cmd.setServiceGroupContextId(sgCtx.getId());
             return cmd;
         } else if (abstractContext instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) abstractContext;
-            ServiceContextCommand cmd;
-            switch (operationType) {
-                case CREATE:
-                    cmd = new CreateServiceContextCommand();
-                    ServiceGroupContext parent = (ServiceGroupContext)serviceCtx.getParent();
-                    if (parent != null) {
-                        ((CreateServiceContextCommand) cmd).setServiceGroupContextId(parent.getId());
-                    }
-                    break;
-                case UPDATE:
-                    return new UpdateServiceContextCommand();
-                case DELETE:
-                    return new DeleteServiceContextCommand();
-                default:
-                    return null;
+            ServiceContextCommand cmd = new CreateServiceContextCommand();
+            ServiceGroupContext parent = (ServiceGroupContext) serviceCtx.getParent();
+            if (parent != null) {
+                ((CreateServiceContextCommand) cmd).setServiceGroupContextId(parent.getId());
             }
+            //TODO: check impl
+            cmd.setServiceGroupName(serviceCtx.getGroupName());
+            cmd.setServiceName(serviceCtx.getAxisService().getName());
+            return cmd;
+        }
+        return null;
+    }
+
+    public static ContextCommandMessage getRemoveMessage(AbstractContext abstractContext) {
+        if (abstractContext instanceof ServiceGroupContext) {
+            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
+            ServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
+            // TODO: impl
+            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
+            cmd.setServiceGroupContextId(sgCtx.getId());
+            return cmd;
+        } else if (abstractContext instanceof ServiceContext) {
+            ServiceContext serviceCtx = (ServiceContext) abstractContext;
+            ServiceContextCommand cmd = new DeleteServiceContextCommand();
+            // TODO: impl
             cmd.setServiceGroupName(serviceCtx.getGroupName());
             cmd.setServiceName(serviceCtx.getAxisService().getName());
             return cmd;

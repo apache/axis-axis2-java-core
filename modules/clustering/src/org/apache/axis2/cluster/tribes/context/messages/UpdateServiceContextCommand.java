@@ -18,18 +18,21 @@ package org.apache.axis2.cluster.tribes.context.messages;
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.tribes.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.PropertyDifference;
+
+import java.util.HashMap;
 
 /**
  * 
  */
-public class UpdateServiceContextCommand extends ServiceContextCommand {
+public class UpdateServiceContextCommand
+        extends ServiceContextCommand
+        implements UpdateContextCommand{
+
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         //TODO: Impl
-//        ServiceGroupContext sgCtx =
-//                configurationContext.getServiceGroupContext(serviceGroupContextId);
-//        propertyUpdater.updateProperties(sgCtx);
 
         /*ServiceGroupContext srvGrpCtx = configurationContext.getServiceGroupContext
                 (event.getParentContextID());
@@ -57,13 +60,23 @@ public class UpdateServiceContextCommand extends ServiceContextCommand {
             log.error(message);
         }*/
 
+
+
+
+        //TODO: Get the service context
+//        ServiceGroupContext sgCtx =
+//                configurationContext.getServiceGroupContext(serviceGroupContextId);
+//        propertyUpdater.updateProperties(sgCtx);
     }
 
     public int getMessageType() {
         return UPDATE_SERVICE_CONTEXT_MSG;
     }
 
-   /* public void addServiceGroupContextProperty(String key, Object value, int updateStatus) {
-        propertyUpdater.addContextProperty(key, value, updateStatus);
-    }*/
+    public void addProperty(PropertyDifference diff) {
+        if (propertyUpdater.getProperties() == null) {
+            propertyUpdater.setProperties(new HashMap());
+        }
+        propertyUpdater.addContextProperty(diff);
+    }
 }
