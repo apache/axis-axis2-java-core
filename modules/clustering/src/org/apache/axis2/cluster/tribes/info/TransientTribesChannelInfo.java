@@ -19,7 +19,7 @@ package org.apache.axis2.cluster.tribes.info;
 import java.io.Serializable;
 
 import org.apache.axis2.cluster.CommandType;
-import org.apache.axis2.cluster.tribes.context.ContextCommandMessage;
+import org.apache.axis2.cluster.context.ContextCommandMessage;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 

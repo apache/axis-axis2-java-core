@@ -23,6 +23,7 @@ import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +42,7 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map properties;
+    private transient Map propertyDifferences = new HashMap();
 
     protected AbstractContext(AbstractContext parent) {
         this.parent = parent;
@@ -50,17 +52,31 @@ public abstract class AbstractContext {
     }
 
     /**
-     * @return Returns AbstractContext.
+     * @return Returns the parent of this context.
      */
     public AbstractContext getParent() {
         return parent;
     }
 
+    /**
+     * @return The properties
+     * @deprecated
+     */
     public Map getProperties() {
         if (this.properties == null) {
             this.properties = new HashMap();
         }
         return properties;
+    }
+
+    /**
+     * An iterator over a collection of <code>String</code> objects, which are the
+     * keys in the properties object.
+     *
+     * @return Iterator over a collection of keys
+     */
+    public Iterator getPropertyNames() {
+        return properties.keySet().iterator();
     }
 
     /**
@@ -70,15 +86,89 @@ public abstract class AbstractContext {
      * @return Returns the property.
      */
     public Object getProperty(String key) {
-        Object obj;
-
-        obj = properties == null ? null : properties.get(key);
-
+        Object obj = properties == null ? null : properties.get(key);
         if ((obj == null) && (parent != null)) {
             obj = parent.getProperty(key);
-        }
+        } else {
 
+            // Assume that a property is which is read may be updated.
+            // i.e. The object pointed to by 'value' may be modified after it is read
+            propertyDifferences.put(key, new PropertyDifference(key, false));
+        }
         return obj;
+    }
+
+    /**
+     * Store a property in this context
+     *
+     * @param key
+     * @param value
+     */
+    public void setProperty(String key, Object value) {
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
+        properties.put(key, value);
+        propertyDifferences.put(key, new PropertyDifference(key, false));
+    }
+
+    /**
+     * Store a property in this context.
+     * But these properties should not be replicated when Axis2 is clustered.
+     *
+     * @param key
+     * @param value
+     */
+    public void setNonReplicableProperty(String key, Object value) {
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
+        properties.put(key, value);
+    }
+
+    /**
+     * Remove a property. Only properties at this level will be removed.
+     * Properties of the parents cannot be removed using this method.
+     *
+     * @param key
+     */
+    public void removeProperty(String key) {
+        if (properties != null) {
+            properties.remove(key);
+        }
+        propertyDifferences.put(key, new PropertyDifference(key, true));
+    }
+
+    /**
+     * Remove a property. Only properties at this level will be removed.
+     * Properties of the parents cannot be removed using this method.
+     * The removal of the property will not be replicated when Axis2 is clustered.
+     *
+     * @param key
+     */
+    public void removePropertyNonReplicable(String key) {
+        if (properties != null) {
+            properties.remove(key);
+        }
+    }
+
+    /**
+     * Get the property differences since the last transmission by the clustering
+     * mechanism
+     *
+     * @return The property differences
+     */
+    public Map getPropertyDifferences() {
+        return Collections.unmodifiableMap(propertyDifferences);
+    }
+
+    /**
+     * Once the clustering mechanism transmits the property differences,
+     * it should call this method to avoid retransmitting stuff that has already
+     * been sent.
+     */
+    public void clearPropertyDifferences() {
+        propertyDifferences.clear();
     }
 
     /**
@@ -118,33 +208,15 @@ public abstract class AbstractContext {
      */
     public void mergeProperties(Map props) {
         if (props != null) {
-            Iterator iterator = props.keySet().iterator();
-
-            while (iterator.hasNext()) {
+            if (this.properties == null) {
+                this.properties = new HashMap();
+            }
+            for (Iterator iterator = props.keySet().iterator();
+                 iterator.hasNext();) {
                 Object key = iterator.next();
-
-                if (this.properties == null) {
-                    this.properties = new HashMap();
-                }
-
                 this.properties.put(key, props.get(key));
             }
-
         }
-    }
-
-
-    /**
-     * Store a property for message context
-     *
-     * @param key
-     * @param value
-     */
-    public void setProperty(String key, Object value) {
-        if (this.properties == null) {
-            this.properties = new HashMap();
-        }
-        properties.put(key, value);
     }
 
     /**
@@ -183,9 +255,10 @@ public abstract class AbstractContext {
 
         //Calling the ClusterManager probably to replicate the updated state of the context.
         if (clusterManager != null) {
-        	ContextManager contextManager = clusterManager.getContextManager();
-        	if (contextManager!=null && contextManager.isContextClusterable (this))
-        		contextManager.updateContext(this);
+            ContextManager contextManager = clusterManager.getContextManager();
+            if (contextManager != null && contextManager.isContextClusterable(this)) {
+                contextManager.updateContext(this);
+            }
         }
 
         //Other logic needed for flushing the contexts

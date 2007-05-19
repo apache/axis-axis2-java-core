@@ -16,11 +16,16 @@
 
 package org.apache.axis2.cluster.context;
 
+import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 
 public interface ContextManagerListener {
-    public void contextAdded(ContextEvent event);
-    public void contextRemoved(ContextEvent event);
-    public void contextUpdated(ContextEvent event);
-    public void setConfigurationContext (ConfigurationContext configurationContext);
+    
+    public void contextAdded(ContextCommandMessage message) throws ClusteringFault;
+
+    public void contextRemoved(ContextCommandMessage message) throws ClusteringFault;
+
+    public void contextUpdated(ContextCommandMessage message) throws ClusteringFault;
+
+    public void setConfigurationContext(ConfigurationContext configurationContext);
 }

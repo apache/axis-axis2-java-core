@@ -16,33 +16,33 @@
 
 package org.apache.axis2.cluster.tribes.configuration;
 
-import org.apache.axis2.cluster.tribes.CommandMessage;
+import org.apache.axis2.cluster.CommandMessage;
 
 public class ConfigurationCommand extends CommandMessage {
-	
-	private String policy;
+
+    private String policy;
     private String serviceName;
     private String[] serviceGroupNames;
-	
-	public ConfigurationCommand (int commandType) {
-		super (commandType);
-	}
-	
-	public String getPolicy() {
-		return policy;
-	}
 
-	public void setPolicy(String policy) {
-		this.policy = policy;
-	}
+    public ConfigurationCommand (int commandType) {
+        super (commandType);
+    }
 
-	public String[] getServiceGroupNames() {
-		return serviceGroupNames;
-	}
-	
-	public void setServiceGroupNames(String[] serviceGroupNames) {
-		this.serviceGroupNames = serviceGroupNames;
-	}
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public String[] getServiceGroupNames() {
+        return serviceGroupNames;
+    }
+
+    public void setServiceGroupNames(String[] serviceGroupNames) {
+        this.serviceGroupNames = serviceGroupNames;
+    }
 
     public String getServiceName() {
         return serviceName;

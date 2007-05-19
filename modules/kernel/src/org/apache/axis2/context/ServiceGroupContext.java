@@ -17,6 +17,7 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.context.ContextManager;
@@ -28,7 +29,6 @@ import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.util.UUIDGenerator;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -132,6 +132,18 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * @throws AxisFault if something goes wrong
      */
     public ServiceContext getServiceContext(AxisService service) throws AxisFault {
+        return getServiceContext(service, true);
+    }
+
+    /**
+     * @param service
+     * @param replicate Indicates whether the newly created ServiceContext
+     *                  has to be replicated across the cluster
+     * @return
+     * @throws AxisFault
+     */
+    public ServiceContext getServiceContext(AxisService service,
+                                            boolean replicate) throws AxisFault {
         AxisService axisService = axisServiceGroup.getService(service.getName());
         if (axisService == null) {
             throw new AxisFault(Messages.getMessage("invalidserviceinagroup",
@@ -147,13 +159,16 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             getRootContext().contextCreated(serviceContext);
             serviceContextMap.put(service.getName(), serviceContext);
 
-            ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();
-            if (clusterManager != null) {
-            	ContextManager contextManager = clusterManager.getContextManager();
-            	if (contextManager!=null)
-            		contextManager.addContext(serviceContext);
+            if (replicate) {
+                ClusterManager clusterManager =
+                        axisService.getAxisConfiguration().getClusterManager();
+                if (clusterManager != null) {
+                    ContextManager contextManager = clusterManager.getContextManager();
+                    if (contextManager != null) {
+                        contextManager.addContext(serviceContext);
+                    }
+                }
             }
-
         }
         return serviceContext;
     }
@@ -366,7 +381,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         // trace point
         if (log.isTraceEnabled()) {
             log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
-                    in.available() + "]  ");
+                      in.available() + "]  ");
         }
 
         // serialization version ID
@@ -539,7 +554,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
             log.warn(myClassName + ":" + methodname + "(): ****WARNING**** " + myClassName +
-                    ".activate(configurationContext) needs to be invoked.");
+                     ".activate(configurationContext) needs to be invoked.");
         }
     }
 

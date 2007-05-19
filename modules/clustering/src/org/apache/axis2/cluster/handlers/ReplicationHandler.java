@@ -32,57 +32,64 @@ import org.apache.commons.logging.LogFactory;
 public class ReplicationHandler extends AbstractHandler {
 
     private static final Log log = LogFactory.getLog(ReplicationHandler.class);
-    
-	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
-		replicateState(msgContext);
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        replicateState(msgContext);
+        return InvocationResponse.CONTINUE;
+    }
 
-		return InvocationResponse.CONTINUE;
-	}
+    public void flowComplete(MessageContext msgContext) {
+        super.flowComplete(msgContext);
+        try {
+            System.err.println("############ Going to replicate state on flow complete");
+            replicateState(msgContext);
+            System.err.println("########### Replicated state ");
+        } catch (Exception e) {
+            String message = "Could not replicate the state";
+            log.error(message, e);
+        }
+    }
 
-	public void flowComplete(MessageContext msgContext) {
-		super.flowComplete(msgContext);
+    private void replicateState(MessageContext message) throws ClusteringFault {
 
-		try {
-			replicateState(msgContext);
-		} catch (ClusteringFault e) {
-			String message = "Could not replicate the state";
-			log.error(message);
-		}
-	}
+        ConfigurationContext configurationContext = message.getConfigurationContext();
+        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+        ClusterManager clusterManager = axisConfiguration.getClusterManager();
 
-	private void replicateState(MessageContext message) throws ClusteringFault {
+        if (clusterManager != null) {
 
-		ConfigurationContext configurationContext = message.getConfigurationContext();
-		AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
-		ClusterManager clusterManager = axisConfiguration.getClusterManager();
+            ContextManager contextManager = clusterManager.getContextManager();
+            if (contextManager == null) {
+                String msg = "Cannot replicate contexts since " +
+                             "ContextManager is not specified in the axis2.xml file.";
+                log.error(msg);
+                return;
+            }
 
-		if (clusterManager != null) {
-			
-			ContextManager contextManager = clusterManager.getContextManager();
-			if (contextManager==null) {
-				if (log.isDebugEnabled()) {
-					String msg = "Cannot replicate contexts since the ClusterManager has not defined a ContextManager";
-					log.error(msg);
-				}
-			}
-			
-			ServiceContext serviceContext = message.getServiceContext();
-			ServiceGroupContext serviceGroupContext = message.getServiceGroupContext();
+            // Replicate state stored in ConfigurationContext
+            if (!configurationContext.getPropertyDifferences().isEmpty()) {
+                contextManager.updateContext(configurationContext);
+            }
 
-			
-			contextManager.updateContext(configurationContext);
+            // Replicate state stored in ServiceGroupContext
+            ServiceGroupContext serviceGroupContext = message.getServiceGroupContext();
+            if (serviceGroupContext != null) {
+                if (!serviceGroupContext.getPropertyDifferences().isEmpty()) {
+                    contextManager.updateContext(serviceGroupContext);
+                }
+            }
 
-			if (serviceGroupContext != null) {
-				contextManager.updateContext(serviceGroupContext);
-			}
-
-			if (serviceContext != null) {
-				contextManager.updateContext(serviceContext);
-			}
-
-		}
-
-	}
-
+            // Replicate state stored in ServiceContext
+            ServiceContext serviceContext = message.getServiceContext();
+            if (serviceContext != null) {
+                if (!serviceContext.getPropertyDifferences().isEmpty()) {
+                    contextManager.updateContext(serviceContext);
+                }
+            }
+        } else {
+            String msg = "Cannot replicate contexts since " +
+                         "ClusterManager is not specified in the axis2.xml file.";
+            throw new ClusteringFault(msg);
+        }
+    }
 }

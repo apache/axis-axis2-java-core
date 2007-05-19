@@ -17,6 +17,7 @@
 package org.apache.axis2.cluster.tribes;
 
 import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.CommandMessage;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;

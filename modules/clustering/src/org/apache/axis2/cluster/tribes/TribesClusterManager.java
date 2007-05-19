@@ -23,7 +23,6 @@ import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager;
-import org.apache.axis2.cluster.tribes.context.ContextUpdater;
 import org.apache.axis2.cluster.tribes.context.TribesContextManager;
 import org.apache.axis2.cluster.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.cluster.tribes.info.TransientTribesMemberInfo;
@@ -81,8 +80,6 @@ public class TribesClusterManager implements ClusterManager {
         configurationManager.setSender(sender);
 
         try {
-            ContextUpdater updater = new ContextUpdater();
-            contextManager.setUpdater(updater);
 
             ManagedChannel channel = new GroupChannel();
             this.channel = channel;
@@ -99,7 +96,6 @@ public class TribesClusterManager implements ClusterManager {
             Member[] members = channel.getMembers();
             TribesUtil.printMembers(members);
 
-            listener.setUpdater(updater);
             listener.setContextManager(contextManager);
 
         } catch (ChannelException e) {

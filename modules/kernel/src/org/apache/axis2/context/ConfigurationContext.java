@@ -237,8 +237,7 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void registerServiceGroupContextintoSoapSessionTable(
-            ServiceGroupContext serviceGroupContext) {
+    public void registerServiceGroupContextintoSoapSessionTable(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
         serviceGroupContextMap.put(id, serviceGroupContext);
         serviceGroupContext.touch();

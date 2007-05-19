@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.context;
+package org.apache.axis2.cluster;
 
-public class ContextType {
-	public static final int CONFIG_CONTEXT = 1;
-	public static final int SERVICE_GROUP_CONTEXT = 2;
-	public static final int SERVICE_CONTEXT = 3;
-	public static final int OPERATION_CONTEXT = 4;
+import java.io.Serializable;
+
+public abstract class CommandMessage implements Serializable {
+
+	protected int commandType;
+
+	public int getCommandType() {
+		return commandType;
+	}
+
+	public void setCommandType(int commandType) {
+		this.commandType = commandType;
+	}
+
+    protected CommandMessage() {
+    }
+
+    public CommandMessage (int commandType) {
+		this.commandType = commandType;
+	}
 }
