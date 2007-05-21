@@ -196,6 +196,7 @@ public class AxisBindingMessage extends AxisDescription {
         if (list != null && list.size() > 0) {
             WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap, bindingMessageElement);
         }
+        WSDLSerializationUtil.addWSDL2DocumentationElement(this, bindingMessageElement, omFactory, wsdl);
         return bindingMessageElement;
     }
 }

@@ -6,12 +6,14 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamConstants;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.io.OutputStream;
@@ -110,10 +112,18 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         String description;
         OMElement documentationElement =
                 omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
-        if ((description = axisService.getServiceDescription()) != null) {
-            documentationElement.setText(description);
+        if ((description = axisService.getDocumentation()) != null) {
+            OMText omText;
+            if (description.indexOf(WSDLSerializationUtil.CDATA_START) > -1) {
+                description = description.replaceFirst(WSDLSerializationUtil.CDATA_START_REGEX, "");
+                description = description.replaceFirst(WSDLSerializationUtil.CDATA_END_REGEX, "");
+                omText = omFactory.createOMText(description, XMLStreamConstants.CDATA);
+            } else {
+            omText =  omFactory.createOMText(description);
+            }
+            documentationElement.addChild(omText);
+            descriptionElement.addChild(documentationElement);
         }
-        descriptionElement.addChild(documentationElement);
 
         // Add types element
         OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);

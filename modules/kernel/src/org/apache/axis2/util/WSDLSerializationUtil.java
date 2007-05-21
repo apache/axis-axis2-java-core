@@ -22,6 +22,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
@@ -32,9 +33,11 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -44,6 +47,11 @@ import java.util.Set;
  * Helps the AxisService to WSDL process
  */
 public class WSDLSerializationUtil {
+
+    public static final String CDATA_START = "<![CDATA[";
+    public static final String CDATA_START_REGEX = "<!\\[CDATA\\[";
+    public static final String CDATA_END = "]]>";
+    public static final String CDATA_END_REGEX = "\\]\\]>";
 
     /**
      * Given a namespace it returns the prefix for that namespace
@@ -372,6 +380,24 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                                 AddressingConstants.USING_ADDRESSING,
                                 "required", "true",
                                 wsawNamespace);
+        }
+    }
+
+    public static void addWSDL2DocumentationElement(AxisDescription axisDescription, OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
+        String documentationString = axisDescription.getDocumentation();
+        OMElement documentation = null;
+        if (documentationString != null && !"".equals(documentationString)) {
+            documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+            OMText omText;
+            if (documentationString.indexOf(CDATA_START) > -1) {
+                documentationString = documentationString.replaceFirst(CDATA_START_REGEX, "");
+                documentationString = documentationString.replaceFirst(CDATA_END_REGEX, "");
+                omText = omFactory.createOMText(documentationString, XMLStreamConstants.CDATA);
+            } else {
+            omText =  omFactory.createOMText(documentationString);
+            }
+            documentation.addChild(omText);
+            omElement.addChild(documentation);
         }
     }
 }

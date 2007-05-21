@@ -273,16 +273,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // copy the documentation element content to the description
             Element documentationElement = wsdl4jDefinition
                     .getDocumentationElement();
-            if ((documentationElement != null) && (documentationElement.getFirstChild() != null)) {
-                Node firstChild = documentationElement.getFirstChild();
-                String serviceDes;
-                if (firstChild.getNodeType() == Node.TEXT_NODE) {
-                    serviceDes = firstChild.getNodeValue();
-                } else {
-                    serviceDes = DOM2Writer.nodeToString(firstChild);
-                }
-                axisService.setServiceDescription(serviceDes);
-            }
+            addDocumentation(axisService, documentationElement);
 
             axisService.setName(wsdl4jService.getQName().getLocalPart());
             populateEndpoints(binding, wsdl4jService);
@@ -294,6 +285,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         } catch (Exception e) {
             log.error(e);
             throw AxisFault.makeFault(e);
+        }
+    }
+
+    private void addDocumentation(AxisDescription axisDescription, Element documentationElement) {
+        if ((documentationElement != null) && (documentationElement.getFirstChild() != null)) {
+            Node firstChild = documentationElement.getFirstChild();
+            String documentation = DOM2Writer.nodeToString(firstChild);
+            if (!"".equals(documentation)) {
+                axisDescription.setDocumentation(documentation);
+            }
         }
     }
 
@@ -364,7 +365,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         axisBinding.setName(wsdl4jBinding.getQName());
         axisEndpoint.setBinding(axisBinding);
-
+        addDocumentation(axisEndpoint, wsdl4jPort.getDocumentationElement());
         populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
 
 
@@ -372,7 +373,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
-
 
         // Added to use in ?wsdl2 as the interface name
         axisService.addParameter(new Parameter(WSDL2Constants.INTERFACE_LOCAL_NAME,
@@ -391,6 +391,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdl4jOperation = (Operation) iterator.next();
 
             axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, wsdl4jDefinition);
+            addDocumentation(axisOperation, wsdl4jOperation.getDocumentationElement());
             axisOperation.setParent(axisService);
             axisService.addChild(axisOperation);
             operationNames.add(axisOperation.getName());
@@ -416,6 +417,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault("No operation found for the binding");
         }
 
+        addDocumentation(axisBinding, wsdl4jBinding.getDocumentationElement());
+
         AxisOperation axisOperation;
         Operation wsdl4jOperation;
 
@@ -436,6 +439,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
 
             axisBindingOperation.setName(new QName("", wsdl4jBindingOperation.getName()));
+            addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
             axisOperation = axisService.getOperation(new QName("", wsdl4jOperation.getName()));
             axisBindingOperation.setAxisOperation(axisOperation);
@@ -457,6 +461,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
 
                 AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
+                addDocumentation(axisBindingInMessage, wsdl4jBindingInput.getDocumentationElement());
                 copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
                                        wsdl4jDefinition,
                                        axisBindingInMessage, BINDING_OPERATION_INPUT);
@@ -482,6 +487,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jBindingOutput != null &&
                     WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
                 AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
+                addDocumentation(axisBindingOutMessage, wsdl4jBindingOutput.getDocumentationElement());
                 AxisMessage axisOutMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
@@ -518,6 +524,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.getFaultMessages());
 
                 AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
+                addDocumentation(axisBindingFaultMessage, wsdl4jFaultMessge.getDocumentationElement());
                 axisBindingFaultMessage.setFault(true);
                 axisBindingFaultMessage.setAxisMessage(faultMessage);
                 axisBindingFaultMessage.setParent(axisBindingOperation);

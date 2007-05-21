@@ -19,6 +19,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
@@ -127,6 +128,7 @@ public class AxisEndpoint extends AxisDescription {
         if (property != null) {
            endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_REALM, whttp, property));
         }
+        WSDLSerializationUtil.addWSDL2DocumentationElement(this, endpointElement, omFactory, wsdl);
         return endpointElement;
     }
 }

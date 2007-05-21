@@ -198,6 +198,7 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
             AxisBindingOperation axisBindingOperation = (AxisBindingOperation) iterator.next();
             bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap));
         }
+        WSDLSerializationUtil.addWSDL2DocumentationElement(this, bindingElement, omFactory, wsdl);
         return bindingElement;
     }
 }

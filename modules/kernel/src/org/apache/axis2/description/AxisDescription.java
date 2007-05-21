@@ -42,6 +42,9 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private HashMap children;
 
+    // Holds the documentation details for each element
+    private String documentation;
+
     // creating a logger instance
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -109,6 +112,14 @@ public abstract class AxisDescription implements ParameterInclude,
 
         Parameter parameter = getParameter(parameterName);
         return parameter != null && parameter.isLocked();
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
     }
 
     public void setParent(AxisDescription parent) {

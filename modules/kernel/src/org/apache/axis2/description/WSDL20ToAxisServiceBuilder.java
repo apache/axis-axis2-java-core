@@ -36,6 +36,7 @@ import org.apache.woden.wsdl20.InterfaceFaultReference;
 import org.apache.woden.wsdl20.InterfaceMessageReference;
 import org.apache.woden.wsdl20.InterfaceOperation;
 import org.apache.woden.wsdl20.Service;
+import org.apache.woden.wsdl20.WSDLComponent;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
@@ -52,9 +53,11 @@ import org.apache.woden.wsdl20.extensions.soap.SOAPModule;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
+import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -70,6 +73,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Comparator;
+
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -177,10 +182,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // if there are documentation elements in the root. Lets add them as the wsdlService description
             // but since there can be multiple documentation elements, lets only add the first one
-            DocumentationElement[] documentationElements = description.toElement().getDocumentationElements();
-            if (documentationElements != null && documentationElements.length > 0) {
-                axisService.setServiceDescription(documentationElements[0].getContent().toString());
-            }
+            addDocumentation(axisService, description.toElement());
+//            DocumentationElement[] documentationElements = description.toElement().getDocumentationElements();
+//            if (documentationElements != null && documentationElements.length > 0) {
+//                axisService.setServiceDescription(documentationElements[0].getContent().toString());
+//            }
 
             // adding ns in the original WSDL
             // processPoliciesInDefintion(wsdl4jDefinition); TODO : Defering policy handling for now - Chinthaka
@@ -329,6 +335,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                      soapEndpointExtensions.getHttpAuthenticationRealm());
 
         }
+        addDocumentation(axisEndpoint, endpoint.toElement());
         return axisEndpoint;
 
     }
@@ -413,6 +420,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // We should process the interface based on the service not on a binding
 
         processedBindings.put(binding.getName(), axisBinding);
+        addDocumentation(axisBinding, binding.toElement());
         return axisBinding;
     }
 
@@ -480,6 +488,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
             axisBindingFault.setParent(axisBinding);
 
+            addDocumentation(axisBindingFault, interfaceFault.toElement());
             SOAPBindingFaultExtensions soapBindingFaultExtensions = null;
 
             try {
@@ -522,7 +531,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setAxisOperation(axisOperation);
             axisBindingOperation.setParent(axisBinding);
             axisBindingOperation.setName(axisOperation.getName());
-
+            addDocumentation(axisBindingOperation, bindingOperation.toElement());
             SOAPBindingOperationExtensions soapBindingOperationExtensions = null;
             try {
                 soapBindingOperationExtensions = ((SOAPBindingOperationExtensions)
@@ -572,7 +581,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 AxisBindingMessage axisBindingMessage = new AxisBindingMessage();
                 axisBindingMessage.setParent(axisBindingOperation);
-
+                addDocumentation(axisBindingMessage, bindingMessageReference.toElement());
                 AxisMessage axisMessage = axisOperation.getMessage(bindingMessageReference
                         .getInterfaceMessageReference().getMessageLabel().toString());
 
@@ -613,6 +622,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 BindingFaultReference bindingFaultReference = bindingFaultReferences[j];
 
                 AxisBindingMessage axisBindingMessageFault = new AxisBindingMessage();
+                addDocumentation(axisBindingMessageFault, bindingFaultReference.toElement());
                 axisBindingMessageFault.setParent(axisBindingOperation);
                 axisBindingMessageFault.setFault(true);
                 axisBindingMessageFault.setName(bindingFaultReference.getInterfaceFaultReference()
@@ -681,6 +691,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
             axisBindingFault.setParent(axisBinding);
 
+            addDocumentation(axisBindingFault, interfaceFault.toElement());
             HTTPBindingFaultExtensions httpBindingFaultExtensions = null;
 
             try {
@@ -716,6 +727,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setParent(axisBinding);
             axisBindingOperation.setName(axisOperation.getName());
 
+            addDocumentation(axisBindingOperation, bindingOperation.toElement());
             HTTPBindingOperationExtensions httpBindingOperationExtensions = null;
             try {
                 httpBindingOperationExtensions = ((HTTPBindingOperationExtensions)
@@ -773,7 +785,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setName(axisMessage.getName());
                 axisBindingMessage.setDirection(axisMessage.getDirection());
 
-
+                addDocumentation(axisBindingMessage, bindingMessageReference.toElement());
                 HTTPBindingMessageReferenceExtensions httpBindingMessageReferenceExtensions = null;
                 try {
                     httpBindingMessageReferenceExtensions =
@@ -804,6 +816,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         .getInterfaceFault().getName().getLocalPart());
                 axisBindingMessageFault.setParent(axisBindingOperation);
                 axisBindingOperation.addFault(axisBindingMessageFault);
+                addDocumentation(axisBindingMessageFault, bindingFaultReference.toElement());
 
             }
 
@@ -852,6 +865,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisOperation.setName(opName);
 
         }
+
+        addDocumentation(axisOperation, operation.toElement());
 
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
         // The following can be used to capture the wsdlx:safe attribute
@@ -1034,5 +1049,27 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             httpHeaderMessages.add(httpHeaderMessage);
         }
         return httpHeaderMessages;
+    }
+
+    /**
+     * Adds documentation details to a given AxisDescription.
+     * The documentation details is extracted from the WSDL element given.
+     * @param axisDescription - The documentation will be added to this
+     * @param element - The element that the documentation is extracted from.
+     */
+    private void addDocumentation(AxisDescription axisDescription, DocumentableElement element) {
+        DocumentationElement[] documentationElements = element.getDocumentationElements();
+        String documentation = "";
+        StringBuffer x;
+        for (int i = 0; i < documentationElements.length; i++) {
+            DocumentationElement documentationElement = documentationElements[i];
+            Element content = (Element) documentationElement.getContent();
+            if (content != null) {
+                documentation = documentation + DOM2Writer.nodeToString(content.getFirstChild());
+            }
+        }
+        if (!"".equals(documentation)) {
+            axisDescription.setDocumentation(documentation);
+        }
     }
 }

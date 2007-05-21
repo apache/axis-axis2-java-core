@@ -211,7 +211,7 @@ public class AxisBindingOperation extends AxisDescription {
                 bindingOpElement.addChild(faultMessage.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
             }
         }
-
+        WSDLSerializationUtil.addWSDL2DocumentationElement(this, bindingOpElement, omFactory, wsdl);
         return bindingOpElement;
     }
 

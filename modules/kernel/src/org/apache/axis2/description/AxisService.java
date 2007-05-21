@@ -124,7 +124,6 @@ public class AxisService extends AxisDescription {
 
     // to store engaged modules
     private ArrayList engagedModules = null;
-    private String serviceDescription;
 
     // to store the wsdl definition , which is build at the deployment time
     // to keep the time that last update time of the service
@@ -1051,11 +1050,11 @@ public class AxisService extends AxisDescription {
 
     /**
      * Gets the description about the service which is specified in services.xml.
-     *
+     * @deprecated Use getDocumentation() instead
      * @return Returns String.
      */
     public String getServiceDescription() {
-        return serviceDescription;
+        return getDocumentation();
     }
 
     /*
@@ -1213,11 +1212,11 @@ public class AxisService extends AxisDescription {
 
     /**
      * Sets the description about the service which is specified in services.xml
-     *
-     * @param serviceDescription
+     * @deprecated Use setDocumentation() instead
+     * @param documentation
      */
-    public void setServiceDescription(String serviceDescription) {
-        this.serviceDescription = serviceDescription;
+    public void setServiceDescription(String documentation) {
+        setDocumentation(documentation);
     }
 
     /*
