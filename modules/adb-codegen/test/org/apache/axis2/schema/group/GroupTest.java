@@ -25,6 +25,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
+import group.test.axis2.apache.org.TestAttributeGroupElement;
+import group.test.axis2.apache.org.TestNestedAttributeGroupElement;
+
 
 public class GroupTest extends TestCase {
 
@@ -144,5 +147,53 @@ public class GroupTest extends TestCase {
             fail();
         }
     }
+
+     public void testAttributeGroup(){
+         TestAttributeGroupElement testAttributeGroup = new TestAttributeGroupElement();
+         testAttributeGroup.setAttribute1("Attribute1");
+         testAttributeGroup.setParam1("Param1");
+
+         OMElement omElement =
+                 testAttributeGroup.getOMElement(TestAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
+         try {
+             String omElementString = omElement.toStringWithConsume();
+             System.out.println("OM Element ==> " + omElementString);
+             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+             TestAttributeGroupElement result = TestAttributeGroupElement.Factory.parse(xmlReader);
+             assertEquals(result.getParam1(),"Param1");
+             assertEquals(result.getAttribute1(),"Attribute1");
+         } catch (XMLStreamException e) {
+             fail();
+         } catch (Exception e) {
+             fail();
+         }
+
+     }
+
+    public void testNestedAttributeGroup(){
+         TestNestedAttributeGroupElement testNestedAttributeGroupElement = new TestNestedAttributeGroupElement();
+         testNestedAttributeGroupElement.setAttribute1("Attribute1");
+         testNestedAttributeGroupElement.setAttribute2("Attribute2");
+         testNestedAttributeGroupElement.setParam1("Param1");
+
+         OMElement omElement =
+                 testNestedAttributeGroupElement.getOMElement(TestNestedAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
+         try {
+             String omElementString = omElement.toStringWithConsume();
+             System.out.println("OM Element ==> " + omElementString);
+             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+             TestNestedAttributeGroupElement result = TestNestedAttributeGroupElement.Factory.parse(xmlReader);
+             assertEquals(result.getParam1(),"Param1");
+             assertEquals(result.getAttribute1(),"Attribute1");
+             assertEquals(result.getAttribute2(),"Attribute2");
+         } catch (XMLStreamException e) {
+             fail();
+         } catch (Exception e) {
+             fail();
+         }
+
+     }
+
+
 
 }

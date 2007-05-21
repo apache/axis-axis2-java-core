@@ -60,4 +60,32 @@
             <xs:group ref="tns:TestChoiceGroup"/>
         </xs:choice>
     </xs:group>
+
+    <xs:element name="TestAttributeGroupElement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:string"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="tns:TestAttributeGroup" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:attributeGroup name="TestAttributeGroup">
+        <xs:attribute name="attribute1" type="xs:string"/>
+    </xs:attributeGroup>
+
+    <xs:element name="TestNestedAttributeGroupElement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:string"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="tns:TestNestedAttributeGroup" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:attributeGroup name="TestNestedAttributeGroup">
+        <xs:attribute name="attribute2" type="xs:string"/>
+        <xs:attributeGroup ref="tns:TestAttributeGroup" />
+    </xs:attributeGroup>
+
 </schema>

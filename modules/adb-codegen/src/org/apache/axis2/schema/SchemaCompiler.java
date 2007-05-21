@@ -968,15 +968,7 @@ public class SchemaCompiler {
         }
 
         //process attributes - first look for the explicit attributes
-        XmlSchemaObjectCollection attribs = complexType.getAttributes();
-        Iterator attribIterator = attribs.getIterator();
-        while (attribIterator.hasNext()) {
-            Object o = attribIterator.next();
-            if (o instanceof XmlSchemaAttribute) {
-                processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
-
-            }
-        }
+        processAttributes(complexType.getAttributes(),metaInfHolder,parentSchema);
 
         //process any attribute
         //somehow the xml schema parser does not seem to pickup the any attribute!!
@@ -985,6 +977,7 @@ public class SchemaCompiler {
             processAnyAttribute(metaInfHolder, anyAtt);
         }
 
+
         //process content ,either  complex or simple
         if (complexType.getContentModel() != null) {
             processContentModel(complexType.getContentModel(),
@@ -992,6 +985,47 @@ public class SchemaCompiler {
                     parentSchema);
         }
         return metaInfHolder;
+    }
+
+    private void processAttributes(XmlSchemaObjectCollection attributes,
+                                   BeanWriterMetaInfoHolder metaInfHolder,
+                                   XmlSchema parentSchema) throws SchemaCompilationException {
+        Iterator attribIterator = attributes.getIterator();
+        while (attribIterator.hasNext()) {
+            Object o = attribIterator.next();
+            if (o instanceof XmlSchemaAttribute) {
+                processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
+            } else if (o instanceof XmlSchemaAttributeGroupRef){
+                processAttributeGroupReference((XmlSchemaAttributeGroupRef)o,metaInfHolder,parentSchema);
+            }
+        }
+    }
+
+    private void processAttributeGroupReference(XmlSchemaAttributeGroupRef attributeGroupRef,
+                                                BeanWriterMetaInfoHolder metaInfHolder,
+                                                XmlSchema parentSchema) throws SchemaCompilationException {
+
+        QName attributeGroupRefName = attributeGroupRef.getRefName();
+        if (attributeGroupRefName != null){
+           XmlSchemaObjectTable xmlSchemaObjectTable = parentSchema.getAttributeGroups();
+           XmlSchemaAttributeGroup xmlSchemaAttributeGroup = null;
+           for (Iterator iter = xmlSchemaObjectTable.getValues(); iter.hasNext();){
+               xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) iter.next();
+               if (xmlSchemaAttributeGroup.getName().equals(attributeGroupRefName.getLocalPart())){
+                   break;
+               }
+           }
+
+           if (xmlSchemaAttributeGroup != null){
+               processAttributes(xmlSchemaAttributeGroup.getAttributes(),metaInfHolder,parentSchema);
+           } else {
+               throw new SchemaCompilationException("Can not find an attribute group for group reference"
+                       + attributeGroupRefName.getLocalPart());
+           }
+        } else {
+            throw new SchemaCompilationException("No group refernce has given");
+        }
+
     }
 
     /**
@@ -1597,7 +1631,8 @@ public class SchemaCompiler {
             }
 
         } else {
-            // this attribute refers to a custom type, probably one of the extended simple types.\
+            // this attribute refers to a custom type, probably one of the extended simple types.
+            // with the inline scheam definition
             QName attributeQName = att.getQName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
@@ -1613,9 +1648,18 @@ public class SchemaCompiler {
                     QName schemaTypeQName = att.getSchemaTypeName();
                     if (schemaTypeQName == null) {
                         // set the parent schema target name space since attribute Qname uri is ""
-                        schemaTypeQName = new QName(parentSchema.getTargetNamespace(), attributeQName.getLocalPart() + getNextTypeSuffix());
+                        if (attributeSimpleType.getQName() != null) {
+                            schemaTypeQName = attributeSimpleType.getQName();
+                        } else {
+                            schemaTypeQName = new QName(parentSchema.getTargetNamespace(),
+                                    attributeQName.getLocalPart() + getNextTypeSuffix());
+
+                        }
                     }
-                    processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
+                    if (!isAlreadyProcessed(schemaTypeQName)){
+                        // we have to process only if it has not processed
+                        processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
+                    }
                     metainf.registerMapping(att.getQName(),
                             schemaTypeQName,
                             processedTypemap.get(schemaTypeQName).toString(),
