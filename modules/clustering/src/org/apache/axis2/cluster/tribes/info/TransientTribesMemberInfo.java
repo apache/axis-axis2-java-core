@@ -16,33 +16,33 @@
 
 package org.apache.axis2.cluster.tribes.info;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransientTribesMemberInfo implements MembershipListener {
 
-	private List liveNodes = new ArrayList();
+    private List liveNodes = new ArrayList();
 
-	private List deadNodes = new ArrayList();
+    private List deadNodes = new ArrayList();
 
-	public void memberAdded(Member member) {
-		liveNodes.add(member);
-		deadNodes.remove(member);
-	}
+    public void memberAdded(Member member) {
+        liveNodes.add(member);
+        deadNodes.remove(member);
+    }
 
-	public void memberDisappeared(Member member) {
-		liveNodes.remove(member);
-		deadNodes.add(member);
-	}
+    public void memberDisappeared(Member member) {
+        liveNodes.remove(member);
+        deadNodes.add(member);
+    }
 
-	public List getLiveNodes() {
-		return liveNodes;
-	}
+    public List getLiveNodes() {
+        return liveNodes;
+    }
 
-	public List getDeadNodes() {
-		return deadNodes;
-	}
+    public List getDeadNodes() {
+        return deadNodes;
+    }
 }

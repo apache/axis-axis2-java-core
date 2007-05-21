@@ -27,7 +27,7 @@
 
     <dependencies>
 
-       <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
@@ -42,11 +42,11 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${pom.currentVersion}</version>
-        </dependency>        
+        </dependency>
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -56,7 +56,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	  <!-- added for the QName -->	
+        <!-- added for the QName -->
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
@@ -108,21 +108,21 @@
             </properties>
         </dependency>
         <dependency>
-        <groupId>org.apache.tomcat.juli</groupId>
+            <groupId>org.apache.tomcat.juli</groupId>
             <artifactId>juli</artifactId>
-             <version>${tomcat.juli.version}</version>
+            <version>${tomcat.juli.version}</version>
             <properties>
                 <module>true</module>
             </properties>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat.tribes</groupId>
             <artifactId>tribes</artifactId>
-             <version>${tomcat.tribes.version}</version>
+            <version>${tomcat.tribes.version}</version>
             <properties>
                 <module>true</module>
             </properties>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>

@@ -254,11 +254,11 @@
     <!--
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
         <parameter name="param1">value1</parameter>
-    	<configurationManager class="org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager">
+    	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listeners>
     	    </listeners>
     	</configurationManager>
-    	<contextManager class="org.apache.axis2.cluster.tribes.context.TribesContextManager">
+    	<contextManager class="org.apache.axis2.cluster.context.TribesContextManager">
     	    <listeners>
     	    </listeners>
     	</contextManager>

@@ -21,12 +21,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
+import org.apache.axis2.cluster.configuration.DefaultConfigurationManager;
 import org.apache.axis2.cluster.context.ContextManager;
-import org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager;
-import org.apache.axis2.cluster.tribes.context.TribesContextManager;
+import org.apache.axis2.cluster.context.DefaultContextManager;
 import org.apache.axis2.cluster.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.cluster.tribes.info.TransientTribesMemberInfo;
-import org.apache.axis2.cluster.tribes.util.TribesUtil;
 import org.apache.axis2.description.Parameter;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
@@ -41,16 +40,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class TribesClusterManager implements ClusterManager {
-
-    private TribesConfigurationManager configurationManager;
-    private TribesContextManager contextManager;
-
-    private HashMap parameters = null;
-    private Channel channel = null;
-    private TransientTribesChannelInfo channelInfo = null;
-    private TransientTribesMemberInfo memberInfo = null;
-
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
+
+    private DefaultConfigurationManager configurationManager;
+    private DefaultContextManager contextManager;
+
+    private HashMap parameters;
+    private Channel channel;
 
     public TribesClusterManager() {
         parameters = new HashMap();
@@ -73,8 +69,8 @@ public class TribesClusterManager implements ClusterManager {
 
         ChannelListener listener = new ChannelListener(configurationManager, contextManager);
 
-        channelInfo = new TransientTribesChannelInfo();
-        memberInfo = new TransientTribesMemberInfo();
+        TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
+        TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
 
         contextManager.setSender(sender);
         configurationManager.setSender(sender);
@@ -114,11 +110,11 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public void setConfigurationManager(ConfigurationManager configurationManager) {
-        this.configurationManager = (TribesConfigurationManager) configurationManager;
+        this.configurationManager = (DefaultConfigurationManager) configurationManager;
     }
 
     public void setContextManager(ContextManager contextManager) {
-        this.contextManager = (TribesContextManager) contextManager;
+        this.contextManager = (DefaultContextManager) contextManager;
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -178,6 +174,4 @@ public class TribesClusterManager implements ClusterManager {
             log.debug("Exit: TribesClusterManager::shutdown");
         }
     }
-
-
 }

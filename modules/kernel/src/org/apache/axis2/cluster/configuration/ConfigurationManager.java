@@ -83,7 +83,7 @@ public interface ConfigurationManager extends ParameterInclude {
     // ######################## General management methods ############################
     /**
      * To notify other nodes that an Exception occurred, during the processing
-     * of a {@link ConfigurationEvent}
+     * of a {@link ConfigurationClusteringCommand}
      *
      * @param throwable The throwable which has to be propogated to other nodes
      */

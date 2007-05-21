@@ -16,75 +16,94 @@
 
 package org.apache.axis2.cluster.tribes.info;
 
-import java.io.Serializable;
-
-import org.apache.axis2.cluster.CommandType;
-import org.apache.axis2.cluster.context.ContextCommandMessage;
+import org.apache.axis2.cluster.context.ContextClusteringCommand;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 
+import java.io.Serializable;
+
 public class TransientTribesChannelInfo implements ChannelListener {
 
-	private long messageCount = 0;
+    private long messageCount = 0;
 
-	private long grpCtxCreationCount = 0;
+    private long grpCtxCreationCount = 0;
 
-	private long srvCtxCreationCount = 0;
+    private long srvCtxCreationCount = 0;
 
-	private long grpCtxRemoveCount = 0;
+    private long grpCtxRemoveCount = 0;
 
-	private long srvCtxRemoveCount = 0;
+    private long srvCtxRemoveCount = 0;
 
-	private long updateStateCount = 0;
+    private long updateConfigCtxCount = 0;
 
-	public boolean accept(Serializable msg, Member sender) {
-		return msg instanceof String;
-	}
+    public long getUpdateServiceCtxCount() {
+        return updateServiceCtxCount;
+    }
 
-	public void messageReceived(Serializable msg, Member sender) {
-		messageCount++;
+    public long getUpdateServiceGroupCtxCount() {
+        return updateServiceGroupCtxCount;
+    }
 
-		System.out.println("Tribes message " + msg);
+    private long updateServiceCtxCount = 0;
+    private long updateServiceGroupCtxCount = 0;
 
-		if (msg instanceof ContextCommandMessage) {
-			ContextCommandMessage comMsg = (ContextCommandMessage) msg;
+    public boolean accept(Serializable msg, Member sender) {
+        return msg instanceof String;
+    }
 
-			if (comMsg.getCommandType()==CommandType.CREATE_SERVICE_GROUP_CONTEXT) {
-				grpCtxCreationCount++;
-			} else if (comMsg.getCommandType()==CommandType.CREATE_SERVICE_CONTEXT) {
-				srvCtxCreationCount++;
-			} else if (comMsg.getCommandType()== CommandType.REMOVE_SERVICE_GROUP_CONTEXT) {
-				grpCtxRemoveCount++;
-			} else if (comMsg.getCommandType()==CommandType.REMOVE_SERVICE_CONTEXT) {
-				srvCtxRemoveCount++;
-			} else if (comMsg.getCommandType()==CommandType.UPDATE_STATE) {
-				updateStateCount++;
-			}
-		}
-	}
+    public void messageReceived(Serializable msg, Member sender) {
+        messageCount++;
 
-	public long getGrpCtxCreationCount() {
-		return grpCtxCreationCount;
-	}
+        System.out.println("Tribes message " + msg);
 
-	public long getGrpCtxRemoveCount() {
-		return grpCtxRemoveCount;
-	}
+        if (msg instanceof ContextClusteringCommand) {
+            ContextClusteringCommand cmd = (ContextClusteringCommand) msg;
 
-	public long getMessageCount() {
-		return messageCount;
-	}
+            if (cmd.getCommandType() == ContextClusteringCommand.CREATE_SERVICE_GROUP_CONTEXT) {
+                grpCtxCreationCount++;
+            } else if (cmd.getCommandType() == ContextClusteringCommand.CREATE_SERVICE_CONTEXT) {
+                srvCtxCreationCount++;
+            } else if (cmd.getCommandType() ==
+                       ContextClusteringCommand.DELETE_SERVICE_GROUP_CONTEXT) {
+                grpCtxRemoveCount++;
+            } else if (cmd.getCommandType() ==
+                       ContextClusteringCommand.DELETE_SERVICE_CONTEXT) {
+                srvCtxRemoveCount++;
+            } else if (cmd.getCommandType() ==
+                       ContextClusteringCommand.UPDATE_CONFIGURATION_CONTEXT) {
+                updateConfigCtxCount++;
+            } else if (cmd.getCommandType() ==
+                       ContextClusteringCommand.UPDATE_SERVICE_CONTEXT) {
+                updateServiceCtxCount++;
+            }else if (cmd.getCommandType() ==
+                      ContextClusteringCommand.UPDATE_SERVICE_GROUP_CONTEXT) {
+                updateServiceGroupCtxCount++;
+            }
+        }
+    }
 
-	public long getSrvCtxCreationCount() {
-		return srvCtxCreationCount;
-	}
+    public long getGrpCtxCreationCount() {
+        return grpCtxCreationCount;
+    }
 
-	public long getSrvCtxRemoveCount() {
-		return srvCtxRemoveCount;
-	}
+    public long getGrpCtxRemoveCount() {
+        return grpCtxRemoveCount;
+    }
 
-	public long getUpdateStateCount() {
-		return updateStateCount;
-	}
+    public long getMessageCount() {
+        return messageCount;
+    }
+
+    public long getSrvCtxCreationCount() {
+        return srvCtxCreationCount;
+    }
+
+    public long getSrvCtxRemoveCount() {
+        return srvCtxRemoveCount;
+    }
+
+    public long getUpdateConfigCtxCount() {
+        return updateConfigCtxCount;
+    }
 
 }

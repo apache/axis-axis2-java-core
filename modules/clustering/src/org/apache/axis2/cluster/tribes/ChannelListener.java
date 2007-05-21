@@ -17,12 +17,10 @@
 package org.apache.axis2.cluster.tribes;
 
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.CommandType;
-import org.apache.axis2.cluster.configuration.ConfigurationEvent;
-import org.apache.axis2.cluster.context.ContextCommandMessage;
-import org.apache.axis2.cluster.tribes.configuration.ConfigurationCommand;
-import org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager;
-import org.apache.axis2.cluster.tribes.context.TribesContextManager;
+import org.apache.axis2.cluster.configuration.ConfigurationClusteringCommand;
+import org.apache.axis2.cluster.configuration.DefaultConfigurationManager;
+import org.apache.axis2.cluster.context.ContextClusteringCommand;
+import org.apache.axis2.cluster.context.DefaultContextManager;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,22 +30,22 @@ import java.io.Serializable;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
 
-    private TribesContextManager contextManager = null;
-    private TribesConfigurationManager configurationManager = null;
+    private DefaultContextManager contextManager = null;
+    private DefaultConfigurationManager configurationManager = null;
 
     private static final Log log = LogFactory.getLog(ChannelListener.class);
 
-    public ChannelListener(TribesConfigurationManager configurationManager,
-                           TribesContextManager contextManager) {
+    public ChannelListener(DefaultConfigurationManager configurationManager,
+                           DefaultContextManager contextManager) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
     }
 
-    public void setContextManager(TribesContextManager contextManager) {
+    public void setContextManager(DefaultContextManager contextManager) {
         this.contextManager = contextManager;
     }
 
-    public void setConfigurationManager(TribesConfigurationManager configurationManager) {
+    public void setConfigurationManager(DefaultConfigurationManager configurationManager) {
         this.configurationManager = configurationManager;
     }
 
@@ -57,48 +55,19 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
     public void messageReceived(Serializable msg, Member sender) {
         System.err.println("####### Message received " + msg);
-        if (msg instanceof ContextCommandMessage) {
+        if (msg instanceof ContextClusteringCommand) {
             try {
-                ContextCommandMessage comMsg = (ContextCommandMessage) msg;
+                ContextClusteringCommand comMsg = (ContextClusteringCommand) msg;
                 contextManager.notifyListeners(comMsg);
             } catch (ClusteringFault e) {
-                // TODO: Handle this
-                log.error(e);
+                log.error("Could not process ContextCommand", e);
             }
-        } else if (msg instanceof ConfigurationCommand) {
-
-            ConfigurationCommand command = (ConfigurationCommand) msg;
-            ConfigurationEvent event = new ConfigurationEvent();
-            int commandType = command.getCommandType();
-            event.setConfigurationType(command.getCommandType());
-            switch (commandType) {
-                case CommandType.LOAD_SERVICE_GROUPS:
-                    event.setServiceGroupNames(command.getServiceGroupNames());
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.UNLOAD_SERVICE_GROUPS:
-                    event.setServiceGroupNames(command.getServiceGroupNames());
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.RELOAD_CONFIGURATION:
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.APPLY_POLICY:
-                    event.setServiceName(command.getServiceName());
-                    event.setPolicy(command.getPolicy());
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.PREPARE:
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.COMMIT:
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                case CommandType.ROLLBACK:
-                    configurationManager.notifyListeners(commandType, event);
-                    break;
-                default:
-                    log.error("TribesClusterManager received an unknown Configuration Command");
+        } else if (msg instanceof ConfigurationClusteringCommand) {
+            ConfigurationClusteringCommand command = (ConfigurationClusteringCommand) msg;
+            try {
+                configurationManager.notifyListeners(command);
+            } catch (ClusteringFault e) {
+                log.error("Could not process ConfigurationCommand", e);
             }
         }
     }

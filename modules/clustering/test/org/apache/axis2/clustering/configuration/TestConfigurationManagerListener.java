@@ -16,62 +16,64 @@
 
 package org.apache.axis2.clustering.configuration;
 
-import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
+import org.apache.axis2.cluster.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 import java.util.ArrayList;
 
 public class TestConfigurationManagerListener implements ConfigurationManagerListener {
 
-    private ArrayList eventList;
+    private ArrayList commandList;
     private ConfigurationContext configurationContext;
 
     public TestConfigurationManagerListener() {
-        eventList = new ArrayList();
+        commandList = new ArrayList();
+    }
+
+    public void serviceGroupsLoaded(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void serviceGroupsUnloaded(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void policyApplied(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void configurationReloaded(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void prepareCalled(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void rollbackCalled(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
+    }
+
+    public void commitCalled(ConfigurationClusteringCommand command) {
+        //TODO: Method implementation
+
     }
 
     public void handleException(Throwable throwable) {
         // TODO Auto-generated method stub
     }
 
-    public void clearEventList() {
-        eventList.clear();
-    }
-
-    public ArrayList getEventList() {
-        return eventList;
-    }
-
-    public void commitCalled(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void configurationReloaded(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void policyApplied(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void prepareCalled(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void rollbackCalled(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void serviceGroupsLoaded(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
-    public void serviceGroupsUnloaded(ConfigurationEvent event) {
-        eventList.add(event);
-    }
-
     public void setConfigurationContext(ConfigurationContext configurationContext) {
-        this.configurationContext = configurationContext;
+        //TODO: Method implementation
+
     }
+
+
 }

@@ -22,8 +22,8 @@ import org.apache.axis2.clustering.ManageContextTestCase;
 
 public class ManageContextTest extends ManageContextTestCase {
 
-	protected ClusterManager getClusterManager() {
-		return new TribesClusterManager();
-	}
+    protected ClusterManager getClusterManager() {
+        return new TribesClusterManager();
+    }
 
 }

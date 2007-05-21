@@ -15,49 +15,51 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  !-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-parent</artifactId>
-		<version>SNAPSHOT</version>
-		<relativePath>../parent/pom.xml</relativePath>
-	</parent>
-	<artifactId>axis2-clustering</artifactId>
-	<name>Apache Axis 2.0 - Clustering</name>
-	<description>Axis2 Clustering module</description>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tribes</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>juli</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>conf</directory>
-				<excludes>
-					<exclude>**/*.properties</exclude>
-				</excludes>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
-	</build>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>axis2-clustering</artifactId>
+    <name>Apache Axis 2.0 - Clustering</name>
+    <description>Axis2 Clustering module</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tribes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>juli</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
 </project>

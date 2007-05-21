@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clustering.tribes;
+package org.apache.axis2.cluster;
 
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.tribes.TribesClusterManager;
+import java.io.Serializable;
 
-public class ConfigurationManagerTest extends
-                                      org.apache.axis2.clustering.configuration.ConfigurationManagerTestCase {
+public abstract class ClusteringCommand implements Serializable {
 
-    protected ClusterManager getClusterManager() {
-        return new TribesClusterManager();
-    }
-
+    public abstract int getCommandType();
 }

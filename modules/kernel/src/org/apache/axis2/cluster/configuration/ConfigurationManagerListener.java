@@ -20,19 +20,19 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public interface ConfigurationManagerListener {
 
-    void serviceGroupsLoaded(ConfigurationEvent event);
+    void serviceGroupsLoaded(ConfigurationClusteringCommand command);
 
-    void serviceGroupsUnloaded(ConfigurationEvent event);
+    void serviceGroupsUnloaded(ConfigurationClusteringCommand command);
 
-    void policyApplied(ConfigurationEvent event);
+    void policyApplied(ConfigurationClusteringCommand command);
 
-    void configurationReloaded(ConfigurationEvent event);
+    void configurationReloaded(ConfigurationClusteringCommand command);
 
-    void prepareCalled(ConfigurationEvent event);
+    void prepareCalled();
 
-    void rollbackCalled(ConfigurationEvent event);
+    void rollbackCalled();
 
-    void commitCalled(ConfigurationEvent event);
+    void commitCalled();
 
     void handleException(Throwable throwable);
 

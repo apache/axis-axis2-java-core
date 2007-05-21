@@ -16,21 +16,22 @@
 
 package org.apache.axis2.cluster.tribes;
 
+import org.apache.axis2.cluster.ClusteringCommand;
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.CommandMessage;
+import org.apache.axis2.cluster.MessageSender;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class ChannelSender {
+public class ChannelSender implements MessageSender {
 
     private Channel channel;
 
     private static final Log log = LogFactory.getLog(ChannelSender.class);
 
-    public void send(CommandMessage msg) throws ClusteringFault {
+    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         Member[] group = channel.getMembers();
         log.debug("Group size " + group.length);
         // send the message
@@ -50,7 +51,17 @@ public class ChannelSender {
         }
     }
 
-    public void send(Throwable throwable) throws ClusteringFault {
+    public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
+        try {
+            channel.send(new Member[]{channel.getLocalMember(true)},
+                         msg,
+                         Channel.SEND_OPTIONS_USE_ACK);
+        } catch (ChannelException e) {
+            throw new ClusteringFault(e);
+        }
+    }
+
+    public void sendToGroup(Throwable throwable) throws ClusteringFault {
         Member[] group = channel.getMembers();
         log.debug("Group size " + group.length);
         // send the message

@@ -22,8 +22,8 @@ import org.apache.axis2.clustering.UpdateStateTestCase;
 
 public class UpdateStateTest extends UpdateStateTestCase {
 
-	protected ClusterManager getClusterManager() {
-		return new TribesClusterManager();
-	}
+    protected ClusterManager getClusterManager() {
+        return new TribesClusterManager();
+    }
 
 }
