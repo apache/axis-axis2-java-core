@@ -58,14 +58,14 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         if (msg instanceof ContextClusteringCommand) {
             try {
                 ContextClusteringCommand comMsg = (ContextClusteringCommand) msg;
-                contextManager.notifyListeners(comMsg);
+                contextManager.notifyListener(comMsg);
             } catch (ClusteringFault e) {
                 log.error("Could not process ContextCommand", e);
             }
         } else if (msg instanceof ConfigurationClusteringCommand) {
             ConfigurationClusteringCommand command = (ConfigurationClusteringCommand) msg;
             try {
-                configurationManager.notifyListeners(command);
+                configurationManager.notifyListener(command);
             } catch (ClusteringFault e) {
                 log.error("Could not process ConfigurationCommand", e);
             }

@@ -26,26 +26,27 @@ import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DefaultConfigurationManager implements ConfigurationManager {
     private static final Log log = LogFactory.getLog(DefaultConfigurationManager.class);
 
-    private List listeners;
+    private ConfigurationManagerListener listener;
     private MessageSender sender;
     private ConfigurationContext configurationContext;
     private Map parameters = new HashMap();
 
     public DefaultConfigurationManager() {
-        listeners = new ArrayList();
     }
 
-    public void addConfigurationManagerListener(ConfigurationManagerListener listener) {
+    public void setConfigurationManagerListener(ConfigurationManagerListener listener) {
         if (configurationContext != null) {
             listener.setConfigurationContext(configurationContext);
         }
-
-        listeners.add(listener);
+        this.listener = listener;
     }
 
     public void applyPolicy(String serviceGroupName, String policy) throws ClusteringFault {
@@ -169,48 +170,42 @@ public class DefaultConfigurationManager implements ConfigurationManager {
         this.sender = sender;
     }
 
-    public void notifyListeners(ConfigurationClusteringCommand command) throws ClusteringFault {
+    public void notifyListener(ConfigurationClusteringCommand command) throws ClusteringFault {
 
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            ConfigurationManagerListener listener = (ConfigurationManagerListener) iter.next();
-            switch (command.getCommandType()) {
-                case ConfigurationClusteringCommand.RELOAD_CONFIGURATION:
-                    listener.configurationReloaded(command);
-                    break;
-                case ConfigurationClusteringCommand.LOAD_SERVICE_GROUPS:
-                    listener.serviceGroupsLoaded(command);
-                    break;
-                case ConfigurationClusteringCommand.UNLOAD_SERVICE_GROUPS:
-                    listener.serviceGroupsUnloaded(command);
-                    break;
-                case ConfigurationClusteringCommand.APPLY_SERVICE_POLICY:
-                    listener.policyApplied(command);
-                    break;
-                case ConfigurationClusteringCommand.PREPARE:
-                    listener.prepareCalled();
-                    break;
-                case ConfigurationClusteringCommand.COMMIT:
-                    listener.commitCalled();
-                    break;
-                case ConfigurationClusteringCommand.ROLLBACK:
-                    listener.rollbackCalled();
-                    break;
-                case ConfigurationClusteringCommand.EXCEPTION:
-                    listener.handleException(((ExceptionCommand)command).getException());
-                    break;
-                default:
-                    throw new ClusteringFault("Invalid ConfigurationClusteringCommand " +
-                                              command.getClass().getName());
-            }
+        switch (command.getCommandType()) {
+            case ConfigurationClusteringCommand.RELOAD_CONFIGURATION:
+                listener.configurationReloaded(command);
+                break;
+            case ConfigurationClusteringCommand.LOAD_SERVICE_GROUPS:
+                listener.serviceGroupsLoaded(command);
+                break;
+            case ConfigurationClusteringCommand.UNLOAD_SERVICE_GROUPS:
+                listener.serviceGroupsUnloaded(command);
+                break;
+            case ConfigurationClusteringCommand.APPLY_SERVICE_POLICY:
+                listener.policyApplied(command);
+                break;
+            case ConfigurationClusteringCommand.PREPARE:
+                listener.prepareCalled();
+                break;
+            case ConfigurationClusteringCommand.COMMIT:
+                listener.commitCalled();
+                break;
+            case ConfigurationClusteringCommand.ROLLBACK:
+                listener.rollbackCalled();
+                break;
+            case ConfigurationClusteringCommand.EXCEPTION:
+                listener.handleException(((ExceptionCommand) command).getException());
+                break;
+            default:
+                throw new ClusteringFault("Invalid ConfigurationClusteringCommand " +
+                                          command.getClass().getName());
         }
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        for (Iterator it = listeners.iterator(); it.hasNext();) {
-            ConfigurationManagerListener listener = (ConfigurationManagerListener) it.next();
-            listener.setConfigurationContext(configurationContext);
-        }
+        listener.setConfigurationContext(configurationContext);
     }
 
     public void addParameter(Parameter param) throws AxisFault {

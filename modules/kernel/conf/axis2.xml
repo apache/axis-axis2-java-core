@@ -255,12 +255,10 @@
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
         <parameter name="param1">value1</parameter>
     	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
-    	    <listeners>
-    	    </listeners>
+    	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
     	<contextManager class="org.apache.axis2.cluster.context.TribesContextManager">
-    	    <listeners>
-    	    </listeners>
+    	    <listener class="org.apache.axis2.cluster.context.DefaultContextManagerListener"/>
     	</contextManager>
     </cluster>
     -->

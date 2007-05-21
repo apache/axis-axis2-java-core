@@ -92,7 +92,7 @@ public interface ConfigurationManager extends ParameterInclude {
     /**
      * For registering a configuration event listener.
      */
-    void addConfigurationManagerListener(ConfigurationManagerListener listener);
+    void setConfigurationManagerListener(ConfigurationManagerListener listener);
 
     /**
      * Set the configuration context

@@ -110,24 +110,21 @@ public class ClusterBuilder extends DescriptionBuilder {
             ContextManager contextManager = (ContextManager) clazz.newInstance();
             clusterManager.setContextManager(contextManager);
 
-            // Load & set the ContextManagerListener objects
-            OMElement listenersElement =
-                    contextManagerEle.getFirstChildWithName(new QName(TAG_LISTENERS));
-            if (listenersElement != null) {
-                for (Iterator iter = listenersElement.getChildrenWithName(new QName(TAG_LISTENER));
-                     iter.hasNext();) {
-                    OMElement listenerElement = (OMElement) iter.next();
-                    classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                    if (classNameAttr == null) {
-                        throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
-                                                                          TAG_LISTENER));
-                    }
-
-                    className = classNameAttr.getAttributeValue();
-                    clazz = Class.forName(className);
-                    ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
-                    contextManager.addContextManagerListener(listener);
+            // Load & set the ContextManagerListener
+            OMElement listenerEle =
+                    contextManagerEle.getFirstChildWithName(new QName(TAG_LISTENER));
+            if (listenerEle != null) {
+                classNameAttr = listenerEle.getAttribute(new QName(TAG_CLASS_NAME));
+                if (classNameAttr == null) {
+                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                                      TAG_LISTENER));
                 }
+                className = classNameAttr.getAttributeValue();
+                clazz = Class.forName(className);
+                ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
+                contextManager.setContextManagerListener(listener);
+            } else {
+                throw new DeploymentException(Messages.getMessage("contextManagerListenerIsNull"));
             }
 
             //loading the parameters.
@@ -207,25 +204,24 @@ public class ClusterBuilder extends DescriptionBuilder {
                     (ConfigurationManager) clazz.newInstance();
             clusterManager.setConfigurationManager(configurationManager);
 
-            OMElement listenersElement =
-                    configManagerEle.getFirstChildWithName(new QName(TAG_LISTENERS));
-            if (listenersElement != null) {
-                Iterator listenerElemIter = listenersElement.getChildrenWithName(new QName(
-                        TAG_LISTENER));
-                while (listenerElemIter.hasNext()) {
-                    OMElement listenerElement = (OMElement) listenerElemIter.next();
-                    classNameAttr = listenerElement.getAttribute(new QName(TAG_CLASS_NAME));
-                    if (classNameAttr == null) {
-                        throw new DeploymentException(Messages.getMessage("classAttributeNotFound", TAG_LISTENER));
-                    }
-
-                    className = classNameAttr.getAttributeValue();
-                    clazz = Class.forName(className);
-                    ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
-                            .newInstance();
-                    listener.setConfigurationContext(configCtx);
-                    configurationManager.addConfigurationManagerListener(listener);
+            OMElement listenerEle =
+                    configManagerEle.getFirstChildWithName(new QName(TAG_LISTENER));
+            if (listenerEle != null) {
+                classNameAttr = listenerEle.getAttribute(new QName(TAG_CLASS_NAME));
+                if (classNameAttr == null) {
+                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                                                                      TAG_LISTENER));
                 }
+
+                className = classNameAttr.getAttributeValue();
+                clazz = Class.forName(className);
+                ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
+                        .newInstance();
+                listener.setConfigurationContext(configCtx);
+                configurationManager.setConfigurationManagerListener(listener);
+            } else {
+                throw new DeploymentException(Messages.
+                        getMessage("configurationManagerListenerIsNull"));
             }
 
             //updating the ConfigurationManager with the new ConfigurationContext

@@ -95,7 +95,6 @@ public interface DeploymentConstants {
     //ClusterBuilder
     String TAG_CONFIGURATION_MANAGER = "configurationManager";
     String TAG_CONTEXT_MANAGER = "contextManager";
-    String TAG_LISTENERS = "listeners";
     String TAG_REPLICATION = "replication";
     String TAG_DEFAULTS = "defaults";
     String TAG_CONTEXT = "context";

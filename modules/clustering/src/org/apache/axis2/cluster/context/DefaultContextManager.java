@@ -32,7 +32,7 @@ public class DefaultContextManager implements ContextManager {
 
     private ConfigurationContext configContext;
 
-    private List listeners = new ArrayList();
+    private ContextManagerListener listener;
     private Map parameters = new HashMap();
 
     private MessageSender sender;
@@ -68,48 +68,37 @@ public class DefaultContextManager implements ContextManager {
                (context instanceof ServiceGroupContext);
     }
 
-    public void notifyListeners(ContextClusteringCommand command) throws ClusteringFault {
-
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            ContextManagerListener listener = (ContextManagerListener) iter.next();
-            switch (command.getCommandType()) {
-                case ContextClusteringCommand.CREATE_SERVICE_CONTEXT:
-                case ContextClusteringCommand.CREATE_SERVICE_GROUP_CONTEXT:
-                    listener.contextAdded(command);
-                    break;
-                case ContextClusteringCommand.UPDATE_SERVICE_CONTEXT:
-                case ContextClusteringCommand.UPDATE_SERVICE_GROUP_CONTEXT:
-                case ContextClusteringCommand.UPDATE_CONFIGURATION_CONTEXT:
-                    listener.contextUpdated(command);
-                    break;
-                case ContextClusteringCommand.DELETE_SERVICE_CONTEXT:
-                case ContextClusteringCommand.DELETE_SERVICE_GROUP_CONTEXT:
-                    listener.contextRemoved(command);
-                    break;
-                default:
-                    throw new ClusteringFault("Invalid ContextClusteringCommand " +
-                                              command.getClass().getName());
-            }
+    public void notifyListener(ContextClusteringCommand command) throws ClusteringFault {
+        switch (command.getCommandType()) {
+            case ContextClusteringCommand.CREATE_SERVICE_CONTEXT:
+            case ContextClusteringCommand.CREATE_SERVICE_GROUP_CONTEXT:
+                listener.contextAdded(command);
+                break;
+            case ContextClusteringCommand.UPDATE_SERVICE_CONTEXT:
+            case ContextClusteringCommand.UPDATE_SERVICE_GROUP_CONTEXT:
+            case ContextClusteringCommand.UPDATE_CONFIGURATION_CONTEXT:
+                listener.contextUpdated(command);
+                break;
+            case ContextClusteringCommand.DELETE_SERVICE_CONTEXT:
+            case ContextClusteringCommand.DELETE_SERVICE_GROUP_CONTEXT:
+                listener.contextRemoved(command);
+                break;
+            default:
+                throw new ClusteringFault("Invalid ContextClusteringCommand " +
+                                          command.getClass().getName());
         }
     }
 
-    public void addContextManagerListener(ContextManagerListener listener) {
+    public void setContextManagerListener(ContextManagerListener listener) {
         if (configContext != null) {
             listener.setConfigurationContext(configContext);
         }
-        listeners.add(listener);
+        this.listener = listener;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configContext = configurationContext;
-
-        //setting this to the listeners as well.
-        if (listeners != null) {
-            for (Iterator it = listeners.iterator(); it.hasNext();) {
-                ContextManagerListener listener = (ContextManagerListener) it.next();
-                listener.setConfigurationContext(configurationContext);
-            }
-        }
+        listener.setConfigurationContext(configurationContext);
     }
 
     public void setReplicationExcludePatterns(String contextType, List patterns) {

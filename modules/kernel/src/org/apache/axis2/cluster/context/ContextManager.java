@@ -24,6 +24,7 @@ import org.apache.axis2.description.ParameterInclude;
 import java.util.List;
 
 public interface ContextManager extends ParameterInclude {
+
     public void addContext(AbstractContext context) throws ClusteringFault;
 
     public void removeContext(AbstractContext context) throws ClusteringFault;
@@ -32,7 +33,7 @@ public interface ContextManager extends ParameterInclude {
 
     public boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
 
-    public void addContextManagerListener(ContextManagerListener listener);
+    public void setContextManagerListener(ContextManagerListener listener);
 
     public void setConfigurationContext(ConfigurationContext configurationContext);
 
