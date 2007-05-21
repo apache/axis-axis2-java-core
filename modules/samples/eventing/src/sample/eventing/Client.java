@@ -200,7 +200,7 @@ public class Client {
 //			throw new AxisFault ("Please specify the client repository as a program argument.Use '-h' for help.");
 		}
 		
-		ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_REPO,AXIS2_XML);
+		ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_REPO,null);
 		serviceClient = new ServiceClient (configContext,null); //TODO give a repo
 		
 		options = new Options ();

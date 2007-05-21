@@ -16,13 +16,13 @@
 
 package sample.eventing;
 
+import java.net.URI;
 import java.util.Random;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.savan.publication.client.PublicationClient;
@@ -64,31 +64,30 @@ public class PublisherService {
 					if (store==null)
 						throw new Exception ("Cant find the Savan subscriber store");
 					
-					SOAPEnvelope envelope = getNextPublicationEnvelope ();
-					PublicationClient.sendPublication(envelope,serviceContext.getConfigurationContext(),store);
+					OMElement data = getNextPublicationData ();
+					
+					PublicationClient publicationClient = new PublicationClient (serviceContext.getConfigurationContext());
+					publicationClient.sendPublication(data,serviceContext.getAxisService(),null);
 				}
-				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		public SOAPEnvelope getNextPublicationEnvelope () {
-			SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+		public OMElement getNextPublicationData () {
+			OMFactory factory = OMAbstractFactory.getOMFactory();
 			OMNamespace namespace = factory.createOMNamespace(publicationNamespaceValue,"ns1");
 			OMElement publicationElement = factory.createOMElement(Publication,namespace);
 			
 			int value = r.nextInt();
 			publicationElement.setText(Integer.toString(value));
 			
-			OMElement publishMethod = factory.createOMElement("publish",namespace);
-			publishMethod.addChild(publicationElement);
+			OMElement data = factory.createOMElement("publish",namespace);
+			data.addChild(publicationElement);
 			
-			SOAPEnvelope envelope = factory.getDefaultEnvelope();
-			envelope.getBody().addChild(publishMethod);
 			
-			return envelope;
+			return data;
 		}
 	}
 }
