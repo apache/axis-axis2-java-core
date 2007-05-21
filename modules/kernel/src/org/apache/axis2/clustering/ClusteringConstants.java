@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clustering.tribes;
 
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
-import org.apache.axis2.clustering.UpdateStateTestCase;
+package org.apache.axis2.clustering;
 
-public class UpdateStateTest extends UpdateStateTestCase {
-
-    protected ClusterManager getClusterManager() {
-        return new TribesClusterManager();
-    }
-
+public class ClusteringConstants {
+	public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
 }

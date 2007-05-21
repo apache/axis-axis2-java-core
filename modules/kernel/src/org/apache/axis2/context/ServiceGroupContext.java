@@ -19,8 +19,8 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.context.ContextManager;
+import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;

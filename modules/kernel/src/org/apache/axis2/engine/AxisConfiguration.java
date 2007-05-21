@@ -18,7 +18,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
-import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;

@@ -16,7 +16,7 @@
 
 package org.apache.axis2.clustering.configuration;
 
-import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.ClusterManagerTestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

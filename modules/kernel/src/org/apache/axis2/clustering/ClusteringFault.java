@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clustering.tribes;
+package org.apache.axis2.clustering;
 
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
-import org.apache.axis2.clustering.UpdateStateTestCase;
+import org.apache.axis2.AxisFault;
 
-public class UpdateStateTest extends UpdateStateTestCase {
+public class ClusteringFault extends AxisFault {
 
-    protected ClusterManager getClusterManager() {
-        return new TribesClusterManager();
-    }
-
+	public ClusteringFault (String message) {
+		super (message);
+	}
+	
+	public ClusteringFault (String message, Exception e) {
+		super (message, e);
+	}
+	
+	public ClusteringFault (Exception e) {
+		super (e);
+	}
 }

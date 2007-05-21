@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clustering.tribes;
+package org.apache.axis2.clustering.context;
 
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
-import org.apache.axis2.clustering.UpdateStateTestCase;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.context.ConfigurationContext;
 
-public class UpdateStateTest extends UpdateStateTestCase {
+public interface ContextManagerListener {
+    
+    public void contextAdded(ContextClusteringCommand message) throws ClusteringFault;
 
-    protected ClusterManager getClusterManager() {
-        return new TribesClusterManager();
-    }
+    public void contextRemoved(ContextClusteringCommand message) throws ClusteringFault;
 
+    public void contextUpdated(ContextClusteringCommand message) throws ClusteringFault;
+
+    public void setConfigurationContext(ConfigurationContext configurationContext);
 }

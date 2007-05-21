@@ -16,8 +16,8 @@
 
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.tribes.TribesClusterManager;
+import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.tribes.TribesClusterManager;
 
 public class ConfigurationManagerTest extends
                                       org.apache.axis2.clustering.configuration.ConfigurationManagerTestCase {

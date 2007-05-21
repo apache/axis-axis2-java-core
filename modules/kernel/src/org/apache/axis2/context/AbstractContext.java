@@ -18,8 +18,8 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.context.ContextManager;
+import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 

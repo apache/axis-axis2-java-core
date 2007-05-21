@@ -19,11 +19,11 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.configuration.ConfigurationManager;
-import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
-import org.apache.axis2.cluster.context.ContextManager;
-import org.apache.axis2.cluster.context.ContextManagerListener;
+import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.configuration.ConfigurationManager;
+import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
+import org.apache.axis2.clustering.context.ContextManager;
+import org.apache.axis2.clustering.context.ContextManagerListener;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 

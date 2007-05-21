@@ -17,9 +17,9 @@
 package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
-import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.context.DefaultContextManagerListener;
+import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
