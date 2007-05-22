@@ -1,5 +1,4 @@
 #!/bin/sh
-
 export AXIS2_HOME=../..
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:SGCCalculator.jar
 for f in $AXIS2_HOME/lib/*.jar
