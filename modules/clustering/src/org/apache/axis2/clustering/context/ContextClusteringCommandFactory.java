@@ -92,6 +92,9 @@ public final class ContextClusteringCommandFactory {
         // First check in the default excludes
         List defaultExcludes =
                 (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
+        if(defaultExcludes == null){
+            return false;
+        }
         if (isExcluded(defaultExcludes, propertyName)) {
             return true;
         } else {

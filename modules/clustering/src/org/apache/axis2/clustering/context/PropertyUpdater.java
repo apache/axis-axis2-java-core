@@ -38,7 +38,7 @@ public class PropertyUpdater implements Serializable {
                 abstractContext.removePropertyNonReplicable(key);
             } else {  // it is updated/added
                 abstractContext.setNonReplicableProperty(key, propDiff.getValue());
-                System.err.println("........ added prop=" + key);
+                System.err.println("........ added prop=" + key + ", value="+ propDiff.getValue() + " to context " + abstractContext);
             }
         }
     }

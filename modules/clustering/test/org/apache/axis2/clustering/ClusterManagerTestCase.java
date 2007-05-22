@@ -21,6 +21,8 @@ import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
+import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
+import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -37,6 +39,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
     protected AxisConfiguration axisConfiguration2 = null;
     protected ConfigurationContext configurationContext1 = null;
     protected ConfigurationContext configurationContext2 = null;
+    protected ConfigurationManagerListener configManagerListener1;
+    protected ConfigurationManagerListener configManagerListener2;
     protected AxisServiceGroup serviceGroup1 = null;
     protected AxisServiceGroup serviceGroup2 = null;
     protected AxisService service1 = null;
@@ -46,10 +50,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
     protected abstract ClusterManager getClusterManager();
 
     protected boolean skipChannelTests = false;
-    protected TestConfigurationManagerListener configurationManagerListener1 = null;
-    protected TestConfigurationManagerListener configurationManagerListener2 = null;
-    protected DefaultContextManagerListener contextManagerListener1 = null;
-    protected DefaultContextManagerListener contextManagerListener2 = null;
+    protected TestConfigurationManagerListener configurationManagerListener;
+    protected DefaultContextManagerListener contextManagerListener;
 
     private static final Log log = LogFactory.getLog(ClusterManagerTestCase.class);
 
@@ -66,21 +68,15 @@ public abstract class ClusterManagerTestCase extends TestCase {
         clusterManager1.getContextManager().setConfigurationContext(configurationContext1);
         clusterManager2.getContextManager().setConfigurationContext(configurationContext2);
 
-        contextManagerListener1 = new DefaultContextManagerListener();
-        clusterManager1.getContextManager(). addContextManagerListener(contextManagerListener1);
-        contextManagerListener2 = new DefaultContextManagerListener();
-        clusterManager2.getContextManager(). addContextManagerListener(contextManagerListener2);
-
         clusterManager1.getConfigurationManager().setConfigurationContext(configurationContext1);
         clusterManager2.getConfigurationManager().setConfigurationContext(configurationContext2);
 
-        configurationManagerListener1 = new TestConfigurationManagerListener();
-        clusterManager1.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener1);
-        configurationManagerListener2 = new TestConfigurationManagerListener();
-        clusterManager2.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener2);
+        configManagerListener1 = new DefaultConfigurationManagerListener();
+        clusterManager1.getConfigurationManager().setConfigurationManagerListener(configManagerListener1);
+        configManagerListener2 = new DefaultConfigurationManagerListener();
+        clusterManager2.getConfigurationManager().setConfigurationManagerListener(configManagerListener2);
 
         //giving both Nodes the same deployment configuration
-
         axisConfiguration1 = configurationContext1.getAxisConfiguration();
         serviceGroup1 = new AxisServiceGroup(axisConfiguration1);
         service1 = new AxisService(serviceName);

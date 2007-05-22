@@ -32,7 +32,8 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
     public void testAddContext() throws Exception {
 
         if (skipChannelTests) {
-            String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+            String message = "Cannot run the clustering test.Please make sure that your network " +
+                             "service is enabled. Skipping the test...";
             log.error(message);
             return;
         }
@@ -53,7 +54,8 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
         Thread.sleep(5000);
 
         //The second configContext should have the newly added contexts.
-        ServiceGroupContext serviceGroupContext2 = configurationContext2.getServiceGroupContext(sgcID);
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.getServiceGroupContext(sgcID);
         System.out.println("sgs ID 2:" + sgcID);
         assertNotNull(serviceGroupContext2);
 
@@ -69,7 +71,8 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 
     public void testRemoveContext() {
         if (skipChannelTests) {
-            String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+            String message = "Cannot run the clustering test.Please make sure that your network " +
+                             "service is enabled. Skipping the test...";
             log.error(message);
             return;
         }

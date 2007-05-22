@@ -16,8 +16,6 @@
 
 package org.apache.axis2.clustering.configuration;
 
-import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
-import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 import java.util.ArrayList;
@@ -51,17 +49,17 @@ public class TestConfigurationManagerListener implements ConfigurationManagerLis
 
     }
 
-    public void prepareCalled(ConfigurationClusteringCommand command) {
+    public void prepareCalled() {
         //TODO: Method implementation
 
     }
 
-    public void rollbackCalled(ConfigurationClusteringCommand command) {
+    public void rollbackCalled() {
         //TODO: Method implementation
 
     }
 
-    public void commitCalled(ConfigurationClusteringCommand command) {
+    public void commitCalled() {
         //TODO: Method implementation
 
     }

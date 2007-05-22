@@ -17,13 +17,24 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
 import org.apache.axis2.clustering.ManageContextTestCase;
+import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
+import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
+import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 
 public class ManageContextTest extends ManageContextTestCase {
 
     protected ClusterManager getClusterManager() {
-        return new TribesClusterManager();
+        TribesClusterManager tribesClusterManager = new TribesClusterManager();
+        DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
+        configurationManager.
+                setConfigurationManagerListener(new DefaultConfigurationManagerListener());
+        tribesClusterManager.setConfigurationManager(configurationManager);
+        DefaultContextManager contextManager = new DefaultContextManager();
+        contextManager.setContextManagerListener(new DefaultContextManagerListener());
+        tribesClusterManager.setContextManager(contextManager);
+        return tribesClusterManager;
     }
 
 }

@@ -39,7 +39,6 @@ public class ReplicationHandler extends AbstractHandler {
     }
 
     public void flowComplete(MessageContext msgContext) {
-        super.flowComplete(msgContext);
         try {
             System.err.println("############ Going to replicate state on flow complete");
             replicateState(msgContext);

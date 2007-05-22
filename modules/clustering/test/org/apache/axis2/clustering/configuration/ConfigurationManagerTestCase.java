@@ -31,7 +31,6 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     private static final Log log = LogFactory.getLog(ConfigurationManagerTestCase.class);
 
     public void testLoadServiceGroup() throws ClusteringFault {
-        configurationManagerListener2.clearEventList();
 
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().loadServiceGroups(new String[]{serviceGroupName});
@@ -56,8 +55,6 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 
     public void testUnloadServiceGroup() throws ClusteringFault {
 
-        configurationManagerListener2.clearEventList();
-
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().unloadServiceGroups(new String[]{serviceGroupName});
 
@@ -80,8 +77,6 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     }
 
     public void testApplyPolicy() throws ClusteringFault, XMLStreamException {
-
-        configurationManagerListener2.clearEventList();
 
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().loadServiceGroups(new String[]{serviceGroupName});
@@ -123,8 +118,6 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 
     public void testPrepare() throws ClusteringFault {
 
-        configurationManagerListener2.clearEventList();
-
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().prepare();
 
@@ -143,8 +136,6 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
     }
 
     public void testCommit() throws ClusteringFault {
-
-        configurationManagerListener2.clearEventList();
 
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().commit();
@@ -165,12 +156,10 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 
     public void testRollback() throws ClusteringFault {
 
-        configurationManagerListener2.clearEventList();
-
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().rollback();
 
-        t/*ry {
+        /*try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -186,18 +175,16 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 
     public void testReloadConfiguration() throws ClusteringFault {
 
-        configurationManagerListener2.clearEventList();
-
         String serviceGroupName = "testService";
         clusterManager1.getConfigurationManager().reloadConfiguration();
 
-        /*try {
+        try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        List eventList = configurationManagerListener2.getEventList();
+        /*List eventList = configurationManagerListener2.getEventList();
         assertNotNull(eventList);
         assertEquals(eventList.size(), 1);
         ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
