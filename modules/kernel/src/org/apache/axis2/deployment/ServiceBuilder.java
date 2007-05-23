@@ -135,7 +135,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                    if (!"".equals(serviceNameatt.getAttributeValue().trim()) && service.getServiceDescription() == null) {
                         service.setServiceDescription(serviceNameatt.getAttributeValue());
                     }
                 }

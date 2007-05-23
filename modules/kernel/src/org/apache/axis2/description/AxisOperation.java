@@ -646,7 +646,7 @@ public abstract class AxisOperation extends AxisDescription
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
                 omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
-        WSDLSerializationUtil.addWSDL2DocumentationElement(this, axisOperationElement, omFactory, wsdl);
+        WSDLSerializationUtil.addWSDLDocumentationElement(this, axisOperationElement, omFactory, wsdl);
         axisOperationElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                       null,
                                                                       this.getName().getLocalPart()));
@@ -666,7 +666,7 @@ public abstract class AxisOperation extends AxisDescription
             OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
             inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, getInputAction());
-            WSDLSerializationUtil.addWSDL2DocumentationElement(inMessage, inMessageElement, omFactory, wsdl);
+            WSDLSerializationUtil.addWSDLDocumentationElement(inMessage, inMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(inMessageElement);
         }
 
@@ -676,7 +676,7 @@ public abstract class AxisOperation extends AxisDescription
             OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
             outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, getOutputAction());
-            WSDLSerializationUtil.addWSDL2DocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
+            WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(outMessageElement);
         }
 
@@ -694,7 +694,7 @@ public abstract class AxisOperation extends AxisDescription
                 }
                 faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
                 WSDLSerializationUtil.addWSAWActionAttribute(faultElement, getFaultAction(faultMessage.getName()));
-                WSDLSerializationUtil.addWSDL2DocumentationElement(faultMessage, faultElement, omFactory, wsdl);
+                WSDLSerializationUtil.addWSDLDocumentationElement(faultMessage, faultElement, omFactory, wsdl);
                 axisOperationElement.addChild(faultElement);
             }
         }

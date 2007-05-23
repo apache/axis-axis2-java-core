@@ -146,13 +146,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         // <documentation>&lt;b&gt;NEW!&lt;/b&gt; This method accepts an ISBN
         // string and returns &lt;b&gt;Amazon.co.uk&lt;/b&gt; Sales Rank for
         // that book.</documentation>
-        String servicedescription = axisService.getServiceDescription();
-        if (servicedescription != null && !"".equals(servicedescription)) {
-            OMElement documenentattion = fac.createOMElement("documentation",
-                                                             wsdl);
-            documenentattion.setText(servicedescription);
-            ele.addChild(documenentattion);
-        }
+        WSDLSerializationUtil.addWSDLDocumentationElement(axisService, ele, fac, wsdl);
 
         ele.addAttribute("targetNamespace", axisService.getTargetNamespace(),
                          null);
@@ -323,6 +317,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             String operationName = axisOperation.getName().getLocalPart();
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                                                       wsdl);
+            WSDLSerializationUtil.addWSDLDocumentationElement(axisOperation, operation, fac, wsdl);
             portType.addChild(operation);
             operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
             addPolicyAsExtElement(PolicyInclude.OPERATION_POLICY, axisOperation
@@ -345,6 +340,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 if (inaxisMessage != null) {
                     OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
                                                           wsdl);
+                    WSDLSerializationUtil.addWSDLDocumentationElement(inaxisMessage, input, fac, wsdl);
                     input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                             + ":" + inaxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.INPUT_POLICY,
@@ -369,6 +365,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 if (outAxisMessage != null) {
                     OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
                                                            wsdl);
+                    WSDLSerializationUtil.addWSDLDocumentationElement(outAxisMessage, output, fac, wsdl);
                     output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                             + ":" + outAxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.OUTPUT_POLICY,
@@ -387,6 +384,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                             .get(i);
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
                                                           wsdl);
+                    WSDLSerializationUtil.addWSDLDocumentationElement(faultyMessage, fault, fac, wsdl);
                     fault.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                             + ":" + faultyMessage.getName(), null);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),

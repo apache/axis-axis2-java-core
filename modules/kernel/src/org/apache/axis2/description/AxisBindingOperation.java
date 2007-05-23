@@ -159,10 +159,11 @@ public class AxisBindingOperation extends AxisDescription {
                 bindingOpElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_FAULT_SERIALIZATION, whttp, property));
             }
-            property = this.options.get(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED).toString();
-            if (property != null) {
+            Boolean ignoreUncited =
+                    (Boolean) this.options.get(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED);
+            if (ignoreUncited != null) {
                 bindingOpElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_IGNORE_UNCITED, whttp, property));
+                        WSDL2Constants.ATTRIBUTE_IGNORE_UNCITED, whttp, ignoreUncited.toString()));
             }
             property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_METHOD);
             if (property != null) {
@@ -211,7 +212,7 @@ public class AxisBindingOperation extends AxisDescription {
                 bindingOpElement.addChild(faultMessage.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
             }
         }
-        WSDLSerializationUtil.addWSDL2DocumentationElement(this, bindingOpElement, omFactory, wsdl);
+        WSDLSerializationUtil.addWSDLDocumentationElement(this, bindingOpElement, omFactory, wsdl);
         return bindingOpElement;
     }
 

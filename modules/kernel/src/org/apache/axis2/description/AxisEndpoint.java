@@ -128,7 +128,7 @@ public class AxisEndpoint extends AxisDescription {
         if (property != null) {
            endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_REALM, whttp, property));
         }
-        WSDLSerializationUtil.addWSDL2DocumentationElement(this, endpointElement, omFactory, wsdl);
+        WSDLSerializationUtil.addWSDLDocumentationElement(this, endpointElement, omFactory, wsdl);
         return endpointElement;
     }
 }

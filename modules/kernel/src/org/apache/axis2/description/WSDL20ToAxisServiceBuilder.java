@@ -886,7 +886,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisOperation.addParameter(parameter);
         }
 
-
         InterfaceMessageReference[] interfaceMessageReferences = operation
                 .getInterfaceMessageReferences();
         for (int i = 0; i < interfaceMessageReferences.length; i++) {

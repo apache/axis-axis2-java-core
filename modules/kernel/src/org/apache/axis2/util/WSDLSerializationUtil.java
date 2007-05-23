@@ -383,9 +383,9 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
         }
     }
 
-    public static void addWSDL2DocumentationElement(AxisDescription axisDescription, OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
+    public static void addWSDLDocumentationElement(AxisDescription axisDescription, OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
         String documentationString = axisDescription.getDocumentation();
-        OMElement documentation = null;
+        OMElement documentation;
         if (documentationString != null && !"".equals(documentationString)) {
             documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
             OMText omText;
