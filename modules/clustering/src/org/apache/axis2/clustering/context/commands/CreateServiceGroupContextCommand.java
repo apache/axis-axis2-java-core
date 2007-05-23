@@ -43,7 +43,6 @@ public class CreateServiceGroupContextCommand extends ServiceGroupContextCommand
     }
 
     public void setServiceGroupContextId(String serviceGroupContextId) {
-        System.err.println("$$$$$$$$$$$$$$$ set sg ctx ID=" + serviceGroupContextId);
         this.serviceGroupContextId = serviceGroupContextId;
     }
 }

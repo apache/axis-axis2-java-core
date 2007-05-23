@@ -40,9 +40,7 @@ public class ReplicationHandler extends AbstractHandler {
 
     public void flowComplete(MessageContext msgContext) {
         try {
-            System.err.println("############ Going to replicate state on flow complete");
             replicateState(msgContext);
-            System.err.println("########### Replicated state ");
         } catch (Exception e) {
             String message = "Could not replicate the state";
             log.error(message, e);

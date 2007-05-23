@@ -20,6 +20,11 @@ import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 
@@ -29,41 +34,22 @@ import java.util.HashMap;
 public class UpdateServiceContextCommand
         extends ServiceContextCommand implements UpdateContextCommand {
 
+    private static final Log log = LogFactory.getLog(UpdateServiceContextCommand.class);
+
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        //TODO: Impl
-
-        /*ServiceGroupContext srvGrpCtx = configurationContext.getServiceGroupContext
-                (event.getParentContextID());
-        Iterator iter = srvGrpCtx.getServiceContexts();
-        String serviceCtxName = event.getDescriptionID();
-        ServiceContext serviceContext = null;
-        while (iter.hasNext()) {
-            ServiceContext serviceContext2 = (ServiceContext) iter.next();
-            if (serviceContext2.getName() != null
-                && serviceContext2.getName().equals(serviceCtxName)) {
-                serviceContext = serviceContext2;
-            }
+        log.debug("Updating service context properties...");
+        ServiceGroupContext sgCtx =
+                configurationContext.getServiceGroupContext(serviceGroupContextId);
+        try {
+            AxisService axisService =
+                    configurationContext.getAxisConfiguration().getService(serviceName);
+            ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+            propertyUpdater.updateProperties(serviceContext);
+        } catch (AxisFault e) {
+            throw new ClusteringFault(e);
         }
-
-        if (serviceContext != null) {
-
-            Map srvProps = updater.getServiceProps(event.getParentContextID(), event.getContextID());
-
-            if (srvProps != null) {
-                serviceContext.setProperties(srvProps);
-            }
-
-        } else {
-            String message = "Cannot find the ServiceContext with the ID:" + serviceCtxName;
-            log.error(message);
-        }*/
-
-        //TODO: Get the service context
-//        ServiceGroupContext sgCtx =
-//                configurationContext.getServiceGroupContext(serviceGroupContextId);
-//        propertyUpdater.updateProperties(sgCtx);
     }
 
     public boolean isPropertiesEmpty() {

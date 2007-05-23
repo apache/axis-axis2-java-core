@@ -26,18 +26,8 @@ import org.apache.axis2.description.AxisService;
  * 
  */
 public class CreateServiceContextCommand extends ServiceContextCommand {
-    private String serviceGroupContextId;
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        /*AxisService axisService =
-                configurationContext.getAxisConfiguration().
-                        getService(message.getContextID());
-        ServiceGroupContext sgCtx =
-                configurationContext.getServiceGroupContext(message.getParentContextID());
-        // This will create service context if one is not available
-        sgCtx.getServiceContext(axisService);*/
-
-        // TODO: Implementation
         ServiceGroupContext sgCtx =
                 configurationContext.getServiceGroupContext(serviceGroupContextId);
         AxisService axisService;
@@ -67,10 +57,6 @@ public class CreateServiceContextCommand extends ServiceContextCommand {
         } catch (AxisFault axisFault) {
             throw new ClusteringFault(axisFault);
         }
-    }
-
-    public void setServiceGroupContextId(String serviceGroupContextId) {
-        this.serviceGroupContextId = serviceGroupContextId;
     }
 
     public int getCommandType() {

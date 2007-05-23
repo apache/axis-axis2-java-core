@@ -22,6 +22,7 @@ import org.apache.axis2.clustering.context.ContextClusteringCommand;
  */
 public abstract class ServiceContextCommand extends ContextClusteringCommand {
     protected String serviceGroupName;
+    protected String serviceGroupContextId;
     protected String serviceName;
 
     public void setServiceGroupName(String serviceGroupName) {
@@ -30,5 +31,9 @@ public abstract class ServiceContextCommand extends ContextClusteringCommand {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
     }
 }

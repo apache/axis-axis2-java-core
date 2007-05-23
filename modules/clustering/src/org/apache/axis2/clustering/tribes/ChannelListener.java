@@ -29,11 +29,10 @@ import java.io.Serializable;
 
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
-
+    private static final Log log = LogFactory.getLog(ChannelListener.class);
+    
     private DefaultContextManager contextManager = null;
     private DefaultConfigurationManager configurationManager = null;
-
-    private static final Log log = LogFactory.getLog(ChannelListener.class);
 
     public ChannelListener(DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager) {
@@ -54,7 +53,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     public void messageReceived(Serializable msg, Member sender) {
-        System.err.println("####### Message received " + msg);
+        log.debug("Message received : " + msg);
         if (msg instanceof ContextClusteringCommand) {
             try {
                 ContextClusteringCommand comMsg = (ContextClusteringCommand) msg;

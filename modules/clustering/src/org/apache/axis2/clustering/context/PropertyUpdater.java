@@ -17,6 +17,8 @@ package org.apache.axis2.clustering.context;
 
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.PropertyDifference;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -26,11 +28,12 @@ import java.util.Map;
  * 
  */
 public class PropertyUpdater implements Serializable {
+    private static final Log log = LogFactory.getLog(PropertyUpdater.class);
 
     private Map properties;
 
     public void updateProperties(AbstractContext abstractContext) {
-        System.err.println("----- updating props in " + abstractContext);
+        log.debug("Updating props in " + abstractContext);
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             PropertyDifference propDiff =
@@ -39,7 +42,8 @@ public class PropertyUpdater implements Serializable {
                 abstractContext.removePropertyNonReplicable(key);
             } else {  // it is updated/added
                 abstractContext.setNonReplicableProperty(key, propDiff.getValue());
-                System.err.println("........ added prop=" + key + ", value="+ propDiff.getValue() + " to context " + abstractContext);
+                log.debug("Added prop=" + key + ", value="+ propDiff.getValue() +
+                          " to context " + abstractContext);
             }
         }
     }

@@ -18,6 +18,8 @@ package org.apache.axis2.clustering.context;
 import org.apache.axis2.clustering.context.commands.*;
 import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -28,6 +30,8 @@ import java.util.Map;
  * 
  */
 public final class ContextClusteringCommandFactory {
+
+    private static final Log log = LogFactory.getLog(ContextClusteringCommandFactory.class);
 
     public static ContextClusteringCommand getUpdateCommand(AbstractContext context,
                                                             Map excludedPropertyPatterns) {
@@ -55,6 +59,7 @@ public final class ContextClusteringCommandFactory {
             UpdateServiceContextCommand updateServiceCmd =
                     (UpdateServiceContextCommand) cmd;
             updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
+            updateServiceCmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
             fillProperties((UpdateContextCommand) cmd,
                            context,
@@ -78,7 +83,7 @@ public final class ContextClusteringCommandFactory {
 
                 // Next check whether it matches an excluded pattern
                 if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                    System.err.println("..................... sending prop=" + key + "-" + prop);
+                    log.debug("sending property =" + key + "-" + prop);
                     PropertyDifference diff = (PropertyDifference) diffs.get(key);
                     diff.setValue(prop);
                     updateCmd.addProperty(diff);
@@ -140,7 +145,7 @@ public final class ContextClusteringCommandFactory {
             ServiceContextCommand cmd = new CreateServiceContextCommand();
             ServiceGroupContext parent = (ServiceGroupContext) serviceCtx.getParent();
             if (parent != null) {
-                ((CreateServiceContextCommand) cmd).setServiceGroupContextId(parent.getId());
+                cmd.setServiceGroupContextId(parent.getId());
             }
             //TODO: check impl
             cmd.setServiceGroupName(serviceCtx.getGroupName());
