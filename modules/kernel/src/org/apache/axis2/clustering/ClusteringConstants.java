@@ -19,4 +19,5 @@ package org.apache.axis2.clustering;
 
 public class ClusteringConstants {
 	public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
+	public static final String DOMAIN = "domain";
 }
