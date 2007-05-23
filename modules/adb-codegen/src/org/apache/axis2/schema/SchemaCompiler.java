@@ -40,7 +40,7 @@ import java.util.Properties;
  */
 public class SchemaCompiler {
 
-    private static final Log log = LogFactory.getLog(SchemaCompiler .class);
+    private static final Log log = LogFactory.getLog(SchemaCompiler.class);
 
     private CompilerOptions options;
     private HashMap processedTypemap;
@@ -1007,15 +1007,9 @@ public class SchemaCompiler {
 
         QName attributeGroupRefName = attributeGroupRef.getRefName();
         if (attributeGroupRefName != null){
-           XmlSchemaObjectTable xmlSchemaObjectTable = parentSchema.getAttributeGroups();
-           XmlSchemaAttributeGroup xmlSchemaAttributeGroup = null;
-           for (Iterator iter = xmlSchemaObjectTable.getValues(); iter.hasNext();){
-               xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) iter.next();
-               if (xmlSchemaAttributeGroup.getName().equals(attributeGroupRefName.getLocalPart())){
-                   break;
-               }
-           }
-
+           parentSchema = resolveParentSchema(attributeGroupRefName,parentSchema);
+           XmlSchemaAttributeGroup xmlSchemaAttributeGroup = getXmlSchemaAttributeGroup(attributeGroupRefName,
+                                                                                        parentSchema);
            if (xmlSchemaAttributeGroup != null){
                processAttributes(xmlSchemaAttributeGroup.getAttributes(),metaInfHolder,parentSchema);
            } else {
@@ -1026,6 +1020,39 @@ public class SchemaCompiler {
             throw new SchemaCompilationException("No group refernce has given");
         }
 
+    }
+
+    private XmlSchemaAttributeGroup getXmlSchemaAttributeGroup(QName attributeGroupQName,
+                                                               XmlSchema parentSchema){
+        XmlSchemaAttributeGroup xmlSchemaAttributeGroup =
+                (XmlSchemaAttributeGroup) parentSchema.getAttributeGroups().getItem(attributeGroupQName);
+        if (xmlSchemaAttributeGroup == null){
+            // i.e this attribute can be in a included or imported schema
+            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) parentSchema.getAttributeGroups().getItem(attributeGroupQName);
+            if (xmlSchemaAttributeGroup == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) schema1.getAttributeGroups().getItem(attributeGroupQName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) schema1.getAttributeGroups().getItem(attributeGroupQName);
+                        }
+                        if (xmlSchemaAttributeGroup != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaAttributeGroup;
     }
 
     /**
@@ -1608,26 +1635,14 @@ public class SchemaCompiler {
 
         } else if (att.getRefName() != null) {
             XmlSchema currentParentSchema = resolveParentSchema(att.getRefName(), parentSchema);
-            QName attrQname = att.getRefName();
-
-            XmlSchemaObjectTable xmlSchemaObjectTable = currentParentSchema.getAttributes();
-
-            QName currentQName = null;
-            XmlSchemaAttribute xmlSchemaAttribute = null;
-            for (Iterator attributesIter = xmlSchemaObjectTable.getNames(); attributesIter.hasNext();) {
-                currentQName = (QName) attributesIter.next();
-                if (currentQName.getLocalPart().equals(attrQname.getLocalPart())) {
-                    xmlSchemaAttribute = (XmlSchemaAttribute) xmlSchemaObjectTable.getItem(currentQName);
-                    break;
-                }
-            }
+            XmlSchemaAttribute xmlSchemaAttribute = getXmlSchemaAttribute(att.getRefName(),currentParentSchema);
 
             if (xmlSchemaAttribute != null) {
                 // call recursively to process the schema
                 processAttribute(xmlSchemaAttribute, metainf, currentParentSchema);
             } else {
                 throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
-                        attrQname);
+                        att.getRefName());
             }
 
         } else {
@@ -1682,6 +1697,39 @@ public class SchemaCompiler {
         }
     }
 
+    private XmlSchemaAttribute getXmlSchemaAttribute(QName attributeQName,
+                                                     XmlSchema parentSchema){
+        XmlSchemaAttribute xmlSchemaAttribute =
+                (XmlSchemaAttribute) parentSchema.getAttributes().getItem(attributeQName);
+        if (xmlSchemaAttribute == null){
+            // i.e this attribute can be in a included or imported schema
+            xmlSchemaAttribute = (XmlSchemaAttribute) parentSchema.getAttributes().getItem(attributeQName);
+            if (xmlSchemaAttribute == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaAttribute = (XmlSchemaAttribute) schema1.getAttributes().getItem(attributeQName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaAttribute = (XmlSchemaAttribute) schema1.getAttributes().getItem(attributeQName);
+                        }
+                        if (xmlSchemaAttribute != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaAttribute;
+    }
+
     /**
      * Process a particle- A particle may be a sequence,all or a choice
      * @param parentElementQName - this can either be parent element QName or parent Complex type qname
@@ -1697,18 +1745,6 @@ public class SchemaCompiler {
 
         if (particle instanceof XmlSchemaSequence) {
             XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
-
-            //remove this : only for testing
-            if (parentElementQName != null) {
-                QName qname = new QName("http://mynamespace.com/testparticlemaxoccurs", "TestCustomType");
-                if (!qname.equals(parentElementQName)) {
-                    if (parentElementQName.getNamespaceURI().equals("http://mynamespace.com/testparticlemaxoccurs")) {
-                        xmlSchemaSequence.setMaxOccurs(5);
-                        xmlSchemaSequence.setMinOccurs(0);
-                    }
-                }
-            }
-
 
             XmlSchemaObjectCollection items = xmlSchemaSequence.getItems();
             //TODO: support parentElementQName null instances. i.e for extensions
@@ -1890,16 +1926,14 @@ public class SchemaCompiler {
                 if (groupQName != null){
                     if (!processedTypemap.containsKey(groupQName)){
                         // processe the schema here
-                        //TODO: get the xmlSchemaGroup correctly when it is in another schema.
-                        XmlSchemaObjectTable xmlSchemaObjectTable = parentSchema.getGroups();
-                        XmlSchemaGroup xmlSchemaGroup = null;
-                        for (Iterator groupsIter = xmlSchemaObjectTable.getValues(); groupsIter.hasNext();){
-                            xmlSchemaGroup = (XmlSchemaGroup) groupsIter.next();
-                            if (xmlSchemaGroup.getName().equals(groupQName.getLocalPart())){
-                                break;
-                            }
+                        XmlSchema resolvedParentSchema = resolveParentSchema(groupQName,parentSchema);
+                        XmlSchemaGroup xmlSchemaGroup = getGroup(groupQName,resolvedParentSchema);
+                        if (xmlSchemaGroup != null){
+                            processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                        } else {
+                            throw new SchemaCompilationException("Refered Group "+ groupQName.getLocalPart() + " can not be found ");
                         }
-                        processGroup(xmlSchemaGroup, groupQName, parentSchema);
+
                     }
 
                     Boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1 ? Boolean.TRUE : Boolean.FALSE;
@@ -2135,6 +2169,39 @@ public class SchemaCompiler {
 
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
+    }
+
+    private XmlSchemaGroup getGroup(QName groupQName,
+                          XmlSchema parentSchema){
+         XmlSchemaGroup xmlSchemaGroup =
+                (XmlSchemaGroup) parentSchema.getGroups().getItem(groupQName);
+        if (xmlSchemaGroup == null){
+            // i.e this attribute can be in a included or imported schema
+            xmlSchemaGroup = (XmlSchemaGroup) parentSchema.getGroups().getItem(groupQName);
+            if (xmlSchemaGroup == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaGroup = (XmlSchemaGroup) schema1.getGroups().getItem(groupQName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaGroup = (XmlSchemaGroup) schema1.getGroups().getItem(groupQName);
+                        }
+                        if (xmlSchemaGroup != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaGroup;
     }
 
     /**
