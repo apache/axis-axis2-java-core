@@ -21,7 +21,6 @@ import org.apache.axis2.context.PropertyDifference;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * 
