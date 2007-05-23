@@ -254,6 +254,7 @@
     <!--
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
         <parameter name="param1">value1</parameter>
+        <parameter name="domain">apache.axis2.domain</parameter>
     	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
