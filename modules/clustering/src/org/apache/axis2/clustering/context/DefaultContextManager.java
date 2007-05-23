@@ -48,18 +48,20 @@ public class DefaultContextManager implements ContextManager {
     }
 
     public void addContext(final AbstractContext context) throws ClusteringFault {
-        processor.process(ContextClusteringCommandFactory.getCreateMessage(context));
+        processor.process(ContextClusteringCommandFactory.getCreateCommand(context));
     }
 
     public void removeContext(AbstractContext context) throws ClusteringFault {
-        processor.process(ContextClusteringCommandFactory.getRemoveMessage(context));
+        processor.process(ContextClusteringCommandFactory.getRemoveCommand(context));
     }
 
     public void updateContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand message =
-                ContextClusteringCommandFactory.getUpdateMessage(context,
+                ContextClusteringCommandFactory.getUpdateCommand(context,
                                                                  excludedReplicationPatterns);
-        processor.process(message);
+        if (message != null) {
+            processor.process(message);
+        }
     }
 
     public boolean isContextClusterable(AbstractContext context) {

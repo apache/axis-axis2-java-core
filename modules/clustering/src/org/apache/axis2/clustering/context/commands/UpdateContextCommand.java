@@ -24,4 +24,6 @@ import java.io.Serializable;
  */
 public interface UpdateContextCommand extends Serializable {
     void addProperty(PropertyDifference diff);
+
+    boolean isPropertiesEmpty();
 }

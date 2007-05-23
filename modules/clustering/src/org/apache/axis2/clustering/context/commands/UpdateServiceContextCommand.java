@@ -65,6 +65,10 @@ public class UpdateServiceContextCommand
 //        propertyUpdater.updateProperties(sgCtx);
     }
 
+    public boolean isPropertiesEmpty() {
+        return propertyUpdater.getProperties().isEmpty();
+    }
+
     public int getCommandType() {
         return UPDATE_SERVICE_CONTEXT;
     }

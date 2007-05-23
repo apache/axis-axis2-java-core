@@ -29,39 +29,45 @@ import java.util.Map;
  */
 public final class ContextClusteringCommandFactory {
 
-    public static ContextClusteringCommand getUpdateMessage(AbstractContext context,
+    public static ContextClusteringCommand getUpdateCommand(AbstractContext context,
                                                             Map excludedPropertyPatterns) {
 
         ContextClusteringCommand cmd = null;
+        UpdateContextCommand updateCmd = (UpdateContextCommand) cmd;
         if (context instanceof ConfigurationContext) {
-            cmd = new UpdateConfigurationContextCommand();
-            fillProperties((UpdateContextCommand) cmd,
+            updateCmd = new UpdateConfigurationContextCommand();
+            fillProperties(updateCmd,
                            context,
                            excludedPropertyPatterns);
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
-            cmd = new UpdateServiceGroupContextCommand();
-            UpdateServiceGroupContextCommand updateSgCmd = (UpdateServiceGroupContextCommand) cmd;
+            updateCmd = new UpdateServiceGroupContextCommand();
+            UpdateServiceGroupContextCommand updateSgCmd =
+                    (UpdateServiceGroupContextCommand) updateCmd;
 
             updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
-            fillProperties((UpdateContextCommand) cmd,
+            fillProperties(updateCmd,
                            context,
                            excludedPropertyPatterns);
             //TODO: impl
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
-            cmd = new UpdateServiceContextCommand();
-            UpdateServiceContextCommand updateServiceCmd = (UpdateServiceContextCommand) cmd;
+            updateCmd = new UpdateServiceContextCommand();
+            UpdateServiceContextCommand updateServiceCmd =
+                    (UpdateServiceContextCommand) updateCmd;
 
             // TODO impl
             updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
-            fillProperties((UpdateContextCommand) cmd,
+            fillProperties(updateCmd,
                            context,
                            excludedPropertyPatterns);
         }
         context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
+        if(updateCmd != null && updateCmd.isPropertiesEmpty()){
+            cmd = null;
+        }
         return cmd;
     }
 
@@ -125,7 +131,7 @@ public final class ContextClusteringCommandFactory {
         return false;
     }
 
-    public static ContextClusteringCommand getCreateMessage(AbstractContext abstractContext) {
+    public static ContextClusteringCommand getCreateCommand(AbstractContext abstractContext) {
         if (abstractContext instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
             ServiceGroupContextCommand cmd = new CreateServiceGroupContextCommand();
@@ -148,7 +154,7 @@ public final class ContextClusteringCommandFactory {
         return null;
     }
 
-    public static ContextClusteringCommand getRemoveMessage(AbstractContext abstractContext) {
+    public static ContextClusteringCommand getRemoveCommand(AbstractContext abstractContext) {
         if (abstractContext instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
             ServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
