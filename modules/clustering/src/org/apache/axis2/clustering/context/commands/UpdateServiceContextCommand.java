@@ -19,6 +19,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
+import org.apache.axis2.context.ServiceGroupContext;
 
 import java.util.HashMap;
 

@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
@@ -32,6 +33,7 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
+import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -78,6 +80,21 @@ public class TribesClusterManager implements ClusterManager {
         try {
 
             ManagedChannel channel = new GroupChannel();
+
+            // Set the domain for this Node
+            Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
+            byte[] domain;
+            if (domainParam != null) {
+                domain = ((String)domainParam.getValue()).getBytes();
+                channel.getMembershipService().setDomain(domain);
+            } else {
+                domain = "apache.axis2.domain".getBytes();
+                channel.getMembershipService().setDomain(domain);
+            }
+            DomainFilterInterceptor dfi = new DomainFilterInterceptor();
+            dfi.setDomain(domain);
+            channel.addInterceptor(dfi);
+
             this.channel = channel;
 
             channel.addChannelListener(listener);

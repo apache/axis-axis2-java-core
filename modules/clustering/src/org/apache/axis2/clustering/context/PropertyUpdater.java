@@ -31,6 +31,7 @@ public class PropertyUpdater implements Serializable {
     private Map properties;
 
     public void updateProperties(AbstractContext abstractContext) {
+        System.err.println("----- updating props in " + abstractContext);
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             PropertyDifference propDiff =

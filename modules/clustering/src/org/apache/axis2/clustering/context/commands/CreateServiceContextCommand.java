@@ -59,6 +59,8 @@ public class CreateServiceContextCommand extends ServiceContextCommand {
                 configurationContext.
                         registerServiceGroupContextintoSoapSessionTable(sgCtx);
             }
+            //TODO: Handle transport session properties
+//            configurationContext.s
         }
         try {
             sgCtx.getServiceContext(axisService, false);
