@@ -33,41 +33,37 @@ public final class ContextClusteringCommandFactory {
                                                             Map excludedPropertyPatterns) {
 
         ContextClusteringCommand cmd = null;
-        UpdateContextCommand updateCmd = (UpdateContextCommand) cmd;
         if (context instanceof ConfigurationContext) {
-            updateCmd = new UpdateConfigurationContextCommand();
-            fillProperties(updateCmd,
+            cmd = new UpdateConfigurationContextCommand();
+            fillProperties((UpdateContextCommand) cmd,
                            context,
                            excludedPropertyPatterns);
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
-            updateCmd = new UpdateServiceGroupContextCommand();
+            cmd = new UpdateServiceGroupContextCommand();
             UpdateServiceGroupContextCommand updateSgCmd =
-                    (UpdateServiceGroupContextCommand) updateCmd;
+                    (UpdateServiceGroupContextCommand) cmd;
 
             updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
-            fillProperties(updateCmd,
+            fillProperties((UpdateContextCommand) cmd,
                            context,
                            excludedPropertyPatterns);
-            //TODO: impl
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
-            updateCmd = new UpdateServiceContextCommand();
+            cmd = new UpdateServiceContextCommand();
             UpdateServiceContextCommand updateServiceCmd =
-                    (UpdateServiceContextCommand) updateCmd;
-
-            // TODO impl
+                    (UpdateServiceContextCommand) cmd;
             updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
-            fillProperties(updateCmd,
+            fillProperties((UpdateContextCommand) cmd,
                            context,
                            excludedPropertyPatterns);
         }
-        context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
-        if(updateCmd != null && updateCmd.isPropertiesEmpty()){
+        if (cmd != null && ((UpdateContextCommand) cmd).isPropertiesEmpty()) {
             cmd = null;
         }
+        context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
         return cmd;
     }
 
@@ -98,7 +94,7 @@ public final class ContextClusteringCommandFactory {
         // First check in the default excludes
         List defaultExcludes =
                 (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
-        if(defaultExcludes == null){
+        if (defaultExcludes == null) {
             return false;
         }
         if (isExcluded(defaultExcludes, propertyName)) {

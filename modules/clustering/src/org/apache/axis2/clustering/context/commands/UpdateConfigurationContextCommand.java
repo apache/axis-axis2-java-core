@@ -40,6 +40,10 @@ public class UpdateConfigurationContextCommand
     }
 
     public boolean isPropertiesEmpty(){
+        if (propertyUpdater.getProperties() == null) {
+            propertyUpdater.setProperties(new HashMap());
+            return true;
+        }
         return propertyUpdater.getProperties().isEmpty();
     }
 

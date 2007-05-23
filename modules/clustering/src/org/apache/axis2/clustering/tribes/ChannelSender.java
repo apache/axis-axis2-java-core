@@ -32,6 +32,7 @@ public class ChannelSender implements MessageSender {
     private static final Log log = LogFactory.getLog(ChannelSender.class);
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+        if(channel == null) return;
         Member[] group = channel.getMembers();
         log.debug("Group size " + group.length);
         // send the message
@@ -52,6 +53,7 @@ public class ChannelSender implements MessageSender {
     }
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
+        if(channel == null) return;
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
@@ -62,6 +64,7 @@ public class ChannelSender implements MessageSender {
     }
 
     public void sendToGroup(Throwable throwable) throws ClusteringFault {
+        if(channel == null) return;
         Member[] group = channel.getMembers();
         log.debug("Group size " + group.length);
         // send the message
