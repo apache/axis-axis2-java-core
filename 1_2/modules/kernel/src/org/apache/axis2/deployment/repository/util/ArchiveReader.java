@@ -326,7 +326,7 @@ public class ArchiveReader implements DeploymentConstants {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(
                                         new ByteArrayInputStream(out.toByteArray()), null, null);
                             } else {
-                                new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+                                throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder,
                                                                   serviceFile, true,
