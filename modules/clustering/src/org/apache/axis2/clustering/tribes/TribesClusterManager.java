@@ -18,13 +18,15 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.clustering.tribes.info.TransientTribesMemberInfo;
 import org.apache.axis2.description.Parameter;
@@ -48,10 +50,14 @@ public class TribesClusterManager implements ClusterManager {
     private DefaultContextManager contextManager;
 
     private HashMap parameters;
-    private Channel channel;
+    private ManagedChannel channel;
+    private TribesMembershipListener membershipListener;
+    private ConfigurationContext configurationContext;
+    private TribesControlCommandProcessor controlCmdProcessor;
 
     public TribesClusterManager() {
         parameters = new HashMap();
+        controlCmdProcessor = new TribesControlCommandProcessor(configurationContext);
     }
 
     public ContextManager getContextManager() {
@@ -63,29 +69,28 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public void init() throws ClusteringFault {
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: TribesClusterManager::init");
-        }
-
         ChannelSender sender = new ChannelSender();
 
-        ChannelListener listener = new ChannelListener(configurationManager, contextManager);
+        ChannelListener listener = new ChannelListener(configurationManager,
+                                                       contextManager,
+                                                       controlCmdProcessor);
 
         TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
         TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
 
         contextManager.setSender(sender);
         configurationManager.setSender(sender);
+        controlCmdProcessor.setChannelSender(sender);
 
         try {
 
-            ManagedChannel channel = new GroupChannel();
+            channel = new GroupChannel();
 
             // Set the domain for this Node
             Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
             byte[] domain;
             if (domainParam != null) {
-                domain = ((String)domainParam.getValue()).getBytes();
+                domain = ((String) domainParam.getValue()).getBytes();
                 channel.getMembershipService().setDomain(domain);
             } else {
                 domain = "apache.axis2.domain".getBytes();
@@ -95,34 +100,62 @@ public class TribesClusterManager implements ClusterManager {
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
 
-            this.channel = channel;
+            // Add the NonBlockingCoordinator. This is used for leader election
+            /*nbc = new NonBlockingCoordinator() {
+                public void fireInterceptorEvent(InterceptorEvent event) {
+                    String status = event.getEventTypeDesc();
+                    System.err.println("$$$$$$$$$$$$ NBC status=" + status);
+                    int type = event.getEventType();
+                }
+            };
+            nbc.setPrevious(dfi);
+            channel.addInterceptor(nbc);*/
+
+//            TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+//            tcpFailureDetector.setPrevious(nbc);
+//            channel.addInterceptor(tcpFailureDetector);
 
             channel.addChannelListener(listener);
             channel.addChannelListener(channelInfo);
             channel.addMembershipListener(memberInfo);
-            channel.addMembershipListener(new TribesMembershipListener());
+            membershipListener = new TribesMembershipListener();
+//            membershipListener.setConfigContext(configurationManager);  //TODO: set the config ctx here and when config context is switched
+            channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
             sender.setChannel(channel);
             contextManager.setSender(sender);
             configurationManager.setSender(sender);
 
+            listener.setContextManager(contextManager);
+
             Member[] members = channel.getMembers();
             TribesUtil.printMembers(members);
 
-            listener.setContextManager(contextManager);
+            // If there is at least one member in the Tribe, get the current state from a member
+            /*while (members.length > 0 &&
+                   configurationContext.
+                           getProperty(ClusteringConstants.GET_STATE_RESPONSE_RECEIVED) == null) {
+
+                // While there are members and GetStateResponseCommand is not received do the following
+                try {
+                    members = channel.getMembers();
+
+                    //TODO: select a random member and send the request to it. Otherwise the same member will
+                    // get overloaded
+                    sender.sendToMember(new GetStateCommand(), members[0]);
+                    System.out.println("### WAITING FOR STATE UPDATE");
+                    Thread.sleep(200);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+            configurationContext.
+                    removePropertyNonReplicable(ClusteringConstants.GET_STATE_RESPONSE_RECEIVED);*/
 
         } catch (ChannelException e) {
-
-            if (log.isDebugEnabled()) {
-                log.debug("Exit: TribesClusterManager::init");
-            }
-
             String message = "Error starting Tribes channel";
             throw new ClusteringFault(message, e);
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: TribesClusterManager::init");
         }
     }
 
@@ -190,5 +223,10 @@ public class TribesClusterManager implements ClusterManager {
         if (log.isDebugEnabled()) {
             log.debug("Exit: TribesClusterManager::shutdown");
         }
+    }
+
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
+        controlCmdProcessor.setConfigurationContext(configurationContext);
     }
 }

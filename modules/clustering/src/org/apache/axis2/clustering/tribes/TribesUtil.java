@@ -26,23 +26,27 @@ public class TribesUtil {
 
     public static void printMembers(Member[] members) {
 
-        log.info("MEMBERS OF THE CURRENT TRIBES GROUP...");
 
         if (members != null) {
             int length = members.length;
-            for (int i = 0; i < length; i++) {
-                byte[] hostBts = members[i].getHost();
-                String host = null;
-                if (hostBts != null) {
-                    for (int j = 0; j < hostBts.length; j++) {
-                        host = host == null ? ("" + hostBts[j]) : (host + "." + hostBts[j]);
+            if (length > 0) {
+                log.info("Members of current Tribes...");
+                for (int i = 0; i < length; i++) {
+                    byte[] hostBts = members[i].getHost();
+                    String host = null;
+                    if (hostBts != null) {
+                        for (int j = 0; j < hostBts.length; j++) {
+                            host = host == null ? ("" + hostBts[j]) : (host + "." + hostBts[j]);
+                        }
                     }
+
+                    String port = "" + members[i].getPort();
+                    log.info("Member " + (i + 1) + " NAME:" + members[i].getName() + " HOST:"
+                             + host + "  PORT:" + port);
+
                 }
-
-                String port = "" + members[i].getPort();
-                log.info("Member " + (i + 1) + " NAME:" + members[i].getName() + " HOST:"
-                         + host + "  PORT:" + port);
-
+            } else {
+                log.info("No members in current Tribe");
             }
         }
     }

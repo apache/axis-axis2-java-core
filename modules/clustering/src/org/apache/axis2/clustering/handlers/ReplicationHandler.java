@@ -34,11 +34,13 @@ public class ReplicationHandler extends AbstractHandler {
     private static final Log log = LogFactory.getLog(ReplicationHandler.class);
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        log.debug("Going to replicate state on invoke");
         replicateState(msgContext);
         return InvocationResponse.CONTINUE;
     }
 
     public void flowComplete(MessageContext msgContext) {
+        log.debug("Going to replicate state on flowComplete");
         try {
             replicateState(msgContext);
         } catch (Exception e) {

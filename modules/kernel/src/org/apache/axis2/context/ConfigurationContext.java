@@ -94,6 +94,7 @@ public class ConfigurationContext extends AbstractContext {
                 configManager.setConfigurationContext(this);
             }
             if (shouldClusterBeInitiated(clusterManager)) {
+                clusterManager.setConfigurationContext(this);
                 clusterManager.init();
             }
         }

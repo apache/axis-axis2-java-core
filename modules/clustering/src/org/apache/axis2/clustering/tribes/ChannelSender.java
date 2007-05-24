@@ -33,17 +33,12 @@ public class ChannelSender implements MessageSender {
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if(channel == null) return;
-        Member[] group = channel.getMembers();
-        log.debug("Group size " + group.length);
+        Member[] members = channel.getMembers();
+
         // send the message
-
-//        for (int i = 0; i < group.length; i++) {
-//            printMember(group[i]);
-//        }
-
-        if (group.length > 0) {
+        if (members.length > 0) {
             try {
-                channel.send(group, msg, 0);
+                channel.send(members, msg, 0);
             } catch (ChannelException e) {
                 log.error("" + msg, e);
                 String message = "Error sending command message : " + msg;
@@ -69,9 +64,9 @@ public class ChannelSender implements MessageSender {
         log.debug("Group size " + group.length);
         // send the message
 
-        for (int i = 0; i < group.length; i++) {
+        /*for (int i = 0; i < group.length; i++) {
             printMember(group[i]);
-        }
+        }*/
 
         if (group.length > 0) {
             try {
@@ -81,6 +76,14 @@ public class ChannelSender implements MessageSender {
                 String message = "Error sending exception message : " + throwable;
                 throw new ClusteringFault(message, e);
             }
+        }
+    }
+
+    public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
+        try {
+            channel.send(new Member[]{member}, cmd, Channel.SEND_OPTIONS_USE_ACK);
+        } catch (ChannelException e) {
+            throw new ClusteringFault(e);
         }
     }
 

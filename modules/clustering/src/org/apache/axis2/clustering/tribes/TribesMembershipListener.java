@@ -17,8 +17,10 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
+import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.context.ConfigurationContext;
 
 /**
  * 
@@ -26,13 +28,20 @@ import org.apache.commons.logging.LogFactory;
 public class TribesMembershipListener implements MembershipListener {
 
     private static Log log = LogFactory.getLog(TribesMembershipListener.class);
+//    private ConfigurationContext configContext;
 
     public void memberAdded(Member member) {
         log.info("New member " + getHostSocket(member) + " added to Tribes group.");
+        /* TODO: Send state information to this member.
+        But if all of the members start sending these messages, there is
+        it is going to be messy. Need to ensure that only one node send this message*/
+
+//        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
     public void memberDisappeared(Member member) {
         log.info("Member " + getHostSocket(member) + " left Tribes group");
+//        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
     private String getHostSocket(Member member) {
@@ -42,5 +51,9 @@ public class TribesMembershipListener implements MembershipListener {
             host = (host == null) ? ("" + hostBytes[i]) : (host + "." + hostBytes[i]);
         }
         return host + ":" + member.getPort();
-    }
+    }/*
+
+    public void setConfigContext(ConfigurationContext configContext) {
+        this.configContext = configContext;
+    }*/
 }

@@ -19,14 +19,21 @@ package org.apache.axis2.clustering;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.context.ConfigurationContext;
 
 public interface ClusterManager extends ParameterInclude {
-	
+
     public void init() throws ClusteringFault;
     public ContextManager getContextManager ();
     public ConfigurationManager getConfigurationManager ();
     public void setContextManager (ContextManager contextManager);
     public void setConfigurationManager (ConfigurationManager configurationManager);
     public void shutdown () throws ClusteringFault;
-    
+
+    /**
+     * Set the configuration context
+     *
+     * @param configurationContext
+     */
+    void setConfigurationContext(ConfigurationContext configurationContext);
 }

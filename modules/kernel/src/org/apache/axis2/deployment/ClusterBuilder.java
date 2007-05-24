@@ -66,6 +66,8 @@ public class ClusterBuilder extends DescriptionBuilder {
             Class clazz = Class.forName(className);
             clusterManager = (ClusterManager) clazz.newInstance();
 
+            clusterManager.setConfigurationContext(configCtx);
+
             //loading the parameters.
             processParameters(clusterElement.getChildrenWithName(new QName(TAG_PARAMETER)),
                               clusterManager,
