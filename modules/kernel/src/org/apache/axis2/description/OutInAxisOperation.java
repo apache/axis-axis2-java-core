@@ -303,7 +303,6 @@ class OutInAxisOperationClient extends OperationClient {
         }
     }
 
-
     /**
      * @param msgctx
      * @return Returns MessageContext.
@@ -319,8 +318,7 @@ class OutInAxisOperationClient extends OperationClient {
                 msgctx.getConfigurationContext().createMessageContext();
 
         // This is a hack - Needs to change
-        responseMessageContext.setOptions(options);
-
+//        responseMessageContext.setOptions(options);
 
         responseMessageContext.setServerSide(false);
         responseMessageContext.setMessageID(msgctx.getMessageID());
@@ -331,6 +329,16 @@ class OutInAxisOperationClient extends OperationClient {
 
         //sending the message
         engine.send(msgctx);
+
+//        // By now we should have a new MessageContext in the IN message
+//        OperationContext operation = msgctx.getOperationContext();
+//        MessageContext response = operation.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+//        if (response == null) {
+//            // Nothing!
+//            throw new AxisFault("No response message!");
+//        }
+//        engine.receive(response);
+
         responseMessageContext.setDoingREST(msgctx.isDoingREST());
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
@@ -348,9 +356,9 @@ class OutInAxisOperationClient extends OperationClient {
             /*
              * old code here was using the outbound message context to set the inbound SOAP namespace,
              * as such and passing it to TransportUtils.createSOAPMessage
-             * 
+             *
              * msgctx.getEnvelope().getNamespace().getNamespaceURI()
-             * 
+             *
              * However, the SOAP1.2 spec, appendix A indicates that if a SOAP1.2 message is sent to a SOAP1.1
              * endpoint, we will get a SOAP1.1 (fault) message response.  We need another way to set
              * the inbound SOAP version.  Best way to do this is to trust the content type and let
@@ -366,8 +374,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
         SOAPEnvelope resenvelope = responseMessageContext.getEnvelope();
         if (resenvelope != null) {
-            engine = new AxisEngine(msgctx.getConfigurationContext());
-            engine.receive(responseMessageContext);
+            AxisEngine.receive(responseMessageContext);
             if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }

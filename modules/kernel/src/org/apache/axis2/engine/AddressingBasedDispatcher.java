@@ -142,17 +142,20 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                                 .getOperationContext(relatesTo);
 
                 if (operationContext != null) {
-                    if(operationContext.isComplete()){
-                        // If the dispatch happens because of the RelatesTo and the mep is complete
-                        // we should throw a more descriptive fault.
-                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
-                    }
+//                    if(operationContext.isComplete()){
+//                        // If the dispatch happens because of the RelatesTo and the mep is complete
+//                        // we should throw a more descriptive fault.
+//                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
+//                    }
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setAxisService(
                             ((ServiceContext) operationContext.getParent()).getAxisService());
-                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
+
+                    // TODO : Is this necessary here?
+//                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
+
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
 

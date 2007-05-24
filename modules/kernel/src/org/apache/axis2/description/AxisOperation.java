@@ -397,9 +397,9 @@ public abstract class AxisOperation extends AxisDescription
                                                                       operationContext);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
-        if (operationContext.isComplete()) {
-            operationContext.cleanup();
-        }
+//        if (operationContext.isComplete()) {
+//            operationContext.cleanup();
+//        }
     }
 
     public void registerMessageContext(MessageContext msgContext,
@@ -407,9 +407,9 @@ public abstract class AxisOperation extends AxisDescription
         msgContext.setAxisOperation(this);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
-        if (operationContext.isComplete()) {
-            operationContext.cleanup();
-        }
+//        if (operationContext.isComplete()) {
+//            operationContext.cleanup();
+//        }
     }
 
     /**
