@@ -101,7 +101,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             if (-1 != index) {
                 service = service.substring(index);
             } else {
-                int queryIndex = path.indexOf("?");
+                int queryIndex = service.indexOf("?");
                 if (queryIndex != -1) {
                     service = service.substring(queryIndex);
                 }
