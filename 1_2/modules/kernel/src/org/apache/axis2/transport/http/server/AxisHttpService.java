@@ -80,7 +80,7 @@ public class AxisHttpService {
     private final HttpProcessor httpProcessor;
     private final ConnectionReuseStrategy connStrategy;
     private final HttpResponseFactory responseFactory;
-    private final MessageContext msgContext;
+    private MessageContext msgContext;
     private final ConfigurationContext configurationContext;
     private final Worker worker;
 
@@ -128,7 +128,10 @@ public class AxisHttpService {
     
     public void handleRequest(final AxisHttpConnection conn, final HttpContext context) 
             throws IOException, HttpException { 
-        
+
+        this.msgContext = ContextFactory.createMessageContext(configurationContext);
+        this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+
         if (conn instanceof HttpInetConnection) {
             HttpInetConnection inetconn = (HttpInetConnection) conn;
             this.msgContext.setProperty(MessageContext.REMOTE_ADDR, 
