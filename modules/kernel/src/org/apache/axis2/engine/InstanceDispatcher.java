@@ -26,7 +26,7 @@ import org.apache.axis2.handlers.AbstractHandler;
  * so that the message context contains the AxisServiceGroup, AxisService and
  * AxisOperation.
  * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
- * @deprecate The functionality of this class has moved into the DispatchPhase postconditions
+ * @deprecated The functionality of this class has moved into the DispatchPhase postconditions
  */
 public class InstanceDispatcher extends AbstractHandler {
 
