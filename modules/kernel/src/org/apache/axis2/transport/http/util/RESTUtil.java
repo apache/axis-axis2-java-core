@@ -149,17 +149,7 @@ public class RESTUtil {
                 }
                 msgContext.setAxisOperation(axisOperation);
             }
-
-            // check for the dispatching result
-//            if (msgContext.getAxisOperation() == null) {
-//                throw new AxisFault("I can not find a service for this request to be serviced." +
-//                        " Check the WSDL and the request URI");
-//            }
         }
-//        else {
-//            throw new AxisFault("I can not find a service for this request to be serviced." +
-//                    " Check the WSDL and the request URI");
-//        }
     }
 
     public static String getConstantFromHTTPLocation(String httpLocation) {
