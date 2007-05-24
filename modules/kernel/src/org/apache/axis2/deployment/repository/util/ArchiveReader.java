@@ -324,7 +324,7 @@ public class ArchiveReader implements DeploymentConstants {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(
                                         new ByteArrayInputStream(out.toByteArray()), null, null);
                             } else {
-                                new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+                                throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder,
                                                                   serviceFile, true,
@@ -384,7 +384,7 @@ public class ArchiveReader implements DeploymentConstants {
                         new WarFileBasedURIResolver(loader));
                 return wsdlToAxisServiceBuilder.populateService();
             } else {
-                new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+                throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
             }
         }
         return null;
@@ -416,7 +416,7 @@ public class ArchiveReader implements DeploymentConstants {
                         in2 = new FileInputStream(file1);
                         wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(in2, null, null);
                     } else {
-                        new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+                        throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                     }
 
                     FileInputStream in3 = new FileInputStream(file1);
