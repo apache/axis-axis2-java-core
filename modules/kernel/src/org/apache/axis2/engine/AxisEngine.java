@@ -61,7 +61,7 @@ public class AxisEngine {
     public AxisEngine(ConfigurationContext engineContext) {
     }
 
-    private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
+    private static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope.getHeader() == null) {
             return;
@@ -94,7 +94,7 @@ public class AxisEngine {
      *
      * @deprecated (post 1.1 branch)
      */
-    public MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
+    public static MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
             throws AxisFault {
         return MessageContextBuilder.createFaultMessageContext(processingContext, e);
     }
@@ -109,7 +109,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public InvocationResponse receive(MessageContext msgContext) throws AxisFault {
+    public static InvocationResponse receive(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgContext.getLogIDString() + " receive:" + msgContext.getMessageID());
         }
@@ -173,7 +173,7 @@ public class AxisEngine {
      *         the next step in the message processing should be.
      * @throws AxisFault
      */
-    public InvocationResponse invoke(MessageContext msgContext, boolean inbound, boolean resuming)
+    public static InvocationResponse invoke(MessageContext msgContext, boolean inbound, boolean resuming)
             throws AxisFault {
 
         if (msgContext.getCurrentHandlerIndex() == -1) {
@@ -231,7 +231,7 @@ public class AxisEngine {
         return pi;
     }
 
-    private void flowComplete(MessageContext msgContext, boolean inbound) {
+    private static void flowComplete(MessageContext msgContext, boolean inbound) {
         Iterator invokedPhaseIterator = inbound ? msgContext.getInboundExecutedPhases() :
                 msgContext.getOutboundExecutedPhases();
 
@@ -260,7 +260,7 @@ public class AxisEngine {
      *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
+    public static InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgContext.getLogIDString() + " resumeReceive:" + msgContext.getMessageID());
         }
@@ -302,7 +302,7 @@ public class AxisEngine {
      *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
+    public static InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgContext.getLogIDString() + " resumeSend:" + msgContext.getMessageID());
         }
@@ -335,7 +335,7 @@ public class AxisEngine {
      *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public InvocationResponse resume(MessageContext msgctx) throws AxisFault {
+    public static InvocationResponse resume(MessageContext msgctx) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgctx.getLogIDString() + " resume:" + msgctx.getMessageID());
         }
@@ -359,7 +359,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void send(MessageContext msgContext) throws AxisFault {
+    public static void send(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgContext.getLogIDString() + " send:" + msgContext.getMessageID());
         }
@@ -419,7 +419,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void sendFault(MessageContext msgContext) throws AxisFault {
+    public static void sendFault(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(msgContext.getLogIDString() + " sendFault:" + msgContext.getMessageID());
         }
@@ -500,7 +500,7 @@ public class AxisEngine {
      * <p/>
      * way transport.
      */
-    private class TransportNonBlockingInvocationWorker implements Runnable {
+    private static class TransportNonBlockingInvocationWorker implements Runnable {
         private MessageContext msgctx;
         private TransportSender sender;
 

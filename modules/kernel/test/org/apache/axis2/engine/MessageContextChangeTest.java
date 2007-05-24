@@ -133,7 +133,7 @@ public class MessageContextChangeTest extends TestCase {
         int numberKnownFields = knownList.length;
 
         if (numberKnownFields != numberFields) {
-            log.debug("ERROR: number of actual fields [" + numberFields +
+            log.error("ERROR: number of actual fields [" + numberFields +
                     "] in MessageContext does not match the expected number [" + numberKnownFields +
                     "]");
             noChange = false;
@@ -148,14 +148,14 @@ public class MessageContextChangeTest extends TestCase {
             Field actualField = findField(fields, name);
 
             if (actualField == null) {
-                log.debug("ERROR:  MessageContext is missing field [" + name + "]");
+                log.error("ERROR:  MessageContext is missing field [" + name + "]");
                 noChange = false;
             } else {
                 String knownType = knownList[i].getType();
                 String actualType = actualField.getType().getName();
 
                 if (!knownType.equals(actualType)) {
-                    log.debug("ERROR:  MessageContext field [" + name +
+                    log.error("ERROR:  MessageContext field [" + name +
                             "] expected type [" + knownType + "] does not match actual type [" +
                             actualType + "]");
                     noChange = false;
@@ -174,7 +174,7 @@ public class MessageContextChangeTest extends TestCase {
             FieldDescription fd = findFieldDescription(name);
 
             if (fd == null) {
-                log.debug("ERROR:  MessageContext has new field [" + description +
+                log.error("ERROR:  MessageContext has new field [" + description +
                         "] that needs to be assessed for message context save/restore functions");
                 noChange = false;
             } else {
@@ -182,7 +182,7 @@ public class MessageContextChangeTest extends TestCase {
                 String actualType = fields[j].getType().getName();
 
                 if (!knownType.equals(actualType)) {
-                    log.debug("ERROR:  MessageContext field [" + name +
+                    log.error("ERROR:  MessageContext field [" + name +
                             "] expected type [" + knownType + "] does not match actual type [" +
                             actualType + "]");
                     noChange = false;
@@ -192,7 +192,6 @@ public class MessageContextChangeTest extends TestCase {
         }
 
         assertTrue(noChange);
-
     }
 
     private Field findField(Field[] fields, String name) {

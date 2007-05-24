@@ -281,7 +281,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null && policyElements.hasNext()) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyRefElements, module.getPolicyInclude());
             }
 

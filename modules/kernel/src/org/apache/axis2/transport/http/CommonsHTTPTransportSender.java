@@ -210,8 +210,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
 
             if (msgContext.getOperationContext() != null) {
-                msgContext.getOperationContext().setProperty(
-                        Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
+                msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
+                                                             Constants.VALUE_TRUE);
             }
         } catch (XMLStreamException e) {
             log.debug(e);

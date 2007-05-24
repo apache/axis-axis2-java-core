@@ -215,20 +215,21 @@ public class ConfigurationContext extends AbstractContext {
      * If the given message id already has a registered operation context,
      * no change is made and the methid resturns false.
      *
-     * @param messageID
-     * @param mepContext
+     * @param messageID the message-id to register
+     * @param mepContext the OperationContext for the specified message-id
+     * @return true if we added a new context, false if the messageID was already there and we did
+     *         nothing
      */
     public boolean registerOperationContext(String messageID,
                                             OperationContext mepContext) {
-        boolean alreadyInMap;
-        mepContext.setKey(messageID);
+        mepContext.setKey(messageID);  // TODO: Doing this here seems dangerous....
         synchronized (operationContextMap) {
-            alreadyInMap = operationContextMap.containsKey(messageID);
-            if (!alreadyInMap) {
+            if  (!operationContextMap.containsKey(messageID)) {
                 this.operationContextMap.put(messageID, mepContext);
+                return true;
             }
         }
-        return (!alreadyInMap);
+        return false;
     }
 
     /**

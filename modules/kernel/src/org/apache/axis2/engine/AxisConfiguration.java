@@ -170,8 +170,8 @@ public class AxisConfiguration extends AxisDescription {
      * Register a messageBuilder implementation against a content type.
      * This is used by Axis2 to support different message formats.
      *
-     * @param contentType
-     * @param messageBuilder
+     * @param contentType the relevant content-type (i.e. "text/xml")
+     * @param messageBuilder a Builder implementation
      */
     public void addMessageBuilder(String contentType,
                                   Builder messageBuilder) {
@@ -183,8 +183,8 @@ public class AxisConfiguration extends AxisDescription {
      * This is used by Axis2 to support serialization of messages to different
      * message formats. (Eg: JSON)
      *
-     * @param contentType
-     * @param messageFormatter
+     * @param contentType the relevant content-type (i.e. "text/xml")
+     * @param messageFormatter a MessageFormatter implementation
      */
     public void addMessageFormatter(String contentType,
                                     MessageFormatter messageFormatter) {
@@ -192,10 +192,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method addModule.
+     * Add an available Module to this configuration
      *
-     * @param module
-     * @throws AxisFault
+     * @param module an AxisModule
+     * @throws AxisFault in case of error
      */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
@@ -229,7 +229,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * To remove a given module from the system
      *
-     * @param module
+     * @param module name of module to remove
      */
     public void removeModule(String module) {
         allModules.remove(module);
@@ -239,7 +239,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Adds module configuration, if there is a moduleConfig tag in service.
      *
-     * @param moduleConfiguration
+     * @param moduleConfiguration a ModuleConfiguration to remember
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         moduleConfigmap.put(moduleConfiguration.getModuleName(),
@@ -275,12 +275,11 @@ public class AxisConfiguration extends AxisDescription {
             axisService = (AxisService) services.next();
             String serviceName = axisService.getName();
             if (allServices.get(serviceName) != null) {
-                throw new AxisFault(Messages.getMessage(
-                        "twoservicecannothavesamename", axisService.getName()));
+                throw new AxisFault(Messages.getMessage("twoservicecannothavesamename",
+                                                        axisService.getName()));
             }
             if (axisService.getSchematargetNamespace() == null) {
-                axisService
-                        .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+                axisService.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }
         services = axisServiceGroup.getServices();

@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
@@ -304,9 +305,9 @@ public abstract class AbstractHTTPSender {
             }
         }
 
-        if (msgContext.getOperationContext() != null) {
-            msgContext.getOperationContext()
-                    .setProperty(MessageContext.TRANSPORT_IN, in);
+        OperationContext opContext = msgContext.getOperationContext();
+        if (opContext != null) {
+            opContext.setProperty(MessageContext.TRANSPORT_IN, in);
         }
     }
 

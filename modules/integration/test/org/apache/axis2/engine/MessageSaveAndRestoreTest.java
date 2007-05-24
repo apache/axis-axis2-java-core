@@ -175,14 +175,13 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
             try {
                 System.out.println("MessageSaveAndRestoreTest:Worker thread started");
                 Thread.sleep(5000);
-                AxisEngine axisEngine = new AxisEngine(configurationContext);
                 System.out.println("MessageSaveAndRestoreTest:Resuming processing");
                 ObjectInputStream objectInputStream =
                         new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
                 MessageContext reconstitutedMessageContext =
                         (MessageContext)objectInputStream.readObject();
                 reconstitutedMessageContext.activate(configurationContext);
-                axisEngine.resume(reconstitutedMessageContext);
+                AxisEngine.resume(reconstitutedMessageContext);
             }
             catch (Exception e) {
                 e.printStackTrace();
