@@ -287,7 +287,11 @@ public class AxisService2OM implements Java2WSDLConstants {
                 OMElement messagePart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
                 messageElement.addChild(messagePart);
-                messagePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                if(axismessage.getMessagePartName() != null) {
+                	messagePart.addAttribute(ATTRIBUTE_NAME, axismessage.getMessagePartName(), null);
+            	} else {
+            		messagePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+            	}
                 messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                                          WSDLSerializationUtil.getPrefix(schemaElementName.getNamespaceURI(), axisService.getNameSpacesMap()) + ":"
                                                  + schemaElementName.getLocalPart(), null);

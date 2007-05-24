@@ -41,11 +41,20 @@ public class AxisMessage extends AxisDescription {
     // such as SchemaElementName , direction etc.
     private QName elementQname;
     private String direction;
+    private String messagePartName;
 
     // private PolicyInclude policyInclude;
 
 
-    public AxisMessage() {
+    public String getMessagePartName() {
+		return messagePartName;
+	}
+
+	public void setMessagePartName(String messagePartName) {
+		this.messagePartName = messagePartName;
+	}
+
+	public AxisMessage() {
         soapHeaders = new ArrayList();
         handlerChain = new ArrayList();
     }

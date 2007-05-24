@@ -848,6 +848,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         QName elementName = part.getElementName();
                         if (elementName != null) {
                             message.setElementQName(elementName);
+                            message.setMessagePartName(part.getName());
                             ((AxisService) message.getParent().getParent())
                                     .addMessageElementQNameToOperationMapping(elementName,
                                                                               (AxisOperation) message
@@ -878,6 +879,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         QName elementName = part.getElementName();
                         if (elementName != null) {
                             message.setElementQName(elementName);
+                            message.setMessagePartName(part.getName());
                             ((AxisService) message.getParent().getParent())
                                     .addMessageElementQNameToOperationMapping(elementName,
                                                                               (AxisOperation) message
@@ -939,7 +941,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             log.error(message);
             throw new AxisFault(message);
         }
-
+        
+        faultMessage.setMessagePartName(wsdl4jMessagePart.getName());
         faultMessage.setElementQName(name);
     }
 
