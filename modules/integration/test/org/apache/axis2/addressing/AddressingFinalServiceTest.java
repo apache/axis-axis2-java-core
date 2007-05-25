@@ -271,7 +271,6 @@ public class AddressingFinalServiceTest extends UtilServerBasedTestCase implemen
                 sender.sendReceive(operationName, method);
                 fail("Should have received a specific fault");
             } catch (AxisFault af) {
-                af.printStackTrace();
                 assertEquals(
                         "The wsa:Action header is required when WS-Addressing is in use but was not sent.",
                         af.getMessage());
