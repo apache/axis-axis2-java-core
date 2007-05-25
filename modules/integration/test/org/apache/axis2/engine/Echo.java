@@ -1,6 +1,4 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,20 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.engine;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/** @version $Rev: $ $Date: $ */
-
 public class Echo {
 
     private static final Log log = LogFactory.getLog(Echo.class);
-
+    public static final String SERVICE_NAME = "EchoXMLService";
+    public static final String ECHO_OM_ELEMENT_OP_NAME = "echoOMElement";
+    
     public Echo() {
     }
 

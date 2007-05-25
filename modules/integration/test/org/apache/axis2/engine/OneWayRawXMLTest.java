@@ -1,6 +1,4 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,81 +14,37 @@
 
 package org.apache.axis2.engine;
 
-//todo
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
 
-public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
+public class OneWayRawXMLTest extends LocalTestCase {
 
-    private SOAPEnvelope envelope;
-
-
-    public OneWayRawXMLTest() {
-        super(OneWayRawXMLTest.class.getName());
-    }
-
-    public OneWayRawXMLTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(OneWayRawXMLTest.class));
-    }
-
+	private boolean received;
     protected void setUp() throws Exception {
-        AxisService service = new AxisService(serviceName.getLocalPart());
-        AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
-        axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) {
-                envelope = messageCtx.getEnvelope();
-                TestingUtils.compareWithCreatedOMElement(
-                        envelope.getBody().getFirstElement());
-            }
-        });
-        service.addOperation(axisOperation);
-        UtilServer.deployService(service);
+    	super.setUp();
+    	serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_ONLY, new MessageReceiver(){
+			public void receive(MessageContext messageCtx) throws AxisFault {
+			    SOAPEnvelope envelope = messageCtx.getEnvelope();
+                TestingUtils.compareWithCreatedOMElement(envelope.getBody().getFirstElement());
+            	received = true;
+			}
+    	});
+    	deployClassAsService(Echo.SERVICE_NAME, Echo.class);
     }
 
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-    }
-
-
-    public void testEchoXMLSync() throws Exception {
-
-        OMElement payload = TestingUtils.createDummyOMElement();
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        ServiceClient sender = new ServiceClient(configContext, null);
-
-        Options options = new Options();
-        sender.setOptions(options);
-        options.setTo(targetEPR);
-        sender.fireAndForget(payload);
+    public void testOneWay() throws Exception {
+        ServiceClient sender = getClient(Echo.SERVICE_NAME, "echoOMElementNoResponse");
+        sender.fireAndForget(TestingUtils.createDummyOMElement());
         int index = 0;
-        while (envelope == null) {
-            Thread.sleep(1000);
+        while (!received) {
+            Thread.sleep(10);
             index++;
-            if (index == 5) {
+            if (index == 20) {
                 throw new AxisFault("error Occured");
             }
         }

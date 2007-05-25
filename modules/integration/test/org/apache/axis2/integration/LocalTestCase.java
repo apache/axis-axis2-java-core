@@ -17,12 +17,15 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.rpc.client.RPCServiceClient;
+import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
@@ -77,8 +80,8 @@ public class LocalTestCase extends TestCase {
         ///////////////////////////////////////////////////////////////////////
         // Set up raw message receivers for OMElement based tests
 
-        serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_OUT,
-                                        new RawXMLINOutMessageReceiver());
+        serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_ONLY,
+                                        new RawXMLINOnlyMessageReceiver());
         serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_OUT,
                                         new RawXMLINOutMessageReceiver());
 
@@ -162,6 +165,31 @@ public class LocalTestCase extends TestCase {
         opts.setTransportOut(td);
 
         RPCServiceClient client = new RPCServiceClient(clientCtx, null);
+        client.setOptions(opts);
+        return client;
+    }
+    
+    /**
+     * Get a pre-initialized ServiceClient set up to talk to our local
+     * server.  If you want to set options, call this and then use getOptions()
+     * on the return. Clients created using this method have their To EPR
+     * preset to include the address for the service+operation.
+     *
+     * @return a ServiceClient, pre-initialized to talk using our local sender
+     * @throws AxisFault if there's a problem
+     */
+    protected ServiceClient getClient(String serviceName, String operationName) throws AxisFault {
+        TransportOutDescription td = new TransportOutDescription("local");
+        td.setSender(sender);
+
+        Options opts = new Options();
+        opts.setTransportOut(td);
+        
+        String url = LocalTransportReceiver.CONFIG_CONTEXT.getServiceContextPath()+"/"+serviceName;
+
+        opts.setTo(new EndpointReference(url));
+        opts.setAction(operationName);
+        ServiceClient client = new ServiceClient(clientCtx, null);
         client.setOptions(opts);
         return client;
     }
