@@ -84,20 +84,21 @@ SimpleHttpServer. First try to use library system using REST API.</p>
 steps given below to make sure that the sample works as it should:</p>
 
 <p><strong>Step 1</strong>:- View all the available books in the library,
-just type the URL http://127.0.0.1:8080/axis2/rest/Library/listAvailableBook
-on your favorite browser.</p>
+just type the URL
+http://127.0.0.1:8080/axis2/services/Library/listAvailableBook on your
+favorite browser.</p>
 
 <p>You will see all the available books in the system.</p>
 
 <p><strong>Step 2</strong> : View all the books in the system at
-http://127.0.0.1:8080/axis2/rest/Library/listAllBook</p>
+http://127.0.0.1:8080/axis2/services/Library/listAllBook</p>
 
 <p>In this case you will get exactly the same result for both the request,
 since no one has borrowed the book.</p>
 
 <p><strong>Step 3</strong>: Now look at all the lent books in the system. And
 you will see an empty list at
-http://127.0.0.1:8080/axis2/rest/Library/listLendBook</p>
+http://127.0.0.1:8080/axis2/services/Library/listLendBook</p>
 
 <p><strong>Step 4</strong> : Register a user. To lend a book or return a
 book, you need to register first. Do not register twice, if you try to do so
@@ -108,7 +109,7 @@ wsdl at http://127.0.0.1:port/axis2/services/serviceName?wsdl. You will see
 what you need to pass in)</p>
 
 <p>So let's create a user called 'foo' with the password '123'
-(http://127.0.0.1:8080/axis2/rest/Library/register?userName=foo&amp;passWord=123)</p>
+(http://127.0.0.1:8080/axis2/services/Library/register?userName=foo&amp;passWord=123)</p>
 
 <p>Then you will get the following response, if everything has gone well.</p>
 <pre>&lt;ns:registerResponse&gt;
@@ -117,13 +118,13 @@ what you need to pass in)</p>
 
 <p><strong>Step 5</strong> : Log into system. To log in you need to pass user
 name and password. So let's try to login to system. The request will be
-http://127.0.0.1:8080/axis2/rest/Library/login?userName=foo&amp;passWord=123</p>
+http://127.0.0.1:8080/axis2/services/Library/login?userName=foo&amp;passWord=123</p>
 
 <p><strong>Step 6</strong> : Now we are ready to lend a book. To lend a book
 you need to pass isbn and userName. Let's try to lend the book with isbn
 0-937175-77-3, your request would look like below:</p>
 
-<p>http://127.0.0.1:8080/axis2/rest/Library/lendBook?isbn=0-937175-77-3&amp;userName=foo</p>
+<p>http://127.0.0.1:8080/axis2/services/Library/lendBook?isbn=0-937175-77-3&amp;userName=foo</p>
 
 <p>If everything went well, you will see the following response in the
 browser.</p>
@@ -136,7 +137,7 @@ browser.</p>
 &lt;/ns:lendBookResponse&gt;</pre>
 
 <p><strong>Step 7</strong> : Now go and look at lent list again at
-http://127.0.0.1:8080/axis2/rest/Library/listLendBook, you will see the
+http://127.0.0.1:8080/axis2/services/Library/listLendBook, you will see the
 following output in the browser.</p>
 <pre>&lt;ns:listLendBookResponse&gt;
 &lt;ns:return&gt;
@@ -153,7 +154,8 @@ in that list.</p>
 
 <p><strong>Step 8</strong> : Now let's return the book.</p>
 
-<p>http://127.0.0.1:8080/axis2/rest/Library/returnBook?isbn= 0-937175-77-3</p>
+<p>http://127.0.0.1:8080/axis2/services/Library/returnBook?isbn=
+0-937175-77-3</p>
 
 <p><strong>Step 9</strong> : Now let's look at the lent book list again, and
 you will realize that list is empty.</p>

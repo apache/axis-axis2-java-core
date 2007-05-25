@@ -3,7 +3,7 @@
   <meta http-equiv="content-type" content="">
   <title>RESTful Web Services Support</title>
   <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-  media="all"/>
+  media="all">
 </head>
 
 <body lang="en">
@@ -74,7 +74,7 @@ options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 AXIS2_HOME/samples/userguide/src/userguide/clients which demonstrates the
 usage of the above. It uses the "echo" operation of the
 <code>userguide.example1.MyService </code>of the
-AXIS2_HOME/samples/userguide/src/userguide/example1. </p>
+AXIS2_HOME/samples/userguide/src/userguide/example1.</p>
 
 <p>The class source will be as follows:<source></p>
 <pre>public class RESTClient {
@@ -124,13 +124,13 @@ AXIS2_HOME/samples/userguide/src/userguide/example1. </p>
 via HTTP GET. For example, the following URL requests the Version Service via
 HTTP GET. However, the Web service arriving via GET assumes REST. Other
 parameters are converted into XML and put into the SOAP body.</p>
-<source><pre>http://127.0.0.1:8080/axis2/rest/Version/getVersion</pre>
+<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
 </source>
 <p>The result can be shown in the browser as follows:</p>
 <img src="/images/userguide/http-get-ws.jpg">
 
 <p>For example, the following request,</p>
-<source><pre>http://127.0.0.1:8080/axis2/rest/Version/getVersion</pre>
+<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
 </source>will be converted into the following SOAP message for processing by
 Axis2.<source>
 <pre> 
