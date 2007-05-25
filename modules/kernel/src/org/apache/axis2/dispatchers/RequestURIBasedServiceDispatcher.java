@@ -14,11 +14,15 @@
 
 package org.apache.axis2.dispatchers;
 
+import java.util.Map;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
@@ -44,15 +48,36 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
             }
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
+            ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                                                                           messageContext
                                                                                   .getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
-                AxisConfiguration registry =
-                        messageContext.getConfigurationContext().getAxisConfiguration();
+            	
+            	AxisConfiguration registry =
+            		configurationContext.getAxisConfiguration();
 
-                return registry.getService(values[0]);
+            	AxisService axisService = registry.getService(values[0]);
+
+            	// If the axisService is not null we get the binding that the request came to add
+            	// add it as a property to the messageContext
+            	if (axisService != null) {
+            		Map endpoints = axisService.getEndpoints();
+            		if (endpoints != null) {
+            			if (endpoints.size() == 1) {
+            				messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+            						endpoints.get(
+            								axisService.getEndpointName()));
+            			} else {
+            				String endpointName = values[0].substring(values[0].indexOf(".") + 1);
+            				messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+            						endpoints.get(endpointName));
+            			}
+            		}
+            	}
+
+            	return axisService;
             } else {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug(messageContext.getLogIDString() +
