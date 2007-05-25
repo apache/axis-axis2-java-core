@@ -28,6 +28,9 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
+import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
+import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
@@ -36,7 +39,10 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.WebServiceException;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(JAXBDispatch.class);
@@ -64,9 +70,24 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
 
     public Message createMessageFromValue(Object value) {
         Message message = null;
+        
+        if (value == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Dispatch invoked with null parameter Value");
+                log.debug("creating empty soap message");
+            }
+            try {
+                return createEmptyMessage(
+                        Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
+
+            } catch (XMLStreamException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+        }
+        
         try {
             JAXBBlockFactory factory =
-                    (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+                (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 
             Class clazz = value.getClass();
             JAXBBlockContext context = null;
@@ -154,4 +175,11 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
 
         return value;
     }
+    
+    private Message createEmptyMessage(Protocol protocol)
+            throws WebServiceException, XMLStreamException {
+        MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(protocol);
+        return m;
+    }    
 }
