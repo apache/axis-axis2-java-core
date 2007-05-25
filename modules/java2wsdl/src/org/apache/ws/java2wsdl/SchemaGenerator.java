@@ -604,7 +604,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
-            elt1.setMinOccurs(1);
+            elt1.setMinOccurs(0);
         }
         elt1.setNillable(true);
     }

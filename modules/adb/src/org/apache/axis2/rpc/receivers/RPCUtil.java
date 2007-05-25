@@ -30,6 +30,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Arrays;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -136,24 +137,6 @@ public class RPCUtil {
         }
     }
 
-    public static OMElement getResponseElementForArray(QName resname, Object [] objs,
-                                                       boolean qualified,
-                                                       TypeTable typeTable) {
-        if (qualified) {
-            return BeanUtil.getOMElement(resname, objs,
-                                         new QName(resname.getNamespaceURI(),
-                                                   RETURN_WRAPPER,
-                                                   resname.getPrefix()),
-                                         qualified,
-                                         typeTable);
-        } else {
-            return BeanUtil.getOMElement(resname, objs,
-                                         new QName(RETURN_WRAPPER),
-                                         qualified,
-                                         typeTable);
-        }
-    }
-
     public static void processResponse(Object resObject,
                                        AxisService service,
                                        Method method,
@@ -165,34 +148,41 @@ public class RPCUtil {
     ) throws Exception {
         QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
-            QName resName;
-            if (service.isElementFormDefault()) {
-                resName = new QName(service.getSchematargetNamespace(),
-                                    RETURN_WRAPPER,
-                                    service.getSchematargetNamespacePrefix());
-            } else {
-                resName = new QName(RETURN_WRAPPER);
-            }
-            XMLStreamReader xr = new NullXMLStreamReader(resName);
-            StreamWrapper parser = new StreamWrapper(xr);
-            StAXOMBuilder stAXOMBuilder =
-                    OMXMLBuilderFactory.createStAXOMBuilder(
-                            OMAbstractFactory.getSOAP11Factory(), parser);
             ns = fac.createOMNamespace(service.getSchematargetNamespace(),
                                        service.getSchematargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
-            bodyChild.addChild(stAXOMBuilder.getDocumentElement());
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {
-                QName resName = new QName(elementQName.getNamespaceURI(),
-                                          method.getName() + "Response",
-                                          elementQName.getPrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                                                                 (Object[])resObject,
-                                                                 service.isElementFormDefault(),
-                                                                 service.getTypeTable());
-                envelope.getBody().addChild(bodyChild);
+                if(Array.getLength(resObject)==0){
+                    QName resName;
+                    if (service.isElementFormDefault()) {
+                        resName = new QName(service.getSchematargetNamespace(),
+                                            RETURN_WRAPPER,
+                                            service.getSchematargetNamespacePrefix());
+                    } else {
+                        resName = new QName(RETURN_WRAPPER);
+                    }
+                    XMLStreamReader xr = new NullXMLStreamReader(resName);
+                    StreamWrapper parser = new StreamWrapper(xr);
+                    StAXOMBuilder stAXOMBuilder =
+                            OMXMLBuilderFactory.createStAXOMBuilder(
+                                    OMAbstractFactory.getSOAP11Factory(), parser);
+                    ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+                                               service.getSchematargetNamespacePrefix());
+                    OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
+                    bodyChild.addChild(stAXOMBuilder.getDocumentElement());
+                    envelope.getBody().addChild(bodyChild);
+                } else {
+                    QName resName = new QName(elementQName.getNamespaceURI(),
+                                              method.getName() + "Response",
+                                              elementQName.getPrefix());
+                    OMElement bodyChild = RPCUtil.getResponseElement(resName,
+                                                                     (Object[])resObject,
+                                                                     service.isElementFormDefault(),
+                                                                     service.getTypeTable());
+                    envelope.getBody().addChild(bodyChild);
+                }
             } else {
                 if (resObject.getClass().isArray()) {
                     int length = Array.getLength(resObject);
@@ -210,7 +200,7 @@ public class RPCUtil {
                     QName resName = new QName(elementQName.getNamespaceURI(),
                                               method.getName() + "Response",
                                               elementQName.getPrefix());
-                    OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
+                    OMElement bodyChild = RPCUtil.getResponseElement(resName,
                                                                              objArray,
                                                                              service.isElementFormDefault(),
                                                                              service.getTypeTable());

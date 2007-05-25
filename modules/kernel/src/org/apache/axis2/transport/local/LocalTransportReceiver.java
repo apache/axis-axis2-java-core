@@ -48,7 +48,7 @@ public class LocalTransportReceiver {
         this.sender = sender;
     }
 
-    public void processMessage(InputStream in, EndpointReference to) throws AxisFault {
+    public void processMessage(InputStream in, EndpointReference to, String action) throws AxisFault {
         try {
             TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
                     Constants.TRANSPORT_LOCAL);
@@ -62,6 +62,7 @@ public class LocalTransportReceiver {
             msgCtx.setTransportOut(tOut);
 
             msgCtx.setTo(to);
+            msgCtx.setWSAAction(action);
             msgCtx.setServerSide(true);
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 

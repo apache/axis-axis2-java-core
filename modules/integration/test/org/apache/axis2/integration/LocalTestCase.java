@@ -16,6 +16,7 @@ package org.apache.axis2.integration;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -52,6 +53,8 @@ public class LocalTestCase extends TestCase {
         // Configuration - server side
         serverConfig = new AxisConfiguration();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(serverConfig);
+        LocalTransportReceiver.CONFIG_CONTEXT.setServicePath("services");
+        LocalTransportReceiver.CONFIG_CONTEXT.setContextRoot("local:/");
         TransportOutDescription tOut = new TransportOutDescription(Constants.TRANSPORT_LOCAL);
         tOut.setSender(new LocalTransportSender());
         serverConfig.addTransportOut(tOut);
@@ -139,6 +142,26 @@ public class LocalTestCase extends TestCase {
         opts.setTransportOut(td);
 
         ServiceClient client = new ServiceClient(clientCtx, null);
+        client.setOptions(opts);
+        return client;
+    }
+
+    /**
+     * Get a pre-initialized ServiceClient set up to talk to our local
+     * server.  If you want to set options, call this and then use getOptions()
+     * on the return.
+     *
+     * @return a ServiceClient, pre-initialized to talk using our local sender
+     * @throws AxisFault if there's a problem
+     */
+    protected RPCServiceClient getRPCClient() throws AxisFault {
+        TransportOutDescription td = new TransportOutDescription("local");
+        td.setSender(sender);
+
+        Options opts = new Options();
+        opts.setTransportOut(td);
+
+        RPCServiceClient client = new RPCServiceClient(clientCtx, null);
         client.setOptions(opts);
         return client;
     }
