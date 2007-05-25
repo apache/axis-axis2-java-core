@@ -1,6 +1,4 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -13,21 +11,14 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
-
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
+import org.apache.axis2.dispatchers.RequestURIBasedOperationDispatcher;
 
 /**
  * Dispatches the operation based on the information from the target endpoint URL.
@@ -35,7 +26,7 @@ import javax.xml.namespace.QName;
 public class RequestURIOperationDispatcher extends AbstractDispatcher {
 
     public static final String NAME = "RequestURIOperationDispatcher";
-    private static final Log log = LogFactory.getLog(RequestURIOperationDispatcher.class);
+    private RequestURIBasedOperationDispatcher rubod = new RequestURIBasedOperationDispatcher();
 
     /*
      *  (non-Javadoc)
@@ -43,31 +34,7 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
      */
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-
-        EndpointReference toEPR = messageContext.getTo();
-        if (toEPR != null) {
-            String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                                                                          messageContext
-                                                                                  .getConfigurationContext().getServiceContextPath());
-
-            if ((values.length >= 2) && (values[1] != null)) {
-                QName operationName = new QName(values[1]);
-                log.debug(messageContext.getLogIDString() +
-                        " Checking for Operation using QName(target endpoint URI fragment) : " +
-                        operationName);
-                AxisOperation axisOperation = service.getOperation(operationName);
-                return axisOperation;
-            } else {
-                log.debug(messageContext.getLogIDString() +
-                        " Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
-                return null;
-            }
-        } else {
-            log.debug(messageContext.getLogIDString() +
-                    " Attempted to check for Operation using null target endpoint URI");
-            return null;
-        }
+    	return rubod.findOperation(service, messageContext);
     }
 
     /*

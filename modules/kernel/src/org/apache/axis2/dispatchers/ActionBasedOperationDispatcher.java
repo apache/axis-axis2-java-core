@@ -14,6 +14,8 @@
 
 package org.apache.axis2.dispatchers;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -41,6 +43,16 @@ public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher 
             if (op == null) {
                 op = service.getOperationByAction(action);
             }
+            
+            /*
+             * HACK: Please remove this when we add support for custom action
+             * uri
+             */
+            if ((op == null) && (action.lastIndexOf('/') != -1)) {
+                op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'),
+                                                                     action.length())));
+            }
+            
             return op;
         }
 
