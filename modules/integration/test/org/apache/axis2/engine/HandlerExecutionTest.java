@@ -1,54 +1,40 @@
 /*
-* Copyright 2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.axis2.engine;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.util.FaultThrowingService;
-import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.integration.TestingUtils;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.util.Utils;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class HandlerExecutionTest extends UtilServerBasedTestCase implements
-        TestConstants {
-    private static boolean initDone = false;
+import javax.xml.namespace.QName;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.util.FaultThrowingService;
+import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.integration.LocalTestCase;
+import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
+
+public class HandlerExecutionTest extends LocalTestCase {
     private static ArrayList testResults;
     private AxisService testService;
     private AxisService testFailingService;
@@ -58,18 +44,6 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
     private TestHandler firstOperationInHandler;
     private TestHandler middleOperationInHandler;
     private TestHandler middleOperationOutHandler;
-
-    public HandlerExecutionTest() {
-        super(HandlerExecutionTest.class.getName());
-    }
-
-    public HandlerExecutionTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(HandlerExecutionTest.class));
-    }
 
     private void registerOperationLevelHandlers(AxisOperation operation) {
         ArrayList operationSpecificPhases = new ArrayList();
@@ -103,12 +77,11 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
     }
 
     protected void setUp() throws Exception {
+    	super.setUp();
         testResults = new ArrayList();
-        if (!initDone) {
-            initDone = true;
 
             ArrayList globalInPhases =
-                    UtilServer.getConfigurationContext().getAxisConfiguration().getInFlowPhases();
+                    serverConfig.getAxisConfiguration().getInFlowPhases();
             for (int i = 0; i < globalInPhases.size(); i++) {
                 Phase globalInPhase = (Phase)globalInPhases.get(i);
                 if (PhaseMetadata.PHASE_PRE_DISPATCH.equals(globalInPhase.getPhaseName())) {
@@ -118,45 +91,20 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
                     globalInPhase.addHandler(new TestHandler("In3"));
                 }
             }
-        }
-
         firstOperationInHandler = new TestHandler("In4");
         middleOperationInHandler = new TestHandler("In5");
         middleOperationOutHandler = new TestHandler("Out2");
 
-        testService = Utils.createSimpleService(serviceName,
-                                                Echo.class.getName(),
-                                                operationName);
-        UtilServer.deployService(testService);
+        testService = deployClassAsService(Echo.SERVICE_NAME, Echo.class);
+        registerOperationLevelHandlers(testService.getOperation(new QName(Echo.ECHO_OM_ELEMENT_OP_NAME)));
 
-        registerOperationLevelHandlers(testService.getOperation(operationName));
-
-        testFailingService = Utils.createSimpleService(failingServiceName,
-                                                       FaultThrowingService.class.getName(),
-                                                       failingOperationName);
-        UtilServer.deployService(testFailingService);
+        testFailingService = deployClassAsService(failingServiceName.getLocalPart(), FaultThrowingService.class);
         registerOperationLevelHandlers(testFailingService.getOperation(failingOperationName));
 
     }
 
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployService(failingServiceName);
-        UtilServer.unDeployClientService();
-    }
-
     private ServiceClient createClient() throws Exception {
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-
-        ServiceClient sender = new ServiceClient(configContext, null);
-        sender.setOptions(options);
-        return sender;
+    	return getClient(Echo.SERVICE_NAME, Echo.ECHO_OM_ELEMENT_OP_NAME);
     }
 
     private void executeClient() throws Exception {
@@ -220,19 +168,9 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
         OMElement payload = omFactory.createOMElement("EchoOMElement", null);
         payload.setText(FaultThrowingService.THROW_FAULT_AS_AXIS_FAULT);
 
-        Options options = new Options();
-        options.setTo(new EndpointReference("http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
-                "/axis2/services/" + failingServiceName.getLocalPart() + "/" +
-                failingOperationName.getLocalPart()));
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setExceptionToBeThrownOnSOAPFault(false);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        ServiceClient sender = new ServiceClient(configContext, null);
-        sender.setOptions(options);
-
+        ServiceClient sender = getClient(failingServiceName.getLocalPart(), failingOperationName.getLocalPart());
+        sender.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+        
         AxisOperation operation =
                 sender.getAxisService().getOperation(ServiceClient.ANON_OUT_IN_OP);
         ArrayList operationSpecificPhases = new ArrayList();
@@ -262,12 +200,13 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
                 operationSpecificPhase.addHandler(new TestHandler("COut3"));
             }
         }
-
-        String result = sender.sendReceive(payload).toString();
-
-        assertTrue(result.indexOf("test:TestFault") > -1);
-        assertTrue(result.indexOf("FaultReason</soapenv:Text>") > -1);
-        assertTrue(result.indexOf("This is a test Exception") > -1);
+        try{
+        	sender.sendReceive(payload);
+        	fail("Expecting exception to be thrown.");
+        }catch(AxisFault af){
+        	assertEquals("TestFault", af.getFaultCode().getLocalPart());
+        	assertTrue(af.getReason().indexOf("FaultReason") > -1);
+        }
         //This odd pattern of CIn FCCIn CIn FCCIn is caused by the InOutAxisOperation always executing the inflow phases, even if there was a fault (and then executing the infaulflow)
         List expectedExecutionState = Arrays.asList(new String[] { "COut1", "COut2", "COut3", "In1",
                 "In2", "In3", "In4", "In5", "In6", "FCIn6", "FCIn5", "FCIn4", "FCIn3", "FCIn2",
