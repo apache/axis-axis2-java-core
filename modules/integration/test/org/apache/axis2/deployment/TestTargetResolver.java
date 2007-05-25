@@ -1,6 +1,4 @@
 /*
-* Copyright 2006 The Apache Software Foundation.
-*
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -28,7 +26,7 @@ public class TestTargetResolver implements TargetResolver {
             messageContext.getTo().setAddress(AddressingConstants.Final.WSA_ANONYMOUS_URL);
         } else if (messageContext.getTo().getAddress().startsWith("trtest://")) {
             messageContext.getTo().setAddress(
-                    "http://127.0.0.1:" + messageContext.getTo().getAddress().substring(9));
+                    "local" + messageContext.getTo().getAddress().substring(6));
         }
         System.out.println("resolveTarget:" + messageContext.getTo().getAddress());
     }
