@@ -27,6 +27,6 @@ public class GetStateResponseCommand extends ControlCommand {
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         //TODO: Method implementation
         configurationContext.
-                setNonReplicableProperty(ClusteringConstants.GET_STATE_RESPONSE_RECEIVED, "true");
+                setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
     }
 }

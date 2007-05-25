@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
@@ -43,10 +44,21 @@ public class TribesControlCommandProcessor {
     }
 
     public void process(ControlCommand command, Member sender) throws ClusteringFault {
-        command.execute(configurationContext);
-        if(command instanceof GetStateCommand){
+
+        if (command instanceof GetStateCommand) {
+
+            // If a GetStateRequest is received by a node which has not yet initialized
+            // (i.e. by getting the GetStateResponseCommand), this node cannot send a response
+            // to the state requester. So we simply return.
+            if (configurationContext.
+                    getNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                return;
+            }
+            command.execute(configurationContext);
             channelSender.sendToMember(new GetStateResponseCommand(),
                                        sender);
+        } else {
+            command.execute(configurationContext);
         }
     }
 }

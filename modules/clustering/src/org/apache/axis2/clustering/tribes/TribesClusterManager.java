@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 public class TribesClusterManager implements ClusterManager {
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
@@ -119,7 +120,6 @@ public class TribesClusterManager implements ClusterManager {
             channel.addChannelListener(channelInfo);
             channel.addMembershipListener(memberInfo);
             membershipListener = new TribesMembershipListener();
-//            membershipListener.setConfigContext(configurationManager);  //TODO: set the config ctx here and when config context is switched
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
             sender.setChannel(channel);
@@ -132,27 +132,31 @@ public class TribesClusterManager implements ClusterManager {
             TribesUtil.printMembers(members);
 
             // If there is at least one member in the Tribe, get the current state from a member
-            /*while (members.length > 0 &&
+            Random random = new Random();
+            int numberOfTries = 0;
+            while (members.length > 0 &&
                    configurationContext.
-                           getProperty(ClusteringConstants.GET_STATE_RESPONSE_RECEIVED) == null) {
+                           getNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED) == null &&
+                    numberOfTries < 50) { // Don't keep on trying infinitely
 
                 // While there are members and GetStateResponseCommand is not received do the following
                 try {
                     members = channel.getMembers();
+                    int memberIndex = random.nextInt(members.length);
 
-                    //TODO: select a random member and send the request to it. Otherwise the same member will
-                    // get overloaded
-                    sender.sendToMember(new GetStateCommand(), members[0]);
+                    System.err.println("###### memberIndex=" + memberIndex);
+                    sender.sendToMember(new GetStateCommand(), members[memberIndex]);
                     System.out.println("### WAITING FOR STATE UPDATE");
                     Thread.sleep(200);
                 } catch (Exception e) {
                     e.printStackTrace();
                     break;
                 }
+                numberOfTries ++;
             }
             configurationContext.
-                    removePropertyNonReplicable(ClusteringConstants.GET_STATE_RESPONSE_RECEIVED);*/
-
+                           setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
+                                                    "true");
         } catch (ChannelException e) {
             String message = "Error starting Tribes channel";
             throw new ClusteringFault(message, e);

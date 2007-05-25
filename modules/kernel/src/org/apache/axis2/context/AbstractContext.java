@@ -100,6 +100,21 @@ public abstract class AbstractContext {
     }
 
     /**
+     * Retrieves an object given a key. The retrieved property will not be replicated to
+     * other nodes in the clustered scenario.
+     *
+     * @param key - if not found, will return null
+     * @return Returns the property.
+     */
+    public Object getNonReplicableProperty(String key) {
+        Object obj = properties == null ? null : properties.get(key);
+        if ((obj == null) && (parent != null)) {
+            obj = parent.getNonReplicableProperty(key);
+        }
+        return obj;
+    }
+
+    /**
      * Store a property in this context
      *
      * @param key
