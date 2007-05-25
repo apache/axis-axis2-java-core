@@ -46,7 +46,7 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
 
 
     public EchoRawRuntimeProxyTest() {
-        super(EchoRawXMLLoadTest.class.getName());
+        super(EchoRawRuntimeProxyTest.class.getName());
     }
 
     public EchoRawRuntimeProxyTest(String testName) {
