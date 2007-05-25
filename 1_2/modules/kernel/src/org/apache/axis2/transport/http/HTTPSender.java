@@ -21,7 +21,9 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportUtils;
@@ -311,7 +313,14 @@ public class HTTPSender extends AbstractHTTPSender {
             if (contenttypeHeader != null) {
                 value = contenttypeHeader.getValue();
             }
-
+            OperationContext opContext = msgContext.getOperationContext();
+            if(opContext!=null){
+                MessageContext inMessageContext =
+                        opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if(inMessageContext!=null){
+                    inMessageContext.setProcessingFault(true);
+                }
+            }
             if (value != null) {
 
                 processResponse(method, msgContext);

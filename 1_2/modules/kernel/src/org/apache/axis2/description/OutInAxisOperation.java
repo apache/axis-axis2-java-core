@@ -364,9 +364,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
         SOAPEnvelope resenvelope = responseMessageContext.getEnvelope();
         if (resenvelope != null) {
-            if (resenvelope.getBody().hasFault()) {
-                SOAPFault soapFault = resenvelope.getBody().getFault();
-                //we need to call engine.receiveFault
+            if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
                 engine = new AxisEngine(msgctx.getConfigurationContext());
                 engine.receiveFault(responseMessageContext);
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
@@ -377,6 +375,13 @@ class OutInAxisOperationClient extends OperationClient {
             } else {
                 engine = new AxisEngine(msgctx.getConfigurationContext());
                 engine.receive(responseMessageContext);
+                if(responseMessageContext.getEnvelope().getBody().hasFault()){
+                    if (options.isExceptionToBeThrownOnSOAPFault()) {
+                        // does the SOAPFault has a detail element for Excpetion
+                        AxisFault af = Utils.getInboundFaultFromMessageContext(responseMessageContext);
+                        throw af;
+                    }
+                }
                 if (responseMessageContext.getReplyTo() != null) {
                     sc.setTargetEPR(responseMessageContext.getReplyTo());
                 }
