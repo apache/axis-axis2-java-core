@@ -154,7 +154,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                             ((ServiceContext) operationContext.getParent()).getAxisService());
 
                     // TODO : Is this necessary here?
-//                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
+                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
 
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
