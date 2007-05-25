@@ -18,7 +18,6 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
@@ -29,6 +28,7 @@ import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.clustering.tribes.info.TransientTribesMemberInfo;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
@@ -52,7 +52,6 @@ public class TribesClusterManager implements ClusterManager {
 
     private HashMap parameters;
     private ManagedChannel channel;
-    private TribesMembershipListener membershipListener;
     private ConfigurationContext configurationContext;
     private TribesControlCommandProcessor controlCmdProcessor;
 
@@ -119,7 +118,7 @@ public class TribesClusterManager implements ClusterManager {
             channel.addChannelListener(listener);
             channel.addChannelListener(channelInfo);
             channel.addMembershipListener(memberInfo);
-            membershipListener = new TribesMembershipListener();
+            TribesMembershipListener membershipListener = new TribesMembershipListener();
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
             sender.setChannel(channel);
@@ -136,15 +135,14 @@ public class TribesClusterManager implements ClusterManager {
             int numberOfTries = 0;
             while (members.length > 0 &&
                    configurationContext.
-                           getNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED) == null &&
-                    numberOfTries < 50) { // Don't keep on trying infinitely
+                           getPropertyNonReplicable(ClusteringConstants.
+                                   CLUSTER_INITIALIZED) == null &&
+                                                                numberOfTries < 50){ // Don't keep on trying infinitely
 
                 // While there are members and GetStateResponseCommand is not received do the following
                 try {
                     members = channel.getMembers();
                     int memberIndex = random.nextInt(members.length);
-
-                    System.err.println("###### memberIndex=" + memberIndex);
                     sender.sendToMember(new GetStateCommand(), members[memberIndex]);
                     System.out.println("### WAITING FOR STATE UPDATE");
                     Thread.sleep(200);
@@ -155,8 +153,8 @@ public class TribesClusterManager implements ClusterManager {
                 numberOfTries ++;
             }
             configurationContext.
-                           setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
-                                                    "true");
+                    setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
+                                             "true");
         } catch (ChannelException e) {
             String message = "Error starting Tribes channel";
             throw new ClusteringFault(message, e);
@@ -206,11 +204,7 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public void shutdown() throws ClusteringFault {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: TribesClusterManager::shutdown");
-        }
-
+        log.debug("Enter: TribesClusterManager::shutdown");
         if (channel != null) {
             try {
                 channel.stop(Channel.DEFAULT);
@@ -223,10 +217,7 @@ public class TribesClusterManager implements ClusterManager {
                 throw new ClusteringFault(e);
             }
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: TribesClusterManager::shutdown");
-        }
+        log.debug("Exit: TribesClusterManager::shutdown");
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {

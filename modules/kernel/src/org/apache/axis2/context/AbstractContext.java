@@ -77,6 +77,9 @@ public abstract class AbstractContext {
      * @return Iterator over a collection of keys
      */
     public Iterator getPropertyNames() {
+        if(properties == null){
+            properties = new HashMap();
+        }
         return properties.keySet().iterator();
     }
 
@@ -106,10 +109,10 @@ public abstract class AbstractContext {
      * @param key - if not found, will return null
      * @return Returns the property.
      */
-    public Object getNonReplicableProperty(String key) {
+    public Object getPropertyNonReplicable(String key) {
         Object obj = properties == null ? null : properties.get(key);
         if ((obj == null) && (parent != null)) {
-            obj = parent.getNonReplicableProperty(key);
+            obj = parent.getPropertyNonReplicable(key);
         }
         return obj;
     }

@@ -17,13 +17,11 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.control.ControlCommand;
-import org.apache.axis2.clustering.control.GetStateCommand;
-import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +31,7 @@ import java.io.Serializable;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
-    
+
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
     private TribesControlCommandProcessor controlCommandProcessor;
@@ -58,26 +56,31 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         return true;
     }
 
-    public void messageReceived(Serializable msg, Member sender) {
+    public void messageReceived(final Serializable msg, final Member sender) {
         log.debug("Message received : " + msg);
-        if (msg instanceof ContextClusteringCommand) {
-            try {
-                contextManager.notifyListener((ContextClusteringCommand) msg);
-            } catch (ClusteringFault e) {
-                log.error("Could not process ContextCommand", e);
+        Thread th = new Thread() {
+            public void run() {
+                if (msg instanceof ContextClusteringCommand) {
+                    try {
+                        contextManager.notifyListener((ContextClusteringCommand) msg);
+                    } catch (ClusteringFault e) {
+                        log.error("Could not process ContextCommand", e);
+                    }
+                } else if (msg instanceof ConfigurationClusteringCommand) {
+                    try {
+                        configurationManager.notifyListener((ConfigurationClusteringCommand) msg);
+                    } catch (ClusteringFault e) {
+                        log.error("Could not process ConfigurationCommand", e);
+                    }
+                } else if (msg instanceof ControlCommand) {
+                    try {
+                        controlCommandProcessor.process((ControlCommand) msg, sender);
+                    } catch (ClusteringFault e) {
+                        log.error("Could not process ControlCommand", e);
+                    }
+                }
             }
-        } else if (msg instanceof ConfigurationClusteringCommand) {
-            try {
-                configurationManager.notifyListener((ConfigurationClusteringCommand) msg);
-            } catch (ClusteringFault e) {
-                log.error("Could not process ConfigurationCommand", e);
-            }
-        } else if(msg instanceof ControlCommand){
-            try {
-                controlCommandProcessor.process((ControlCommand) msg, sender);
-            } catch (ClusteringFault e) {
-                log.error("Could not process ControlCommand", e);
-            }
-        }
+        };
+        th.start();
     }
 }

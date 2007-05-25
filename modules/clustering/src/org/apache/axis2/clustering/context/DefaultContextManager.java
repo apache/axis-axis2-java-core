@@ -58,7 +58,8 @@ public class DefaultContextManager implements ContextManager {
     public void updateContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand message =
                 ContextClusteringCommandFactory.getUpdateCommand(context,
-                                                                 excludedReplicationPatterns);
+                                                                 excludedReplicationPatterns,
+                                                                 false);
         if (message != null) {
             processor.process(message);
         }
@@ -105,6 +106,10 @@ public class DefaultContextManager implements ContextManager {
 
     public void setReplicationExcludePatterns(String contextType, List patterns) {
         excludedReplicationPatterns.put(contextType, patterns);
+    }
+
+    public Map getReplicationExcludePatterns(){
+        return excludedReplicationPatterns;
     }
 
     // ---------------------- Methods from ParameterInclude ----------------------------------------

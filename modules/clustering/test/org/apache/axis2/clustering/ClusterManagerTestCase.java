@@ -47,7 +47,7 @@ public abstract class ClusterManagerTestCase extends TestCase {
     protected AxisService service2 = null;
     protected String serviceName = "testService";
 
-    protected abstract ClusterManager getClusterManager();
+    protected abstract ClusterManager getClusterManager(ConfigurationContext configCtx);
 
     protected boolean skipChannelTests = false;
     protected TestConfigurationManagerListener configurationManagerListener;
@@ -59,11 +59,11 @@ public abstract class ClusterManagerTestCase extends TestCase {
 
         Thread.sleep(3000);
 
-        clusterManager1 = getClusterManager();
-        clusterManager2 = getClusterManager();
-
         configurationContext1 = ConfigurationContextFactory.createDefaultConfigurationContext();
         configurationContext2 = ConfigurationContextFactory.createDefaultConfigurationContext();
+        
+        clusterManager1 = getClusterManager(configurationContext1);
+        clusterManager2 = getClusterManager(configurationContext2);
 
         clusterManager1.getContextManager().setConfigurationContext(configurationContext1);
         clusterManager2.getContextManager().setConfigurationContext(configurationContext2);

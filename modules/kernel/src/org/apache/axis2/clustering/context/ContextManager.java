@@ -22,29 +22,40 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ContextManager extends ParameterInclude {
 
-    public void addContext(AbstractContext context) throws ClusteringFault;
+    void addContext(AbstractContext context) throws ClusteringFault;
 
-    public void removeContext(AbstractContext context) throws ClusteringFault;
+    void removeContext(AbstractContext context) throws ClusteringFault;
 
-    public void updateContext(AbstractContext context) throws ClusteringFault;
+    void updateContext(AbstractContext context) throws ClusteringFault;
 
-    public boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
+    boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
 
-    public void setContextManagerListener(ContextManagerListener listener);
+    void setContextManagerListener(ContextManagerListener listener);
 
-    public void setConfigurationContext(ConfigurationContext configurationContext);
+    void setConfigurationContext(ConfigurationContext configurationContext);
 
     /**
      * All properties in the context with type <code>contextType</code> which have
      * names that match the specified pattern will be excluded from replication.
-     *
+     * <p/>
      * Generally, we can use the context class name as the context type.
      *
      * @param contextType
      * @param patterns    The patterns
      */
-    public void setReplicationExcludePatterns(String contextType, List patterns);
+    void setReplicationExcludePatterns(String contextType, List patterns);
+
+    /**
+     * Get all the excluded context property name patterns
+     *
+     * @return All the excluded pattern of all the contexts. The key of the Map is the
+     *         the <code>contextType</code>. See {@link #setReplicationExcludePatterns(String,List)}.
+     *         The values are of type {@link List} of {@link String} Objects,
+     *         which are a collection of patterns to be excluded.
+     */
+    Map getReplicationExcludePatterns();
 }

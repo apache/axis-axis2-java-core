@@ -38,6 +38,7 @@ public class CreateServiceContextCommand extends ServiceContextCommand {
         }
         String scope = axisService.getScope();
         if (sgCtx == null) {
+
             sgCtx = new ServiceGroupContext(configurationContext,
                                             configurationContext.getAxisConfiguration().
                                                     getServiceGroup(serviceGroupName));

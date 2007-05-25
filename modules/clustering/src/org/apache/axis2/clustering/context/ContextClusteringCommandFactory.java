@@ -33,15 +33,24 @@ public final class ContextClusteringCommandFactory {
 
     private static final Log log = LogFactory.getLog(ContextClusteringCommandFactory.class);
 
+    /**
+     * @param context
+     * @param excludedPropertyPatterns
+     * @param includeAllProperties     True - Include all properties,
+     *                                 False - Include only property differences
+     * @return ContextClusteringCommand
+     */
     public static ContextClusteringCommand getUpdateCommand(AbstractContext context,
-                                                            Map excludedPropertyPatterns) {
+                                                            Map excludedPropertyPatterns,
+                                                            boolean includeAllProperties) {
 
         ContextClusteringCommand cmd = null;
         if (context instanceof ConfigurationContext) {
             cmd = new UpdateConfigurationContextCommand();
             fillProperties((UpdateContextCommand) cmd,
                            context,
-                           excludedPropertyPatterns);
+                           excludedPropertyPatterns,
+                           includeAllProperties);
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
             cmd = new UpdateServiceGroupContextCommand();
@@ -52,7 +61,8 @@ public final class ContextClusteringCommandFactory {
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
             fillProperties((UpdateContextCommand) cmd,
                            context,
-                           excludedPropertyPatterns);
+                           excludedPropertyPatterns,
+                           includeAllProperties);
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
             cmd = new UpdateServiceContextCommand();
@@ -63,7 +73,8 @@ public final class ContextClusteringCommandFactory {
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
             fillProperties((UpdateContextCommand) cmd,
                            context,
-                           excludedPropertyPatterns);
+                           excludedPropertyPatterns,
+                           includeAllProperties);
         }
         if (cmd != null && ((UpdateContextCommand) cmd).isPropertiesEmpty()) {
             cmd = null;
@@ -72,21 +83,45 @@ public final class ContextClusteringCommandFactory {
         return cmd;
     }
 
+    /**
+     * @param updateCmd
+     * @param context
+     * @param excludedPropertyPatterns
+     * @param includeAllProperties     True - Include all properties,
+     *                                 False - Include only property differences
+     */
     private static void fillProperties(UpdateContextCommand updateCmd,
                                        AbstractContext context,
-                                       Map excludedPropertyPatterns) {
-        Map diffs = context.getPropertyDifferences();
-        for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-            String key = (String) iter.next();
-            Object prop = context.getProperty(key);
-            if (prop instanceof Serializable) { // First check whether it is serializable
+                                       Map excludedPropertyPatterns,
+                                       boolean includeAllProperties) {
+        if (!includeAllProperties) {
+            Map diffs = context.getPropertyDifferences();
+            for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
+                String key = (String) iter.next();
+                Object prop = context.getPropertyNonReplicable(key);
+                if (prop instanceof Serializable) { // First check whether it is serializable
 
-                // Next check whether it matches an excluded pattern
-                if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                    log.debug("sending property =" + key + "-" + prop);
-                    PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                    diff.setValue(prop);
-                    updateCmd.addProperty(diff);
+                    // Next check whether it matches an excluded pattern
+                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        log.debug("sending property =" + key + "-" + prop);
+                        PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                        diff.setValue(prop);
+                        updateCmd.addProperty(diff);
+                    }
+                }
+            }
+        } else {
+            for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
+                String key = (String) iter.next();
+                Object prop = context.getPropertyNonReplicable(key);
+                if (prop instanceof Serializable) { // First check whether it is serializable
+
+                    // Next check whether it matches an excluded pattern
+                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        log.debug("sending property =" + key + "-" + prop);
+                        PropertyDifference diff = new PropertyDifference(key, prop, false);
+                        updateCmd.addProperty(diff);
+                    }
                 }
             }
         }
@@ -143,12 +178,9 @@ public final class ContextClusteringCommandFactory {
         } else if (abstractContext instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) abstractContext;
             ServiceContextCommand cmd = new CreateServiceContextCommand();
-            ServiceGroupContext parent = (ServiceGroupContext) serviceCtx.getParent();
-            if (parent != null) {
-                cmd.setServiceGroupContextId(parent.getId());
-            }
-            //TODO: check impl
-            cmd.setServiceGroupName(serviceCtx.getGroupName());
+            ServiceGroupContext sgCtx = (ServiceGroupContext) serviceCtx.getParent();
+            cmd.setServiceGroupContextId(sgCtx.getId());
+            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             cmd.setServiceName(serviceCtx.getAxisService().getName());
             return cmd;
         }

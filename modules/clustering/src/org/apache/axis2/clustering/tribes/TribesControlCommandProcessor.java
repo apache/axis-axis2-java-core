@@ -51,12 +51,13 @@ public class TribesControlCommandProcessor {
             // (i.e. by getting the GetStateResponseCommand), this node cannot send a response
             // to the state requester. So we simply return.
             if (configurationContext.
-                    getNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                    getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
                 return;
             }
             command.execute(configurationContext);
-            channelSender.sendToMember(new GetStateResponseCommand(),
-                                       sender);
+            GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
+            getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
+            channelSender.sendToMember(getStateRespCmd, sender);
         } else {
             command.execute(configurationContext);
         }

@@ -17,6 +17,7 @@ package org.apache.axis2.clustering.control;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
@@ -24,9 +25,19 @@ import org.apache.axis2.context.ConfigurationContext;
  */
 public class GetStateResponseCommand extends ControlCommand {
 
+    private ContextClusteringCommand[] commands;
+
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        //TODO: Method implementation
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
+        if (commands != null) {
+            for (int i = 0; i < commands.length; i++) {
+                commands[i].execute(configurationContext);
+            }
+        }
+    }
+
+    public void setCommands(ContextClusteringCommand[] commands) {
+        this.commands = commands;
     }
 }

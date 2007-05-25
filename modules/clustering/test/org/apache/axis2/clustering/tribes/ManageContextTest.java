@@ -22,11 +22,13 @@ import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
 import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManagerListener;
+import org.apache.axis2.context.ConfigurationContext;
 
 public class ManageContextTest extends ManageContextTestCase {
 
-    protected ClusterManager getClusterManager() {
+    protected ClusterManager getClusterManager(ConfigurationContext configCtx) {
         TribesClusterManager tribesClusterManager = new TribesClusterManager();
+        tribesClusterManager.setConfigurationContext(configCtx);
         DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
         configurationManager.
                 setConfigurationManagerListener(new DefaultConfigurationManagerListener());
