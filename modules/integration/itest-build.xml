@@ -125,6 +125,10 @@
     	                  tofile="target/test-resources/repository-client/conf/axis2.xml"/>
 		<mkdir dir="target/toWar/services/"/>
 
+		<mkdir dir="target/test-resources/local"/>
+		<copy file="../addressing/target/addressing-${addressing_version}.mar"
+		    	                  tofile="target/test-resources/local/addressing.mar"/>
+				
 		<!-- Create Chunked enabled Repository -->
 		<mkdir dir="target/test-resources/chunking-enabledRepository"/>
 		<mkdir dir="target/test-resources/chunking-enabledRepository/conf"/>

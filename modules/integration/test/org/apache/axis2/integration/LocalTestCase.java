@@ -71,12 +71,6 @@ public class LocalTestCase extends TestCase {
         addOutPhases(serverConfig.getOutFlowPhases());
         addOutPhases(serverConfig.getOutFaultFlowPhases());
 
-        // NOTE : If you want addressing (which you probably do), we can do something
-        // like this, or we can pull it off the classpath (better solution?)
-        //
-        // serverConfig.deployModule("repo/modules/addressing.mar");
-        // serverConfig.engageModule("addressing");
-
         ///////////////////////////////////////////////////////////////////////
         // Set up raw message receivers for OMElement based tests
 
