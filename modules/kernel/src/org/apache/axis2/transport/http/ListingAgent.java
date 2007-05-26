@@ -293,7 +293,7 @@ public class ListingAgent extends AbstractAgent {
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
-                                res.setContentType("text/xml");
+                                res.setContentType("application/wspolicy+xml");
                                 targetPolicy.serialize(writer);
                                 writer.flush();
 
@@ -328,7 +328,7 @@ public class ListingAgent extends AbstractAgent {
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
-                                res.setContentType("text/xml");
+                                res.setContentType("application/wspolicy+xml");
                                 effecPolicy.serialize(writer);
                                 writer.flush();
 
