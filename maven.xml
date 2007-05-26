@@ -341,7 +341,8 @@
     </goal>
 
     <goal name="clover">
-        <modules:reactor goals="clover:on,jar:install,test"/>
+        <j:set var="goal">clover:on,jar:install,test</j:set>
+        <attainGoal name="multiproject:goal"/>
         <attainGoal name="clover:merge"/>
         <attainGoal name="clover:report"/>
     </goal>
