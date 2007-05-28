@@ -540,7 +540,6 @@
                   addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
               </xsl:for-each>
 
-          <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env=null;
@@ -661,7 +660,8 @@
                                     );
                                 </xsl:when>
                                 <xsl:when test="$outputparamcount=1">
-                                    (<xsl:value-of select="output/param[@location='body']/param/@type"/>)object);
+                                    get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
+                                      select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object));
                                 </xsl:when>
                                 <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0">
                                     (<xsl:value-of select="$outputcomplextype"/>)object);
