@@ -106,7 +106,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final String SKELETON_INTERFACE_SUFFIX_BACK = "";
     protected static final String STUB_INTERFACE_SUFFIX_BACK = "Stub";
     protected static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
-    protected static final String FAULT_SUFFIX = "Exception";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
 
     protected static Map mepToClassMap;
@@ -380,8 +379,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (!fullyQualifiedFaultClassNameMap.
                         containsKey(faultMessage.getElementQName())) {
                     //make a name
-                    String className = makeJavaClassName(faultMessage.getName()
-                            + FAULT_SUFFIX);
+                    String className = makeJavaClassName(faultMessage.getName());
                     while (fullyQualifiedFaultClassNameMap.containsValue(className)) {
                         className = makeJavaClassName(className + (uniqueFaultNameCounter++));
                     }
