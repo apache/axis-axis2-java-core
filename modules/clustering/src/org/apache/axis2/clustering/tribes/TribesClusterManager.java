@@ -132,19 +132,18 @@ public class TribesClusterManager implements ClusterManager {
 
             // If there is at least one member in the Tribe, get the current state from a member
             Random random = new Random();
-            int numberOfTries = 0;
+            int numberOfTries = 0; // Don't keep on trying infinitely
             while (members.length > 0 &&
                    configurationContext.
-                           getPropertyNonReplicable(ClusteringConstants.
-                                   CLUSTER_INITIALIZED) == null &&
-                                                                numberOfTries < 50){ // Don't keep on trying infinitely
+                           getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
+                   && numberOfTries < 50) {
 
                 // While there are members and GetStateResponseCommand is not received do the following
                 try {
                     members = channel.getMembers();
                     int memberIndex = random.nextInt(members.length);
                     sender.sendToMember(new GetStateCommand(), members[memberIndex]);
-                    System.out.println("### WAITING FOR STATE UPDATE");
+                    log.debug("WAITING FOR STATE UPDATE...");
                     Thread.sleep(200);
                 } catch (Exception e) {
                     e.printStackTrace();
