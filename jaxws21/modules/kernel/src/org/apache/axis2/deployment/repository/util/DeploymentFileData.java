@@ -1,0 +1,148 @@
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+
+package org.apache.axis2.deployment.repository.util;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.i18n.Messages;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+
+/**
+ * ArchiveFileData stores information about the module or service item to be deployed.
+ */
+public class DeploymentFileData {
+    private File file = null;
+    private ArrayList deployableServices = new ArrayList();
+    private ClassLoader classLoader;
+    private String messageReceiver;
+
+    private Deployer deployer;
+
+    public DeploymentFileData(File file) {
+        this.file = file;
+    }
+
+    public DeploymentFileData(File file, Deployer deployer) {
+        this.file = file;
+        this.deployer = deployer;
+    }
+
+    public String getAbsolutePath() {
+        return file.getAbsolutePath();
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public ArrayList getDeployableServices() {
+        return deployableServices;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public String getMessageReceiver() {
+        return messageReceiver;
+    }
+
+    public String getName() {
+        return file.getName();
+    }
+
+    public String getServiceName() {
+        if (file != null) {
+            return file.getName();
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isModuleArchiveFile(String filename) {
+        return (filename.endsWith(".mar"));
+    }
+
+    /**
+     * Checks whether a given file is a jar or an aar file.
+     *
+     * @param filename file to check
+     * @return Returns boolean.
+     */
+    public static boolean isServiceArchiveFile(String filename) {
+        return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
+    }
+
+    public static String getFileExtension(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        return fileName.substring(index + 1);
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public void setClassLoader(boolean isDirectory, ClassLoader parent, File file) throws AxisFault {
+        if (!isDirectory) {
+            if (this.file != null) {
+                URL[] urlsToLoadFrom;
+                try {
+                    if (!this.file.exists()) {
+                        throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
+                                                                this.file.getAbsolutePath()));
+                    }
+                    urlsToLoadFrom = new URL[]{this.file.toURL()};
+                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file);
+                } catch (Exception e) {
+                    throw AxisFault.makeFault(e);
+                }
+            }
+        } else {
+            if (this.file != null) {
+                classLoader = Utils.getClassLoader(parent, this.file);
+            }
+        }
+    }
+
+    public void setDeployableServices(ArrayList deployableServices) {
+        this.deployableServices = deployableServices;
+    }
+
+    public void setMessageReceiver(String messageReceiver) {
+        this.messageReceiver = messageReceiver;
+    }
+
+
+    public Deployer getDeployer() {
+        return deployer;
+    }
+
+    public void setDeployer(Deployer deployer) {
+        this.deployer = deployer;
+    }
+
+    public void deploy() throws DeploymentException {
+        deployer.deploy(this);
+    }
+}
