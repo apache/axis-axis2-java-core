@@ -49,7 +49,10 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.jms.JMSConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.net.URI;
@@ -58,6 +61,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MessageContextBuilder {
+	
+	protected static final Log log = LogFactory.getLog(MessageContextBuilder.class);
 
     /**
      * Creates a new 'response' message context based on a 'request' message context
@@ -107,6 +112,7 @@ public class MessageContextBuilder {
         newmsgCtx.setProperty(Constants.OUT_TRANSPORT_INFO,
                               inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
+        handleCorrelationID(inMessageContext,newmsgCtx);
         return newmsgCtx;
     }
 
@@ -183,8 +189,29 @@ public class MessageContextBuilder {
 
         // Ensure transport settings match the scheme for the To EPR
         setupCorrectTransportOut(newmsgCtx);
-
         return newmsgCtx;
+    }
+
+    /**
+     * Copies the correlation id (jms) from the in message ctx
+     * to the out message ctx. Currently this check is for jms 
+     * only, but can be expanded to other transports if the need
+     * arises.
+     */
+    private static void handleCorrelationID(MessageContext inMessageContext,MessageContext outMessageContext)    
+    {
+    	if (inMessageContext.getIncomingTransportName()!= null &&
+    	    inMessageContext.getIncomingTransportName().equals(Constants.TRANSPORT_JMS))
+    	{
+    		log.debug("Incoming Transport is JMS, lets check for JMS correlation id");
+    		
+	    	String correlationId =
+	            (String) inMessageContext.getProperty(JMSConstants.JMS_COORELATION_ID);
+	    	log.debug("Correlation id is " + correlationId);
+	        if (correlationId != null && correlationId.length() > 0) {
+	        	outMessageContext.setProperty(JMSConstants.JMS_COORELATION_ID, correlationId);
+	        }
+    	}
     }
 
     /**
