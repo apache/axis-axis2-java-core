@@ -208,7 +208,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean serverSide = false;
     private boolean generateDeployementDescriptor = true;
     private boolean writeTestCase = false;
-    private boolean writeMessageReceiver = true;
+    private boolean skipMessageReceiver = false;
+    private boolean skipWriteWSDLs = false;
+    private boolean skipBuildXML = false;
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
 
     // Default packClasses is true, which means the classes generated
@@ -413,17 +415,33 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return generateDeployementDescriptor;
     }
 
+
+    public boolean isSkipBuildXML() {
+        return skipBuildXML;
+    }
+
+    public void setSkipBuildXML(boolean skipBuildXML) {
+        this.skipBuildXML = skipBuildXML;
+    }
+
     public boolean isWriteTestCase() {
         return writeTestCase;
     }
 
-
-    public boolean isWriteMessageReceiver() {
-        return writeMessageReceiver;
+    public boolean isSkipWriteWSDLs() {
+        return skipWriteWSDLs;
     }
 
-    public void setWriteMessageReceiver(boolean writeMessageReceiver) {
-        this.writeMessageReceiver = writeMessageReceiver;
+    public void setSkipWriteWSDLs(boolean writeWriteWSDLs) {
+        this.skipWriteWSDLs = writeWriteWSDLs;
+    }
+
+    public boolean isSkipMessageReceiver() {
+        return skipMessageReceiver;
+    }
+
+    public void setSkipMessageReceiver(boolean skipMessageReceiver) {
+        this.skipMessageReceiver = skipMessageReceiver;
     }
 
     public void setRepositoryPath(String repositoryPath) {

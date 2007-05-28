@@ -10,7 +10,6 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.util.CommandLineOptionConstants;
@@ -52,8 +51,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -481,18 +478,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 copyMap(originalTypeMap, this.mapper.getAllMappedNames());
             }
 
-            // write an ant build file
-            // Note that ant build is generated only once
-            // and that has to happen here only if the
-            // client side code is required
-            if (!codeGenConfiguration.isGenerateAll()) {
-                //our logic for the build xml is that it will
-                //only be written when not flattened
-                if (!codeGenConfiguration.isFlattenFiles()) {
-                    writeAntBuild();
+            if(!codeGenConfiguration.isSkipBuildXML()){
+                // write an ant build file
+                // Note that ant build is generated only once
+                // and that has to happen here only if the
+                // client side code is required
+                if (!codeGenConfiguration.isGenerateAll()) {
+                    //our logic for the build xml is that it will
+                    //only be written when not flattened
+                    if (!codeGenConfiguration.isFlattenFiles()) {
+                        writeAntBuild();
+                    }
                 }
             }
-
         } catch (CodeGenerationException ce) {
             throw ce;
         } catch (Exception e) {
@@ -1244,15 +1242,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     writeSkeleton();
                 }
 
-                // write a MessageReceiver for this particular service.
-                writeMessageReceiver();
+                if(!codeGenConfiguration.isSkipMessageReceiver()){
+                    // write a MessageReceiver for this particular service.
+                    writeMessageReceiver();
+                }
 
                 // write the Exceptions
                 writeExceptions();
 
-                //for the server side codegen
-                //we need to serialize the WSDL's
-                writeWSDLFiles();
+                if(!codeGenConfiguration.isSkipWriteWSDLs()){
+                    //for the server side codegen
+                    //we need to serialize the WSDL's
+                    writeWSDLFiles();
+                }
             }
 
             // save back type map
@@ -1266,10 +1268,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 writeServiceXml();
             }
 
-            //write the ant build
-            //we skip this for the flattened case
-            if (!codeGenConfiguration.isFlattenFiles()) {
-                writeAntBuild();
+            if(!codeGenConfiguration.isSkipBuildXML()){
+                //write the ant build
+                //we skip this for the flattened case
+                if (!codeGenConfiguration.isFlattenFiles()) {
+                    writeAntBuild();
+                }
             }
 
 
@@ -1380,32 +1384,29 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @throws Exception
      */
     protected void writeMessageReceiver() throws Exception {
+        //loop through the meps and generate code for each mep
+        Iterator it = mepToClassMap.keySet().iterator();
+        while (it.hasNext()) {
+            String mep = (String) it.next();
+            Document classModel = createDocumentForMessageReceiver(
+                    mep,
+                    codeGenConfiguration.isServerSideInterface());
+            debugLogDocument("Document for message receiver (mep=" + mep +
+                    "):", classModel);
+            //write the class only if any methods are found
+            if (Boolean.TRUE.equals(infoHolder.get(mep))) {
+                MessageReceiverWriter writer =
+                        new MessageReceiverWriter(
+                                codeGenConfiguration.isFlattenFiles() ?
+                                        getOutputDirectory(
+                                                codeGenConfiguration.getOutputLocation(),
+                                                null) :
+                                        getOutputDirectory(
+                                                codeGenConfiguration.getOutputLocation(),
+                                                codeGenConfiguration.getSourceLocation()),
+                                codeGenConfiguration.getOutputLanguage());
 
-        if (codeGenConfiguration.isWriteMessageReceiver()) {
-            //loop through the meps and generate code for each mep
-            Iterator it = mepToClassMap.keySet().iterator();
-            while (it.hasNext()) {
-                String mep = (String)it.next();
-                Document classModel = createDocumentForMessageReceiver(
-                        mep,
-                        codeGenConfiguration.isServerSideInterface());
-                debugLogDocument("Document for message receiver (mep=" + mep +
-                        "):", classModel);
-                //write the class only if any methods are found
-                if (Boolean.TRUE.equals(infoHolder.get(mep))) {
-                    MessageReceiverWriter writer =
-                            new MessageReceiverWriter(
-                                    codeGenConfiguration.isFlattenFiles() ?
-                                            getOutputDirectory(
-                                                    codeGenConfiguration.getOutputLocation(),
-                                                    null) :
-                                            getOutputDirectory(
-                                                    codeGenConfiguration.getOutputLocation(),
-                                                    codeGenConfiguration.getSourceLocation()),
-                                    codeGenConfiguration.getOutputLanguage());
-
-                    writeClass(classModel, writer);
-                }
+                writeClass(classModel, writer);
             }
         }
     }
