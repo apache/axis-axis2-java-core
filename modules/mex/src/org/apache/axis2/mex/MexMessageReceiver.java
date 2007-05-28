@@ -108,6 +108,7 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 		SOAPBody body = envelope.getBody();
 		OMElement aReq = body.getFirstChildWithName(new QName(
+                MexConstants.Spec_2004_09.NS_URI,
 				MexConstants.SPEC.GET_METADATA));
 		List metadata_request_list;
 		if (aReq != null) {
