@@ -26,16 +26,48 @@ import java.util.Map;
 
 public interface ContextManager extends ParameterInclude {
 
+    /**
+     * This method is called when a new {@link AbstractContext} is added to the system
+     *
+     * @param context
+     * @throws ClusteringFault
+     */
     void addContext(AbstractContext context) throws ClusteringFault;
 
+    /**
+     * This method is called when a new {@link AbstractContext} is removed from the system
+     *
+     * @param context
+     * @throws ClusteringFault
+     */
     void removeContext(AbstractContext context) throws ClusteringFault;
 
+    /**
+     * This method is called when properties in an {@link AbstractContext} are updated.
+     * This could be addition of new properties, modifications of existing properties or
+     * removal of properties.
+     *
+     * @param context
+     * @throws ClusteringFault
+     */
     void updateContext(AbstractContext context) throws ClusteringFault;
 
+    /**
+     *
+     * @param context
+     * @return True - if the provided {@link AbstractContext}  is clusterable
+     * @throws ClusteringFault
+     */
     boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
 
+    /**
+     * @param listener
+     */
     void setContextManagerListener(ContextManagerListener listener);
 
+    /**
+     * @param configurationContext
+     */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
     /**

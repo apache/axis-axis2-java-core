@@ -23,11 +23,41 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public interface ClusterManager extends ParameterInclude {
 
+    /**
+     * Initialize the ClusteManager
+     *
+     * @throws ClusteringFault
+     */
     public void init() throws ClusteringFault;
+
+    /**
+     *
+     * @return The ContextManager
+     */
     public ContextManager getContextManager ();
+
+    /**
+     *
+     * @return The ConfigurationManager
+     */
     public ConfigurationManager getConfigurationManager ();
+
+    /**
+     *
+     * @param contextManager
+     */
     public void setContextManager (ContextManager contextManager);
+
+    /**
+     *
+     * @param configurationManager
+     */
     public void setConfigurationManager (ConfigurationManager configurationManager);
+
+    /**
+     *
+     * @throws ClusteringFault
+     */
     public void shutdown () throws ClusteringFault;
 
     /**

@@ -28,11 +28,14 @@ public class GetStateResponseCommand extends ControlCommand {
     private ContextClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        configurationContext.
-                setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
-        if (commands != null) {
-            for (int i = 0; i < commands.length; i++) {
-                commands[i].execute(configurationContext);
+        if (configurationContext.
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+            configurationContext.
+                    setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
+            if (commands != null) {
+                for (int i = 0; i < commands.length; i++) {
+                    commands[i].execute(configurationContext);
+                }
             }
         }
     }

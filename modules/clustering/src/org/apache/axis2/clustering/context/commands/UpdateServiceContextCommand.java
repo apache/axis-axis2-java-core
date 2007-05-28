@@ -42,13 +42,15 @@ public class UpdateServiceContextCommand
         log.debug("Updating service context properties...");
         ServiceGroupContext sgCtx =
                 configurationContext.getServiceGroupContext(serviceGroupContextId);
-        try {
-            AxisService axisService =
-                    configurationContext.getAxisConfiguration().getService(serviceName);
-            ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
-            propertyUpdater.updateProperties(serviceContext);
-        } catch (AxisFault e) {
-            throw new ClusteringFault(e);
+        if (sgCtx != null) {
+            try {
+                AxisService axisService =
+                        configurationContext.getAxisConfiguration().getService(serviceName);
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+                propertyUpdater.updateProperties(serviceContext);
+            } catch (AxisFault e) {
+                throw new ClusteringFault(e);
+            }
         }
     }
 

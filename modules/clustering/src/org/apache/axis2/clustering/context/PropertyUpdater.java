@@ -34,16 +34,18 @@ public class PropertyUpdater implements Serializable {
 
     public void updateProperties(AbstractContext abstractContext) {
         log.debug("Updating props in " + abstractContext);
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-            String key = (String) iter.next();
-            PropertyDifference propDiff =
-                    (PropertyDifference) properties.get(key);
-            if (propDiff.isRemoved()) {
-                abstractContext.removePropertyNonReplicable(key);
-            } else {  // it is updated/added
-                abstractContext.setNonReplicableProperty(key, propDiff.getValue());
-                log.debug("Added prop=" + key + ", value="+ propDiff.getValue() +
-                          " to context " + abstractContext);
+        if (abstractContext != null) {
+            for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
+                String key = (String) iter.next();
+                PropertyDifference propDiff =
+                        (PropertyDifference) properties.get(key);
+                if (propDiff.isRemoved()) {
+                    abstractContext.removePropertyNonReplicable(key);
+                } else {  // it is updated/added
+                    abstractContext.setNonReplicableProperty(key, propDiff.getValue());
+                    log.debug("Added prop=" + key + ", value=" + propDiff.getValue() +
+                              " to context " + abstractContext);
+                }
             }
         }
     }
