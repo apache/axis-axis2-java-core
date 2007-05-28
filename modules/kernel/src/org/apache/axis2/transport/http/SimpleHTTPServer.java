@@ -56,6 +56,7 @@ public class SimpleHTTPServer implements TransportListener {
      * Embedded commons http core based server
      */
     SimpleHttpServer embedded = null;
+    private String localAddress;
     int port = -1;
 
     public static int DEFAULT_PORT = 8080;
@@ -257,21 +258,25 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
         //if the host address is not present
-        String localAddress;
+        String ipAddress;
         if (ip != null) {
-            localAddress = ip;
+            ipAddress = ip;
         } else {
             try {
-                localAddress = HttpUtils.getIpAddress();
-                if (localAddress == null) {
-                    localAddress = "127.0.0.1";
+                if(localAddress==null){
+                    localAddress = HttpUtils.getIpAddress();
                 }
+                if (localAddress == null) {
+                   ipAddress = "127.0.0.1";
+                 } else {
+                    ipAddress = localAddress;
+                 }
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }
         }
         if (embedded != null) {
-            return new EndpointReference[]{new EndpointReference("http://" + localAddress + ":" +
+            return new EndpointReference[]{new EndpointReference("http://" + ipAddress + ":" +
                                                                  (embedded.getPort())
                                                                  + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
         } else {

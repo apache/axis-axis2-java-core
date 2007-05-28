@@ -115,7 +115,7 @@ public class AxisEngine {
         }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases;
-        if (msgContext.isFault()) {
+        if (msgContext.isFault()|| msgContext.isProcessingFault()) {
             preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlowPhases();
             msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
         } else {

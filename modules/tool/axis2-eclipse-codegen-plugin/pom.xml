@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache.axis2</groupId>
 		<artifactId>axis2-parent</artifactId>
-		<version>SNAPSHOT</version>
+		<version>1.2-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>axis2.eclipse.codegen.plugin</artifactId>
@@ -137,8 +137,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-activation_1.1_spec</artifactId>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>annogen</groupId>
@@ -298,7 +298,7 @@
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								<filter token="version_number" value="SNAPSHOT"/>
+								<filter token="version_number" value="1.2-SNAPSHOT"/>
 								<filter token="activation.version" value="1.0-SNAPSHOT"/>
 								<filter token="annogen.version" value="0.1.0"/>
 								<filter token="ant.version" value="1.6.5"/>

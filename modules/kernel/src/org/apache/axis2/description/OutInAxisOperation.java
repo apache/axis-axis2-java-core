@@ -73,6 +73,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
         } else {
             mep.put(MESSAGE_LABEL_IN_VALUE, msgContext);
             opContext.setComplete(true);
+            opContext.cleanup();
         }
     }
 
@@ -378,7 +379,7 @@ class OutInAxisOperationClient extends OperationClient {
             if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }
-            if (resenvelope.getBody().hasFault()) {
+             if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);

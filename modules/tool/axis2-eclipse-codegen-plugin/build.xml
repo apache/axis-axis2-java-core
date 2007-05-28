@@ -51,7 +51,7 @@
 
      <!--Codegen wizard libraries -->
      <fileset id="codegen.libs" dir="${axis2.lib.dir}">
- 		<include name="geronimo-activation_1.1_spec-${activation.version}.jar" />
+ 		<include name="activation-${activation.version}.jar" />
  		<include name="annogen-${annogen.version}.jar" />
 		<include name="ant-${ant.version}.jar" />
 		<include name="axiom-api-${axiom.version}.jar" />
@@ -202,17 +202,21 @@
     		</classpath>	
 	</javac>
 	
-	<!-- create the Axis2CodegenWizard.jar -->
+	<!--Make available the resources for the plugin -->
         <copy todir="${codegen.plugin.output.dir}/class">
             <fileset dir="${codegen.output.dir}/${source.dir.name}" >
 		<include name="**/Codegen.properties" />
+		<exclude name="**/*.class" />
 	    </fileset>
         </copy>
       
+	<!-- create the Axis2CodegenWizard.jar -->
         <jar destfile="${codegen.plugin.output.dir}/Axis2CodegenWizard.jar" 
 	       basedir="${codegen.plugin.output.dir}/class"
            includes="org/apache/**"
           />
+	<delete dir="${codegen.plugin.output.dir}/src"></delete>
+	<delete dir="${codegen.plugin.output.dir}/class"></delete>
     </target>
 
     <!--Install the codegen plugin -->

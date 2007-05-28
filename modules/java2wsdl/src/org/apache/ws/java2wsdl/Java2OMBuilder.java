@@ -9,6 +9,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JClass;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -185,7 +186,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .getSimpleName())) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
                 // avoid duplicate namespaces
-                if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
+                if ((namespacePrefix = messagePartType.getPrefix()) == null &&
                         (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
@@ -206,7 +207,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .getSimpleName()
                     + RESPONSE)) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
-                if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
+                if ((namespacePrefix = messagePartType.getPrefix()) == null &&
                         (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
@@ -229,30 +230,32 @@ public class Java2OMBuilder implements Java2WSDLConstants {
             }
 
             if (jmethod.getExceptionTypes().length > 0) {
-                if ((messagePartType = typeTable.getComplexSchemaType(jmethod.getSimpleName() + "Fault")) != null) {
-                    namespaceURI = messagePartType.getNamespaceURI();
-                    if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
-                            (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
-                        namespacePrefix = generatePrefix();
-                        namespaceMap.put(namespaceURI, namespacePrefix);
+                JClass[] extypes = jmethod.getExceptionTypes() ;
+                for (int j= 0 ; j < extypes.length ; j++) {
+                    JClass extype = extypes[j] ;
+                    String exname = extype.getSimpleName() ;
+                    String q_exname= extype.getQualifiedName() ;
+                    if ((messagePartType = typeTable.getComplexSchemaType(q_exname)) != null) {
+                        namespaceURI = messagePartType.getNamespaceURI();
+                        if ((namespacePrefix = messagePartType.getPrefix()) == null &&
+                                (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                            namespacePrefix = generatePrefix();
+                            namespaceMap.put(namespaceURI, namespacePrefix);
+                        }
+                        OMElement responseMessge = fac.createOMElement(
+                                MESSAGE_LOCAL_NAME, wsdl);
+                        responseMessge.addAttribute(ATTRIBUTE_NAME, exname, null);
+                        definitions.addChild(responseMessge);
+                        OMElement responsePart = fac.createOMElement(
+                                PART_ATTRIBUTE_NAME, wsdl);
+                        responseMessge.addChild(responsePart);
+                        responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                        responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                                namespacePrefix + COLON_SEPARATOR
+                                        + exname, null);
                     }
-                    //Response Message
-                    OMElement responseMessge = fac.createOMElement(
-                            MESSAGE_LOCAL_NAME, wsdl);
-                    responseMessge.addAttribute(ATTRIBUTE_NAME, jmethod
-                            .getSimpleName()
-                            + "Fault", null);
-                    definitions.addChild(responseMessge);
-                    OMElement responsePart = fac.createOMElement(
-                            PART_ATTRIBUTE_NAME, wsdl);
-                    responseMessge.addChild(responsePart);
-                    responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
-
-                    responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                            namespacePrefix + COLON_SEPARATOR
-                                    + jmethod.getSimpleName() + "Fault", null);
                 }
-            }
+            }// end for loop
         }
 
         // now add these unique namespaces to the the definitions element
@@ -307,16 +310,18 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 operation.addChild(message);
             }
             if (jmethod.getExceptionTypes().length > 0) {
-                message = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
-                message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
-                        + COLON_SEPARATOR + jmethod.getSimpleName()
-                        + "Fault", null);
-                message.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName()
-                        + "Fault", null);
-                namespace = message.declareNamespace(WSAD_NS,
-                        "wsaw");
-                message.addAttribute("Action", "urn:" + jmethod.getSimpleName(), namespace);
-                operation.addChild(message);
+            	JClass[] extypes = jmethod.getExceptionTypes() ;
+           	 	for (int j= 0 ; j < extypes.length ; j++) {
+           		 JClass extype = extypes[j] ;
+           		 String exname = extype.getSimpleName() ;
+
+           		 message = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+           		 message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
+                        + COLON_SEPARATOR + exname, null);
+           		 message.addAttribute(ATTRIBUTE_NAME, exname, null);
+          		 operation.addChild(message);
+
+           	 	} // end for
             }
         }
 
@@ -391,11 +396,15 @@ public class Java2OMBuilder implements Java2WSDLConstants {
             }
 
             if (jmethod.getExceptionTypes().length > 0) {
-
-                OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
-                fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
-                addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use);
-                operation.addChild(fault);
+            	JClass[] extypes = jmethod.getExceptionTypes() ;
+           	 	for (int j= 0 ; j < extypes.length ; j++) {
+           	 		JClass extype = extypes[j] ;
+           	 		String exname = extype.getSimpleName() ;
+           	 		OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+           	 		fault.addAttribute(ATTRIBUTE_NAME, exname, null);
+           	 		addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use);
+           	 		operation.addChild(fault);
+           	 	}
             }
         }
     }
@@ -437,11 +446,15 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 operation.addChild(output);
             }
             if (jmethod.getExceptionTypes().length > 0) {
-
-                OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
-                fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
-                addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use);
-                operation.addChild(fault);
+                JClass[] extypes = jmethod.getExceptionTypes() ;
+                for (int j= 0 ; j < extypes.length ; j++) {
+                    JClass extype = extypes[j] ;
+                    String exname = extype.getSimpleName() ;
+                    OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                    fault.addAttribute(ATTRIBUTE_NAME, exname, null);
+                    addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use);
+                    operation.addChild(fault);
+                }
             }
         }
     }

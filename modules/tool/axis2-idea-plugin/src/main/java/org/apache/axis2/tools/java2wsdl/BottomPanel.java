@@ -69,7 +69,18 @@ public class BottomPanel extends JPanel implements ActionListener {
 
             }else if(java2WSDLFrame.opPanel.isVisible()){
 
-                java2WSDLFrame.setPanel();
+                if( java2WSDLFrame.opPanel .txtService .getText().trim().equals("")){
+                    JOptionPane.showMessageDialog(java2WSDLFrame,
+                            " Service name should be specified. ",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    java2WSDLFrame.repaint();
+                    setEnable(true,false,false,true);
+                    return;
+                }else{
+                    setEnable(true,true,true,true);
+                    java2WSDLFrame.setPanel();
+                }
 
             }
 
@@ -83,20 +94,71 @@ public class BottomPanel extends JPanel implements ActionListener {
             Thread.currentThread().setContextClassLoader(java2WSDLFrame.getClassLoader());
 
         }  else if(obj ==btnFinish ){
-            try {
 
+            java2WSDLFrame.outPanel.setOutput();
+            java2WSDLFrame.opPanel .setNamespaceDefaults();
+
+            File outputDir = new File(java2WSDLFrame.outPanel .txtLocation .getText().trim());
+            String outputName=java2WSDLFrame.outPanel.txtFileName.getText().trim();
+
+            if(java2WSDLFrame.opPanel.txtService .getText() .trim() .equals("") ){
+                JOptionPane.showMessageDialog(java2WSDLFrame,
+                        " Service name should be specified. ",
+                        "Error!",
+                        JOptionPane.ERROR_MESSAGE);
+                java2WSDLFrame.repaint();
+                setEnable(true,false,false,true);
+                return;
+            }
+
+            if (java2WSDLFrame.outPanel .rbtnSave .isSelected() )
+            {
+                if(!outputDir.isDirectory() && !new FileFilter() .accept(outputName )){
+                    JOptionPane.showMessageDialog(java2WSDLFrame,
+                            "Input a proper location for the output and name for WSDL.",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    java2WSDLFrame.repaint();
+                    setEnable(true,false,false,true);
+                    return;
+                }
+                if (!outputDir.isDirectory())
+                {
+                    JOptionPane.showMessageDialog(java2WSDLFrame,
+                            "The Output Directory specified is invalid. Please provide a valid directory",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    java2WSDLFrame.repaint();
+                    setEnable(true,false,false,true);
+                    return;
+                }
+                if(!new FileFilter() .accept(outputName ) ){
+                    JOptionPane.showMessageDialog(java2WSDLFrame,
+                            "Input a valid file name , Example : services.wsdl or services.xml",
+                            "Error!",
+                            JOptionPane.ERROR_MESSAGE);
+                    java2WSDLFrame.repaint();
+                    setEnable(true,false,false,true);
+                    return;
+                }
+            }
+            try {
                 java2WSDLFrame.generatecode();
                 StringWriter writer = new StringWriter();
-                JOptionPane.showMessageDialog(java2WSDLFrame, "Code genaration Successful !" + writer.toString(),
-                        "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE );
+                JOptionPane.showMessageDialog(java2WSDLFrame,
+                        "Code genaration Successful !" + writer.toString(),
+                        "Axis2 code generation",
+                        JOptionPane.INFORMATION_MESSAGE );
 
                 java2WSDLFrame.dispose();
 
             } catch (Exception e1) {
 
                 StringWriter writer = new StringWriter();
-                JOptionPane.showMessageDialog(java2WSDLFrame, "Code genaration failed!" + writer.toString(),
-                        "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(java2WSDLFrame,
+                        "Code genaration failed!" + writer.toString(),
+                        "Axis2 code generation",
+                        JOptionPane.ERROR_MESSAGE);
                 java2WSDLFrame.dispose();
 
             }

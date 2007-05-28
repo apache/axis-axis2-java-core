@@ -16,6 +16,16 @@
 
 package org.apache.axis2.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
@@ -27,15 +37,9 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
+import org.apache.neethi.PolicyRegistry;
 import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.Element;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 public class PolicyUtil {
 
@@ -189,5 +193,31 @@ public class PolicyUtil {
         }
 
         return identifier;
+    }
+    
+    
+    public static Policy getMergedPolicy(List policies, AxisDescription description) {
+        
+        Policy policy = null;
+        
+        for (Iterator iterator = policies.iterator(); iterator.hasNext(); ) {
+            Object policyElement = iterator.next()
+            ;
+            if (policyElement instanceof Policy) {
+                policy = (policy == null) ? (Policy) policyElement : (Policy) policy.merge((Policy) policyElement);
+                
+            } else {
+                PolicyReference policyReference = (PolicyReference) policyElement;
+                Policy policy2 = (Policy) policyReference.normalize(new AxisPolicyLocator(description), false);
+                policy = (policy == null) ? policy2 : (Policy) policy.merge(policy2);                 
+            }
+        }
+        
+        
+        if (policy != null) {
+            policy = (Policy) policy.normalize(new AxisPolicyLocator(description), false);            
+        }
+        
+        return policy;        
     }
 }

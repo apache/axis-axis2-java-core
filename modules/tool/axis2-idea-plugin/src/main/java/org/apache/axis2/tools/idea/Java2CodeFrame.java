@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.tools.bean.SrcCompiler;
 import org.apache.ideaplugin.bean.JarFileWriter;
-import org.apache.ideaplugin.frames.Axi2PluginPage;
 
 import javax.swing.*;
 import javax.wsdl.WSDLException;
@@ -48,13 +47,12 @@ public class Java2CodeFrame extends JFrame {
     //    SecondPanel secondPanel;
     SecondFrame secondPanel;
     OutPutPane outputpane;
-    OptionPane optionPane;
     private int panleID = 0;
     private ClassLoader classLoader;
 
     // To keep the value of wsdl wizzard
     private CodegenBean codegenBean;
-
+    private int defaultCloseOperation;
     public Java2CodeFrame() {
         windowLayout customLayout = new windowLayout(1);
 
@@ -79,10 +77,6 @@ public class Java2CodeFrame extends JFrame {
         BottomPanel.setEnable(false,false, false, true);
         getContentPane().add(lblBottom);
 
-        optionPane = new OptionPane();
-        optionPane.setVisible(false);
-        getContentPane().add(optionPane);
-
         secondPanel = new SecondFrame();
         secondPanel.setVisible(false);
         getContentPane().add(secondPanel);
@@ -94,6 +88,26 @@ public class Java2CodeFrame extends JFrame {
         Dimension dim = new Dimension(450, 600);
         setSize(dim);
         setBounds(200, 200, dim.width, dim.height);
+    }
+
+    public void setDefaultCloseOperation(int operation) {
+        if (operation != DO_NOTHING_ON_CLOSE &&
+                operation != HIDE_ON_CLOSE &&
+                operation != DISPOSE_ON_CLOSE &&
+                operation != EXIT_ON_CLOSE) {
+            throw new IllegalArgumentException("defaultCloseOperation must be one of: DO_NOTHING_ON_CLOSE, HIDE_ON_CLOSE, DISPOSE_ON_CLOSE, or EXIT_ON_CLOSE");
+        }
+        if (this.defaultCloseOperation != operation) {
+            if (operation == EXIT_ON_CLOSE) {
+                SecurityManager security = System.getSecurityManager();
+                if (security != null) {
+                    security.checkExit(0);
+                }
+            }
+            int oldValue = this.defaultCloseOperation;
+            this.defaultCloseOperation = operation;
+            firePropertyChange("defaultCloseOperation", oldValue, operation);
+        }
     }
 
     public void setProject(Project project) {
@@ -190,29 +204,23 @@ public class Java2CodeFrame extends JFrame {
         try {
             codegenBean.generate();
             SrcCompiler compiler = new SrcCompiler();
-            compiler.compileSource(temp.getAbsolutePath());
+            compiler.compileSource(temp.getAbsolutePath()  );
             String wsdl = codegenBean.getWSDLFileName();
             final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub";
-            final File lib = new File(codegenBean.getActiveProject().getProjectFilePath() + File.separator + "lib");
+            final File lib = new File(temp.getAbsolutePath() + File.separator + "lib");
             if (!lib.isDirectory()) {
                 lib.mkdir();
             }
             JarFileWriter jarFileWriter = new JarFileWriter();
-            jarFileWriter.writeJarFile(lib, name + ".jar", new File(temp + File.separator + "classes"));
+            jarFileWriter.writeJarFile(lib, name + ".jar", new File(temp.getAbsolutePath() + File.separator + "classes"));
             Project project = codegenBean.getActiveProject();
 
             final LibraryTable table = (LibraryTable) project.getComponent(LibraryTable.class);
 
-
-
-
             ApplicationManager.getApplication().runWriteAction(new
                     Runnable() {
                         public void run() {
-
                             String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name + ".jar") + JarFileSystem.JAR_SEPARATOR;
-
-
 
                             VirtualFile jarVirtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
                             Library myLibrary = table.createLibrary(name);
@@ -220,10 +228,15 @@ public class Java2CodeFrame extends JFrame {
                             libraryModel.addRoot(jarVirtualFile, OrderRootType.CLASSES);
                             libraryModel.commit();
 
-
                         }
                     });
+
+            copyDirectory(new File(temp + File.separator + "src"), new File(codegenBean.getOutput()+File.separator + ".." + File.separator + "src") );
+            copyDirectory(new File(temp + File.separator + "lib"), new File(codegenBean.getOutput() + File.separator + ".." + File.separator + "lib"));
+            copyFiles(new File(temp + File.separator + "build.xml"), new File(codegenBean.getOutput() + File.separator + ".." + File.separator + "build.xml"));
+
         } catch (Exception e1) {
+
             throw e1;
         }
         finally {
@@ -246,18 +259,6 @@ public class Java2CodeFrame extends JFrame {
                     panleID--;
                     break;
                 }
-                panel_3.setCaptions("  Options"
-                        , " Select from custom or default");
-                this.secondPanel.setVisible(false);
-                this.plMiddle.setVisible(false);
-                if (this.optionPane.codegenBean == null)
-                    this.optionPane.setCodeGenBean(codegenBean);
-                this.optionPane.setVisible(true);
-                this.outputpane.setVisible(false);
-                BottomPanel.setEnable(true,true, false, true);
-                break;
-            }
-            case 2: {
                 panel_3.setCaptions("  Custom Options"
                         , "  Set the options for the code generation");
 
@@ -266,26 +267,16 @@ public class Java2CodeFrame extends JFrame {
                     this.secondPanel.setCodeGenBean(codegenBean);
                 this.secondPanel.setStatus();
                 this.plMiddle.setVisible(false);
-                this.optionPane.setVisible(false);
                 this.outputpane.setVisible(false);
                 BottomPanel.setEnable(true,true, false, true);
                 break;
             }
-            case 3: {
-                String result;
-                if (this.optionPane.radCustom.isSelected() && (result = validatePackageNames()) != null)
-                {
-                    JOptionPane.showMessageDialog(this, "The package name " + result + " is not a valid package name",
-                            "Error!!!", JOptionPane.INFORMATION_MESSAGE);
-                    panleID--;
-                    break;
-                }
+            case 2: {
 
                 panel_3.setCaptions("  Set the output location for the generated code"
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
-                this.optionPane.setVisible(false);
                 outputpane.loadCmbCurrentProject();
                 outputpane.loadcmbModuleSrcProject();
                 this.outputpane.setVisible(true);
@@ -322,49 +313,18 @@ public class Java2CodeFrame extends JFrame {
                         , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(true);
-
-                this.optionPane.setVisible(false);
                 this.outputpane.setVisible(false);
                 BottomPanel.setEnable(false,true, false, true);
                 break;
             }
             case 1: {
-
-                panel_3.setCaptions("  Options"
-                        , " Select from custom or default");
-                this.secondPanel.setVisible(false);
-                this.plMiddle.setVisible(false);
-                this.outputpane.setVisible(false);
-                this.optionPane.setVisible(true);
-                BottomPanel.setEnable(true,true, false, true);
-                break;
-            }
-            case 2: {
-                if (!this.optionPane.radCustom.isSelected())
-                {
-
-                    this.backButtonImpl();
-                    break;
-                }
                 panel_3.setCaptions("  Custom  Options"
                         , "  Set the options for the code generation");
 
                 this.secondPanel.setVisible(true);
                 this.plMiddle.setVisible(false);
-                this.optionPane.setVisible(false);
                 this.outputpane.setVisible(false);
                 BottomPanel.setEnable(true,true, false, true);
-                break;
-            }
-            case 3: {
-                panel_3.setCaptions("  Set the output location for the generated code"
-                        , "  set the output project for the generated code");
-                this.secondPanel.setVisible(false);
-                this.plMiddle.setVisible(false);
-                this.optionPane.setVisible(false);
-
-                this.outputpane.setVisible(true);
-                BottomPanel.setEnable(true,false, true, true);
                 break;
             }
         }
@@ -377,13 +337,6 @@ public class Java2CodeFrame extends JFrame {
 
     public void setMiddlerPanel(int panel) {
         this.panleID = panel;
-        if (panleID == 2) {
-            panel_3.setCaptions("  Options"
-                    , "  Set the options for the code generation");
-            this.secondPanel.setVisible(true);
-            this.plMiddle.setVisible(false);
-            BottomPanel.setEnable(true,true, true, true);
-        }
         this.pack();
         this.show();
     }
@@ -436,10 +389,6 @@ class windowLayout implements LayoutManager {
             c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
         c = parent.getComponent(4);
-        if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 600, 480);
-        }
-        c = parent.getComponent(5);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 80, 600, 480);
         }

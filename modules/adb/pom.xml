@@ -15,6 +15,7 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  !-->
+<<<<<<< .mine
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -82,4 +83,95 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
+
+
+
+
+
+
+
+
+
+=======
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>axis2-adb</artifactId>
+    <name>Apache Axis 2.0 - Data Binding</name>
+    <description>Axis2 Data Binding module</description>
+    <scm>
+        <connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb</connection>
+        <developerConnection>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb</developerConnection>
+        <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/adb</url>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-kernel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <skip>false</skip>
+                    <excludes>
+                        <exclude>**/*Abstract*.java</exclude>
+                        <exclude>**/*Util*.java</exclude>
+                        <exclude>**/*PhaseResolvingTest.java</exclude>
+                    </excludes>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+>>>>>>> .theirs
 </project>

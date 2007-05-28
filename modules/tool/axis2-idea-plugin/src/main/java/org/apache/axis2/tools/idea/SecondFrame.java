@@ -4,13 +4,10 @@ import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.util.URLProcessor;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.border.BevelBorder;
 import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.Collection;
 
@@ -34,6 +31,9 @@ import com.intellij.openapi.module.Module;
 */
 
 public class SecondFrame extends JPanel implements ActionListener {
+
+    JLabel lblCodeGenOption;
+    JComboBox cmbCodeGenOption;
 
     JLabel lblLangauge;
     JComboBox cmbLan;
@@ -76,10 +76,17 @@ public class SecondFrame extends JPanel implements ActionListener {
 
     JTable table;
 
+    JScrollPane spTable;
+
     CodegenBean codegenBean;
+
     java.util.List serviceNameList;
 
+    QName serviceName;
+    String portName;
+
     public SecondFrame()  {
+
         SecondFrameLayout customLayout = new SecondFrameLayout();
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -128,8 +135,8 @@ public class SecondFrame extends JPanel implements ActionListener {
         cmbdbtype.setToolTipText("Select the databinding framework to be used in the generation process");
         add(cmbdbtype);
 
-        chkTestCase = new JCheckBox("Generate Test Case", true);
-        chkTestCase.setVisible(false);
+        chkTestCase = new JCheckBox("Generate Test Case", false);
+        chkTestCase.setVisible(true);
         chkTestCase.setToolTipText("A test case will be generated if this is checked");
         add(chkTestCase);
 
@@ -145,7 +152,7 @@ public class SecondFrame extends JPanel implements ActionListener {
 
         buttonGroup = new ButtonGroup();
 
-        rdBoth = new JRadioButton("Generate both sync and async", true);
+        rdBoth = new JRadioButton("Generate both sync and async", false);
         buttonGroup.add(rdBoth);
         add(rdBoth);
 
@@ -165,11 +172,11 @@ public class SecondFrame extends JPanel implements ActionListener {
         serverSide.addActionListener(this);
         add(serverSide);
 
-        serviceXML = new JCheckBox("Generate default service.xml", true);
+        serviceXML = new JCheckBox("Generate default service.xml", false);
         serviceXML.setEnabled(false);
         add(serviceXML);
 
-        serverSideInterface = new JCheckBox("Generate an interface for skeleton", true);
+        serverSideInterface = new JCheckBox("Generate an interface for skeleton", false);
         serverSideInterface.setEnabled(false);
         add(serverSideInterface);
 
@@ -189,12 +196,45 @@ public class SecondFrame extends JPanel implements ActionListener {
 
         model = new PackageNameTableModel(new Object [1][2]);
         table = new JTable(model);
-        add(new JScrollPane(table));
+        spTable=new JScrollPane(table);
+        add(spTable);
+
+        lblCodeGenOption =new JLabel("Codegen Option");
+        add(lblCodeGenOption );
+
+        cmbCodeGenOption =new JComboBox();
+        cmbCodeGenOption .addItem("default");
+        cmbCodeGenOption .addItem("custom");
+        cmbCodeGenOption .setToolTipText("Select the Codegen option");
+        cmbCodeGenOption.addActionListener(this);
+        add(cmbCodeGenOption );
+
+        enabel();
 
         Dimension dim = new Dimension(450, 600);
         setSize(dim);
     }
+    private void enabel(){
+        cmbdbtype .setEnabled(false);
+        cmbLan .setEnabled(false);
+        cmbPortName .setEnabled(false);
+        cmbServiceName .setEnabled(false);
+        txtPacakgeName.setEnabled(false);
+        chkTestCase.setEnabled(false);
+        clientSide .setEnabled(false);
+        rdsyn .setEnabled(false);
+        rdBoth .setEnabled(false);
+        rdasync .setEnabled(false);
+        serverSide .setEnabled(false);
+        serverSideInterface .setEnabled(false);
+        serviceXML .setEnabled(false);
+        all.setEnabled(false);
+        table.setEnabled(false);
+        spTable.setEnabled(false);
 
+
+
+    }
     public void setCodeGenBean(CodegenBean codegenBean) {
         this.codegenBean = codegenBean;
         setStatus();
@@ -233,6 +273,35 @@ public class SecondFrame extends JPanel implements ActionListener {
 
         model.setTableData(tableData);
 
+
+    }
+
+    public void setDefaultBothConfigurations() {
+
+        setDefaultCommonConfigurations();
+    }
+
+    public void setDefaultCommonConfigurations() {
+
+        setStatus();
+
+        codegenBean.setLanguage("java");
+
+        codegenBean.setDatabindingName("adb");
+
+        codegenBean.setTestCase(false);
+
+        codegenBean.setServerSide(false);
+
+        codegenBean.setPackageName(codegenBean.packageFromTargetNamespace());
+
+        codegenBean.setServerXML(false);
+
+        codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString() );
+
+        codegenBean.setPortName(cmbPortName .getSelectedItem().toString());
+
+        codegenBean.setNamespace2packageList(getNs2PkgMapping());
 
     }
 
@@ -294,14 +363,13 @@ public class SecondFrame extends JPanel implements ActionListener {
         }
         else {
             codegenBean.setGenerateAll(true);
-
-
         }
         if (chkTestCase.isSelected()) {
             codegenBean.setTestCase(true);
         }
         else
             codegenBean.setTestCase(false);
+
         codegenBean.setPackageName(txtPacakgeName.getText());
         codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString());
         codegenBean.setPortName(cmbPortName.getSelectedItem().toString());
@@ -309,9 +377,9 @@ public class SecondFrame extends JPanel implements ActionListener {
     }
 
     /**
-	 * get the package to namespace mappings
-	 * @return
-	 */
+     * get the package to namespace mappings
+     * @return
+     */
     public String getNs2PkgMapping(){
         String returnList="";
         String packageValue;
@@ -321,14 +389,52 @@ public class SecondFrame extends JPanel implements ActionListener {
                     ("".equals(returnList)?"":",") +
                     (String)table.getValueAt(i,0)+ "=" + packageValue;
 
-
         }
         return "".equals(returnList)?null:returnList;
     }
-
+    private void setDefault(){
+        buttonGroup.setSelected(rdasync.getModel(),false);
+        buttonGroup.setSelected(rdsyn .getModel(),false);
+        buttonGroup.setSelected(rdBoth.getModel(),false);
+        rdasync .setSelected(false);
+        rdsyn .setSelected(false);
+        rdBoth .setSelected(false);
+        serviceXML .setSelected(false);
+        serverSideInterface .setSelected(false);
+        BottomPanel.setEnable(true,true,false,true);
+    }
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if (obj == cmbServiceName) {
+        if(obj == cmbCodeGenOption ){
+            if(cmbCodeGenOption.getSelectedItem().equals("custom") ){
+                setDefault();
+                cmbdbtype .setEnabled(true);
+                cmbLan .setEnabled(true);
+                cmbPortName .setEnabled(true);
+                cmbServiceName .setEnabled(true);
+                txtPacakgeName.setEnabled(true);
+                chkTestCase.setEnabled(true);
+                clientSide .setEnabled(true);
+                rdsyn .setEnabled(true);
+                rdBoth .setEnabled(true);
+                rdasync .setEnabled(true);
+                serverSide .setEnabled(true);
+                serverSideInterface .setEnabled(false);
+                serviceXML .setEnabled(false);
+                all.setEnabled(true);
+                table.setEnabled(true);
+                spTable.setEnabled(true);
+                clientSide.setSelected(true);
+                rdBoth .setSelected(true);
+                BottomPanel.setEnable(true,true,false,true);
+            }else {
+                clientSide.setSelected(true);
+                rdBoth .setSelected(true);
+                setDefault();
+                enabel();
+            }
+
+        }else if (obj == cmbServiceName) {
             int selindex = cmbServiceName.getSelectedIndex();
             if (selindex>=0)
             {
@@ -341,38 +447,24 @@ public class SecondFrame extends JPanel implements ActionListener {
             }
         }
         else if (obj == serverSide){
-            if(clientSide.isSelected()){
-                rdasync.setEnabled(true);
-                rdBoth.setEnabled(true);
-                rdsyn.setEnabled(true);
-                chkTestCase.setEnabled(true);
-                serviceXML.setEnabled(false);
-                serverSideInterface.setEnabled(false);
-            }
-            else
-            {
+            if(serverSide.isSelected() )   {
+                setDefault();
                 rdasync.setEnabled(false);
                 rdBoth.setEnabled(false);
                 rdsyn.setEnabled(false);
-                chkTestCase.setEnabled(false);
                 serviceXML.setEnabled(true);
                 serverSideInterface.setEnabled(true);
+                chkTestCase.setEnabled(false);
+
             }
         }
         else if (obj == clientSide){
-            if(serverSide.isSelected()){
-                rdasync.setEnabled(false);
-                rdBoth.setEnabled(false);
-                rdsyn.setEnabled(false);
-                serviceXML.setEnabled(true);
-                chkTestCase.setEnabled(false);
-                serverSideInterface.setEnabled(true);
-            }
-            else
-            {
+            if(clientSide.isSelected() ) {
+                setDefault();
                 rdasync.setEnabled(true);
                 rdBoth.setEnabled(true);
                 rdsyn.setEnabled(true);
+                rdBoth .setSelected(true);
                 chkTestCase.setEnabled(true);
                 serviceXML.setEnabled(false);
                 serverSideInterface.setEnabled(false);
@@ -380,6 +472,7 @@ public class SecondFrame extends JPanel implements ActionListener {
         }
         else if (obj == all){
             if(all.isSelected()){
+                setDefault();
                 rdasync.setEnabled(false);
                 rdBoth.setEnabled(false);
                 rdsyn.setEnabled(false);
@@ -387,7 +480,6 @@ public class SecondFrame extends JPanel implements ActionListener {
                 serverSideInterface.setEnabled(false);
                 chkTestCase.setEnabled(true);
             }
-
 
         }
     }
@@ -426,51 +518,51 @@ class SecondFrameLayout implements LayoutManager {
         // Language selection
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 10, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 40, 192, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 10, 250, 24);
+            c.setBounds(insets.left + 272, insets.top + 40, 250, 24);
         }
 
         // Service Name selection
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 40, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 70, 192, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 40, 250, 24);
+            c.setBounds(insets.left + 272, insets.top + 70, 250, 24);
         }
 
         // Port Name Selection
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 70, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 100, 192, 24);
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 70, 250, 24);
+            c.setBounds(insets.left + 272, insets.top + 100, 250, 24);
         }
 
         // Data Binding Selection
-        c = parent.getComponent(6);
+        c = parent.getComponent(8);
         if (c.isVisible()) {
             c.setBounds(insets.left + 8, insets.top + 130, 192, 24);
         }
-        c = parent.getComponent(7);
+        c = parent.getComponent(9);
         if (c.isVisible()) {
             c.setBounds(insets.left + 272, insets.top + 130, 250, 24);
         }
 
         //Package NAme Selection
-        c = parent.getComponent(8);
+        c = parent.getComponent(6);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 100, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 160, 192, 24);
         }
-        c = parent.getComponent(9);
+        c = parent.getComponent(7);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 100, 250, 24);
+            c.setBounds(insets.left + 272, insets.top + 160, 250, 24);
         }
 
 
@@ -478,87 +570,97 @@ class SecondFrameLayout implements LayoutManager {
         // Test Case Selection
         c = parent.getComponent(10);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 160, 208, 24);
+            c.setBounds(insets.left + 8, insets.top + 185, 208, 24);
         }
 
         // JSeperator
 
         c = parent.getComponent(11);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 187, 530, 2);
+            c.setBounds(insets.left + 8, insets.top + 212, 530, 2);
         }
 
         // Client side options
         c = parent.getComponent(12);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 190, 168, 24);
+            c.setBounds(insets.left + 8, insets.top + 215, 168, 24);
         }
 
         // Service invocation both,sync,async
         c = parent.getComponent(13);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 48, insets.top + 220, 210, 24);
+            c.setBounds(insets.left + 48, insets.top + 240, 210, 24);
         }
         c = parent.getComponent(14);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 260, insets.top + 220, 140, 24);
+            c.setBounds(insets.left + 260, insets.top + 240, 140, 24);
         }
         c = parent.getComponent(15);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 400, insets.top + 220, 145, 24);
+            c.setBounds(insets.left + 400, insets.top + 240, 145, 24);
         }
 
         // JSeperator
 
         c = parent.getComponent(16);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 247, 530, 2);
+            c.setBounds(insets.left + 8, insets.top + 267, 530, 2);
         }
 
         // Server side options
         c = parent.getComponent(17);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 250, 168, 24);
+            c.setBounds(insets.left + 8, insets.top + 270, 168, 24);
         }
 
         // Generate serverside, generate service XML
         c = parent.getComponent(18);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 48, insets.top + 280, 200, 24);
+            c.setBounds(insets.left + 48, insets.top + 290, 200, 24);
         }
 
         c = parent.getComponent(19);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 248, insets.top + 280, 250, 24);
+            c.setBounds(insets.left + 248, insets.top + 290, 250, 24);
         }
 
         // JSeperator
 
         c = parent.getComponent(20);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 307, 530, 2);
+            c.setBounds(insets.left + 8, insets.top + 317, 530, 2);
         }
 
         c = parent.getComponent(21);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 310, 200, 24);
+            c.setBounds(insets.left + 8, insets.top + 320, 200, 24);
         }
 
         // JSeperator
 
         c = parent.getComponent(22);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 337, 530, 2);
+            c.setBounds(insets.left + 8, insets.top + 347, 530, 2);
         }
 
         c = parent.getComponent(23);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 340, 250, 24);
+            c.setBounds(insets.left + 8, insets.top + 350, 250, 24);
         }
 
         c = parent.getComponent(24);
         if (c.isVisible()) {
             c.setBounds(insets.left + 8, insets.top + 370, 522, 85);
+        }
+
+        //Codegen Option
+        c = parent.getComponent(25);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 10, 192, 24);
+        }
+        c = parent.getComponent(26);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 272, insets.top + 10, 250, 24);
         }
 
 

@@ -76,10 +76,14 @@
                    __operation = new org.apache.axis2.description.OutInAxisOperation();
                 </xsl:otherwise>
             </xsl:choose>
+            <xsl:if test="@policy">
+			    (__operation).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="@policy"/>"));
+	    	</xsl:if>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
 	    _service.addOperation(__operation);
 	    
+	    <!-- 
 	    <xsl:if test="input/@policy">
 	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
 	    </xsl:if>
@@ -87,6 +91,7 @@
 	    <xsl:if test="output/@policy">
 	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
 	    </xsl:if>
+	    -->
 	    
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
             
@@ -128,7 +133,7 @@
          populateFaults();
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
-        <xsl:if test="@policy">
+        <xsl:if test="//method[@policy]">
         _service.applyPolicy();
         </xsl:if>
 	

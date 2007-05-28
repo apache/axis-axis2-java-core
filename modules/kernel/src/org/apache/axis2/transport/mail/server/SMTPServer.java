@@ -93,7 +93,7 @@ public class SMTPServer extends Thread {
                 ss = null;
             }
         } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(e.getMessage(),e);
         }
     }
 }

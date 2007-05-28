@@ -128,7 +128,8 @@ public class MailSorter {
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgContext.setEnvelope(envelope);
-            engine.receive(msgContext);
+
+            AxisEngine.receive(msgContext);
         } catch (Exception e) {
             try {
                 if (msgContext != null) {
@@ -165,7 +166,7 @@ public class MailSorter {
                 return null;
             }
         } catch (MessagingException e) {
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(e.getMessage(),e);
         }
     }
 }

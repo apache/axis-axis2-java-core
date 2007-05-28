@@ -43,7 +43,7 @@ public class MailWorkerManager {
 
     public void start() throws AxisFault {
         for (int i = 0; i < poolSize; i++) {
-            workerPool.execute(new MailWorker(configurationContext, messageQueue));
+//            workerPool.execute(new MailWorker(configurationContext, messageQueue));
         }
     }
 }

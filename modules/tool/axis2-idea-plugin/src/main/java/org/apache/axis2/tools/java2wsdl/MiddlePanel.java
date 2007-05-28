@@ -4,7 +4,6 @@ import org.apache.axis2.tools.bean.ClassLoadingTestBean;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -162,8 +161,8 @@ public class MiddlePanel extends JPanel implements ActionListener, MouseListener
     }
     private void setDefaultPathAndName(File file)  {
         String defualtOutPutPath=file.getParent();
-        wsdlgenBean.setOutputLocation(defualtOutPutPath );
-        wsdlgenBean.setOutputWSDLName("services.wsdl");
+        java2WSDLFrame.outPanel.txtLocation .setText(defualtOutPutPath);
+        java2WSDLFrame.outPanel .txtFileName .setText("services.wsdl");
 
     }
 
@@ -219,7 +218,6 @@ public class MiddlePanel extends JPanel implements ActionListener, MouseListener
     public void updateStatusTextField(boolean success,String text){
         if (success){
             java2WSDLFrame.opPanel.setDefaultNamespaces(txtClass.getText());
-            // java2WSDLFrame.outPanel.setNamespaceDefaults();
         }
         lblTest.setText(text);
     }

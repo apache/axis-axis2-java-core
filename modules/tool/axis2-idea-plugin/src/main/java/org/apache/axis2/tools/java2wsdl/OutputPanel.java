@@ -1,14 +1,17 @@
 package org.apache.axis2.tools.java2wsdl;
 
 import org.apache.axis2.tools.bean.WsdlgenBean;
-
 import javax.swing.*;
+import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener ;
+import java.awt.event.MouseEvent ;
 import java.awt.*;
+import java.io.File;
 
 
-public class OutputPanel extends JPanel implements ActionListener {
+public class OutputPanel extends JPanel implements ActionListener,MouseListener  {
 
     JLabel lblTitle;
     JLabel lblLocation;
@@ -22,13 +25,14 @@ public class OutputPanel extends JPanel implements ActionListener {
 
     JButton btnBrowes;
 
-    final JFileChooser fc = new JFileChooser();
+    final JFileChooser DirChooser=new JFileChooser();
     private WsdlgenBean wsdlgenBean;
+    private Java2WSDLFrame java2WSDLFrame;
 
-    public OutputPanel(WsdlgenBean wsdlgenBean){
+    public OutputPanel(Java2WSDLFrame java2WSDLFrame,WsdlgenBean wsdlgenBean){
 
         this.wsdlgenBean=wsdlgenBean;
-
+        this.java2WSDLFrame=java2WSDLFrame;
         OutputLayout customLayout=new OutputLayout();
         setLayout(customLayout);
 
@@ -40,28 +44,44 @@ public class OutputPanel extends JPanel implements ActionListener {
 
         rbtnAdd =new JRadioButton("Browes and Add the WSDL to a project on current workspace");
         add(rbtnAdd );
+        rbtnAdd .setSelected(false);
+        rbtnAdd .addActionListener(this);
+
 
         rbtnSave =new JRadioButton("Browes and Save the WSDL file on local filesystem ");
         add(rbtnSave );
+        rbtnSave .addActionListener(this);
+        rbtnSave .setSelected(true);
+
+
 
         lblLocation =new JLabel("OutPut Location");
         add(lblLocation );
 
         txtLocation =new JTextField();
         add(txtLocation );
+        txtLocation .setEnabled(true);
+        txtLocation .addActionListener(this);
+        txtLocation.addMouseListener(this);
+
 
         btnBrowes=new JButton("Browse...");
         add(btnBrowes);
+        btnBrowes.setEnabled(true);
+        btnBrowes.addActionListener(this);
+
 
         lblFileName =new JLabel("OutPut File Name");
         add(lblFileName );
 
         txtFileName =new JTextField();
         add(txtFileName );
+        txtFileName .setEnabled(true);
+        txtFileName .addActionListener(this);
+        txtFileName .addMouseListener(this);
+
 
         setSize(getPreferredSize());
-
-        initializeDefaultSettings();
 
 
     }
@@ -71,16 +91,114 @@ public class OutputPanel extends JPanel implements ActionListener {
         txtFileName.setText(wsdlgenBean.getOutputWSDLName());
 
     }
-    public void setNamespace(){
-        wsdlgenBean.setTargetNamespace(txtLocation .getText() );
-        wsdlgenBean.setTargetNamespacePrefix(txtFileName .getText() );
+    public void setOutput(){
+
+        wsdlgenBean.setOutputLocation(txtLocation .getText() );
+        wsdlgenBean.setOutputWSDLName(txtFileName .getText() );
 
     }
 
     public void actionPerformed(ActionEvent e){
+        Object obj=e.getSource();
+        if(obj==btnBrowes) {
+            DirChooser .setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int returnVal = DirChooser.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                DirChooser.setFileSelectionMode(JFileChooser .FILES_ONLY );
+                File newfile = DirChooser.getSelectedFile();
+                BottomPanel.setEnable(true,false, true, true);
+                txtLocation.setText(newfile.getAbsolutePath());
+            }
+        } else if(obj == rbtnAdd ) {
+            rbtnSave .setSelected(false);
+            txtLocation .setEnabled(false);
+            btnBrowes.setEnabled(false);
+            txtFileName .setEnabled(false);
+            BottomPanel.setEnable(true,false, true, true);
+            wsdlgenBean.setOutputLocation(java2WSDLFrame .getActiveProject().getProjectFilePath() );
+            wsdlgenBean.setOutputWSDLName("Services.wsdl" );            
+        }else if(obj == rbtnSave ) {
+            rbtnAdd .setSelected(false);
+            txtLocation .setEnabled(true);
+            btnBrowes.setEnabled(true);
+            txtFileName .setEnabled(true);
 
+        } else if(obj ==txtFileName ){
+            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+            }
+        } else if(obj ==txtLocation ){
+            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+            }
+        }
+    }
+    public void mouseClicked(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtFileName ){
+            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+            }
+        }  else if(obj ==txtLocation ){
+            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+            }
+        }
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+        Object obj = e.getSource();
+         if(obj ==txtFileName ){
+            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+            }
+        }  else if(obj ==txtLocation ){
+            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+            }
+        }
+    }
+
+    public void mousePressed(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtFileName ){
+            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+            }
+        }  else if(obj ==txtLocation ){
+            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+            }
+        }
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtFileName ){
+            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+            }
+        } else if(obj ==txtLocation ){
+            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,false, true, true);
+                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+            }
+        }
     }
 }
+
 
 class OutputLayout implements LayoutManager{
 

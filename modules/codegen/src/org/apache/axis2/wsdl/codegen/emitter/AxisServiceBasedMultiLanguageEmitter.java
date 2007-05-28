@@ -53,6 +53,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -256,7 +258,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return property;
     }
-
+    
+    
+    private Policy getBindingPolicyFromOperation(QName qName) {
+        AxisBindingOperation axisBindingOperation = null;
+        
+        if (axisBinding != null) {
+            axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+        }
+        
+        if (axisBindingOperation != null) {
+            return axisBindingOperation.getEffectivePolicy();
+        }
+        
+        return null;
+    }
+    
     private Object getBindingPropertyFromMessage(String name, QName qName, String key) {
 
         Object property = null;
@@ -654,7 +671,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                    codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
+        
         writeClass(interfaceImplModel, writer);
+        
+        
     }
 
     /** Creates the DOM tree for implementations. */
@@ -926,15 +946,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param rootElement
      */
     protected void addEndpoint(Document doc, Element rootElement) throws Exception {
-
-        PolicyInclude policyInclude = axisService.getPolicyInclude();
-        Policy servicePolicy = policyInclude.getPolicy();
-
-        if (servicePolicy != null) {
-            String policyString = PolicyUtil.policyComponentToString(servicePolicy);
-            policyString = PolicyUtil.getSafeString(policyString);
-            addAttribute(doc, "policy", policyString, rootElement);
-        }
 
         Element endpointElement = doc.createElement("endpoint");
 
@@ -2080,7 +2091,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         /*
          * Setting the policy of the operation
          */
-        Policy policy = axisOperation.getPolicyInclude().getPolicy();
+        Policy policy = getBindingPolicyFromOperation(axisOperation.getName());
+        
         if (policy != null) {
             try {
                 addAttribute(doc, "policy",
@@ -2090,6 +2102,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 throw new RuntimeException("can't serialize the policy ..");
             }
         }
+        
+//        System.out.println(DOM2Writer.nodeToString(methodElement));
 
 
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
@@ -2503,27 +2517,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (WSDLUtil.isInputPresentForMEP(mep)) {
 
-            /*
-             * Setting the input message policy as an attribute of the input element.
-             */
-            AxisMessage inputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inputMessage != null) {
-                PolicyInclude policyInclude = inputMessage.getPolicyInclude();
-                Policy policy = policyInclude.getPolicy();
-
-                if (policy != null) {
-                    policy = (Policy)policy.normalize(policyInclude.getPolicyRegistry(), false);
-                    try {
-                        String policyString = PolicyUtil.policyComponentToString(policy);
-                        policyString = PolicyUtil.getSafeString(policyString);
-                        addAttribute(doc, "policy", policyString, inputElt);
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
             Element[] param = getInputParamElement(doc, operation);
             for (int i = 0; i < param.length; i++) {
                 inputElt.appendChild(param[i]);
@@ -2581,24 +2574,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
         if (WSDLUtil.isOutputPresentForMEP(mep)) {
-
-            AxisMessage outMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (outMessage != null) {
-                PolicyInclude policyInclude = outMessage.getPolicyInclude();
-                Policy policy = policyInclude.getPolicy();
-
-                if (policy != null) {
-                    policy = (Policy)policy.normalize(policyInclude.getPolicyRegistry(), false);
-
-                    try {
-                        String policyString = PolicyUtil.policyComponentToString(policy);
-                        policyString = PolicyUtil.getSafeString(policyString);
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
 
             Element param = getOutputParamElement(doc, operation);
 

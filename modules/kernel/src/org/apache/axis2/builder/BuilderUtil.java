@@ -98,6 +98,9 @@ public class BuilderUtil {
                     String value = (String) requestParameterMap.get(key);
                     if (value != null) {
                         soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                         if (value != null) {
+                               soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                         }
                     }
 
                 }

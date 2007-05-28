@@ -217,7 +217,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             sender.send();
 
         } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(e.getMessage(),e);
         }
     }
 
@@ -232,7 +232,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             messageFormatter.writeTo(msgContext, format, out, false);
             out.flush();
         } catch (Exception e) {
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(e.getMessage(),e);
         }
     }
 

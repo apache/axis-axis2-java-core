@@ -172,7 +172,6 @@ public class JMSMessageReceiver implements MessageListener {
                                                            message.getJMSReplyTo()));
 
             msgContext.setServerSide(true);
-            msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             msgContext.setMessageID(message.getJMSMessageID());
 
             Destination replyTo = message.getJMSReplyTo();

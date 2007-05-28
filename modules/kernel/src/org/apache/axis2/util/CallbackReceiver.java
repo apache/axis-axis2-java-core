@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.MessageReceiver;
 
 import java.util.HashMap;
@@ -65,7 +66,10 @@ public class CallbackReceiver implements MessageReceiver {
             // check weather the result is a fault.
             SOAPEnvelope envelope = result.getResponseEnvelope();
             SOAPFault fault = envelope.getBody().getFault();
-
+            OperationContext opContext =messageCtx.getOperationContext();
+            if(opContext!=null&&!opContext.isComplete()){
+                opContext.addMessageContext(messageCtx);
+            }
             if (fault == null) {
                 // if there is not fault call the onComplete method
                 callback.onComplete(result);

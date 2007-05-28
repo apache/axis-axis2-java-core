@@ -223,7 +223,12 @@ public class URLTemplatingUtil {
                 if (replacedQuery.charAt(0) == '?') {
                     appendedURI = new URI(targetURL.toString () + replacedQuery);
                 } else {
-                    targetURI = new URI(targetURL.toString() + "/");
+                     String uriString = targetURL.toString();
+                    if (!uriString.endsWith("/")) {
+                    targetURI = new URI(uriString + "/");
+                    } else {
+                        targetURI = new URI(uriString);
+                    }
                     appendedURI = targetURI.resolve(replacedQuery);
                 }
                 
