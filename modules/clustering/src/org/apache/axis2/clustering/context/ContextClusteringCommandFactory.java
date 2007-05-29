@@ -20,6 +20,7 @@ import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.util.UUIDGenerator;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ public final class ContextClusteringCommandFactory {
         ContextClusteringCommand cmd = null;
         if (context instanceof ConfigurationContext) {
             cmd = new UpdateConfigurationContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             fillProperties((UpdateContextCommand) cmd,
                            context,
                            excludedPropertyPatterns,
@@ -54,6 +56,7 @@ public final class ContextClusteringCommandFactory {
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
             cmd = new UpdateServiceGroupContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             UpdateServiceGroupContextCommand updateSgCmd =
                     (UpdateServiceGroupContextCommand) cmd;
 
@@ -66,6 +69,7 @@ public final class ContextClusteringCommandFactory {
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
             cmd = new UpdateServiceContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             UpdateServiceContextCommand updateServiceCmd =
                     (UpdateServiceContextCommand) cmd;
             updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());

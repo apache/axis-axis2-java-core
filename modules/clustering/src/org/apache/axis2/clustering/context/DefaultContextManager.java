@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -32,7 +33,6 @@ public class DefaultContextManager implements ContextManager {
 
     private ConfigurationContext configContext;
 
-    private ContextManagerListener listener;
     private Map parameters = new HashMap();
 
     private MessageSender sender;
@@ -65,6 +65,22 @@ public class DefaultContextManager implements ContextManager {
         }
     }
 
+    public void updateContexts(AbstractContext[] contexts) throws ClusteringFault {
+        ArrayList commands = new ArrayList(contexts.length);
+        ContextClusteringCommandCollection collection =
+                new ContextClusteringCommandCollection(commands);
+        for (int i = 0; i < contexts.length; i++) {
+            ContextClusteringCommand cmd =
+                    ContextClusteringCommandFactory.getUpdateCommand(contexts[i],
+                                                                     excludedReplicationPatterns,
+                                                                     false);
+            if (cmd != null) {
+                commands.add(cmd);
+            }
+        }
+        processor.process(collection);
+    }
+
     public boolean isContextClusterable(AbstractContext context) {
         return (context instanceof ConfigurationContext) ||
                (context instanceof ServiceContext) ||
@@ -72,43 +88,24 @@ public class DefaultContextManager implements ContextManager {
     }
 
     public void process(ContextClusteringCommand command) throws ClusteringFault {
-        switch (command.getCommandType()) {
-            case ContextClusteringCommand.CREATE_SERVICE_CONTEXT:
-            case ContextClusteringCommand.CREATE_SERVICE_GROUP_CONTEXT:
-                listener.contextAdded(command);
-                break;
-            case ContextClusteringCommand.UPDATE_SERVICE_CONTEXT:
-            case ContextClusteringCommand.UPDATE_SERVICE_GROUP_CONTEXT:
-            case ContextClusteringCommand.UPDATE_CONFIGURATION_CONTEXT:
-                listener.contextUpdated(command);
-                break;
-            case ContextClusteringCommand.DELETE_SERVICE_CONTEXT:
-            case ContextClusteringCommand.DELETE_SERVICE_GROUP_CONTEXT:
-                listener.contextRemoved(command);
-                break;
-            default:
-                throw new ClusteringFault("Invalid ContextClusteringCommand " +
-                                          command.getClass().getName());
-        }
+        command.execute(configContext);
     }
 
     public void setContextManagerListener(ContextManagerListener listener) {
         if (configContext != null) {
             listener.setConfigurationContext(configContext);
         }
-        this.listener = listener;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configContext = configurationContext;
-        listener.setConfigurationContext(configurationContext);
     }
 
     public void setReplicationExcludePatterns(String contextType, List patterns) {
         excludedReplicationPatterns.put(contextType, patterns);
     }
 
-    public Map getReplicationExcludePatterns(){
+    public Map getReplicationExcludePatterns() {
         return excludedReplicationPatterns;
     }
 

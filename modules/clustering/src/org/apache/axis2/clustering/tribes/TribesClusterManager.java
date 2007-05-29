@@ -26,15 +26,12 @@ import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.control.GetStateCommand;
-import org.apache.axis2.clustering.tribes.info.TransientTribesChannelInfo;
-import org.apache.axis2.clustering.tribes.info.TransientTribesMemberInfo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.membership.McastService;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.commons.logging.Log;
@@ -74,10 +71,8 @@ public class TribesClusterManager implements ClusterManager {
 
         ChannelListener listener = new ChannelListener(configurationManager,
                                                        contextManager,
-                                                       controlCmdProcessor);
-
-        TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
-        TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
+                                                       controlCmdProcessor,
+                                                       sender);
 
         if (configurationManager != null) {
             configurationManager.setSender(sender);
@@ -97,6 +92,8 @@ public class TribesClusterManager implements ClusterManager {
                 domain = "apache.axis2.domain".getBytes();
             }
             channel.getMembershipService().setDomain(domain);
+
+//            ((McastService)channel.getMembershipService()).setPort(5000);
 
             DomainFilterInterceptor dfi = new DomainFilterInterceptor();
             dfi.setDomain(domain);
@@ -118,13 +115,10 @@ public class TribesClusterManager implements ClusterManager {
 //            channel.addInterceptor(tcpFailureDetector);
 
             channel.addChannelListener(listener);
-            channel.addChannelListener(channelInfo);
-            channel.addMembershipListener(memberInfo);
             TribesMembershipListener membershipListener = new TribesMembershipListener();
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
             sender.setChannel(channel);
-
 
             if (contextManager != null) {
                 contextManager.setSender(sender);

@@ -20,6 +20,7 @@ import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
@@ -35,6 +36,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
     private TribesControlCommandProcessor controlCommandProcessor;
+    private ChannelSender sender;
 
     /**
      * The messages received are enqued. Another thread, messageProcessor, will
@@ -49,10 +51,12 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
     public ChannelListener(DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
-                           TribesControlCommandProcessor controlCommandProcessor) {
+                           TribesControlCommandProcessor controlCommandProcessor,
+                           ChannelSender sender) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
+        this.sender = sender;
         startMessageProcessor();
     }
 
@@ -123,7 +127,12 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
                     Serializable msg = memberMessage.getMessage();
                     if (msg instanceof ContextClusteringCommand && contextManager != null) {
-                        contextManager.process((ContextClusteringCommand) msg);
+                        ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
+                        contextManager.process(ctxCmd);
+                        AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
+
+                        // Send the ACK
+                        sender.sendToMember(ackCmd, memberMessage.getSender());
                     } else if (msg instanceof ConfigurationClusteringCommand &&
                                configurationManager != null) {
                         configurationManager.process((ConfigurationClusteringCommand) msg);

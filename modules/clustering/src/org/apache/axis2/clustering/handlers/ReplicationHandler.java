@@ -20,14 +20,14 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReplicationHandler extends AbstractHandler {
 
@@ -64,21 +64,30 @@ public class ReplicationHandler extends AbstractHandler {
                 throw new ClusteringFault(msg);
             }
 
-            // Replicate state stored in ConfigurationContext
+            List contexts = new ArrayList();
+
+            // Do we need to replicate state stored in ConfigurationContext?
             if (!configurationContext.getPropertyDifferences().isEmpty()) {
-                contextManager.updateContext(configurationContext);
+                contexts.add(configurationContext);
             }
 
-            // Replicate state stored in ServiceGroupContext
+            // Do we need to replicate state stored in ServiceGroupContext?
             ServiceGroupContext sgContext = message.getServiceGroupContext();
             if (sgContext != null && !sgContext.getPropertyDifferences().isEmpty()) {
-                contextManager.updateContext(sgContext);
+                contexts.add(sgContext);
             }
 
-            // Replicate state stored in ServiceContext
+            // Do we need to replicate state stored in ServiceContext?
             ServiceContext serviceContext = message.getServiceContext();
             if (serviceContext != null && !serviceContext.getPropertyDifferences().isEmpty()) {
-                contextManager.updateContext(serviceContext);
+                contexts.add(serviceContext);
+            }
+
+            // Do the actual replication here
+            if (!contexts.isEmpty()) {
+                contextManager.
+                        updateContexts((AbstractContext[]) contexts.
+                                toArray(new AbstractContext[contexts.size()]));
             }
         } else {
             String msg = "Cannot replicate contexts since " +

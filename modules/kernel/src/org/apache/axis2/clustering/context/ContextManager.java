@@ -53,6 +53,16 @@ public interface ContextManager extends ParameterInclude {
     void updateContext(AbstractContext context) throws ClusteringFault;
 
     /**
+     * This method is called when properties in a collection of {@link AbstractContext}s are updated.
+     * This could be addition of new properties, modifications of existing properties or
+     * removal of properties.
+     *
+     * @param contexts
+     * @throws ClusteringFault
+     */
+    void updateContexts(AbstractContext[] contexts) throws ClusteringFault;
+
+    /**
      *
      * @param context
      * @return True - if the provided {@link AbstractContext}  is clusterable
