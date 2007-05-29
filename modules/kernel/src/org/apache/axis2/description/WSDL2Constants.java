@@ -140,6 +140,10 @@ public interface WSDL2Constants {
     public String MEP_URI_OUT_IN = "http://www.w3.org/ns/wsdl/out-in";
     public String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/ns/wsdl/out-opt-in";
 
+    public String STYLE_IRI = "http://www.w3.org/ns/wsdl/style/iri";
+    public String STYLE_RPC = "http://www.w3.org/ns/wsdl/style/rpc";
+    public String STYLE_MULTIPART = "http://www.w3.org/ns/wsdl/style/multipart";
+
     public String NMTOKEN_ANY = "#any";
     public String NMTOKEN_NONE = "#none";
     public String NMTOKEN_OTHER = "#other";
