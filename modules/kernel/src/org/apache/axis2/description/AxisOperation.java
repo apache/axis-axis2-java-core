@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
+import java.net.URI;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -650,6 +651,16 @@ public abstract class AxisOperation extends AxisDescription
         axisOperationElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                       null,
                                                                       this.getName().getLocalPart()));
+        URI [] opStyle = (URI[]) this.getParameterValue(WSDL2Constants.OPERATION_STYLE);
+        if (opStyle != null && opStyle.length > 0) {
+            String style = opStyle[0].toString();
+            for (int i = 1; i < opStyle.length; i++) {
+                URI uri = opStyle[i];
+                style = style + " " + uri;
+            }
+            axisOperationElement.addAttribute(
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_STYLE, null, style));
+        }
         axisOperationElement.addAttribute(omFactory.createOMAttribute(
                 WSDL2Constants.ATTRIBUTE_NAME_PATTERN, null, this.getMessageExchangePattern()));
         Parameter param = this.getParameter(WSDL2Constants.ATTR_WSDLX_SAFE);

@@ -152,8 +152,6 @@ public class AxisBindingMessage extends AxisDescription {
             // Fault specific properties
             SOAPFaultCode faultCode = (SOAPFaultCode) this.options
                     .get(WSDL2Constants.ATTR_WSOAP_CODE);
-            property = (String) this.options
-                    .get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
             if (faultCode != null && faultCode.getQName() != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_CODE, wsoap, faultCode.getQName().getLocalPart()));

@@ -71,6 +71,8 @@ public interface WSDL2Constants {
     String ATTRIBUTE_ADDRESS = "address";
     String ATTRIBUTE_AUTHENTICATION_TYPE = "authenticationType";
     String ATTRIBUTE_AUTHENTICATION_REALM = "authenticationRealm";
+    String ATTRIBUTE_STYLE = "style";
+    String OPERATION_STYLE = "operationStyle";
     String IN_PUT_LOCAL_NAME = "input";
     String OUT_PUT_LOCAL_NAME = "output";
     String OUT_FAULT_LOCAL_NAME = "outfault";
