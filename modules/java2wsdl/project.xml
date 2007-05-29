@@ -101,6 +101,22 @@
             </properties>
             <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>${xalan.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 
         <!--for java2wsdl generation we use JAM , so there should be a dependency on the annogen jar or-->
         <!--XML Beans-->
