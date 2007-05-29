@@ -29,6 +29,7 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
+import org.apache.axis2.util.Loader;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +80,6 @@ public class BeanUtil {
             if (cl == null)
                 cl = ClassLoader.getSystemClassLoader();
             jam_service_parms.addClassLoader(cl);
-//            beanObject.getClass().isArray()
 
             jam_service_parms.includeClass(beanObject.getClass().getName());
             JamService service = factory.createService(jam_service_parms);
@@ -278,9 +278,9 @@ public class BeanUtil {
             // support polymorphism in POJO approach.
             // For some reason, using QName(Constants.XSI_NAMESPACE, "type", "xsi") does not generate
             // an xsi:type attribtue properly for inner objects. So just using a simple QName("type").
-//            ArrayList objectAttributes = new ArrayList();
-//            objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
-//            objectAttributes.add(beanObject.getClass().getName());
+            ArrayList objectAttributes = new ArrayList();
+            objectAttributes.add(new QName("type"));
+            objectAttributes.add(beanObject.getClass().getName());
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null,
                                               typeTable, qualified);
 
@@ -317,22 +317,18 @@ public class BeanUtil {
             throws AxisFault {
         Object beanObj =null;
         try {
-             // Added this block as a fix for issues AXIS2-2055 and AXIS2-1899
+            // Added this block as a fix for issues AXIS2-2055 and AXIS2-1899
             // to support polymorphism in POJO approach.
             // Retrieve the type name of the instance from the 'type' attribute
             // and retrieve the class.
-//            String instanceTypeName = beanElement.getAttributeValue(
-//                    new QName(Constants.XSI_NAMESPACE,"type","xsi"));
-//            if ((instanceTypeName != null) && (! beanClass.isArray())) {
-//                try {
-//                    beanClass = Class.forName(instanceTypeName);
-//                } catch (ClassNotFoundException ce) {
-//                    log.warn(ce);
-                    // This breaks samples , and Need to improve a bit to fully 
-                    // support this so , Exception just ignore here, we can fix
-                    // that later
-//                }
-//            }
+            String instanceTypeName = beanElement.getAttributeValue(new QName("type"));
+            if ((instanceTypeName != null) && (! beanClass.isArray())) {
+                try {
+                    beanClass = Loader.loadClass(beanClass.getClassLoader(), instanceTypeName);
+                } catch (ClassNotFoundException ce) {
+                    throw AxisFault.makeFault(ce);
+                }
+            }
    
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
@@ -374,9 +370,9 @@ public class BeanUtil {
                     // the beanClass could be an abstract one.
                     // so create an instance only if there are elements, in
                     // which case a concrete subclass is available to instantiate.
-//                    if (beanObj == null) {
-//                        beanObj = objectSupplier.getObject(beanClass);
-//                    }
+                    if (beanObj == null) {
+                        beanObj = objectSupplier.getObject(beanClass);
+                    }
                     OMElement parts;
                     Object objValue = elements.next();
                     if (objValue instanceof OMElement) {

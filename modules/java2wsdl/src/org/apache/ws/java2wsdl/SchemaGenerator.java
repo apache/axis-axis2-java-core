@@ -158,7 +158,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
         JamServiceFactory factory = JamServiceFactory.getInstance();
         JamServiceParams jam_service_parms = factory.createServiceParams();
         //setting the classLoder
-//        jam_service_parms.setParentClassLoader(factory.createJamClassLoader(classLoader));
         //it can posible to add the classLoader as well
         jam_service_parms.addClassLoader(classLoader);
         jam_service_parms.includeClass(className);
@@ -223,28 +222,14 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         continue;
                     }
                     if (jMethod.getExceptionTypes().length > 0) {
-                        /*
-                    	methodSchemaType = createSchemaTypeForMethodPart(getSimpleName(jMethod) + "Fault");
-                         sequence = new XmlSchemaSequence();
-                         XmlSchemaElement elt1 = new XmlSchemaElement();
-                         elt1.setName(getSimpleName(jMethod) + "Fault");
-                         elt1.setSchemaTypeName(typeTable.getQNamefortheType(Object.class.getName()));
-                         sequence.getItems().add(elt1);
-                         methodSchemaType.setParticle(sequence);
-                        */
-//                    	 begin mj
                         JClass[] extypes = jMethod.getExceptionTypes() ;
                         for (int j= 0 ; j < extypes.length ; j++) {
                             JClass extype = extypes[j] ;
                             methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
                             sequence = new XmlSchemaSequence();
-                           // methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName());
-                           // methodSchemaType.setParticle(sequence);
                         	generateSchemaForType(sequence, extype, extype.getSimpleName());
                             methodSchemaType.setParticle(sequence);
                         }
-                        // end mj
-
                     }
                     uniqueMethods.put(getSimpleName(jMethod), jMethod);
                     //create the schema type for the method wrapper
@@ -363,7 +348,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             JClass sup = javaType.getSuperclass();
 
-//          AXIS2-1749 inheritance
             if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
                 !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
                 String superClassName = sup.getQualifiedName();
@@ -413,23 +397,18 @@ public class SchemaGenerator implements Java2WSDLConstants {
             // adding this type to the table
             typeTable.addComplexSchema(name, eltOuter.getQName());
              // adding this type's package to the table, to support inheritance.
-//          typeTable.addComplexSchema(javaType.getContainingPackage().getQualifiedName(),
-//                    eltOuter.getQName());
-
+            typeTable.addComplexSchema(javaType.getContainingPackage().getQualifiedName(),
+                    eltOuter.getQName());
 
 
             JClass tempClass = javaType;
             Set propertiesSet = new HashSet();
             Set propertiesNames = new HashSet();
 
-            // while (tempClass != null && !"java.lang.Object".equals(getQualifiedName(tempClass))) {
-//	  With 1749 we don'nt need properties of superclasses
             JProperty[] tempProperties = tempClass.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
                 propertiesSet.add(tempProperties[i]);
             }
-            //	tempClass = tempClass.getSuperclass();
-            //    }
 
             JProperty[] properties = (JProperty[])propertiesSet.toArray(new JProperty[0]);
             Arrays.sort(properties);
@@ -446,8 +425,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
                                                           propname, isArryType);
 
             }
-
-            // AXIS2-2116 support for fields
 
             JField[] tempFields = javaType.getDeclaredFields();
             HashMap FieldMap = new HashMap();
@@ -471,24 +448,15 @@ public class SchemaGenerator implements Java2WSDLConstants {
             // remove fields from super classes patch for defect Annogen-21
             // getDeclaredFields is incorrectly returning fields of super classes as well
             // getDeclaredProperties used earlier works correctly
-
             JClass supr = javaType.getSuperclass();
             while (supr != null && supr.getQualifiedName().compareTo("java.lang.Object") != 0) {
-
                 JField[] suprFields = supr.getFields();
-
                 for (int i = 0; i < suprFields.length; i++) {
-
                     FieldMap.remove(suprFields[i].getSimpleName());
-
                 }
-
                 supr = supr.getSuperclass();
-
-
             }
-
-            // end patch for Annogen -21  
+            // end patch for Annogen -21
 
             JField[] froperties = (JField[])FieldMap.values().toArray(new JField[0]);
             Arrays.sort(froperties);
@@ -599,7 +567,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
                                          schemaTypeName,
                                          partName,
                                          isArrayType);
-            //addImport((XmlSchema)schemaMap.get(schemaTargetNameSpace), schemaTypeName);
             String schemaNamespace;
             schemaNamespace = resolveSchemaNamespace(getQualifiedName(type.getContainingPackage()));
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
@@ -639,7 +606,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
         XmlSchemaElement globalElement = new XmlSchemaElement();
         globalElement.setSchemaType(complexType);
-//        globalElement.setName(formGlobalElementName(localPartName));
         globalElement.setName(localPartName);
         globalElement.setQName(elementName);
         xmlSchema.getItems().add(globalElement);
