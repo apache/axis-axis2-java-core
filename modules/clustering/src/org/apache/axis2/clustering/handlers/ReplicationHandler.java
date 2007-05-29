@@ -61,8 +61,7 @@ public class ReplicationHandler extends AbstractHandler {
             if (contextManager == null) {
                 String msg = "Cannot replicate contexts since " +
                              "ContextManager is not specified in the axis2.xml file.";
-                log.error(msg);
-                return;
+                throw new ClusteringFault(msg);
             }
 
             // Replicate state stored in ConfigurationContext
@@ -71,19 +70,15 @@ public class ReplicationHandler extends AbstractHandler {
             }
 
             // Replicate state stored in ServiceGroupContext
-            ServiceGroupContext serviceGroupContext = message.getServiceGroupContext();
-            if (serviceGroupContext != null) {
-                if (!serviceGroupContext.getPropertyDifferences().isEmpty()) {
-                    contextManager.updateContext(serviceGroupContext);
-                }
+            ServiceGroupContext sgContext = message.getServiceGroupContext();
+            if (sgContext != null && !sgContext.getPropertyDifferences().isEmpty()) {
+                contextManager.updateContext(sgContext);
             }
 
             // Replicate state stored in ServiceContext
             ServiceContext serviceContext = message.getServiceContext();
-            if (serviceContext != null) {
-                if (!serviceContext.getPropertyDifferences().isEmpty()) {
-                    contextManager.updateContext(serviceContext);
-                }
+            if (serviceContext != null && !serviceContext.getPropertyDifferences().isEmpty()) {
+                contextManager.updateContext(serviceContext);
             }
         } else {
             String msg = "Cannot replicate contexts since " +
