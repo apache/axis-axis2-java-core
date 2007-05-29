@@ -50,6 +50,12 @@ public class Constants {
     public static final String APPLICATION_CONTEXT_MIGRATOR_LIST_ID =
             "org.apache.axis2.jaxws.spi.ApplicationContextMigrators";
 
+    // Value = Colletion
+    // Usage: A list of WebServiceFeatureConfigurators that are called to configure the client or
+    //   server as appropriate.
+    public static final String WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID =
+        "org.apache.axis2.jaxws.spi.WebServiceFeatureConfigurators";
+    
     /** Intentionally Private */
     private Constants() {
     }

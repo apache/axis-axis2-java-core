@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -29,6 +30,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigUtil;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.Constants;
@@ -39,9 +41,9 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Binding;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.http.HTTPBinding;
@@ -60,8 +62,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
     protected Mode mode;
 
-    protected BaseDispatch(ServiceDelegate svcDelgate, EndpointDescription epDesc) {
-        super(svcDelgate, epDesc);
+    protected BaseDispatch(ServiceDelegate svcDelgate,
+                           EndpointDescription epDesc,
+                           EndpointReference epr,
+                           String addressingNamespace,
+                           WebServiceFeature... features) {
+        super(svcDelgate, epDesc, epr, addressingNamespace, features);
 
         ic = new AxisInvocationController();
     }
@@ -116,7 +122,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
-            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -124,6 +129,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ApplicationContextMigratorUtil.performMigrationToMessageContext(
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
+
+            // Perform the client-side configuration, as specified during the invocation.
+            WebServiceFeatureConfigUtil.performConfiguration(
+                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
+                    requestMsgCtx, this);
 
             // Send the request using the InvocationController
             ic.invoke(invocationContext);
@@ -187,7 +197,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
-            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -195,6 +204,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ApplicationContextMigratorUtil.performMigrationToMessageContext(
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
+
+            // Perform the client-side configuration, as specified during the invocation.
+            WebServiceFeatureConfigUtil.performConfiguration(
+                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
+                    requestMsgCtx, this);
 
             // Send the request using the InvocationController
             ic.invokeOneWay(invocationContext);
@@ -241,7 +255,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
-            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -249,6 +262,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ApplicationContextMigratorUtil.performMigrationToMessageContext(
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
+
+            // Perform the client-side configuration, as specified during the invocation.
+            WebServiceFeatureConfigUtil.performConfiguration(
+                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
+                    requestMsgCtx, this);
 
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
@@ -306,7 +324,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
-            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -314,6 +331,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ApplicationContextMigratorUtil.performMigrationToMessageContext(
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
+
+            // Perform the client-side configuration, as specified during the invocation.
+            WebServiceFeatureConfigUtil.performConfiguration(
+                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
+                    requestMsgCtx, this);
 
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
@@ -393,29 +415,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
             return true;
         else
             return false;
-    }
-
-    /*
-     * Configure any properties that will be needed on the Message
-     */
-    private void setupMessageProperties(Message msg) {
-        // If the user has enabled MTOM on the SOAPBinding, we need
-        // to make sure that gets pushed to the Message object.
-        Binding binding = getBinding();
-        if (binding != null && binding instanceof SOAPBinding) {
-            SOAPBinding soapBinding = (SOAPBinding)binding;
-            if (soapBinding.isMTOMEnabled())
-                msg.setMTOMEnabled(true);
-        }
-
-        // Check if the user enabled MTOM using the SOAP binding 
-        // properties for MTOM
-        String bindingID = endpointDesc.getClientBindingID();
-        if ((bindingID.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                bindingID.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) &&
-                !msg.isMTOMEnabled()) {
-            msg.setMTOMEnabled(true);
-        }
     }
 
     /*

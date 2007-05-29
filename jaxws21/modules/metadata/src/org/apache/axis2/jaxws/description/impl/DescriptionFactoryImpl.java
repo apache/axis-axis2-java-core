@@ -22,6 +22,9 @@ package org.apache.axis2.jaxws.description.impl;
  * 
  */
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -235,6 +238,35 @@ public class DescriptionFactoryImpl {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
         return endpointDesc;
+    }
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     *      Class, EndpointReference, String, DescriptionFactory.UpdateType)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType) {
+        QName portQName = null;
+        
+        try {
+            ServiceName serviceName = EndpointReferenceHelper.getServiceNameMetadata(epr, addressingNamespace);
+            QName serviceQName = serviceDescription.getServiceQName();
+            
+            if (!serviceQName.equals(serviceName.getName()))
+                throw ExceptionFactory.makeWebServiceException("The service name of the endpoint reference does not match the service name of the service client.");
+            
+            //An assumption is made here that the namespace associated with the ServiceName also
+            //applies to the PortName.
+            portQName = new QName(serviceQName.getNamespaceURI(), serviceName.getEndpointName());
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("An error occured updating the endpoint", e);
+        }
+        
+        return updateEndpoint(serviceDescription, sei, portQName, updateType);
     }
 
     public static ClientConfigurationFactory getClientConfigurationFactory() {

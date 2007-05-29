@@ -16,23 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.spi;
+package javax.xml.ws;
 
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.ws.spi.Provider;
 
-/**
- * 
- */
-public interface BindingProvider extends javax.xml.ws.BindingProvider {
-    public EndpointDescription getEndpointDescription();
-
-    public ServiceDelegate getServiceDelegate();
-
-    public EndpointReference getAxis2EndpointReference();
+public abstract class EndpointReference {
+    protected EndpointReference() {
+    }
     
-    public String getAddressingNamespace();
+    public static EndpointReference readFrom(Source eprInfoset) {
+        return Provider.provider().readEndpointReference(eprInfoset);
+    }
     
-    public WebServiceFeatureValidator getWebServiceFeatureValidator();
+    public abstract void writeTo(Result result);
+    
+    public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        return Provider.provider().getPort(this, serviceEndpointInterface, features);
+    }
 }

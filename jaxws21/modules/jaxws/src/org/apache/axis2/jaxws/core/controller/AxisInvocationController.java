@@ -373,19 +373,22 @@ public class AxisInvocationController extends InvocationController {
     protected void prepareResponse(MessageContext responseMsgCtx) {
 
     }
-
+    
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
         org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
         setupProperties(requestMsgCtx, axisRequest.getOptions());
 
-        Options options = opClient.getOptions();
         if (opClient != null) {
+            Options options = opClient.getOptions();
+            
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            String targetUrl = (String)requestMsgCtx.getProperties().get(
-                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            EndpointReference toEPR = new EndpointReference(targetUrl);
-            options.setTo(toEPR);
+            if (options.getTo() == null) {
+                String targetUrl = (String)requestMsgCtx.getProperties().get(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+                EndpointReference toEPR = new EndpointReference(targetUrl);
+                options.setTo(toEPR);
+            }
 
             // Get the SOAP Action (if needed)
             String soapAction = ClientUtils.findSOAPAction(requestMsgCtx);
@@ -476,6 +479,7 @@ public class AxisInvocationController extends InvocationController {
             ops.setProperty(key, value);
         }
 
+        //TODO Do I have to leave this here or can I move it to the MTOMConfigurator.
         // Enable MTOM
         Message msg = mc.getMessage();
         if (msg.isMTOMEnabled()) {

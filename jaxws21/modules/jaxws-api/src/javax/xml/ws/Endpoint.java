@@ -64,6 +64,12 @@ public abstract class Endpoint {
 
     public abstract void setProperties(Map<java.lang.String, java.lang.Object> map);
 
+    //TODO
+    public abstract EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters);
+
+    //TODO
+    public abstract <T extends EndpointReference> T getEndpointReference(Class<T> clazz, org.w3c.dom.Element... referenceParameters);
+
     public static final String WSDL_SERVICE = "javax.xml.ws.wsdl.service";
     public static final String WSDL_PORT = "javax.xml.ws.wsdl.port";
 }

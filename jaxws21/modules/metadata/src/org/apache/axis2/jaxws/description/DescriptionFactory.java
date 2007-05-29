@@ -1,29 +1,31 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
-
 package org.apache.axis2.jaxws.description;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 
 import javax.xml.namespace.QName;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +95,35 @@ public class DescriptionFactory {
                                                      DescriptionFactory.UpdateType updateType) {
         return DescriptionFactoryImpl
                 .updateEndpoint(serviceDescription, sei, portQName, updateType);
+    }
+
+    /**
+     * Retrieve or create the EndpointDescription hierachy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  If an EndpointDescritption already exists, it will
+     * be returned; if one does not already exist, it will be created.  Note that if the SEI is null
+     * then the EndpointDescription returned will be for a Dispatch client only and it will not have
+     * an EndpointInterfaceDescription hierachy associated with it.  If, at a later point, the same
+     * port is requested and an SEI is provided, the existing EndpointDescription will be updated
+     * with a newly-created EndpointInterfaceDescription hieracy.
+     *
+     * @param serviceDescription  An existing client-side ServiceDescription.  This must not be
+     *                            null.
+     * @param sei                 The ServiceInterface class.  This can be null for adding a port or
+     *                            creating a Dispatch; it can not be null when getting a port.
+     * @param epr                 The endpoint reference to the target port.
+     * @param addressingNamespace The addressing namespace of the endpoint reference.
+     * @param updateType          The type of the update: adding a port, creating a dispatch, or
+     *                            getting an SEI-based port.
+     * @return An EndpointDescription corresponding to the port.
+     * @see #createServiceDescription(URL, QName, Class)
+     * @see DescriptionFactory.UpdateType
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+                                                     Class sei, EndpointReference epr,
+                                                     String addressingNamespace,
+                                                     DescriptionFactory.UpdateType updateType) {
+        return DescriptionFactoryImpl
+                .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType);
     }
 
     /**

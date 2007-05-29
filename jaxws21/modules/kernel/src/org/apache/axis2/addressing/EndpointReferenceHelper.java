@@ -1,18 +1,21 @@
 /*
-* Copyright 2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.addressing;
 
 import org.apache.axiom.om.OMAttribute;
@@ -25,6 +28,8 @@ import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -228,8 +233,8 @@ public class EndpointReferenceHelper {
             if (addressAttributes != null) {
                 Iterator attrIter = addressAttributes.iterator();
                 while (attrIter.hasNext()) {
-                    OMAttribute omAttributes = (OMAttribute) attrIter.next();
-                    addressE.addAttribute(omAttributes);
+                    OMAttribute omAttribute = (OMAttribute) attrIter.next();
+                    AttributeHelper.importOMAttribute(omAttribute, addressE);
                 }
             }
 
@@ -247,8 +252,8 @@ public class EndpointReferenceHelper {
                 if (metadataAttributes != null) {
                     Iterator attrIter = metadataAttributes.iterator();
                     while (attrIter.hasNext()) {
-                        OMAttribute omAttributes = (OMAttribute) attrIter.next();
-                        metadataE.addAttribute(omAttributes);
+                        OMAttribute omAttribute = (OMAttribute) attrIter.next();
+                        AttributeHelper.importOMAttribute(omAttribute, metadataE);
                     }
                 }
             }
@@ -352,7 +357,130 @@ public class EndpointReferenceHelper {
             log.debug("fromOM: Endpoint reference, " + epr);
         }
     }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static ServiceName getServiceNameMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
+        ServiceName serviceName = new ServiceName();
+        List elements = null;
+        
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace))
+            elements = epr.getExtensibleElements();
+        else
+            elements = epr.getMetaData();
+        
+        if (elements != null) {
+            //Retrieve the service name and endpoint name.
+            for (int i = 0, size = elements.size(); i < size; i++) {
+                OMElement omElement = (OMElement) elements.get(i);
+                if (ServiceName.isServiceNameElement(omElement)) {
+                    try {
+                        serviceName.fromOM(omElement);
+                        break;
+                    }
+                    catch (Exception e) {
+                        //TODO NLS enable.
+                        throw new AxisFault("Metadata conversion error.", e);
+                    }
+                }
+            }
+        }
+        
+        return serviceName;
+    }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static WSDLLocation getWSDLLocationMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
+        WSDLLocation wsdlLocation = new WSDLLocation();
+        List attributes = null;
 
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace))
+            attributes = epr.getAttributes();
+        else
+            attributes = epr.getMetadataAttributes();
+        
+        if (attributes != null) {
+            //Retrieve the wsdl location.
+            for (int i = 0, size = attributes.size(); i < size; i++) {
+                OMAttribute omAttribute = (OMAttribute) attributes.get(i);
+                if (WSDLLocation.isWSDLLocationAttribute(omAttribute)) {
+                    try {
+                        wsdlLocation.fromOM(omAttribute);
+                        break;
+                    }
+                    catch (Exception e) {
+                        //TODO NLS enable.
+                        throw new AxisFault("Metadata conversion error.", e);
+                    }
+                }
+            }
+        }
+        
+        return wsdlLocation;
+    }
+
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @param serviceName
+     * @throws AxisFault
+     */
+    public static void setServiceNameMetadata(EndpointReference epr, String addressingNamespace, ServiceName serviceName) throws AxisFault {
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+            OMElement omElement = serviceName.toOM(ServiceName.subQName);
+            epr.addExtensibleElement(omElement);
+        }
+        else {
+            OMElement omElement = serviceName.toOM(ServiceName.finalQName);
+            epr.addMetaData(omElement);
+        }
+    }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static void setWSDLLocationMetadata(EndpointReference epr, String addressingNamespace, WSDLLocation wsdlLocation) throws AxisFault {
+        OMAttribute attribute = wsdlLocation.toOM();
+
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+            epr.addAttribute(attribute);
+        }
+        else {
+            ArrayList list = new ArrayList();
+            list.add(attribute);
+            epr.setMetadataAttributes(list);
+        }
+    }
+    
+    /**
+     * 
+     * @param source
+     * @param destination
+     */
+    public static void transferReferenceParameters(EndpointReference source, EndpointReference destination) {
+        Map referenceParameters = source.getAllReferenceParameters();
+        Iterator iterator = referenceParameters.values().iterator();
+        while (iterator.hasNext()) {
+            destination.addReferenceParameter((OMElement) iterator.next());                        
+        }
+    }
+    
     static {
         finalQNames.put(AddressingConstants.EPR_ADDRESS, new QName(
                 AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));

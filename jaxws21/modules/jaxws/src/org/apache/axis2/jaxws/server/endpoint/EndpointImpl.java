@@ -22,7 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -30,9 +30,12 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.WorkerFactory;
+import org.w3c.dom.Element;
 
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.io.IOException;
 import java.util.List;
@@ -201,5 +204,23 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        if (!SubmissionEndpointReference.class.isAssignableFrom(clazz) &&
+                !W3CEndpointReference.class.isAssignableFrom(clazz))
+            throw ExceptionFactory.makeWebServiceException("Unrecognized class type " + clazz.getCanonicalName());
+            
+        T jaxwsEPR = null;
+        
+        
+
+        return jaxwsEPR;
+    }
+
+    @Override
+    public EndpointReference getEndpointReference(Element... arg0) {
+        return getEndpointReference(W3CEndpointReference.class, arg0);
     }
 }

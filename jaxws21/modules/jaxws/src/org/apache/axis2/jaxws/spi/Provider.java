@@ -18,15 +18,38 @@
  */
 package org.apache.axis2.jaxws.spi;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
+import org.apache.axis2.util.XMLUtils;
+import org.w3c.dom.Element;
 
 import java.net.URL;
+import java.util.List;
 
 public class Provider extends javax.xml.ws.spi.Provider {
+    private static volatile JAXBContext jaxbContext;
 
     @Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
@@ -43,5 +66,125 @@ public class Provider extends javax.xml.ws.spi.Provider {
     @Override
     public ServiceDelegate createServiceDelegate(URL url, QName qname, Class clazz) {
         return new org.apache.axis2.jaxws.spi.ServiceDelegate(url, qname, clazz);
+    }
+
+    @Override
+    public W3CEndpointReference createW3CEndpointReference(String address,
+            QName serviceName,
+            QName portName,
+            List<Element> metadata,
+            String wsdlDocumentLocation,
+            List<Element> referenceParameters) {
+        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        
+        if (address != null) {
+            axis2EPR = EndpointReferenceBuilder.createEndpointReference(address);
+        }
+        else if (serviceName != null && portName != null) {
+            axis2EPR = EndpointReferenceBuilder.createEndpointReference(serviceName, portName, wsdlDocumentLocation);
+        }
+        else {
+            //TODO NLS enable.
+            throw new IllegalStateException("Cannot create an endpoint reference because the address, service name, and port name are all null.");
+        }
+        
+        W3CEndpointReference w3cEPR = null;
+        
+        try {
+            //This enables EndpointReference.getPort() to work.
+            if (serviceName != null && portName != null) {
+                
+            }
+            
+            if (metadata != null) {
+                for (Element element : metadata) {
+                    OMElement omElement = XMLUtils.toOM(element);
+                    axis2EPR.addMetaData(omElement);
+                }
+            }
+            
+            if (referenceParameters != null) {
+                for (Element element : referenceParameters) {
+                    OMElement omElement = XMLUtils.toOM(element);
+                    axis2EPR.addReferenceParameter(omElement);
+                }            
+            }
+            
+            w3cEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, W3CEndpointReference.class);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+        }
+        
+        return w3cEPR;
+    }
+
+    @Override
+    public <T> T getPort(EndpointReference jaxwsEPR, Class<T> sei, WebServiceFeature... features) {
+        if (jaxwsEPR == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("The endpoint reference cannot be null.");
+        }
+        
+        if (sei == null) {
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("getPortInvalidSEI", jaxwsEPR.toString(), "null"));
+        }
+
+        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        try {
+            axis2EPR = EndpointReferenceConverter.convertToAxis2(jaxwsEPR);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+        }
+        
+        String addressingNamespace = (jaxwsEPR instanceof SubmissionEndpointReference) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
+        
+        try {
+            ServiceName serviceName = EndpointReferenceHelper.getServiceNameMetadata(axis2EPR, addressingNamespace);
+            WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(axis2EPR, addressingNamespace);
+            
+            serviceDelegate = new org.apache.axis2.jaxws.spi.ServiceDelegate(new URL(wsdlLocation.getURL()), serviceName.getName(), Service.class);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("An error occured updating the endpoint", e);
+        }
+
+        return serviceDelegate.getPort(axis2EPR, addressingNamespace, sei, features);
+    }
+
+    @Override
+    public EndpointReference readEndpointReference(Source eprInfoset) {
+        EndpointReference epr = null;
+
+        try {
+            JAXBContext jaxbContext = getJAXBContext();
+            Unmarshaller um = jaxbContext.createUnmarshaller();
+            epr = (EndpointReference) um.unmarshal(eprInfoset);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+        }
+        
+        return epr;
+    }
+    
+    private JAXBContext getJAXBContext() throws JAXBException {
+        //This is an implementation of double-checked locking.
+        //It works because jaxbContext is volatile.
+        if (jaxbContext == null) {
+            synchronized (javax.xml.ws.spi.Provider.class) {
+                if (jaxbContext == null)
+                    jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class, SubmissionEndpointReference.class);
+            }
+        }
+        
+        return jaxbContext;
     }
 }

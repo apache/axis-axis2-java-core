@@ -18,24 +18,40 @@
  */
 package org.apache.axis2.jaxws;
 
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
+import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
-
     protected Map<String, Object> requestContext;
 
     protected Map<String, Object> responseContext;
@@ -43,13 +59,26 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     protected EndpointDescription endpointDesc;
 
     protected ServiceDelegate serviceDelegate;
+    
+    protected WebServiceFeatureValidator validator;
+    
+    protected org.apache.axis2.addressing.EndpointReference epr;
+    
+    protected String addressingNamespace;
 
     private Binding binding;  // force subclasses to use the lazy getter
 
-    public BindingProvider(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
-        endpointDesc = epDesc;
-        serviceDelegate = svcDelegate;
-
+    public BindingProvider(ServiceDelegate svcDelegate,
+                           EndpointDescription epDesc,
+                           org.apache.axis2.addressing.EndpointReference epr,
+                           String addressingNamespace,
+                           WebServiceFeature... features) {
+        this.endpointDesc = epDesc;
+        this.serviceDelegate = svcDelegate;
+        this.epr = epr;
+        this.addressingNamespace = addressingNamespace;
+        this.validator = new WebServiceFeatureValidator(false, features);
+        
         initialize();
     }
 
@@ -59,15 +88,24 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     private void initialize() {
         requestContext = new ValidatingClientContext();
         responseContext = new ValidatingClientContext();
-
+        
         // Setting standard property defaults for the request context
-        requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, new Boolean(false));
-        requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, new Boolean(true));
-
+        requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, Boolean.FALSE);
+        
+        WebServiceFeature addressingFeature = validator.get(AddressingFeature.ID);
+        WebServiceFeature submissionAddressingFeature = validator.get(SubmissionAddressingFeature.ID);
+        String bindingID = endpointDesc.getClientBindingID();
+        
+        if (BindingUtils.isSOAPBinding(bindingID) &&
+                (addressingFeature.isEnabled() || submissionAddressingFeature.isEnabled()))
+            requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+        else
+            requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.FALSE);
+        
         // Set the endpoint address
-        String endpointAddress = endpointDesc.getEndpointAddress();
-        if (endpointAddress != null) {
-            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+        String endpointAddress = (epr != null ) ? epr.getAddress() : endpointDesc.getEndpointAddress();        
+        if (endpointAddress != null && !"".equals(endpointAddress)) {
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);                
         }
     }
 
@@ -188,10 +226,88 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         }
     }
 
+    public EndpointReference getEndpointReference() {
+        return getEndpointReference(W3CEndpointReference.class);
+    }
+
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
+        //TODO NLS enable.
+        if (!SubmissionEndpointReference.class.isAssignableFrom(clazz) &&
+            !W3CEndpointReference.class.isAssignableFrom(clazz))
+            throw ExceptionFactory.makeWebServiceException("Unrecognized class type " + clazz.getCanonicalName());
+        
+        T jaxwsEPR = null;
+        String bindingID = endpointDesc.getClientBindingID();
+        String addressingNamespace =
+            SubmissionEndpointReference.class.isAssignableFrom(clazz) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        
+        if (BindingUtils.isSOAPBinding(bindingID)) {
+            try {
+                if (epr == null) {
+                    String address = endpointDesc.getEndpointAddress();
+                    org.apache.axis2.addressing.EndpointReference epr =
+                        new org.apache.axis2.addressing.EndpointReference(address);
+                    QName service = endpointDesc.getServiceQName();
+                    QName port = endpointDesc.getPortQName();
+                    URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+                    ServiceName serviceName = new ServiceName(service, port.getLocalPart());
+                    WSDLLocation wsdlLocation = new WSDLLocation(port.getNamespaceURI(), wsdlURL.toString());
+                    EndpointReferenceHelper.setServiceNameMetadata(epr, addressingNamespace, serviceName);
+                    EndpointReferenceHelper.setWSDLLocationMetadata(epr, addressingNamespace, wsdlLocation);
+                    this.epr = epr;
+                    this.addressingNamespace = addressingNamespace;
+                }
+                else if (!addressingNamespace.equals(this.addressingNamespace)) {
+                    String address = this.epr.getAddress();
+                    org.apache.axis2.addressing.EndpointReference epr =
+                        new org.apache.axis2.addressing.EndpointReference(address);
+                    QName service = endpointDesc.getServiceQName();
+                    QName port = endpointDesc.getPortQName();
+                    URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+                    ServiceName serviceName = new ServiceName(service, port.getLocalPart());
+                    WSDLLocation wsdlLocation = new WSDLLocation(port.getNamespaceURI(), wsdlURL.toString());
+                    EndpointReferenceHelper.setServiceNameMetadata(epr, addressingNamespace, serviceName);
+                    EndpointReferenceHelper.setWSDLLocationMetadata(epr, addressingNamespace, wsdlLocation);
+                    EndpointReferenceHelper.transferReferenceParameters(this.epr, epr);
+                    this.epr = epr;
+                    this.addressingNamespace = addressingNamespace;                    
+                }
+            
+                jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(epr, clazz);
+            }
+            catch (Exception e) {
+                //TODO NLS enable.
+                throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+            }
+        }
+        else {
+            //TODO NLS enable.
+            throw new UnsupportedOperationException("This method is not supported with a binding of " + bindingID);
+        }
+        
+        return jaxwsEPR;
+    }
+    
+    public String getAddressingNamespace() {
+        return addressingNamespace;
+    }
+
+    public org.apache.axis2.addressing.EndpointReference getAxis2EndpointReference() {
+        return epr;
+    }    
+
+    public WebServiceFeatureValidator getWebServiceFeatureValidator() {
+        return validator;
+    }    
+    
     /*
     * An inner class used to validate properties as they are set by the client.
     */
     class ValidatingClientContext extends Hashtable<String, Object> {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3485112205801917858L;
 
         @Override
         public synchronized Object put(String key, Object value) {
@@ -204,4 +320,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             }
         }
     }
+
+
 }

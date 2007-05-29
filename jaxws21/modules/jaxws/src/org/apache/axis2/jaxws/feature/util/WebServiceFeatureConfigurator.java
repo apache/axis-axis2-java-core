@@ -16,17 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package javax.xml.ws;
+package org.apache.axis2.jaxws.feature.util;
 
-import javax.xml.ws.handler.Handler;
-import java.util.List;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.spi.BindingProvider;
 
-public interface Binding {
+/**
+ * 
+ */
+public interface WebServiceFeatureConfigurator {
 
-    //TODO
-    public abstract String getBindingID();
-    
-    public abstract List<Handler> getHandlerChain();
+    /**
+     * Perform client-side configuration for a <code>WebServiceFeature</code>.
+     * 
+     * @param messageContext
+     * @param provider
+     */
+    public void performConfiguration(MessageContext messageContext, BindingProvider provider);
 
-    public abstract void setHandlerChain(List<Handler> list);
+    /**
+     * Perform server-side configuration for a <code>WebServiceFeature</code>.
+     * 
+     * @param serviceDescription
+     */
+    public void performConfiguration(ServiceDescription serviceDescription);
 }
