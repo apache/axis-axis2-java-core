@@ -285,6 +285,10 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                             WSDL2Constants.INTERFACE_LOCAL_NAME, null,
                             tns.getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
         for (int i = 0; i < eprs.length; i++) {
+            String epr = eprs[i];
+            if (!epr.endsWith("/")) {
+                epr = epr + "/";
+            }
             OMElement soap11EndpointElement =
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
@@ -295,7 +299,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     tns.getPrefix() + ":" + axisService.getName() +
                             Java2WSDLConstants.BINDING_NAME_SUFFIX));
             soap11EndpointElement.addAttribute(
-                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, eprs[i]));
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
             serviceElement.addChild(soap11EndpointElement);
             OMElement soap12EndpointElement =
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
@@ -307,7 +311,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     tns.getPrefix() + ":" + axisService.getName() +
                             Java2WSDLConstants.SOAP12BINDING_NAME_SUFFIX));
             soap12EndpointElement.addAttribute(
-                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, eprs[i]));
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
             serviceElement.addChild(soap12EndpointElement);
             OMElement httpEndpointElement =
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
@@ -318,7 +322,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() + Java2WSDLConstants.HTTP_BINDING));
             httpEndpointElement.addAttribute(
-                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, eprs[i]));
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
             serviceElement.addChild(httpEndpointElement);
         }
         return serviceElement;

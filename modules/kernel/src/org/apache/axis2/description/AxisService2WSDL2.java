@@ -180,7 +180,11 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 // of updating the endpoints.
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
                 for (int i = 0; i < eprs.length; i++) {
-                    OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, eprs[i]);
+                    String epr = eprs[i];
+                    if (!epr.endsWith("/")) {
+                        epr = epr + "/";
+                    }
+                    OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, epr);
                     boolean endpointAlreadyAdded = false;
                     Iterator endpointsAdded = serviceElement.getChildren();
                     while (endpointsAdded.hasNext()) {
