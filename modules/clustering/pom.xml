@@ -42,10 +42,6 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>juli</artifactId>
         </dependency>
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>

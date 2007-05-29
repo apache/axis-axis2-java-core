@@ -34,6 +34,7 @@ public class UpdateServiceGroupContextCommand
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         ServiceGroupContext sgCtx =
                 configurationContext.getServiceGroupContext(serviceGroupContextId);
+        System.err.println("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
         if (sgCtx != null) {
             propertyUpdater.updateProperties(sgCtx);
         }

@@ -34,6 +34,7 @@ import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.membership.McastService;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.commons.logging.Log;
@@ -91,11 +92,11 @@ public class TribesClusterManager implements ClusterManager {
             byte[] domain;
             if (domainParam != null) {
                 domain = ((String) domainParam.getValue()).getBytes();
-                channel.getMembershipService().setDomain(domain);
             } else {
                 domain = "apache.axis2.domain".getBytes();
-                channel.getMembershipService().setDomain(domain);
             }
+            channel.getMembershipService().setDomain(domain);
+
             DomainFilterInterceptor dfi = new DomainFilterInterceptor();
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
@@ -124,6 +125,7 @@ public class TribesClusterManager implements ClusterManager {
             sender.setChannel(channel);
             contextManager.setSender(sender);
             configurationManager.setSender(sender);
+
 
             listener.setContextManager(contextManager);
 

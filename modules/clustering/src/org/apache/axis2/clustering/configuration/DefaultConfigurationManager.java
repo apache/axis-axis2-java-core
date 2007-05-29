@@ -170,7 +170,7 @@ public class DefaultConfigurationManager implements ConfigurationManager {
         this.sender = sender;
     }
 
-    public void notifyListener(ConfigurationClusteringCommand command) throws ClusteringFault {
+    public void process(ConfigurationClusteringCommand command) throws ClusteringFault {
 
         switch (command.getCommandType()) {
             case ConfigurationClusteringCommand.RELOAD_CONFIGURATION:

@@ -71,7 +71,7 @@ public class DefaultContextManager implements ContextManager {
                (context instanceof ServiceGroupContext);
     }
 
-    public void notifyListener(ContextClusteringCommand command) throws ClusteringFault {
+    public void process(ContextClusteringCommand command) throws ClusteringFault {
         switch (command.getCommandType()) {
             case ContextClusteringCommand.CREATE_SERVICE_CONTEXT:
             case ContextClusteringCommand.CREATE_SERVICE_GROUP_CONTEXT:
