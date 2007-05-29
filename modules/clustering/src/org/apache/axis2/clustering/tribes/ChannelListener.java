@@ -122,11 +122,12 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                     }
 
                     Serializable msg = memberMessage.getMessage();
-                    if (msg instanceof ContextClusteringCommand) {
+                    if (msg instanceof ContextClusteringCommand && contextManager != null) {
                         contextManager.process((ContextClusteringCommand) msg);
-                    } else if (msg instanceof ConfigurationClusteringCommand) {
+                    } else if (msg instanceof ConfigurationClusteringCommand &&
+                               configurationManager != null) {
                         configurationManager.process((ConfigurationClusteringCommand) msg);
-                    } else if (msg instanceof ControlCommand) {
+                    } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
                         controlCommandProcessor.process((ControlCommand) msg,
                                                         memberMessage.getSender());
                     }

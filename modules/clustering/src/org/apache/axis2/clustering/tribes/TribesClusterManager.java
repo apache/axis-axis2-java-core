@@ -79,8 +79,9 @@ public class TribesClusterManager implements ClusterManager {
         TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
         TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
 
-        contextManager.setSender(sender);
-        configurationManager.setSender(sender);
+        if (configurationManager != null) {
+            configurationManager.setSender(sender);
+        }
         controlCmdProcessor.setChannelSender(sender);
 
         try {
@@ -123,39 +124,40 @@ public class TribesClusterManager implements ClusterManager {
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
             sender.setChannel(channel);
-            contextManager.setSender(sender);
-            configurationManager.setSender(sender);
 
 
-            listener.setContextManager(contextManager);
+            if (contextManager != null) {
+                contextManager.setSender(sender);
+                listener.setContextManager(contextManager);
 
-            Member[] members = channel.getMembers();
-            TribesUtil.printMembers(members);
+                Member[] members = channel.getMembers();
+                TribesUtil.printMembers(members);
 
-            // If there is at least one member in the Tribe, get the current state from a member
-            Random random = new Random();
-            int numberOfTries = 0; // Don't keep on trying infinitely
-            while (members.length > 0 &&
-                   configurationContext.
-                           getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-                   && numberOfTries < 50) {
+                // If there is at least one member in the Tribe, get the current state from a member
+                Random random = new Random();
+                int numberOfTries = 0; // Don't keep on trying infinitely
+                while (members.length > 0 &&
+                       configurationContext.
+                               getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
+                       && numberOfTries < 50) {
 
-                // While there are members and GetStateResponseCommand is not received do the following
-                try {
-                    members = channel.getMembers();
-                    int memberIndex = random.nextInt(members.length);
-                    sender.sendToMember(new GetStateCommand(), members[memberIndex]);
-                    log.debug("WAITING FOR STATE UPDATE...");
-                    Thread.sleep(200);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
+                    // While there are members and GetStateResponseCommand is not received do the following
+                    try {
+                        members = channel.getMembers();
+                        int memberIndex = random.nextInt(members.length);
+                        sender.sendToMember(new GetStateCommand(), members[memberIndex]);
+                        log.debug("WAITING FOR STATE UPDATE...");
+                        Thread.sleep(200);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                    numberOfTries ++;
                 }
-                numberOfTries ++;
+                configurationContext.
+                        setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
+                                                 "true");
             }
-            configurationContext.
-                    setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
-                                             "true");
         } catch (ChannelException e) {
             String message = "Error starting Tribes channel";
             throw new ClusteringFault(message, e);
