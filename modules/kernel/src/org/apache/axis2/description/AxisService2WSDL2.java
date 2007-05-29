@@ -14,6 +14,7 @@ import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.io.OutputStream;
@@ -164,7 +165,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
         Map endpointMap = axisService.getEndpoints();
-        if (endpointMap != null && endpointMap.size() > 0) {
+         if (endpointMap != null && endpointMap.size() > 0) {
             String[] eprs = axisService.getEPRs();
             if (eprs == null) {
                 eprs = new String[]{axisService.getName()};
@@ -172,13 +173,34 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
             while (iterator.hasNext()) {
+                // With the new binding hierachy in place we need to do some extra checking here.
+                // If a service has both http and https listners up we should show two separate eprs
+                // If the service was deployed with a WSDL and it had two endpoints for http and
+                // https then we have two endpoints populated so we should serialize them instead
+                // of updating the endpoints.
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
-                serviceElement.addChild(axisEndpoint.toWSDL20(wsdl, tns, whttp, eprs[0]));
+                for (int i = 0; i < eprs.length; i++) {
+                    OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, eprs[i]);
+                    boolean endpointAlreadyAdded = false;
+                    Iterator endpointsAdded = serviceElement.getChildren();
+                    while (endpointsAdded.hasNext()) {
+                        OMElement endpoint = (OMElement) endpointsAdded.next();
+                        // Checking whether a endpoint with the same binding and address exists.
+                        if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue().equals(endpointElement.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
+                                && endpoint.getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue().equals(endpointElement.getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
+                            endpointAlreadyAdded = true;
+                        }
 
-                descriptionElement.addChild(axisEndpoint.getBinding().toWSDL20(wsdl, tns, wsoap, whttp,
-                                                                               interfaceName,
-                                                                               axisService.getNameSpacesMap(),
-                                                                               axisService.getWSAddressingFlag()));
+                    }
+                    if (!endpointAlreadyAdded) {
+                        serviceElement.addChild(endpointElement);
+                    }
+                }
+                descriptionElement
+                            .addChild(axisEndpoint.getBinding().toWSDL20(wsdl, tns, wsoap, whttp,
+                                                                         interfaceName,
+                                                                         axisService.getNameSpacesMap(),
+                                                                         axisService.getWSAddressingFlag()));
             }
 
             descriptionElement.addChild(serviceElement);

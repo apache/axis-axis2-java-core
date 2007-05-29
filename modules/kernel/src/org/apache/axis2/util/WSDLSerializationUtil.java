@@ -278,18 +278,18 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
             eprs = new String[]{axisService.getName()};
         }
         OMElement serviceElement = null;
+        serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
+                    serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
+                                                                            null, axisService.getName()));
+                    serviceElement.addAttribute(omFactory.createOMAttribute(
+                            WSDL2Constants.INTERFACE_LOCAL_NAME, null,
+                            tns.getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
         for (int i = 0; i < eprs.length; i++) {
-            serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
-            serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
-                                                                    null, axisService.getName()));
-            serviceElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.INTERFACE_LOCAL_NAME, null,
-                    tns.getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
             OMElement soap11EndpointElement =
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME));
+                    WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME + i));
             soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() +
@@ -301,7 +301,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_SOAP12_ENDPOINT_NAME));
+                    WSDL2Constants.DEFAULT_SOAP12_ENDPOINT_NAME + i));
             soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() +
@@ -313,7 +313,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             httpEndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME));
+                    WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME + i));
             httpEndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() + Java2WSDLConstants.HTTP_BINDING));
