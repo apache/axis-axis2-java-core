@@ -281,7 +281,7 @@ public class BeanUtil {
             ArrayList objectAttributes = new ArrayList();
             objectAttributes.add(new QName("type"));
             objectAttributes.add(beanObject.getClass().getName());
-            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null,
+            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), objectAttributes.toArray(),
                                               typeTable, qualified);
 
         } catch (java.io.IOException e) {
