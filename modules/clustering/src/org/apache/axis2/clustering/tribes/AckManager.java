@@ -37,6 +37,7 @@ public final class AckManager {
 
     public static void addAcknowledgement(String messageUniqueId,
                                           String memberId) {
+        System.err.println("######### Added ACK for msg " + messageUniqueId + " from member " + memberId);
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         if (ack != null) {
             List memberList = ack.getMemberList();
@@ -46,6 +47,7 @@ public final class AckManager {
 
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
+        System.err.println("########## Call to isMessageAcknowledged for msg UUID " + messageUniqueId);
         boolean isAcknowledged = false;
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         List memberList = ack.getMemberList();

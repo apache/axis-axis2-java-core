@@ -26,12 +26,12 @@ import org.apache.axis2.description.AxisServiceGroup;
 public class CreateServiceGroupContextCommand extends ServiceGroupContextCommand {
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
-        AxisServiceGroup axisServiceGroup =
+        /*AxisServiceGroup axisServiceGroup =
                 configContext.getAxisConfiguration()
                         .getServiceGroup(serviceGroupName);
         ServiceGroupContext ctx = new ServiceGroupContext(configContext, axisServiceGroup);
         ctx.setId(serviceGroupContextId);
-        configContext.registerServiceGroupContextintoSoapSessionTable(ctx);
+        configContext.registerServiceGroupContextintoSoapSessionTable(ctx);*/
     }
 
     public int getCommandType() {

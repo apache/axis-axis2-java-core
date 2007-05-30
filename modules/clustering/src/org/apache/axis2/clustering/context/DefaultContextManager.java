@@ -51,15 +51,15 @@ public class DefaultContextManager implements ContextManager {
     }
 
     public String addContext(final AbstractContext context) throws ClusteringFault {
-        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getCreateCommand(context);
-        processor.process(cmd);
-        return cmd.getUniqueId();
+//        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getCreateCommand(context);
+//        processor.process(cmd);
+        return null;
     }
 
     public String removeContext(AbstractContext context) throws ClusteringFault {
-        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
-        processor.process(cmd);
-        return cmd.getUniqueId();
+//        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
+//        processor.process(cmd);
+        return null;
     }
 
     public String updateContext(AbstractContext context) throws ClusteringFault {

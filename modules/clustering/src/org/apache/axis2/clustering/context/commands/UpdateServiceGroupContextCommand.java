@@ -20,6 +20,7 @@ import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisServiceGroup;
 
 import java.util.HashMap;
 
@@ -31,13 +32,21 @@ public class UpdateServiceGroupContextCommand
 
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
-    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+    public void execute(ConfigurationContext configContext) throws ClusteringFault {
         ServiceGroupContext sgCtx =
-                configurationContext.getServiceGroupContext(serviceGroupContextId);
-        System.err.println("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
-        if (sgCtx != null) {
-            propertyUpdater.updateProperties(sgCtx);
+                configContext.getServiceGroupContext(serviceGroupContextId);
+
+        // If the ServiceGroupContext is not found, create it
+        if (sgCtx == null) {
+            AxisServiceGroup axisServiceGroup =
+                    configContext.getAxisConfiguration()
+                            .getServiceGroup(serviceGroupName);
+            sgCtx = new ServiceGroupContext(configContext, axisServiceGroup);
+            sgCtx.setId(serviceGroupContextId);
+            configContext.registerServiceGroupContextintoSoapSessionTable(sgCtx);  // TODO: Check this
         }
+        System.err.println("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
+        propertyUpdater.updateProperties(sgCtx);
     }
 
     public int getCommandType() {

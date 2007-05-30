@@ -79,9 +79,7 @@ public final class ContextClusteringCommandFactory {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
             cmd = new UpdateServiceGroupContextCommand();
             cmd.setUniqueId(UUIDGenerator.getUUID());
-            UpdateServiceGroupContextCommand updateSgCmd =
-                    (UpdateServiceGroupContextCommand) cmd;
-
+            UpdateServiceGroupContextCommand updateSgCmd = (UpdateServiceGroupContextCommand) cmd;
             updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
             fillProperties((UpdateContextCommand) cmd,
@@ -92,9 +90,10 @@ public final class ContextClusteringCommandFactory {
             ServiceContext serviceCtx = (ServiceContext) context;
             cmd = new UpdateServiceContextCommand();
             cmd.setUniqueId(UUIDGenerator.getUUID());
-            UpdateServiceContextCommand updateServiceCmd =
-                    (UpdateServiceContextCommand) cmd;
-            updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
+            UpdateServiceContextCommand updateServiceCmd = (UpdateServiceContextCommand) cmd;
+            String sgName =
+                    serviceCtx.getServiceGroupContext().getDescription().getServiceGroupName();
+            updateServiceCmd.setServiceGroupName(sgName);
             updateServiceCmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
             fillProperties((UpdateContextCommand) cmd,

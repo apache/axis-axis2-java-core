@@ -101,11 +101,11 @@ public class ReplicationHandler extends AbstractHandler {
                 // the message with UUID 'msgUUID'
                 while (!contextManager.isMessageAcknowledged(msgUUID)) {
                     if(System.currentTimeMillis() - start > 20000){
-                        throw new ClusteringFault("ACKs not received from all members within 1 min. " +
+                        throw new ClusteringFault("ACKs not received from all members within 20 sec. " +
                                                   "Aborting wait.");
                     }
                     try {
-                        Thread.sleep(2);
+                        Thread.sleep(20);
                     } catch (InterruptedException e) {
                         log.error(e);
                         break;

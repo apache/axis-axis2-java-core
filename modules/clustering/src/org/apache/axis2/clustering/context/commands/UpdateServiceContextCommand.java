@@ -15,14 +15,15 @@
  */
 package org.apache.axis2.clustering.context.commands;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,6 +51,34 @@ public class UpdateServiceContextCommand
                 propertyUpdater.updateProperties(serviceContext);
             } catch (AxisFault e) {
                 throw new ClusteringFault(e);
+            }
+        } else {
+            sgCtx = configurationContext.getServiceGroupContext(serviceGroupContextId);
+            AxisService axisService;
+            try {
+                axisService = configurationContext.getAxisConfiguration().getService(serviceName);
+            } catch (AxisFault axisFault) {
+                throw new ClusteringFault(axisFault);
+            }
+            String scope = axisService.getScope();
+            if (sgCtx == null) {
+                sgCtx = new ServiceGroupContext(configurationContext,
+                                                configurationContext.getAxisConfiguration().
+                                                        getServiceGroup(serviceGroupName));
+                sgCtx.setId(serviceGroupContextId);
+                if (scope.equals(Constants.SCOPE_APPLICATION)) {
+                    configurationContext.
+                            addServiceGroupContextintoApplicatoionScopeTable(sgCtx);
+                } else if (scope.equals(Constants.SCOPE_SOAP_SESSION)) {
+                    configurationContext.
+                            registerServiceGroupContextintoSoapSessionTable(sgCtx);
+                }
+            }
+            try {
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+                propertyUpdater.updateProperties(serviceContext);
+            } catch (AxisFault axisFault) {
+                throw new ClusteringFault(axisFault);
             }
         }
     }
