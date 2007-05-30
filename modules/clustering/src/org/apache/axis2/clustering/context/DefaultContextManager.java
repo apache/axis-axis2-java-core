@@ -20,6 +20,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
+import org.apache.axis2.clustering.tribes.AckManager;
+import org.apache.axis2.clustering.tribes.ChannelSender;
 import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
@@ -35,56 +37,59 @@ public class DefaultContextManager implements ContextManager {
 
     private Map parameters = new HashMap();
 
-    private MessageSender sender;
+    private ChannelSender sender;
     private ContextReplicationProcessor processor = new ContextReplicationProcessor();
 
     private Map excludedReplicationPatterns = new HashMap();
 
-    public void setSender(MessageSender sender) {
+    //TODO: Try how to use an interface
+    public void setSender(ChannelSender sender) {
         this.sender = sender;
     }
 
     public DefaultContextManager() {
     }
 
-    public void addContext(final AbstractContext context) throws ClusteringFault {
-        processor.process(ContextClusteringCommandFactory.getCreateCommand(context));
+    public String addContext(final AbstractContext context) throws ClusteringFault {
+        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getCreateCommand(context);
+        processor.process(cmd);
+        return cmd.getUniqueId();
     }
 
-    public void removeContext(AbstractContext context) throws ClusteringFault {
-        processor.process(ContextClusteringCommandFactory.getRemoveCommand(context));
+    public String removeContext(AbstractContext context) throws ClusteringFault {
+        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
+        processor.process(cmd);
+        return cmd.getUniqueId();
     }
 
-    public void updateContext(AbstractContext context) throws ClusteringFault {
-        ContextClusteringCommand message =
+    public String updateContext(AbstractContext context) throws ClusteringFault {
+        ContextClusteringCommand cmd =
                 ContextClusteringCommandFactory.getUpdateCommand(context,
                                                                  excludedReplicationPatterns,
                                                                  false);
-        if (message != null) {
-            processor.process(message);
+        if (cmd != null) {
+            processor.process(cmd);
+            return cmd.getUniqueId();
         }
+        return null;
     }
 
-    public void updateContexts(AbstractContext[] contexts) throws ClusteringFault {
-        ArrayList commands = new ArrayList(contexts.length);
-        ContextClusteringCommandCollection collection =
-                new ContextClusteringCommandCollection(commands);
-        for (int i = 0; i < contexts.length; i++) {
-            ContextClusteringCommand cmd =
-                    ContextClusteringCommandFactory.getUpdateCommand(contexts[i],
-                                                                     excludedReplicationPatterns,
-                                                                     false);
-            if (cmd != null) {
-                commands.add(cmd);
-            }
-        }
-        processor.process(collection);
+    public String updateContexts(AbstractContext[] contexts) throws ClusteringFault {
+        ContextClusteringCommandCollection cmd =
+                ContextClusteringCommandFactory.getCommandCollection(contexts,
+                                                                     excludedReplicationPatterns);
+        processor.process(cmd);
+        return cmd.getUniqueId();
     }
 
     public boolean isContextClusterable(AbstractContext context) {
         return (context instanceof ConfigurationContext) ||
                (context instanceof ServiceContext) ||
                (context instanceof ServiceGroupContext);
+    }
+
+    public boolean isMessageAcknowledged(String messageUniqueId) throws ClusteringFault {
+        return AckManager.isMessageAcknowledged(messageUniqueId, sender);
     }
 
     public void process(ContextClusteringCommand command) throws ClusteringFault {

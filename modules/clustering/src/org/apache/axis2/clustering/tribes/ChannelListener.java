@@ -16,12 +16,17 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
+import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
 import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
+import org.apache.axis2.clustering.control.GetStateResponseCommand;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +54,10 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
      */
     private Thread messageProcessor;
 
-    public ChannelListener(DefaultConfigurationManager configurationManager,
+    private ConfigurationContext configurationContext;
+
+    public ChannelListener(ConfigurationContext configurationContext,
+                           DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
                            TribesControlCommandProcessor controlCommandProcessor,
                            ChannelSender sender) {
@@ -57,6 +65,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
         this.sender = sender;
+        this.configurationContext = configurationContext;
         startMessageProcessor();
     }
 
@@ -68,12 +77,24 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationManager = configurationManager;
     }
 
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
+    }
+
     public boolean accept(Serializable msg, Member sender) {
         return true;
     }
 
     public void messageReceived(Serializable msg, Member sender) {
-        log.debug("Message received : " + msg);
+
+        // If the system has not still been intialized, reject all incoming messages, except the
+        // GetStateResponseCommand message
+        if (configurationContext.
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
+            && !(msg instanceof GetStateResponseCommand)) {
+            return;
+        }
+        log.debug("RECEIVED MESSAGE " + msg);
         synchronized (cmdQueue) {
             cmdQueue.enqueue(new MemberMessage(msg, sender));
         }
@@ -129,10 +150,16 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                     if (msg instanceof ContextClusteringCommand && contextManager != null) {
                         ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
                         contextManager.process(ctxCmd);
-                        AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
 
-                        // Send the ACK
-                        sender.sendToMember(ackCmd, memberMessage.getSender());
+                        // Sending ACKs for ContextClusteringCommandCollection or
+                        // UpdateContextCommand is sufficient
+                        if (msg instanceof ContextClusteringCommandCollection ||
+                            msg instanceof UpdateContextCommand) {
+                            AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
+
+                            // Send the ACK
+                            sender.sendToMember(ackCmd, memberMessage.getSender());
+                        }
                     } else if (msg instanceof ConfigurationClusteringCommand &&
                                configurationManager != null) {
                         configurationManager.process((ConfigurationClusteringCommand) msg);

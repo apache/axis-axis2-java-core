@@ -35,7 +35,13 @@ public class ReplicationHandler extends AbstractHandler {
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Going to replicate state on invoke");
-        replicateState(msgContext);
+        try {
+            replicateState(msgContext);
+        } catch (Exception e) {
+            System.err.println("###########################");
+            e.printStackTrace();
+            System.err.println("###########################");
+        }
         return InvocationResponse.CONTINUE;
     }
 
@@ -85,10 +91,28 @@ public class ReplicationHandler extends AbstractHandler {
 
             // Do the actual replication here
             if (!contexts.isEmpty()) {
-                contextManager.
+                String msgUUID = contextManager.
                         updateContexts((AbstractContext[]) contexts.
                                 toArray(new AbstractContext[contexts.size()]));
+
+                long start = System.currentTimeMillis();
+
+                // Wait till all members have ACKed receipt & successful processing of
+                // the message with UUID 'msgUUID'
+                while (!contextManager.isMessageAcknowledged(msgUUID)) {
+                    if(System.currentTimeMillis() - start > 20000){
+                        throw new ClusteringFault("ACKs not received from all members within 1 min. " +
+                                                  "Aborting wait.");
+                    }
+                    try {
+                        Thread.sleep(2);
+                    } catch (InterruptedException e) {
+                        log.error(e);
+                        break;
+                    }
+                }
             }
+
         } else {
             String msg = "Cannot replicate contexts since " +
                          "ClusterManager is not specified in the axis2.xml file.";

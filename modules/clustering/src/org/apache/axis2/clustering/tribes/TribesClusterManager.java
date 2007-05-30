@@ -52,6 +52,7 @@ public class TribesClusterManager implements ClusterManager {
     private ManagedChannel channel;
     private ConfigurationContext configurationContext;
     private TribesControlCommandProcessor controlCmdProcessor;
+    private ChannelListener channelListener;
 
     public TribesClusterManager() {
         parameters = new HashMap();
@@ -69,10 +70,11 @@ public class TribesClusterManager implements ClusterManager {
     public void init() throws ClusteringFault {
         ChannelSender sender = new ChannelSender();
 
-        ChannelListener listener = new ChannelListener(configurationManager,
-                                                       contextManager,
-                                                       controlCmdProcessor,
-                                                       sender);
+        channelListener = new ChannelListener(configurationContext,
+                                              configurationManager,
+                                              contextManager,
+                                              controlCmdProcessor,
+                                              sender);
 
         if (configurationManager != null) {
             configurationManager.setSender(sender);
@@ -114,7 +116,7 @@ public class TribesClusterManager implements ClusterManager {
 //            tcpFailureDetector.setPrevious(nbc);
 //            channel.addInterceptor(tcpFailureDetector);
 
-            channel.addChannelListener(listener);
+            channel.addChannelListener(channelListener);
             TribesMembershipListener membershipListener = new TribesMembershipListener();
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
@@ -122,7 +124,7 @@ public class TribesClusterManager implements ClusterManager {
 
             if (contextManager != null) {
                 contextManager.setSender(sender);
-                listener.setContextManager(contextManager);
+                channelListener.setContextManager(contextManager);
 
                 Member[] members = channel.getMembers();
                 TribesUtil.printMembers(members);
@@ -220,5 +222,8 @@ public class TribesClusterManager implements ClusterManager {
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
         controlCmdProcessor.setConfigurationContext(configurationContext);
+        if (channelListener != null) {
+            channelListener.setConfigurationContext(configurationContext);
+        }
     }
 }

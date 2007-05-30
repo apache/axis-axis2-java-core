@@ -15,13 +15,16 @@
  */
 package org.apache.axis2.clustering.control;
 
-import org.apache.axis2.clustering.ClusteringCommand;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.tribes.AckManager;
+import org.apache.axis2.context.ConfigurationContext;
 
 /**
- *  ACK for the message with id <code>uniqueId</code>
+ * ACK for the message with id <code>uniqueId</code>
  */
-public class AckCommand extends ClusteringCommand {
+public class AckCommand extends ControlCommand {
     private String uniqueId;
+    private String memberId;
 
     public AckCommand(String messageUniqueId) {
         this.uniqueId = messageUniqueId;
@@ -31,7 +34,19 @@ public class AckCommand extends ClusteringCommand {
         return uniqueId;
     }
 
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+
     public int getCommandType() {
         return Integer.MAX_VALUE;
+    }
+
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        AckManager.addAcknowledgement(uniqueId, memberId);
+    }
+
+    public String toString() {
+        return "ACK for message with UUID " + uniqueId;
     }
 }

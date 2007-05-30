@@ -59,15 +59,17 @@ public class GetStateCommand extends ControlCommand {
                 if (updateCmd != null) {
                     cmdList.add(updateCmd);
                 }
-                for (Iterator iter2 = sgCtx.getServiceContexts(); iter2.hasNext();) {
-                    ServiceContext serviceCtx = (ServiceContext) iter2.next();
-                    cmdList.add(ContextClusteringCommandFactory.getCreateCommand(serviceCtx));
-                    ContextClusteringCommand updateServiceCtxCmd =
-                            ContextClusteringCommandFactory.getUpdateCommand(serviceCtx,
-                                                                             excludedPropPatterns,
-                                                                             true);
-                    if (updateServiceCtxCmd != null) {
-                        cmdList.add(updateServiceCtxCmd);
+                if (sgCtx.getServiceContexts() != null) {
+                    for (Iterator iter2 = sgCtx.getServiceContexts(); iter2.hasNext();) {
+                        ServiceContext serviceCtx = (ServiceContext) iter2.next();
+                        cmdList.add(ContextClusteringCommandFactory.getCreateCommand(serviceCtx));
+                        ContextClusteringCommand updateServiceCtxCmd =
+                                ContextClusteringCommandFactory.getUpdateCommand(serviceCtx,
+                                                                                 excludedPropPatterns,
+                                                                                 true);
+                        if (updateServiceCtxCmd != null) {
+                            cmdList.add(updateServiceCtxCmd);
+                        }
                     }
                 }
             }

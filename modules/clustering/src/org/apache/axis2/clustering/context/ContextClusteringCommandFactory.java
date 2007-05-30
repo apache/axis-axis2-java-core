@@ -15,14 +15,16 @@
  */
 package org.apache.axis2.clustering.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.clustering.context.commands.*;
+import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.util.UUIDGenerator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,26 @@ import java.util.Map;
 public final class ContextClusteringCommandFactory {
 
     private static final Log log = LogFactory.getLog(ContextClusteringCommandFactory.class);
+
+    public static ContextClusteringCommandCollection
+            getCommandCollection(AbstractContext[] contexts,
+                                 Map excludedReplicationPatterns) {
+
+        ArrayList commands = new ArrayList(contexts.length);
+        ContextClusteringCommandCollection collection =
+                new ContextClusteringCommandCollection(commands);
+        for (int i = 0; i < contexts.length; i++) {
+            ContextClusteringCommand cmd = getUpdateCommand(contexts[i],
+                                                            excludedReplicationPatterns,
+                                                            false);
+            if (cmd != null) {
+                commands.add(cmd);
+            }
+        }
+        collection.setUniqueId(UUIDGenerator.getUUID());
+        AckManager.addInitialAcknowledgement(collection);
+        return collection;
+    }
 
     /**
      * @param context
@@ -82,6 +104,8 @@ public final class ContextClusteringCommandFactory {
         }
         if (cmd != null && ((UpdateContextCommand) cmd).isPropertiesEmpty()) {
             cmd = null;
+        } else {
+            AckManager.addInitialAcknowledgement(cmd);
         }
         context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
         return cmd;
@@ -175,7 +199,7 @@ public final class ContextClusteringCommandFactory {
         if (abstractContext instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
             ServiceGroupContextCommand cmd = new CreateServiceGroupContextCommand();
-            //TODO impl
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             cmd.setServiceGroupContextId(sgCtx.getId());
             return cmd;
@@ -183,6 +207,7 @@ public final class ContextClusteringCommandFactory {
             ServiceContext serviceCtx = (ServiceContext) abstractContext;
             ServiceContextCommand cmd = new CreateServiceContextCommand();
             ServiceGroupContext sgCtx = (ServiceGroupContext) serviceCtx.getParent();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             cmd.setServiceGroupContextId(sgCtx.getId());
             cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             cmd.setServiceName(serviceCtx.getAxisService().getName());
@@ -196,6 +221,7 @@ public final class ContextClusteringCommandFactory {
             ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
             ServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
             // TODO: impl
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             cmd.setServiceGroupContextId(sgCtx.getId());
             return cmd;
@@ -203,6 +229,7 @@ public final class ContextClusteringCommandFactory {
             ServiceContext serviceCtx = (ServiceContext) abstractContext;
             ServiceContextCommand cmd = new DeleteServiceContextCommand();
             // TODO: impl
+            cmd.setUniqueId(UUIDGenerator.getUUID());
             cmd.setServiceGroupName(serviceCtx.getGroupName());
             cmd.setServiceName(serviceCtx.getAxisService().getName());
             return cmd;

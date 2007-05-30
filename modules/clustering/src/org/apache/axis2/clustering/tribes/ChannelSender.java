@@ -22,14 +22,10 @@ import org.apache.axis2.clustering.MessageSender;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class ChannelSender implements MessageSender {
 
     private Channel channel;
-
-    private static final Log log = LogFactory.getLog(ChannelSender.class);
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if(channel == null) return;
@@ -82,14 +78,5 @@ public class ChannelSender implements MessageSender {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
-    }
-
-    private void printMember(Member member) {
-        member.getUniqueId();
-        log.debug("\n===============================");
-        log.debug("Member Name " + member.getName());
-        log.debug("Member Host" + member.getHost());
-        log.debug("Member Payload" + member.getPayload());
-        log.debug("===============================\n");
     }
 }

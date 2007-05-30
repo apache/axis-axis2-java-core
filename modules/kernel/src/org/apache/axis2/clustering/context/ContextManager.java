@@ -30,17 +30,19 @@ public interface ContextManager extends ParameterInclude {
      * This method is called when a new {@link AbstractContext} is added to the system
      *
      * @param context
+     * @return The UUID of the message that was sent to the group communications framework
      * @throws ClusteringFault
      */
-    void addContext(AbstractContext context) throws ClusteringFault;
+    String addContext(AbstractContext context) throws ClusteringFault;
 
     /**
      * This method is called when a new {@link AbstractContext} is removed from the system
      *
      * @param context
+     * @return The UUID of the message that was sent to the group communications framework
      * @throws ClusteringFault
      */
-    void removeContext(AbstractContext context) throws ClusteringFault;
+    String removeContext(AbstractContext context) throws ClusteringFault;
 
     /**
      * This method is called when properties in an {@link AbstractContext} are updated.
@@ -48,9 +50,10 @@ public interface ContextManager extends ParameterInclude {
      * removal of properties.
      *
      * @param context
+     * @return The UUID of the message that was sent to the group communications framework
      * @throws ClusteringFault
      */
-    void updateContext(AbstractContext context) throws ClusteringFault;
+    String updateContext(AbstractContext context) throws ClusteringFault;
 
     /**
      * This method is called when properties in a collection of {@link AbstractContext}s are updated.
@@ -58,17 +61,27 @@ public interface ContextManager extends ParameterInclude {
      * removal of properties.
      *
      * @param contexts
+     * @return The UUID of the message that was sent to the group communications framework
      * @throws ClusteringFault
      */
-    void updateContexts(AbstractContext[] contexts) throws ClusteringFault;
+    String updateContexts(AbstractContext[] contexts) throws ClusteringFault;
 
     /**
-     *
      * @param context
      * @return True - if the provided {@link AbstractContext}  is clusterable
      * @throws ClusteringFault
      */
     boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
+
+    /**
+     * Indicates whether a particular message has been ACKed by all members of a cluster
+     *
+     * @param messageUniqueId
+     * @return true - if all memebers have ACKed the message with ID <code>messageUniqueId</code>
+     *         false - otherwise
+     * @throws ClusteringFault
+     */
+    boolean isMessageAcknowledged(String messageUniqueId) throws ClusteringFault;
 
     /**
      * @param listener
