@@ -31,18 +31,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
@@ -615,7 +604,22 @@ public abstract class AbstractHTTPSender {
                         .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
             }
         } else {
-            httpClient = new HttpClient();
+            HttpConnectionManager connManager =
+                    (HttpConnectionManager) msgContext.getProperty(
+                            HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
+            if(connManager==null){
+                connManager =
+                        new SimpleHttpConnectionManager();
+                msgContext.getConfigurationContext().
+                        setProperty(
+                                HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER,
+                                connManager);
+            }
+            if(msgContext.getOptions().isUseSeparateListener()){
+                httpClient = new HttpClient(connManager);
+            } else {
+                httpClient = new HttpClient(connManager);
+            }
         }
 
         // Get the timeout values set in the runtime

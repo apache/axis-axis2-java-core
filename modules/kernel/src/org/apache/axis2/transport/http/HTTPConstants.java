@@ -434,6 +434,8 @@ public class HTTPConstants {
      */
     public static final String CACHED_HTTP_CLIENT = "CACHED_HTTP_CLIENT";
 
+    public static final String MUTTITHREAD_HTTP_CONNECTION_MANAGER = "MUTTITHREAD_HTTP_CONNECTION_MANAGER";
+
     /**
      * Field CACHED_HTTP_CLIENT
      */

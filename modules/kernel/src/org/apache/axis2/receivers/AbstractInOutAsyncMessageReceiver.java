@@ -40,6 +40,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                         new AxisEngine(messageCtx.getOperationContext().getServiceContext()
                                 .getConfigurationContext());
                 engine.send(result);
+                result.getTransportOut().getSender().cleanup(result);
             }
 
             public void handleFault(AxisFault fault) throws AxisFault {

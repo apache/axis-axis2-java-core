@@ -138,9 +138,7 @@ public abstract class OperationClient {
      *                   client.
      */
     public final void execute(boolean block) throws AxisFault {
-        if (sc.isCachingOperationContext()) {
-            sc.setLastOperationContext(oc);
-        }
+        sc.setLastOperationContext(oc);
         executeImpl(block);
     }
 
