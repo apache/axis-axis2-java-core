@@ -615,8 +615,8 @@ public abstract class AbstractHTTPSender {
                                 HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER,
                                 connManager);
             }
-            if(msgContext.getOptions().isUseSeparateListener()){
-                httpClient = new HttpClient(connManager);
+            if(msgContext.isServerSide()){
+                httpClient = new HttpClient();
             } else {
                 httpClient = new HttpClient(connManager);
             }

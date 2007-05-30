@@ -35,7 +35,6 @@ import java.lang.reflect.Method;
 
 public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
-    private Method method;
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     /**
@@ -57,6 +56,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
 
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
             throws AxisFault {
+        Method method = null;
         try {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
@@ -75,7 +75,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
-                    this.method = methods[i];
+                    method = methods[i];
                     break;
                 }
             }
