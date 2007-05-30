@@ -821,6 +821,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                                                                  mime);
                     input.addChild(inputelement);
                     inputelement.addAttribute("type", "text/xml", null);
+                    inputelement.addAttribute("part", axisOperation.getName()
+                    .getLocalPart(), null);
                     operation.addChild(input);
                 }
             }
@@ -842,6 +844,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                     OMElement outElement = fac.createOMElement("content", mime);
                     outElement.addChild(outElement);
                     outElement.addAttribute("type", "text/xml", null);
+                     outElement.addAttribute("part", axisOperation.getName()
+                    .getLocalPart(), null);
                     output.addChild(outElement);
                     operation.addChild(output);
                 }
