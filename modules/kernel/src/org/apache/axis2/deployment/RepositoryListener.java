@@ -20,6 +20,8 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
@@ -27,18 +29,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
 
 public class RepositoryListener implements DeploymentConstants {
+    protected static final Log log = LogFactory.getLog(RepositoryListener.class);
+
     static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     protected DeploymentEngine deploymentEngine;
     private HashMap directoryToExtensionMappingMap;
-
-    /**
-     * The parent directory of the modules and services directories
-     */
 
     /** Reference to a WSInfoList */
     protected WSInfoList wsInfoList;
@@ -100,6 +102,32 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
     protected void loadClassPathModules() {
+        ModuleDeployer deployer = deploymentEngine.getModuleDeployer();
+
+        /* WORKING (Glen)
+        // Find Modules on the class path (i.e. if classpath includes "addressing.mar" then
+        // addressing will be available for engaging)
+
+        // TODO: Confirm correct class loader
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try {
+            Enumeration moduleURLs = loader.getResources("META-INF/module.xml");
+            while (moduleURLs.hasMoreElements()) {
+                URL url = (URL)moduleURLs.nextElement();
+                String fileName = url.toString();
+                fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
+                System.out.println(fileName);
+                File f = new File(new URI(fileName));
+                System.out.println(f.getAbsolutePath());
+                addFileToDeploy(f, deployer);
+            }
+        } catch (Exception e) {
+            // Oh well, log the problem
+            log.error(e);
+        }
+
+        */
+
         String classPath = getLocation();
 
         if (classPath == null) return;
@@ -118,7 +146,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                        addFileToDeploy(file, deployer);
                     }
                 }
             }
@@ -143,7 +171,7 @@ public class RepositoryListener implements DeploymentConstants {
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
-                            addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                            addFileToDeploy(file, deployer);
                         }
                     }
                 }
@@ -280,7 +308,6 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
     public void updateRemote() throws Exception {
-
         findServicesInDirectory();
         update();
     }

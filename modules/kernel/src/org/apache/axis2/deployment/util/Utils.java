@@ -190,16 +190,39 @@ public class Utils {
         return getClassLoader(parent, new File(path));
     }
 
+    /**
+     * Get a ClassLoader which contains a classpath of a) the passed directory and b) any jar
+     * files inside the "lib/" or "Lib/" subdirectory of the passed directory.
+     *
+     * @param parent parent ClassLoader which will be the parent of the result of this method
+     * @param file a File which must be a directory for this to be useful
+     * @return a new ClassLoader pointing to both the passed dir and jar files under lib/
+     * @throws DeploymentException if problems occur
+     */
     public static ClassLoader getClassLoader(ClassLoader parent, File file)
             throws DeploymentException {
         URLClassLoader classLoader;
 
-        if (file != null) {
-            try {
-                ArrayList urls = new ArrayList();
-                urls.add(file.toURL());
-                // lower case directory name
-                File libfiles = new File(file, "lib");
+        if (file == null) return null; // Shouldn't this just return the parent?
+
+        try {
+            ArrayList urls = new ArrayList();
+            urls.add(file.toURL());
+
+            // lower case directory name
+            File libfiles = new File(file, "lib");
+            if (libfiles.exists()) {
+                urls.add(libfiles.toURL());
+                File jarfiles[] = libfiles.listFiles();
+                for (int i = 0; i < jarfiles.length; i++) {
+                    File jarfile = jarfiles[i];
+                    if (jarfile.getName().endsWith(".jar")) {
+                        urls.add(jarfile.toURL());
+                    }
+                }
+            } else {
+                // upper case directory name
+                libfiles = new File(file, "Lib");
                 if (libfiles.exists()) {
                     urls.add(libfiles.toURL());
                     File jarfiles[] = libfiles.listFiles();
@@ -209,33 +232,18 @@ public class Utils {
                             urls.add(jarfile.toURL());
                         }
                     }
-                } else {
-                    // upper case directory name
-                    libfiles = new File(file, "Lib");
-                    if (libfiles.exists()) {
-                        urls.add(libfiles.toURL());
-                        File jarfiles[] = libfiles.listFiles();
-                        for (int i = 0; i < jarfiles.length; i++) {
-                            File jarfile = jarfiles[i];
-                            if (jarfile.getName().endsWith(".jar")) {
-                                urls.add(jarfile.toURL());
-                            }
-                        }
-                    }
                 }
-
-                URL urllist[] = new URL[urls.size()];
-                for (int i = 0; i < urls.size(); i++) {
-                    urllist[i] = (URL) urls.get(i);
-                }
-                classLoader = new URLClassLoader(urllist, parent);
-                return classLoader;
-            } catch (MalformedURLException e) {
-                throw new DeploymentException(e);
             }
-        }
 
-        return null;
+            URL urllist[] = new URL[urls.size()];
+            for (int i = 0; i < urls.size(); i++) {
+                urllist[i] = (URL) urls.get(i);
+            }
+            classLoader = new URLClassLoader(urllist, parent);
+            return classLoader;
+        } catch (MalformedURLException e) {
+            throw new DeploymentException(e);
+        }
     }
 
     private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {

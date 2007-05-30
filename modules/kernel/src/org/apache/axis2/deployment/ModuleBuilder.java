@@ -83,6 +83,14 @@ public class ModuleBuilder extends DescriptionBuilder {
     public void populateModule() throws DeploymentException {
         try {
             OMElement moduleElement = buildOM();
+
+            OMAttribute nameAtt = moduleElement.getAttribute(new QName("name"));
+            if (nameAtt != null) {
+                String moduleName = nameAtt.getAttributeValue();
+                if (moduleName != null && !"".equals(moduleName))
+                    module.setName(moduleName);
+            }
+
             // Setting Module Class , if it is there
             OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
 
