@@ -16,6 +16,7 @@
 package org.apache.axis2.clustering.control;
 
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.ContextClusteringCommandFactory;
 import org.apache.axis2.clustering.context.ContextManager;
@@ -36,13 +37,11 @@ public class GetStateCommand extends ControlCommand {
     private ContextClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configCtx) throws ClusteringFault {
-
-        //TODO: Method implementation
-        System.err.println("####### Going to send state to Member");
-
-
-        ContextManager contextManager =
-                configCtx.getAxisConfiguration().getClusterManager().getContextManager();
+        ClusterManager clusterManager = configCtx.getAxisConfiguration().getClusterManager();
+        if(clusterManager == null){
+            return;
+        }
+        ContextManager contextManager = clusterManager.getContextManager();
         if (contextManager != null) {
             Map excludedPropPatterns = contextManager.getReplicationExcludePatterns();
             List cmdList = new ArrayList();
