@@ -277,6 +277,7 @@ public class Java2CodeFrame extends JFrame {
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
+                this.secondPanel.fillBean();
                 outputpane.loadCmbCurrentProject();
                 outputpane.loadcmbModuleSrcProject();
                 this.outputpane.setVisible(true);

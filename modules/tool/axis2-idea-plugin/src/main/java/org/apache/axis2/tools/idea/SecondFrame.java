@@ -227,7 +227,7 @@ public class SecondFrame extends JPanel implements ActionListener {
         rdasync .setEnabled(false);
         serverSide .setEnabled(false);
         serverSideInterface .setEnabled(false);
-        serviceXML .setEnabled(false);
+        serviceXML.setEnabled(false);
         all.setEnabled(false);
         table.setEnabled(false);
         spTable.setEnabled(false);
