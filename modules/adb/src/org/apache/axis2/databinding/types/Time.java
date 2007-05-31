@@ -36,7 +36,7 @@ public class Time implements java.io.Serializable {
      * timestamp
      */
     private static SimpleDateFormat zulu =
-            new SimpleDateFormat("HH:mm:ss.SSS'Z'");
+            new SimpleDateFormat("HH:mm:ss.SSSSSSSSS'Z'");
 
     static {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -103,12 +103,12 @@ public class Time implements java.io.Serializable {
                     // i.e this have the ('.'s+) part
                     if (rest.endsWith("Z")) {
                         // this is in gmt time zone
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS'Z'");
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSS'Z'");
                         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
                     } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
                         // this is given in a general time zione
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSz");
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSSz");
                         if (rest.lastIndexOf("+") > 0) {
                             source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
                                     rest.substring(rest.lastIndexOf("+"));
@@ -118,7 +118,7 @@ public class Time implements java.io.Serializable {
                         }
                     } else {
                         // i.e it does not have time zone
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSS");
                     }
 
                 } else {

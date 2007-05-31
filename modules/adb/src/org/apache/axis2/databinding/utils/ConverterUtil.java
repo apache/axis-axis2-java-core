@@ -569,12 +569,12 @@ public class ConverterUtil {
                         // i.e this have the ('.'s+) part
                         if (rest.endsWith("Z")) {
                             // this is in gmt time zone
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
                             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
                         } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
                             // this is given in a general time zione
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSz");
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSz");
                             if (rest.lastIndexOf("+") > 0) {
                                 source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
                                         rest.substring(rest.lastIndexOf("+"));
@@ -585,7 +585,7 @@ public class ConverterUtil {
 
                         } else {
                             // i.e it does not have time zone
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
                         }
 
                     } else {
