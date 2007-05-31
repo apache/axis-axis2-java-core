@@ -28,11 +28,10 @@ public class EndpointDispatcherFactory {
 
     public EndpointDispatcherFactory() {
         super();
-
     }
 
-    public static EndpointDispatcher createEndpointDispatcher(Class serviceImplClass,
-                                                              Object serviceInstance) {
+    public EndpointDispatcher createEndpointDispatcher(Class serviceImplClass,
+                                                       Object serviceInstance) {
         //		 TODO:  This check should be based on the EndpointDescription processing of annotations
         //        It is left this way for now because some tests have an @WebService annotation on
         //        Provider-based endpoints as a pre-existing workaround.

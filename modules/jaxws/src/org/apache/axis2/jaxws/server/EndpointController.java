@@ -213,8 +213,9 @@ public class EndpointController {
       */
     private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
             throws Exception {
-        return EndpointDispatcherFactory
-                .createEndpointDispatcher(serviceImplClass, serviceInstance);
+        EndpointDispatcherFactory factory = 
+            (EndpointDispatcherFactory)FactoryRegistry.getFactory(EndpointDispatcherFactory.class);        
+        return factory.createEndpointDispatcher(serviceImplClass, serviceInstance);       
     }
 
     /*
