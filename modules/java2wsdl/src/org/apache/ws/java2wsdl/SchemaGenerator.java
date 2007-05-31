@@ -501,10 +501,11 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             if (isArryType && (!propertyName.equals("base64Binary"))){
                 elt1.setMaxOccurs(Long.MAX_VALUE);
-                elt1.setMinOccurs(1);
             }
-            if(type.isPrimitiveType() == false)
+            elt1.setMinOccurs(0) ;
+            if(type.isPrimitiveType() == false) {
                elt1.setNillable(true) ;
+            }
         } else {
             if (isArryType) {
                 generateSchema(type.getArrayComponentType());
@@ -517,8 +518,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
             sequence.getItems().add(elt1);
             if (isArryType) {
                 elt1.setMaxOccurs(Long.MAX_VALUE);
-                elt1.setMinOccurs(1);
             }
+            elt1.setMinOccurs(0);
             elt1.setNillable(true);
 
             if (!((NamespaceMap)xmlSchema.getNamespaceContext()).values().
@@ -592,8 +593,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
-            elt1.setMinOccurs(0);
         }
+        elt1.setMinOccurs(0);
         elt1.setNillable(true);
     }
 
