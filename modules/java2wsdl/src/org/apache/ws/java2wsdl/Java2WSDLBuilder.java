@@ -5,7 +5,6 @@ import org.apache.axiom.om.OMElement;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -50,6 +49,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     
     private String nsGenClassName = null;
     private Map pkg2nsMap = null;
+    private boolean pretty = true;
 
     public String getSchemaTargetNamespace() throws Exception {
         if ( schemaTargetNamespace == null ) {
@@ -182,7 +182,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         java2OMBuilder.setSchemaTargetNamespace(getSchemaTargetNamespace());
         java2OMBuilder.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
         OMElement wsdlElement = java2OMBuilder.generateOM();
-        wsdlElement.serialize(out);
+        if(!isPretty()){
+            wsdlElement.serialize(out);
+        } else {
+            Java2WSDLUtils.prettyPrint(wsdlElement, out);
+        }
         out.flush();
         out.close();
     }
@@ -237,6 +241,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         
         return nsGen;
     }
-    
+
+    public boolean isPretty() {
+        return pretty;
+    }
+
+    public void setPretty(boolean pretty) {
+        this.pretty = pretty;
+    }
 }
 
