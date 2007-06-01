@@ -363,7 +363,6 @@ public class BeanUtil {
                     PropertyDescriptor proprty = propDescs[i];
                     properties.put(proprty.getName(), proprty);
                 }
-                 beanObj = objectSupplier.getObject(beanClass);
                 boolean tuched = false;
                 Iterator elements = beanElement.getChildren();
                 while (elements.hasNext()) {
