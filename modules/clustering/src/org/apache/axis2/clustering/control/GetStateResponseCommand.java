@@ -28,6 +28,8 @@ public class GetStateResponseCommand extends ControlCommand {
     private ContextClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+
+        // Run this code only if this node is not already initialized
         if (configurationContext.
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
             configurationContext.

@@ -157,7 +157,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     public OperationContext createOperationContext(AxisOperation axisOp) {
         OperationContext ctx = new OperationContext(axisOp, this);
-        configContext.contextCreated(ctx);
         return ctx;
     }
 

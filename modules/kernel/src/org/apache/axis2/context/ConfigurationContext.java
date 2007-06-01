@@ -150,14 +150,6 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContext = cfgCtx.createServiceGroupContext(axisServiceGroup);
                     applicationSessionServiceGroupContexts
                             .put(serviceGroupName, serviceGroupContext);
-
-                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
-                    if (clusterManager != null) {
-                        ContextManager contextManager = clusterManager.getContextManager();
-                        if (contextManager != null) {
-                            contextManager.addContext(serviceGroupContext);
-                        }
-                    }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
@@ -174,7 +166,7 @@ public class ConfigurationContext extends AbstractContext {
                         serviceGroupContext = new ServiceGroupContext(this,
                                                                       (AxisServiceGroup) axisService.getParent());
                         serviceGroupContext.setId(serviceGroupContextId);
-                        registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
+                        addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
 //                        throw new AxisFault("Unable to find corresponding context" +
 //                                            " for the serviceGroupId: " + serviceGroupContextId);
                     }
@@ -185,16 +177,8 @@ public class ConfigurationContext extends AbstractContext {
                     // set the serviceGroupContextID
                     serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
-
-                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
-                    if (clusterManager != null) {
-                        ContextManager contextManager = clusterManager.getContextManager();
-                        if (contextManager != null) {
-                            contextManager.addContext(serviceGroupContext);
-                        }
-                    }
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
-                    registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
+                    addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
@@ -244,8 +228,7 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void registerServiceGroupContextintoSoapSessionTable(
-            ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextIntoSoapSessionTable(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
         serviceGroupContextMap.put(id, serviceGroupContext);
         serviceGroupContext.touch();
@@ -254,8 +237,7 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    public void addServiceGroupContextintoApplicatoionScopeTable(
-            ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextIntoApplicationScopeTable(ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContexts == null) {
             applicationSessionServiceGroupContexts = new Hashtable();
         }
@@ -338,45 +320,13 @@ public class ConfigurationContext extends AbstractContext {
         return null;
     }
 
-    protected ArrayList contextListeners;
-
-    /**
-     * Register a ContextListener to be notified of all sub-context creation events.
-     * Note that we currently only support a single listener.
-     *
-     * @param contextListener a ContextListener
-     */
-    public void registerContextListener(ContextListener contextListener) {
-        if (contextListeners == null) {
-            contextListeners = new ArrayList();
-        }
-        contextListeners.add(contextListener);
-    }
-
-    /**
-     * Inform any listeners of a new context
-     *
-     * @param context the just-created subcontext
-     */
-    void contextCreated(AbstractContext context) {
-        if (contextListeners == null) {
-            return;
-        }
-        for (Iterator i = contextListeners.iterator(); i.hasNext();) {
-            ContextListener listener = (ContextListener) i.next();
-            listener.contextCreated(context);
-        }
-    }
-
     /**
      * Create a MessageContext, and notify any registered ContextListener.
      *
      * @return a new MessageContext
      */
     public MessageContext createMessageContext() {
-        MessageContext msgCtx = new MessageContext(this);
-        contextCreated(msgCtx);
-        return msgCtx;
+        return new MessageContext(this);
     }
 
     /**
@@ -387,9 +337,7 @@ public class ConfigurationContext extends AbstractContext {
      * @return a new ServiceGroupContext
      */
     public ServiceGroupContext createServiceGroupContext(AxisServiceGroup serviceGroup) {
-        ServiceGroupContext sgCtx = new ServiceGroupContext(this, serviceGroup);
-        contextCreated(sgCtx);
-        return sgCtx;
+        return new ServiceGroupContext(this, serviceGroup);
     }
 
     /**
@@ -457,7 +405,27 @@ public class ConfigurationContext extends AbstractContext {
      *
      * @return Returns hashmap of ServiceGroupContexts.
      */
-    public Hashtable getServiceGroupContexts() {
+    public String[] getServiceGroupContextIDs() {
+        String[] ids = new String[serviceGroupContextMap.size() +
+                                  applicationSessionServiceGroupContexts.size()];
+        int index =0;
+        for (Iterator iter = serviceGroupContextMap.keySet().iterator(); iter.hasNext();) {
+            ids[index] = (String)iter.next();
+            index ++;
+        }
+        for (Iterator iter = applicationSessionServiceGroupContexts.keySet().iterator();
+             iter.hasNext();) {
+            ids[index] = (String)iter.next();
+            index ++;
+        }
+        return ids;
+    }
+
+    /**
+     * @deprecated Use {@link #getServiceGroupContextIDs} & {@link #getServiceGroupContext(String)}
+     * @return The ServiceGroupContexts
+     */
+    public Hashtable getServiceGroupContexts(){
         return serviceGroupContextMap;
     }
 
@@ -557,8 +525,7 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void terminate()
-            throws AxisFault {
+    public void terminate() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.stop();
         }
@@ -643,13 +610,10 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContextMap.remove(s);
                 }
             }
-
         }
     }
 
     public ConfigurationContext getRootContext() {
         return this;
     }
-
-
 }

@@ -19,10 +19,9 @@ package org.apache.axis2.clustering.context;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.MessageSender;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.clustering.tribes.ChannelSender;
-import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -49,19 +48,7 @@ public class DefaultContextManager implements ContextManager {
 
     public DefaultContextManager() {
     }
-
-    public String addContext(final AbstractContext context) throws ClusteringFault {
-//        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getCreateCommand(context);
-//        processor.process(cmd);
-        return null;
-    }
-
-    public String removeContext(AbstractContext context) throws ClusteringFault {
-//        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
-//        processor.process(cmd);
-        return null;
-    }
-
+    
     public String updateContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand cmd =
                 ContextClusteringCommandFactory.getUpdateCommand(context,

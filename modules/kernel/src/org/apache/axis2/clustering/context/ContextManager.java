@@ -27,24 +27,6 @@ import java.util.Map;
 public interface ContextManager extends ParameterInclude {
 
     /**
-     * This method is called when a new {@link AbstractContext} is added to the system
-     *
-     * @param context
-     * @return The UUID of the message that was sent to the group communications framework
-     * @throws ClusteringFault
-     */
-    String addContext(AbstractContext context) throws ClusteringFault;
-
-    /**
-     * This method is called when a new {@link AbstractContext} is removed from the system
-     *
-     * @param context
-     * @return The UUID of the message that was sent to the group communications framework
-     * @throws ClusteringFault
-     */
-    String removeContext(AbstractContext context) throws ClusteringFault;
-
-    /**
      * This method is called when properties in an {@link AbstractContext} are updated.
      * This could be addition of new properties, modifications of existing properties or
      * removal of properties.

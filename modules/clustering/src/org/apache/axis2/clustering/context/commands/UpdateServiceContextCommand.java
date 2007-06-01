@@ -47,7 +47,7 @@ public class UpdateServiceContextCommand
             try {
                 AxisService axisService =
                         configurationContext.getAxisConfiguration().getService(serviceName);
-                ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService);
                 propertyUpdater.updateProperties(serviceContext);
             } catch (AxisFault e) {
                 throw new ClusteringFault(e);
@@ -68,14 +68,14 @@ public class UpdateServiceContextCommand
                 sgCtx.setId(serviceGroupContextId);
                 if (scope.equals(Constants.SCOPE_APPLICATION)) {
                     configurationContext.
-                            addServiceGroupContextintoApplicatoionScopeTable(sgCtx);
+                            addServiceGroupContextIntoApplicationScopeTable(sgCtx);
                 } else if (scope.equals(Constants.SCOPE_SOAP_SESSION)) {
                     configurationContext.
-                            registerServiceGroupContextintoSoapSessionTable(sgCtx);
+                            addServiceGroupContextIntoSoapSessionTable(sgCtx);
                 }
             }
             try {
-                ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService);
                 propertyUpdater.updateProperties(serviceContext);
             } catch (AxisFault axisFault) {
                 throw new ClusteringFault(axisFault);

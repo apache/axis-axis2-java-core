@@ -47,22 +47,19 @@ public class GetStateCommand extends ControlCommand {
             List cmdList = new ArrayList();
 
             // Add the service group contexts, service contexts & their respective properties
-            for (Iterator iter = configCtx.getServiceGroupContexts().keySet().iterator();
-                 iter.hasNext();) {
-                String id = (String) iter.next();
-                ServiceGroupContext sgCtx = configCtx.getServiceGroupContext(id);
-                cmdList.add(ContextClusteringCommandFactory.getCreateCommand(sgCtx));
-                ContextClusteringCommand updateCmd =
+            String[] sgCtxIDs = configCtx.getServiceGroupContextIDs();
+            for (int i  = 0; i < sgCtxIDs.length; i ++) {
+                ServiceGroupContext sgCtx = configCtx.getServiceGroupContext(sgCtxIDs[i]);
+                ContextClusteringCommand updateServiceGroupCtxCmd =
                         ContextClusteringCommandFactory.getUpdateCommand(sgCtx,
                                                                          excludedPropPatterns,
                                                                          true);
-                if (updateCmd != null) {
-                    cmdList.add(updateCmd);
+                if (updateServiceGroupCtxCmd != null) {
+                    cmdList.add(updateServiceGroupCtxCmd);
                 }
                 if (sgCtx.getServiceContexts() != null) {
                     for (Iterator iter2 = sgCtx.getServiceContexts(); iter2.hasNext();) {
                         ServiceContext serviceCtx = (ServiceContext) iter2.next();
-                        cmdList.add(ContextClusteringCommandFactory.getCreateCommand(serviceCtx));
                         ContextClusteringCommand updateServiceCtxCmd =
                                 ContextClusteringCommandFactory.getUpdateCommand(serviceCtx,
                                                                                  excludedPropPatterns,

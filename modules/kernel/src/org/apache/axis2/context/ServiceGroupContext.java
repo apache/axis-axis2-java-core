@@ -19,8 +19,6 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -132,18 +130,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * @throws AxisFault if something goes wrong
      */
     public ServiceContext getServiceContext(AxisService service) throws AxisFault {
-        return getServiceContext(service, true);
-    }
-
-    /**
-     * @param service
-     * @param replicate Indicates whether the newly created ServiceContext
-     *                  has to be replicated across the cluster
-     * @return
-     * @throws AxisFault
-     */
-    public ServiceContext getServiceContext(AxisService service,
-                                            boolean replicate) throws AxisFault {
         AxisService axisService = axisServiceGroup.getService(service.getName());
         if (axisService == null) {
             throw new AxisFault(Messages.getMessage("invalidserviceinagroup",
@@ -156,19 +142,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
         if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
-            getRootContext().contextCreated(serviceContext);
             serviceContextMap.put(service.getName(), serviceContext);
-
-            if (replicate) {
-                ClusterManager clusterManager =
-                        axisService.getAxisConfiguration().getClusterManager();
-                if (clusterManager != null) {
-                    ContextManager contextManager = clusterManager.getContextManager();
-                    if (contextManager != null) {
-                        contextManager.addContext(serviceContext);
-                    }
-                }
-            }
         }
         return serviceContext;
     }
@@ -492,7 +466,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         this.setParent(cc);
 
         // register with the parent
-        cc.registerServiceGroupContextintoSoapSessionTable(this);
+        cc.addServiceGroupContextIntoSoapSessionTable(this);
 
         //-------------------------------------------------------
         // done, reset the flag

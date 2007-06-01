@@ -43,7 +43,7 @@ public class UpdateServiceGroupContextCommand
                             .getServiceGroup(serviceGroupName);
             sgCtx = new ServiceGroupContext(configContext, axisServiceGroup);
             sgCtx.setId(serviceGroupContextId);
-            configContext.registerServiceGroupContextintoSoapSessionTable(sgCtx);  // TODO: Check this
+            configContext.addServiceGroupContextIntoSoapSessionTable(sgCtx);  // TODO: Check this
         }
         System.err.println("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
         propertyUpdater.updateProperties(sgCtx);

@@ -197,46 +197,4 @@ public final class ContextClusteringCommandFactory {
         }
         return false;
     }
-
-    public static ContextClusteringCommand getCreateCommand(AbstractContext abstractContext) {
-        if (abstractContext instanceof ServiceGroupContext) {
-            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
-            ServiceGroupContextCommand cmd = new CreateServiceGroupContextCommand();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            return cmd;
-        } else if (abstractContext instanceof ServiceContext) {
-            ServiceContext serviceCtx = (ServiceContext) abstractContext;
-            ServiceContextCommand cmd = new CreateServiceContextCommand();
-            ServiceGroupContext sgCtx = (ServiceGroupContext) serviceCtx.getParent();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceName(serviceCtx.getAxisService().getName());
-            return cmd;
-        }
-        return null;
-    }
-
-    public static ContextClusteringCommand getRemoveCommand(AbstractContext abstractContext) {
-        if (abstractContext instanceof ServiceGroupContext) {
-            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
-            ServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
-            // TODO: impl
-            cmd.setUniqueId(UUIDGenerator.getUUID());
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            return cmd;
-        } else if (abstractContext instanceof ServiceContext) {
-            ServiceContext serviceCtx = (ServiceContext) abstractContext;
-            ServiceContextCommand cmd = new DeleteServiceContextCommand();
-            // TODO: impl
-            cmd.setUniqueId(UUIDGenerator.getUUID());
-            cmd.setServiceGroupName(serviceCtx.getGroupName());
-            cmd.setServiceName(serviceCtx.getAxisService().getName());
-            return cmd;
-        }
-        return null;
-    }
 }
