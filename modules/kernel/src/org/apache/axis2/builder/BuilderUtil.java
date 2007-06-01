@@ -84,27 +84,13 @@ public class BuilderUtil {
             xmlSchemaElement = axisMessage.getSchemaElement();
 
         if (xmlSchemaElement == null) {
+            OMElement bodyFirstChild =
+                            soapFactory.createOMElement(messageContext.getAxisOperation().getName(), body);
+
             // if there is no schema its piece of cake !! add these to the soap body in any order you like.
             // Note : if there are parameters in the path of the URL, there is no way this can add them
             // to the message.
-            OMElement bodyFirstChild =
-                    soapFactory.createOMElement(messageContext.getAxisOperation().getName(), body);
-
-            // first add the parameters in the URL
-            if (requestParameterMap != null) {
-                Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
-                while (requestParamMapIter.hasNext()) {
-                    String key = (String) requestParamMapIter.next();
-                    String value = (String) requestParameterMap.get(key);
-                    if (value != null) {
-                        soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
-                         if (value != null) {
-                               soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
-                         }
-                    }
-
-                }
-            }
+            createSOAPMessageWithoutSchema(soapFactory, messageContext, bodyFirstChild, requestParameterMap);
         } else {
 
             // first get the target namespace from the schema and the wrapping element.
@@ -134,6 +120,10 @@ public class BuilderUtil {
                     while (iterator.hasNext()) {
                         XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
                         QName qName = innerElement.getQName();
+                        if (qName ==null && innerElement.getSchemaTypeName().equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                            createSOAPMessageWithoutSchema(soapFactory, messageContext, bodyFirstChild, requestParameterMap);
+                            break;
+                        }
                         long minOccurs = innerElement.getMinOccurs();
                         boolean nillable = innerElement.isNillable();
                         String name =
@@ -173,6 +163,24 @@ public class BuilderUtil {
         }
     }
         return soapEnvelope;
+    }
+
+    private static void createSOAPMessageWithoutSchema(SOAPFactory soapFactory,
+                                                       MessageContext messageContext, OMElement bodyFirstChild,
+                                                       MultipleEntryHashMap requestParameterMap) {
+
+        // first add the parameters in the URL
+        if (requestParameterMap != null) {
+            Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
+            while (requestParamMapIter.hasNext()) {
+                String key = (String) requestParamMapIter.next();
+                String value = (String) requestParameterMap.get(key);
+                if (value != null) {
+                    soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                }
+
+            }
+        }
     }
 
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc)
