@@ -37,7 +37,6 @@ public final class AckManager {
 
     public static void addAcknowledgement(String messageUniqueId,
                                           String memberId) {
-        System.err.println("######### Added ACK for msg " + messageUniqueId + " from member " + memberId);
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         if (ack != null) {
             List memberList = ack.getMemberList();
@@ -47,7 +46,6 @@ public final class AckManager {
 
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
-        System.err.println("########## Call to isMessageAcknowledged for msg UUID " + messageUniqueId);
         boolean isAcknowledged = false;
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         List memberList = ack.getMemberList();
@@ -55,17 +53,21 @@ public final class AckManager {
         // Check that all members in the memberList are same as the total member list,
         // which will indicate that all members have ACKed the message
         Member[] members = sender.getChannel().getMembers();
-        for (int i = 0; i < members.length; i++) {
-            Member member = members[i];
-            if (!memberList.contains(member.getName())) {
+        if (members.length == 0) {
+            isAcknowledged = true;
+        } else {
+            for (int i = 0; i < members.length; i++) {
+                Member member = members[i];
+                if (!memberList.contains(member.getName())) {
 
-                // At this point, resend the original message back to the node which has not
-                // sent an ACK
-                sender.sendToMember(ack.getCommand(), member);
-                isAcknowledged = false;
-                break;
-            } else {
-                isAcknowledged = true;
+                    // At this point, resend the original message back to the node which has not
+                    // sent an ACK
+                    sender.sendToMember(ack.getCommand(), member);
+                    isAcknowledged = false;
+                    break;
+                } else {
+                    isAcknowledged = true;
+                }
             }
         }
 

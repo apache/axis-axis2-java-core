@@ -123,31 +123,35 @@ public final class ContextClusteringCommandFactory {
                                        boolean includeAllProperties) {
         if (!includeAllProperties) {
             Map diffs = context.getPropertyDifferences();
-            for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                String key = (String) iter.next();
-                Object prop = context.getPropertyNonReplicable(key);
-                if (prop instanceof Serializable) { // First check whether it is serializable
+            synchronized (context) {
+                for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    Object prop = context.getPropertyNonReplicable(key);
+                    if (prop instanceof Serializable) { // First check whether it is serializable
 
-                    // Next check whether it matches an excluded pattern
-                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                        log.debug("sending property =" + key + "-" + prop);
-                        PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                        diff.setValue(prop);
-                        updateCmd.addProperty(diff);
+                        // Next check whether it matches an excluded pattern
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                            log.debug("sending property =" + key + "-" + prop);
+                            PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                            diff.setValue(prop);
+                            updateCmd.addProperty(diff);
+                        }
                     }
                 }
             }
         } else {
-            for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
-                String key = (String) iter.next();
-                Object prop = context.getPropertyNonReplicable(key);
-                if (prop instanceof Serializable) { // First check whether it is serializable
+            synchronized (context) {
+                for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    Object prop = context.getPropertyNonReplicable(key);
+                    if (prop instanceof Serializable) { // First check whether it is serializable
 
-                    // Next check whether it matches an excluded pattern
-                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                        log.debug("sending property =" + key + "-" + prop);
-                        PropertyDifference diff = new PropertyDifference(key, prop, false);
-                        updateCmd.addProperty(diff);
+                        // Next check whether it matches an excluded pattern
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                            log.debug("sending property =" + key + "-" + prop);
+                            PropertyDifference diff = new PropertyDifference(key, prop, false);
+                            updateCmd.addProperty(diff);
+                        }
                     }
                 }
             }

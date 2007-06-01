@@ -39,7 +39,7 @@ public class TribesUtil {
                             host = host == null ? ("" + hostBts[j]) : (host + "." + hostBts[j]);
                         }
                     }
-                    log.info("Member " + (i + 1) + " " + members[i].getName());
+                    log.info("Member" + (i + 1) + " " + members[i].getName());
                 }
             } else {
                 log.info("No members in current cluster");
