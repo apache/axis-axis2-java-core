@@ -83,14 +83,6 @@ public class ModuleBuilder extends DescriptionBuilder {
     public void populateModule() throws DeploymentException {
         try {
             OMElement moduleElement = buildOM();
-
-            OMAttribute nameAtt = moduleElement.getAttribute(new QName("name"));
-            if (nameAtt != null) {
-                String moduleName = nameAtt.getAttributeValue();
-                if (moduleName != null && !"".equals(moduleName))
-                    module.setName(moduleName);
-            }
-
             // Setting Module Class , if it is there
             OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
 
@@ -289,7 +281,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null && policyRefElements.hasNext()) {
+            if (policyRefElements != null && policyElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyRefElements, module.getPolicyInclude());
             }
 
