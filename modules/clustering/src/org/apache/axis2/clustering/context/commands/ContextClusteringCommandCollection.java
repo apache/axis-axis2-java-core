@@ -40,8 +40,4 @@ public class ContextClusteringCommandCollection extends ContextClusteringCommand
             }
         }
     }
-
-    public int getCommandType() {
-        return CONTEXT_COMMAND_COLLECTION;
-    }
 }

@@ -21,16 +21,37 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 
 /**
  * 
  */
-public class UpdateServiceGroupContextCommand
-        extends ServiceGroupContextCommand implements UpdateContextCommand {
+public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
 
+    private static Log log = LogFactory.getLog(UpdateServiceGroupContextCommand.class);
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
+
+    protected String serviceGroupName;
+    protected String serviceGroupContextId;
+
+    public String getServiceGroupName() {
+        return serviceGroupName;
+    }
+
+    public void setServiceGroupName(String serviceGroupName) {
+        this.serviceGroupName = serviceGroupName;
+    }
+
+    public String getServiceGroupContextId() {
+        return serviceGroupContextId;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
         ServiceGroupContext sgCtx =
@@ -45,12 +66,8 @@ public class UpdateServiceGroupContextCommand
             sgCtx.setId(serviceGroupContextId);
             configContext.addServiceGroupContextIntoSoapSessionTable(sgCtx);  // TODO: Check this
         }
-        System.err.println("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
+        log.debug("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
         propertyUpdater.updateProperties(sgCtx);
-    }
-
-    public int getCommandType() {
-        return UPDATE_SERVICE_GROUP_CONTEXT;
     }
 
     public boolean isPropertiesEmpty() {

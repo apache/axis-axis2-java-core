@@ -37,6 +37,13 @@ public abstract class ConfigurationClusteringCommand extends ClusteringCommand {
     public static final int ROLLBACK = 7;
 
     /**
+     * Get the command type
+     * 
+     * @return The command type
+     */
+    public abstract int getCommandType();
+
+    /**
      * Process the <code>event</event>. The implementer of this interface will
      * need to cache the outcome of this processing.
      *

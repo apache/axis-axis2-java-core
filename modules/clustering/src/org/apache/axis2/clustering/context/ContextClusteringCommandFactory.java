@@ -67,44 +67,36 @@ public final class ContextClusteringCommandFactory {
                                                             Map excludedPropertyPatterns,
                                                             boolean includeAllProperties) {
 
-        ContextClusteringCommand cmd = null;
+        UpdateContextCommand cmd = null;
         if (context instanceof ConfigurationContext) {
             cmd = new UpdateConfigurationContextCommand();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
-            fillProperties((UpdateContextCommand) cmd,
-                           context,
-                           excludedPropertyPatterns,
-                           includeAllProperties);
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
             cmd = new UpdateServiceGroupContextCommand();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
             UpdateServiceGroupContextCommand updateSgCmd = (UpdateServiceGroupContextCommand) cmd;
             updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
-            fillProperties((UpdateContextCommand) cmd,
-                           context,
-                           excludedPropertyPatterns,
-                           includeAllProperties);
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
             cmd = new UpdateServiceContextCommand();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
             UpdateServiceContextCommand updateServiceCmd = (UpdateServiceContextCommand) cmd;
             String sgName =
                     serviceCtx.getServiceGroupContext().getDescription().getServiceGroupName();
             updateServiceCmd.setServiceGroupName(sgName);
             updateServiceCmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
-            fillProperties((UpdateContextCommand) cmd,
+        }
+        if (cmd != null) {
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            fillProperties(cmd,
                            context,
                            excludedPropertyPatterns,
                            includeAllProperties);
-        }
-        if (cmd != null && ((UpdateContextCommand) cmd).isPropertiesEmpty()) {
-            cmd = null;
-        } else {
-            AckManager.addInitialAcknowledgement(cmd);
+            if (cmd.isPropertiesEmpty()) {
+                cmd = null;
+            } else {
+                AckManager.addInitialAcknowledgement(cmd);
+            }
         }
         context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
         return cmd;
@@ -130,7 +122,8 @@ public final class ContextClusteringCommandFactory {
                     if (prop instanceof Serializable) { // First check whether it is serializable
 
                         // Next check whether it matches an excluded pattern
-                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns))
+                        {
                             log.debug("sending property =" + key + "-" + prop);
                             PropertyDifference diff = (PropertyDifference) diffs.get(key);
                             diff.setValue(prop);
@@ -147,7 +140,8 @@ public final class ContextClusteringCommandFactory {
                     if (prop instanceof Serializable) { // First check whether it is serializable
 
                         // Next check whether it matches an excluded pattern
-                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns))
+                        {
                             log.debug("sending property =" + key + "-" + prop);
                             PropertyDifference diff = new PropertyDifference(key, prop, false);
                             updateCmd.addProperty(diff);

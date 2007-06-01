@@ -26,17 +26,12 @@ import java.util.HashMap;
 /**
  * 
  */
-public class UpdateConfigurationContextCommand
-        extends ContextClusteringCommand implements UpdateContextCommand {
+public class UpdateConfigurationContextCommand extends UpdateContextCommand {
 
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         propertyUpdater.updateProperties(configurationContext);
-    }
-
-    public int getCommandType() {
-        return UPDATE_CONFIGURATION_CONTEXT;
     }
 
     public boolean isPropertiesEmpty(){

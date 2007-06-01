@@ -22,16 +22,6 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public abstract class ContextClusteringCommand extends ClusteringCommand {
 
-    public static final int CREATE_SERVICE_GROUP_CONTEXT = 0;
-    public static final int CREATE_SERVICE_CONTEXT = 1;
-    public static final int CREATE_SESSION_CONTEXT = 2;
-    public static final int UPDATE_SERVICE_GROUP_CONTEXT = 3;
-    public static final int UPDATE_SERVICE_CONTEXT = 4;
-    public static final int CONTEXT_COMMAND_COLLECTION = 5;
-    public static final int UPDATE_CONFIGURATION_CONTEXT = 6;
-    public static final int DELETE_SERVICE_GROUP_CONTEXT = 7;
-    public static final int DELETE_SERVICE_CONTEXT = 8;
-
     private String uniqueId;
 
     public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;

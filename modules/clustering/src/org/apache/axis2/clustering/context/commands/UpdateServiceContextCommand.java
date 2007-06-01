@@ -32,12 +32,26 @@ import java.util.HashMap;
 /**
  * 
  */
-public class UpdateServiceContextCommand
-        extends ServiceContextCommand implements UpdateContextCommand {
+public class UpdateServiceContextCommand extends UpdateContextCommand {
 
     private static final Log log = LogFactory.getLog(UpdateServiceContextCommand.class);
 
     private PropertyUpdater propertyUpdater = new PropertyUpdater();
+    protected String serviceGroupName;
+    protected String serviceGroupContextId;
+    protected String serviceName;
+
+    public void setServiceGroupName(String serviceGroupName) {
+        this.serviceGroupName = serviceGroupName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         log.debug("Updating service context properties...");
@@ -89,10 +103,6 @@ public class UpdateServiceContextCommand
             return true;
         }
         return propertyUpdater.getProperties().isEmpty();
-    }
-
-    public int getCommandType() {
-        return UPDATE_SERVICE_CONTEXT;
     }
 
     public void addProperty(PropertyDifference diff) {

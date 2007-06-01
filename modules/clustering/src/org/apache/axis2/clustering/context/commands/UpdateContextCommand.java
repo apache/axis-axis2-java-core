@@ -15,15 +15,15 @@
  */
 package org.apache.axis2.clustering.context.commands;
 
+import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.context.PropertyDifference;
-
-import java.io.Serializable;
 
 /**
  * 
  */
-public interface UpdateContextCommand extends Serializable {
-    void addProperty(PropertyDifference diff);
+public abstract class UpdateContextCommand extends ContextClusteringCommand {
+    public abstract void addProperty(PropertyDifference diff);
+    
 
-    boolean isPropertiesEmpty();
+    public abstract boolean isPropertiesEmpty();
 }

@@ -26,18 +26,6 @@ public class DefaultContextManagerListener implements ContextManagerListener {
     private ConfigurationContext configurationContext;
     private static final Log log = LogFactory.getLog(DefaultContextManagerListener.class);
 
-    public void contextAdded(ContextClusteringCommand message) throws ClusteringFault {
-        log.debug("Enter: DefaultContextManagerListener::contextAdded");
-        message.execute(configurationContext);
-        log.debug("Exit: DefaultContextManagerListener::contextAdded");
-    }
-
-    public void contextRemoved(ContextClusteringCommand message) throws ClusteringFault {
-        log.debug("Enter: DefaultContextManagerListener::contextRemoved");
-        message.execute(configurationContext);
-        log.debug("Exit: DefaultContextManagerListener::contextRemoved");
-    }
-
     public void contextUpdated(ContextClusteringCommand message) throws ClusteringFault {
         log.debug("Enter: DefaultContextManagerListener::contextRemoved");
         message.execute(configurationContext);
