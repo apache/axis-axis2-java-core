@@ -50,7 +50,7 @@ import java.util.Map;
  *
  */
 
-public class AxisService2OM implements Java2WSDLConstants {
+public class AxisService2WSDL11 implements Java2WSDLConstants {
 
     private AxisService axisService;
 
@@ -72,9 +72,9 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private OMNamespace wsdl;
 
-    private String style;
+    private String style = DOCUMENT;
 
-    private String use;
+    private String use = LITERAL;
 
     private String servicePath;
 
@@ -84,26 +84,17 @@ public class AxisService2OM implements Java2WSDLConstants {
 
     private HashMap messagesMap;
 
-    public AxisService2OM(AxisService service, String[] serviceEndpointURLs,
-                          String style, String use, String servicePath) {
+    public AxisService2WSDL11(AxisService service) throws Exception {
         this.axisService = service;
 
         // the EPR list of AxisService contains REST EPRs as well. Those REST EPRs will be used to generated HTTPBinding
         // and rest of the EPRs will be used to generate SOAP 1.1 and 1.2 bindings. Let's first initialize those set of
         // EPRs now to be used later, especially when we generate the WSDL.
-        this.serviceEndpointURLs = serviceEndpointURLs;
+        serviceEndpointURLs = service.getEPRs();
+        if (serviceEndpointURLs == null) {
+            serviceEndpointURLs = new String[]{service.getEndpointName()};
+        }
 
-        if (style == null) {
-            this.style = DOCUMENT;
-        } else {
-            this.style = style;
-        }
-        if (use == null) {
-            this.use = LITERAL;
-        } else {
-            this.use = use;
-        }
-        this.servicePath = servicePath;
         this.targetNamespace = service.getTargetNamespace();
 
         serializer = new ExternalPolicySerializer();

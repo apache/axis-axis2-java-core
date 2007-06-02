@@ -37,7 +37,7 @@ import java.util.Iterator;
 *
 */
 
-public class Java2OMBuilder implements Java2WSDLConstants {
+public class Java2WSDL11 implements Java2WSDLConstants {
 
     private TypeTable typeTable = null;
 
@@ -73,7 +73,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private String locationURL;
 
-    public Java2OMBuilder(JMethod[] method, Collection schemaCollection,
+    public Java2WSDL11(JMethod[] method, Collection schemaCollection,
                           TypeTable typeTab, String serviceName, String targetNamespace,
                           String targetNamespacePrefix, String style, String use,
                           String locationURL) {

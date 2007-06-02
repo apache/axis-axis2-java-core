@@ -23,23 +23,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-public class AxisService2WSDL2 implements WSDL2Constants {
+public class AxisService2WSDL20 implements WSDL2Constants {
 
     private AxisService axisService;
 
-    private String[] url;
-
-    public AxisService2WSDL2(AxisService service, String[] serviceURL) {
+    public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
-        url = serviceURL;
     }
 
     /**
      * Generates a WSDL 2.0 document for this web service
      * @return The WSDL2 document element
-     * @throws org.apache.axis2.AxisFault - Thrown in case an exception occurs
+     * @throws Exception - Thrown in case an exception occurs
      */
-    public OMElement toWSDL20() throws AxisFault {
+    public OMElement generateOM() throws Exception {
 
         Map nameSpacesMap = axisService.getNameSpacesMap();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();

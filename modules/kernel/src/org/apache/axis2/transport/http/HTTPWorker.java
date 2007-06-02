@@ -103,10 +103,9 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    String ip = getHostAddress(request);
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL2(response.getOutputStream(), ip, servicePath);
+                    service.printWSDL2(response.getOutputStream());
                     return;
                 }
             }
@@ -115,10 +114,9 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    String ip = getHostAddress(request);
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL(response.getOutputStream(), ip, servicePath);
+                    service.printWSDL(response.getOutputStream());
                     return;
                 }
             }

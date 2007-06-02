@@ -170,7 +170,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
         Collection schemaCollection = schemaGenerator.generateSchema();
         
-        Java2OMBuilder java2OMBuilder = new Java2OMBuilder(schemaGenerator.getMethods(),
+        Java2WSDL11 java2WSDL11 = new Java2WSDL11(schemaGenerator.getMethods(),
                 schemaCollection,
                 schemaGenerator.getTypeTable(),
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
@@ -179,9 +179,9 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
                 style,
                 use,
                 locationUri);
-        java2OMBuilder.setSchemaTargetNamespace(getSchemaTargetNamespace());
-        java2OMBuilder.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
-        OMElement wsdlElement = java2OMBuilder.generateOM();
+        java2WSDL11.setSchemaTargetNamespace(getSchemaTargetNamespace());
+        java2WSDL11.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
+        OMElement wsdlElement = java2WSDL11.generateOM();
         if(!isPretty()){
             wsdlElement.serialize(out);
         } else {

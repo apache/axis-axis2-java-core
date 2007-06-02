@@ -821,35 +821,6 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
-    /**
-     * @param out
-     * @param requestIP
-     * @param servicePath
-     * @throws AxisFault
-     */
-    public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
-        if (isUseUserWSDL()) {
-            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-            if (wsld4jdefinition != null) {
-                try {
-                    Definition definition = (Definition) wsld4jdefinition.getValue();
-                    if (isModifyUserWSDLPortAddress()) {
-                        setPortAddress(definition);
-                    }
-                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-                    writer.writeWSDL(definition, out);
-                } catch (WSDLException e) {
-                    throw AxisFault.makeFault(e);
-                }
-            } else {
-                printWSDLError(out);
-            }
-        } else {
-            String[] eprArray = getEPRs(requestIP);
-            getWSDL(out, eprArray);
-        }
-    }
-
     public String[] getEPRs() throws AxisFault {
         String requestIP;
         try {
@@ -919,14 +890,36 @@ public class AxisService extends AxisDescription {
         return (String[]) eprList.toArray(new String[eprList.size()]);
     }
 
+    private void printUserWSDL(OutputStream out) throws AxisFault {
+        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+        if (wsld4jdefinition != null) {
+            try {
+                Definition definition = (Definition) wsld4jdefinition.getValue();
+                if (isModifyUserWSDLPortAddress()) {
+                    setPortAddress(definition);
+                }
+                WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+                writer.writeWSDL(definition, out);
+            } catch (WSDLException e) {
+                throw AxisFault.makeFault(e);
+            }
+        } else {
+            printWSDLError(out);
+        }
+    }
+
     /**
      * @param out
      * @param requestIP
      * @throws AxisFault
-     * @deprecated try to use the method which takes three arguments
      */
     public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
-        printWSDL(out, requestIP, "services");
+        if (isUseUserWSDL()) {
+            printUserWSDL(out);
+        } else {
+            String[] eprArray = getEPRs(requestIP);
+            getWSDL(out, eprArray);
+        }
     }
 
     /**
@@ -937,21 +930,7 @@ public class AxisService extends AxisDescription {
      */
     public void printWSDL(OutputStream out) throws AxisFault {
         if (isUseUserWSDL()) {
-            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-            if (wsld4jdefinition != null) {
-                try {
-                    Definition definition = (Definition) wsld4jdefinition.getValue();
-                    if (isModifyUserWSDLPortAddress()) {
-                        setPortAddress(definition);
-                    }
-                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-                    writer.writeWSDL(definition, out);
-                } catch (WSDLException e) {
-                    throw AxisFault.makeFault(e);
-                }
-            } else {
-                printWSDLError(out);
-            }
+            printUserWSDL(out);
         } else {
             setWsdlFound(true);
             //pick the endpointName and take it as the epr for the WSDL
@@ -1026,20 +1005,9 @@ public class AxisService extends AxisDescription {
 
     //WSDL 2.0
     public void printWSDL2(OutputStream out) throws AxisFault {
-        // Woden has not implemented the serializer yet, so all we can do it serialize the axisService
-            getWSDL2(out, new String[]{this.endpointName});
-        }
-
-    public void printWSDL2(OutputStream out,
-                           String requestIP,
-                           String servicePath) throws AxisFault {
-        getWSDL2(out, getEPRs());
-    }
-
-    private void getWSDL2(OutputStream out, String[] serviceURL) throws AxisFault {
-        AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
+        AxisService2WSDL20 axisService2WSDL2 = new AxisService2WSDL20(this);
         try {
-            OMElement wsdlElement = axisService2WSDL2.toWSDL20();
+            OMElement wsdlElement = axisService2WSDL2.generateOM();
             wsdlElement.serialize(out);
             out.flush();
             out.close();

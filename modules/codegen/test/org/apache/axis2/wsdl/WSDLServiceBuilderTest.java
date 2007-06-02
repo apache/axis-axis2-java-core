@@ -70,13 +70,9 @@ public class WSDLServiceBuilderTest extends TestCase {
                         configContext.getAxisConfiguration().addService(service);
                         OutputStream out =
                                 new FileOutputStream(new File(outLocation, file1.getName()));
-                        service.printWSDL(out, "http://google.com/axis2/services", "services");
+                        service.printWSDL(out, "http://google.com/axis2/services");
                         out.flush();
                         out.close();
-//                        URL wsdlURL = new URL("http://localhost:" + 6060 +
-//                                "/axis2/services/" + service.getName() + "?wsdl");
-//                        builder = new WSDL11ToAxisServiceBuilder(wsdlURL.openStream(), null, null);
-//                        service = builder.populateService();
                         configContext.getAxisConfiguration().removeService(service.getName());
                     } catch (Exception e) {
                         System.out.println("Error in WSDL : " + file1.getName());
