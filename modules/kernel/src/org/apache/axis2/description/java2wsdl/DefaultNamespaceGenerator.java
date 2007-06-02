@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.     
  */
-package org.apache.ws.java2wsdl;
+package org.apache.axis2.description.java2wsdl;
+
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 
 /**
  * This class provides the default implementatoin for mapping java classes to namespaces
@@ -28,7 +30,7 @@ public class DefaultNamespaceGenerator implements NamespaceGenerator {
     public static final String SCHEMA_NAMESPACE_EXTN = "/xsd";
 
     /* (non-Javadoc)
-     * @see org.apache.ws.java2wsdl.NamespaceGenerator#namespaceFromPackageName(java.lang.String)
+     * @see org.apache.axis2.description.java2wsdl.NamespaceGenerator#namespaceFromPackageName(java.lang.String)
      */
     public StringBuffer namespaceFromPackageName(String packageName) {
 
@@ -60,7 +62,7 @@ public class DefaultNamespaceGenerator implements NamespaceGenerator {
     }
 
     /* (non-Javadoc)
-     * @see org.apache.ws.java2wsdl.NamespaceGenerator#schemaNamespaceFromPackageName(java.lang.String)
+     * @see org.apache.axis2.description.java2wsdl.NamespaceGenerator#schemaNamespaceFromPackageName(java.lang.String)
      */
     public StringBuffer schemaNamespaceFromPackageName(String packageName) {
         if (packageName.length() > 0) {

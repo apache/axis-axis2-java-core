@@ -1,6 +1,8 @@
 package org.apache.ws.java2wsdl;
 
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,7 +13,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Vector;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

@@ -1,4 +1,4 @@
-package org.apache.ws.java2wsdl;
+package org.apache.axis2.description.java2wsdl;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
@@ -10,8 +10,10 @@ import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.ws.java2wsdl.bytecode.MethodTable;
-import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.description.java2wsdl.AnnotationConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;
@@ -36,7 +38,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.lang.reflect.Modifier;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

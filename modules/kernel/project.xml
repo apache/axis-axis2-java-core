@@ -36,12 +36,6 @@
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-
 
         <!-- external JARs -->
         

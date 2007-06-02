@@ -1,4 +1,4 @@
-package org.apache.ws.java2wsdl;
+package org.apache.axis2.description.java2wsdl;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

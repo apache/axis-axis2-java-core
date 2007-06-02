@@ -27,6 +27,11 @@
 	<name>Apache Axis 2.0 - Java2WSDL</name>
 	<description>To generate WSDL file for a given Java class</description>
 	<dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
 		<dependency>
 			<groupId>${stax.impl.groupid}</groupId>
 			<artifactId>${stax.impl.artifactid}</artifactId>

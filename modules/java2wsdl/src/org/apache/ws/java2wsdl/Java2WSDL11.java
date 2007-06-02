@@ -7,7 +7,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.codehaus.jam.JMethod;
 import org.codehaus.jam.JClass;
 

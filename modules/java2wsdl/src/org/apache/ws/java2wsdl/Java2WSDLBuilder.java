@@ -1,6 +1,11 @@
 package org.apache.ws.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -149,7 +154,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader, 
+        SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader,
                                                     className,
                                                     getSchemaTargetNamespace(), 
                                                     getSchemaTargetNamespacePrefix());

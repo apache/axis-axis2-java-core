@@ -33,6 +33,8 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
@@ -41,8 +43,6 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
-import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

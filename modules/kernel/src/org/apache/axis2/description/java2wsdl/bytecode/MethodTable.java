@@ -1,4 +1,4 @@
-package org.apache.ws.java2wsdl.bytecode;
+package org.apache.axis2.description.java2wsdl.bytecode;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

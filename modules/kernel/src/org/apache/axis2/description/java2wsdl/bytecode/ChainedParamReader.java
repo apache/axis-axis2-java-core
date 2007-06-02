@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.ws.java2wsdl.bytecode;
+package org.apache.axis2.description.java2wsdl.bytecode;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

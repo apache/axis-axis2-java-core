@@ -1,6 +1,6 @@
 package org.apache.ws.java2wsdl.utils;
 
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
