@@ -214,11 +214,12 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         axisService.setEPRs(new String[]{uri});
         configCtx.getAxisConfiguration().addService(axisService);
 
-        //TODO: Figure out how to set the style, use;
         //TODO: Switch for WSDL20
 
-        AxisService2WSDL11 axisService2WOM = new AxisService2WSDL11(axisService);
-        OMElement wsdlElement = axisService2WOM.generateOM();
+        AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
+        g.setStyle(this.style);
+        g.setUse(this.use);
+        OMElement wsdlElement = g.generateOM();
         if(!isPretty()){
             wsdlElement.serialize(out);
         } else {

@@ -76,8 +76,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
     private String use = LITERAL;
 
-    private String servicePath;
-
     private HashMap policiesInDefinitions;
 
     private ExternalPolicySerializer serializer;
@@ -1013,5 +1011,21 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
     private void addPolicyToDefinitionElement(String key, Policy policy) {
         policiesInDefinitions.put(key, policy);
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
     }
 }
