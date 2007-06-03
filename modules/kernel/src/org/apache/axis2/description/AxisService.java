@@ -239,6 +239,8 @@ public class AxisService extends AxisDescription {
     // names list keep to preserve the parameter order
     private List operationsNameList;
 
+    private String[] eprs = null;
+
     public AxisEndpoint getEndpoint(String key) {
         return (AxisEndpoint) endpointMap.get(key);
     }
@@ -821,14 +823,22 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
+    public void setEPRs(String[] eprs) {
+        this.eprs = eprs;
+    }
+
     public String[] getEPRs() throws AxisFault {
+        if(eprs != null) {
+            return eprs;
+        }
         String requestIP;
         try {
             requestIP = HttpUtils.getIpAddress();
         } catch (SocketException e) {
             throw new AxisFault("Cannot get local IP address", e);
         }
-        return getEPRs(requestIP);
+        eprs = getEPRs(requestIP);
+        return eprs;
     }
 
     private String[] getEPRs(String requestIP) {
@@ -1531,17 +1541,6 @@ public class AxisService extends AxisDescription {
                                             String targetNamespace,
                                             String schemaNamespace,
                                             ClassLoader loader) throws AxisFault {
-        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
-        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
-        parameter.setParameterElement(paraElement);
-        AxisService axisService = new AxisService();
-        axisService.setUseDefaultChains(false);
-        axisService.addParameter(parameter);
-
-        if (schemaNamespace == null) {
-            schemaNamespace = axisService.getSchematargetNamespace();
-        }
-
         int index = implClass.lastIndexOf(".");
         String serviceName;
         if (index > 0) {
@@ -1550,13 +1549,59 @@ public class AxisService extends AxisDescription {
             serviceName = implClass;
         }
 
-        axisService.setName(serviceName);
-        axisService.setClassLoader(loader);
-
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator;
         ArrayList excludeOpeartion = new ArrayList();
 
+        try {
+            schemaGenerator = new SchemaGenerator(loader,
+                                                  implClass, schemaNamespace,
+                                                  Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX);
+            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+            Utils.addExcludeMethods(excludeOpeartion);
+            schemaGenerator.setExcludeMethods(excludeOpeartion);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
+
+        return createService(implClass,
+                serviceName,
+                axisConfiguration,
+                messageReceiverClassMap,
+                targetNamespace,
+                loader,
+                schemaGenerator);
+    }
+    /**
+     * messageReceiverClassMap will hold the MessageReceivers for given meps. Key will be the
+     * mep and value will be the instance of the MessageReceiver class.
+     * Ex:
+     * Map mrMap = new HashMap();
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
+     * RPCInOnlyMessageReceiver.class.newInstance());
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
+     * RPCMessageReceiver.class.newInstance());
+     *
+     * @param implClass
+     * @param axisConfiguration
+     * @param messageReceiverClassMap
+     * @param targetNamespace
+     * @throws AxisFault
+     */
+    public static AxisService createService(String implClass,
+                                            String serviceName,
+                                            AxisConfiguration axisConfiguration,
+                                            Map messageReceiverClassMap,
+                                            String targetNamespace,
+                                            ClassLoader loader,
+                                            SchemaGenerator schemaGenerator) throws AxisFault {
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
+        parameter.setParameterElement(paraElement);
+        AxisService axisService = new AxisService();
+        axisService.setUseDefaultChains(false);
+        axisService.addParameter(parameter);
+        axisService.setName(serviceName);
+        axisService.setClassLoader(loader);
 
         NamespaceMap map = new NamespaceMap();
         map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
@@ -1564,27 +1609,19 @@ public class AxisService extends AxisDescription {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
-
-
+        axisService.setElementFormDefault(false);
         try {
-            schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                                                  implClass, schemaNamespace,
-                                                  axisService.getSchematargetNamespacePrefix());
-            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
-            axisService.setElementFormDefault(false);
-            Utils.addExclueMethods(excludeOpeartion);
-            schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
-            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
-            axisService.setTypeTable(schemaGenerator.getTypeTable());
-            if (targetNamespace == null) {
-                targetNamespace = schemaGenerator.getSchemaTargetNameSpace();
-            }
-            if (targetNamespace != null && !"".equals(targetNamespace)) {
-                axisService.setTargetNamespace(targetNamespace);
-            }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
+        }
+        axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setTypeTable(schemaGenerator.getTypeTable());
+        if (targetNamespace == null) {
+            targetNamespace = schemaGenerator.getSchemaTargetNameSpace();
+        }
+        if (targetNamespace != null && !"".equals(targetNamespace)) {
+            axisService.setTargetNamespace(targetNamespace);
         }
 
         JMethod[] method = schemaGenerator.getMethods();
@@ -1592,6 +1629,7 @@ public class AxisService extends AxisDescription {
 
         PhasesInfo pinfo = axisConfiguration.getPhasesInfo();
 
+        List excludes = schemaGenerator.getExcludeMethods();
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
             JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
@@ -1603,8 +1641,10 @@ public class AxisService extends AxisDescription {
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;
-            } else if (excludeOpeartion.contains(jmethod.getSimpleName())) {
-                continue;
+            } else {
+                if (excludes.contains(jmethod.getSimpleName())) {
+                    continue;
+                }
             }
             AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
             String mep = operation.getMessageExchangePattern();
@@ -1717,7 +1757,7 @@ public class AxisService extends AxisDescription {
                                                   axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
-            Utils.addExclueMethods(excludeOpeartion);
+            Utils.addExcludeMethods(excludeOpeartion);
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());

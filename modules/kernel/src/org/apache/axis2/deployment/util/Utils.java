@@ -676,7 +676,7 @@ public class Utils {
      * To add the exclude method when generating scheams , here the exclude methods
      * will be session releated axis2 methods
      */
-    public static void addExclueMethods(ArrayList excludeList){
+    public static void addExcludeMethods(ArrayList excludeList){
         excludeList.add("init");
         excludeList.add("setOperationContext");
         excludeList.add("startUp");

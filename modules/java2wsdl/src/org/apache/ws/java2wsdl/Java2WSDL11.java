@@ -92,11 +92,7 @@ public class Java2WSDL11 implements Java2WSDLConstants {
             this.use = use;
         }
 
-        if (locationURL == null) {
-            this.locationURL = DEFAULT_LOCATION_URL;
-        } else {
-            this.locationURL = locationURL;
-        }
+        this.locationURL = locationURL;
         this.serviceName = serviceName;
 
         if (targetNamespace != null && targetNamespace.trim().length() != 0) {

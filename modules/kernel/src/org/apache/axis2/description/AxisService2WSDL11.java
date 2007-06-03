@@ -442,8 +442,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
     private void generateHTTPPorts(OMFactory fac, OMElement service)
             throws Exception {
-        String[] exposedEPRs = axisService.getEPRs();
-        for (int i = 0; i < exposedEPRs.length; i++) {
+        for (int i = 0; i < serviceEndpointURLs.length; i++) {
             String urlString = serviceEndpointURLs[i];
             if (urlString != null && urlString.startsWith("http")) {
                 OMElement port = fac.createOMElement(PORT, wsdl);

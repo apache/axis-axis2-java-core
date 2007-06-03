@@ -38,6 +38,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -664,6 +665,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
     public void setExcludeMethods(ArrayList excludeMethods) {
         if (excludeMethods == null) excludeMethods = new ArrayList();
         this.excludeMethods = excludeMethods;
+    }
+
+    public List getExcludeMethods() {
+        return this.excludeMethods;
     }
 
     public String getSchemaTargetNameSpace() {

@@ -6,11 +6,20 @@ import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisService2WSDL11;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.util.Utils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.HashMap;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -49,7 +58,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String schemaTargetNamespacePrefix = null;
     private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
-    private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private String locationUri;
     private ArrayList extraClasses;
     
     private String nsGenClassName = null;
@@ -158,40 +167,64 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
                                                     className,
                                                     getSchemaTargetNamespace(), 
                                                     getSchemaTargetNamespacePrefix());
+
         ArrayList excludedOperation = new ArrayList();
-        excludedOperation.add("init");
-        excludedOperation.add("setOperationContext");
-        excludedOperation.add("destroy");
+        Utils.addExcludeMethods(excludedOperation);
         schemaGenerator.setExcludeMethods(excludedOperation);
         schemaGenerator.setAttrFormDefault(getAttrFormDefault());
         schemaGenerator.setElementFormDefault(getElementFormDefault());
         schemaGenerator.setExtraClasses(getExtraClasses());
         schemaGenerator.setNsGen(resolveNSGen());
         schemaGenerator.setPkg2nsmap(getPkg2nsMap());
-        if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() && 
+        if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() &&
                 (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase())) ) {
             schemaGenerator.setUseWSDLTypesNamespace(true);
         }
 
-        Collection schemaCollection = schemaGenerator.generateSchema();
-        
-        Java2WSDL11 java2WSDL11 = new Java2WSDL11(schemaGenerator.getMethods(),
-                schemaCollection,
-                schemaGenerator.getTypeTable(),
+        HashMap messageReciverMap = new HashMap();
+        Class inOnlyMessageReceiver = Loader.loadClass(
+                "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+        MessageReceiver messageReceiver =
+                (MessageReceiver) inOnlyMessageReceiver.newInstance();
+        messageReciverMap.put(
+                WSDL2Constants.MEP_URI_IN_ONLY,
+                messageReceiver);
+        Class inoutMessageReceiver = Loader.loadClass(
+                "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+        MessageReceiver inOutmessageReceiver =
+                (MessageReceiver) inoutMessageReceiver.newInstance();
+        messageReciverMap.put(
+                WSDL2Constants.MEP_URI_IN_OUT,
+                inOutmessageReceiver);
+        ConfigurationContext configCtx = ConfigurationContextFactory.createDefaultConfigurationContext();
+        AxisService axisService = AxisService.createService(className,
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader, resolveNSGen()).toString() : targetNamespace,
-                targetNamespacePrefix,
-                style,
-                use,
-                locationUri);
-        java2WSDL11.setSchemaTargetNamespace(getSchemaTargetNamespace());
-        java2WSDL11.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
-        OMElement wsdlElement = java2WSDL11.generateOM();
+                configCtx.getAxisConfiguration(),
+                messageReciverMap,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className, classLoader, resolveNSGen()).toString() : targetNamespace,
+                classLoader,
+                schemaGenerator);
+        axisService.setTargetNamespacePrefix(targetNamespacePrefix);
+        axisService.setSchematargetNamespace(getSchemaTargetNamespace());
+        axisService.setSchematargetNamespacePrefix(getSchemaTargetNamespacePrefix());
+        String uri = locationUri;
+        if(uri == null){
+            uri = DEFAULT_LOCATION_URL + (serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName);
+        }
+        axisService.setEPRs(new String[]{uri});
+        configCtx.getAxisConfiguration().addService(axisService);
+
+        //TODO: Figure out how to set the style, use;
+        //TODO: Switch for WSDL20
+
+        AxisService2WSDL11 axisService2WOM = new AxisService2WSDL11(axisService);
+        OMElement wsdlElement = axisService2WOM.generateOM();
         if(!isPretty()){
             wsdlElement.serialize(out);
         } else {
             Java2WSDLUtils.prettyPrint(wsdlElement, out);
         }
+
         out.flush();
         out.close();
     }
@@ -238,12 +271,15 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     
     private NamespaceGenerator resolveNSGen() {
         NamespaceGenerator nsGen = null;
-        try {
-            nsGen = (NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance();
-        } catch ( Exception e ) {
+        if(this.nsGenClassName == null){
             nsGen = new DefaultNamespaceGenerator();
+        } else {
+            try {
+                nsGen = (NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance();
+            } catch ( Exception e ) {
+                nsGen = new DefaultNamespaceGenerator();
+            }
         }
-        
         return nsGen;
     }
 

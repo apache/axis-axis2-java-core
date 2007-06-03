@@ -45,7 +45,7 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private Path classpath = null;
     private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
-    private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private String locationUri;
     private String attrFormDefault = null;
     private String elementFormDefault = null;
 
