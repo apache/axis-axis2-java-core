@@ -196,6 +196,18 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         option = loadOption(Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
                             Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION_LONG, optionsMap);
         java2WsdlBuilder.setPkg2nsMap(loadJavaPkg2NamespaceMap(option));
+
+        option = loadOption(Java2WSDLConstants.WSDL_VERSION_OPTION,
+                           Java2WSDLConstants.WSDL_VERSION_OPTION_LONG,
+                           optionsMap);
+        if (option != null) {
+            String optionValue = option.getOptionValue();
+            if (Java2WSDLConstants.WSDL_VERSION_2.equals(optionValue) ||
+                    Java2WSDLConstants.WSDL_VERSION_2_OPTIONAL.equals(optionValue)) {
+                //users can say either 2.0 or 2 - we  just set it to the constant
+                java2WsdlBuilder.setWSDLVersion(Java2WSDLConstants.WSDL_VERSION_2);
+            } //ignore the other cases - they'll be taken as 1.1
+        }
     }
     
      /**

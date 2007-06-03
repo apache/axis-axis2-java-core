@@ -105,6 +105,7 @@ public interface Java2WSDLConstants {
     String EXTRA_CLASSES_DEFAULT_OPTION = "xc";
     String NAMESPACE_GENERATOR_OPTION = "nsg";
     String JAVA_PKG_2_NSMAP_OPTION = "p2n";
+    String WSDL_VERSION_OPTION = "wv";
 
     //long option constants
     String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -125,7 +126,11 @@ public interface Java2WSDLConstants {
     String EXTRA_CLASSES_DEFAULT_OPTION_LONG = "extraClasses";
     String NAMESPACE_GENERATOR_OPTION_LONG = "namespaceGenerator";
     String JAVA_PKG_2_NSMAP_OPTION_LONG = "package2Namespace";
+    String WSDL_VERSION_OPTION_LONG = "wsdl-version";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 
+    String WSDL_VERSION_2 = "2.0";
+    String WSDL_VERSION_2_OPTIONAL = "2";
+    String WSDL_VERSION_1 = "1.1";
 }

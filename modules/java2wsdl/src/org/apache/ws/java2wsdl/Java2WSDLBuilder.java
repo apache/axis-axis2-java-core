@@ -9,6 +9,7 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2WSDL11;
+import org.apache.axis2.description.AxisService2WSDL20;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -64,6 +65,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String nsGenClassName = null;
     private Map pkg2nsMap = null;
     private boolean pretty = true;
+    private String wsdlVersion = WSDL_VERSION_1;
 
     public String getSchemaTargetNamespace() throws Exception {
         if ( schemaTargetNamespace == null ) {
@@ -214,16 +216,24 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         axisService.setEPRs(new String[]{uri});
         configCtx.getAxisConfiguration().addService(axisService);
 
-        //TODO: Switch for WSDL20
-
-        AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
-        g.setStyle(this.style);
-        g.setUse(this.use);
-        OMElement wsdlElement = g.generateOM();
-        if(!isPretty()){
-            wsdlElement.serialize(out);
+        if (WSDL_VERSION_1.equals(wsdlVersion)) {
+            AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
+            g.setStyle(this.style);
+            g.setUse(this.use);
+            OMElement wsdlElement = g.generateOM();
+            if(!isPretty()){
+                wsdlElement.serialize(out);
+            } else {
+                Java2WSDLUtils.prettyPrint(wsdlElement, out);
+            }
         } else {
-            Java2WSDLUtils.prettyPrint(wsdlElement, out);
+            AxisService2WSDL20 g = new AxisService2WSDL20(axisService);
+            OMElement wsdlElement = g.generateOM();
+            if(!isPretty()){
+                wsdlElement.serialize(out);
+            } else {
+                Java2WSDLUtils.prettyPrint(wsdlElement, out);
+            }
         }
 
         out.flush();
@@ -290,6 +300,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setPretty(boolean pretty) {
         this.pretty = pretty;
+    }
+
+    public void setWSDLVersion(String wsdlVersion) {
+        this.wsdlVersion = wsdlVersion;
     }
 }
 
