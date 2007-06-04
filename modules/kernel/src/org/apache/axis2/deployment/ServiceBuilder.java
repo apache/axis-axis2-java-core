@@ -183,7 +183,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (schemaNameSpace != null) {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();
                     if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
-                        service.setSchematargetNamespace(nameSpeceVale);
+                        service.setSchemaTargetNamespace(nameSpeceVale);
                     }
                 }
                 OMAttribute elementFormDefault = schemaElement.

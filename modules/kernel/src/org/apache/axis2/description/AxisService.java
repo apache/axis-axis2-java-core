@@ -1300,11 +1300,11 @@ public class AxisService extends AxisDescription {
         return schematargetNamespace;
     }
 
-    public void setSchematargetNamespace(String schematargetNamespace) {
+    public void setSchemaTargetNamespace(String schematargetNamespace) {
         this.schematargetNamespace = schematargetNamespace;
     }
 
-    public String getSchematargetNamespacePrefix() {
+    public String getSchemaTargetNamespacePrefix() {
         return schematargetNamespacePrefix;
     }
 
@@ -1614,7 +1614,7 @@ public class AxisService extends AxisDescription {
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
-        axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         axisService.setTypeTable(schemaGenerator.getTypeTable());
         if (targetNamespace == null) {
             targetNamespace = schemaGenerator.getSchemaTargetNameSpace();
@@ -1738,13 +1738,13 @@ public class AxisService extends AxisDescription {
         try {
             schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
                                                   implClass, schemaNameSpace,
-                                                  axisService.getSchematargetNamespacePrefix());
+                                                  axisService.getSchemaTargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
             Utils.addExcludeMethods(excludeOpeartion);
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
-            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
             axisService.setTypeTable(schemaGenerator.getTypeTable());
             if (targetNameSpace == null) {
                 targetNameSpace = schemaGenerator.getSchemaTargetNameSpace();

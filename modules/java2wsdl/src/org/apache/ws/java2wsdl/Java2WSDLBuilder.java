@@ -209,7 +209,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
                 classLoader,
                 schemaGenerator);
         axisService.setTargetNamespacePrefix(targetNamespacePrefix);
-        axisService.setSchematargetNamespace(getSchemaTargetNamespace());
+        axisService.setSchemaTargetNamespace(getSchemaTargetNamespace());
         axisService.setSchematargetNamespacePrefix(getSchemaTargetNamespacePrefix());
         String uri = locationUri;
         if(uri == null){

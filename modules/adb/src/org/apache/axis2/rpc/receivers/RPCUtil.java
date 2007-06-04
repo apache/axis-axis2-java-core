@@ -148,7 +148,7 @@ public class RPCUtil {
         QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
             ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                       service.getSchematargetNamespacePrefix());
+                                       service.getSchemaTargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
             envelope.getBody().addChild(bodyChild);
         } else {
@@ -158,7 +158,7 @@ public class RPCUtil {
                     if (service.isElementFormDefault()) {
                         resName = new QName(service.getSchematargetNamespace(),
                                             RETURN_WRAPPER,
-                                            service.getSchematargetNamespacePrefix());
+                                            service.getSchemaTargetNamespacePrefix());
                     } else {
                         resName = new QName(RETURN_WRAPPER);
                     }
@@ -168,7 +168,7 @@ public class RPCUtil {
                             OMXMLBuilderFactory.createStAXOMBuilder(
                                     OMAbstractFactory.getSOAP11Factory(), parser);
                     ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                               service.getSchematargetNamespacePrefix());
+                                               service.getSchemaTargetNamespacePrefix());
                     OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
                     bodyChild.addChild(stAXOMBuilder.getDocumentElement());
                     envelope.getBody().addChild(bodyChild);

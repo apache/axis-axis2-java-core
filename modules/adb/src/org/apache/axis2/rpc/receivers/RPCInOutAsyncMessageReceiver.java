@@ -120,7 +120,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
-                                                   service.getSchematargetNamespacePrefix());
+                                                   service.getSchemaTargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
             RPCUtil.processResponse(resObject, service,

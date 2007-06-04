@@ -279,7 +279,7 @@ public class AxisConfiguration extends AxisDescription {
                                                         axisService.getName()));
             }
             if (axisService.getSchematargetNamespace() == null) {
-                axisService.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+                axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }
         services = axisServiceGroup.getServices();

@@ -313,7 +313,7 @@ public class Utils {
         SchemaGenerator schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
                                                               serviceClass.trim(),
                                                               axisService.getSchematargetNamespace(),
-                                                              axisService.getSchematargetNamespacePrefix());
+                                                              axisService.getSchemaTargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
         schemaGenerator.setNonRpcMethods(nonRpcMethods);
         if (!axisService.isElementFormDefault()) {
@@ -323,7 +323,7 @@ public class Utils {
         schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
-        axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         axisService.setTypeTable(schemaGenerator.getTypeTable());
         if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
                 axisService.getTargetNamespace())) {
