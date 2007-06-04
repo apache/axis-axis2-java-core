@@ -80,12 +80,11 @@ public class DeploymentClassLoader extends URLClassLoader {
                  */
                 completeFileName = completeFileName.replace('.', '/').concat(".class");
                 raw = getBytes(completeFileName);
-                if (raw == null) {
-                    throw new ClassNotFoundException("Class Not found : " + name);
-                }
             } catch (Exception ex) {
-                // TODO: This, or throw new ClassNotFoundException?
                 throw new RuntimeException(ex);
+            }
+            if (raw == null) {
+                throw new ClassNotFoundException("Class Not found : " + name);
             }
             clazz = defineClass(name, raw, 0, raw.length);
         }
