@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -79,9 +80,11 @@ import javax.xml.ws.WebServiceException;
 })
 public class SubmissionEndpointReference extends EndpointReference {
     @XmlTransient
-    private static volatile JAXBContext jaxbContext;
+    protected static volatile JAXBContext jaxbContext;
     @XmlTransient
     protected static final String NS = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+    @XmlTransient
+    protected static final QName NAME = new QName(NS, "EndpointReference", "wsa");
     
 
     @XmlElement(name = "Address", required = true)
@@ -108,8 +111,9 @@ public class SubmissionEndpointReference extends EndpointReference {
         try {
             JAXBContext jaxbContext = getJAXBContext();
             Unmarshaller um = jaxbContext.createUnmarshaller();
-            SubmissionEndpointReference subEPR =
-                (SubmissionEndpointReference) um.unmarshal(eprInfoset);
+            JAXBElement<SubmissionEndpointReference> element =
+                um.unmarshal(eprInfoset, SubmissionEndpointReference.class);
+            SubmissionEndpointReference subEPR = element.getValue();
             
             address = subEPR.address;
             referenceParameters = subEPR.referenceParameters;
@@ -134,7 +138,10 @@ public class SubmissionEndpointReference extends EndpointReference {
         try {
             JAXBContext jaxbContext = getJAXBContext();
             Marshaller m = jaxbContext.createMarshaller();
-            m.marshal(this, result);
+            m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            JAXBElement<SubmissionEndpointReference> element =
+                new JAXBElement<SubmissionEndpointReference>(NAME, SubmissionEndpointReference.class, this);
+            m.marshal(element, result);
         }
         catch (Exception e) {
             //TODO NLS enable
@@ -175,13 +182,16 @@ public class SubmissionEndpointReference extends EndpointReference {
     @XmlType(name = "AttributedURI", propOrder = {
         "value"
     })
-    private class AttributedURI {
+    private static class AttributedURI {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")
         protected String value;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public AttributedURI() {
+        }
     }
     
     /**
@@ -207,10 +217,13 @@ public class SubmissionEndpointReference extends EndpointReference {
     @XmlType(name = "ReferenceParametersType", propOrder = {
         "any"
     })
-    private class ReferenceParametersType {
+    private static class ReferenceParametersType {
 
         @XmlAnyElement(lax = true)
         protected List<Object> any;
+        
+        public ReferenceParametersType() {
+        }
     }
     
     /**
@@ -236,10 +249,13 @@ public class SubmissionEndpointReference extends EndpointReference {
     @XmlType(name = "ReferencePropertiesType", propOrder = {
         "any"
     })
-    private class ReferencePropertiesType {
+    private static class ReferencePropertiesType {
 
         @XmlAnyElement(lax = true)
         protected List<Object> any;
+        
+        public ReferencePropertiesType() {
+        }
     }
     
     /**
@@ -263,7 +279,7 @@ public class SubmissionEndpointReference extends EndpointReference {
     @XmlType(name = "ServiceNameType", propOrder = {
         "value"
     })
-    private class ServiceNameType {
+    private static class ServiceNameType {
 
         @XmlValue
         protected QName value;
@@ -273,6 +289,9 @@ public class SubmissionEndpointReference extends EndpointReference {
         protected String portName;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public ServiceNameType() {
+        }
     }
     
     /**
@@ -295,11 +314,14 @@ public class SubmissionEndpointReference extends EndpointReference {
     @XmlType(name = "AttributedQName", propOrder = {
         "value"
     })
-    private class AttributedQName {
+    private static class AttributedQName {
 
         @XmlValue
         protected QName value;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public AttributedQName() {
+        }
     }
 }

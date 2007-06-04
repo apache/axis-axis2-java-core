@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverterTests;
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.ClientConfigTests;
@@ -125,6 +126,9 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
+        
+        // ------ Addressing Tests ------
+        suite.addTestSuite(EndpointReferenceConverterTests.class);
         
         // ------ Metadata Tests ------
         suite.addTestSuite(WSDLTests.class);

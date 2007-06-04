@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.feature.config.W3CAndSubmissionAddressingConfigura
 import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigUtil;
 import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
@@ -74,6 +75,10 @@ import java.util.concurrent.ThreadFactory;
  * javax.xml.ws.Service} API.  This is the plug point for the client implementation.
  */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
+    private static final WebServiceFeatureConfigurator[] CONFIGURATORS = {
+        new W3CAndSubmissionAddressingConfigurator(), new MTOMConfigurator(), new RespectBindingConfigurator()};
+    private static final ApplicationContextMigrator[] MIGRATORS = {new PropertyMigrator()};
+    
     private static final Log log = LogFactory.getLog(ServiceDelegate.class);
     private Executor executor;
 
@@ -101,17 +106,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             }
         }
         
-        ConfigurationContext context= serviceDescription.getAxisConfigContext();
+        //TODO: Is this the best place for this code?
+        ConfigurationContext context = serviceDescription.getAxisConfigContext();
 
         // Register the necessary ApplicationContextMigrators
-        ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
-                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, new PropertyMigrator());
+        for (ApplicationContextMigrator migrator : MIGRATORS) {
+            ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, migrator);
+        }
         
         // Register our WebServiceFeature configurators.
-        WebServiceFeatureConfigurator[] configurators = {new W3CAndSubmissionAddressingConfigurator(),
-                new MTOMConfigurator(), new RespectBindingConfigurator()};
-        
-        for (WebServiceFeatureConfigurator configurator : configurators) {
+        for (WebServiceFeatureConfigurator configurator : CONFIGURATORS) {
             WebServiceFeatureConfigUtil.addWebServiceFeatureConfigurator(context,
                     Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID, configurator);            
         }

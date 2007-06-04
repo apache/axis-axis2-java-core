@@ -20,6 +20,9 @@ package org.apache.axis2.jaxws.addressing.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedExceptionAction;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -28,23 +31,21 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.EndpointReference;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
-import org.apache.axis2.jaxws.spi.Provider;
 import org.apache.axis2.util.XMLUtils;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 public final class EndpointReferenceConverter {
     
-    private static OMFactory omFactory = DOOMAbstractFactory.getOMFactory();
-    private static QName eprType = new QName("namespace", "epr", "prefix");
-    private static Provider provider = new Provider();
+    private static OMFactory omFactory = OMAbstractFactory.getOMFactory();
     
     private EndpointReferenceConverter() {
     }
@@ -59,15 +60,25 @@ public final class EndpointReferenceConverter {
      * @return
      * @throws AxisFault
      */
-    public static <T extends EndpointReference> T convertFromAxis2(org.apache.axis2.addressing.EndpointReference axis2EPR, Class<T> clazz)
-    throws AxisFault {
+    public static <T extends EndpointReference> T convertFromAxis2(org.apache.axis2.addressing.EndpointReference axis2EPR, final Class<T> clazz)
+    throws AxisFault, NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException, Exception {
         String addressingNamespace =
             SubmissionEndpointReference.class.isAssignableFrom(clazz) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
-        OMElement om = EndpointReferenceHelper.toOM(omFactory, axis2EPR, eprType, addressingNamespace);
-        Source source = new DOMSource((Node) om);
-        EndpointReference jaxwsEPR = provider.readEndpointReference(source);
+        QName qname = new QName(addressingNamespace, "EndpointReference", "wsa");
+        OMElement omElement =
+            EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
+        Element eprElement = XMLUtils.toDOM(omElement);
+        Source eprInfoset = new DOMSource(eprElement);
         
-        return clazz.cast(jaxwsEPR);
+        Constructor constructor =
+            (Constructor) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws NoSuchMethodException {
+                            return clazz.getConstructor(Source.class);
+                        }
+                    });
+
+        return clazz.cast(constructor.newInstance(eprInfoset));
     }
     
     /**

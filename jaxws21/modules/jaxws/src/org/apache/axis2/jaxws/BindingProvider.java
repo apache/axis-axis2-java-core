@@ -23,7 +23,6 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
-import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.binding.BindingUtils;
@@ -44,7 +43,6 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.net.URL;
@@ -62,8 +60,10 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     
     protected WebServiceFeatureValidator validator;
     
+    //TODO: Is this the best place for this code?
     protected org.apache.axis2.addressing.EndpointReference epr;
     
+    //TODO: Is this the best place for this code?
     protected String addressingNamespace;
 
     private Binding binding;  // force subclasses to use the lazy getter
@@ -91,16 +91,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         
         // Setting standard property defaults for the request context
         requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, Boolean.FALSE);
-        
-        WebServiceFeature addressingFeature = validator.get(AddressingFeature.ID);
-        WebServiceFeature submissionAddressingFeature = validator.get(SubmissionAddressingFeature.ID);
-        String bindingID = endpointDesc.getClientBindingID();
-        
-        if (BindingUtils.isSOAPBinding(bindingID) &&
-                (addressingFeature.isEnabled() || submissionAddressingFeature.isEnabled()))
-            requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-        else
-            requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.FALSE);
+        requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         
         // Set the endpoint address
         String endpointAddress = (epr != null ) ? epr.getAddress() : endpointDesc.getEndpointAddress();        

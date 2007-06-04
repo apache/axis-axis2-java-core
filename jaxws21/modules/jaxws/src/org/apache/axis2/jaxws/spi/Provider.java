@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
@@ -45,11 +45,12 @@ import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
 import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.List;
 
 public class Provider extends javax.xml.ws.spi.Provider {
-    private static volatile JAXBContext jaxbContext;
 
     @Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
@@ -160,31 +161,31 @@ public class Provider extends javax.xml.ws.spi.Provider {
 
     @Override
     public EndpointReference readEndpointReference(Source eprInfoset) {
-        EndpointReference epr = null;
+        EndpointReference jaxwsEPR = null;
 
         try {
-            JAXBContext jaxbContext = getJAXBContext();
-            Unmarshaller um = jaxbContext.createUnmarshaller();
-            epr = (EndpointReference) um.unmarshal(eprInfoset);
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            xformer.transform(eprInfoset, new StreamResult(baos));
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
+            org.apache.axis2.addressing.EndpointReference axis2EPR =
+                new org.apache.axis2.addressing.EndpointReference("");
+            String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
+            Class<? extends EndpointReference> clazz = null;
+            
+            if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
+                clazz = SubmissionEndpointReference.class;
+            else
+                clazz = W3CEndpointReference.class;
+            
+            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, clazz);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
         }
         
-        return epr;
-    }
-    
-    private JAXBContext getJAXBContext() throws JAXBException {
-        //This is an implementation of double-checked locking.
-        //It works because jaxbContext is volatile.
-        if (jaxbContext == null) {
-            synchronized (javax.xml.ws.spi.Provider.class) {
-                if (jaxbContext == null)
-                    jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class, SubmissionEndpointReference.class);
-            }
-        }
-        
-        return jaxbContext;
+        return jaxwsEPR;
     }
 }

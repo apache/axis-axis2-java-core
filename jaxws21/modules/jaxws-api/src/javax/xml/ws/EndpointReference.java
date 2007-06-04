@@ -18,8 +18,11 @@
  */
 package javax.xml.ws;
 
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.spi.Provider;
 
 public abstract class EndpointReference {
@@ -34,5 +37,13 @@ public abstract class EndpointReference {
     
     public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
         return Provider.provider().getPort(this, serviceEndpointInterface, features);
+    }
+    
+    @Override
+    public String toString() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writeTo(new StreamResult(baos));
+        
+        return baos.toString();
     }
 }

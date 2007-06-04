@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -72,9 +73,11 @@ import javax.xml.ws.WebServiceException;
 })
 public final class W3CEndpointReference extends EndpointReference {
     @XmlTransient
-    private static volatile JAXBContext jaxbContext;
+    protected static volatile JAXBContext jaxbContext;
     @XmlTransient
     protected static final String NS = "http://www.w3.org/2005/08/addressing";
+    @XmlTransient
+    protected static final QName NAME = new QName(NS, "EndpointReference", "wsa");
     
     @XmlElement(name = "Address", required = true)
     protected AttributedURIType address;
@@ -96,8 +99,9 @@ public final class W3CEndpointReference extends EndpointReference {
         try {
             JAXBContext jaxbContext = getJAXBContext();
             Unmarshaller um = jaxbContext.createUnmarshaller();
-            W3CEndpointReference w3cEPR =
-                (W3CEndpointReference) um.unmarshal(eprInfoset);
+            JAXBElement<W3CEndpointReference> element =
+                um.unmarshal(eprInfoset, W3CEndpointReference.class);
+            W3CEndpointReference w3cEPR = element.getValue();
             
             address = w3cEPR.address;
             referenceParameters = w3cEPR.referenceParameters;
@@ -120,14 +124,17 @@ public final class W3CEndpointReference extends EndpointReference {
         try {
             JAXBContext jaxbContext = getJAXBContext();
             Marshaller m = jaxbContext.createMarshaller();
-            m.marshal(this, result);
+            m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            JAXBElement<W3CEndpointReference> element =
+                new JAXBElement<W3CEndpointReference>(NAME, W3CEndpointReference.class, this);
+            m.marshal(element, result);
         }
         catch (Exception e) {
             //TODO NLS enable
             throw new WebServiceException("writeTo failure.", e);
         }
     }
-    
+
     private JAXBContext getJAXBContext() throws JAXBException {
         //This is an implementation of double-checked locking.
         //It works because jaxbContext is volatile.
@@ -168,6 +175,9 @@ public final class W3CEndpointReference extends EndpointReference {
         protected String value;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public AttributedURIType() {
+        }
     }
 
     /**
@@ -199,6 +209,9 @@ public final class W3CEndpointReference extends EndpointReference {
         protected List<Object> any;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public ReferenceParametersType() {
+        }
     }
 
     /**
@@ -230,5 +243,8 @@ public final class W3CEndpointReference extends EndpointReference {
         protected List<Object> any;
         @XmlAnyAttribute
         private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+        
+        public MetadataType() {
+        }
     }
 }
