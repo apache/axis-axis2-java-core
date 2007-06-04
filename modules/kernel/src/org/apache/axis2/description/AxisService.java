@@ -21,9 +21,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.java2wsdl.AnnotationConstants;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -60,7 +60,6 @@ import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
-import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -1553,7 +1552,7 @@ public class AxisService extends AxisDescription {
         ArrayList excludeOpeartion = new ArrayList();
 
         try {
-            schemaGenerator = new SchemaGenerator(loader,
+            schemaGenerator = new DefaultSchemaGenerator(loader,
                                                   implClass, schemaNamespace,
                                                   Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX);
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
@@ -1737,7 +1736,7 @@ public class AxisService extends AxisDescription {
 
 
         try {
-            schemaGenerator = new SchemaGenerator(serviceClassLoader,
+            schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
                                                   implClass, schemaNameSpace,
                                                   axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);

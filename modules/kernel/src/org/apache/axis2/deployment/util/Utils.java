@@ -6,7 +6,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -23,6 +22,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -48,7 +48,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -311,7 +310,7 @@ public class Utils {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
-        SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
+        SchemaGenerator schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
                                                               serviceClass.trim(),
                                                               axisService.getSchematargetNamespace(),
                                                               axisService.getSchematargetNamespacePrefix());

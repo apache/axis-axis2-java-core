@@ -62,6 +62,8 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private ArrayList pkg2nsMappings = new ArrayList();
 
     private MappingSet mappings = new MappingSet();
+    
+    private String schemaGenClassName = null;
 
     public String getLocationUri() {
         return locationUri;
@@ -176,6 +178,10 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         addToOptionMap(optionMap,
                 Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
                 getNsGenClassName());
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
+                getSchemaGenClassName());
 
         loadPkg2NsMap();
         addToOptionMap(optionMap,
@@ -343,6 +349,14 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
     public void setNsGenClassName(String nsGenClassName) {
         this.nsGenClassName = nsGenClassName;
+    }
+
+    public String getSchemaGenClassName() {
+        return schemaGenClassName;
+    }
+
+    public void setSchemaGenClassName(String schemaGenClassName) {
+        this.schemaGenClassName = schemaGenClassName;
     }
 
     public void loadPkg2NsMap() {

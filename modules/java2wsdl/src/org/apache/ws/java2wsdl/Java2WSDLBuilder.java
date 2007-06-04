@@ -2,10 +2,11 @@ package org.apache.ws.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2WSDL11;
@@ -18,9 +19,9 @@ import org.apache.axis2.deployment.util.Utils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -66,6 +67,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private Map pkg2nsMap = null;
     private boolean pretty = true;
     private String wsdlVersion = WSDL_VERSION_1;
+    private String schemaGenClassName = null;
 
     public String getSchemaTargetNamespace() throws Exception {
         if ( schemaTargetNamespace == null ) {
@@ -165,7 +167,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader,
+        SchemaGenerator schemaGenerator = resolveSchemaGen(classLoader,
                                                     className,
                                                     getSchemaTargetNamespace(), 
                                                     getSchemaTargetNamespacePrefix());
@@ -272,6 +274,14 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         this.nsGenClassName = nsGenClassName;
     }
 
+    public String getSchemaGenClassName() {
+        return schemaGenClassName;
+    }
+
+    public void setSchemaGenClassName(String schemaGenClassName) {
+        this.schemaGenClassName = schemaGenClassName;
+    }
+
     public Map getPkg2nsMap() {
         return pkg2nsMap;
     }
@@ -292,6 +302,24 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             }
         }
         return nsGen;
+    }
+
+    private SchemaGenerator resolveSchemaGen(ClassLoader loader, String className,
+                           String schematargetNamespace,
+                           String schematargetNamespacePrefix) throws Exception {
+        SchemaGenerator schemaGen = null;
+        if(this.schemaGenClassName == null){
+            schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
+        } else {
+            try {
+                schemaGen = (DefaultSchemaGenerator) Class.forName(this.nsGenClassName).getConstructor(
+                        new Class[]{ClassLoader.class, String.class, String.class, String.class}).newInstance(
+                            new Object[]{loader, className, schematargetNamespace, schematargetNamespacePrefix});
+            } catch ( Exception e ) {
+                schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
+            }
+        }
+        return schemaGen;
     }
 
     public boolean isPretty() {

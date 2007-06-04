@@ -193,6 +193,12 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
             java2WsdlBuilder.setNsGenClassName(option.getOptionValue());
         }
         
+        option = loadOption(Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
+                            Java2WSDLConstants.SCHEMA_GENERATOR_OPTION_LONG, optionsMap);
+        if ( option != null ) {
+            java2WsdlBuilder.setSchemaGenClassName(option.getOptionValue());
+        }
+
         option = loadOption(Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
                             Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION_LONG, optionsMap);
         java2WsdlBuilder.setPkg2nsMap(loadJavaPkg2NamespaceMap(option));
