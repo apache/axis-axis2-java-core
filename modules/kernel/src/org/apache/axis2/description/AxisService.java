@@ -1034,12 +1034,6 @@ public class AxisService extends AxisDescription {
         return getDocumentation();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.axis2.description.AxisService#getClassLoader()
-     */
-
     /**
      * Method getClassLoader.
      *
@@ -1103,7 +1097,6 @@ public class AxisService extends AxisDescription {
      * @return Returns AxisOperation.
      */
     public AxisOperation getOperation(QName operationName) {
-//        AxisOperation axisOperation = (AxisOperation) operations.get(operationName);
         AxisOperation axisOperation = (AxisOperation) getChild(operationName);
 
         if (axisOperation == null) {
@@ -1142,7 +1135,6 @@ public class AxisService extends AxisDescription {
             return null;
         }
 
-//        AxisOperation operation = (AxisOperation) operations.get(new QName(soapAction));
         AxisOperation operation = (AxisOperation) getChild(new QName(soapAction));
 
         if (operation != null) {
@@ -1195,12 +1187,6 @@ public class AxisService extends AxisDescription {
     public void setServiceDescription(String documentation) {
         setDocumentation(documentation);
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.axis2.description.AxisService#setClassLoader(java.lang.ClassLoader)
-     */
 
     /**
      * Method setClassLoader.

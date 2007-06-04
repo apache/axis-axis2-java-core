@@ -160,7 +160,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             if (webpath != null && !"".equals(webpath)) {
                 log.debug("setting web location string: " + webpath);
                 File weblocation = new File(webpath);
-                setWebLocationString(weblocation.getAbsolutePath());
             } // if webpath not null
 
 

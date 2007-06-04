@@ -45,17 +45,7 @@ public class AxisServiceGroup extends AxisDescription {
     // to keep name of the service group
     private String serviceGroupName;
 
-    //to check whether user has put WWW dir or not
-    private boolean foundWebResources;
-
-    //To check whether server side service or client side service
-
-    /**
-     * Field services
-     */
-//    private HashMap services;
     public AxisServiceGroup() {
-//        services = new HashMap();
         moduleConfigmap = new HashMap();
         engagedModules = new ArrayList();
     }
@@ -154,23 +144,9 @@ public class AxisServiceGroup extends AxisDescription {
         }
     }
 
-//    /**
-//     * @deprecate Please use String version instead
-//     * @param moduleName
-//     */
-//    public void addToengagedModules(String moduleName) {
-//    }
-
     public void addToengagedModules(String moduleName) {
         engagedModules.add(moduleName);
     }
-
-//    /**
-//     * @deprecate Please use String version instead
-//     * @param moduleName
-//     */
-//    public void removeFromEngageList(QName moduleName) {
-//    }
 
     public void removeFromEngageList(String moduleName) {
         engagedModules.remove(moduleName);
@@ -208,7 +184,6 @@ public class AxisServiceGroup extends AxisDescription {
             ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_REMOVE, service);
         }
 
-//        services.remove(name);
         removeChild(name);
     }
 
@@ -229,7 +204,6 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public AxisService getService(String name) throws AxisFault {
-//        return (AxisService) services.get(name);
         return (AxisService) getChild(name);
     }
 
@@ -245,7 +219,6 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public Iterator getServices() {
-//        return services.values().iterator();
         return getChildren();
     }
 
@@ -282,13 +255,5 @@ public class AxisServiceGroup extends AxisDescription {
             }
         }
         return false;
-    }
-
-    public boolean isFoundWebResources() {
-        return foundWebResources;
-    }
-
-    public void setFoundWebResources(boolean foundWebResources) {
-        this.foundWebResources = foundWebResources;
     }
 }

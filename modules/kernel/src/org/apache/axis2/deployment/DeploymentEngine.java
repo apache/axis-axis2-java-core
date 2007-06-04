@@ -51,13 +51,6 @@ import java.util.zip.ZipInputStream;
 public abstract class DeploymentEngine implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
 
-    //to keep the web resource location if any
-    protected static String webLocationString = null;
-
-    public static void setWebLocationString(String webLocationString) {
-        DeploymentEngine.webLocationString = webLocationString;
-    }
-
     /**
      * Support for hot update is controlled by this flag
      */
@@ -433,10 +426,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                        AxisConfiguration axisConfiguration) throws AxisFault {
         fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfiguration);
         axisConfiguration.addServiceGroup(serviceGroup);
-        if (currentDeploymentFile != null) {
-            addAsWebResources(currentDeploymentFile.getFile(),
-                              serviceGroup.getServiceGroupName(), serviceGroup);
-        }
     }
 
     protected static void fillServiceGroup(AxisServiceGroup serviceGroup,
@@ -506,51 +495,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     }
                 }
             }
-        }
-    }
-
-    private static void addAsWebResources(File in,
-                                          String serviceFileName,
-                                          AxisServiceGroup serviceGroup) {
-        try {
-            if (webLocationString == null) {
-                return;
-            }
-            if (in.isDirectory()) {
-                return;
-            }
-            File webLocation = new File(webLocationString);
-            File out = new File(webLocation, serviceFileName);
-            int BUFFER = 1024;
-            byte data[] = new byte[BUFFER];
-            FileInputStream fin = new FileInputStream(in);
-            ZipInputStream zin = new ZipInputStream(
-                    fin);
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null) {
-                ZipEntry zip = new ZipEntry(entry);
-                if (zip.getName().toUpperCase().startsWith("WWW")) {
-                    String fileName = zip.getName();
-                    fileName = fileName.substring("WWW/".length(),
-                                                  fileName.length());
-                    if (zip.isDirectory()) {
-                        new File(out, fileName).mkdirs();
-                    } else {
-                        FileOutputStream tempOut = new FileOutputStream(new File(out, fileName));
-                        int count;
-                        while ((count = zin.read(data, 0, BUFFER)) != -1) {
-                            tempOut.write(data, 0, count);
-                        }
-                        tempOut.close();
-                        tempOut.flush();
-                    }
-                    serviceGroup.setFoundWebResources(true);
-                }
-            }
-            zin.close();
-            fin.close();
-        } catch (IOException e) {
-            log.info(e.getMessage());
         }
     }
 
@@ -848,10 +792,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             }
         }
         return fileList;
-    }
-
-    public String getWebLocationString() {
-        return webLocationString;
     }
 
     public void setConfigContext(ConfigurationContext configContext) {
