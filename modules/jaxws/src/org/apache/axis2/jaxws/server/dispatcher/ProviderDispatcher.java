@@ -48,7 +48,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * The ProviderDispatcher is used to invoke instances of a target endpoint that implement the {@link
@@ -85,7 +85,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.server.EndpointDispatcher#execute()
     */
-    public MessageContext invoke(MessageContext mc) throws Exception {
+    public MessageContext invoke(final MessageContext mc) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
         }
@@ -173,9 +173,9 @@ public class ProviderDispatcher extends JavaDispatcher {
         Object responseParamValue = null;
         try {
             responseParamValue = (Object)org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
-                            return providerInstance.invoke(input);
+                    .doPrivileged(new PrivilegedExceptionAction() {
+                        public Object run() throws Exception {
+                            return invokeProvider(mc, providerInstance, input);
                         }
                     });
         } catch (Exception e) {
@@ -222,6 +222,12 @@ public class ProviderDispatcher extends JavaDispatcher {
         return responseMsgCtx;
     }
 
+    protected Object invokeProvider(MessageContext ctx,
+                                    Provider provider,
+                                    Object input) throws Exception {
+        return provider.invoke(input);
+    }
+    
     /**
      * Get the endpoint provider instance
      *

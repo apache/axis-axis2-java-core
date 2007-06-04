@@ -86,7 +86,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         Throwable fault = null;
         Object response = null;
         try {
-            response = target.invoke(serviceInstance, methodInputParams);
+            response = invokeService(mc, target, serviceInstance, methodInputParams);
         } catch (Exception e) {
             faultThrown = true;
             fault = e;
@@ -147,6 +147,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return responseMsgCtx;
     }
 
+    protected Object invokeService(MessageContext ctx,
+                                   Method method, 
+                                   Object obj,
+                                   Object args[]) throws Exception {
+        return method.invoke(obj, args);
+    }
+    
     private void initialize(MessageContext mc) {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         endpointDesc = mc.getEndpointDescription();

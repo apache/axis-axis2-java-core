@@ -211,7 +211,7 @@ public class EndpointController {
     /*
       * Get the appropriate EndpointDispatcher for a given service endpoint.
       */
-    private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
+    protected EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
             throws Exception {
         EndpointDispatcherFactory factory = 
             (EndpointDispatcherFactory)FactoryRegistry.getFactory(EndpointDispatcherFactory.class);        
