@@ -1629,23 +1629,8 @@ public class AxisService extends AxisDescription {
 
         PhasesInfo pinfo = axisConfiguration.getPhasesInfo();
 
-        List excludes = schemaGenerator.getExcludeMethods();
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if (methodAnnon != null) {
-                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
-                    continue;
-                }
-            }
-            if (!jmethod.isPublic()) {
-                // no need to expose , private and protected methods
-                continue;
-            } else {
-                if (excludes.contains(jmethod.getSimpleName())) {
-                    continue;
-                }
-            }
             AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
             String mep = operation.getMessageExchangePattern();
             MessageReceiver mr;
@@ -1779,18 +1764,6 @@ public class AxisService extends AxisDescription {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if (methodAnnon != null) {
-                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
-                    continue;
-                }
-            }
-            if (!jmethod.isPublic()) {
-                // no need to expose , private and protected methods
-                continue;
-            } else if (excludeOpeartion.contains(jmethod.getSimpleName())) {
-                continue;
-            }
             AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
 
             // loading message receivers

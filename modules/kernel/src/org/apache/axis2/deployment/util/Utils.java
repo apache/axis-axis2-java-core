@@ -338,19 +338,6 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if (methodAnnon != null) {
-                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
-                    continue;
-                }
-            }
-            if (!jmethod.isPublic()) {
-                // no need to expose , private and protected methods
-                continue;
-            }
-            if (excludeOperations != null && excludeOperations.contains(jmethod.getSimpleName())) {
-                continue;
-            }
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the operation there in services.xml then try to set it schema element name

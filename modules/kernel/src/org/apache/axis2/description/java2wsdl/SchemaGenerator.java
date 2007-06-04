@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.lang.reflect.Array;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -190,109 +191,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         targetNamespace = tns;
                     }
                 }
-                methods = jclass.getDeclaredMethods();
-                //short the elements in the array
-                Arrays.sort(methods);
+                methods = processMethods(jclass.getDeclaredMethods());
 
-                // since we do not support overload
-                HashMap uniqueMethods = new HashMap();
-                XmlSchemaComplexType methodSchemaType;
-                XmlSchemaSequence sequence = null;
-
-                for (int i = 0; i < methods.length; i++) {
-                    JMethod jMethod = methods[i];
-                    JAnnotation methodAnnon = jMethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-                    if (methodAnnon != null) {
-                        if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
-                            continue;
-                        }
-                    }
-                    String methodName = getSimpleName(jMethod);
-                    // no need to think abt this method , since that is system
-                    // config method
-                    if (excludeMethods.contains(getSimpleName(jMethod))) {
-                        continue;
-                    }
-
-                    if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
-                        log.warn("We don't support methods overloading. Ignoring [" + jMethod.getQualifiedName() + "]");
-                        continue;
-                    }
-
-                    if (!jMethod.isPublic()) {
-                        // no need to generate Schema for non public methods
-                        continue;
-                    }
-                    if (jMethod.getExceptionTypes().length > 0) {
-                        JClass[] extypes = jMethod.getExceptionTypes() ;
-                        for (int j= 0 ; j < extypes.length ; j++) {
-                            JClass extype = extypes[j] ;
-                            methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
-                            sequence = new XmlSchemaSequence();
-                        	generateSchemaForType(sequence, extype, extype.getSimpleName());
-                            methodSchemaType.setParticle(sequence);
-                        }
-                    }
-                    uniqueMethods.put(getSimpleName(jMethod), jMethod);
-                    //create the schema type for the method wrapper
-
-                    uniqueMethods.put(getSimpleName(jMethod), jMethod);
-                    JParameter[] paras = jMethod.getParameters();
-                    String parameterNames[] = null;
-                    if (paras.length > 0) {
-                        parameterNames = methodTable.getParameterNames(methodName);
-                        sequence = new XmlSchemaSequence();
-
-                        methodSchemaType = createSchemaTypeForMethodPart(getSimpleName(jMethod));
-                        methodSchemaType.setParticle(sequence);
-                    }
-
-                    for (int j = 0; j < paras.length; j++) {
-                        JParameter methodParameter = paras[j];
-                        String parameterName = null;
-                        JAnnotation paramterAnnon =
-                                methodParameter.getAnnotation(AnnotationConstants.WEB_PARAM);
-                        if (paramterAnnon != null) {
-                            parameterName =
-                                    paramterAnnon.getValue(AnnotationConstants.NAME).asString();
-                        }
-                        if (parameterName == null || "".equals(parameterName)) {
-                            parameterName = (parameterNames != null && parameterNames[j] != null) ?
-                                    parameterNames[j] : getSimpleName(methodParameter);
-                        }
-                        JClass paraType = methodParameter.getType();
-                        if (nonRpcMethods.contains(getSimpleName(jMethod))) {
-                            generateSchemaForType(sequence, null, getSimpleName(jMethod));
-                            break;
-                        } else {
-                            generateSchemaForType(sequence, paraType, parameterName);
-                        }
-                    }
-                    // for its return type
-                    JClass returnType = jMethod.getReturnType();
-
-                    if (!returnType.isVoidType()) {
-                        methodSchemaType =
-                                createSchemaTypeForMethodPart(getSimpleName(jMethod) + RESPONSE);
-                        sequence = new XmlSchemaSequence();
-                        methodSchemaType.setParticle(sequence);
-                        JAnnotation returnAnnon =
-                                jMethod.getAnnotation(AnnotationConstants.WEB_RESULT);
-                        String returnName = "return";
-                        if (returnAnnon != null) {
-                            returnName = returnAnnon.getValue(AnnotationConstants.NAME).asString();
-                            if (returnName != null && !"".equals(returnName)) {
-                                returnName = "return";
-                            }
-                        }
-                        if (nonRpcMethods.contains(getSimpleName(jMethod))) {
-                            generateSchemaForType(sequence, null, returnName);
-                        } else {
-                            generateSchemaForType(sequence, returnType, returnName);
-                        }
-
-                    }
-                }
             } else {
                 //generate the schema type for extra classes
                 extraSchemaTypeName = typeTable.getSimpleSchemaTypeName(getQualifiedName(jclass));
@@ -302,6 +202,117 @@ public class SchemaGenerator implements Java2WSDLConstants {
             }
         }
         return schemaMap.values();
+    }
+
+    private JMethod[] processMethods(JMethod[] declaredMethods) throws Exception {
+        ArrayList list = new ArrayList();
+        //short the elements in the array
+        Arrays.sort(declaredMethods);
+
+        // since we do not support overload
+        HashMap uniqueMethods = new HashMap();
+        XmlSchemaComplexType methodSchemaType;
+        XmlSchemaSequence sequence = null;
+
+        for (int i = 0; i < declaredMethods.length; i++) {
+            JMethod jMethod = declaredMethods[i];
+            JAnnotation methodAnnon = jMethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if (methodAnnon != null) {
+                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
+                    continue;
+                }
+            }
+            String methodName = getSimpleName(jMethod);
+            // no need to think abt this method , since that is system
+            // config method
+            if (excludeMethods.contains(getSimpleName(jMethod))) {
+                continue;
+            }
+
+            if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
+                log.warn("We don't support methods overloading. Ignoring [" + jMethod.getQualifiedName() + "]");
+                continue;
+            }
+
+            if (!jMethod.isPublic()) {
+                // no need to generate Schema for non public methods
+                continue;
+            }
+
+            // Maintain a list of methods we actually work with
+            list.add(jMethod);
+
+            if (jMethod.getExceptionTypes().length > 0) {
+                JClass[] extypes = jMethod.getExceptionTypes() ;
+                for (int j= 0 ; j < extypes.length ; j++) {
+                    JClass extype = extypes[j] ;
+                    methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
+                    sequence = new XmlSchemaSequence();
+                    generateSchemaForType(sequence, extype, extype.getSimpleName());
+                    methodSchemaType.setParticle(sequence);
+                }
+            }
+            uniqueMethods.put(getSimpleName(jMethod), jMethod);
+            //create the schema type for the method wrapper
+
+            uniqueMethods.put(getSimpleName(jMethod), jMethod);
+            JParameter[] paras = jMethod.getParameters();
+            String parameterNames[] = null;
+            if (paras.length > 0) {
+                parameterNames = methodTable.getParameterNames(methodName);
+                sequence = new XmlSchemaSequence();
+
+                methodSchemaType = createSchemaTypeForMethodPart(getSimpleName(jMethod));
+                methodSchemaType.setParticle(sequence);
+            }
+
+            for (int j = 0; j < paras.length; j++) {
+                JParameter methodParameter = paras[j];
+                String parameterName = null;
+                JAnnotation paramterAnnon =
+                        methodParameter.getAnnotation(AnnotationConstants.WEB_PARAM);
+                if (paramterAnnon != null) {
+                    parameterName =
+                            paramterAnnon.getValue(AnnotationConstants.NAME).asString();
+                }
+                if (parameterName == null || "".equals(parameterName)) {
+                    parameterName = (parameterNames != null && parameterNames[j] != null) ?
+                            parameterNames[j] : getSimpleName(methodParameter);
+                }
+                JClass paraType = methodParameter.getType();
+                if (nonRpcMethods.contains(getSimpleName(jMethod))) {
+                    generateSchemaForType(sequence, null, getSimpleName(jMethod));
+                    break;
+                } else {
+                    generateSchemaForType(sequence, paraType, parameterName);
+                }
+            }
+            // for its return type
+            JClass returnType = jMethod.getReturnType();
+
+            if (!returnType.isVoidType()) {
+                methodSchemaType =
+                        createSchemaTypeForMethodPart(getSimpleName(jMethod) + RESPONSE);
+                sequence = new XmlSchemaSequence();
+                methodSchemaType.setParticle(sequence);
+                JAnnotation returnAnnon =
+                        jMethod.getAnnotation(AnnotationConstants.WEB_RESULT);
+                String returnName = "return";
+                if (returnAnnon != null) {
+                    returnName = returnAnnon.getValue(AnnotationConstants.NAME).asString();
+                    if (returnName != null && !"".equals(returnName)) {
+                        returnName = "return";
+                    }
+                }
+                if (nonRpcMethods.contains(getSimpleName(jMethod))) {
+                    generateSchemaForType(sequence, null, returnName);
+                } else {
+                    generateSchemaForType(sequence, returnType, returnName);
+                }
+
+            }
+        }
+        return (JMethod[]) list.toArray(new JMethod[list.size()]);
     }
 
     /**
