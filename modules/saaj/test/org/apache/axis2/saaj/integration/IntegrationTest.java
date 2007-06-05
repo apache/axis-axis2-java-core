@@ -28,6 +28,7 @@ import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -43,6 +44,7 @@ import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -312,4 +314,33 @@ public class IntegrationTest extends TestCase {
         final SOAPElement ele2 = bodyElement2.addChildElement(ns4);
         ele2.addTextNode("This is another text");
     }
+    
+    
+    public void testSendReceive_ISO88591_EncodedSOAPMessage() {
+        try{
+        	MimeHeaders mimeHeaders = new MimeHeaders();
+            mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
+            
+            FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
+                    "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
+            SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
+            
+
+            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+            SOAPMessage response = sCon.call(requestMessage, getAddress());
+            assertFalse(response.getAttachments().hasNext());
+            assertEquals(0, response.countAttachments());
+
+            printSOAPMessage(requestMessage);
+            String responseStr = printSOAPMessage(response);
+            assertTrue(responseStr.indexOf("This is some text.Here are some special chars : öÆÚ®¤") != -1);
+            assertTrue(responseStr.indexOf("echo") != -1);
+            sCon.close();
+        } catch (SOAPException e) {
+            e.printStackTrace();
+            fail("Unexpected Exception while running test: " + e);
+        } catch (IOException e) {
+            fail("Unexpected Exception while running test: " + e);
+        }
+    }    
 }

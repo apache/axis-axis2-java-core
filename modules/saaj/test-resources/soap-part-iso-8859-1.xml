@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Header>
+		<pref:Header1 xmlns:pref="http://test.apach.org/test">This is header1</pref:Header1>
+	</soapenv:Header>
+	<soapenv:Body>
+		<swa2:echo xmlns:swa2="http://fakeNamespace2.org">
+			<something>This is some text.Here are some special chars : öÆÚ®¤</something>
+		</swa2:echo>
+	</soapenv:Body>
+</soapenv:Envelope>

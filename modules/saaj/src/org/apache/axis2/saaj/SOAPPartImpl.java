@@ -119,6 +119,10 @@ public class SOAPPartImpl extends SOAPPart {
         }
         soapMessage = parentSoapMsg;
 
+        String knownEncoding = (String) soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+        XMLStreamReader xmlReader = null;
+      
+        
         InputStream modifiedInputStream = null;
         StAXSOAPModelBuilder builder = null;
         InputStreamReader isReader = null;
@@ -129,7 +133,8 @@ public class SOAPPartImpl extends SOAPPart {
                 Attachments attachments =
                         new Attachments(inputStream, fullContentTypeStr, false, "", "");
                 modifiedInputStream = attachments.getSOAPPartInputStream();
-                isReader = new InputStreamReader(modifiedInputStream);
+               	isReader = new InputStreamReader(modifiedInputStream);
+               
 
                 String soapEnvelopeNamespaceURI =
                         BuilderUtil.getEnvelopeNamespace(fullContentTypeStr);
@@ -173,23 +178,30 @@ public class SOAPPartImpl extends SOAPPart {
             modifiedInputStream = inputStream;
             try {
                 isReader = new InputStreamReader(modifiedInputStream);
+                XMLStreamReader streamReader = null;
+                
+                if(knownEncoding != null){
+                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream, knownEncoding);
+                }else{
+                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream);                	
+                }
 
                 if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(isReader),
+                    builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP11Factory(),
                                                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
                 } else if (HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(isReader),
+                    builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP12Factory(),
                                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
                 } else if (HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(isReader),
+                    builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP11Factory(),
                                                        null);
                 } else {
-                    builder = new StAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(isReader),
+                    builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP11Factory(),
                                                        null);
                 }
@@ -204,7 +216,7 @@ public class SOAPPartImpl extends SOAPPart {
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
             javax.xml.transform.Source xmlSource =
-                    new javax.xml.transform.stream.StreamSource(isReader);
+                    new javax.xml.transform.stream.StreamSource( isReader);
             this.source = xmlSource;
         } catch (Exception e) {
             throw new SOAPException(e);
