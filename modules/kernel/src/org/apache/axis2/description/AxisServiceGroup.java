@@ -30,6 +30,8 @@ import java.util.Iterator;
 
 public class AxisServiceGroup extends AxisDescription {
 
+    //to check whether user has put WWW dir or not
+    private boolean foundWebResources;
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();
 
@@ -256,4 +258,12 @@ public class AxisServiceGroup extends AxisDescription {
         }
         return false;
     }
+
+        public boolean isFoundWebResources() {
+        return foundWebResources;
+    }
+
+    public void setFoundWebResources(boolean foundWebResources) {
+        this.foundWebResources = foundWebResources;
+     }
 }
