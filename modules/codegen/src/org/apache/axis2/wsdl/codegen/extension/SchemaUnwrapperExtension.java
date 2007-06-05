@@ -13,22 +13,7 @@ import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaContentModel;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -131,11 +116,24 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-
-        handleAllCasesOfComplexTypes(schemaType,
+        if (schemaType instanceof XmlSchemaComplexType){
+             handleAllCasesOfComplexTypes(schemaType,
                                      message,
                                      partNameList,
                                      qnameSuffix);
+        } else if (schemaType instanceof XmlSchemaSimpleType){
+            XmlSchemaSimpleType xmlSchemaSimpleType = (XmlSchemaSimpleType) schemaType;
+            QName opName = ((AxisOperation)message.getParent()).getName();
+            partNameList.add(WSDLUtil.getPartQName(opName.getLocalPart(),
+                                                  qnameSuffix,
+                                                  schemaElement.getQName().getLocalPart()));
+        } else {
+            //we've no idea how to unwrap a non complexType!!!!!!
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                               "unknown", "complexType"));
+        }
+
 
 
         try {
@@ -182,11 +180,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             // handle attributes here
             processAttributes(cmplxType, message, partNameList, qnameSuffix);
 
-        } else {
-            //we've no idea how to unwrap a non complexType!!!!!!
-            throw new CodeGenerationException(
-                    CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                               "unknown", "complexType"));
         }
     }
 
@@ -221,8 +214,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent)contentModel;
             XmlSchemaContent content = xmlSchemaComplexContent.getContent();
             if (content instanceof XmlSchemaComplexContentExtension) {
-                XmlSchemaComplexContentExtension schemaExtension =
-                        (XmlSchemaComplexContentExtension)content;
+                XmlSchemaComplexContentExtension schemaExtension =  (XmlSchemaComplexContentExtension)content;
 
                 // process particles inside this extension, if any
                 if (schemaExtension.getParticle() != null) {
@@ -237,23 +229,52 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 XmlSchema parentSchema = null;
 
-                for (int i = 0; i < schemasList.size() || parentSchema == null; i++) {
-                    XmlSchema schema = (XmlSchema)schemasList.get(i);
-                    if (schema.getTargetNamespace()
-                            .equals(schemaExtension.getBaseTypeName().getNamespaceURI())) {
-                        parentSchema = schema;
+                XmlSchema schema = null;
+                XmlSchemaType extensionSchemaType = null;
+                for (Iterator iter = schemasList.iterator();iter.hasNext();){
+                    schema = (XmlSchema) iter.next();
+                    extensionSchemaType = getSchemaType(schema, schemaExtension.getBaseTypeName());
+                    if (extensionSchemaType != null){
+                        break;
                     }
                 }
 
                 // ok now we got the parent schema. Now let's get the extension's schema type
 
-                XmlSchemaType extensionSchemaType =
-                        parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
-
                 handleAllCasesOfComplexTypes(extensionSchemaType, message, partNameList,
                                              qnameSuffix);
             }
         }
+    }
+
+    private XmlSchemaType getSchemaType(XmlSchema schema, QName typeName) {
+        XmlSchemaType xmlSchemaType = null;
+        if (schema != null) {
+            xmlSchemaType = schema.getTypeByName(typeName);
+            if (xmlSchemaType == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaType = getSchemaType(schema1,typeName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaType = getSchemaType(schema1,typeName);
+                        }
+                        if (xmlSchemaType != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaType;
     }
 
     private void processXMLSchemaSequence(XmlSchemaParticle schemaParticle,
