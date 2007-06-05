@@ -127,12 +127,10 @@ public class SOAPMessageTest extends TestCase {
                 cnt++;
                 iterator.next();
             }
-            System.out.println("number of attachments: " + cnt);
             assertEquals(cnt, 1);
             iterator = msg.getAttachments();
             AttachmentPart ap = (AttachmentPart)iterator.next();
             String ctype = ap.getContentType();
-            System.out.println(ctype);
             assertTrue(ctype.equals("text/plain"));
 
         } catch (Exception e) {
@@ -174,13 +172,6 @@ public class SOAPMessageTest extends TestCase {
                     fail("got object: " + o +
                             ", expected object: javax.xml.transform.stream.StreamSource");
                 }
-
-                //if(is != null) {
-                //	StringBuffer sb2 = copyToBuffer(is);
-                //	String s1 = sb1.toString();
-                //	String s2 = sb2.toString();
-                //	assertTrue(s1.equals(s2));
-                //}
             }
             catch (Exception e) {
                 fail("attachment has no content - unexpected");
@@ -455,8 +446,8 @@ public class SOAPMessageTest extends TestCase {
             SOAPMessage replymsg = con.call(msg, urlEndpoint);
 
             // Check if reply message
-            if (ValidateReplyMessage(replymsg, 1)) {
-                //TestUtil.logMsg("Reply message is correct (PASSED)");
+            if (!validateReplyMessage(replymsg, 1)) {
+                //Reply message is correct
             } else {
                 //TestUtil.logErr("Reply message is incorrect (FAILED)");
             }
@@ -467,7 +458,7 @@ public class SOAPMessageTest extends TestCase {
         }
     }
 
-    private boolean ValidateReplyMessage(SOAPMessage msg, int num) {
+    private boolean validateReplyMessage(SOAPMessage msg, int num) {
         try {
             boolean pass = true;
             SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -498,12 +489,11 @@ public class SOAPMessageTest extends TestCase {
             }
             if (!foundHeader1 || !foundHeader2 ||
                     !foundHeader3 || !foundHeader4) {
-                //"Did not find expected soap headers in reply message"
+                //expected soap headers in reply message
                 pass = false;
             } else {
-                //"Did find expected soap headers in reply message");
+                //expected soap headers in reply message
             }
-            //TestUtil.logMsg("Verify soap body");
             boolean foundBody1 = false;
             boolean foundChild1 = false;
             boolean foundChild2 = false;
@@ -528,21 +518,17 @@ public class SOAPMessageTest extends TestCase {
                 }
             }
             if (!foundBody1) {
-                //TestUtil.logErr("Did not find expected soap body in reply message");
+                //expected soap body in reply message
                 pass = false;
             } else
-                //TestUtil.logMsg("Did find expected soap body in reply message");
                 if (!foundChild1 || !foundChild2) {
-                    //TestUtil.logErr("Did not find expected soap body " +ild elements in reply message");
                     pass = false;
                 } else {
-                    //TestUtil.logMsg("Did find expected soap body child " +
+                    //Did find expected soap body child
                 }
-            //TestUtil.logMsg("Verify attachments");
             int count = msg.countAttachments();
             if (count == num) {
-                //TestUtil.logMsg("Got expected " + count +" attachments in reply message");
-
+                //received expected number of attachments in reply message
                 i = msg.getAttachments();
                 boolean gifFound = false;
                 boolean xmlFound = false;
@@ -552,7 +538,6 @@ public class SOAPMessageTest extends TestCase {
                 while (i.hasNext()) {
                     AttachmentPart a = (AttachmentPart)i.next();
                     String type = a.getContentType();
-                    //TestUtil.logMsg("MIME type of attachment = " + type);
                     if (type.equals("image/gif"))
                         gifFound = true;
                     else if (type.equals("text/xml"))
@@ -564,28 +549,21 @@ public class SOAPMessageTest extends TestCase {
                     else if (type.equals("image/jpeg"))
                         jpegFound = true;
                     else {
-                        //TestUtil.logErr("Got unexpected MIME type: " + type);
+                        //Got unexpected MIME type
                         pass = false;
                     }
                 }
-                if (num == 1 && xmlFound) {
-                    //TestUtil.logMsg("Did find expected MIME types in reply message");
-                } else if (num == 3 && xmlFound && jpegFound && textFound) {
-                    // TestUtil.logMsg("Did find expected MIME types in reply message");
-                } else if (num > 0) {
-                    //TestUtil.logErr("Did not find expected MIME types in reply message");
+                if (num > 0) {
+                    //Did not find expected MIME types in reply message
                     pass = false;
                 }
                 return pass;
             } else {
-                //TestUtil.logErr("Got unexpected " + count +" attachments in reply message, expected 5");
+                //Got unexpected number of attachments in reply message
                 return false;
             }
         } catch (Exception e) {
             return false;
         }
     }
-
-
 }
-
