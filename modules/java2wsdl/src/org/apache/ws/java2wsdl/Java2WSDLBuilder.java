@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.reflect.Constructor;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -312,8 +313,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
         } else {
             try {
-                schemaGen = (DefaultSchemaGenerator) Class.forName(this.nsGenClassName).getConstructor(
-                        new Class[]{ClassLoader.class, String.class, String.class, String.class}).newInstance(
+                Class clazz = Class.forName(this.schemaGenClassName);
+                Constructor constructor = clazz.getConstructor(
+                        new Class[]{ClassLoader.class, String.class, String.class, String.class});
+                schemaGen = (SchemaGenerator) constructor.newInstance(
                             new Object[]{loader, className, schematargetNamespace, schematargetNamespacePrefix});
             } catch ( Exception e ) {
                 schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
