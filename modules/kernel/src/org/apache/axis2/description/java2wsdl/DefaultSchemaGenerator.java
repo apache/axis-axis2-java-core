@@ -10,6 +10,7 @@ import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
@@ -72,11 +73,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
 
-    private ClassLoader classLoader;
+    protected ClassLoader classLoader;
 
     private String className;
 
-    private TypeTable typeTable = new TypeTable();
+    protected TypeTable typeTable = new TypeTable();
 
     // to keep loadded method using JAM
     private JMethod methods[];
@@ -94,11 +95,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     private ArrayList excludeMethods = new ArrayList();
 
-    private ArrayList extraClasses = null;
+    protected ArrayList extraClasses = null;
 
     private boolean useWSDLTypesNamespace = false;
 
-    private Map pkg2nsmap = null;
+    protected Map pkg2nsmap = null;
 
     private NamespaceGenerator nsGen = null;
 
@@ -106,6 +107,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     //to keep the list of operation which uses MR other than RPC MR
     private ArrayList nonRpcMethods = new ArrayList();
 
+    protected Class serviceClass = null;
 
     public NamespaceGenerator getNsGen() throws Exception {
         if (nsGen == null) {
@@ -125,8 +127,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         this.classLoader = loader;
         this.className = className;
 
-        Class clazz = Class.forName(className, true, loader);
-        methodTable = new MethodTable(clazz);
+        serviceClass = Class.forName(className, true, loader);
+        methodTable = new MethodTable(serviceClass);
 
         this.targetNamespace = Java2WSDLUtils.targetNamespaceFromClassName(
                 className, loader, getNsGen()).toString();
@@ -347,6 +349,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
             String targetNamespacePrefix = (String)targetNamespacePrefixMap.get(targetNameSpace);
+            if (targetNamespacePrefix == null) {
+                targetNamespacePrefix = generatePrefix();
+                targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix) ;
+            }
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
             XmlSchemaSequence sequence = new XmlSchemaSequence();
@@ -682,7 +688,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     private void addImport(XmlSchema xmlSchema, QName schemaTypeName) {
-        if (!((NamespaceMap)xmlSchema.getNamespaceContext()).values().
+        NamespacePrefixList map = xmlSchema.getNamespaceContext();
+        if (map instanceof NamespaceMap && !((NamespaceMap)map).values().
                 contains(schemaTypeName.getNamespaceURI())) {
             XmlSchemaImport importElement = new XmlSchemaImport();
             importElement.setNamespace(schemaTypeName.getNamespaceURI());
