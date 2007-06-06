@@ -523,6 +523,10 @@ public class MessageContextBuilder {
                     message = getFaultReasonFromException(e, context);
                 }
             }
+        }  else {
+            if (message == null || "".equals(message)) {
+                message = getFaultReasonFromException(e, context);
+            }
         }
 
         // defaulting to reason, unknown, if no reason is available
