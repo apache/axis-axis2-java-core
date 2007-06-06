@@ -96,6 +96,10 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         }
         return binding;
     }
+    
+    public void setBinding(Binding binding) {
+        this.binding = binding;
+    }
 
     public Map<String, Object> getRequestContext() {
         return requestContext;
