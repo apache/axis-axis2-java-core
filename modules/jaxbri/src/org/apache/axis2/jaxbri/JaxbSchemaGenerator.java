@@ -3,6 +3,8 @@ package org.apache.axis2.jaxbri;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.util.Loader;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
+import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -59,8 +64,15 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             }
         }
 
-        JAXBContext context = createJAXBContext(classes,
-                (isUseWSDLTypesNamespace() ? ((String) pkg2nsmap.get("all")) : null));
+        String jaxbNamespace = null;
+        if(isUseWSDLTypesNamespace()){
+            jaxbNamespace = (String) pkg2nsmap.get("all");
+        }
+        if(jaxbNamespace == null) {
+            jaxbNamespace = this.getSchemaTargetNameSpace();
+        }
+
+        JAXBContextImpl context = (JAXBContextImpl) createJAXBContext(classes, jaxbNamespace);
 
         for (DOMResult r : generateJaxbSchemas(context)) {
             Document d = (Document) r.getNode();
@@ -82,10 +94,27 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             }
 
             XmlSchema xmlSchema = xmlSchemaCollection.read(d.getDocumentElement());
+
+            for (Class clazz : classes) {
+                JaxBeanInfo<?> beanInfo = context.getBeanInfo(clazz);
+                QName qName = getTypeName(beanInfo);
+                if(qName != null) {
+                    typeTable.addComplexSchema(clazz.getName(), qName);
+                }
+            }
             schemaMap.put(targetNamespace, xmlSchema);
         }
 
         return super.generateSchema();
+    }
+
+    private QName getTypeName(JaxBeanInfo<?> beanInfo) {
+        Iterator<QName> itr = beanInfo.getTypeNames().iterator();
+        if (!itr.hasNext()) {
+            return null;
+        }
+
+        return itr.next();
     }
 
     private List<Class<?>> processMethods(Method[] declaredMethods) throws Exception {
