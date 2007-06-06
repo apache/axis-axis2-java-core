@@ -88,4 +88,8 @@ public class GetStateCommand extends ControlCommand {
     public ContextClusteringCommand[] getCommands() {
         return commands;
     }
+
+    public String toString() {
+        return "GetStateCommand";
+    }
 }

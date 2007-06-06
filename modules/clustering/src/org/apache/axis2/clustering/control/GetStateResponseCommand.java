@@ -45,4 +45,8 @@ public class GetStateResponseCommand extends ControlCommand {
     public void setCommands(ContextClusteringCommand[] commands) {
         this.commands = commands;
     }
+
+    public String toString() {
+        return "GetStateResponseCommand";
+    }
 }

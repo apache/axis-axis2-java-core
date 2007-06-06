@@ -59,10 +59,15 @@ public final class AckManager {
             for (int i = 0; i < members.length; i++) {
                 Member member = members[i];
                 if (!memberList.contains(member.getName())) {
-
+                    System.err.println("\n\n");
+                    System.err.println("##### NO ACK from member " + member.getName());
+                    System.err.println("#### ACKed member list=" + memberList);
+                    System.err.println("\n\n");
                     // At this point, resend the original message back to the node which has not
                     // sent an ACK
                     sender.sendToMember(ack.getCommand(), member);
+
+                    //TODO: Check whether this is a new member. If then send the msg
                     isAcknowledged = false;
                     break;
                 } else {

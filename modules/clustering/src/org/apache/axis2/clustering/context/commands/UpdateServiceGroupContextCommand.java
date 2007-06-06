@@ -16,15 +16,11 @@
 package org.apache.axis2.clustering.context.commands;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.PropertyDifference;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.HashMap;
 
 /**
  * 
@@ -32,7 +28,6 @@ import java.util.HashMap;
 public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
 
     private static Log log = LogFactory.getLog(UpdateServiceGroupContextCommand.class);
-    private PropertyUpdater propertyUpdater = new PropertyUpdater();
 
     protected String serviceGroupName;
     protected String serviceGroupContextId;
@@ -70,18 +65,7 @@ public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
         propertyUpdater.updateProperties(sgCtx);
     }
 
-    public boolean isPropertiesEmpty() {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-            return true;
-        }
-        return propertyUpdater.getProperties().isEmpty();
-    }
-
-    public void addProperty(PropertyDifference diff) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(diff);
+    public String toString() {
+        return "UpdateServiceGroupContextCommand(" + uniqueId + ")";
     }
 }

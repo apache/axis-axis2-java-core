@@ -37,10 +37,7 @@ import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 public class TribesClusterManager implements ClusterManager {
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
@@ -94,9 +91,6 @@ public class TribesClusterManager implements ClusterManager {
                 domain = "apache.axis2.domain".getBytes();
             }
             channel.getMembershipService().setDomain(domain);
-
-//            ((McastService)channel.getMembershipService()).setPort(5000);
-
             DomainFilterInterceptor dfi = new DomainFilterInterceptor();
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
@@ -111,6 +105,16 @@ public class TribesClusterManager implements ClusterManager {
             };
             nbc.setPrevious(dfi);
             channel.addInterceptor(nbc);*/
+
+            /*Properties mcastProps = channel.getMembershipService().getProperties();
+            mcastProps.setProperty("mcastPort", "5555");
+            mcastProps.setProperty("mcastAddress", "224.10.10.10");
+            mcastProps.setProperty("mcastClusterDomain", "catalina");
+            mcastProps.setProperty("bindAddress", "localhost");
+            mcastProps.setProperty("memberDropTime", "20000");
+            mcastProps.setProperty("mcastFrequency", "500");
+            mcastProps.setProperty("tcpListenPort", "4000");
+            mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
 //            TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
 //            tcpFailureDetector.setPrevious(nbc);
@@ -127,11 +131,16 @@ public class TribesClusterManager implements ClusterManager {
                 channelListener.setContextManager(contextManager);
 
                 Member[] members = channel.getMembers();
+                log.info("Local Tribes Member " + channel.getLocalMember(true).getName());
                 TribesUtil.printMembers(members);
 
                 // If there is at least one member in the Tribe, get the current state from a member
                 Random random = new Random();
                 int numberOfTries = 0; // Don't keep on trying infinitely
+
+                // Keep track of members to whom we already sent a GetStateCommand
+                // Do not send another request to these members
+                List sentMembersList = new ArrayList();
                 while (members.length > 0 &&
                        configurationContext.
                                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
@@ -141,9 +150,13 @@ public class TribesClusterManager implements ClusterManager {
                     try {
                         members = channel.getMembers();
                         int memberIndex = random.nextInt(members.length);
-                        sender.sendToMember(new GetStateCommand(), members[memberIndex]);
-                        log.debug("WAITING FOR STATE UPDATE...");
-                        Thread.sleep(200);
+                        Member member = members[memberIndex];
+                        if (!sentMembersList.contains(member.getName())) {
+                            sender.sendToMember(new GetStateCommand(), member);
+                            sentMembersList.add(member.getName());
+                            log.debug("WAITING FOR STATE UPDATE...");
+                            Thread.sleep(1000);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         break;

@@ -22,9 +22,12 @@ import org.apache.axis2.clustering.MessageSender;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ChannelSender implements MessageSender {
 
+    private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
@@ -32,7 +35,8 @@ public class ChannelSender implements MessageSender {
         Member[] members = channel.getMembers();
         if (members.length > 0) {
             try {
-                channel.send(members, msg, 0);
+                channel.send(members, msg, Channel.DEFAULT);
+                log.debug("Sent " + msg + " to group");
             } catch (ChannelException e) {
                 String message = "Error sending command message : " + msg;
                 throw new ClusteringFault(message, e);
@@ -45,7 +49,8 @@ public class ChannelSender implements MessageSender {
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
-                         Channel.SEND_OPTIONS_USE_ACK);
+                         Channel.DEFAULT);
+            log.debug("Sent " + msg + " to self");
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
         }
@@ -57,6 +62,7 @@ public class ChannelSender implements MessageSender {
         if (group.length > 0) {
             try {
                 channel.send(group, throwable, 0);
+                log.debug("Sent " + throwable + " to group");
             } catch (ChannelException e) {
                 String message = "Error sending exception message : " + throwable;
                 throw new ClusteringFault(message, e);
@@ -66,7 +72,8 @@ public class ChannelSender implements MessageSender {
 
     public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
-            channel.send(new Member[]{member}, cmd, Channel.SEND_OPTIONS_USE_ACK);
+            channel.send(new Member[]{member}, cmd, Channel.DEFAULT);
+            log.debug("Sent " + cmd + " to " + member.getName());
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
         }

@@ -17,6 +17,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
@@ -94,7 +95,20 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             && !(msg instanceof GetStateResponseCommand)) {
             return;
         }
-        log.debug("RECEIVED MESSAGE " + msg);
+        log.debug("RECEIVED MESSAGE " + msg + " from " + sender.getName());
+
+        // Need to process ACKs as soon as they are received since otherwise,
+        // unnecessary retransmissions will take place
+        if(msg instanceof AckCommand){
+            try {
+                controlCommandProcessor.process((AckCommand) msg, sender);
+            } catch (Exception e) {
+                log.error(e);
+            }
+            return;
+        }
+
+        // Add the commands to be precessed to the cmdQueue
         synchronized (cmdQueue) {
             cmdQueue.enqueue(new MemberMessage(msg, sender));
         }
@@ -106,8 +120,8 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     private void startMessageProcessor() {
         messageProcessor = new Thread(new MessageProcessor(), "ClusteringInComingMessageProcessor");
         messageProcessor.setDaemon(true);
-        messageProcessor.start();
         messageProcessor.setPriority(Thread.MAX_PRIORITY);
+        messageProcessor.start();
     }
 
     /**
@@ -132,7 +146,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     /**
-     * A processor which continously polls for messages in the cmdQueue and processes them
+     * A processor which continuously polls for messages in the cmdQueue and processes them
      */
     private class MessageProcessor implements Runnable {
         public void run() {

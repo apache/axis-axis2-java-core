@@ -16,36 +16,18 @@
 package org.apache.axis2.clustering.context.commands;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.ContextClusteringCommand;
-import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.PropertyDifference;
-
-import java.util.HashMap;
 
 /**
  * 
  */
 public class UpdateConfigurationContextCommand extends UpdateContextCommand {
 
-    private PropertyUpdater propertyUpdater = new PropertyUpdater();
-
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         propertyUpdater.updateProperties(configurationContext);
     }
 
-    public boolean isPropertiesEmpty(){
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-            return true;
-        }
-        return propertyUpdater.getProperties().isEmpty();
-    }
-
-    public void addProperty(PropertyDifference diff) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(diff);
+    public String toString() {
+        return "UpdateConfigurationContextCommand(" + uniqueId + ")";
     }
 }

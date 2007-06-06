@@ -418,7 +418,7 @@ public abstract class AxisOperation extends AxisDescription
      * Further, in the first lookup, it will cache the looked
      * up value so that the subsequent method calls are extremely efficient.
      */
-    public int getAxisSpecifMEPConstant() {
+    public int getAxisSpecificMEPConstant() {
         if (this.mep != WSDLConstants.MEP_CONSTANT_INVALID) {
             return this.mep;
         }

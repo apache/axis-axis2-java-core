@@ -22,7 +22,7 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public abstract class ContextClusteringCommand extends ClusteringCommand {
 
-    private String uniqueId;
+    protected String uniqueId;
 
     public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;
 

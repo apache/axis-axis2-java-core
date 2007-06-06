@@ -51,4 +51,8 @@ public class ExceptionCommand extends ConfigurationClusteringCommand {
     public void rollback(ConfigurationContext configContext) throws Exception {
         // Nothing to implement
     }
+
+    public String toString() {
+        return "ExceptionCommand";
+    }
 }
