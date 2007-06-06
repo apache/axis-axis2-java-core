@@ -103,7 +103,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     throw (AxisFault)cause;
                 }
             }
-            throw new AxisFault(msg);
+            throw new AxisFault(msg, e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();
