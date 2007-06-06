@@ -9,6 +9,8 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
@@ -40,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -617,22 +620,35 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     private XmlSchemaComplexType createSchemaTypeForMethodPart(String localPartName) {
-        //XmlSchema xmlSchema = (XmlSchema)schemaMap.get(schemaTargetNameSpace);
         XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
         QName elementName =
                 new QName(this.schemaTargetNameSpace, localPartName, this.schema_namespace_prefix);
-        XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
 
-        XmlSchemaElement globalElement = new XmlSchemaElement();
-        globalElement.setSchemaType(complexType);
-        globalElement.setName(localPartName);
-        globalElement.setQName(elementName);
-        xmlSchema.getItems().add(globalElement);
-        xmlSchema.getElements().add(elementName, globalElement);
-
+        XmlSchemaComplexType complexType = getComplexTypeForElement(xmlSchema, elementName);
+        if(complexType == null) {
+            complexType = new XmlSchemaComplexType(xmlSchema);
+    
+            XmlSchemaElement globalElement = new XmlSchemaElement();
+            globalElement.setSchemaType(complexType);
+            globalElement.setName(localPartName);
+            globalElement.setQName(elementName);
+            xmlSchema.getItems().add(globalElement);
+            xmlSchema.getElements().add(elementName, globalElement);
+        }
         typeTable.addComplexSchema(localPartName, elementName);
 
         return complexType;
+    }
+
+    private XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
+        Iterator iterator = xmlSchema.getItems().getIterator();
+        while(iterator.hasNext()){
+            XmlSchemaObject object = (XmlSchemaObject) iterator.next();
+            if(object instanceof XmlSchemaElement && ((XmlSchemaElement)object).getQName().equals(name)){
+                return (XmlSchemaComplexType)((XmlSchemaElement)object).getSchemaType();
+            }
+        }
+        return null;
     }
 
     private XmlSchema getXmlSchema(String targetNamespace) {
