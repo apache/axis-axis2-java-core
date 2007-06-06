@@ -12,6 +12,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2WSDL11;
 import org.apache.axis2.description.AxisService2WSDL20;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
@@ -227,7 +228,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             if(!isPretty()){
                 wsdlElement.serialize(out);
             } else {
-                Java2WSDLUtils.prettyPrint(wsdlElement, out);
+                XMLPrettyPrinter.prettify(wsdlElement, out);
             }
         } else {
             AxisService2WSDL20 g = new AxisService2WSDL20(axisService);
@@ -235,7 +236,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             if(!isPretty()){
                 wsdlElement.serialize(out);
             } else {
-                Java2WSDLUtils.prettyPrint(wsdlElement, out);
+                XMLPrettyPrinter.prettify(wsdlElement, out);
             }
         }
 

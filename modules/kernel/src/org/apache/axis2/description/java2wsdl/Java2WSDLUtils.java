@@ -138,33 +138,4 @@ public class Java2WSDLUtils {
             ret = name.substring(0, lastDot);
         return ret;
     }
-
-    private static final String prettyPrintStylesheet =
-                     "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0' " +
-                             " xmlns:xalan='http://xml.apache.org/xslt' " +
-                             " exclude-result-prefixes='xalan'>" +
-                     "  <xsl:output method='xml' indent='yes' xalan:indent-amount='4'/>" +
-                     "  <xsl:strip-space elements='*'/>" +
-                     "  <xsl:template match='/'>" +
-                     "    <xsl:apply-templates/>" +
-                     "  </xsl:template>" +
-                     "  <xsl:template match='node() | @*'>" +
-                     "        <xsl:copy>" +
-                     "          <xsl:apply-templates select='node() | @*'/>" +
-                     "        </xsl:copy>" +
-                     "  </xsl:template>" +
-                     "</xsl:stylesheet>";
-
-    public static void prettyPrint(OMElement wsdlElement, OutputStream out) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        wsdlElement.serialize(baos);
-
-        Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
-        Source xmlSource = new StreamSource(new ByteArrayInputStream(baos.toByteArray()));
-
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Templates templates = tf.newTemplates(stylesheetSource);
-        Transformer transformer = templates.newTransformer();
-        transformer.transform(xmlSource, new StreamResult(out));
-    }
 }

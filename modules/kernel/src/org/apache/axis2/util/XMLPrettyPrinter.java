@@ -2,12 +2,22 @@ package org.apache.axis2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -43,24 +53,6 @@ public class XMLPrettyPrinter {
      */
     public static void prettify(File file) {
         try {
-            // Create an instance of the Jalopy bean
-            Class clazz = Loader.loadClass("org.w3c.tidy.Tidy");
-            Object prettifier = clazz.newInstance();
-
-            //set the input to be xml
-            Method setXmlInFlagMethod = clazz.getMethod(
-                    "setXmlTags",
-                    new Class[]{boolean.class});
-            setXmlInFlagMethod.invoke(prettifier,
-                                      new Object[]{Boolean.TRUE});
-
-            //set the output to be xml
-            Method setXmlOutFlagMethod = clazz.getMethod(
-                    "setXmlOut",
-                    new Class[]{boolean.class});
-            setXmlOutFlagMethod.invoke(prettifier,
-                                       new Object[]{Boolean.TRUE});
-
             //create the input stream
             InputStream input = new FileInputStream(file);
 
@@ -71,15 +63,14 @@ public class XMLPrettyPrinter {
 
             File tempFile = new File(tempFileName);
             FileOutputStream tempFileOutputStream = new FileOutputStream(tempFile);
-            //Call the pretty printer
-            Method parsr = clazz.getMethod("parse", new Class[]{
-                    InputStream.class,
-                    OutputStream.class});
 
-            parsr.invoke(prettifier, new Object[]{input,
-                    tempFileOutputStream});
+            Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
+            Source xmlSource = new StreamSource(input);
 
-            //rename and restore the pretty printed one as the original
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Templates templates = tf.newTemplates(stylesheetSource);
+            Transformer transformer = templates.newTransformer();
+            transformer.transform(xmlSource, new StreamResult(tempFileOutputStream));
 
             //first close the streams. if not this may cause the
             // files not to be renamed
@@ -103,4 +94,32 @@ public class XMLPrettyPrinter {
     }
 
 
+    private static final String prettyPrintStylesheet =
+                     "<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0' " +
+                             " xmlns:xalan='http://xml.apache.org/xslt' " +
+                             " exclude-result-prefixes='xalan'>" +
+                     "  <xsl:output method='xml' indent='yes' xalan:indent-amount='4'/>" +
+                     "  <xsl:strip-space elements='*'/>" +
+                     "  <xsl:template match='/'>" +
+                     "    <xsl:apply-templates/>" +
+                     "  </xsl:template>" +
+                     "  <xsl:template match='node() | @*'>" +
+                     "        <xsl:copy>" +
+                     "          <xsl:apply-templates select='node() | @*'/>" +
+                     "        </xsl:copy>" +
+                     "  </xsl:template>" +
+                     "</xsl:stylesheet>";
+
+    public static void prettify(OMElement wsdlElement, OutputStream out) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        wsdlElement.serialize(baos);
+
+        Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
+        Source xmlSource = new StreamSource(new ByteArrayInputStream(baos.toByteArray()));
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Templates templates = tf.newTemplates(stylesheetSource);
+        Transformer transformer = templates.newTransformer();
+        transformer.transform(xmlSource, new StreamResult(out));
+    }
 }
