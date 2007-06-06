@@ -58,16 +58,16 @@
 				<isset property="file" />
 			</and>
 		</condition>
-		<!-- This is a hack to get a if-else working in ant. Some much more "ANTy" person is welcome to improve this -->
+		<!-- This is a hack to get an if-else working in ant. Some much more "ANTy" person is welcome to improve this -->
 		<antcall target="print-usage" />
 	</target>
 
 	<target name="print-usage" unless="parameters.set">
-		<echo message="ant -Dfile &lt;file to be transfered&gt;  -Ddest &lt;name of the destination file&gt;" />
+		<echo message="ant -Dfile &lt;file to be transferred&gt;  -Ddest &lt;name of the destination file&gt;" />
 	</target>
 
-	<!-- Run Client -->
-	<target name="run.client" depends="check-parameters" if="parameters.set">
+	<!-- Generate Client -->
+	<target name="generate.client">
 		<java classname="org.apache.axis2.wsdl.WSDL2Java">
 			<arg value="-uri" />
 			<arg value="resources/MTOMSample.wsdl" />
@@ -85,8 +85,10 @@
 		<javac srcdir="${client.dir}/src" destdir="${client.classes.dir}">
 			<classpath refid="class.path" />
 		</javac>
+    </target>	
 
-		<!-- Run client -->
+	<!-- Run Client -->
+	<target name="run.client" depends="check-parameters" if="parameters.set">
 		<!-- Accept two arguments from the command line, Also use the class.path set earlier -->
 		<java classname="sample.mtom.client.Client" fork="true">
 			<arg value="-file" />
