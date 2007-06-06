@@ -56,7 +56,7 @@ public interface Java2WSDLConstants {
     String REQUEST_MESSAGE = "RequestMessage";
     String RESPONSE_MESSAGE = "ResponseMessage";
     String FAULT_MESSAGE = "Message";
-    String MESSAGE_SUFFIX = "Message";
+    String MESSAGE_SUFFIX = "Request";
     String REQUEST = "Request";
     String RESPONSE = "Response";
     String PORT_TYPE_LOCAL_NAME = "portType";
