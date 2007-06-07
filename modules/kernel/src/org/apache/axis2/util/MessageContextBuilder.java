@@ -524,7 +524,7 @@ public class MessageContextBuilder {
                 }
             }
         }  else {
-            if (message == null || "".equals(message)) {
+            if (e != null && (message == null || "".equals(message))) {
                 message = getFaultReasonFromException(e, context);
             }
         }

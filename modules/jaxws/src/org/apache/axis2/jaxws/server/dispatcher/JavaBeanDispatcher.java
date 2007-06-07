@@ -124,7 +124,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 
         MessageContext responseMsgCtx = null;
         if (faultThrown) {
-            responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
+            responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc, fault);
             responseMsgCtx.setMessage(message);
         } else {
             responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);

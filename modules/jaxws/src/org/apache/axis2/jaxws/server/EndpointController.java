@@ -354,7 +354,7 @@ public class EndpointController {
                     .create(Protocol.soap11);  // always soap11 according to the spec
             msg.setXMLFault(xmlfault);
             MessageContext responseMsgCtx =
-                    MessageContextUtils.createFaultMessageContext(requestMsgCtx);
+                    MessageContextUtils.createFaultMessageContext(requestMsgCtx, null);
             responseMsgCtx.setMessage(msg);
             return responseMsgCtx;
         } catch (XMLStreamException e) {
