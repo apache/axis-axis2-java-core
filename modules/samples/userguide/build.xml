@@ -1,4 +1,4 @@
-<project name="samples" default="generate.service">
+<project name="userguide" default="generate.service">
     <property name="mainDir" value="../.."/>
     <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">

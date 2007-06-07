@@ -1,4 +1,4 @@
-<project basedir="." default="generate.service" name="WeatherSpringService">
+<project name="pojoguidespring" basedir="." default="generate.service" name="WeatherSpringService">
 
 	<property environment="env" />
 	<property name="service-name" value="WeatherSpringService" />

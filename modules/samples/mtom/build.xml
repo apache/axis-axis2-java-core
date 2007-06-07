@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  -->
-<project basedir="." default="generate.service">
+<project name="mtom" basedir="." default="generate.service">
 
 	<property environment="env" />
 	<property name="build.dir" value="build" />

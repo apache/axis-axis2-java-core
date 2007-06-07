@@ -1,4 +1,4 @@
-<project basedir="." default="generate.all">
+<project name="quickstartjibx" basedir="." default="generate.all">
 
     <property environment="env"/>
     <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>

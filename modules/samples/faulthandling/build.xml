@@ -1,4 +1,4 @@
-<project basedir="." default="generate.service">
+<project name="faulthandling" basedir="." default="generate.service">
 
     <property environment="env"/>
 

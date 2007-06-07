@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  -->
-<project name="samples" default="generate.service">
+<project name="mex" default="generate.service">
     <property name="mainDir" value="../.."/>
     <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">

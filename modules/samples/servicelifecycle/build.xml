@@ -1,4 +1,4 @@
-<project basedir="." default="build" name="Library">
+<project name="servicelifecycle" basedir="." default="build">
 
     <property environment="env"/>
     <property name="service-name" value="Library.aar"/>
