@@ -18,7 +18,6 @@
 package org.apache.axis2;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
@@ -202,16 +201,12 @@ public class AxisFault extends RemoteException {
         }
 
         if (soapFaultCode != null) {
-            if(soapFaultReason.getNamespace() != null && 
-                    soapFaultReason.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                faultCode = soapFaultCode.getValue().getTextAsQName();
-            } else {
-                faultCode = soapFaultCode.getTextAsQName();
-            }
+            // This works the same regardless of SOAP version
+            faultCode = soapFaultCode.getTextAsQName();
 
             SOAPFaultSubCode subCode = soapFaultCode.getSubCode();
             if (subCode != null) {
-                if (faultSubCodes == null) faultSubCodes = new ArrayList();
+                faultSubCodes = new ArrayList();
                 while (subCode != null) {
                     faultSubCodes.add(subCode.getValue().getTextAsQName());
                     subCode = subCode.getSubCode();
