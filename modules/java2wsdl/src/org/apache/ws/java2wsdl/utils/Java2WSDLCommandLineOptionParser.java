@@ -78,7 +78,6 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
                     state = NEW_OPTION;
                     optionType = args[i];
                     optionBundle = null;
-
                 }
             } else {
                 if (STARTED == state) {
@@ -91,10 +90,16 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
                     return commandLineOptions;
 
                 } else if (NEW_OPTION == state) {
-                    optionBundle = new ArrayList();
-                    optionBundle.add(args[i]);
-                    state = SUB_PARAM_OF_OPTION;
-
+                    Java2WSDLCommandLineOption old = (Java2WSDLCommandLineOption)commandLineOptions.get(getOptionType(optionType));
+                    if(old !=null){
+                        old.getOptionValues().add(args[i]);
+                        optionBundle = null;
+                        state = STARTED;
+                    } else {
+                        optionBundle = new ArrayList();
+                        optionBundle.add(args[i]);
+                        state = SUB_PARAM_OF_OPTION;
+                    }
                 } else if (SUB_PARAM_OF_OPTION == state) {
                     optionBundle.add(args[i]);
                 }
@@ -104,9 +109,18 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
 
         }
 
-        commandLineOption = new Java2WSDLCommandLineOption(optionType, optionBundle);
-        commandLineOptions.put(commandLineOption.getOptionType(), commandLineOption);
+        if(state != STARTED) { 
+            commandLineOption = new Java2WSDLCommandLineOption(optionType, optionBundle);
+            commandLineOptions.put(commandLineOption.getOptionType(), commandLineOption);
+        }
         return commandLineOptions;
+    }
+
+    private String getOptionType(String type) {
+        //cater for the long options first
+        if (type.startsWith("--")) type = type.replaceFirst("--", "");
+        if (type.startsWith("-")) type = type.replaceFirst("-", "");
+        return type;
     }
 
     public Map getAllOptions() {
