@@ -171,6 +171,7 @@ public class ProviderDispatcher extends JavaDispatcher {
         boolean faultThrown = false;
         XMLFault fault = null;
         Object responseParamValue = null;
+        Throwable t = null;
         try {
             responseParamValue = (Object)org.apache.axis2.java.security.AccessController
                     .doPrivileged(new PrivilegedExceptionAction() {
@@ -179,7 +180,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                         }
                     });
         } catch (Exception e) {
-            Throwable t = ClassUtils.getRootCause(e);
+            t = ClassUtils.getRootCause(e);
             faultThrown = true;
             fault = MethodMarshallerUtils.createXMLFaultFromSystemException(t);
 
@@ -197,7 +198,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                 // If a fault was thrown, we need to create a slightly different
                 // MessageContext, than in the response path.
                 Message responseMsg = createMessageFromValue(fault);
-                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
+                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc, t);
                 responseMsgCtx.setMessage(responseMsg);
             } else {
                 Message responseMsg = createMessageFromValue(responseParamValue);
