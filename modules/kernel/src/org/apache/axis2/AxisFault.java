@@ -202,21 +202,8 @@ public class AxisFault extends RemoteException {
         }
 
         if (soapFaultCode != null) {
-
-            /////////////////////////////////
-            // This code should be replaced by the paragraph after it - but DOOM needs to be fixed
-            // first.
-            /////////////////////////////////
-            if(soapFaultReason.getNamespace() != null &&
-                    soapFaultReason.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                faultCode = soapFaultCode.getValue().getTextAsQName();
-            } else {
-                faultCode = soapFaultCode.getTextAsQName();
-            }
-            /////////////////////////////////
-
-//            // This works the same regardless of SOAP version
-//            faultCode = soapFaultCode.getTextAsQName();
+            // This works the same regardless of SOAP version
+            faultCode = soapFaultCode.getTextAsQName();
 
             SOAPFaultSubCode subCode = soapFaultCode.getSubCode();
             if (subCode != null) {
