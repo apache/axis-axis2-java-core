@@ -2311,9 +2311,9 @@ public class AxisService extends AxisDescription {
         // does exists means there are two or more operations which has the same input element (in doc/literal
         // this is possible. In this case better to set it as null without giving
         // a random operation.
-        Object key = messageElementQNameToOperationMap.get(messageElementQName);
-        if (key != null  && key != operation){
-            messageElementQNameToOperationMap.put(messageElementQName,null);
+        if (messageElementQNameToOperationMap.containsKey(messageElementQName) &&
+                 messageElementQNameToOperationMap.get(messageElementQName) != operation){
+            messageElementQNameToOperationMap.put(messageElementQName, null);
         } else {
             messageElementQNameToOperationMap.put(messageElementQName, operation);
         }
