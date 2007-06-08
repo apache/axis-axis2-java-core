@@ -17,7 +17,7 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class SkeletonInterfaceWriter extends ClassWriter {
+public class SkeletonInterfaceWriter extends FileWriter {
 
 
     public SkeletonInterfaceWriter(String outputFileLocation) {

@@ -18,7 +18,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import java.io.File;
 
-public class ExceptionWriter extends ClassWriter {
+public class ExceptionWriter extends FileWriter {
 
     public ExceptionWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);

@@ -1,6 +1,6 @@
 package org.apache.axis2.tool.core;
 
-import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.FileWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,8 +42,8 @@ public class ServiceFileCreator {
         String currentUserDir = System.getProperty("user.dir");
         String fileName = "services.xml";
         
-        ClassWriter serviceXmlWriter = new ServiceXMLWriter(currentUserDir);
-        writeClass(getServiceModel(serviceName,implementationClassName,methodList),serviceXmlWriter,fileName);
+        FileWriter serviceXmlWriter = new ServiceXMLWriter(currentUserDir);
+        writeFile(getServiceModel(serviceName,implementationClassName,methodList),serviceXmlWriter,fileName);
 
         return new File(currentUserDir + File.separator + fileName);
 
@@ -84,7 +84,7 @@ public class ServiceFileCreator {
      * @throws IOException
      * @throws Exception
      */
-    private void writeClass(Document model, ClassWriter writer,String fileName) throws IOException,Exception {
+    private void writeFile(Document model, FileWriter writer,String fileName) throws IOException,Exception {
         
         Source source = new DOMSource(model);
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();

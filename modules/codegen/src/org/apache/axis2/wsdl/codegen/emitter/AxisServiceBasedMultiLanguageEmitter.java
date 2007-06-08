@@ -26,7 +26,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
 import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
-import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.FileWriter;
 import org.apache.axis2.wsdl.codegen.writer.ExceptionWriter;
 import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
@@ -531,7 +531,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                            codeGenConfiguration.getOutputLanguage());
 
         antBuildWriter.setDatabindingFramework(codeGenConfiguration.getDatabindingType());
-        writeClass(skeletonModel, antBuildWriter);
+        writeFile(skeletonModel, antBuildWriter);
     }
 
     /** Creates the DOM tree for the Ant build. Uses the interface. */
@@ -573,7 +573,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                        TEST_SRC_DIR_NAME),
                             codeGenConfiguration.getOutputLanguage());
 
-            writeClass(classModel, callbackWriter);
+            writeFile(classModel, callbackWriter);
         }
     }
 
@@ -668,7 +668,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         codeGenConfiguration.getOutputLanguage());
 
         
-        writeClass(interfaceImplModel, writer);
+        writeFile(interfaceImplModel, writer);
         
         
     }
@@ -1019,7 +1019,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             codeGenConfiguration.getOutputLanguage());
 
             doc.appendChild(faultElement);
-            writeClass(doc, exceptionWriter);
+            writeFile(doc, exceptionWriter);
         }
     }
 
@@ -1055,7 +1055,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                        codeGenConfiguration.getSourceLocation()),
                             codeGenConfiguration.getOutputLanguage());
 
-            writeClass(interfaceModel, callbackWriter);
+            writeFile(interfaceModel, callbackWriter);
         }
     }
 
@@ -1098,7 +1098,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                    codeGenConfiguration.getSourceLocation()),
                         this.codeGenConfiguration.getOutputLanguage());
 
-        writeClass(interfaceModel, interfaceWriter);
+        writeFile(interfaceModel, interfaceWriter);
     }
 
     /** Creates the DOM tree for the interface creation. Uses the interface. */
@@ -1406,7 +1406,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                 codeGenConfiguration.getSourceLocation()),
                                 codeGenConfiguration.getOutputLanguage());
 
-                writeClass(classModel, writer);
+                writeFile(classModel, writer);
             }
         }
     }
@@ -1788,7 +1788,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // Write the service xml in a folder with the
         Document serviceXMLModel = createDOMDocumentForServiceXML();
         debugLogDocument("Document for service XML:", serviceXMLModel);
-        ClassWriter serviceXmlWriter =
+        FileWriter serviceXmlWriter =
                 new ServiceXMLWriter(
                         codeGenConfiguration.isFlattenFiles() ?
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
@@ -1796,7 +1796,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                    codeGenConfiguration.getResourceLocation()),
                         this.codeGenConfiguration.getOutputLanguage());
 
-        writeClass(serviceXMLModel, serviceXmlWriter);
+        writeFile(serviceXMLModel, serviceXmlWriter);
 
     }
 
@@ -1870,14 +1870,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Document skeletonModel =
                 createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
-        ClassWriter skeletonWriter = new SkeletonWriter(
+        FileWriter skeletonWriter = new SkeletonWriter(
                 codeGenConfiguration.isFlattenFiles() ?
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                            codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
 
-        writeClass(skeletonModel, skeletonWriter);
+        writeFile(skeletonModel, skeletonWriter);
     }
 
     /**
@@ -1888,14 +1888,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected void writeSkeletonInterface() throws Exception {
         Document skeletonModel = createDOMDocumentForSkeletonInterface();
         debugLogDocument("Document for skeleton Interface:", skeletonModel);
-        ClassWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(
+        FileWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(
                 codeGenConfiguration.isFlattenFiles() ?
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                            codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
 
-        writeClass(skeletonModel, skeletonInterfaceWriter);
+        writeFile(skeletonModel, skeletonInterfaceWriter);
     }
 
     /**
@@ -2381,7 +2381,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @throws java.io.IOException
      * @throws Exception
      */
-    protected void writeClass(Document model, ClassWriter writer) throws IOException, Exception {
+    protected void writeFile(Document model, FileWriter writer) throws IOException, Exception {
         writer.loadTemplate();
 
         String packageName = model.getDocumentElement().getAttribute("package");
