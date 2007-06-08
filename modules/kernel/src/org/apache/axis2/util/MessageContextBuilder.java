@@ -428,12 +428,12 @@ public class MessageContextBuilder {
         SOAPProcessingException soapException = null;
         AxisFault axisFault = null;
 
-        if (e != null) {
-            if (e instanceof AxisFault) {
-                axisFault = (AxisFault) e;
-            } else if (e.getCause() instanceof AxisFault) {
-                axisFault = (AxisFault) e.getCause();
-            }
+        if (e == null) return envelope;
+
+        if (e instanceof AxisFault) {
+            axisFault = (AxisFault) e;
+        } else if (e.getCause() instanceof AxisFault) {
+            axisFault = (AxisFault) e.getCause();
         }
 
         if (axisFault != null) {
@@ -450,8 +450,6 @@ public class MessageContextBuilder {
             if (axisFault.getCause() instanceof SOAPProcessingException) {
                 soapException = (SOAPProcessingException) axisFault.getCause();
             }
-        } else {
-            // we have recd an instance of just the Exception class
         }
 
         // user can set the fault information to the message context or to the AxisFault itself.
@@ -459,7 +457,6 @@ public class MessageContextBuilder {
         
         Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         String soapFaultCode = "";
-
 
         if (faultCode != null) {
             fault.setCode((SOAPFaultCode) faultCode);
@@ -502,46 +499,36 @@ public class MessageContextBuilder {
         if(faultCode == null && !context.isSOAP11()){
             fault.getCode().getValue().setText(soapFaultCode);
         }
-        Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
-        String message = "";
+        SOAPFaultReason faultReason = (SOAPFaultReason)context.getProperty(
+                                            SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
 
+        if (faultReason == null && axisFault != null) {
+            faultReason = axisFault.getFaultReasonElement();
+        }
         if (faultReason != null) {
-            fault.setReason((SOAPFaultReason) faultReason);
-            if(context.isSOAP11()) {
-                message = fault.getReason().getText();
-            } else {
-                message = fault.getReason().getFirstSOAPText().getText();
-            }
-        } else if (soapException != null) {
-            message = soapException.getMessage();
-        } else if (axisFault != null) {
-            if (axisFault.getFaultReasonElement() != null) {
-                fault.setReason(axisFault.getFaultReasonElement());
-            } else {
+            fault.setReason(faultReason);
+        } else {
+            String message = "";
+            if (soapException != null) {
+                message = soapException.getMessage();
+            } else if (axisFault != null) {
+                // Couldn't find FaultReasonElement, try reason string
                 message = axisFault.getReason();
-                if (message == null || "".equals(message)) {
-                    message = getFaultReasonFromException(e, context);
-                }
             }
-        }  else {
-            if (e != null && (message == null || "".equals(message))) {
+
+            if (message == null || "".equals(message)) {
                 message = getFaultReasonFromException(e, context);
             }
-        }
 
-        // defaulting to reason, unknown, if no reason is available
-        if (faultReason == null) {
-            message = ("".equals(message) || (message == null))
-                    ? "unknown"
-                    : message;
-            if(context.isSOAP11()) {
+            if (message == null || "".equals(message)) message = "unknown";
+
+            if (context.isSOAP11()) {
                 fault.getReason().setText(message);
             } else {
                 fault.getReason().getFirstSOAPText().setLang("en-US");
                 fault.getReason().getFirstSOAPText().setText(message);
             }
         }
-
 
         Object faultRole = context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
         if (faultRole != null) {

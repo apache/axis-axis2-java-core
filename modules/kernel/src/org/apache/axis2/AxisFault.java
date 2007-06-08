@@ -26,7 +26,6 @@ import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPFaultSubCode;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
@@ -91,7 +90,7 @@ public class AxisFault extends RemoteException {
     private SOAPFaultDetail soapFaultDetail;
 
     /**
-     * If not null, the messageContext represents the fault as it
+     * If not null, this MessageContext represents the fault as it
      * should be returned.  This is used by higher-level layers
      * that want to generate the message themselves so that
      * processing may take place before they return control (e.g. JAX-WS.)
@@ -114,7 +113,9 @@ public class AxisFault extends RemoteException {
 
 
     /**
-     * @param message
+     * Constructor.
+     *
+     * @param message the human-readable text describing the fault
      */
     public AxisFault(String message) {
         this.message = message;
@@ -122,17 +123,26 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * These are the absolute minimum to construct a meaningful SOAPFault from user's information
+     * Constructor
      *
      * @param faultCode   - fault code of the message as a QName
      * @param faultReason - the reason for the fault. The language will be defaulted to 'en'
-     * @param cause
+     * @param cause embedded fault which caused this one
      */
     public AxisFault(QName faultCode, String faultReason, Throwable cause) {
         this(faultReason, cause);
         setFaultCode(faultCode);
     }
 
+    /**
+     * Constructor
+     *
+     * @param faultCode a QName for the fault code
+     * @param faultReason the reason for the fault. The language will be defaulted to 'en'
+     * @param faultNode a URL identifying the SOAP node generating this fault, or null
+     * @param faultRole a URL identifying the SOAP role active when generating this fault, or null
+     * @param faultDetail arbitrary XML containing application-specific fault data
+     */
     public AxisFault(QName faultCode, String faultReason, String faultNode, String faultRole,
                      OMElement faultDetail) {
         this(faultReason, faultCode);
@@ -146,10 +156,11 @@ public class AxisFault extends RemoteException {
      * in this class to get and set things.
      * Any of the parameters can be null
      *
-     * @param soapFaultCode
-     * @param soapFaultReason
-     * @param soapFaultNode
-     * @param soapFaultRole
+     * @param soapFaultCode the fault code
+     * @param soapFaultReason the fault reason
+     * @param soapFaultNode the SOAPFaultNode representing the source node for this fault
+     * @param soapFaultRole the SOAPFaultRole representing the source role for this fault
+     * @param soapFaultDetail the SOAPFaultDetail containing any application-specific info
      */
     public AxisFault(SOAPFaultCode soapFaultCode, SOAPFaultReason soapFaultReason,
                      SOAPFaultNode soapFaultNode, SOAPFaultRole soapFaultRole,
@@ -192,6 +203,8 @@ public class AxisFault extends RemoteException {
 //                cause = new Exception(exceptionElement.getText());
 //            }
 
+            // TODO - Wha? Details can have multiple elements, why take the first child here?
+            // TODO - Review the API for details
             // setting the first child element of the fault detail as this.detail
             this.detail = soapFaultDetail.getFirstElement();
 
@@ -230,6 +243,8 @@ public class AxisFault extends RemoteException {
     }
 
     /**
+     * Constructor.
+     *
      * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
      * @param faultCode   - this will appear as the Value in the Code information item of SOAP Fault
      */
@@ -239,8 +254,10 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
-     * @param faultCode   - this will appear as the Value in the Code information item of SOAP Fault
+     * Constructor
+     *
+     * @param messageText this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode this will appear as the Value in the Code information item of SOAP Fault
      */
     public AxisFault(String messageText, QName faultCode) {
         this(messageText);
@@ -248,8 +265,10 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * @param message
-     * @param cause
+     * Constructor
+     *
+     * @param message this will appear as the Text in the Reason information item of SOAP Fault
+     * @param cause the embedded Throwable that caused this fault
      */
     public AxisFault(String message, Throwable cause) {
         super(message, cause);
@@ -285,7 +304,7 @@ public class AxisFault extends RemoteException {
      * that contains the actual fault representation.
      *
      * @param message             A string that's really only useful for logging.
-     * @param faultMessageContext
+     * @param faultMessageContext A MessageContext which must contain SOAP fault info
      */
     public AxisFault(String message, MessageContext faultMessageContext) {
         this(message);
@@ -443,7 +462,7 @@ public class AxisFault extends RemoteException {
     /**
      * Set the entire detail element of the fault
      *
-     * @param detail
+     * @param detail an OMElement which MUST be 
      */
     public void setDetail(OMElement detail) {
         this.detail = detail;
@@ -460,7 +479,9 @@ public class AxisFault extends RemoteException {
     }
 
     /**
-     * Set the faulting node uri. SOAP1.2
+     * Set the faulting node uri. (SOAP1.2)
+     *
+     * @param nodeURI a String containing a URI indicating which SOAP Node faulted
      */
     public void setNodeURI(String nodeURI) {
         this.nodeURI = nodeURI;
@@ -540,8 +561,9 @@ public class AxisFault extends RemoteException {
 	}
 
 	/**
-	 * Set the (OPTIONAL) action value for the fault message 
-	 * @param faultAction
+	 * Set the (OPTIONAL) action value for the fault message
+     *
+	 * @param faultAction a String containing an action URI for the fault
 	 */
 	public void setFaultAction(String faultAction) {
 		this.faultAction = faultAction;

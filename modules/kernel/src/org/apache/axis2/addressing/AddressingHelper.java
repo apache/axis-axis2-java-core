@@ -58,7 +58,7 @@ public class AddressingHelper {
      * spec.
      *
      * @param messageContext
-     * @see isReplyRedirected
+     * @see #isReplyRedirected(org.apache.axis2.context.MessageContext)
      */
     public static boolean isFaultRedirected(MessageContext messageContext) {
         EndpointReference faultTo = messageContext.getFaultTo();
