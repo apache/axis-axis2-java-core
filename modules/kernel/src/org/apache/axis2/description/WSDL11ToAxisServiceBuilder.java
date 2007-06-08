@@ -983,32 +983,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * Simply Copy information.
-     *
-     * @param wsdl4jPortType
-     */
-    // FIXME Evaluate a way of injecting features and priperties with a general
-    // formatted input
-    private void processPortType(PortType wsdl4jPortType, Definition dif)
-            throws Exception {
-
-        copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
-                                axisService, PORT_TYPE);
-
-        // set port the type name
-        axisService.setEndpointName(wsdl4jPortType.getQName().getLocalPart());
-
-        Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
-                .iterator();
-        Operation wsdl4jOperation;
-        while (wsdl4JOperationsIterator.hasNext()) {
-            wsdl4jOperation = (Operation) wsdl4JOperationsIterator.next();
-            axisService.addOperation(populateOperations(wsdl4jOperation,
-                                                        wsdl4jPortType, dif));
-        }
-    }
-
-    /**
      * Copy the component from the operation
      *
      * @param wsdl4jOperation

@@ -338,7 +338,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         if (generateWsdl(service)) {
                             Utils.fillAxisService(service, axisConfig, excludeops, null);
                         } else {
-                            ArrayList nonRpcOperations = getNonPRCMethods(service);
+                            ArrayList nonRpcOperations = getNonRPCMethods(service);
                             Utils.fillAxisService(service, axisConfig, excludeops,
                                                   nonRpcOperations);
                         }
@@ -497,7 +497,7 @@ public class ServiceBuilder extends DescriptionBuilder {
      *
      * @return ArrayList
      */
-    private ArrayList getNonPRCMethods(AxisService axisService) {
+    private ArrayList getNonRPCMethods(AxisService axisService) {
         ArrayList excludeOperations = new ArrayList();
         Iterator operatins = axisService.getOperations();
         if (operatins.hasNext()) {
