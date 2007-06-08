@@ -241,6 +241,9 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public int getMemberCount() {
-        return channel.getMembers().length;
+        if (channel != null) {
+            return channel.getMembers().length;
+        }
+        return 0;
     }
 }
