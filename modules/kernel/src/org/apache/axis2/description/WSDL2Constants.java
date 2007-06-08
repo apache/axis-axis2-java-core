@@ -36,6 +36,7 @@ public interface WSDL2Constants {
     String DEFAULT_SOAP11_ENDPOINT_NAME = "SOAP11Endpoint";
     String DEFAULT_SOAP12_ENDPOINT_NAME = "SOAP12Endpoint";
     String DEFAULT_HTTP_ENDPOINT_NAME = "HTTPEndpoint";
+    String DEFAULT_HTTPS_PREFIX = "Secure";
     String DEFAULT_INTERFACE_NAME = "ServiceInterface";
     String TYPES_LOCAL_NALE = "types";
     String INTERFACE_LOCAL_NAME = "interface";

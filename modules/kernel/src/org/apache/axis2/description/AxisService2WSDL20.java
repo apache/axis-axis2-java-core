@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
@@ -161,8 +163,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
+        Set bindings = new HashSet();
         Map endpointMap = axisService.getEndpoints();
-         if (endpointMap != null && endpointMap.size() > 0) {
+        if (endpointMap != null && endpointMap.size() > 0) {
             String[] eprs = axisService.getEPRs();
             if (eprs == null) {
                 eprs = new String[]{axisService.getName()};
@@ -176,6 +179,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 // https then we have two endpoints populated so we should serialize them instead
                 // of updating the endpoints.
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
+                bindings.add(axisEndpoint.getBinding());
                 for (int i = 0; i < eprs.length; i++) {
                     String epr = eprs[i];
                     if (!epr.endsWith("/")) {
@@ -187,8 +191,13 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     while (endpointsAdded.hasNext()) {
                         OMElement endpoint = (OMElement) endpointsAdded.next();
                         // Checking whether a endpoint with the same binding and address exists.
-                        if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue().equals(endpointElement.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
-                                && endpoint.getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue().equals(endpointElement.getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
+                        if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME))
+                                .getAttributeValue().equals(endpointElement.getAttribute(
+                                new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
+                                && endpoint
+                                .getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS))
+                                .getAttributeValue().equals(endpointElement.getAttribute(
+                                new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
                             endpointAlreadyAdded = true;
                         }
 
@@ -197,11 +206,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                         serviceElement.addChild(endpointElement);
                     }
                 }
+            }
+            Iterator iter = bindings.iterator();
+            while (iter.hasNext()) {
+                AxisBinding binding = (AxisBinding) iter.next();
                 descriptionElement
-                            .addChild(axisEndpoint.getBinding().toWSDL20(wsdl, tns, wsoap, whttp,
-                                                                         interfaceName,
-                                                                         axisService.getNameSpacesMap(),
-                                                                         axisService.getWSAddressingFlag()));
+                        .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
+                                                   interfaceName,
+                                                   axisService.getNameSpacesMap(),
+                                                   axisService.getWSAddressingFlag()));
             }
 
             descriptionElement.addChild(serviceElement);
@@ -215,7 +228,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
             descriptionElement.addChild(
-                    WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl, whttp, tns));
+                    WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl, whttp,
+                                                              tns));
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
                                                                            axisService));

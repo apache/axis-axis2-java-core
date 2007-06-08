@@ -285,15 +285,19 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                             WSDL2Constants.INTERFACE_LOCAL_NAME, null,
                             tns.getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
         for (int i = 0; i < eprs.length; i++) {
+            String name = "";
             String epr = eprs[i];
             if (!epr.endsWith("/")) {
                 epr = epr + "/";
+            }
+            if (epr.startsWith("https://")) {
+                name = WSDL2Constants.DEFAULT_HTTPS_PREFIX;
             }
             OMElement soap11EndpointElement =
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME + i));
+                    name + WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME));
             soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() +
@@ -305,7 +309,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_SOAP12_ENDPOINT_NAME + i));
+                    name + WSDL2Constants.DEFAULT_SOAP12_ENDPOINT_NAME));
             soap12EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() +
@@ -317,13 +321,34 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                     omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
             httpEndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME + i));
+                    name + WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME));
             httpEndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
                     tns.getPrefix() + ":" + axisService.getName() + Java2WSDLConstants.HTTP_BINDING));
             httpEndpointElement.addAttribute(
                     omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
             serviceElement.addChild(httpEndpointElement);
+            if (epr.startsWith("https://")) {
+                OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTPS");
+                soap11EndpointElement.addChild(soap11Documentation);
+                OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTPS");
+                soap12EndpointElement.addChild(soap12Documentation);
+                OMElement httpDocumentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                httpDocumentation.setText("This endpoint exposes a HTTP binding over a HTTPS");
+                httpEndpointElement.addChild(httpDocumentation);
+            } else if (epr.startsWith("http://")) {
+                OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTP");
+                soap11EndpointElement.addChild(soap11Documentation);
+                OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTP");
+                soap12EndpointElement.addChild(soap12Documentation);
+                OMElement httpDocumentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                httpDocumentation.setText("This endpoint exposes a HTTP binding over a HTTP");
+                httpEndpointElement.addChild(httpDocumentation);
+            }
         }
         return serviceElement;
     }
