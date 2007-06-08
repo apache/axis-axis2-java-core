@@ -10,6 +10,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.stream.XMLStreamException;
@@ -17,13 +18,12 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
-import java.io.OutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.net.URI;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
@@ -159,7 +159,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         // Add the interface element
-        descriptionElement.addChild(getInterfaceEmelent(wsdl, tns, wsdlx, omFactory, interfaceName));
+        descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, omFactory, interfaceName));
 
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
@@ -247,7 +247,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @param interfaceName - The name of the interface
      * @return - The generated interface element
      */
-    private OMElement getInterfaceEmelent(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
+    private OMElement getInterfaceElement(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
                                           OMFactory fac, String interfaceName) {
 
         OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, wsdl);
@@ -259,7 +259,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         int i = 0;
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
-            interfaceOperations.add(i, axisOperation.toWSDL20(wsdl, tns, wsdlx));
+            interfaceOperations.add(i, generateInterfaceOperationElement(axisOperation, wsdl, tns, wsdlx));
             i++;
             Iterator faultsIterator = axisOperation.getFaultMessages().iterator();
             while (faultsIterator.hasNext()) {
@@ -304,5 +304,82 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                                 null, tns.getPrefix() + ":" +
                 interfaceName));
         return serviceElement;
+    }
+
+    /**
+     * Generates the interface Operation element. As with the binding operations we dont need to
+     * ask AxisMessage to serialize its message cause AxisMessage does not have specific properties
+     * as bindings.
+     * @param tns - The targetnamespace
+     * @param wsdlx - The WSDL extentions namespace (WSDL 2.0)
+     * @return The generated binding element
+     */
+    public OMElement generateInterfaceOperationElement(AxisOperation axisOperation, OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx) {
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMElement axisOperationElement =
+                omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
+        WSDLSerializationUtil.addWSDLDocumentationElement(axisOperation, axisOperationElement, omFactory, wsdl);
+        axisOperationElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
+                                                                      null,
+                                                                      axisOperation.getName().getLocalPart()));
+        URI[] opStyle = (URI[]) axisOperation.getParameterValue(WSDL2Constants.OPERATION_STYLE);
+        if (opStyle != null && opStyle.length > 0) {
+            String style = opStyle[0].toString();
+            for (int i = 1; i < opStyle.length; i++) {
+                URI uri = opStyle[i];
+                style = style + " " + uri;
+            }
+            axisOperationElement.addAttribute(
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_STYLE, null, style));
+        }
+        axisOperationElement.addAttribute(omFactory.createOMAttribute(
+                WSDL2Constants.ATTRIBUTE_NAME_PATTERN, null, axisOperation.getMessageExchangePattern()));
+        Parameter param = axisOperation.getParameter(WSDL2Constants.ATTR_WSDLX_SAFE);
+        if (param != null) {
+            axisOperationElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_SAFE, wsdlx, (param.getValue()).toString()));
+        }
+        AxisService axisService = (AxisService) axisOperation.getParent();
+        Map nameSpaceMap = axisService.getNameSpacesMap();
+
+        // Add the input element
+        AxisMessage inMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_IN_MESSAGE);
+        if (inMessage != null) {
+            OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
+            inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
+            WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, axisOperation.getInputAction());
+            WSDLSerializationUtil.addWSDLDocumentationElement(inMessage, inMessageElement, omFactory, wsdl);
+            axisOperationElement.addChild(inMessageElement);
+        }
+
+        // Add the output element
+        AxisMessage outMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE);
+        if (outMessage != null) {
+            OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
+            outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
+            WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction());
+            WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
+            axisOperationElement.addChild(outMessageElement);
+        }
+
+        // Add the fault element
+        ArrayList faults = axisOperation.getFaultMessages();
+        if (faults != null) {
+            Iterator iterator = faults.iterator();
+            while (iterator.hasNext()) {
+                AxisMessage faultMessage = (AxisMessage) iterator.next();
+                OMElement faultElement;
+                if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(faultMessage.getDirection())) {
+                    faultElement = omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, wsdl);
+                } else {
+                    faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
+                }
+                faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
+                WSDLSerializationUtil.addWSAWActionAttribute(faultElement, axisOperation.getFaultAction(faultMessage.getName()));
+                WSDLSerializationUtil.addWSDLDocumentationElement(faultMessage, faultElement, omFactory, wsdl);
+                axisOperationElement.addChild(faultElement);
+            }
+        }
+        return axisOperationElement;
     }
 }
