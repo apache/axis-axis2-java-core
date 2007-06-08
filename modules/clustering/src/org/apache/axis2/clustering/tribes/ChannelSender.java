@@ -31,21 +31,32 @@ public class ChannelSender implements MessageSender {
     private Channel channel;
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
-        if(channel == null) return;
-        Member[] members = channel.getMembers();
-        if (members.length > 0) {
-            try {
-                channel.send(members, msg, Channel.DEFAULT);
-                log.debug("Sent " + msg + " to group");
-            } catch (ChannelException e) {
-                String message = "Error sending command message : " + msg;
-                throw new ClusteringFault(message, e);
+        if (channel == null) {
+            return;
+        }
+
+        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        while (true) {
+            if (channel.getMembers().length > 0) {
+                try {
+                    channel.send(channel.getMembers(), msg, Channel.DEFAULT);
+                    log.debug("Sent " + msg + " to group");
+                    break;
+                } catch (ChannelException e) {
+                    String message = "Error sending command message : " + msg +
+                                     ". Reason " + e.getMessage();
+                    log.warn(message);
+                }
+            } else {
+                break;
             }
         }
     }
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
-        if(channel == null) return;
+        if (channel == null) {
+            return;
+        }
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
@@ -57,15 +68,23 @@ public class ChannelSender implements MessageSender {
     }
 
     public void sendToGroup(Throwable throwable) throws ClusteringFault {
-        if(channel == null) return;
-        Member[] group = channel.getMembers();
-        if (group.length > 0) {
-            try {
-                channel.send(group, throwable, 0);
-                log.debug("Sent " + throwable + " to group");
-            } catch (ChannelException e) {
-                String message = "Error sending exception message : " + throwable;
-                throw new ClusteringFault(message, e);
+        if (channel == null) {
+            return;
+        }
+
+        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        while (true) {
+            if (channel.getMembers().length > 0) {
+                try {
+                    channel.send(channel.getMembers(), throwable, 0);
+                    log.debug("Sent " + throwable + " to group");
+                } catch (ChannelException e) {
+                    String message = "Error sending exception message : " + throwable +
+                                     ". Reason " + e.getMessage();
+                    log.warn(message);
+                }
+            } else {
+                break;
             }
         }
     }
@@ -75,7 +94,9 @@ public class ChannelSender implements MessageSender {
             channel.send(new Member[]{member}, cmd, Channel.DEFAULT);
             log.debug("Sent " + cmd + " to " + member.getName());
         } catch (ChannelException e) {
-            throw new ClusteringFault(e);
+            String message = "Could not send message to " + member.getName() +
+                             ". Reason " + e.getMessage();
+            log.warn(message);
         }
     }
 

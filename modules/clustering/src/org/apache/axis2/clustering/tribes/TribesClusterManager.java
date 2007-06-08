@@ -239,4 +239,8 @@ public class TribesClusterManager implements ClusterManager {
             channelListener.setConfigurationContext(configurationContext);
         }
     }
+
+    public int getMemberCount() {
+        return channel.getMembers().length;
+    }
 }

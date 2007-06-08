@@ -77,7 +77,7 @@ public abstract class AbstractContext {
      * @return Iterator over a collection of keys
      */
     public Iterator getPropertyNames() {
-        if(properties == null){
+        if (properties == null) {
             properties = new HashMap();
         }
         return properties.keySet().iterator();
@@ -97,7 +97,7 @@ public abstract class AbstractContext {
 
             // Assume that a property is which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            propertyDifferences.put(key, new PropertyDifference(key, false));
+            addPropertyDifference(key);
         }
         return obj;
     }
@@ -128,7 +128,18 @@ public abstract class AbstractContext {
             this.properties = new HashMap();
         }
         properties.put(key, value);
-        propertyDifferences.put(key, new PropertyDifference(key, false));
+        addPropertyDifference(key);
+    }
+
+    private void addPropertyDifference(String key) {
+        // Add the property differences only if Context replication is enabled,
+        // and there are members in the cluster
+        ClusterManager clusterManager = getRootContext().getAxisConfiguration().getClusterManager();
+        if (clusterManager != null &&
+            clusterManager.getContextManager() != null &&
+            clusterManager.getMemberCount() != 0) {
+            propertyDifferences.put(key, new PropertyDifference(key, false));
+        }
     }
 
     /**

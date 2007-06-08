@@ -18,6 +18,8 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.catalina.tribes.Member;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -25,10 +27,10 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * 
+ *
  */
 public final class AckManager {
-
+    private static Log log = LogFactory.getLog(AckManager.class);
     private static Map messageAckTable = new Hashtable();
 
     public static void addInitialAcknowledgement(ContextClusteringCommand command) {
@@ -40,7 +42,9 @@ public final class AckManager {
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         if (ack != null) {
             List memberList = ack.getMemberList();
-            memberList.add(memberId);
+            if (!memberList.contains(memberId)) {  // If the member has not already ACKed
+                memberList.add(memberId);
+            }
         }
     }
 
@@ -59,15 +63,15 @@ public final class AckManager {
             for (int i = 0; i < members.length; i++) {
                 Member member = members[i];
                 if (!memberList.contains(member.getName())) {
-                    System.err.println("\n\n");
-                    System.err.println("##### NO ACK from member " + member.getName());
-                    System.err.println("#### ACKed member list=" + memberList);
-                    System.err.println("\n\n");
+                    log.debug("[NO ACK] from member " + member.getName());
+                    log.debug("ACKed member list=" + memberList);
                     // At this point, resend the original message back to the node which has not
                     // sent an ACK
-                    sender.sendToMember(ack.getCommand(), member);
+                    if (member.isReady()) {
+                        sender.sendToMember(ack.getCommand(), member);
+                    }
 
-                    //TODO: Check whether this is a new member. If then send the msg
+                    //TODO: Enhancement, Check whether this is a new member. If then send the msg
                     isAcknowledged = false;
                     break;
                 } else {

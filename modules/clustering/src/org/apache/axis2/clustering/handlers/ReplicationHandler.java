@@ -49,6 +49,14 @@ public class ReplicationHandler extends AbstractHandler {
     }
 
     public void flowComplete(MessageContext msgContext) {
+
+        // If there are no members, we need not do any replication
+        ClusterManager clusterManager =
+                msgContext.getConfigurationContext().getAxisConfiguration().getClusterManager();
+        if(clusterManager != null && clusterManager.getMemberCount() == 0){
+             return;
+        }
+
         int flow = msgContext.getFLOW();
         String mep = msgContext.getAxisOperation().getMessageExchangePattern();
 
@@ -59,7 +67,7 @@ public class ReplicationHandler extends AbstractHandler {
                   mep.equals(WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT) ||
                   mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY))
                  && (flow == MessageContext.IN_FLOW || flow == MessageContext.IN_FAULT_FLOW));
-        
+
         boolean replicateOnOutFlow =
                 (mep.equals(WSDL2Constants.MEP_URI_IN_OUT) ||
                  mep.equals(WSDL2Constants.MEP_URI_OUT_ONLY) ||
@@ -69,7 +77,7 @@ public class ReplicationHandler extends AbstractHandler {
                 && (flow == MessageContext.OUT_FLOW || flow == MessageContext.OUT_FAULT_FLOW);
 
         if (replicateOnInFLow || replicateOnOutFlow) {
-            System.err.println("### [FLOW COMPLETE] Going to replicate state. Flow:" + flow);
+            log.debug("### [FLOW COMPLETE] Going to replicate state. Flow:" + flow);
             try {
                 replicateState(msgContext);
             } catch (Exception e) {
@@ -122,7 +130,7 @@ public class ReplicationHandler extends AbstractHandler {
 
                 // Wait till all members have ACKed receipt & successful processing of
                 // the message with UUID 'msgUUID'
-                /*do {
+                do {
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -133,7 +141,7 @@ public class ReplicationHandler extends AbstractHandler {
                         throw new ClusteringFault("ACKs not received from all members within 20 sec. " +
                                                   "Aborting wait.");
                     }
-                } while (!contextManager.isMessageAcknowledged(msgUUID));*/
+                } while (!contextManager.isMessageAcknowledged(msgUUID));
             }
 
         } else {
