@@ -142,11 +142,11 @@ public class AxisEngine {
                     }
                     receiver.receive(msgContext);
                 }
-                flowComplete(msgContext, true);
+                flowComplete(msgContext);
             } else if (pi.equals(InvocationResponse.SUSPEND)) {
                 return pi;
             } else if (pi.equals(InvocationResponse.ABORT)) {
-                flowComplete(msgContext, true);
+                flowComplete(msgContext);
                 return pi;
             } else {
                 String errorMsg =
@@ -156,7 +156,7 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
-            flowComplete(msgContext, true);
+            flowComplete(msgContext);
             throw e;
         }
 
@@ -188,11 +188,7 @@ public class AxisEngine {
 
             try {
                 if (!resuming) {
-                    if (inbound) {
-                        msgContext.addInboundExecutedPhase(currentHandler);
-                    } else {
-                        msgContext.addOutboundExecutedPhase(currentHandler);
-                    }
+                    msgContext.addExecutedPhase(currentHandler);
                 } else {
                     /* If we are resuming the flow, we don't want to add the phase
                     * again, as it has already been added.
@@ -211,11 +207,7 @@ public class AxisEngine {
                     notification of flowComplete, then we'll need to introduce
                     some more complex logic to keep track of what has been
                     executed.*/
-                    if (inbound) {
-                        msgContext.removeFirstInboundExecutedPhase();
-                    } else {
-                        msgContext.removeFirstOutboundExecutedPhase();
-                    }
+                    msgContext.removeFirstExecutedPhase();
                 }
                 throw e;
             }
@@ -231,9 +223,8 @@ public class AxisEngine {
         return pi;
     }
 
-    private static void flowComplete(MessageContext msgContext, boolean inbound) {
-        Iterator invokedPhaseIterator = inbound ? msgContext.getInboundExecutedPhases() :
-                msgContext.getOutboundExecutedPhases();
+    private static void flowComplete(MessageContext msgContext) {
+        Iterator invokedPhaseIterator = msgContext.getExecutedPhases();
 
         while (invokedPhaseIterator.hasNext()) {
             Handler currentHandler = ((Handler) invokedPhaseIterator.next());
@@ -244,11 +235,7 @@ public class AxisEngine {
         * receive() even when a fault occurs, and we will have already executed
         * the flowComplete on those before receiveFault() is called.
         */
-        if (inbound) {
-            msgContext.resetInboundExecutedPhases();
-        } else {
-            msgContext.resetOutboundExecutedPhases();
-        }
+        msgContext.resetExecutedPhases();
     }
 
     /**
@@ -287,7 +274,7 @@ public class AxisEngine {
                 }
                 receiver.receive(msgContext);
             }
-            flowComplete(msgContext, true);
+            flowComplete(msgContext);
         }
 
         return pi;
@@ -321,7 +308,7 @@ public class AxisEngine {
             TransportOutDescription transportOut = msgContext.getTransportOut();
             TransportSender sender = transportOut.getSender();
             sender.invoke(msgContext);
-            flowComplete(msgContext, false);
+            flowComplete(msgContext);
         }
 
         return pi;
@@ -396,10 +383,10 @@ public class AxisEngine {
                     sender.invoke(msgContext);
                 }
                 //REVIEW: In the case of the TransportNonBlockingInvocationWorker, does this need to wait until that finishes?
-                flowComplete(msgContext, false);
+                flowComplete(msgContext);
             } else if (pi.equals(InvocationResponse.SUSPEND)) {
             } else if (pi.equals(InvocationResponse.ABORT)) {
-                flowComplete(msgContext, false);
+                flowComplete(msgContext);
             } else {
                 String errorMsg =
                         "Unrecognized InvocationResponse encountered in AxisEngine.send()";
@@ -408,7 +395,7 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
-            flowComplete(msgContext, false);
+            flowComplete(msgContext);
             throw e;
         }
     }
@@ -446,7 +433,7 @@ public class AxisEngine {
                             " The resumption of this flow may function incorrectly, as the OutFaultFlow will not be used");
                     return;
                 } else if (pi.equals(InvocationResponse.ABORT)) {
-                    flowComplete(msgContext, false);
+                    flowComplete(msgContext);
                     return;
                 } else if (!pi.equals(InvocationResponse.CONTINUE)) {
                     String errorMsg =
@@ -456,7 +443,7 @@ public class AxisEngine {
                 }
             }
             catch (AxisFault e) {
-                flowComplete(msgContext, false);
+                flowComplete(msgContext);
                 throw e;
             }
         }
@@ -475,10 +462,10 @@ public class AxisEngine {
             TransportSender sender = transportOut.getSender();
 
             sender.invoke(msgContext);
-            flowComplete(msgContext, false);
+            flowComplete(msgContext);
         } else if (pi.equals(InvocationResponse.SUSPEND)) {
         } else if (pi.equals(InvocationResponse.ABORT)) {
-            flowComplete(msgContext, false);
+            flowComplete(msgContext);
         } else {
             String errorMsg =
                     "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";

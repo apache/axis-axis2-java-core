@@ -328,12 +328,8 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
             checkHandler(execIt);
 
             System.out.println(title + "Checking inbound executed phases list.....");
-            Iterator inboundIt = mc.getInboundExecutedPhases();
+            Iterator inboundIt = mc.getExecutedPhases();
             checkHandler(inboundIt);
-
-            System.out.println(title + "Checking outbound executed phases list.....");
-            Iterator outboundIt = mc.getOutboundExecutedPhases();
-            checkHandler(outboundIt);
         }
 
         private void checkHandler(Iterator it) {
