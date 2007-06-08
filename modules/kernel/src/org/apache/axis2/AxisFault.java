@@ -347,6 +347,8 @@ public class AxisFault extends RemoteException {
     public String getReason() {
         if (faultReasonList.size() >= 1) {
             return ((FaultReason) faultReasonList.get(0)).getText();
+        } else if (soapFaultReason != null) {
+            return soapFaultReason.getText();
         }
 
         return null;
