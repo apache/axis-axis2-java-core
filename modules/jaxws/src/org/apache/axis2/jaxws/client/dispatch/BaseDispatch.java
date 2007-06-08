@@ -18,10 +18,29 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
+import java.net.HttpURLConnection;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Binding;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.http.HTTPException;
+import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
+
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
@@ -29,25 +48,17 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Binding;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.Response;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 
 public abstract class BaseDispatch<T> extends BindingProvider
         implements javax.xml.ws.Dispatch {
@@ -110,10 +121,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setRequestMessageContext(requestMsgCtx);
 
             Message requestMsg = null;
-            if (isValidInvocationParam(obj)) {
-                requestMsg = createMessageFromValue(obj);
-            } else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
+            try {
+                if (isValidInvocationParam(obj)) {
+                    requestMsg = createMessageFromValue(obj);
+                } else {
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
+                }
+            } catch (Exception e) {
+                throw getProtocolException(e);
             }
 
             setupMessageProperties(requestMsg);
@@ -181,10 +196,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setRequestMessageContext(requestMsgCtx);
 
             Message requestMsg = null;
-            if (isValidInvocationParam(obj)) {
-                requestMsg = createMessageFromValue(obj);
-            } else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
+            try {
+                if (isValidInvocationParam(obj)) {
+                    requestMsg = createMessageFromValue(obj);
+                } else {
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
+                }
+            } catch (Exception e){
+                throw getProtocolException(e);
             }
 
             setupMessageProperties(requestMsg);
@@ -378,6 +397,37 @@ public abstract class BaseDispatch<T> extends BindingProvider
         }
 
         return null;
+    }
+    
+    private ProtocolException getProtocolException(Exception e) {
+        if (getBinding() instanceof SOAPBinding) {
+            // Throw a SOAPFaultException
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing SOAPFaultException for " + e);
+            }
+            try {
+                SOAPFault soapFault = SOAPFactory.newInstance().createFault();
+                soapFault.setFaultString(e.getMessage());
+                return new SOAPFaultException(soapFault);
+            } catch (Exception ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occurred during fault processing:", ex);
+                }
+                return ExceptionFactory.makeProtocolException(e.getMessage(), null);
+            }
+        } else if (getBinding() instanceof HTTPBinding) {
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing ProtocolException for " + e);
+            }
+            HTTPException ex = new HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR);
+            ex.initCause(new Throwable(e.getMessage()));
+            return ex;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing ProtocolException for " + e);
+            }
+            return ExceptionFactory.makeProtocolException(e.getMessage(), null);
+        }
     }
 
     /**
