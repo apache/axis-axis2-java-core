@@ -7,12 +7,6 @@
          xmlns:ant="jelly:ant">
     <j:set var="samples.dir" value="target/samples"/>
 
-    <postGoal name="itest:compile">
-        <mkdir dir="target/itest-classes/modules"/>
-        <copy file="../addressing/target/addressing-${addressing_version}.mar"
-              tofile="target/itest-classes/modules/addressing-${addressing_version}.mar"/>
-    </postGoal>
-
     <preGoal name="test:compile">
 
 		<!-- Set a property that can be picked up from the ant build.xml's -->
@@ -50,48 +44,6 @@
             <arg line="-o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
         </java>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/rpcunwrapping"/>
-
-        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>
-		</java>
-		<ant:copy overwrite="yes" todir="target/perf/src/samples/wsdl/perf">
-			<ant:fileset dir="test/samples/wsdl/perf">
-				<ant:include name="*Skeleton.java"/>
-			</ant:fileset>
-		</ant:copy>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
-				 target="make.repo"/>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
-				 target="jar.client"/>
-		 <ant:move file="target/perf/build/lib/Services-test-client.jar" 
-			  tofile="target/perf/build/lib/PerfSoapService-test-client.jar" />
-			  
-		  <ant:move file="target/perf/build/lib/Services.aar" 
-			  tofile="target/perf/build/lib/PerfSoapService.aar" />
-			  
-		 <ant:path id="samples.wsdl.perf.client.jar"
-				  location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
-		
-		<maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf.client.jar"/>
-		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -t -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
-		</java>
-		<ant:copy overwrite="yes" todir="target/perf2/src/samples/wsdl/perf2">
-			<ant:fileset dir="test/samples/wsdl/perf2">
-				<ant:include name="*Skeleton.java"/>
-			</ant:fileset>
-		</ant:copy>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
-				 target="make.repo"/>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
-				 target="jar.client"/>
-		<ant:move file="target/perf2/build/lib/Services-test-client.jar" 
-				tofile="target/perf2/build/lib/PerfSoapService2-test-client.jar" />
-		<ant:path id="samples.wsdl.perf2.client.jar"
-				  location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
-		<maven:addPath id="maven.dependency.classpath" refid="samples.wsdl.perf2.client.jar"/>
 
 		<!-- compile the schema for XMLbeans -->
 		<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">

@@ -341,48 +341,6 @@
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="target/wsdl/rpcunwrapping"/>
 
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>
-                                </java>
-                                <copy overwrite="yes" todir="target/perf/src/samples/wsdl/perf">
-                                    <fileset dir="test/samples/wsdl/perf">
-                                        <include name="*Skeleton.java"/>
-                                    </fileset>
-                                </copy>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
-                                     target="make.repo"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
-                                     target="jar.client"/>
-                                <move file="target/perf/build/lib/Services-test-client.jar"
-                                      tofile="target/perf/build/lib/PerfSoapService-test-client.jar"/>
-
-                                <move file="target/perf/build/lib/Services.aar"
-                                      tofile="target/perf/build/lib/PerfSoapService.aar"/>
-
-                                <path id="samples.wsdl.perf.client.jar"
-                                      location="target/perf/build/lib/PerfSoapService-test-client.jar"/>
-                                <delete file="target/perf/src/samples/wsdl/perf/PerfPortTypeSkeleton.java"/>
-
-                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <arg line="-d adb -p samples.wsdl.perf2 -o target/perf2 -s -ss -sd -g -uri test/samples/wsdl/perf2/perf.wsdl"/>
-                                </java>
-                                <copy overwrite="yes" todir="target/perf2/src/samples/wsdl/perf2">
-                                    <fileset dir="test/samples/wsdl/perf2">
-                                        <include name="*Skeleton.java"/>
-                                    </fileset>
-                                </copy>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
-                                     target="make.repo"/>
-                                <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf2"
-                                     target="jar.client"/>
-                                <move file="target/perf2/build/lib/Services-test-client.jar"
-                                      tofile="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
-                                <path id="samples.wsdl.perf2.client.jar"
-                                      location="target/perf2/build/lib/PerfSoapService2-test-client.jar"/>
-                                <delete file="target/perf2/src/samples/wsdl/perf2/PerfPortTypeSkeleton.java"/>
-
                                 <!-- compile the schema for XMLbeans -->
                                 <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
@@ -419,25 +377,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/perf2/src/</source>
-                                <source>${basedir}/target/perf/src/</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
