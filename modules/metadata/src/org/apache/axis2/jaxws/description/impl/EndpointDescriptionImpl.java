@@ -1229,6 +1229,10 @@ class EndpointDescriptionImpl
     // ANNOTATION: HandlerChain
     // ===========================================
 
+    public void setHandlerChain(HandlerChainsType handlerChain) {
+        handlerChainsType = handlerChain;
+    }
+    
     /**
      * Returns a schema derived java class containing the the handler configuration filel
      *
@@ -1263,28 +1267,13 @@ class EndpointDescriptionImpl
                 if(is == null) {
                     log.warn("Unable to load handlers from file: " + handlerFileName);                    
                 } else {
-                    try {
-                        // All the classes we need should be part of this package
-                        JAXBContext jc = JAXBContext
-                                .newInstance("org.apache.axis2.jaxws.description.xml.handler",
-                                             this.getClass().getClassLoader());
-    
-                        Unmarshaller u = jc.createUnmarshaller();
-    
-                        JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
-                        handlerChainsType = (HandlerChainsType)o.getValue();
-    
-                    } catch (Exception e) {
-                        throw ExceptionFactory
-                                .makeWebServiceException(
-                                        "EndpointDescriptionImpl: getHandlerList: thrown when attempting to unmarshall JAXB content");
-                    }
+                    handlerChainsType = DescriptionUtils.loadHandlerChains(is);
                 }
             }
         }
         return handlerChainsType;
     }
-
+  
     public HandlerChain getAnnoHandlerChainAnnotation() {
         if (this.handlerChainAnnotation == null) {
             if (getServiceDescriptionImpl().isDBCMap()) {

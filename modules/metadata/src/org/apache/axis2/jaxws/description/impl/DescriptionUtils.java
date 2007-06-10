@@ -23,10 +23,14 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Response;
 import java.io.IOException;
@@ -42,7 +46,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.Future;
 
 /** Utilities used throughout the Description package. */
-class DescriptionUtils {
+public class DescriptionUtils {
     private static final Log log = LogFactory.getLog(DescriptionUtils.class);
 
     static boolean isEmpty(String string) {
@@ -337,5 +341,24 @@ class DescriptionUtils {
         } else {
             return false;
         }
+    }
+    
+    public static HandlerChainsType loadHandlerChains(InputStream is) {
+        try {
+            // All the classes we need should be part of this package
+            JAXBContext jc = JAXBContext
+                    .newInstance("org.apache.axis2.jaxws.description.xml.handler",
+                                 EndpointDescriptionImpl.class.getClassLoader());
+
+            Unmarshaller u = jc.createUnmarshaller();
+
+            JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
+            return (HandlerChainsType)o.getValue();
+
+        } catch (Exception e) {
+            throw ExceptionFactory
+                    .makeWebServiceException(
+                            "EndpointDescriptionImpl: loadHandlerList: thrown when attempting to unmarshall JAXB content");
+        }       
     }
 }

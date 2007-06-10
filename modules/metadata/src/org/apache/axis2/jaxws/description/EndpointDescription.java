@@ -97,6 +97,8 @@ public interface EndpointDescription {
      */
     public abstract String getBindingType();
 
+    public abstract void setHandlerChain(HandlerChainsType handlerChain);
+    
     public abstract HandlerChainsType getHandlerChain();
 
     /**
