@@ -865,7 +865,13 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisOperation.setName(opName);
 
         }
-
+        URI[] operationStyle = operation.getStyle();
+        if (operationStyle != null && operationStyle.length > 0) {
+            Parameter opStyleParameter = new Parameter();
+            opStyleParameter.setName(WSDL2Constants.OPERATION_STYLE);
+            opStyleParameter.setValue(operationStyle);
+            axisOperation.addParameter(opStyleParameter);
+        }
         addDocumentation(axisOperation, operation.toElement());
 
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)

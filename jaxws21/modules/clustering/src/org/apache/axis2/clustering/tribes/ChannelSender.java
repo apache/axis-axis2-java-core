@@ -27,63 +27,76 @@ import org.apache.commons.logging.LogFactory;
 
 public class ChannelSender implements MessageSender {
 
+    private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
 
-    private static final Log log = LogFactory.getLog(ChannelSender.class);
-
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
-        if(channel == null) return;
-        Member[] members = channel.getMembers();
+        if (channel == null) {
+            return;
+        }
 
-        // send the message
-        if (members.length > 0) {
-            try {
-                channel.send(members, msg, 0);
-            } catch (ChannelException e) {
-                log.error("" + msg, e);
-                String message = "Error sending command message : " + msg;
-                throw new ClusteringFault(message, e);
+        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        while (true) {
+            if (channel.getMembers().length > 0) {
+                try {
+                    channel.send(channel.getMembers(), msg, Channel.DEFAULT);
+                    log.debug("Sent " + msg + " to group");
+                    break;
+                } catch (ChannelException e) {
+                    String message = "Error sending command message : " + msg +
+                                     ". Reason " + e.getMessage();
+                    log.warn(message);
+                }
+            } else {
+                break;
             }
         }
     }
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
-        if(channel == null) return;
+        if (channel == null) {
+            return;
+        }
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
-                         Channel.SEND_OPTIONS_USE_ACK);
+                         Channel.DEFAULT);
+            log.debug("Sent " + msg + " to self");
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
         }
     }
 
     public void sendToGroup(Throwable throwable) throws ClusteringFault {
-        if(channel == null) return;
-        Member[] group = channel.getMembers();
-        log.debug("Group size " + group.length);
-        // send the message
+        if (channel == null) {
+            return;
+        }
 
-        /*for (int i = 0; i < group.length; i++) {
-            printMember(group[i]);
-        }*/
-
-        if (group.length > 0) {
-            try {
-                channel.send(group, throwable, 0);
-            } catch (ChannelException e) {
-                log.error("" + throwable, e);
-                String message = "Error sending exception message : " + throwable;
-                throw new ClusteringFault(message, e);
+        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        while (true) {
+            if (channel.getMembers().length > 0) {
+                try {
+                    channel.send(channel.getMembers(), throwable, 0);
+                    log.debug("Sent " + throwable + " to group");
+                } catch (ChannelException e) {
+                    String message = "Error sending exception message : " + throwable +
+                                     ". Reason " + e.getMessage();
+                    log.warn(message);
+                }
+            } else {
+                break;
             }
         }
     }
 
     public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
-            channel.send(new Member[]{member}, cmd, Channel.SEND_OPTIONS_USE_ACK);
+            channel.send(new Member[]{member}, cmd, Channel.DEFAULT);
+            log.debug("Sent " + cmd + " to " + member.getName());
         } catch (ChannelException e) {
-            throw new ClusteringFault(e);
+            String message = "Could not send message to " + member.getName() +
+                             ". Reason " + e.getMessage();
+            log.warn(message);
         }
     }
 
@@ -93,14 +106,5 @@ public class ChannelSender implements MessageSender {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
-    }
-
-    private void printMember(Member member) {
-        member.getUniqueId();
-        log.debug("\n===============================");
-        log.debug("Member Name " + member.getName());
-        log.debug("Member Host" + member.getHost());
-        log.debug("Member Payload" + member.getPayload());
-        log.debug("===============================\n");
     }
 }

@@ -6,6 +6,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private Path classpath = null;
     private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
-    private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private String locationUri;
     private String attrFormDefault = null;
     private String elementFormDefault = null;
 
@@ -61,6 +62,8 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private ArrayList pkg2nsMappings = new ArrayList();
 
     private MappingSet mappings = new MappingSet();
+    
+    private String schemaGenClassName = null;
 
     public String getLocationUri() {
         return locationUri;
@@ -175,6 +178,10 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         addToOptionMap(optionMap,
                 Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
                 getNsGenClassName());
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
+                getSchemaGenClassName());
 
         loadPkg2NsMap();
         addToOptionMap(optionMap,
@@ -342,6 +349,14 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
     public void setNsGenClassName(String nsGenClassName) {
         this.nsGenClassName = nsGenClassName;
+    }
+
+    public String getSchemaGenClassName() {
+        return schemaGenClassName;
+    }
+
+    public void setSchemaGenClassName(String schemaGenClassName) {
+        this.schemaGenClassName = schemaGenClassName;
     }
 
     public void loadPkg2NsMap() {

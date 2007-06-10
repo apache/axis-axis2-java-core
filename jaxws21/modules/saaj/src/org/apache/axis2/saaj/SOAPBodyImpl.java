@@ -98,11 +98,19 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         String prefix = soapElement.getPrefix();
         String localName = soapElement.getLocalName();
         element.declareNamespace(namespaceURI, prefix);
-
-        SOAPBodyElementImpl childEle =
+        SOAPBodyElementImpl childEle;
+        
+        if (localName == null) {
+            childEle =
                 new SOAPBodyElementImpl(
                         (ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
-                                                                        localName));
+                                                                        ""));
+        } else {
+            childEle =
+                new SOAPBodyElementImpl(
+                        (ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
+                                                                        localName));            
+        }
         for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
             Name name = (Name)iter.next();
             childEle.addAttribute(name, soapElement.getAttributeValue(name));
@@ -406,7 +414,16 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                                    domEle.getTagName().substring(0, indexOfColon));
         } else {
             localname = domEle.getLocalName();
-            ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
+            if (domEle.getNamespaceURI() != null) {
+                ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
+            } else {
+                if (domEle.getPrefix() != null) {
+                    ns = new NamespaceImpl("", domEle.getPrefix());
+                } else {
+                    ns = new NamespaceImpl("", "");
+                    
+                }
+            }
         }
         ElementImpl eleImpl =
                 new ElementImpl((DocumentImpl)this.getOwnerDocument(),
@@ -418,10 +435,18 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         NamedNodeMap domAttrs = domEle.getAttributes();
         for (int i = 0; i < domAttrs.getLength(); i++) {
             org.w3c.dom.Node attrNode = domAttrs.item(i);
-            saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
-                                                   attrNode.getLocalName(),
-                                                   attrNode.getPrefix()),
-                                 attrNode.getNodeValue());
+            if (attrNode.getLocalName() == null) {
+                //local part is required.  "" is allowed to preserve compatibility with QName 1.0
+                saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
+                                                       "",
+                                                       attrNode.getPrefix()),
+                                                       attrNode.getNodeValue());
+            } else {
+                saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
+                                                       attrNode.getLocalName(),
+                                                       attrNode.getPrefix()),
+                                                       attrNode.getNodeValue());                
+            }
         }
 
         NodeList childNodes = node.getChildNodes();

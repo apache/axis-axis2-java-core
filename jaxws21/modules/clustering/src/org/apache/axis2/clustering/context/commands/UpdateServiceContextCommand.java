@@ -15,28 +15,38 @@
  */
 package org.apache.axis2.clustering.context.commands;
 
-import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.PropertyUpdater;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.PropertyDifference;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.HashMap;
 
 /**
  * 
  */
-public class UpdateServiceContextCommand
-        extends ServiceContextCommand implements UpdateContextCommand {
+public class UpdateServiceContextCommand extends UpdateContextCommand {
 
     private static final Log log = LogFactory.getLog(UpdateServiceContextCommand.class);
 
-    private PropertyUpdater propertyUpdater = new PropertyUpdater();
+    protected String serviceGroupName;
+    protected String serviceGroupContextId;
+    protected String serviceName;
+
+    public void setServiceGroupName(String serviceGroupName) {
+        this.serviceGroupName = serviceGroupName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         log.debug("Updating service context properties...");
@@ -46,30 +56,43 @@ public class UpdateServiceContextCommand
             try {
                 AxisService axisService =
                         configurationContext.getAxisConfiguration().getService(serviceName);
-                ServiceContext serviceContext = sgCtx.getServiceContext(axisService, false);
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService);
                 propertyUpdater.updateProperties(serviceContext);
             } catch (AxisFault e) {
                 throw new ClusteringFault(e);
             }
+        } else {
+            sgCtx = configurationContext.getServiceGroupContext(serviceGroupContextId);
+            AxisService axisService;
+            try {
+                axisService = configurationContext.getAxisConfiguration().getService(serviceName);
+            } catch (AxisFault axisFault) {
+                throw new ClusteringFault(axisFault);
+            }
+            String scope = axisService.getScope();
+            if (sgCtx == null) {
+                sgCtx = new ServiceGroupContext(configurationContext,
+                                                configurationContext.getAxisConfiguration().
+                                                        getServiceGroup(serviceGroupName));
+                sgCtx.setId(serviceGroupContextId);
+                if (scope.equals(Constants.SCOPE_APPLICATION)) {
+                    configurationContext.
+                            addServiceGroupContextIntoApplicationScopeTable(sgCtx);
+                } else if (scope.equals(Constants.SCOPE_SOAP_SESSION)) {
+                    configurationContext.
+                            addServiceGroupContextIntoSoapSessionTable(sgCtx);
+                }
+            }
+            try {
+                ServiceContext serviceContext = sgCtx.getServiceContext(axisService);
+                propertyUpdater.updateProperties(serviceContext);
+            } catch (AxisFault axisFault) {
+                throw new ClusteringFault(axisFault);
+            }
         }
     }
 
-    public boolean isPropertiesEmpty() {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-            return true;
-        }
-        return propertyUpdater.getProperties().isEmpty();
-    }
-
-    public int getCommandType() {
-        return UPDATE_SERVICE_CONTEXT;
-    }
-
-    public void addProperty(PropertyDifference diff) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(diff);
+    public String toString() {
+        return "UpdateServiceContextCommand(" + uniqueId + ")";
     }
 }

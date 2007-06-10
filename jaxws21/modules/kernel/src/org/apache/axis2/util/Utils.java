@@ -22,8 +22,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -146,20 +144,8 @@ public class Utils {
                         .getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);
-        configurationContext.registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
-        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
-
-        ClusterManager clusterManager =
-                configurationContext.getAxisConfiguration().getClusterManager();
-        if (clusterManager != null) {
-        	ContextManager contextManager = clusterManager.getContextManager();
-        	if (contextManager!=null) {
-        		contextManager.addContext(serviceGroupContext);
-        		contextManager.addContext(serviceContext);
-        	}
-        }
-
-        return serviceContext;
+        configurationContext.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
+        return serviceGroupContext.getServiceContext(axisService);
     }
 
     /**

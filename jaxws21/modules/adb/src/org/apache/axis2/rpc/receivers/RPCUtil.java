@@ -16,13 +16,13 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -30,7 +30,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Arrays;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -149,7 +148,7 @@ public class RPCUtil {
         QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
             ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                       service.getSchematargetNamespacePrefix());
+                                       service.getSchemaTargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
             envelope.getBody().addChild(bodyChild);
         } else {
@@ -159,7 +158,7 @@ public class RPCUtil {
                     if (service.isElementFormDefault()) {
                         resName = new QName(service.getSchematargetNamespace(),
                                             RETURN_WRAPPER,
-                                            service.getSchematargetNamespacePrefix());
+                                            service.getSchemaTargetNamespacePrefix());
                     } else {
                         resName = new QName(RETURN_WRAPPER);
                     }
@@ -169,7 +168,7 @@ public class RPCUtil {
                             OMXMLBuilderFactory.createStAXOMBuilder(
                                     OMAbstractFactory.getSOAP11Factory(), parser);
                     ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                               service.getSchematargetNamespacePrefix());
+                                               service.getSchemaTargetNamespacePrefix());
                     OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
                     bodyChild.addChild(stAXOMBuilder.getDocumentElement());
                     envelope.getBody().addChild(bodyChild);

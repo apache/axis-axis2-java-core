@@ -17,6 +17,7 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
@@ -58,6 +59,10 @@ public class TribesControlCommandProcessor {
             GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
             getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
             channelSender.sendToMember(getStateRespCmd, sender);
+        } else if (command instanceof AckCommand) {
+            AckCommand cmd = (AckCommand) command;
+            cmd.setMemberId(sender.getName());
+            cmd.execute(configurationContext);
         } else {
             command.execute(configurationContext);
         }

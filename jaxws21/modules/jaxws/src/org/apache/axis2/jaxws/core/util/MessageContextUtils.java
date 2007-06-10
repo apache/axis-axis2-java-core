@@ -71,11 +71,11 @@ public class MessageContextUtils {
      * @param mc
      * @return
      */
-    public static MessageContext createFaultMessageContext(MessageContext mc) {
+    public static MessageContext createFaultMessageContext(MessageContext mc, Throwable t) {
         try {
             org.apache.axis2.context.MessageContext faultMC =
                     MessageContextBuilder.createFaultMessageContext(
-                            mc.getAxisMessageContext(), null);
+                            mc.getAxisMessageContext(), t);
             MessageContext jaxwsFaultMC = new MessageContext(faultMC);
             jaxwsFaultMC.setEndpointDescription(mc.getEndpointDescription());
             jaxwsFaultMC.setOperationDescription(mc.getOperationDescription());

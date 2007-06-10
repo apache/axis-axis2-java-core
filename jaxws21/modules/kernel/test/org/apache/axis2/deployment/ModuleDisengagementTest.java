@@ -63,7 +63,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         er.engageModule(module.getName());
@@ -88,7 +88,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         er.engageModule(module.getName());
@@ -122,7 +122,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         er.engageModule(module.getName());
@@ -147,7 +147,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         service.engageModule(module);
@@ -172,7 +172,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         service.engageModule(module);
@@ -197,7 +197,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
-        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(0);
+        userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         operation.engageModule(module);

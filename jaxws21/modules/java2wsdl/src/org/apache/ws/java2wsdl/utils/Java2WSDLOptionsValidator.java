@@ -1,6 +1,6 @@
 package org.apache.ws.java2wsdl.utils;
 
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -44,6 +44,8 @@ public class Java2WSDLOptionsValidator implements Java2WSDLConstants {
                 Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION.equalsIgnoreCase(optionType) ||
+                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION_LONG.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION.equalsIgnoreCase(optionType) ||
                 Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION_LONG.equalsIgnoreCase(optionType) ||
 
@@ -59,6 +61,8 @@ public class Java2WSDLOptionsValidator implements Java2WSDLConstants {
                 Java2WSDLConstants.SERVICE_NAME_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.STYLE_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.USE_OPTION_LONG.equalsIgnoreCase(optionType)||
+                Java2WSDLConstants.WSDL_VERSION_OPTION.equalsIgnoreCase(optionType)||
+                Java2WSDLConstants.WSDL_VERSION_OPTION_LONG.equalsIgnoreCase(optionType)||
                 Java2WSDLConstants.LOCATION_OPTION_LONG.equalsIgnoreCase(optionType));
 
 

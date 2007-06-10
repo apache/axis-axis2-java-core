@@ -42,6 +42,7 @@ public class OutPutPane extends JPanel implements ActionListener {
     JRadioButton radCustomLocation;
 
     ButtonGroup buttonGroup;
+    ProgressBarPanel progressBar;
 
     JLabel lblModuleSrc;
     JComboBox cmbModuleSrc;
@@ -96,10 +97,10 @@ public class OutPutPane extends JPanel implements ActionListener {
         cmbModuleSrc.setEnabled(true);
         add(cmbModuleSrc);
 
-
-//        loadCmbCurrentProject();
-//        loadcmbModuleSrcProject();
-
+        progressBar= new ProgressBarPanel();
+        progressBar.setVisible(false);
+        progressBar.setBorder(BorderFactory.createTitledBorder("") );
+        add(progressBar );
 
         setSize(getPreferredSize());
     }
@@ -189,70 +190,75 @@ public class OutPutPane extends JPanel implements ActionListener {
             loadcmbModuleSrcProject();
         }
     }
+}
 
-    class OutPutPaneLayout implements LayoutManager {
+class OutPutPaneLayout implements LayoutManager {
 
-        public OutPutPaneLayout() {
-        }
-
-        public void addLayoutComponent(String name, Component comp) {
-        }
-
-        public void removeLayoutComponent(Component comp) {
-        }
-
-        public Dimension preferredLayoutSize(Container parent) {
-            Dimension dim = new Dimension(0, 0);
-
-            Insets insets = parent.getInsets();
-            dim.width = 611 + insets.left + insets.right;
-            dim.height = 600 + insets.top + insets.bottom;
-
-            return dim;
-        }
-
-        public Dimension minimumLayoutSize(Container parent) {
-            return new Dimension(0, 0);
-        }
-
-        public void layoutContainer(Container parent) {
-            Insets insets = parent.getInsets();
-
-            Component c;
-            c = parent.getComponent(2);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 8, insets.top + 8, 350, 24);
-            }
-            c = parent.getComponent(3);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 30, insets.top + 40, 150, 24);
-            }
-            c = parent.getComponent(5);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 200, insets.top + 40, 330, 24);
-            }
-            c = parent.getComponent(6);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 30, insets.top + 70, 150, 24);
-            }
-            c = parent.getComponent(7);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 200, insets.top + 70, 330, 24);
-            }
-            c = parent.getComponent(4);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 8, insets.top + 100, 350, 24);
-            }
-            c = parent.getComponent(0);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 30, insets.top + 130, 350, 24);
-            }
-            c = parent.getComponent(1);
-            if (c.isVisible()) {
-                c.setBounds(insets.left + 400, insets.top + 130, 80, 24);
-            }
-        }
+    public OutPutPaneLayout() {
     }
 
+    public void addLayoutComponent(String name, Component comp) {
+    }
+
+    public void removeLayoutComponent(Component comp) {
+    }
+
+    public Dimension preferredLayoutSize(Container parent) {
+        Dimension dim = new Dimension(0, 0);
+
+        Insets insets = parent.getInsets();
+        dim.width = 611 + insets.left + insets.right;
+        dim.height = 600 + insets.top + insets.bottom;
+
+        return dim;
+    }
+
+    public Dimension minimumLayoutSize(Container parent) {
+        return new Dimension(0, 0);
+    }
+
+    public void layoutContainer(Container parent) {
+        Insets insets = parent.getInsets();
+
+        Component c;
+        c = parent.getComponent(2);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 8, 350, 24);
+        }
+        c = parent.getComponent(3);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 30, insets.top + 40, 150, 24);
+        }
+        c = parent.getComponent(5);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 200, insets.top + 40, 330, 24);
+        }
+        c = parent.getComponent(6);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 30, insets.top + 70, 150, 24);
+        }
+        c = parent.getComponent(7);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 200, insets.top + 70, 330, 24);
+        }
+        c = parent.getComponent(4);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 100, 350, 24);
+        }
+        c = parent.getComponent(0);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 30, insets.top + 130, 350, 24);
+        }
+        c = parent.getComponent(1);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 400, insets.top + 130, 80, 24);
+        }
+         c = parent.getComponent(8);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 20, insets.top + 375, 510, 80);
+        }
+    }
 }
+
+
 

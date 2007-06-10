@@ -15,15 +15,31 @@
  */
 package org.apache.axis2.clustering.context.commands;
 
+import org.apache.axis2.clustering.context.ContextClusteringCommand;
+import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.PropertyDifference;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * 
  */
-public interface UpdateContextCommand extends Serializable {
-    void addProperty(PropertyDifference diff);
+public abstract class UpdateContextCommand extends ContextClusteringCommand {
 
-    boolean isPropertiesEmpty();
+    protected PropertyUpdater propertyUpdater = new PropertyUpdater();
+
+    public boolean isPropertiesEmpty() {
+        if (propertyUpdater.getProperties() == null) {
+            propertyUpdater.setProperties(new HashMap());
+            return true;
+        }
+        return propertyUpdater.getProperties().isEmpty();
+    }
+
+    public void addProperty(PropertyDifference diff) {
+        if (propertyUpdater.getProperties() == null) {
+            propertyUpdater.setProperties(new HashMap());
+        }
+        propertyUpdater.addContextProperty(diff);
+    }
 }

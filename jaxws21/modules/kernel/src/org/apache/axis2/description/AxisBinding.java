@@ -130,6 +130,8 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         if (WSDL2Constants.URI_WSDL2_SOAP.equals(type) || Constants.URI_SOAP11_HTTP.equals(type) ||
                 Constants.URI_SOAP12_HTTP.equals(type)) {
             // SOAP Binding specific properties
+            bindingElement.addAttribute(
+                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE, null, WSDL2Constants.URI_WSDL2_SOAP));
             property = (String) options.get(WSDL2Constants.ATTR_WSOAP_VERSION);
             if (property != null) {
                 if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(property)) {
@@ -166,14 +168,11 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
                 bindingElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_METHOD_DEFAULT, whttp, property));
             }
+            bindingElement.addAttribute(
+                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE, null, WSDL2Constants.URI_WSDL2_HTTP));
         }
 
         // Common Properties
-        property = getType();
-        if (property != null) {
-            bindingElement.addAttribute(
-                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE, null, property));
-        }
         property = (String) options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
         if (property != null) {
             bindingElement.addAttribute(omFactory.createOMAttribute(

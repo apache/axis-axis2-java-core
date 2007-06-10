@@ -5,7 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;

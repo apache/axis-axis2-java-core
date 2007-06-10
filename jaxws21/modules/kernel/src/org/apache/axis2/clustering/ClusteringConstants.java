@@ -18,6 +18,7 @@
 package org.apache.axis2.clustering;
 
 public final class ClusteringConstants {
+
     private ClusteringConstants() {
     }
 

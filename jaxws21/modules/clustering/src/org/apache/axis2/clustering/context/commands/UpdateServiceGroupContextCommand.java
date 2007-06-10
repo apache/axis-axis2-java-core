@@ -16,45 +16,56 @@
 package org.apache.axis2.clustering.context.commands;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.PropertyUpdater;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.PropertyDifference;
 import org.apache.axis2.context.ServiceGroupContext;
-
-import java.util.HashMap;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
  */
-public class UpdateServiceGroupContextCommand
-        extends ServiceGroupContextCommand implements UpdateContextCommand {
+public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
 
-    private PropertyUpdater propertyUpdater = new PropertyUpdater();
+    private static Log log = LogFactory.getLog(UpdateServiceGroupContextCommand.class);
 
-    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+    protected String serviceGroupName;
+    protected String serviceGroupContextId;
+
+    public String getServiceGroupName() {
+        return serviceGroupName;
+    }
+
+    public void setServiceGroupName(String serviceGroupName) {
+        this.serviceGroupName = serviceGroupName;
+    }
+
+    public String getServiceGroupContextId() {
+        return serviceGroupContextId;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
+
+    public void execute(ConfigurationContext configContext) throws ClusteringFault {
         ServiceGroupContext sgCtx =
-                configurationContext.getServiceGroupContext(serviceGroupContextId);
-        if (sgCtx != null) {
-            propertyUpdater.updateProperties(sgCtx);
+                configContext.getServiceGroupContext(serviceGroupContextId);
+
+        // If the ServiceGroupContext is not found, create it
+        if (sgCtx == null) {
+            AxisServiceGroup axisServiceGroup =
+                    configContext.getAxisConfiguration()
+                            .getServiceGroup(serviceGroupName);
+            sgCtx = new ServiceGroupContext(configContext, axisServiceGroup);
+            sgCtx.setId(serviceGroupContextId);
+            configContext.addServiceGroupContextIntoSoapSessionTable(sgCtx);  // TODO: Check this
         }
+        log.debug("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
+        propertyUpdater.updateProperties(sgCtx);
     }
 
-    public int getCommandType() {
-        return UPDATE_SERVICE_GROUP_CONTEXT;
-    }
-
-    public boolean isPropertiesEmpty() {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-            return true;
-        }
-        return propertyUpdater.getProperties().isEmpty();
-    }
-
-    public void addProperty(PropertyDifference diff) {
-        if (propertyUpdater.getProperties() == null) {
-            propertyUpdater.setProperties(new HashMap());
-        }
-        propertyUpdater.addContextProperty(diff);
+    public String toString() {
+        return "UpdateServiceGroupContextCommand(" + uniqueId + ")";
     }
 }

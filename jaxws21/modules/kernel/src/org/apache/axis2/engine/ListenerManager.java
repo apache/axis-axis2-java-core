@@ -43,7 +43,7 @@ public class ListenerManager {
 
     private ConfigurationContext configctx;
     private HashMap startedTransports = new HashMap();
-    private boolean stopped = true;
+    private boolean stopped ;
 
     public void init(ConfigurationContext configCtx) {
         configCtx.setTransportManager(this);
@@ -134,7 +134,6 @@ public class ListenerManager {
                 log.info(e.getMessage());
             }
         }
-        stopped = false;
         Runtime.getRuntime().addShutdownHook(new ListenerManagerShutdownThread(this));
     }
 
@@ -208,7 +207,6 @@ public class ListenerManager {
                 transportListener.init(configctx, trsIn);
                 transportListener.start();
             }
-            stopped = false;
             startedTransports.put(trsIn.getName(), transportListener);
         }
     }

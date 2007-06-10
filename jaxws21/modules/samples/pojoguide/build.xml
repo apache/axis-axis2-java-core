@@ -1,5 +1,4 @@
-
-<project basedir="." default="generate.service">
+<project name="pojoguide" basedir="." default="generate.service">
 
 	<property name="service.name" value="WeatherService" />
 	<property name="dest.dir" value="build" />

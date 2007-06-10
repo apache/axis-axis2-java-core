@@ -30,7 +30,7 @@ public class TribesUtil {
         if (members != null) {
             int length = members.length;
             if (length > 0) {
-                log.info("Members of current Tribes...");
+                log.info("Members of current cluster");
                 for (int i = 0; i < length; i++) {
                     byte[] hostBts = members[i].getHost();
                     String host = null;
@@ -39,14 +39,10 @@ public class TribesUtil {
                             host = host == null ? ("" + hostBts[j]) : (host + "." + hostBts[j]);
                         }
                     }
-
-                    String port = "" + members[i].getPort();
-                    log.info("Member " + (i + 1) + " NAME:" + members[i].getName() + " HOST:"
-                             + host + "  PORT:" + port);
-
+                    log.info("Member" + (i + 1) + " " + members[i].getName());
                 }
             } else {
-                log.info("No members in current Tribe");
+                log.info("No members in current cluster");
             }
         }
     }

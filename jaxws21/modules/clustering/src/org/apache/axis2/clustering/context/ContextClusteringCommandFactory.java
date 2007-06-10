@@ -15,13 +15,16 @@
  */
 package org.apache.axis2.clustering.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.clustering.context.commands.*;
+import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,26 @@ import java.util.Map;
 public final class ContextClusteringCommandFactory {
 
     private static final Log log = LogFactory.getLog(ContextClusteringCommandFactory.class);
+
+    public static ContextClusteringCommandCollection
+            getCommandCollection(AbstractContext[] contexts,
+                                 Map excludedReplicationPatterns) {
+
+        ArrayList commands = new ArrayList(contexts.length);
+        ContextClusteringCommandCollection collection =
+                new ContextClusteringCommandCollection(commands);
+        for (int i = 0; i < contexts.length; i++) {
+            ContextClusteringCommand cmd = getUpdateCommand(contexts[i],
+                                                            excludedReplicationPatterns,
+                                                            false);
+            if (cmd != null) {
+                commands.add(cmd);
+            }
+        }
+        collection.setUniqueId(UUIDGenerator.getUUID());
+        AckManager.addInitialAcknowledgement(collection);
+        return collection;
+    }
 
     /**
      * @param context
@@ -44,40 +67,36 @@ public final class ContextClusteringCommandFactory {
                                                             Map excludedPropertyPatterns,
                                                             boolean includeAllProperties) {
 
-        ContextClusteringCommand cmd = null;
+        UpdateContextCommand cmd = null;
         if (context instanceof ConfigurationContext) {
             cmd = new UpdateConfigurationContextCommand();
-            fillProperties((UpdateContextCommand) cmd,
-                           context,
-                           excludedPropertyPatterns,
-                           includeAllProperties);
         } else if (context instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) context;
             cmd = new UpdateServiceGroupContextCommand();
-            UpdateServiceGroupContextCommand updateSgCmd =
-                    (UpdateServiceGroupContextCommand) cmd;
-
+            UpdateServiceGroupContextCommand updateSgCmd = (UpdateServiceGroupContextCommand) cmd;
             updateSgCmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
             updateSgCmd.setServiceGroupContextId(sgCtx.getId());
-            fillProperties((UpdateContextCommand) cmd,
-                           context,
-                           excludedPropertyPatterns,
-                           includeAllProperties);
         } else if (context instanceof ServiceContext) {
             ServiceContext serviceCtx = (ServiceContext) context;
             cmd = new UpdateServiceContextCommand();
-            UpdateServiceContextCommand updateServiceCmd =
-                    (UpdateServiceContextCommand) cmd;
-            updateServiceCmd.setServiceGroupName(serviceCtx.getGroupName());
+            UpdateServiceContextCommand updateServiceCmd = (UpdateServiceContextCommand) cmd;
+            String sgName =
+                    serviceCtx.getServiceGroupContext().getDescription().getServiceGroupName();
+            updateServiceCmd.setServiceGroupName(sgName);
             updateServiceCmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
             updateServiceCmd.setServiceName(serviceCtx.getAxisService().getName());
-            fillProperties((UpdateContextCommand) cmd,
+        }
+        if (cmd != null) {
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            fillProperties(cmd,
                            context,
                            excludedPropertyPatterns,
                            includeAllProperties);
-        }
-        if (cmd != null && ((UpdateContextCommand) cmd).isPropertiesEmpty()) {
-            cmd = null;
+            if (cmd.isPropertiesEmpty()) {
+                cmd = null;
+            } else {
+                AckManager.addInitialAcknowledgement(cmd);
+            }
         }
         context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
         return cmd;
@@ -95,19 +114,31 @@ public final class ContextClusteringCommandFactory {
                                        Map excludedPropertyPatterns,
                                        boolean includeAllProperties) {
         if (!includeAllProperties) {
-            Map diffs = context.getPropertyDifferences();
-            for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                String key = (String) iter.next();
-                Object prop = context.getPropertyNonReplicable(key);
-                if (prop instanceof Serializable) { // First check whether it is serializable
 
-                    // Next check whether it matches an excluded pattern
-                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                        log.debug("sending property =" + key + "-" + prop);
-                        PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                        diff.setValue(prop);
-                        updateCmd.addProperty(diff);
+            // Sometimes, there can be failures, so if an exception occurs, we retry
+            while (true) {
+                Map diffs = context.getPropertyDifferences();
+                try {
+                    for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
+                        String key = (String) iter.next();
+                        Object prop = context.getPropertyNonReplicable(key);
+
+                        // First check whether it is serializable
+                        if (prop instanceof Serializable) {
+
+                            // Next check whether it matches an excluded pattern
+                            if (!isExcluded(key,
+                                            context.getClass().getName(),
+                                            excludedPropertyPatterns)) {
+                                log.debug("sending property =" + key + "-" + prop);
+                                PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                                diff.setValue(prop);
+                                updateCmd.addProperty(diff);
+                            }
+                        }
                     }
+                    break;
+                } catch (Exception ignored) {
                 }
             }
         } else {
@@ -165,44 +196,5 @@ public final class ContextClusteringCommandFactory {
             }
         }
         return false;
-    }
-
-    public static ContextClusteringCommand getCreateCommand(AbstractContext abstractContext) {
-        if (abstractContext instanceof ServiceGroupContext) {
-            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
-            ServiceGroupContextCommand cmd = new CreateServiceGroupContextCommand();
-            //TODO impl
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            return cmd;
-        } else if (abstractContext instanceof ServiceContext) {
-            ServiceContext serviceCtx = (ServiceContext) abstractContext;
-            ServiceContextCommand cmd = new CreateServiceContextCommand();
-            ServiceGroupContext sgCtx = (ServiceGroupContext) serviceCtx.getParent();
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceName(serviceCtx.getAxisService().getName());
-            return cmd;
-        }
-        return null;
-    }
-
-    public static ContextClusteringCommand getRemoveCommand(AbstractContext abstractContext) {
-        if (abstractContext instanceof ServiceGroupContext) {
-            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
-            ServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
-            // TODO: impl
-            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
-            cmd.setServiceGroupContextId(sgCtx.getId());
-            return cmd;
-        } else if (abstractContext instanceof ServiceContext) {
-            ServiceContext serviceCtx = (ServiceContext) abstractContext;
-            ServiceContextCommand cmd = new DeleteServiceContextCommand();
-            // TODO: impl
-            cmd.setServiceGroupName(serviceCtx.getGroupName());
-            cmd.setServiceName(serviceCtx.getAxisService().getName());
-            return cmd;
-        }
-        return null;
     }
 }

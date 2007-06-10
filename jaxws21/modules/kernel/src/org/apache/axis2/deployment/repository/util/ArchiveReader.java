@@ -312,7 +312,7 @@ public class ArchiveReader implements DeploymentConstants {
                         OMNamespace documentElementNS =
                                 ((OMElement) XMLUtils.toOM(in)).getNamespace();
                         if (documentElementNS != null) {
-                            WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
+                            WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder;
                             if (WSDL2Constants.WSDL_NAMESPACE
                                     .equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
@@ -397,7 +397,7 @@ public class ArchiveReader implements DeploymentConstants {
             File file1 = files[i];
             if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
                 InputStream in = new FileInputStream(file1);
-                FileInputStream in2 = null;
+                FileInputStream in2;
 
                 // now the question is which version of WSDL file this archive contains.
                 // lets check the namespace of the root element and decide. But since we are
@@ -405,7 +405,7 @@ public class ArchiveReader implements DeploymentConstants {
                 // whole thing.
                 OMNamespace documentElementNS = ((OMElement) XMLUtils.toOM(in)).getNamespace();
                 if (documentElementNS != null) {
-                    WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
+                    WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder;
                     if (WSDL2Constants.WSDL_NAMESPACE
                             .equals(documentElementNS.getNamespaceURI())) {
                         // we have a WSDL 2.0 document here.
@@ -423,9 +423,7 @@ public class ArchiveReader implements DeploymentConstants {
                     AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false,
                                                           in2, file1.toURI().toString());
                     try {
-                        if (in2 != null) {
-                            in2.close();
-                        }
+                        in2.close();
                         in3.close();
                     } catch (IOException e) {
                         log.info(e);

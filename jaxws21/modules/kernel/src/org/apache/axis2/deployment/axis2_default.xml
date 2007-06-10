@@ -182,6 +182,7 @@
                 <order phase="Dispatch"/>
             </handler>
         </phase>
+        <phase name="RMPhase"/>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
         <phase name="OperationInPhase"/>
@@ -191,6 +192,7 @@
         <phase name="OperationOutPhase"/>
         <!--system predefined phase-->
         <!--these phase will run irrespective of the service-->
+        <phase name="RMPhase"/>
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
         <phase name="Security"/>
@@ -227,12 +229,14 @@
                 <order phase="Dispatch"/>
             </handler>
         </phase>
+        <phase name="RMPhase"/>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>
     </phaseOrder>
     <phaseOrder type="OutFaultFlow">
         <!--      user can add his own phases to this area  -->
         <phase name="OperationOutFaultPhase"/>
+        <phase name="RMPhase"/>
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>

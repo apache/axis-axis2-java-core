@@ -87,7 +87,7 @@ public class ConfigurationContextFactory {
             if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
                 ServiceGroupContext serviceGroupContext =
                         configCtx.createServiceGroupContext(axisServiceGroup);
-                configCtx.addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
+                configCtx.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext);
                 DependencyManager.initService(serviceGroupContext);
             }
         }

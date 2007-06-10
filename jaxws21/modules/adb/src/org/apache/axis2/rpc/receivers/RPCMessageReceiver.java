@@ -41,7 +41,6 @@ import java.lang.reflect.Method;
 public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 
-    private Method method;
     private static Log log = LogFactory.getLog(RPCMessageReceiver.class);
 
     /**
@@ -63,6 +62,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
     public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
             throws AxisFault {
+        Method method = null;
         try {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
@@ -78,9 +78,10 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
+
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
-                    this.method = methods[i];
+                    method = methods[i];
                     break;
                 }
             }
@@ -128,7 +129,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
-                                                   service.getSchematargetNamespacePrefix());
+                                                   service.getSchemaTargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
             RPCUtil.processResponse(resObject, service,
@@ -149,7 +150,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             if (cause instanceof AxisFault) {
                 throw (AxisFault)cause;
             }
-            throw new AxisFault(msg);
+            throw new AxisFault(msg, e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();

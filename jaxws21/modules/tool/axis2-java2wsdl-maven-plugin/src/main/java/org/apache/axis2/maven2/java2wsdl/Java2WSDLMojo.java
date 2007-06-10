@@ -28,8 +28,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 
 
 /**

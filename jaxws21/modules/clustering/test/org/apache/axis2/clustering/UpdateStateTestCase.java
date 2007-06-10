@@ -68,9 +68,6 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
         serviceGroupContext1.setProperty(key2, val2);
         serviceContext1.setProperty(key3, val3);
 
-        clusterManager1.getContextManager().addContext(serviceGroupContext1);
-        clusterManager1.getContextManager().addContext(serviceContext1);
-
         clusterManager1.getContextManager().updateContext(configurationContext1);
         clusterManager1.getContextManager().updateContext(serviceGroupContext1);
         clusterManager1.getContextManager().updateContext(serviceContext1);

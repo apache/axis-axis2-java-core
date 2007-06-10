@@ -21,10 +21,6 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public interface ContextManagerListener {
     
-    public void contextAdded(ContextClusteringCommand message) throws ClusteringFault;
-
-    public void contextRemoved(ContextClusteringCommand message) throws ClusteringFault;
-
     public void contextUpdated(ContextClusteringCommand message) throws ClusteringFault;
 
     public void setConfigurationContext(ConfigurationContext configurationContext);

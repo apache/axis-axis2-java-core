@@ -17,7 +17,6 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axis2.deployment.util.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -72,7 +71,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         try {
             clazz = super.findClass(name);
         } catch (ClassNotFoundException e) {
-            byte raw[];
+            byte raw[] = null;
             try {
                 String completeFileName = name;
                 /**
@@ -80,12 +79,11 @@ public class DeploymentClassLoader extends URLClassLoader {
                  */
                 completeFileName = completeFileName.replace('.', '/').concat(".class");
                 raw = getBytes(completeFileName);
-                if (raw == null) {
-                    throw new ClassNotFoundException("Class Not found : " + name);
-                }
             } catch (Exception ex) {
-                // TODO: This, or throw new ClassNotFoundException?
-                throw new RuntimeException(ex);
+                // Fall through
+            }
+            if (raw == null) {
+                throw new ClassNotFoundException("Class Not found : " + name);
             }
             clazz = defineClass(name, raw, 0, raw.length);
         }

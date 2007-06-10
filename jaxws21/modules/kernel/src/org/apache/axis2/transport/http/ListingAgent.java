@@ -210,7 +210,7 @@ public class ListingAgent extends AbstractAgent {
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
                     ((AxisService) serviceObj)
-                            .printWSDL2(out, ip, configContext.getServiceContextPath());
+                            .printWSDL2(out);
                     out.flush();
                     out.close();
                     return;
@@ -218,7 +218,7 @@ public class ListingAgent extends AbstractAgent {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
-                    ((AxisService) serviceObj).printWSDL(out, ip, configContext.getServicePath());
+                    ((AxisService) serviceObj).printWSDL(out, ip);
                     out.flush();
                     out.close();
                     return;

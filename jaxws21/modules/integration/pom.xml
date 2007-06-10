@@ -192,6 +192,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.all.version}</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -297,7 +302,8 @@
                             <tasks>
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
-
+								<property name="maven.test.path" refid="maven.compile.classpath"/>
+								<echo>${maven.test.path}</echo>
                                 <!-- copy the mars so that they are available on the test classpath -->
                                 <copy file="../addressing/target/addressing-${version}.mar"
                                       tofile="target/test-classes/modules/addressing-${version}.mar"/>
@@ -315,6 +321,7 @@
 
                                 <echo>Compiling DocumentUnwrappingTest.wsdl</echo>
                                 <mkdir dir="${wsdl.output.base.dir}/documentunwrapping"/>
+                                
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
@@ -439,7 +446,11 @@
                 <inherited>true</inherited>
                 <configuration>
                     <skip>false</skip>
-                    <forkMode>once</forkMode>
+                    
+                    <!-- The pertest forkMode is not ideal but seems to be necessary
+                         because the test server doesn't shut down properly :-(
+                         Should be removed if possible -->
+                    <forkMode>pertest</forkMode>
                     <argLine>-Xms256m -Xmx512m</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                    <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
@@ -469,11 +480,11 @@
         </plugins>
     </build>
     <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-            </plugin>
-        </plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+    </plugins>
     </reporting>
 </project>

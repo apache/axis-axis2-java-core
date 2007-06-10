@@ -74,9 +74,9 @@ public class HTTPTransportUtils {
             SOAPFactory soapFactory = new SOAP11Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
             OMNamespace omNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
-                                                             service.getSchematargetNamespacePrefix());
+                                                             service.getSchemaTargetNamespacePrefix());
             soapFactory.createOMNamespace(service.getSchematargetNamespace(),
-                                          service.getSchematargetNamespacePrefix());
+                                          service.getSchemaTargetNamespacePrefix());
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
             Iterator it = map.keySet().iterator();
 

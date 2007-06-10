@@ -15,7 +15,7 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  !-->
-<project basedir="." default="setup">
+<project name="security" basedir="." default="setup">
 
 	<property name="lib.dir" value="../lib"/>
 	<property name="modules.dir" value="../"/>

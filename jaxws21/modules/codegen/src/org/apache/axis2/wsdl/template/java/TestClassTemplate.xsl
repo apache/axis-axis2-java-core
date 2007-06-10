@@ -28,8 +28,13 @@
 
      <xsl:for-each select="method">
          <xsl:if test="@mep='12'">
+
           <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
-          <xsl:if test="$isSync='1'">
+          <xsl:variable name="outParamType" select="output/param[@location='body']/@type"></xsl:variable>
+          <xsl:variable name="outParamComplexType" select="output/param[@location='body']/@complextype"></xsl:variable>
+          <xsl:variable name="outParamCount" select="count(output/param[@location='body']/param)"></xsl:variable>
+
+        <xsl:if test="$isSync='1'">
         /**
          * Auto generated test method
          */
@@ -165,8 +170,19 @@
         private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>{
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
-            public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.async.AsyncResult result) {
-                assertNotNull(result.getResponseEnvelope().getBody().getFirstElement());
+            public void receiveResult<xsl:value-of select="@name"/>(
+                         <xsl:choose>
+                            <xsl:when test="$outParamCount=1">
+                                 <xsl:value-of select="output/param[@location='body']/param/@type"/><xsl:text> </xsl:text>result
+                            </xsl:when>
+                            <xsl:when test="string-length(normalize-space($outParamComplexType)) > 0">
+                                <xsl:value-of select="$outParamComplexType"/><xsl:text> </xsl:text>result
+                            </xsl:when>
+                            <xsl:when test="string-length(normalize-space($outParamType)) > 0">
+                                <xsl:value-of select="$outParamType"/><xsl:text> </xsl:text>result
+                            </xsl:when>
+                        </xsl:choose>) {
+                
             }
 
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {

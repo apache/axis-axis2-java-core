@@ -33,6 +33,8 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
@@ -41,8 +43,6 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
-import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -183,7 +183,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (schemaNameSpace != null) {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();
                     if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
-                        service.setSchematargetNamespace(nameSpeceVale);
+                        service.setSchemaTargetNamespace(nameSpeceVale);
                     }
                 }
                 OMAttribute elementFormDefault = schemaElement.
@@ -252,7 +252,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (excludeops == null) {
                 excludeops = new ArrayList();
             }
-            Utils.addExclueMethods(excludeops);
+            Utils.addExcludeMethods(excludeops);
 
             //<schema targetNamespace="http://x.y.z"/>
             // setting the PolicyInclude
@@ -338,7 +338,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         if (generateWsdl(service)) {
                             Utils.fillAxisService(service, axisConfig, excludeops, null);
                         } else {
-                            ArrayList nonRpcOperations = getNonPRCMethods(service);
+                            ArrayList nonRpcOperations = getNonRPCMethods(service);
                             Utils.fillAxisService(service, axisConfig, excludeops,
                                                   nonRpcOperations);
                         }
@@ -497,7 +497,7 @@ public class ServiceBuilder extends DescriptionBuilder {
      *
      * @return ArrayList
      */
-    private ArrayList getNonPRCMethods(AxisService axisService) {
+    private ArrayList getNonRPCMethods(AxisService axisService) {
         ArrayList excludeOperations = new ArrayList();
         Iterator operatins = axisService.getOperations();
         if (operatins.hasNext()) {

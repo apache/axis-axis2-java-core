@@ -6,7 +6,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -20,6 +19,11 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.AnnotationConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -28,10 +32,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.ws.java2wsdl.AnnotationConstants;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
-import org.apache.ws.java2wsdl.SchemaGenerator;
-import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
 import org.codehaus.jam.JClass;
@@ -48,7 +48,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -190,16 +189,39 @@ public class Utils {
         return getClassLoader(parent, new File(path));
     }
 
+    /**
+     * Get a ClassLoader which contains a classpath of a) the passed directory and b) any jar
+     * files inside the "lib/" or "Lib/" subdirectory of the passed directory.
+     *
+     * @param parent parent ClassLoader which will be the parent of the result of this method
+     * @param file a File which must be a directory for this to be useful
+     * @return a new ClassLoader pointing to both the passed dir and jar files under lib/
+     * @throws DeploymentException if problems occur
+     */
     public static ClassLoader getClassLoader(ClassLoader parent, File file)
             throws DeploymentException {
         URLClassLoader classLoader;
 
-        if (file != null) {
-            try {
-                ArrayList urls = new ArrayList();
-                urls.add(file.toURL());
-                // lower case directory name
-                File libfiles = new File(file, "lib");
+        if (file == null) return null; // Shouldn't this just return the parent?
+
+        try {
+            ArrayList urls = new ArrayList();
+            urls.add(file.toURL());
+
+            // lower case directory name
+            File libfiles = new File(file, "lib");
+            if (libfiles.exists()) {
+                urls.add(libfiles.toURL());
+                File jarfiles[] = libfiles.listFiles();
+                for (int i = 0; i < jarfiles.length; i++) {
+                    File jarfile = jarfiles[i];
+                    if (jarfile.getName().endsWith(".jar")) {
+                        urls.add(jarfile.toURL());
+                    }
+                }
+            } else {
+                // upper case directory name
+                libfiles = new File(file, "Lib");
                 if (libfiles.exists()) {
                     urls.add(libfiles.toURL());
                     File jarfiles[] = libfiles.listFiles();
@@ -209,33 +231,18 @@ public class Utils {
                             urls.add(jarfile.toURL());
                         }
                     }
-                } else {
-                    // upper case directory name
-                    libfiles = new File(file, "Lib");
-                    if (libfiles.exists()) {
-                        urls.add(libfiles.toURL());
-                        File jarfiles[] = libfiles.listFiles();
-                        for (int i = 0; i < jarfiles.length; i++) {
-                            File jarfile = jarfiles[i];
-                            if (jarfile.getName().endsWith(".jar")) {
-                                urls.add(jarfile.toURL());
-                            }
-                        }
-                    }
                 }
-
-                URL urllist[] = new URL[urls.size()];
-                for (int i = 0; i < urls.size(); i++) {
-                    urllist[i] = (URL) urls.get(i);
-                }
-                classLoader = new URLClassLoader(urllist, parent);
-                return classLoader;
-            } catch (MalformedURLException e) {
-                throw new DeploymentException(e);
             }
-        }
 
-        return null;
+            URL urllist[] = new URL[urls.size()];
+            for (int i = 0; i < urls.size(); i++) {
+                urllist[i] = (URL) urls.get(i);
+            }
+            classLoader = new URLClassLoader(urllist, parent);
+            return classLoader;
+        } catch (MalformedURLException e) {
+            throw new DeploymentException(e);
+        }
     }
 
     private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
@@ -303,10 +310,10 @@ public class Utils {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
-        SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
+        SchemaGenerator schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
                                                               serviceClass.trim(),
                                                               axisService.getSchematargetNamespace(),
-                                                              axisService.getSchematargetNamespacePrefix());
+                                                              axisService.getSchemaTargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
         schemaGenerator.setNonRpcMethods(nonRpcMethods);
         if (!axisService.isElementFormDefault()) {
@@ -316,7 +323,7 @@ public class Utils {
         schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
-        axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
         axisService.setTypeTable(schemaGenerator.getTypeTable());
         if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
                 axisService.getTargetNamespace())) {
@@ -330,19 +337,6 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if (methodAnnon != null) {
-                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
-                    continue;
-                }
-            }
-            if (!jmethod.isPublic()) {
-                // no need to expose , private and protected methods
-                continue;
-            }
-            if (excludeOperations != null && excludeOperations.contains(jmethod.getSimpleName())) {
-                continue;
-            }
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the operation there in services.xml then try to set it schema element name
@@ -668,7 +662,7 @@ public class Utils {
      * To add the exclude method when generating scheams , here the exclude methods
      * will be session releated axis2 methods
      */
-    public static void addExclueMethods(ArrayList excludeList){
+    public static void addExcludeMethods(ArrayList excludeList){
         excludeList.add("init");
         excludeList.add("setOperationContext");
         excludeList.add("startUp");

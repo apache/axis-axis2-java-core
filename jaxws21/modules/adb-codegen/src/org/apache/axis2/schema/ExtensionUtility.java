@@ -205,6 +205,9 @@ public class ExtensionUtility {
                     Map metaInfo = complexType.getMetaInfoMap();
                     String complexTypeName = (String)
                             metaInfo.get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
+                    if (complexTypeName.endsWith("[]")){
+                        complexTypeName = complexTypeName.substring(0,complexTypeName.length() -2);
+                    }
                     // store the complext type name to process later
                    axisMessage.addParameter(new Parameter(Constants.COMPLEX_TYPE, complexTypeName));
                 }
@@ -240,7 +243,17 @@ public class ExtensionUtility {
         if (message.getParameter(Constants.UNWRAPPED_KEY) != null) {
             XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
             //create a type mapper
-            processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap, qnameSuffix);
+            if (schemaType instanceof XmlSchemaComplexType) {
+                processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap, qnameSuffix);
+            } else if (schemaType instanceof XmlSchemaSimpleType) {
+                XmlSchemaSimpleType xmlSchemaSimpleType = (XmlSchemaSimpleType) schemaType;
+                populateClassName(xmlSchemaSimpleType.getMetaInfoMap(),
+                        mapper,
+                        opName,
+                        false,
+                        message.getElementQName().getLocalPart(),
+                        qnameSuffix);
+            }
 
         }
     }
@@ -284,6 +297,36 @@ public class ExtensionUtility {
 
     }
 
+    private static XmlSchemaType getSchemaType(XmlSchema schema, QName typeName) {
+        XmlSchemaType xmlSchemaType = null;
+        if (schema != null) {
+            xmlSchemaType = schema.getTypeByName(typeName);
+            if (xmlSchemaType == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object = null;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaType = getSchemaType(schema1,typeName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaType = getSchemaType(schema1,typeName);
+                        }
+                        if (xmlSchemaType != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaType;
+    }
+
 
     private static void processComplexContentModel(XmlSchemaComplexType cmplxType,
                                                    TypeMapper mapper,
@@ -300,13 +343,15 @@ public class ExtensionUtility {
                 // process particles inside this extension, if any
                 processSchemaSequence(schemaExtension.getParticle(), mapper, opName, schemaMap, qnameSuffix);
 
-                // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
-                // the parent schema
-                XmlSchema parentSchema = (XmlSchema) schemaMap.get(schemaExtension.getBaseTypeName().getNamespaceURI());
-
-                // ok now we got the parent schema. Now let's get the extension's schema type
-
-                XmlSchemaType extensionSchemaType = parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
+                XmlSchema xmlSchema = null;
+                 XmlSchemaType extensionSchemaType = null;
+                for (Iterator iter = schemaMap.values().iterator();iter.hasNext();){
+                    xmlSchema = (XmlSchema) iter.next();
+                    extensionSchemaType = getSchemaType(xmlSchema,schemaExtension.getBaseTypeName());
+                    if (extensionSchemaType != null){
+                        break;
+                    }
+                }
 
                 processXMLSchemaComplexType(extensionSchemaType, mapper, opName, schemaMap, qnameSuffix);
             }

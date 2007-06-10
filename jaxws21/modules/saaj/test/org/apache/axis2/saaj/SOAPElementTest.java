@@ -95,8 +95,8 @@ public class SOAPElementTest extends TestCase {
         assertSame(o, z1);   // should be same SAAJ Node
         assertSame(z1, z2);  // should be same SAAJ Node
 
-        assertEquals(((javax.xml.soap.Text)z1).getNodeValue(),
-                     ((javax.xml.soap.Text)z2).getNodeValue());
+        assertEquals(((javax.xml.soap.Text)z1).getValue(),
+                     ((javax.xml.soap.Text)z2).getValue());
 
         Node lastChildNode = (Node)soapEle.getLastChild();
         SOAPElement lastChildSOAPEle = (SOAPElement)lastChildNode;
@@ -132,8 +132,8 @@ public class SOAPElementTest extends TestCase {
         Object z2 = soapEle.getFirstChild();
         assertSame(o, z1);   // should be same SAAJ Node
         assertSame(z1, z2);  // should be same SAAJ Node
-        assertEquals(((javax.xml.soap.Text)z1).getNodeValue(),
-                     ((javax.xml.soap.Text)z2).getNodeValue());
+        assertEquals(((javax.xml.soap.Text)z1).getValue(),
+                     ((javax.xml.soap.Text)z2).getValue());
 
         SOAPElement lastChildSOAPEle = (SOAPElement)soapEle.getLastChild();
 

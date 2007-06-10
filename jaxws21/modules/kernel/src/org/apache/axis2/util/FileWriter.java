@@ -28,7 +28,7 @@ public class FileWriter {
      * @param rootLocation - Location to be written
      * @param packageName  - package, can be '.' separated
      * @param fileName     name of the file
-     * @param extension    type of the file, java, csharp, cpp etc
+     * @param extension    type of the file, java, cpp etc
      * @return the File that was created
      * @throws IOException
      * @throws Exception

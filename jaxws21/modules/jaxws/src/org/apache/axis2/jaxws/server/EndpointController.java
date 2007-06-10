@@ -211,10 +211,11 @@ public class EndpointController {
     /*
       * Get the appropriate EndpointDispatcher for a given service endpoint.
       */
-    private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
+    protected EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
             throws Exception {
-        return EndpointDispatcherFactory
-                .createEndpointDispatcher(serviceImplClass, serviceInstance);
+        EndpointDispatcherFactory factory = 
+            (EndpointDispatcherFactory)FactoryRegistry.getFactory(EndpointDispatcherFactory.class);        
+        return factory.createEndpointDispatcher(serviceImplClass, serviceInstance);       
     }
 
     /*
@@ -353,7 +354,7 @@ public class EndpointController {
                     .create(Protocol.soap11);  // always soap11 according to the spec
             msg.setXMLFault(xmlfault);
             MessageContext responseMsgCtx =
-                    MessageContextUtils.createFaultMessageContext(requestMsgCtx);
+                    MessageContextUtils.createFaultMessageContext(requestMsgCtx, null);
             responseMsgCtx.setMessage(msg);
             return responseMsgCtx;
         } catch (XMLStreamException e) {

@@ -36,6 +36,7 @@ public interface WSDL2Constants {
     String DEFAULT_SOAP11_ENDPOINT_NAME = "SOAP11Endpoint";
     String DEFAULT_SOAP12_ENDPOINT_NAME = "SOAP12Endpoint";
     String DEFAULT_HTTP_ENDPOINT_NAME = "HTTPEndpoint";
+    String DEFAULT_HTTPS_PREFIX = "Secure";
     String DEFAULT_INTERFACE_NAME = "ServiceInterface";
     String TYPES_LOCAL_NALE = "types";
     String INTERFACE_LOCAL_NAME = "interface";
@@ -71,6 +72,8 @@ public interface WSDL2Constants {
     String ATTRIBUTE_ADDRESS = "address";
     String ATTRIBUTE_AUTHENTICATION_TYPE = "authenticationType";
     String ATTRIBUTE_AUTHENTICATION_REALM = "authenticationRealm";
+    String ATTRIBUTE_STYLE = "style";
+    String OPERATION_STYLE = "operationStyle";
     String IN_PUT_LOCAL_NAME = "input";
     String OUT_PUT_LOCAL_NAME = "output";
     String OUT_FAULT_LOCAL_NAME = "outfault";
@@ -137,6 +140,10 @@ public interface WSDL2Constants {
     public String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/ns/wsdl/robust-out-only";
     public String MEP_URI_OUT_IN = "http://www.w3.org/ns/wsdl/out-in";
     public String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/ns/wsdl/out-opt-in";
+
+    public String STYLE_IRI = "http://www.w3.org/ns/wsdl/style/iri";
+    public String STYLE_RPC = "http://www.w3.org/ns/wsdl/style/rpc";
+    public String STYLE_MULTIPART = "http://www.w3.org/ns/wsdl/style/multipart";
 
     public String NMTOKEN_ANY = "#any";
     public String NMTOKEN_NONE = "#none";

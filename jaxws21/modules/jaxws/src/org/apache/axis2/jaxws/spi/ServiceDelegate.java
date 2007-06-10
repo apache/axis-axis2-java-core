@@ -25,6 +25,7 @@ import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.binding.BindingImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
@@ -194,10 +195,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
         }
 
-        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
-        addBinding(endpointDesc.getClientBindingID());
-
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, axis2EPR, addressingNamespace, features);
+
+        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here.
+        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
+
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
@@ -240,9 +242,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
         }
 
-        addBinding(endpointDesc.getClientBindingID());
-
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, axis2EPR, addressingNamespace, features);
+        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
 
         if (mode != null) {
             dispatch.setMode(mode);
@@ -278,10 +279,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     Messages.getMessage("createDispatchFail2", portName.toString()));
         }
 
-        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
-        addBinding(endpointDesc.getClientBindingID());
-
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, features);
+
+        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
+        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
@@ -311,9 +312,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     Messages.getMessage("createDispatchFail2", portName.toString()));
         }
 
-        addBinding(endpointDesc.getClientBindingID());
-
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, features);
+        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
 
         if (mode != null) {
             dispatch.setMode(mode);
@@ -551,22 +551,26 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         return getWSDLWrapper().getService(serviceName) != null;
     }
 
-    private void addBinding(String bindingId) {
+    private BindingImpl addBinding(EndpointDescription endpointDesc, String bindingId) {
         // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
         if (bindingId != null) {
             //TODO: create all the bindings here
             if (bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)) {
                 //instantiate soap11 binding implementation here and call setBinding in BindingProvider
+                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
             }
 
             if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
                 //instantiate soap11 binding implementation here and call setBinding in BindingProvider
+                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
             }
 
             if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
                 //instantiate http binding implementation here and call setBinding in BindingProvider
+                return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);
             }
-        }
+        } 
+        return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
     }
 
     private boolean isValidDispatchType(Class clazz) {

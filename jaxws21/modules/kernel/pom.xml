@@ -28,11 +28,6 @@
 	<description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 		</dependency>

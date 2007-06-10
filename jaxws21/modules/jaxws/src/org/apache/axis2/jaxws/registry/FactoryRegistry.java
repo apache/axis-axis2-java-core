@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.impl.MessageFactoryImpl;
 import org.apache.axis2.jaxws.message.impl.XMLPartFactoryImpl;
 import org.apache.axis2.jaxws.message.util.impl.SAAJConverterFactoryImpl;
+import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
 
 import java.util.Hashtable;
@@ -56,6 +57,7 @@ public class FactoryRegistry {
         table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
         table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
+        table.put(EndpointDispatcherFactory.class, new EndpointDispatcherFactory());
     }
 
     /** FactoryRegistry is currently a static singleton */

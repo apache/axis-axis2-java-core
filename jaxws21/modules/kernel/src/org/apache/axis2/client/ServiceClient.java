@@ -510,7 +510,13 @@ public class ServiceClient {
         operationClient.execute(true);
         MessageContext response = operationClient
                 .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        return response.getEnvelope().getBody().getFirstElement();
+        if(options.isCallTransportCleanup()){
+            response.getEnvelope().build();
+            cleanupTransport();
+            return response.getEnvelope().getBody().getFirstElement();
+        } else {
+            return response.getEnvelope().getBody().getFirstElement();
+        }
     }
 
     /**
@@ -681,7 +687,7 @@ public class ServiceClient {
 
     /**
      * Sets whether or not to cache the last OperationContext
-     *
+     * @deprecated
      * @param cachingOpContext true if we should hold onto the last active OperationContext
      */
     public void setCachingOperationContext(boolean cachingOpContext) {
@@ -724,6 +730,12 @@ public class ServiceClient {
         } else {
             configContext.terminate();
         }
+    }
+
+    public void cleanupTransport() throws AxisFault{
+        MessageContext outMessageContext =
+                getLastOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
     }
 
     /**

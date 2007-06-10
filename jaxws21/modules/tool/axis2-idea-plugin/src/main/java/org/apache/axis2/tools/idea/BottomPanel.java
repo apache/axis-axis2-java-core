@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.TimerTask;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -96,88 +97,119 @@ public class BottomPanel extends JPanel implements ActionListener {
                 }
             }
 
-            String selected = java2CodeFrame.secondPanel.cmbCodeGenOption.getSelectedItem().toString() ;
-            if (selected.equalsIgnoreCase("default")) {
-                File temp = java2CodeFrame.secondPanel.codegenBean.getTemp();
-                java2CodeFrame.secondPanel.setDefaultCommonConfigurations();
-                java2CodeFrame.secondPanel.codegenBean.setOutput(temp.getAbsolutePath() );
+            final String selected = java2CodeFrame.secondPanel.cmbCodeGenOption.getSelectedItem().toString() ;
+            java2CodeFrame.outputpane.progressBar.setVisible(true);
+            final BarThread stepper = new BarThread(java2CodeFrame.outputpane.progressBar);
+            stepper.start();
+            new java.util.Timer(true).schedule(new TimerTask() {
+                public void run() {
+                    stepper.requestStop();
 
-                try {
-
-                    java2CodeFrame.generateDefaultClientCode( temp) ;
-                } catch (Exception e1) {
-                    StringWriter writer = new StringWriter();
-                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                            "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
-                    java2CodeFrame.dispose();
-                    return;
                 }
+            }, 1000);
 
-                JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
-                        "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
-                java2CodeFrame.dispose();
-                return;
+            new Thread(){public void run(){
+                if (selected.equalsIgnoreCase("default")) {
 
-            }
+                    String output = java2CodeFrame.outputpane.buttonGroup.getSelection().getActionCommand();
+                    java2CodeFrame.secondPanel.setDefaultCommonConfigurations();
 
-            else if (selected.equalsIgnoreCase("custom")) {
+                    if (output.equalsIgnoreCase("radCurrentProject")) {
 
-                String output = java2CodeFrame.outputpane.buttonGroup.getSelection().getActionCommand();
+                        File temp = java2CodeFrame.secondPanel.codegenBean.getTemp();
+                        java2CodeFrame.secondPanel.codegenBean.setOutput(temp.getAbsolutePath() );
+                        try {
+                            java2CodeFrame.generatecode() ;
+                            java2CodeFrame.copyDirectory(new File(temp + File.separator + "src"), new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem()));
+                            File src = new File(temp + File.separator + "resources");
+                            if (src.isDirectory())
+                                java2CodeFrame.copyDirectory(src, new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem() + File.separator + ".." + File.separator + "resources"));
 
-                if (output.equalsIgnoreCase("radCurrentProject")) {
-
-                    File temp = java2CodeFrame.secondPanel.codegenBean.getTemp();
-                    java2CodeFrame.secondPanel.codegenBean.setOutput(temp.getAbsolutePath());
-                    try {
-                        java2CodeFrame.generatecode();
-                        java2CodeFrame.copyDirectory(new File(temp + File.separator + "src"), new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem()));
-                        File src = new File(temp + File.separator + "resources");
-                        if (src.isDirectory())
-                            java2CodeFrame.copyDirectory(src, new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem() + File.separator + ".." + File.separator + "resources"));
-
-                        java2CodeFrame.deleteDirectory(temp);
-                    } catch (Exception e1) {
-                        StringWriter writer = new StringWriter();
-                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.deleteDirectory(temp);
+                        } catch (Exception e1) {
+                            java2CodeFrame.outputpane.progressBar.setVisible(false);
+                            StringWriter writer = new StringWriter();
+                            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
+                        }
+                        java2CodeFrame.outputpane.progressBar.setVisible(false);
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                                "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
                         java2CodeFrame.dispose();
                         return;
-                    }
-
-                }
-                else
-                {
-
-                    try {
-
-                        java2CodeFrame.generatecode();
-
-                    } catch (Exception e1) {
-                        StringWriter writer = new StringWriter();
-                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                    }else if(output.equalsIgnoreCase("radCustomLocation") ){
+                        try{
+                            java2CodeFrame.generatecode();
+                        } catch (Exception e1) {
+                            java2CodeFrame.outputpane.progressBar.setVisible(false);
+                            StringWriter writer = new StringWriter();
+                            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
+                        }
+                        java2CodeFrame.outputpane.progressBar.setVisible(false);
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                                "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
                         java2CodeFrame.dispose();
                         return;
                     }
                 }
 
-            }
-            try {
+                else if (selected.equalsIgnoreCase("custom")) {
 
-                java2CodeFrame.generatecode();
+                    String output = java2CodeFrame.outputpane.buttonGroup.getSelection().getActionCommand();
+                    java2CodeFrame.secondPanel.fillBean();
+                    if (output.equalsIgnoreCase("radCurrentProject")) {
 
-            } catch (Exception e1) {
-                System.out.println(e1);
-                StringWriter writer = new StringWriter();
-                JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                        "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
-                java2CodeFrame.dispose();
-                return;
+                        File temp = java2CodeFrame.secondPanel.codegenBean.getTemp();
+                        java2CodeFrame.secondPanel.codegenBean.setOutput(temp.getAbsolutePath());
+                        //java2CodeFrame.secondPanel.codegenBean.setProject();
+                        try {
+                            java2CodeFrame.generatecode();
+                            java2CodeFrame.copyDirectory(new File(temp + File.separator + "src"), new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem()));
+                            File src = new File(temp + File.separator + "resources");
+                            if (src.isDirectory())
+                                java2CodeFrame.copyDirectory(src, new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem() + File.separator + ".." + File.separator + "resources"));
+
+                            java2CodeFrame.deleteDirectory(temp);
+                        } catch (Exception e1) {
+                            StringWriter writer = new StringWriter();
+                            java2CodeFrame.outputpane.progressBar.setVisible(false);
+                            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
+                        }
+                        java2CodeFrame.outputpane.progressBar.setVisible(false);
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                                "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
+                        java2CodeFrame.dispose();
+                        return;
+                    }
+                    else if(output.equalsIgnoreCase("radCustomLocation"))
+                    {
+                        try {
+                            java2CodeFrame.generatecode();
+                        } catch (Exception e1) {
+                            java2CodeFrame.outputpane.progressBar.setVisible(false);
+                            StringWriter writer = new StringWriter();
+                            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
+                        }
+                        java2CodeFrame.outputpane.progressBar.setVisible(false);
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                                "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
+                        java2CodeFrame.dispose();
+                        return;
+                    }
+                }
             }
-            JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
-                    "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
-            java2CodeFrame.dispose();
-            return;
+            }.start();
 
         } else if (obj == btnNext) {
 

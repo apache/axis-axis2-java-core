@@ -19,7 +19,7 @@ package org.apache.axis2.dataretrieval;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisService2OM;
+import org.apache.axis2.description.AxisService2WSDL11;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -118,17 +118,11 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
                 throw new DataRetrievalException("MessageContext was not set!");
             }
 
-            AxisService2OM axisService2WOM;
+            AxisService2WSDL11 axisService2WOM;
             OMElement wsdlElement;
 
             try {
-                String[] exposedEPRs = theService.getEPRs();
-                if (exposedEPRs == null) {
-                    exposedEPRs = new String[]{theService.getEndpointName()};
-                }
-                axisService2WOM = new AxisService2OM(theService,
-                                                     exposedEPRs, "document", "literal",
-                                                     "");
+                axisService2WOM = new AxisService2WSDL11(theService);
                 wsdlElement = axisService2WOM.generateOM();
             }
             catch (Exception e) {

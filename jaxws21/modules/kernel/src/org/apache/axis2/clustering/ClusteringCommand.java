@@ -20,5 +20,4 @@ import java.io.Serializable;
 
 public abstract class ClusteringCommand implements Serializable {
 
-    public abstract int getCommandType();
 }

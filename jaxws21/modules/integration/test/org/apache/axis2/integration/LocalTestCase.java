@@ -54,7 +54,8 @@ public class LocalTestCase extends TestCase {
 
     protected void setUp() throws Exception {
         // Configuration - server side
-        serverConfig = new AxisConfiguration();
+        serverConfig = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem(null).getAxisConfiguration();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(serverConfig);
         LocalTransportReceiver.CONFIG_CONTEXT.setServicePath("services");
         LocalTransportReceiver.CONFIG_CONTEXT.setContextRoot("local:/");
@@ -62,14 +63,14 @@ public class LocalTestCase extends TestCase {
         tOut.setSender(new LocalTransportSender());
         serverConfig.addTransportOut(tOut);
 
-        addInPhases(serverConfig.getInFlowPhases());
-        DispatchPhase dp = (DispatchPhase)serverConfig.getInFlowPhases().get(1);
-        dp.addHandler(new AddressingBasedDispatcher());
-
-        addInPhases(serverConfig.getInFaultFlowPhases());
-
-        addOutPhases(serverConfig.getOutFlowPhases());
-        addOutPhases(serverConfig.getOutFaultFlowPhases());
+//        addInPhases(serverConfig.getInFlowPhases());
+//        DispatchPhase dp = (DispatchPhase)serverConfig.getInFlowPhases().get(1);
+//        dp.addHandler(new AddressingBasedDispatcher());
+//
+//        addInPhases(serverConfig.getInFaultFlowPhases());
+//
+//        addOutPhases(serverConfig.getOutFlowPhases());
+//        addOutPhases(serverConfig.getOutFaultFlowPhases());
 
         ///////////////////////////////////////////////////////////////////////
         // Set up raw message receivers for OMElement based tests

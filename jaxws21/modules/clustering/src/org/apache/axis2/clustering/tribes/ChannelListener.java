@@ -16,16 +16,22 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
+import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
+import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
-import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.axis2.clustering.control.GetStateResponseCommand;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import sun.misc.Queue;
 
 import java.io.Serializable;
 
@@ -33,19 +39,35 @@ import java.io.Serializable;
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
 
-    private ThreadPool threadPool;
-
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
     private TribesControlCommandProcessor controlCommandProcessor;
+    private ChannelSender sender;
 
-    public ChannelListener(DefaultConfigurationManager configurationManager,
+    /**
+     * The messages received are enqued. Another thread, messageProcessor, will
+     * process these messages in the order that they were received.
+     */
+    private final Queue cmdQueue = new Queue();
+
+    /**
+     * The thread which picks up messages from the cmdQueue and processes them.
+     */
+    private Thread messageProcessor;
+
+    private ConfigurationContext configurationContext;
+
+    public ChannelListener(ConfigurationContext configurationContext,
+                           DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
-                           TribesControlCommandProcessor controlCommandProcessor) {
+                           TribesControlCommandProcessor controlCommandProcessor,
+                           ChannelSender sender) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
-        this.threadPool = new ThreadPool();
+        this.sender = sender;
+        this.configurationContext = configurationContext;
+        startMessageProcessor();
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -56,42 +78,111 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationManager = configurationManager;
     }
 
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
+    }
+
     public boolean accept(Serializable msg, Member sender) {
         return true;
     }
 
     public void messageReceived(Serializable msg, Member sender) {
-        log.debug("Message received : " + msg);
-        threadPool.execute(new MessageHandler(msg, sender));
+
+        // If the system has not still been intialized, reject all incoming messages, except the
+        // GetStateResponseCommand message
+        if (configurationContext.
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
+            && !(msg instanceof GetStateResponseCommand)) {
+            return;
+        }
+        log.debug("RECEIVED MESSAGE " + msg + " from " + sender.getName());
+
+        // Need to process ACKs as soon as they are received since otherwise,
+        // unnecessary retransmissions will take place
+        if(msg instanceof AckCommand){
+            try {
+                controlCommandProcessor.process((AckCommand) msg, sender);
+            } catch (Exception e) {
+                log.error(e);
+            }
+            return;
+        }
+
+        // Add the commands to be precessed to the cmdQueue
+        synchronized (cmdQueue) {
+            cmdQueue.enqueue(new MemberMessage(msg, sender));
+        }
+        if (!messageProcessor.isAlive()) {
+            startMessageProcessor();
+        }
     }
 
-    private class MessageHandler implements Runnable {
-        private Serializable msg;
+    private void startMessageProcessor() {
+        messageProcessor = new Thread(new MessageProcessor(), "ClusteringInComingMessageProcessor");
+        messageProcessor.setDaemon(true);
+        messageProcessor.setPriority(Thread.MAX_PRIORITY);
+        messageProcessor.start();
+    }
+
+    /**
+     * A container to hold a message and its sender
+     */
+    private class MemberMessage {
+        private Serializable message;
         private Member sender;
 
-        public MessageHandler(Serializable msg, Member sender) {
-            this.msg = msg;
+        public MemberMessage(Serializable msg, Member sender) {
+            this.message = msg;
             this.sender = sender;
         }
 
+        public Serializable getMessage() {
+            return message;
+        }
+
+        public Member getSender() {
+            return sender;
+        }
+    }
+
+    /**
+     * A processor which continuously polls for messages in the cmdQueue and processes them
+     */
+    private class MessageProcessor implements Runnable {
         public void run() {
-            if (msg instanceof ContextClusteringCommand) {
+            while (true) {
+                MemberMessage memberMessage = null;
                 try {
-                    contextManager.notifyListener((ContextClusteringCommand) msg);
-                } catch (ClusteringFault e) {
-                    log.error("Could not process ContextCommand", e);
-                }
-            } else if (msg instanceof ConfigurationClusteringCommand) {
-                try {
-                    configurationManager.notifyListener((ConfigurationClusteringCommand) msg);
-                } catch (ClusteringFault e) {
-                    log.error("Could not process ConfigurationCommand", e);
-                }
-            } else if (msg instanceof ControlCommand) {
-                try {
-                    controlCommandProcessor.process((ControlCommand) msg, sender);
-                } catch (ClusteringFault e) {
-                    log.error("Could not process ControlCommand", e);
+                    if (!cmdQueue.isEmpty()) {
+                        memberMessage = (MemberMessage) cmdQueue.dequeue();
+                    } else {
+                        Thread.sleep(1);
+                        continue;
+                    }
+
+                    Serializable msg = memberMessage.getMessage();
+                    if (msg instanceof ContextClusteringCommand && contextManager != null) {
+                        ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
+                        contextManager.process(ctxCmd);
+
+                        // Sending ACKs for ContextClusteringCommandCollection or
+                        // UpdateContextCommand is sufficient
+                        if (msg instanceof ContextClusteringCommandCollection ||
+                            msg instanceof UpdateContextCommand) {
+                            AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
+
+                            // Send the ACK
+                            sender.sendToMember(ackCmd, memberMessage.getSender());
+                        }
+                    } else if (msg instanceof ConfigurationClusteringCommand &&
+                               configurationManager != null) {
+                        configurationManager.process((ConfigurationClusteringCommand) msg);
+                    } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
+                        controlCommandProcessor.process((ControlCommand) msg,
+                                                        memberMessage.getSender());
+                    }
+                } catch (Throwable e) {
+                    log.error("Could not process message ", e);
                 }
             }
         }

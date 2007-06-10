@@ -79,6 +79,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setCallTransportCleanup(true);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);

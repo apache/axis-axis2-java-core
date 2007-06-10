@@ -20,21 +20,22 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
 
 public class RequestCounter {
 
 	private static final String REQUEST_COUNT = "Request_Count";
 
 	public OMElement getRequestCount(OMElement oe) {
-		ServiceGroupContext sgc = MessageContext.getCurrentMessageContext().getServiceGroupContext();
+		MessageContext msg = MessageContext.getCurrentMessageContext();
 		
-		Integer requestCount = (Integer)sgc.getProperty(REQUEST_COUNT);
+		Integer requestCount = (Integer)msg.getProperty(REQUEST_COUNT);
 		if (requestCount == null) {
 			requestCount = new Integer(1);
 		} else {
 			requestCount = new Integer(requestCount.intValue() + 1);
 		}
-
+        ServiceContext sgc = msg.getServiceContext();
 		sgc.setProperty(REQUEST_COUNT, requestCount);
 		
 		QName qn = new QName("http://ws.apache.org/axis2/namespaces/", "RequestCount","axis2");

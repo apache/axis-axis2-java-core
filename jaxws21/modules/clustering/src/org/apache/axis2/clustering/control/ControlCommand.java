@@ -20,13 +20,15 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
- * 
+ * Represents a Control command sent from one Node to another
  */
 public abstract class ControlCommand extends ClusteringCommand {
-    public int getCommandType() {
-        //TODO: Method implementation
-        return 0;
-    }
 
+    /**
+     * Execute this command
+     *
+     * @param configurationContext
+     * @throws ClusteringFault
+     */
     public abstract void execute(ConfigurationContext configurationContext) throws ClusteringFault;
 }

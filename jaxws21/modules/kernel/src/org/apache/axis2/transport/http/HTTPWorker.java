@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -86,15 +87,36 @@ public class HTTPWorker implements Worker {
             }
             if (uri.indexOf("?") < 0) {
                 if (!uri.endsWith(contextPath)) {
-                    String serviceName = uri.replaceAll(contextPath, "");
-                    if (serviceName.indexOf("/") < 0) {
-                        String s = HTTPTransportReceiver
-                                .printServiceHTML(serviceName, configurationContext);
-                        response.setStatus(HttpStatus.SC_OK);
-                        response.setContentType("text/html");
-                        OutputStream out = response.getOutputStream();
-                        out.write(EncodingUtils.getBytes(s, HTTP.ISO_8859_1));
-                        return;
+                    if (uri.endsWith(".xsd") || uri.endsWith(".wsdl")) {
+                        HashMap services = configurationContext.getAxisConfiguration().getServices();
+                        String file = uri.substring(uri.lastIndexOf("/") + 1,
+                                uri.length());
+                        if ((services != null) && !services.isEmpty()) {
+                            Iterator i = services.values().iterator();
+                            while (i.hasNext()) {
+                                AxisService service = (AxisService) i.next();
+                                InputStream stream = service.getClassLoader().getResourceAsStream("META-INF/" + file);
+                                if (stream != null) {
+                                    OutputStream out = response.getOutputStream();
+                                    response.setContentType("text/xml");
+                                    ListingAgent.copy(stream, out);
+                                    out.flush();
+                                    out.close();
+                                    return;
+                                }
+                            }
+                        }
+                    } else {
+                        String serviceName = uri.replaceAll(contextPath, "");
+                        if (serviceName.indexOf("/") < 0) {
+                            String s = HTTPTransportReceiver
+                                    .printServiceHTML(serviceName, configurationContext);
+                            response.setStatus(HttpStatus.SC_OK);
+                            response.setContentType("text/html");
+                            OutputStream out = response.getOutputStream();
+                            out.write(EncodingUtils.getBytes(s, HTTP.ISO_8859_1));
+                            return;
+                        }
                     }
                 }
             }
@@ -103,10 +125,9 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    String ip = getHostAddress(request);
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL2(response.getOutputStream(), ip, servicePath);
+                    service.printWSDL2(response.getOutputStream());
                     return;
                 }
             }
@@ -115,10 +136,9 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    String ip = getHostAddress(request);
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL(response.getOutputStream(), ip, servicePath);
+                    service.printWSDL(response.getOutputStream());
                     return;
                 }
             }

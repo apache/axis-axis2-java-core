@@ -26,6 +26,7 @@ import org.apache.axis2.deployment.ModuleDeployer;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.MessageFormatter;
@@ -33,7 +34,6 @@ import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -279,7 +279,7 @@ public class AxisConfiguration extends AxisDescription {
                                                         axisService.getName()));
             }
             if (axisService.getSchematargetNamespace() == null) {
-                axisService.setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+                axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }
         services = axisServiceGroup.getServices();

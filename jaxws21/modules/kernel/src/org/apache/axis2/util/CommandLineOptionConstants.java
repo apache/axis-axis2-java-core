@@ -82,6 +82,9 @@ public interface CommandLineOptionConstants {
         String WSDL_VERSION_1 = "1.1";
 
 
+        String NO_MESSAGE_RECEIVER_OPTION_LONG = "noMessageReceiver";
+        String NO_WSDLS_OPTION_LONG = "noWSDL";
+        String NO_BUILD_XML_OPTION_LONG = "noBuildXML";
     }
 
     interface Java2WSDLConstants {

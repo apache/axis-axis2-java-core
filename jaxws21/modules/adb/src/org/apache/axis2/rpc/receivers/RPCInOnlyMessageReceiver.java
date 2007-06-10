@@ -32,10 +32,10 @@ import java.lang.reflect.Method;
 
 public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
-    private Method method;
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
+        Method method = null;
         try {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
@@ -54,7 +54,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
-                    this.method = methods[i];
+                    method = methods[i];
                     break;
                 }
             }
@@ -103,7 +103,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     throw (AxisFault)cause;
                 }
             }
-            throw new AxisFault(msg);
+            throw new AxisFault(msg, e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();

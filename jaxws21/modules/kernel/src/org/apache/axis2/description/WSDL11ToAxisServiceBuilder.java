@@ -164,6 +164,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private static final String JAVAX_WSDL_VERBOSE_MODE_KEY = "javax.wsdl.verbose";
 
+    // As bindings are processed add it to this array so that we dont process the same binding twice
+    private Map processedBindings;
+
     /**
      * constructor taking in the service name and the port name
      *
@@ -316,6 +319,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         Port port;
         AxisEndpoint axisEndpoint = null;
 
+        processedBindings = new HashMap();
+
         // process the port type for this binding
         // although we support multiports they must be belongs to same port type and should have the
         // same soap style
@@ -367,14 +372,23 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdl4jDefinition,
                                axisEndpoint, BINDING);
 
-        AxisBinding axisBinding = new AxisBinding();
+
         Binding wsdl4jBinding = wsdl4jDefinition.getBinding(wsdl4jPort.getBinding().getQName());
 
-        axisBinding.setName(wsdl4jBinding.getQName());
-        axisBinding.setParent(axisEndpoint);
-        axisEndpoint.setBinding(axisBinding);
         addDocumentation(axisEndpoint, wsdl4jPort.getDocumentationElement());
-        populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
+        if (processedBindings.containsKey(wsdl4jBinding.getQName())) {
+            axisEndpoint.setBinding(
+                    (AxisBinding) processedBindings.get(wsdl4jBinding.getQName()));
+        } else {
+            AxisBinding axisBinding = new AxisBinding();
+            axisBinding.setName(wsdl4jBinding.getQName());
+            axisBinding.setParent(axisEndpoint);
+            axisEndpoint.setBinding(axisBinding);
+            axisEndpoint.setBinding(axisBinding);
+            populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
+            processedBindings.put(wsdl4jBinding.getQName(), axisBinding);
+        }
+
     }
 
     private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
@@ -966,32 +980,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         }
         return null;
-    }
-
-    /**
-     * Simply Copy information.
-     *
-     * @param wsdl4jPortType
-     */
-    // FIXME Evaluate a way of injecting features and priperties with a general
-    // formatted input
-    private void processPortType(PortType wsdl4jPortType, Definition dif)
-            throws Exception {
-
-        copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
-                                axisService, PORT_TYPE);
-
-        // set port the type name
-        axisService.setEndpointName(wsdl4jPortType.getQName().getLocalPart());
-
-        Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
-                .iterator();
-        Operation wsdl4jOperation;
-        while (wsdl4JOperationsIterator.hasNext()) {
-            wsdl4jOperation = (Operation) wsdl4JOperationsIterator.next();
-            axisService.addOperation(populateOperations(wsdl4jOperation,
-                                                        wsdl4jPortType, dif));
-        }
     }
 
     /**

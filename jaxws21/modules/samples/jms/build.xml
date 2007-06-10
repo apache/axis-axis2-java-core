@@ -1,5 +1,4 @@
-
-<project basedir="." default="generate.service">
+<project name="jms" basedir="." default="generate.service">
 
 	<property name="dest.dir" value="build" />
 

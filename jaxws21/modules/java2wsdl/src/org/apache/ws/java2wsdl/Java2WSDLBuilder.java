@@ -1,12 +1,29 @@
 package org.apache.ws.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisService2WSDL11;
+import org.apache.axis2.description.AxisService2WSDL20;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.util.Utils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.HashMap;
+import java.lang.reflect.Constructor;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -45,11 +62,14 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String schemaTargetNamespacePrefix = null;
     private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
-    private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private String locationUri;
     private ArrayList extraClasses;
     
     private String nsGenClassName = null;
     private Map pkg2nsMap = null;
+    private boolean pretty = true;
+    private String wsdlVersion = WSDL_VERSION_1;
+    private String schemaGenClassName = null;
 
     public String getSchemaTargetNamespace() throws Exception {
         if ( schemaTargetNamespace == null ) {
@@ -149,40 +169,77 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader, 
+        SchemaGenerator schemaGenerator = resolveSchemaGen(classLoader,
                                                     className,
                                                     getSchemaTargetNamespace(), 
                                                     getSchemaTargetNamespacePrefix());
+
         ArrayList excludedOperation = new ArrayList();
-        excludedOperation.add("init");
-        excludedOperation.add("setOperationContext");
-        excludedOperation.add("destroy");
+        Utils.addExcludeMethods(excludedOperation);
         schemaGenerator.setExcludeMethods(excludedOperation);
         schemaGenerator.setAttrFormDefault(getAttrFormDefault());
         schemaGenerator.setElementFormDefault(getElementFormDefault());
         schemaGenerator.setExtraClasses(getExtraClasses());
         schemaGenerator.setNsGen(resolveNSGen());
         schemaGenerator.setPkg2nsmap(getPkg2nsMap());
-        if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() && 
+        if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() &&
                 (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase())) ) {
             schemaGenerator.setUseWSDLTypesNamespace(true);
         }
 
-        Collection schemaCollection = schemaGenerator.generateSchema();
-        
-        Java2OMBuilder java2OMBuilder = new Java2OMBuilder(schemaGenerator.getMethods(),
-                schemaCollection,
-                schemaGenerator.getTypeTable(),
+        HashMap messageReciverMap = new HashMap();
+        Class inOnlyMessageReceiver = Loader.loadClass(
+                "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+        MessageReceiver messageReceiver =
+                (MessageReceiver) inOnlyMessageReceiver.newInstance();
+        messageReciverMap.put(
+                WSDL2Constants.MEP_URI_IN_ONLY,
+                messageReceiver);
+        Class inoutMessageReceiver = Loader.loadClass(
+                "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+        MessageReceiver inOutmessageReceiver =
+                (MessageReceiver) inoutMessageReceiver.newInstance();
+        messageReciverMap.put(
+                WSDL2Constants.MEP_URI_IN_OUT,
+                inOutmessageReceiver);
+        ConfigurationContext configCtx = ConfigurationContextFactory.createDefaultConfigurationContext();
+        AxisService axisService = AxisService.createService(className,
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader, resolveNSGen()).toString() : targetNamespace,
-                targetNamespacePrefix,
-                style,
-                use,
-                locationUri);
-        java2OMBuilder.setSchemaTargetNamespace(getSchemaTargetNamespace());
-        java2OMBuilder.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
-        OMElement wsdlElement = java2OMBuilder.generateOM();
-        wsdlElement.serialize(out);
+                configCtx.getAxisConfiguration(),
+                messageReciverMap,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className, classLoader, resolveNSGen()).toString() : targetNamespace,
+                classLoader,
+                schemaGenerator);
+        axisService.setTargetNamespacePrefix(targetNamespacePrefix);
+        axisService.setSchemaTargetNamespace(getSchemaTargetNamespace());
+        axisService.setSchematargetNamespacePrefix(getSchemaTargetNamespacePrefix());
+        String uri = locationUri;
+        if(uri == null){
+            uri = DEFAULT_LOCATION_URL + (serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName);
+        }
+        axisService.setEPRs(new String[]{uri});
+        configCtx.getAxisConfiguration().addService(axisService);
+
+        if (WSDL_VERSION_1.equals(wsdlVersion)) {
+            AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
+            g.setStyle(this.style);
+            g.setUse(this.use);
+            OMElement wsdlElement = g.generateOM();
+            if(!isPretty()){
+                wsdlElement.serialize(out);
+            } else {
+                XMLPrettyPrinter.prettify(wsdlElement, out);
+            }
+        } else {
+            AxisService2WSDL20 g = new AxisService2WSDL20(axisService);
+            OMElement wsdlElement = g.generateOM();
+            if(!isPretty()){
+                wsdlElement.serialize(out);
+            } else {
+                XMLPrettyPrinter.prettify(wsdlElement, out);
+            }
+        }
+
         out.flush();
         out.close();
     }
@@ -219,6 +276,14 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         this.nsGenClassName = nsGenClassName;
     }
 
+    public String getSchemaGenClassName() {
+        return schemaGenClassName;
+    }
+
+    public void setSchemaGenClassName(String schemaGenClassName) {
+        this.schemaGenClassName = schemaGenClassName;
+    }
+
     public Map getPkg2nsMap() {
         return pkg2nsMap;
     }
@@ -229,14 +294,48 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     
     private NamespaceGenerator resolveNSGen() {
         NamespaceGenerator nsGen = null;
-        try {
-            nsGen = (NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance();
-        } catch ( Exception e ) {
+        if(this.nsGenClassName == null){
             nsGen = new DefaultNamespaceGenerator();
+        } else {
+            try {
+                nsGen = (NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance();
+            } catch ( Exception e ) {
+                nsGen = new DefaultNamespaceGenerator();
+            }
         }
-        
         return nsGen;
     }
-    
+
+    private SchemaGenerator resolveSchemaGen(ClassLoader loader, String className,
+                           String schematargetNamespace,
+                           String schematargetNamespacePrefix) throws Exception {
+        SchemaGenerator schemaGen = null;
+        if(this.schemaGenClassName == null){
+            schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
+        } else {
+            try {
+                Class clazz = Class.forName(this.schemaGenClassName);
+                Constructor constructor = clazz.getConstructor(
+                        new Class[]{ClassLoader.class, String.class, String.class, String.class});
+                schemaGen = (SchemaGenerator) constructor.newInstance(
+                            new Object[]{loader, className, schematargetNamespace, schematargetNamespacePrefix});
+            } catch ( Exception e ) {
+                schemaGen = new DefaultSchemaGenerator(loader, className, schematargetNamespace, schematargetNamespacePrefix);
+            }
+        }
+        return schemaGen;
+    }
+
+    public boolean isPretty() {
+        return pretty;
+    }
+
+    public void setPretty(boolean pretty) {
+        this.pretty = pretty;
+    }
+
+    public void setWSDLVersion(String wsdlVersion) {
+        this.wsdlVersion = wsdlVersion;
+    }
 }
 

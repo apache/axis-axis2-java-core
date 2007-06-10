@@ -15,6 +15,13 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  !-->
+ <!-- 
+   N.B. This is a parent POM for use by the Apache Axis2 development community.
+   Please do not use this as a maven2 dependency. Please use either one of the
+   specific modules or a aggregate - org.apache.axis2:axis2
+   
+   See https://issues.apache.org/jira/browse/AXIS2-2721 for more details
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.apache</groupId>

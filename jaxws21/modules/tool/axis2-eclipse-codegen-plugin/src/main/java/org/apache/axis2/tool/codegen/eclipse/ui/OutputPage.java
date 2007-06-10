@@ -74,6 +74,12 @@ public class OutputPage extends AbstractWizardPage {
 	
 	private String axis2LibsLocation = null;
 	
+	private Label hintLabel;
+	
+	private Button hintButton;
+	
+	private boolean hintVisible = false;
+	
 
 	/**
 	 * 
@@ -319,15 +325,24 @@ public class OutputPage extends AbstractWizardPage {
 		
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3; 
-		Label hintLabel = new Label(container, SWT.NULL);
+		
+		hintButton = new Button(container, SWT.PUSH);
+		hintButton.setText(CodegenWizardPlugin
+				.getResourceString("page3.hint.off"));
+		hintButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleHintBrowse();
+			}
+		});
+		
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		hintLabel = new Label(container, SWT.NULL);
 		hintLabel
 				.setText(CodegenWizardPlugin
 						.getResourceString("page3.hint.caption"));
 		hintLabel.setLayoutData(gd);
-//		hintLabel.setFont(new Font(new Device() {
-//				public int internal_new_GC(GCData data) {return 0;}
-//				public void internal_dispose_GC(int handle, GCData data) {}
-//												},"hintFont",8,SWT.NORMAL));
+		hintLabel.setVisible(hintVisible);
 		
 		disableControls();
 		
@@ -339,6 +354,21 @@ public class OutputPage extends AbstractWizardPage {
 		if (restoredFromPreviousSettings) {
 			handleModifyEvent();
 		}
+	}
+	
+	private void handleHintBrowse() {
+		if (hintVisible) {
+			hintButton.setText(CodegenWizardPlugin
+					.getResourceString("page3.hint.off"));
+			hintVisible = false;
+			hintLabel.setVisible(hintVisible);
+		} else {
+			hintButton.setText(CodegenWizardPlugin
+					.getResourceString("page3.hint.on"));
+			hintVisible = true;
+			hintLabel.setVisible(hintVisible);
+		}
+		
 	}
 
 	/**

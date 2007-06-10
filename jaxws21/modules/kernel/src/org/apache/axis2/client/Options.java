@@ -187,6 +187,9 @@ public class Options implements Externalizable {
      */
     private transient MetaDataEntry metaListener = null;
 
+    //This property can be used to specify to call the auto transport clean up
+    private transient boolean callTransportCleanup ;
+
     //----------------------------------------------------------------
     // end MetaData section
     //----------------------------------------------------------------
@@ -1645,5 +1648,14 @@ public class Options implements Externalizable {
             log.warn(getLogCorrelationIDString() + ":" + methodname + "(): ****WARNING**** " +
                     myClassName + ".activate(configurationContext) needs to be invoked.");
         }
+    }
+
+
+    public boolean isCallTransportCleanup() {
+        return callTransportCleanup;
+    }
+
+    public void setCallTransportCleanup(boolean callTransportCleanup) {
+        this.callTransportCleanup = callTransportCleanup;
     }
 }

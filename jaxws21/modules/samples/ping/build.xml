@@ -1,4 +1,4 @@
-<project basedir="." default="generate.service">
+<project name="ping" basedir="." default="generate.service">
 
     <property environment="env"/>
     <property name="AXIS2_HOME" value="../../"/>

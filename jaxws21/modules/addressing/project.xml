@@ -139,5 +139,24 @@
             </properties>
         </dependency>
     </dependencies>
-
+    <build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.xsl</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>../../</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+				  <include>NOTICE.txt</include>
+				  <include>LICENSE.txt</include>
+				</includes>
+			</resource>
+		</resources>
+    </build>
 </project>

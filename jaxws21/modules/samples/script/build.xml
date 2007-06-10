@@ -1,4 +1,4 @@
-<project name="samples" default="alltests">
+<project name="script" default="alltests">
     <property name="mainDir" value="../.."/>
     <path id="axis.classpath">
         <fileset dir="../../lib">
