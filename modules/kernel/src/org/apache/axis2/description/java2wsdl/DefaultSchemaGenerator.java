@@ -383,6 +383,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     tgtNamespace =
                             resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName());
                     tgtNamespacepfx = (String)targetNamespacePrefixMap.get(tgtNamespace);
+                    generateSchema(sup);
                 }
 
                 if (tgtNamespacepfx == null) {
