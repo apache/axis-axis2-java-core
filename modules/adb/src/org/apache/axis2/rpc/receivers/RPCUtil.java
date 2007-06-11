@@ -153,26 +153,7 @@ public class RPCUtil {
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {
-                if(Array.getLength(resObject)==0){
-                    QName resName;
-                    if (service.isElementFormDefault()) {
-                        resName = new QName(service.getSchematargetNamespace(),
-                                            RETURN_WRAPPER,
-                                            service.getSchemaTargetNamespacePrefix());
-                    } else {
-                        resName = new QName(RETURN_WRAPPER);
-                    }
-                    XMLStreamReader xr = new NullXMLStreamReader(resName);
-                    StreamWrapper parser = new StreamWrapper(xr);
-                    StAXOMBuilder stAXOMBuilder =
-                            OMXMLBuilderFactory.createStAXOMBuilder(
-                                    OMAbstractFactory.getSOAP11Factory(), parser);
-                    ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                               service.getSchemaTargetNamespacePrefix());
-                    OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
-                    bodyChild.addChild(stAXOMBuilder.getDocumentElement());
-                    envelope.getBody().addChild(bodyChild);
-                } else {
+
                     QName resName = new QName(elementQName.getNamespaceURI(),
                                               method.getName() + "Response",
                                               elementQName.getPrefix());
@@ -181,7 +162,6 @@ public class RPCUtil {
                                                                      service.isElementFormDefault(),
                                                                      service.getTypeTable());
                     envelope.getBody().addChild(bodyChild);
-                }
             } else {
                 if (resObject.getClass().isArray()) {
                     int length = Array.getLength(resObject);
