@@ -38,6 +38,7 @@ import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.MessageReceiver;
@@ -50,6 +51,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -484,7 +486,14 @@ public class AxisService extends AxisDescription {
                     }
                 }
                 // this operation is a control operation.
-                axisOperation.setControlOperation(true);
+                Parameter expose = axisOperation.getParameter(DeploymentConstants.TAG_EXPOSE);
+                if(expose!=null){
+                    if(JavaUtils.isTrue(expose.getValue(), false)){
+                        axisOperation.setControlOperation(true);
+                    }
+                } else {
+                    axisOperation.setControlOperation(true);
+                }
                 this.addOperation(axisOperation);
             }
         }

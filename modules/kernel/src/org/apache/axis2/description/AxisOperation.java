@@ -22,7 +22,9 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -250,7 +252,14 @@ public abstract class AxisOperation extends AxisDescription
             ArrayList wsamappings = axisOperation.getWsamappingList();
             if (service.getOperation(axisOperation.getName()) == null) {
                 // this operation is a control operation.
-                axisOperation.setControlOperation(true);
+                Parameter expose = axisOperation.getParameter(DeploymentConstants.TAG_EXPOSE);
+                if(expose!=null){
+                    if(JavaUtils.isTrue(expose.getValue(), false)){
+                        axisOperation.setControlOperation(true);
+                    }
+                } else {
+                    axisOperation.setControlOperation(true);
+                }
                 Module moduleclazz = module.getModule();
                 if (moduleclazz != null) {
                     moduleclazz.engageNotify(axisOperation);
