@@ -19,9 +19,7 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringCommand;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,10 +34,11 @@ public class ChannelSender implements MessageSender {
         }
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        // causing a view change. All nodes in a view should get the msg
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {
-                    channel.send(channel.getMembers(), msg, Channel.DEFAULT);
+                    channel.send(channel.getMembers(), msg, 0); // TODO: We must try to minimize the delay here
                     log.debug("Sent " + msg + " to group");
                     break;
                 } catch (ChannelException e) {
@@ -60,7 +59,7 @@ public class ChannelSender implements MessageSender {
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
-                         Channel.DEFAULT);
+                         0);
             log.debug("Sent " + msg + " to self");
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
@@ -91,8 +90,13 @@ public class ChannelSender implements MessageSender {
 
     public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
-            channel.send(new Member[]{member}, cmd, Channel.DEFAULT);
-            log.debug("Sent " + cmd + " to " + member.getName());
+            System.err.println("######## MEM Ready=" + member.isReady());
+            System.err.println("######## MEM Failing=" + member.isFailing());
+            System.err.println("######## MEM Suspect=" + member.isSuspect());
+            if (member.isReady()) {
+                channel.send(new Member[]{member}, cmd, 0);
+                log.debug("Sent " + cmd + " to " + member.getName());
+            }
         } catch (ChannelException e) {
             String message = "Could not send message to " + member.getName() +
                              ". Reason " + e.getMessage();

@@ -51,11 +51,11 @@ public class ReplicationHandler extends AbstractHandler {
     public void flowComplete(MessageContext msgContext) {
 
         // If there are no members, we need not do any replication
-        ClusterManager clusterManager =
+        /*ClusterManager clusterManager =
                 msgContext.getConfigurationContext().getAxisConfiguration().getClusterManager();
         if(clusterManager != null && clusterManager.getMemberCount() == 0){
              return;
-        }
+        }*/
 
         int flow = msgContext.getFLOW();
         String mep = msgContext.getAxisOperation().getMessageExchangePattern();
@@ -131,11 +131,11 @@ public class ReplicationHandler extends AbstractHandler {
                 // Wait till all members have ACKed receipt & successful processing of
                 // the message with UUID 'msgUUID'
                 do {
+
+                    // Wait sometime before checking whether message is ACKed
                     try {
                         Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        log.error(e);
-                        break;
+                    } catch (InterruptedException ignored) {
                     }
                     if (System.currentTimeMillis() - start > 20000) {
                         throw new ClusteringFault("ACKs not received from all members within 20 sec. " +
