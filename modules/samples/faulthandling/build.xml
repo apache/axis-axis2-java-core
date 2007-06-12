@@ -1,7 +1,5 @@
 <project name="faulthandling" basedir="." default="generate.service">
 
-    <property environment="env"/>
-
     <property name="wsdl.uri" value="bank.wsdl"/>
     <property name="service.target" value="build/service"/>
     <property name="client.target" value="build/client"/>

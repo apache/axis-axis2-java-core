@@ -1,7 +1,7 @@
 <project name="quickstartaxiom" basedir="." default="generate.service">
 
     <property environment="env"/>
-    <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>
+    <property name="AXIS2_HOME" value="../.."/>
 
     <property name="build.dir" value="build"/>
 

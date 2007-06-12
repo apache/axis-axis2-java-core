@@ -17,7 +17,7 @@
 
     <property name="jardrop.dir" value="${build.dir}/services"/>
     <property environment="env"/>
-    <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>
+    <property name="AXIS2_HOME" value="../.."/>
     <property name="axis.serverJarDrop.dir" value="${AXIS2_HOME}/WEB-INF/services"/>
 
     <property name="conf.dir" value="conf"/>
