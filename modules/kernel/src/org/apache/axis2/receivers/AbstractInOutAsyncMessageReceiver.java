@@ -36,21 +36,15 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
     public final void receive(final MessageContext messageCtx) {
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result) throws AxisFault {
-                AxisEngine engine =
-                        new AxisEngine(messageCtx.getOperationContext().getServiceContext()
-                                .getConfigurationContext());
-                engine.send(result);
+                AxisEngine.send(result);
                 result.getTransportOut().getSender().cleanup(result);
             }
 
             public void handleFault(AxisFault fault) throws AxisFault {
-                AxisEngine engine =
-                        new AxisEngine(messageCtx.getOperationContext().getServiceContext()
-                                .getConfigurationContext());
                 MessageContext faultContext =
                         MessageContextBuilder.createFaultMessageContext(messageCtx, fault);
 
-                engine.sendFault(faultContext);
+                AxisEngine.sendFault(faultContext);
             }
         };
         Runnable theadedTask = new Runnable() {
