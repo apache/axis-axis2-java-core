@@ -653,6 +653,7 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         } catch (IOException e) {
             fail("Error has occurred " + e);
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Error has occurred " + e);
         }
     }

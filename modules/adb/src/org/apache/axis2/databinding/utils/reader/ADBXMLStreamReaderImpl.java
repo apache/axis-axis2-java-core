@@ -3,6 +3,7 @@ package org.apache.axis2.databinding.utils.reader;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.util.OMSerializerUtil;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.java2wsdl.TypeTable;
@@ -16,6 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -58,6 +60,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     private Object[] properties;
     private Object[] attributes;
     private QName elementQName;
+
+    //This is to store the QName which are in the typeTable after setting the corrcet prefix
+    private HashMap qnameMap = new HashMap();
+
     //we always create a new namespace context
     private ADBNamespaceContext namespaceContext = new ADBNamespaceContext();
 
@@ -110,6 +116,26 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         this(adbBeansQName, properties, attributes);
         this.qualified = qualified;
         this.typeTable = typeTable;
+        if(this.typeTable!=null){
+            Map complextTyepMap = this.typeTable.getComplexSchemaMap();
+            if(complextTyepMap!=null){
+                Iterator keyps = complextTyepMap.keySet().iterator();
+                while (keyps.hasNext()) {
+                    String key = (String) keyps.next();
+                    QName qname = (QName) complextTyepMap.get(key);
+                    if(qname!=null){
+                        String prefix =qname.getPrefix();
+                        if(prefix==null&&"".equals(prefix)){
+                            prefix = OMSerializerUtil.getNextNSPrefix();
+                        }
+                        qname = new QName(qname.getNamespaceURI(),qname.getLocalPart(),prefix);
+                        this.typeTable.getComplexSchemaMap().put(key,qname);
+                        qnameMap.put(qname.getNamespaceURI(),prefix);
+                        addToNsMap(prefix, qname.getNamespaceURI());
+                    }
+                }
+            }
+        }
     }
 
     /** add the namespace context */
@@ -850,6 +876,13 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //oops - we've no idea what kind of key this is
             throw new XMLStreamException(
                     "unidentified property key!!!" + propPointer);
+        }
+
+        if(propertyQName!=null){
+            String prefix = (String) qnameMap.get(propertyQName.getNamespaceURI());
+            if(prefix!=null){
+                propertyQName = new QName(propertyQName.getNamespaceURI(),propertyQName.getLocalPart(),prefix);
+            }
         }
 
         //ok! we got the key. Now look at the value
