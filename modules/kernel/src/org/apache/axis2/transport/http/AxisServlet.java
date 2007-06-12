@@ -20,16 +20,24 @@ package org.apache.axis2.transport.http;
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisBindingMessage;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -49,7 +57,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.SocketException;
 import java.util.Map;
 
@@ -101,17 +113,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 // adding ServletContext into msgContext;
                 InvocationResponse pi = HTTPTransportUtils.
                         processHTTPPostRequest(msgContext,
-                                               new BufferedInputStream(request.getInputStream()),
-                                               new BufferedOutputStream(out),
-                                               contentType,
-                                               request.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                                               request.getRequestURL().toString());
+                                new BufferedInputStream(request.getInputStream()),
+                                new BufferedOutputStream(out),
+                                contentType,
+                                request.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                                request.getRequestURL().toString());
 
                 Boolean holdResponse =
                         (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
 
                 if (pi.equals(InvocationResponse.SUSPEND) ||
-                    (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
+                        (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
                     ((RequestResponseTransport) msgContext
                             .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
                             .awaitResponse();
@@ -125,7 +137,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 }
 
                 response.setContentType("text/xml; charset="
-                                        + msgContext
+                        + msgContext
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
                 if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
@@ -202,15 +214,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // 2. list services requests
         // 3. REST requests.
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
-                                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
-                                query.indexOf("policy") >= 0)) {
+                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
+                query.indexOf("policy") >= 0)) {
             // handling meta data exchange stuff
             agent.processListService(request, response);
         } else if (requestURI.endsWith(".xsd") ||
-                   requestURI.endsWith(".wsdl")) {
+                requestURI.endsWith(".wsdl")) {
             agent.processExplicitSchemaAndWSDL(request, response);
         } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
-                   requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
+                requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
             // handling list services request
             try {
                 agent.handle(request, response);
@@ -277,7 +289,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void showRestDisabledErrorMessage(HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml " +
-                       "and WEB-INF/web.xml</h2></body></html>");
+                "and WEB-INF/web.xml</h2></body></html>");
         writer.flush();
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
     }
@@ -363,6 +375,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             //TODO : Check for SOAP 1.2!
             SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
+
             OMElement valueElement = null;
             if (code != null) {
                 valueElement = code.getFirstChildWithName(new QName(
@@ -371,15 +384,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
 
             if (valueElement != null) {
-                if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
-                    -1 && !msgContext.isDoingREST()) {
+                if (SOAP12Constants.FAULT_CODE_SENDER.equals(valueElement.getTextAsQName().getLocalPart())
+                        && !msgContext.isDoingREST()) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 }
             }
         }
 
 
-        engine.sendFault(faultContext);
+        AxisEngine.sendFault(faultContext);
     }
 
     /**
@@ -533,9 +546,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         }
 
-        String endpointRefernce = "http://" + ip + ":" + port ;
-        if(configContext.getServiceContextPath().startsWith("/")){
-            endpointRefernce =  endpointRefernce +
+        String endpointRefernce = "http://" + ip + ":" + port;
+        if (configContext.getServiceContextPath().startsWith("/")) {
+            endpointRefernce = endpointRefernce +
                     configContext.getServiceContextPath() + "/" + serviceName;
         } else {
             endpointRefernce = endpointRefernce + '/' +
@@ -606,7 +619,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setFrom(new EndpointReference(request.getRemoteAddr()));
         msgContext.setProperty(MessageContext.REMOTE_ADDR, request.getRemoteAddr());
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                               new ServletBasedOutTransportInfo(response));
+                new ServletBasedOutTransportInfo(response));
         // set the transport Headers
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(request));
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, request);
@@ -614,7 +627,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         //setting the RequestResponseTransport object
         msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                               new ServletRequestResponseTransport(response));
+                new ServletRequestResponseTransport(response));
 
         return msgContext;
     }
@@ -650,7 +663,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             sessionContext = new SessionContext(null);
             sessionContext.setCookieID(sessionId);
             req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                                          sessionContext);
+                    sessionContext);
         }
         messageContext.setSessionContext(sessionContext);
         messageContext.setProperty(SESSION_ID, sessionId);
@@ -670,7 +683,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             log.debug("Acking one-way request");
             response.setContentType("text/xml; charset="
-                                    + msgContext
+                    + msgContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -718,7 +731,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             if (stateInt == HttpServletResponse.SC_UNAUTHORIZED) { // Unauthorized
                 String realm = (String) messageContext.getProperty(Constants.HTTP_BASIC_AUTH_REALM);
                 response.addHeader("WWW-Authenticate",
-                                   "basic realm=\"" + realm + "\"");
+                        "basic realm=\"" + realm + "\"");
             }
         }
     }
@@ -739,13 +752,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             this.response = response;
             messageContext = createMessageContext(this.request, this.response, false);
             messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
-                                       httpMethodString);
+                    httpMethodString);
         }
 
         public void processXMLRequest() throws IOException, ServletException {
             try {
                 RESTUtil.processXMLRequest(messageContext, request.getInputStream(),
-                                           response.getOutputStream(), request.getContentType());
+                        response.getOutputStream(), request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault axisFault) {
                 processFault(axisFault);
@@ -756,7 +769,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         public void processURLRequest() throws IOException, ServletException {
             try {
                 RESTUtil.processURLRequest(messageContext, response.getOutputStream(),
-                                           request.getContentType());
+                        request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault e) {
                 setResponseState(messageContext, response);
