@@ -22,6 +22,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
@@ -51,14 +52,19 @@ public class ReplicationHandler extends AbstractHandler {
     public void flowComplete(MessageContext msgContext) {
 
         // If there are no members, we need not do any replication
-        /*ClusterManager clusterManager =
+        ClusterManager clusterManager =
                 msgContext.getConfigurationContext().getAxisConfiguration().getClusterManager();
         if(clusterManager != null && clusterManager.getMemberCount() == 0){
              return;
-        }*/
+        }
 
+        AxisOperation axisOperation = msgContext.getAxisOperation();
+        if(axisOperation == null){
+            return;
+        }
+        
+        String mep = axisOperation.getMessageExchangePattern();
         int flow = msgContext.getFLOW();
-        String mep = msgContext.getAxisOperation().getMessageExchangePattern();
 
         // The ReplicationHandler should be added to all 4 flows. We will replicate on flowComplete
         // only during one of the flows
@@ -83,6 +89,7 @@ public class ReplicationHandler extends AbstractHandler {
             } catch (Exception e) {
                 String message = "Could not replicate the state";
                 log.error(message, e);
+                //TODO: We need to throw a checked exception
             }
         }
     }
@@ -137,8 +144,8 @@ public class ReplicationHandler extends AbstractHandler {
                         Thread.sleep(50);
                     } catch (InterruptedException ignored) {
                     }
-                    if (System.currentTimeMillis() - start > 20000) {
-                        throw new ClusteringFault("ACKs not received from all members within 20 sec. " +
+                    if (System.currentTimeMillis() - start > 40000) {
+                        throw new ClusteringFault("ACKs not received from all members within 40 sec. " +
                                                   "Aborting wait.");
                     }
                 } while (!contextManager.isMessageAcknowledged(msgUUID));

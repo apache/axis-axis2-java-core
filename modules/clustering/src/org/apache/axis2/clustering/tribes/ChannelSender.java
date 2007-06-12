@@ -38,7 +38,7 @@ public class ChannelSender implements MessageSender {
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {
-                    channel.send(channel.getMembers(), msg, 0); // TODO: We must try to minimize the delay here
+                    channel.send(channel.getMembers(), msg, 0); 
                     log.debug("Sent " + msg + " to group");
                     break;
                 } catch (ChannelException e) {
@@ -90,9 +90,6 @@ public class ChannelSender implements MessageSender {
 
     public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
-            System.err.println("######## MEM Ready=" + member.isReady());
-            System.err.println("######## MEM Failing=" + member.isFailing());
-            System.err.println("######## MEM Suspect=" + member.isSuspect());
             if (member.isReady()) {
                 channel.send(new Member[]{member}, cmd, 0);
                 log.debug("Sent " + cmd + " to " + member.getName());
