@@ -43,16 +43,26 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
         implements MessageReceiver {
 
     private Method findOperation(AxisOperation op, Class implClass) {
+        Method method = (Method)(op.getParameterValue("myMethod"));
+        if (method != null) return method;
+
         String methodName = op.getName().getLocalPart();
         Method[] methods = implClass.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(methodName) &&
-                    methods[i].getParameterTypes().length == 1 &&
-                    OMElement.class.getName().equals(
-                            methods[i].getParameterTypes()[0].getName()) &&
-                    OMElement.class.getName().equals(methods[i].getReturnType().getName())) {
-                return methods[i];
+            if (methods[i].getName().equals(methodName)) {
+                Class [] params = methods[i].getParameterTypes();
+                if (params.length == 1 &&
+                        OMElement.class.equals(params[0]) &&
+                        OMElement.class.equals(methods[i].getReturnType())) {
+                    method = methods[i];
+                    try {
+                        op.addParameter("myMethod", method);
+                    } catch (AxisFault axisFault) {
+                        // Do nothing here
+                    }
+                    return method;
+                }
             }
         }
 

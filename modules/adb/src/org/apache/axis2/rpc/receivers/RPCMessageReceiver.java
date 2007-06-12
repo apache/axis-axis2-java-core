@@ -76,15 +76,25 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
             QName elementQName;
-            String methodName = op.getName().getLocalPart();
-            Method[] methods = ImplClass.getMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals(methodName)) {
-                    method = methods[i];
-                    break;
+            method = (Method)(op.getParameterValue("myMethod"));
+            if (method == null) {
+                String methodName = op.getName().getLocalPart();
+                Method[] methods = ImplClass.getMethods();
+
+                for (int i = 0; i < methods.length; i++) {
+                    if (methods[i].getName().equals(methodName)) {
+                        method = methods[i];
+                        op.addParameter("myMethod", method);
+                        break;
+                    }
+                }
+                if (method == null) {
+                    throw new AxisFault("No such method '" + methodName +
+                            "' in class " + ImplClass.getName());
                 }
             }
+
             Object resObject = null;
             if (inAxisMessage != null) {
                 if (inAxisMessage.getElementQName() == null) {
