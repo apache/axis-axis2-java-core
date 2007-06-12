@@ -194,7 +194,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';
     public static final String SERVICE_GROUP_ID = "ServiceGroupId";
-    public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
+    public static final String RESPONSE_WRITTEN = "RESPONSE_WRITTEN";
     //To have a floag if the replyTo is not annon one
     public static final String DIFFERENT_EPR = "DIFFERENT_EPR";
 

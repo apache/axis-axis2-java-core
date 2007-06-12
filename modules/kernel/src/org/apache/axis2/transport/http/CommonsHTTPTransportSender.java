@@ -209,7 +209,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 }
             }
 
-            if (msgContext.getOperationContext() != null) {
+            /**
+             * We should only set the property Constants.RESPONSE_WRITTEN=true only if we are in the
+             * server side. If it is in the client side we may not know whether we have received the response
+             * in an async request/response case.
+             **/
+             if (msgContext.isServerSide()&& msgContext.getOperationContext() != null) {
                 msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
                                                              Constants.VALUE_TRUE);
             }
@@ -244,9 +249,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         if (transportInfo instanceof ServletBasedOutTransportInfo) {
             servletBasedOutTransportInfo =
                     (ServletBasedOutTransportInfo) transportInfo;
-            List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
-            if (customHheaders != null) {
-                Iterator iter = customHheaders.iterator();
+            List customHeaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+            if (customHeaders != null) {
+                Iterator iter = customHeaders.iterator();
                 while (iter.hasNext()) {
                     Header header = (Header) iter.next();
                     if (header != null) {
