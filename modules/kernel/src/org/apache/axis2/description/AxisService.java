@@ -20,38 +20,27 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataretrieval.AxisDataLocator;
-import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
-import org.apache.axis2.dataretrieval.DRConstants;
-import org.apache.axis2.dataretrieval.Data;
-import org.apache.axis2.dataretrieval.DataRetrievalException;
-import org.apache.axis2.dataretrieval.DataRetrievalRequest;
-import org.apache.axis2.dataretrieval.LocatorType;
-import org.apache.axis2.dataretrieval.OutputForm;
+import org.apache.axis2.dataretrieval.*;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DefaultObjectSupplier;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ObjectSupplier;
-import org.apache.axis2.engine.ServiceLifeCycle;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,17 +71,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -124,7 +103,7 @@ public class AxisService extends AxisDescription {
     private ArrayList moduleRefs = null;
 
     // to store engaged modules
-    private ArrayList engagedModules = null;
+    private ArrayList engagedModulesNames = null;
 
     // to store the wsdl definition , which is build at the deployment time
     // to keep the time that last update time of the service
@@ -308,7 +287,7 @@ public class AxisService extends AxisDescription {
         httpLocationDispatcherMap = new HashMap();
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
-        engagedModules = new ArrayList();
+        engagedModulesNames = new ArrayList();
         schemaList = new ArrayList();
         serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
                 .doPrivileged(new PrivilegedAction() {
@@ -517,10 +496,10 @@ public class AxisService extends AxisDescription {
     public void addOperation(AxisOperation axisOperation) {
         axisOperation.setParent(this);
 
-        Iterator modules = getEngagedModules().iterator();
+        Iterator moduleNames = getEngagedModulesNames().iterator();
 
-        while (modules.hasNext()) {
-            AxisModule module = (AxisModule) modules.next();
+        while (moduleNames.hasNext()) {
+            AxisModule module = (AxisModule) moduleNames.next();
             AxisServiceGroup parent = (AxisServiceGroup) getParent();
 
             try {
@@ -668,11 +647,11 @@ public class AxisService extends AxisDescription {
         if (axisModule == null) {
             throw new AxisFault(Messages.getMessage("modulenf"));
         }
-        Iterator itr_engageModules = engagedModules.iterator();
+        Iterator itr_engageModuleNames = engagedModulesNames.iterator();
         boolean isEngagable;
         String moduleName = axisModule.getName();
-        while (itr_engageModules.hasNext()) {
-            AxisModule module = (AxisModule) itr_engageModules.next();
+        while (itr_engageModuleNames.hasNext()) {
+            AxisModule module = (AxisModule) itr_engageModuleNames.next();
             String modu = module.getName();
             isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
             if (!isEngagable) {
@@ -694,7 +673,7 @@ public class AxisService extends AxisDescription {
             AxisOperation axisOperation = (AxisOperation) operations.next();
             axisOperation.engageModule(axisModule);
         }
-        engagedModules.add(axisModule);
+        engagedModulesNames.add(axisModule);
     }
 
     /**
@@ -1071,12 +1050,12 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Method getEngagedModules.
+     * Method getEngagedModulesNames.
      *
      * @return Returns Collection.
      */
-    public Collection getEngagedModules() {
-        return engagedModules;
+    public Collection getEngagedModulesNames() {
+        return engagedModulesNames;
     }
 
     public URL getFileName() {
@@ -1400,7 +1379,7 @@ public class AxisService extends AxisDescription {
                 }
             }
         }
-        engagedModules.remove(module);
+        engagedModulesNames.remove(module);
     }
 
     /**
@@ -1422,9 +1401,9 @@ public class AxisService extends AxisDescription {
         if (module == null) {
             return false;
         }
-        Iterator engagedModuleItr = engagedModules.iterator();
-        while (engagedModuleItr.hasNext()) {
-            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
+        Iterator engagedModuleNamesItr = engagedModulesNames.iterator();
+        while (engagedModuleNamesItr.hasNext()) {
+            AxisModule axisModule = (AxisModule) engagedModuleNamesItr.next();
             if (axisModule.getName().equals(module.getName())) {
                 return true;
             }

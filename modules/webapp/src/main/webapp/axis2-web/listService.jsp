@@ -75,7 +75,7 @@
         <h4>Service Description : <font color="black"><%=serviceDescription%></h4>
 <i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br>
 <%
-    Collection engagedModules = axisService.getEngagedModules();
+    Collection engagedModules = axisService.getEngagedModulesNames();
     String moduleName;
     boolean modules_present = false;
     if (engagedModules.size() > 0) {
