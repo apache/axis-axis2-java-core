@@ -25,7 +25,6 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.Utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,8 +35,8 @@ public class AxisServiceGroup extends AxisDescription {
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();
 
-    // to store service Group engagedModulesNames name
-    private ArrayList engagedModulesNames;
+    // to store service Group engagedModules name
+    private ArrayList engagedModules;
 
     // to store modeule configuration info
     private HashMap moduleConfigmap;
@@ -50,7 +49,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     public AxisServiceGroup() {
         moduleConfigmap = new HashMap();
-        engagedModulesNames = new ArrayList();
+        engagedModules = new ArrayList();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -90,10 +89,10 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
-            Iterator moduleNames = this.engagedModulesNames.iterator();
+            Iterator modules = this.engagedModules.iterator();
 
-            while (moduleNames.hasNext()) {
-                String moduleName = (String) moduleNames.next();
+            while (modules.hasNext()) {
+                String moduleName = (String) modules.next();
                 AxisModule axisModule = axisConfig.getModule(moduleName);
 
                 if (axisModule != null) {
@@ -122,10 +121,10 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
-            Iterator moduleNames = this.engagedModulesNames.iterator();
+            Iterator modules = this.engagedModules.iterator();
 
-            while (moduleNames.hasNext()) {
-                String moduleName = (String) moduleNames.next();
+            while (modules.hasNext()) {
+                String moduleName = (String) modules.next();
                 AxisModule axisModule = axisConfig.getModule(moduleName);
 
                 if (axisModule != null) {
@@ -148,17 +147,17 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public void addToengagedModules(String moduleName) {
-        engagedModulesNames.add(moduleName);
+        engagedModules.add(moduleName);
     }
 
     public void removeFromEngageList(String moduleName) {
-        engagedModulesNames.remove(moduleName);
+        engagedModules.remove(moduleName);
     }
 
     public void engageModule(AxisModule module) throws AxisFault {
         String moduleName = module.getName();
         boolean isEngagable;
-        for (Iterator iterator = engagedModulesNames.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             String modu = (String) iterator.next();
             isEngagable = Utils.checkVersion(moduleName, modu);
             if (!isEngagable) {
@@ -194,8 +193,8 @@ public class AxisServiceGroup extends AxisDescription {
         return (AxisConfiguration) getParent();
     }
 
-    public Collection getEngagedModulesNames() {
-        return engagedModulesNames;
+    public ArrayList getEngagedModules() {
+        return engagedModules;
     }
 
     public ModuleConfiguration getModuleConfig(String moduleName) {
@@ -250,7 +249,7 @@ public class AxisServiceGroup extends AxisDescription {
             return false;
         }
 
-        for (Iterator engagedModuleItr = engagedModulesNames.iterator();
+        for (Iterator engagedModuleItr = engagedModules.iterator();
              engagedModuleItr.hasNext();) {
             String axisModule = (String) engagedModuleItr.next();
             if (axisModule.equals(module.getName())) {

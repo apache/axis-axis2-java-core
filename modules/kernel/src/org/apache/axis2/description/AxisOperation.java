@@ -17,27 +17,38 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map;
+import java.net.URI;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -457,7 +468,7 @@ public abstract class AxisOperation extends AxisDescription
      */
 
     /**
-     * Method getEngagedModulesNames.
+     * Method getEngagedModules.
      */
     public Collection getEngagedModules() {
         return engagedModules;

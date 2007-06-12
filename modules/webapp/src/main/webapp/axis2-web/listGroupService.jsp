@@ -58,13 +58,13 @@
 <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
 <i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br/>
 <%
-  Collection engagedModulesNames = axisService.getEngagedModulesNames();
+  Collection engagedModules = axisService.getEngagedModules();
   String moduleName;
-  if (engagedModulesNames.size() > 0) {
+  if (engagedModules.size() > 0) {
 %>
 <i>Engaged Modules for the Axis Service</i><ul>
   <%
-    for (Iterator iteratorm = engagedModulesNames.iterator(); iteratorm.hasNext();) {
+    for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
       AxisModule axisOperation = (AxisModule) iteratorm.next();
       moduleName = axisOperation.getName();
   %><li><%=moduleName%></li>
@@ -84,12 +84,12 @@
     AxisOperation axisOperation = (AxisOperation) operations.next();
 %><li><%=axisOperation.getName().getLocalPart()%></li>
   <%
-    engagedModulesNames = axisOperation.getEngagedModules();
-    if (engagedModulesNames.size() > 0) {
+    engagedModules = axisOperation.getEngagedModules();
+    if (engagedModules.size() > 0) {
   %>
   <br><i>Engaged Modules for the Operation</i><ul>
   <%
-    for (Iterator iterator2 = engagedModulesNames.iterator(); iterator2.hasNext();) {
+    for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
       AxisModule moduleDecription = (AxisModule) iterator2.next();
       moduleName = moduleDecription.getName();
   %><li><%=moduleName%></li><br><%
