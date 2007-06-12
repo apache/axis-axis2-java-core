@@ -921,7 +921,7 @@ public class SchemaCompiler {
      */
     private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder);
+        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder, complexType.isAbstract());
         processedTypeMetaInfoMap.put(complexType.getQName(), metaInfHolder);
         return javaClassName;
     }
@@ -938,7 +938,7 @@ public class SchemaCompiler {
 
     private String writeComplexParticle(QName qname,BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder);
+       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder,false);
         processedTypeMetaInfoMap.put(qname, metaInfHolder);
         return javaClassName;
     }

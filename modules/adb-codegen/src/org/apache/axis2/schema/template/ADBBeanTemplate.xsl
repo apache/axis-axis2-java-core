@@ -68,7 +68,7 @@
             */
         </xsl:if>
 
-        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
+        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> <xsl:if test="@isAbstract">abstract</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
         <xsl:if test="$union and not($restriction) and not($extension)"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
@@ -2334,7 +2334,9 @@
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
             <xsl:variable name="isEnumFacet" select="property/enumFacet"/>
-            <xsl:if test="not($isEnumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
+            <xsl:if test="not($isEnumFacet)"><xsl:value-of select="$name"/> object =
+                <xsl:choose><xsl:when test="@isAbstract">null;</xsl:when><xsl:otherwise>new <xsl:value-of select="$name"/>();</xsl:otherwise></xsl:choose>
+            </xsl:if>
             <xsl:if test="$isEnumFacet">
                 <xsl:value-of select="$name"/> object = null;
                 // initialize a hash map to keep values
@@ -2417,6 +2419,9 @@
                               }
                         </xsl:otherwise>
                     </xsl:choose>
+                    <xsl:if test="@isAbstract">
+                        throw new RuntimeException("The an abstract class can not be instantiated !!!");
+                    </xsl:if>
 
                   }
 
