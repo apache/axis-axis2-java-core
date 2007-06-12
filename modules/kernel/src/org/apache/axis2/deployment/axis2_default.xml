@@ -36,6 +36,9 @@
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
 
+    <!-- Following parameter will set the host name for the epr-->
+    <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
+
     <!-- ================================================= -->
     <!-- Message Receivers -->
     <!-- ================================================= -->

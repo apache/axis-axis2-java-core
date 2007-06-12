@@ -66,6 +66,9 @@
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
 
+    <!-- Following parameter will set the host name for the epr-->
+    <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
+
     <!-- If you have a front end host which exposes this webservice using a different public URL  -->
     <!-- use this parameter to override autodetected url -->
     <!--<parameter name="httpFrontendHostUrl">https://someotherhost/context</parameter>-->

@@ -28,6 +28,9 @@
 package org.apache.axis2.transport.http.server;
 
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.description.Parameter;
 import org.apache.http.Header;
 
 import java.net.InetAddress;
@@ -84,6 +87,23 @@ public class HttpUtils {
         }
 
         return address;
+    }
+
+    /**
+     * First check whether the hostname parameter is there in AxisConfiguration (axis2.xml) ,
+     * if it is there then this will retun that as the host name , o.w will return the IP address.
+     */
+    public static String getIpAddress(AxisConfiguration axisConfiguration) throws SocketException {
+        if(axisConfiguration!=null){
+            Parameter param = axisConfiguration.getParameter(TransportListener.HOST_ADDRESS);
+            if (param != null) {
+                String  hostAddress = ((String) param.getValue()).trim();
+                if(hostAddress!=null){
+                    return hostAddress;
+                }
+            }
+        }
+        return getIpAddress();
     }
 
     private static boolean isIP(String hostAddress) {

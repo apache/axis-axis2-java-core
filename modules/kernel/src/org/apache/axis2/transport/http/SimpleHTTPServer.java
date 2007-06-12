@@ -251,8 +251,15 @@ public class SimpleHTTPServer implements TransportListener {
         //if host address is present
         if (hostAddress != null) {
             if (embedded != null) {
-                return new EndpointReference[]{new EndpointReference(hostAddress + "/" +
-                                                                     configurationContext.getServiceContextPath() + "/" + serviceName)};
+                String endpointRefernce = hostAddress ;
+                if(configurationContext.getServiceContextPath().startsWith("/")){
+                    endpointRefernce =  endpointRefernce +
+                            configurationContext.getServiceContextPath() + "/" + serviceName;
+                } else {
+                    endpointRefernce = endpointRefernce + '/' +
+                            configurationContext.getServiceContextPath() + "/" + serviceName;
+                }
+                return new EndpointReference[]{new EndpointReference(endpointRefernce)};
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -264,7 +271,7 @@ public class SimpleHTTPServer implements TransportListener {
         } else {
             try {
                 if(localAddress==null){
-                    localAddress = HttpUtils.getIpAddress();
+                    localAddress = HttpUtils.getIpAddress(configurationContext.getAxisConfiguration());
                 }
                 if (localAddress == null) {
                    ipAddress = "127.0.0.1";
@@ -276,9 +283,17 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
         if (embedded != null) {
-            return new EndpointReference[]{new EndpointReference("http://" + ipAddress + ":" +
-                                                                 (embedded.getPort())
-                                                                 + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
+            String endpointRefernce = "http://" + ip + ":" + embedded.getPort() ;
+            if(configurationContext.getServiceContextPath().startsWith("/")){
+                endpointRefernce =  endpointRefernce +
+                        configurationContext.getServiceContextPath() + "/" + serviceName;
+            } else {
+                endpointRefernce = endpointRefernce + '/' +
+                        configurationContext.getServiceContextPath() + "/" + serviceName;
+            }
+
+
+            return new EndpointReference[]{new EndpointReference(endpointRefernce)};
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }

@@ -841,7 +841,7 @@ public class AxisService extends AxisDescription {
         }
         String requestIP;
         try {
-            requestIP = HttpUtils.getIpAddress();
+            requestIP = HttpUtils.getIpAddress(getAxisConfiguration());
         } catch (SocketException e) {
             throw new AxisFault("Cannot get local IP address", e);
         }

@@ -524,7 +524,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
         if (ip == null) {
             try {
-                ip = HttpUtils.getIpAddress();
+                ip = HttpUtils.getIpAddress(axisConfiguration);
                 if (ip == null) {
                     ip = "localhost";
                 }
@@ -533,12 +533,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         }
 
-
-        EndpointReference endpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                                                           configContext
-                                                                   .getServiceContextPath() +
-                                                                                            "/" +
-                                                                                            serviceName);
+        String endpointRefernce = "http://" + ip + ":" + port ;
+        if(configContext.getServiceContextPath().startsWith("/")){
+            endpointRefernce =  endpointRefernce +
+                    configContext.getServiceContextPath() + "/" + serviceName;
+        } else {
+            endpointRefernce = endpointRefernce + '/' +
+                    configContext.getServiceContextPath() + "/" + serviceName;
+        }
+        EndpointReference endpoint = new EndpointReference(endpointRefernce);
 
         return new EndpointReference[]{endpoint};
     }
