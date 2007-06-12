@@ -18,7 +18,6 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -290,15 +289,63 @@ class OutInAxisOperationClient extends OperationClient {
             // process the result of the invocation
             if (internalCallback.envelope != null) {
                 // The call ended normally, so there is nothing to do
-            } else {
+            }  else {
                 if (internalCallback.error instanceof AxisFault) {
-                    throw (AxisFault) internalCallback.error;
+                    createFaultMesasgeConext(mc);
                 } else if (internalCallback.error != null) {
-                    throw AxisFault.makeFault(internalCallback.error);
+                    createFaultMesasgeConext(mc);
                 } else if (! internalCallback.isComplete()) {
                     throw new AxisFault(Messages.getMessage("responseTimeOut"));
                 } else {
                     throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
+                }
+            }
+        }
+    }
+
+    private void createFaultMesasgeConext(MessageContext mc) throws AxisFault {
+        MessageContext faultMessageContext =
+                mc.getConfigurationContext().createMessageContext();
+
+        // This is a hack - Needs to change
+//        responseMessageContext.setOptions(options);
+
+        faultMessageContext.setServerSide(false);
+        faultMessageContext.setMessageID(mc.getMessageID());
+        addMessageContext(faultMessageContext);
+        faultMessageContext.setServiceContext(mc.getServiceContext());
+        faultMessageContext.setAxisMessage(
+                            axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+        faultMessageContext.setDoingREST(mc.isDoingREST());
+
+        faultMessageContext.setProperty(MessageContext.TRANSPORT_IN, mc
+                .getProperty(MessageContext.TRANSPORT_IN));
+        faultMessageContext.setTransportIn(mc.getTransportIn());
+        faultMessageContext.setTransportOut(mc.getTransportOut());
+
+        // Options object reused above so soapAction needs to be removed so
+        // that soapAction+wsa:Action on response don't conflict
+        faultMessageContext.setSoapAction(null);
+
+        if (faultMessageContext.getEnvelope() == null) {
+            SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(faultMessageContext);
+            if (resenvelope != null) {
+                faultMessageContext.setEnvelope(resenvelope);
+            } else {
+                throw new AxisFault(Messages
+                        .getMessage("blockingInvocationExpectsResponse"));
+            }
+        }
+        SOAPEnvelope resenvelope = faultMessageContext.getEnvelope();
+        if (resenvelope != null) {
+            AxisEngine.receive(faultMessageContext);
+            if (faultMessageContext.getReplyTo() != null) {
+                sc.setTargetEPR(faultMessageContext.getReplyTo());
+            }
+            if (resenvelope.getBody().hasFault()||faultMessageContext.isProcessingFault()) {
+                if (options.isExceptionToBeThrownOnSOAPFault()) {
+                    // does the SOAPFault has a detail element for Excpetion
+                    throw Utils.getInboundFaultFromMessageContext(faultMessageContext);
                 }
             }
         }
@@ -379,7 +426,7 @@ class OutInAxisOperationClient extends OperationClient {
             if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }
-             if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
+            if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
@@ -440,6 +487,7 @@ class OutInAxisOperationClient extends OperationClient {
 
         private Exception error;
 
+
         public void onComplete(AsyncResult result) {
             if (log.isDebugEnabled()) {
                 log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onComplete");
@@ -473,6 +521,7 @@ class OutInAxisOperationClient extends OperationClient {
                 log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onError, " + e);
             }
             error = e;
+            setComplete(true);
             if (log.isDebugEnabled()) {
                 log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onError");
             }

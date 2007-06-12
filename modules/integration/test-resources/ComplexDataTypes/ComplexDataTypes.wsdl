@@ -20,7 +20,7 @@
             <xs:element name="ArrayOfshort" type="ax22:ArrayOfshort"/>
             <xs:complexType name="ArrayOfshort">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="short"
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="_short"
                                 nillable="true" type="xs:short"/>
                 </xs:sequence>
             </xs:complexType>

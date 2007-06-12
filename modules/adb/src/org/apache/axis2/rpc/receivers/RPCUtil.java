@@ -147,9 +147,23 @@ public class RPCUtil {
     ) throws Exception {
         QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
+            QName   resName;
+            if (service.isElementFormDefault()) {
+                resName = new QName(service.getSchematargetNamespace(),
+                        RETURN_WRAPPER,
+                        service.getSchemaTargetNamespacePrefix());
+            } else {
+                resName = new QName(RETURN_WRAPPER);
+            }
+            XMLStreamReader xr = new NullXMLStreamReader(resName);
+            StreamWrapper parser = new StreamWrapper(xr);
+            StAXOMBuilder stAXOMBuilder =
+                    OMXMLBuilderFactory.createStAXOMBuilder(
+                            OMAbstractFactory.getSOAP11Factory(), parser);
             ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                                       service.getSchemaTargetNamespacePrefix());
+                    service.getSchemaTargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
+            bodyChild.addChild(stAXOMBuilder.getDocumentElement());
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {

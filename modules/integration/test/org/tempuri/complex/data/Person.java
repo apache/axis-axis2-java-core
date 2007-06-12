@@ -53,7 +53,7 @@ public class Person {
      * @return possible object is
      *         {@link Boolean }
      */
-    public Boolean isMale() {
+    public Boolean getMale() {
         return male;
     }
 

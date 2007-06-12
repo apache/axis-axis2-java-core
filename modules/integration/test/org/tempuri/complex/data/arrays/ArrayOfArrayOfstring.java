@@ -11,4 +11,8 @@ public class ArrayOfArrayOfstring {
         return this.arrayOfstring;
     }
 
+
+    public void setArrayOfstring(ArrayOfstring[] arrayOfstring) {
+        this.arrayOfstring = arrayOfstring;
+    }
 }

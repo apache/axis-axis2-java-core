@@ -283,7 +283,7 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
         if (embedded != null) {
-            String endpointRefernce = "http://" + ip + ":" + embedded.getPort() ;
+            String endpointRefernce = "http://" + ipAddress + ":" + embedded.getPort() ;
             if(configurationContext.getServiceContextPath().startsWith("/")){
                 endpointRefernce =  endpointRefernce +
                         configurationContext.getServiceContextPath() + "/" + serviceName;
