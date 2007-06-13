@@ -14,6 +14,8 @@
 
 package org.apache.axis2.engine;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -27,31 +29,43 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
-public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
+public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
     public static Test suite() {
-        return getTestSetup(new TestSuite(OneWayRawXMLTest.class));
+        return getTestSetup(new TestSuite(ThirdPartyResponseRawXMLTest.class));
     }
     
 	private boolean received;
     protected AxisService service;
+    private SimpleHTTPServer receiver;
+    private String callbackOperation;
+    private String callbackServiceName = "CallbackService";
+    private int callbackserverPort = 17458;
+    
     protected void setUp() throws Exception {
-    	service = Utils.createSimpleInOnlyService(serviceName,new MessageReceiver(){
+        service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
+        UtilServer.deployService(service);
+        
+        callbackOperation = "callback";
+    	AxisService callbackService  = Utils.createSimpleInOnlyService(new QName(callbackServiceName),new MessageReceiver(){
             public void receive(MessageContext messageCtx) throws AxisFault {
                 SOAPEnvelope envelope = messageCtx.getEnvelope();
                 TestingUtils.compareWithCreatedOMElement(envelope.getBody().getFirstElement());
                 received = true;
             }
-        },
-                operationName);
-        UtilServer.deployService(service);
+        },new QName(callbackOperation));
+        UtilServer.deployService(callbackService);
+        
+        receiver = new SimpleHTTPServer(UtilServer.getConfigurationContext(), callbackserverPort);
+        receiver.start();
     }
 
     public void testOneWay() throws Exception {
@@ -60,13 +74,12 @@ public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestCon
                     Constants.TESTING_PATH + "integrationRepo/", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         Options op = new Options();
-//        op.setTo(new EndpointReference(
-// //               "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-//                "http://127.0.0.1:" + 5556
-//                        + "/axis2/services/"+service.getName()+"/"+operationName.getLocalPart()));
         op.setTo(targetEPR);
+        
+        op.setReplyTo(new EndpointReference("http://127.0.0.1:"+(callbackserverPort)+"/axis2/services/"+callbackServiceName+ "/"+callbackOperation));
         op.setAction("urn:SomeAction");
         sender.setOptions(op);
+        sender.engageModule(Constants.MODULE_ADDRESSING);
         sender.fireAndForget(TestingUtils.createDummyOMElement());
         int index = 0;
         while (!received) {
@@ -76,6 +89,10 @@ public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestCon
                 throw new AxisFault("error Occured");
             }
         }
+    }
+
+    protected void tearDown() throws Exception {
+        receiver.stop();
     }
 
 }
