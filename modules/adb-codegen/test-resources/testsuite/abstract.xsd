@@ -1,0 +1,12 @@
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://tempuri.org/abstract"
+           targetNamespace="http://tempuri.org/abstract">
+
+    <xs:element name="TestAbstract1" type="tns:TestAbstract2"/>
+    <xs:complexType name="TestAbstract2" abstract="true">
+        <xs:sequence>
+            <xs:element name="param1" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
