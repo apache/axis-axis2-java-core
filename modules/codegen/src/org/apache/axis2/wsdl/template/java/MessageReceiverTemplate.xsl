@@ -231,7 +231,7 @@
         newMsgContext.setEnvelope(envelope);
         }
         <xsl:for-each select="fault-list/fault">
-            <xsl:if test="position()=1">}</xsl:if>catch (<xsl:value-of select="@name"/> e) {
+            <xsl:if test="position()=1">}</xsl:if> catch (<xsl:value-of select="@name"/> e) {
 
             msgContext.setProperty(org.apache.axis2.Constants.FAULT_NAME,"<xsl:value-of select="@localname"/>");
             org.apache.axis2.AxisFault f = createAxisFault(e);
@@ -558,7 +558,7 @@
 
         }
         <xsl:for-each select="fault-list/fault">
-            <xsl:if test="position()=1">}</xsl:if>catch (<xsl:value-of select="@name"/> e) {
+            <xsl:if test="position()=1">}</xsl:if> catch (<xsl:value-of select="@name"/> e) {
             msgContext.setProperty(org.apache.axis2.Constants.FAULT_NAME,"<xsl:value-of select="@localname"/>");
             org.apache.axis2.AxisFault f = createAxisFault(e);
             if (e.getFaultMessage() != null){

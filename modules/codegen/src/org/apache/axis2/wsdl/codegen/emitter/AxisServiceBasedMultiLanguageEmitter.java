@@ -47,7 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -73,6 +72,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -197,6 +198,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     //a map to keep the fault classNames
     protected Map fullyQualifiedFaultClassNameMap = new HashMap();
     protected Map faultClassNameMap = new HashMap();
+    protected Map faultElementQNameMap = new HashMap();
 
     protected Map instantiatableMessageClassNames = new HashMap();
 
@@ -368,6 +370,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected void resetFaultNames() {
         fullyQualifiedFaultClassNameMap.clear();
         faultClassNameMap.clear();
+        faultElementQNameMap.clear();
     }
 
     /**
@@ -385,7 +388,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 faultMessage = (AxisMessage) faultMessages.get(i);
                 //make a unique name and put that in the hashmap
                 if (!fullyQualifiedFaultClassNameMap.
-                        containsKey(faultMessage.getElementQName())) {
+                        containsKey(faultMessage.getName())) {
                     //make a name
                     String className = makeJavaClassName(faultMessage.getName());
                     while (fullyQualifiedFaultClassNameMap.containsValue(className)) {
@@ -393,11 +396,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     }
 
                     fullyQualifiedFaultClassNameMap.put(
-                            faultMessage.getElementQName(),
+                            faultMessage.getName(),
                             className);
                     //we've to keep track of the fault base names seperately
-                    faultClassNameMap.put(faultMessage.getElementQName(),
+                    faultClassNameMap.put(faultMessage.getName(),
                             className);
+
+                    faultElementQNameMap.put(faultMessage.getName(),
+                            faultMessage.getElementQName());
 
                 }
             }
@@ -817,11 +823,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element getUniqueListofFaults(Document doc) {
         Element rootElement = doc.createElement("fault-list");
         Element faultElement;
-        QName key;
+        String key;
         Iterator iterator = fullyQualifiedFaultClassNameMap.keySet().iterator();
         while (iterator.hasNext()) {
             faultElement = doc.createElement("fault");
-            key = (QName) iterator.next();
+            key = (String) iterator.next();
 
             //as for the name of a fault, we generate an exception
             addAttribute(doc, "name",
@@ -834,7 +840,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //the type represents the type that will be wrapped by this
             //name
             String typeMapping =
-                    this.mapper.getTypeMappingName(key);
+                    this.mapper.getTypeMappingName((QName) faultElementQNameMap.get(key));
             addAttribute(doc, "type", (typeMapping == null)
                     ? ""
                     : typeMapping, faultElement);
@@ -871,7 +877,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         AxisMessage faultMessage;
         for (Iterator iter = operationFaultMessages.iterator(); iter.hasNext();) {
             faultMessage = (AxisMessage) iter.next();
-            faultMessagesToMep.add(faultMessage.getElementQName());
+            faultMessagesToMep.add(faultMessage.getName());
         }
 
     }
@@ -905,11 +911,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Element rootElement = doc.createElement("fault-list");
         Element faultElement;
-        QName key;
+        String key;
         Iterator iterator = faultListForMep.iterator();
         while (iterator.hasNext()) {
             faultElement = doc.createElement("fault");
-            key = (QName) iterator.next();
+            key = (String) iterator.next();
 
             //as for the name of a fault, we generate an exception
             addAttribute(doc, "name",
@@ -922,7 +928,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //the type represents the type that will be wrapped by this
             //name
             String typeMapping =
-                    this.mapper.getTypeMappingName(key);
+                    this.mapper.getTypeMappingName((QName) faultElementQNameMap.get(key));
             addAttribute(doc, "type", (typeMapping == null)
                     ? ""
                     : typeMapping, faultElement);
@@ -933,7 +939,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     attribValue == null ? "" : attribValue,
                     faultElement);
 
-            String exceptionName = key.getLocalPart();
+            String exceptionName = ((QName) faultElementQNameMap.get(key)).getLocalPart();
             addAttribute(doc, "localname",
                     exceptionName == null ? "" : exceptionName,
                     faultElement);
@@ -989,7 +995,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected void writeExceptions() throws Exception {
         Element faultElement;
-        QName key;
+        String key;
         Iterator iterator = fullyQualifiedFaultClassNameMap.keySet().iterator();
         while (iterator.hasNext()) {
             Document doc = getEmptyDocument();
@@ -998,7 +1004,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             addAttribute(doc, "package", codeGenConfiguration.getPackageName(), faultElement);
 
-            key = (QName) iterator.next();
+            key = (String) iterator.next();
 
             //as for the name of a fault, we generate an exception
             addAttribute(doc, "name",
@@ -1011,7 +1017,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //the type represents the type that will be wrapped by this
             //name
             String typeMapping =
-                    this.mapper.getTypeMappingName(key);
+                    this.mapper.getTypeMappingName((QName) faultElementQNameMap.get(key));
             addAttribute(doc, "type", (typeMapping == null)
                     ? ""
                     : typeMapping, faultElement);
@@ -1909,7 +1915,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return rootElement;
     }
 
-    protected void writeSkeleton() throws Exception {
+    protected void      writeSkeleton() throws Exception {
         Document skeletonModel =
                 createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
@@ -2661,10 +2667,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 //as for the name of a fault, we generate an exception
                 addAttribute(doc, "name",
-                        (String) fullyQualifiedFaultClassNameMap.get(msg.getElementQName()),
+                        (String) fullyQualifiedFaultClassNameMap.get(msg.getName()),
                         paramElement);
                 addAttribute(doc, "shortName",
-                        (String) faultClassNameMap.get(msg.getElementQName()),
+                        (String) faultClassNameMap.get(msg.getName()),
                         paramElement);
 
                 // attach the namespace and the localName
