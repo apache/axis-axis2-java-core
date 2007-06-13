@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -282,8 +283,11 @@ public class Utils {
             // other looks.
             implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
             if (implInfoParam != null) {
-                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, ((String)
-                        implInfoParam.getValue()).trim());
+                String className = ((String)implInfoParam.getValue()).trim();
+                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, className);
+                if(serviceObjectMaker.getModifiers() != Modifier.PUBLIC){
+                    throw new AxisFault("Service class "+ className + " must have public as access Modifier");
+                }
 
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.
