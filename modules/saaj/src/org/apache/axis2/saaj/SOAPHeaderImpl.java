@@ -176,7 +176,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator examineHeaderElements(String actor) {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineHeaderBlocks(actor); iterator.hasNext();) {
-            elements.add(((NodeImpl)iterator.next()).getUserData(SAAJ_NODE));
+            elements.add(toSAAJNode((NodeImpl)iterator.next()));
         }
         return elements.iterator();
     }
@@ -197,7 +197,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator extractHeaderElements(String actor) {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.extractHeaderBlocks(actor); iterator.hasNext();) {
-            elements.add(((NodeImpl)iterator.next()).getUserData(SAAJ_NODE));
+            elements.add(toSAAJNode((NodeImpl)iterator.next()));
         }
         return elements.iterator();
     }
@@ -215,7 +215,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineMustUnderstandHeaderBlocks(actor);
              iterator.hasNext();) {
-            elements.add(((NodeImpl)iterator.next()).getUserData(SAAJ_NODE));
+            elements.add(toSAAJNode((NodeImpl)iterator.next()));
         }
         return elements.iterator();
     }
@@ -230,7 +230,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator examineAllHeaderElements() {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.examineAllHeaderBlocks(); iterator.hasNext();) {
-            elements.add(((NodeImpl)iterator.next()).getUserData(SAAJ_NODE));
+            elements.add(toSAAJNode((NodeImpl)iterator.next()));
         }
         return elements.iterator();
     }
@@ -245,7 +245,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     public Iterator extractAllHeaderElements() {
         Collection elements = new ArrayList();
         for (Iterator iterator = omSOAPHeader.extractAllHeaderBlocks(); iterator.hasNext();) {
-            elements.add(((NodeImpl)iterator.next()).getUserData(SAAJ_NODE));
+            elements.add(toSAAJNode((NodeImpl)iterator.next()));
         }
         return elements.iterator();
     }
