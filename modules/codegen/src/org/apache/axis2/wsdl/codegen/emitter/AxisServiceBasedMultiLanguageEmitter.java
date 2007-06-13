@@ -566,6 +566,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "servicename", serviceName, rootElement);
         addAttribute(doc, "src", codeGenConfiguration.getSourceLocation(), rootElement);
         addAttribute(doc, "resource", codeGenConfiguration.getResourceLocation(), rootElement);
+
+        if (!codeGenConfiguration.isWriteTestCase()) {
+            addAttribute(doc, "testOmit", "true", rootElement);
+        }
+
         if (codeGenConfiguration.isServerSide()) {
             addAttribute(doc,
                     "isserverside",
@@ -574,6 +579,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         doc.appendChild(rootElement);
+
+        //////////////////////////////////////////////////////////
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        ////////////////////////////////////////////////////////////
 
         return doc;
     }
