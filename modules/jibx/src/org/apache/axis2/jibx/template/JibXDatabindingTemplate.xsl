@@ -822,12 +822,12 @@
     
     <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
     private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
-        java.util.Map extraNamespaces) {
+        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
         try {
             org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
             return ctx.unmarshalElement(type);
         } catch (Exception e) {
-             throw new RuntimeException(e);
+             throw new org.apache.axis2.AxisFault(e.getMessage());
         }
     }
   </xsl:template>

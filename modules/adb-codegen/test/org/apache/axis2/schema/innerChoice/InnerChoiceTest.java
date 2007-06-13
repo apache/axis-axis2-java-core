@@ -39,9 +39,9 @@ public class InnerChoiceTest extends TestCase {
         testInnerSequence1Choice_type2.setChoice2(5);
         testSequence.setTestInnerSequence1Choice_type2(testInnerSequence1Choice_type2);
 
-        OMElement omElement = testSequence.getOMElement(TestInnerSequence1.MY_QNAME,
-                OMAbstractFactory.getSOAP12Factory());
         try {
+            OMElement omElement = testSequence.getOMElement(TestInnerSequence1.MY_QNAME,
+                     OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMelement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -69,9 +69,9 @@ public class InnerChoiceTest extends TestCase {
         testInnerSequence2Choice_type1.setChoice1(new String[]{"choice1", "choice2"});
         testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
 
-        OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
-                OMAbstractFactory.getSOAP12Factory());
         try {
+            OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
+                    OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMelement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -92,9 +92,9 @@ public class InnerChoiceTest extends TestCase {
         testInnerSequence2Choice_type1.setChoice2(new int[]{2, 4});
         testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
 
-        OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
-                OMAbstractFactory.getSOAP12Factory());
-        try {
+         try {
+             OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
+                      OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMelement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -115,9 +115,9 @@ public class InnerChoiceTest extends TestCase {
         testInnerSequence3Choice_type0.setChoice1(new String[]{"choice1", null, "choice2"});
         testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
-        OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
-                OMAbstractFactory.getSOAP12Factory());
-        try {
+       try {
+           OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
+                   OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMelement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -139,9 +139,9 @@ public class InnerChoiceTest extends TestCase {
         testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
 
-        OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
-                OMAbstractFactory.getSOAP12Factory());
-        try {
+         try {
+             OMElement omElement = testSequence.getOMElement(TestInnerSequence3.MY_QNAME,
+                      OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMelement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

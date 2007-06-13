@@ -32,8 +32,8 @@ public class BooleanTest extends TestCase {
         TestBoolean1 testBoolean = new TestBoolean1();
         testBoolean.setTestBoolean1(true);
 
-        OMElement omElement = testBoolean.getOMElement(TestBoolean1.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testBoolean.getOMElement(TestBoolean1.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -49,8 +49,8 @@ public class BooleanTest extends TestCase {
         testBoolean.setParam1(false);
         testBoolean.setAttribute1(true);
 
-        OMElement omElement = testBoolean.getOMElement(TestBoolean2.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+            OMElement omElement = testBoolean.getOMElement(TestBoolean2.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

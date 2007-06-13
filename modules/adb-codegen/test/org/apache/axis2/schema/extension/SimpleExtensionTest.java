@@ -39,8 +39,8 @@ public class SimpleExtensionTest extends TestCase {
 
         fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE",""));
 
-        OMElement omElement = fullName.getOMElement(FullName.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
-        try {
+         try {
+            OMElement omElement = fullName.getOMElement(FullName.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

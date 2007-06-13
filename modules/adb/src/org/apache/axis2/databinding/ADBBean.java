@@ -2,6 +2,7 @@ package org.apache.axis2.databinding;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,7 +33,7 @@ public interface ADBBean {
      * @param adbBeanQName the name of the element to be generated for this ADBBean.
      * @return Returns a pull parser for this ADBBean.
      */
-    public XMLStreamReader getPullParser(QName adbBeanQName);
+    public XMLStreamReader getPullParser(QName adbBeanQName) throws XMLStreamException;
 
     /**
      * There will be a self factory in every generated data bound class XXX:

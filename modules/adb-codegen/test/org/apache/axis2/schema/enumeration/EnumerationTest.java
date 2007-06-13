@@ -36,8 +36,8 @@ public class EnumerationTest extends TestCase {
         countPlacesInRect.setUpperleft("upperleft");
         countPlacesInRect.setPtype(PlaceType.River);
 
-        OMElement omElement = countPlacesInRect.getOMElement(CountPlacesInRect.MY_QNAME,OMAbstractFactory.getOMFactory());
-        try {
+       try {
+            OMElement omElement = countPlacesInRect.getOMElement(CountPlacesInRect.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

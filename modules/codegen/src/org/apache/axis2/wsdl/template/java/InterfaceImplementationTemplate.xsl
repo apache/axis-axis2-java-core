@@ -655,6 +655,7 @@
                            _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
                     public void onComplete(
                             org.apache.axis2.client.async.AsyncResult result) {
+                        try{
                         java.lang.Object object = fromOM(result.getResponseEnvelope().getBody().getFirstElement(),
                                <xsl:value-of select="$outputtype"/>.class,
                                getEnvelopeNamespaces(result.getResponseEnvelope())
@@ -675,6 +676,9 @@
                                    (<xsl:value-of select="$outputtype"/>)object);
                                 </xsl:otherwise>
                             </xsl:choose>
+                        } catch(org.apache.axis2.AxisFault e){
+                           callback.receiveError<xsl:value-of select="@name"/>(e); 
+                        }
 
                     }
 

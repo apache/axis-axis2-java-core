@@ -33,8 +33,8 @@ public class ChiceTest extends TestCase {
         testChoise.setChoice1("test 2");
         testChoise.setChoice2(5);
 
-        OMElement omElement = testChoise.getOMElement(TestChoise.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testChoise.getOMElement(TestChoise.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

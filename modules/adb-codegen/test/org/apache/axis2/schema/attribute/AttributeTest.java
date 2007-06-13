@@ -31,9 +31,9 @@ public class AttributeTest extends TestCase {
 
         TestElement1 testElement = new TestElement1();
         testElement.setAttribute1(1);
-
-        OMElement omElement = testElement.getOMElement(TestElement1.MY_QNAME, OMAbstractFactory.getOMFactory());
+        OMElement omElement;
         try {
+            omElement = testElement.getOMElement(TestElement1.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -46,8 +46,8 @@ public class AttributeTest extends TestCase {
         testElement = new TestElement1();
         testElement.setAttribute1(Integer.MIN_VALUE);
 
-        omElement = testElement.getOMElement(TestElement1.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            omElement = testElement.getOMElement(TestElement1.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -61,10 +61,10 @@ public class AttributeTest extends TestCase {
     public void testElement2(){
         TestElement2 testElement = new TestElement2();
         testElement.setAttribute1(1);
-
-        OMElement omElement = testElement.getOMElement(TestElement2.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
-            String omElementString = omElement.toStringWithConsume();
+         OMElement omElement;
+         try {
+             omElement = testElement.getOMElement(TestElement2.MY_QNAME, OMAbstractFactory.getOMFactory());
+             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestElement2 result = TestElement2.Factory.parse(xmlReader);
@@ -76,8 +76,8 @@ public class AttributeTest extends TestCase {
         testElement = new TestElement2();
         testElement.setAttribute1(Integer.MIN_VALUE);
 
-        omElement = testElement.getOMElement(TestElement2.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            omElement = testElement.getOMElement(TestElement2.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             fail();
@@ -89,10 +89,10 @@ public class AttributeTest extends TestCase {
     public void testElement3(){
         TestElement3 testElement = new TestElement3();
         testElement.setAttribute1("test");
-
-        OMElement omElement = testElement.getOMElement(TestElement3.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
-            String omElementString = omElement.toStringWithConsume();
+         OMElement omElement;
+         try {
+             omElement = testElement.getOMElement(TestElement3.MY_QNAME, OMAbstractFactory.getOMFactory());
+             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestElement3 result = TestElement3.Factory.parse(xmlReader);
@@ -103,9 +103,9 @@ public class AttributeTest extends TestCase {
 
         testElement = new TestElement3();
 
-        omElement = testElement.getOMElement(TestElement3.MY_QNAME, OMAbstractFactory.getOMFactory());
 
         try {
+            omElement = testElement.getOMElement(TestElement3.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -119,9 +119,9 @@ public class AttributeTest extends TestCase {
      public void testElement4(){
         TestElement4 testElement = new TestElement4();
         testElement.setAttribute1("test");
-
-        OMElement omElement = testElement.getOMElement(TestElement4.MY_QNAME, OMAbstractFactory.getOMFactory());
+        OMElement omElement;
         try {
+            omElement = testElement.getOMElement(TestElement4.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -133,9 +133,9 @@ public class AttributeTest extends TestCase {
 
         testElement = new TestElement4();
 
-        omElement = testElement.getOMElement(TestElement4.MY_QNAME, OMAbstractFactory.getOMFactory());
 
         try {
+            omElement = testElement.getOMElement(TestElement4.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMElement ==> " + omElementString);
             fail();
@@ -150,9 +150,9 @@ public class AttributeTest extends TestCase {
         attribute1_type0.setAttribute1_type0("test attribute");
         testAttributeSimpleType.setAttribute1(attribute1_type0);
 
-        OMElement omElement = testAttributeSimpleType.getOMElement(TestAttributeSimpleType.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testAttributeSimpleType.getOMElement(TestAttributeSimpleType.MY_QNAME,
+                      OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OMString ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -172,9 +172,9 @@ public class AttributeTest extends TestCase {
 
         testAttributeReferenceElement.setTestAttributeReferenceElement(testAttributeReferenceType);
 
-        OMElement omElement = testAttributeReferenceElement.getOMElement(TestAttributeReferenceElement.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testAttributeReferenceElement.getOMElement(TestAttributeReferenceElement.MY_QNAME,
+                         OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader =

@@ -14,7 +14,9 @@
 
         <!--  generate toOM for only non parts and non primitives!!! -->
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type) and @type!='' and not(@primitive)]">
-            private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
+            private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault {
+            try{
             <xsl:choose>
                     <xsl:when test="$helpermode">
                             return <xsl:value-of select="@type"/>Helper.getOMElement(
@@ -30,6 +32,9 @@
                                   org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                     </xsl:otherwise>
             </xsl:choose>
+            } catch(org.apache.axis2.databinding.ADBException e){
+                throw new org.apache.axis2.AxisFault(e.getMessage());
+            }
 
             }
         </xsl:for-each>
@@ -59,8 +64,9 @@
                                      <xsl:value-of select="@type"/> param<xsl:value-of select="position()"/>,
                                     </xsl:for-each>
                                     <xsl:value-of select="$inputElementType"/> dummyWrappedType,
-                                 boolean optimizeContent){
+                                 boolean optimizeContent) throws org.apache.axis2.AxisFault{
 
+                                try{
                                 <xsl:value-of select="$inputElementType"/> wrappedType = new <xsl:value-of select="$inputElementType"/>();
 
                                  <xsl:choose>
@@ -90,18 +96,21 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
 
-                               return emptyEnvelope;
+                                return emptyEnvelope;
+                               } catch(org.apache.axis2.databinding.ADBException e){
+                                    throw new org.apache.axis2.AxisFault(e.getMessage());
+                               }
                                }
 
 
 
                                 </xsl:when>
-                                <xsl:otherwise>
 
-                                </xsl:otherwise>
                          </xsl:choose>
                             <!-- Assumption - the parameter is always an ADB element-->
-                            private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent){
+                            private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent)
+                            throws org.apache.axis2.AxisFault{
+                            try{
                             org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
                                  <xsl:choose>
                                     <xsl:when test="$helpermode">
@@ -117,6 +126,9 @@
                                     </xsl:otherwise>
                             </xsl:choose>
                              return emptyEnvelope;
+                            } catch(org.apache.axis2.databinding.ADBException e){
+                                throw new org.apache.axis2.AxisFault(e.getMessage());
+                            }
                             }
 
                              <!-- to support for backword compatiblity we have to add and wrapp method-->
@@ -201,21 +213,26 @@
                   <xsl:variable name="outElementType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"></xsl:variable>
                     <!-- Assumption - The ADBBean here is always an element based bean -->
                     <xsl:if test="generate-id($outElement) = generate-id(key('paramsOut', $outElementType)[1])">
-                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
-                      org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                       <xsl:choose>
-                            <xsl:when test="$helpermode">
-                                emptyEnvelope.getBody().addChild(
-                                <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>Helper.getOMElement(
-                                param,
-                                <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
-                            </xsl:when>
-                            <xsl:otherwise>
-                                emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
-                            </xsl:otherwise>
-                    </xsl:choose>
+                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent)
+                        throws org.apache.axis2.AxisFault{
+                      try{
+                          org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                           <xsl:choose>
+                                <xsl:when test="$helpermode">
+                                    emptyEnvelope.getBody().addChild(
+                                    <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>Helper.getOMElement(
+                                    param,
+                                    <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                                </xsl:otherwise>
+                        </xsl:choose>
 
-                     return emptyEnvelope;
+                         return emptyEnvelope;
+                    } catch(org.apache.axis2.databinding.ADBException e){
+                        throw new org.apache.axis2.AxisFault(e.getMessage());
+                    }
                     }
                     </xsl:if>
                 </xsl:when>
@@ -335,7 +352,7 @@
         private  java.lang.Object fromOM(
         org.apache.axiom.om.OMElement param,
         java.lang.Class type,
-        java.util.Map extraNamespaces){
+        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
 
         try {
         <xsl:for-each select="param[not(@primitive) and @type!='']">
@@ -354,8 +371,8 @@
 
                 }
            </xsl:for-each>
-        } catch (Exception e) {
-        throw new RuntimeException(e);
+        } catch (java.lang.Exception e) {
+        throw new org.apache.axis2.AxisFault(e.getMessage());
         }
            return null;
         }

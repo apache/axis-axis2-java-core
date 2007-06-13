@@ -48,8 +48,8 @@ public class SimpleRestrictionTest extends TestCase {
         testSimpleAttribute.setAttrib1(parentSimpleType1);
         testSimpleAttribute.setAttrib2(parentSimpleType2);
 
-        OMElement omElement = testSimpleAttributeElement.getOMElement(TestSimpleAttributeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement = testSimpleAttributeElement.getOMElement(TestSimpleAttributeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -72,8 +72,8 @@ public class SimpleRestrictionTest extends TestCase {
         normalSimpleTypeElement.setNormalSimpleTypeElement(parentNormalSimpleType);
         parentNormalSimpleType.setNormalSimpleType(new QName("http://wso2.com", "test"));
 
-        OMElement omElement = normalSimpleTypeElement.getOMElement(NormalSimpleTypeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = normalSimpleTypeElement.getOMElement(NormalSimpleTypeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -91,8 +91,8 @@ public class SimpleRestrictionTest extends TestCase {
         EnumerationSimpleTypeElement enumerationSimpleTypeElement = new EnumerationSimpleTypeElement();
         enumerationSimpleTypeElement.setEnumerationSimpleTypeElement(ParentEnumerationSimpleType.value1);
 
-        OMElement omElement = enumerationSimpleTypeElement.getOMElement(EnumerationSimpleTypeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = enumerationSimpleTypeElement.getOMElement(EnumerationSimpleTypeElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -112,8 +112,8 @@ public class SimpleRestrictionTest extends TestCase {
         parentRestrictionType.setBaseTypeElement1("test 1");
         parentRestrictionType.setBaseTypeElement2(5);
 
-        OMElement omElement = complexRestrictionTypeTestElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+            OMElement omElement = complexRestrictionTypeTestElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -146,8 +146,8 @@ public class SimpleRestrictionTest extends TestCase {
         address.setZip(ziptype);
         ziptype.setZip_type2("C");
 
-        OMElement omElement = personElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = personElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
