@@ -31,6 +31,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
@@ -69,5 +70,22 @@ public class FaultSerializationTest extends TestCase {
         // For right now, just making sure we have a test for AXIS2-2752
         // Confirm reason was correctly processed
         assertTrue("Incorrect or missing reason!", result.indexOf(REASON) > -1);
+    }
+    
+    //test for https://issues.apache.org/jira/browse/AXIS2-1703
+    public void testFaultReason() throws Exception {
+    	SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
+    	OMElement response = soapFactory.createOMElement(new QName("testNs","test"));
+        String falutReason = "myFaultReason";
+		AxisFault fault = new AxisFault( new QName( "myQname" ), falutReason ,
+                "myFaultNode" , "myFaultRole" , response); 
+
+        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+        MessageContext ctx = cc.createMessageContext();
+        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
+        ctx.setEnvelope(fac.getDefaultEnvelope());
+        MessageContext faultCtx = MessageContextBuilder.createFaultMessageContext(ctx, fault);
+
+        assertEquals(falutReason, Utils.getInboundFaultFromMessageContext(faultCtx).getReason());
     }
 }
