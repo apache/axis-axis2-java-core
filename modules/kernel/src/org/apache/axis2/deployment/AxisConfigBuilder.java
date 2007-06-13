@@ -467,7 +467,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                 (TransportListener) receiverClass.newInstance();
                         transportIN.setReceiver(receiver);
                     } catch (NoClassDefFoundError e) {
-                        log.info(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
+                        throw new DeploymentException(e);
                     } catch (ClassNotFoundException e) {
                         throw new DeploymentException(e);
                     } catch (IllegalAccessException e) {
@@ -529,6 +529,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addTransportOut(transportout);
                 } catch (NoClassDefFoundError e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
+                    throw new DeploymentException(e);
                 } catch (ClassNotFoundException e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
