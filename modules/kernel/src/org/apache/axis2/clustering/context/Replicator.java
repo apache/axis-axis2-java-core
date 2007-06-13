@@ -14,88 +14,50 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clustering.handlers;
+package org.apache.axis2.clustering.context;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.context.*;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReplicationHandler extends AbstractHandler {
+public final class Replicator {
 
-    private static final Log log = LogFactory.getLog(ReplicationHandler.class);
+    private static final Log log = LogFactory.getLog(Replicator.class);
 
-    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-//        System.err.println("### [INVOKE] Going to replicate state. Flow:" + msgContext.getFLOW());
-        /* log.debug("Going to replicate state on invoke");
-        try {
-            replicateState(msgContext);
-        } catch (Exception e) {
-            System.err.println("###########################");
-            String message = "Could not replicate the state";
-            log.error(message, e);
-            System.err.println("###########################");
-        }*/
-        return InvocationResponse.CONTINUE;
-    }
+    public static void replicate(MessageContext msgContext) throws ClusteringFault {
 
-    public void flowComplete(MessageContext msgContext) {
-
-        // If there are no members, we need not do any replication
+        // Do replication only if context replication is enabled.
+        // Also note that if there are no members, we need not do any replication
         ClusterManager clusterManager =
                 msgContext.getConfigurationContext().getAxisConfiguration().getClusterManager();
-        if(clusterManager != null && clusterManager.getMemberCount() == 0){
-             return;
+        if (clusterManager == null ||
+            clusterManager.getContextManager() == null ||
+            clusterManager.getMemberCount() == 0) {
+            return;
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
-        if(axisOperation == null){
+        if (axisOperation == null) {
             return;
         }
-        
-        String mep = axisOperation.getMessageExchangePattern();
-        int flow = msgContext.getFLOW();
-
-        // The ReplicationHandler should be added to all 4 flows. We will replicate on flowComplete
-        // only during one of the flows
-        boolean replicateOnInFLow =
-                ((mep.equals(WSDL2Constants.MEP_URI_IN_ONLY) ||
-                  mep.equals(WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT) ||
-                  mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY))
-                 && (flow == MessageContext.IN_FLOW || flow == MessageContext.IN_FAULT_FLOW));
-
-        boolean replicateOnOutFlow =
-                (mep.equals(WSDL2Constants.MEP_URI_IN_OUT) ||
-                 mep.equals(WSDL2Constants.MEP_URI_OUT_ONLY) ||
-                 mep.equals(WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN) ||
-                 mep.equals(WSDL2Constants.MEP_URI_OUT_IN) ||
-                 mep.equals(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY))
-                && (flow == MessageContext.OUT_FLOW || flow == MessageContext.OUT_FAULT_FLOW);
-
-        if (replicateOnInFLow || replicateOnOutFlow) {
-            log.debug("### [FLOW COMPLETE] Going to replicate state. Flow:" + flow);
-            try {
-                replicateState(msgContext);
-            } catch (Exception e) {
-                String message = "Could not replicate the state";
-                log.error(message, e);
-                //TODO: We need to throw a checked exception
-            }
+        log.debug("Going to replicate state...");
+        try {
+            replicateState(msgContext);
+        } catch (Exception e) {
+            String message = "Could not replicate the state";
+            throw new ClusteringFault(message, e);
         }
     }
 
-    private void replicateState(MessageContext message) throws ClusteringFault {
-        ConfigurationContext configurationContext = message.getConfigurationContext();
+    private static void replicateState(MessageContext msgContext) throws ClusteringFault {
+        ConfigurationContext configurationContext = msgContext.getConfigurationContext();
         AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
 
@@ -116,13 +78,13 @@ public class ReplicationHandler extends AbstractHandler {
             }
 
             // Do we need to replicate state stored in ServiceGroupContext?
-            ServiceGroupContext sgContext = message.getServiceGroupContext();
+            ServiceGroupContext sgContext = msgContext.getServiceGroupContext();
             if (sgContext != null && !sgContext.getPropertyDifferences().isEmpty()) {
                 contexts.add(sgContext);
             }
 
             // Do we need to replicate state stored in ServiceContext?
-            ServiceContext serviceContext = message.getServiceContext();
+            ServiceContext serviceContext = msgContext.getServiceContext();
             if (serviceContext != null && !serviceContext.getPropertyDifferences().isEmpty()) {
                 contexts.add(serviceContext);
             }

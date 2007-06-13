@@ -23,6 +23,8 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.clustering.context.Replicator;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -47,6 +49,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public class ThreadContextDescriptor {
         public ClassLoader oldClassLoader;
         public MessageContext oldMessageContext;
+    }
+
+    public void replicateState(MessageContext messageContext) throws ClusteringFault {
+        Replicator.replicate(messageContext);
     }
 
     /**

@@ -37,14 +37,10 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         ThreadContextDescriptor tc = setThreadContext(msgContext);
         try {
             invokeBusinessLogic(msgContext, outMsgContext);
+            replicateState(msgContext);
         } finally {
             restoreThreadContext(tc);
         }
-
-        AxisEngine engine =
-                new AxisEngine(
-                        msgContext.getConfigurationContext());
-
-        engine.send(outMsgContext);
+        AxisEngine.send(outMsgContext);
     }
 }

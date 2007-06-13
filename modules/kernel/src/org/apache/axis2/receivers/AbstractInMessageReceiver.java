@@ -31,6 +31,7 @@ public abstract class AbstractInMessageReceiver extends AbstractMessageReceiver 
         ThreadContextDescriptor tc = setThreadContext(messageCtx);
         try {
             invokeBusinessLogic(messageCtx);
+            replicateState(messageCtx);
         } finally {
             restoreThreadContext(tc);
         }
