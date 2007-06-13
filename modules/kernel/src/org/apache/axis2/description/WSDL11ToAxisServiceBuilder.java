@@ -1070,6 +1070,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         } else {
 
+            
             // for the client side we have to do something that is a bit
             // weird. The in message is actually taken from the output
             // and the output is taken from the in
@@ -1979,7 +1980,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String soapAction = soapOperation.getSoapActionURI();
                 if ((soapAction != null) && (!soapAction.equals(""))) {
                     axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
-                    axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
+                    if(isServerSide){
+                        axisBindingOperation.getAxisOperation().setSoapAction(soapAction);    
+                    }else{
+                        axisBindingOperation.getAxisOperation().setOutputAction(soapAction);
+                    }
+                    
                     axisService.mapActionToOperation(soapAction,
                                                      axisBindingOperation.getAxisOperation());
                 }
