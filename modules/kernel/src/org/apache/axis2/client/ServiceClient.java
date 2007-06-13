@@ -733,9 +733,13 @@ public class ServiceClient {
     }
 
     public void cleanupTransport() throws AxisFault{
-        MessageContext outMessageContext =
-                getLastOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-        outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
+        if(getLastOperationContext()!=null){
+            MessageContext outMessageContext =
+                    getLastOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (outMessageContext!=null) {
+                outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
+            }
+        }
     }
 
     /**

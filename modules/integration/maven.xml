@@ -24,6 +24,23 @@
         <!-- make the dirs -->
         <mkdir dir="${wsdl.output.base.dir}"/>
 
+        <ant:echo>Compiling ComplexDataTypes.wsdl</ant:echo>
+        <mkdir dir="${wsdl.output.base.dir}/complexdatatype"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <arg line="-o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
+        </java>
+        <javac destdir="target/classes" debug="on">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <src path="target/wsdl/complexdatatype"/>
+        </javac>
+
+
+
         <ant:echo>Compiling DocumentUnwrappingTest.wsdl </ant:echo>
         <mkdir dir="${wsdl.output.base.dir}/documentunwrapping"/>
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">

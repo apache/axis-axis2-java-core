@@ -366,6 +366,8 @@ public class BeanUtil {
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
+                } else if ("java.lang.Object".equals(beanClass.getName())){
+                    return beanElement.getFirstOMChild();
                 }
                 HashMap properties = new HashMap();
                 BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
@@ -694,7 +696,11 @@ public class BeanUtil {
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg == null) {
-                objects.add("item" + i);
+                if (partName == null) {
+                    objects.add("item" + argCount);
+                } else {
+                    objects.add(partName);
+                }
                 objects.add(arg);
                 continue;
             }

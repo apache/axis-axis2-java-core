@@ -77,7 +77,7 @@
             <xs:element name="ArrayOfint" type="ax22:ArrayOfint"/>
             <xs:complexType name="ArrayOfint">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="int"
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="_int"
                                 nillable="true" type="xs:int"/>
                 </xs:sequence>
             </xs:complexType>
