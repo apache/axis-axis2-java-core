@@ -252,7 +252,9 @@ public class HTTPTransportUtils {
                                                 String contentType) {
         int soapVersion = VERSION_UNKNOWN;
         // remove the starting and trailing " from the SOAP Action
-        if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
+        if ((soapActionHeader != null) 
+                && soapActionHeader.length() > 0 
+                && soapActionHeader.charAt(0) == '\"'
                 && soapActionHeader.endsWith("\"")) {
             soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
         }
