@@ -61,7 +61,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     private Object[] attributes;
     private QName elementQName;
 
-    //This is to store the QName which are in the typeTable after setting the corrcet prefix
+    //This is to store the QName which are in the typeTable after setting the correct prefix
     private HashMap qnameMap = new HashMap();
 
     //we always create a new namespace context
@@ -117,15 +117,15 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         this.qualified = qualified;
         this.typeTable = typeTable;
         if(this.typeTable!=null){
-            Map complextTyepMap = this.typeTable.getComplexSchemaMap();
-            if(complextTyepMap!=null){
-                Iterator keyps = complextTyepMap.keySet().iterator();
-                while (keyps.hasNext()) {
-                    String key = (String) keyps.next();
-                    QName qname = (QName) complextTyepMap.get(key);
-                    if(qname!=null){
+            Map complexTypeMap = this.typeTable.getComplexSchemaMap();
+            if(complexTypeMap !=null){
+                Iterator keys = complexTypeMap.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    QName qname = (QName) complexTypeMap.get(key);
+                    if(qname !=null){
                         String prefix =qname.getPrefix();
-                        if(prefix==null&&"".equals(prefix)){
+                        if(prefix ==null && "".equals(prefix)){
                             prefix = OMSerializerUtil.getNextNSPrefix();
                         }
                         qname = new QName(qname.getNamespaceURI(),qname.getLocalPart(),prefix);
