@@ -42,25 +42,31 @@ public class FaultSerializationTest extends TestCase {
 
         SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
         SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode();
-        SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
-        soapFaultValue.setText(new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, "Sender"));
+        SOAPFaultValue soapFaultValue = soapFactory
+                .createSOAPFaultValue(soapFaultCode);
+        soapFaultValue.setText(new QName(
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, "Sender"));
 
         SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason();
-        SOAPFaultText soapFaultText = soapFactory.createSOAPFaultText(soapFaultReason);
+        SOAPFaultText soapFaultText = soapFactory
+                .createSOAPFaultText(soapFaultReason);
         soapFaultText.setText(REASON);
 
         SOAPFaultDetail soapFaultDetail = soapFactory.createSOAPFaultDetail();
         QName qName = new QName("http://mycompany.com", "FaultException", "ex");
-        OMElement exception = soapFactory.createOMElement(qName, soapFaultDetail);
+        OMElement exception = soapFactory.createOMElement(qName,
+                soapFaultDetail);
         exception.setText("Detail text");
-        AxisFault fault = new AxisFault(soapFaultCode, soapFaultReason, null, null,
-                                        soapFaultDetail);
+        AxisFault fault = new AxisFault(soapFaultCode, soapFaultReason, null,
+                null, soapFaultDetail);
 
-        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ConfigurationContext cc = ConfigurationContextFactory
+                .createDefaultConfigurationContext();
         MessageContext ctx = cc.createMessageContext();
         SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
         ctx.setEnvelope(fac.getDefaultEnvelope());
-        MessageContext faultCtx = MessageContextBuilder.createFaultMessageContext(ctx, fault);
+        MessageContext faultCtx = MessageContextBuilder
+                .createFaultMessageContext(ctx, fault);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         TransportUtils.writeMessage(faultCtx, bos);
@@ -71,21 +77,25 @@ public class FaultSerializationTest extends TestCase {
         // Confirm reason was correctly processed
         assertTrue("Incorrect or missing reason!", result.indexOf(REASON) > -1);
     }
-    
-    //test for https://issues.apache.org/jira/browse/AXIS2-1703
-    public void testFaultReason() throws Exception {
-    	SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
-    	OMElement response = soapFactory.createOMElement(new QName("testNs","test"));
-        String falutReason = "myFaultReason";
-		AxisFault fault = new AxisFault( new QName( "myQname" ), falutReason ,
-                "myFaultNode" , "myFaultRole" , response); 
 
-        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+    // test for https://issues.apache.org/jira/browse/AXIS2-1703
+    public void testFaultReason() throws Exception {
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
+        OMElement response = soapFactory.createOMElement(new QName("testNs",
+                "test"));
+        String faultReason = "myFaultReason";
+        AxisFault fault = new AxisFault(new QName("myQname"), faultReason,
+                "myFaultNode", "myFaultRole", response);
+
+        ConfigurationContext cc = ConfigurationContextFactory
+                .createDefaultConfigurationContext();
         MessageContext ctx = cc.createMessageContext();
         SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
         ctx.setEnvelope(fac.getDefaultEnvelope());
-        MessageContext faultCtx = MessageContextBuilder.createFaultMessageContext(ctx, fault);
+        MessageContext faultCtx = MessageContextBuilder
+                .createFaultMessageContext(ctx, fault);
 
-        assertEquals(falutReason, Utils.getInboundFaultFromMessageContext(faultCtx).getReason());
+        assertEquals(faultReason, Utils.getInboundFaultFromMessageContext(
+                faultCtx).getReason());
     }
 }

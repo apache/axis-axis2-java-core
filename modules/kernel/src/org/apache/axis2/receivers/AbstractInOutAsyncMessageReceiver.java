@@ -62,27 +62,32 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
 		 * async message recivers are removed later
 		 */
 		
-		if(messageCtx.getReplyTo() != null 
-				&& !AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(messageCtx.getReplyTo().getAddress())
-				&& !AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(messageCtx.getReplyTo().getAddress())){
-			messageCtx.getConfigurationContext().getThreadPool().execute(theadedTask);
-		}else{
-			theadedTask.run();
-		}
+		if (messageCtx.getReplyTo() != null
+                && !AddressingConstants.Submission.WSA_ANONYMOUS_URL
+                        .equals(messageCtx.getReplyTo().getAddress())
+                && !AddressingConstants.Final.WSA_ANONYMOUS_URL
+                        .equals(messageCtx.getReplyTo().getAddress())) {
+            messageCtx.getConfigurationContext().getThreadPool().execute(
+                    theadedTask);
+        } else {
+            theadedTask.run();
+        }
     }
-    public class AsyncMessageReceiverWorker implements Runnable{
-    	private MessageContext messageCtx;
-    	private ServerCallback callback;
-    	
-    	public AsyncMessageReceiverWorker(MessageContext messageCtx,ServerCallback callback){
-    		this.messageCtx = messageCtx;
-    		this.callback = callback;
-    	}
-    	
+    public class AsyncMessageReceiverWorker implements Runnable {
+        private MessageContext messageCtx;
+
+        private ServerCallback callback;
+
+        public AsyncMessageReceiverWorker(MessageContext messageCtx,
+                ServerCallback callback) {
+            this.messageCtx = messageCtx;
+            this.callback = callback;
+        }
+
         public void run() {
             try {
-                MessageContext newmsgCtx =
-                        MessageContextBuilder.createOutMessageContext(messageCtx);
+                MessageContext newmsgCtx = MessageContextBuilder
+                        .createOutMessageContext(messageCtx);
                 newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
                 ThreadContextDescriptor tc = setThreadContext(messageCtx);
                 try {
