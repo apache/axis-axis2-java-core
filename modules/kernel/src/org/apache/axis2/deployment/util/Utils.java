@@ -167,8 +167,9 @@ public class Utils {
         int count;
         File f;
         if(tmpDir == null) {
-        new File(System.getProperty("java.io.tmpdir")).mkdirs();
-            f = File.createTempFile("axis2", suffix);
+            new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs();
+            File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
+            f = File.createTempFile("axis2", suffix,tempFile);
         } else {
             f = File.createTempFile("axis2", suffix, tmpDir);
         }
@@ -367,8 +368,11 @@ public class Utils {
                 if (jmethod.getExceptionTypes().length > 0) {
                     JClass[] extypes = jmethod.getExceptionTypes() ;
                     for (int j= 0 ; j < extypes.length ; j++) {
-                        AxisMessage faultMessage = new AxisMessage();
                         JClass extype = extypes[j] ;
+                        if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                            continue;
+                        }
+                        AxisMessage faultMessage = new AxisMessage();
                         String exname = extype.getSimpleName() ;
                         if(extypes.length>1){
                             faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
@@ -421,8 +425,11 @@ public class Utils {
         if (jmethod.getExceptionTypes().length > 0) {
             JClass[] extypes = jmethod.getExceptionTypes() ;
             for (int j= 0 ; j < extypes.length ; j++) {
-                AxisMessage faultMessage = new AxisMessage();
                 JClass extype = extypes[j] ;
+                if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                    continue;
+                }
+                AxisMessage faultMessage = new AxisMessage();
                 String exname = extype.getSimpleName() ;
                 if(extypes.length >1){
                     faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);

@@ -17,6 +17,7 @@ import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;
@@ -250,6 +251,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 JClass[] extypes = jMethod.getExceptionTypes() ;
                 for (int j= 0 ; j < extypes.length ; j++) {
                     JClass extype = extypes[j] ;
+                    if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                        continue;
+                    }
                     methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
                     sequence = new XmlSchemaSequence();
                     generateSchemaForType(sequence, extype, extype.getSimpleName());
@@ -569,6 +573,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         if (isArrayType) {
             type = type.getArrayComponentType();
+        }
+        if(AxisFault.class.getName().equals(type)){
+            return null;
         }
         String classTypeName;
         if (type == null) {
