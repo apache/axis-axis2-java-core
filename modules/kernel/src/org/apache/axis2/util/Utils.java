@@ -33,6 +33,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
@@ -88,6 +89,26 @@ public class Utils {
                                             className,
                                             opName);
     }
+    
+    
+    public static AxisService createSimpleInOnlyService(QName serviceName,
+            MessageReceiver messageReceiver,
+            QName opName)
+        throws AxisFault {
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        
+        AxisOperation axisOp = new InOnlyAxisOperation(opName);
+        
+        axisOp.setMessageReceiver(messageReceiver);
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
+        service.addOperation(axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(),
+        axisOp);
+        
+        return service;
+    }
+    
 
     public static AxisService createSimpleService(QName serviceName,
                                                   MessageReceiver messageReceiver, String className,
