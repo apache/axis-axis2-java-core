@@ -643,4 +643,14 @@ public abstract class AxisOperation extends AxisDescription
         }
         return false;
     }
+    
+    /**
+     * All childerns of a AxisOperation must be Messages. So we just return it. 
+     * @return
+     */
+    
+    public Iterator getMessages(){
+        return getChildren();
+    }
+    
  }
