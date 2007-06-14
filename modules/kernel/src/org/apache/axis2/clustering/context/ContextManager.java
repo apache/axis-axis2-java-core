@@ -51,9 +51,8 @@ public interface ContextManager extends ParameterInclude {
     /**
      * @param context
      * @return True - if the provided {@link AbstractContext}  is clusterable
-     * @throws ClusteringFault
      */
-    boolean isContextClusterable(AbstractContext context) throws ClusteringFault;
+    boolean isContextClusterable(AbstractContext context);
 
     /**
      * Indicates whether a particular message has been ACKed by all members of a cluster

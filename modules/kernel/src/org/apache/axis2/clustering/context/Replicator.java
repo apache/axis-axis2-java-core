@@ -18,7 +18,11 @@ package org.apache.axis2.clustering.context;
 
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.AbstractContext;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
@@ -32,19 +36,7 @@ public final class Replicator {
     private static final Log log = LogFactory.getLog(Replicator.class);
 
     public static void replicate(MessageContext msgContext) throws ClusteringFault {
-
-        // Do replication only if context replication is enabled.
-        // Also note that if there are no members, we need not do any replication
-        ClusterManager clusterManager =
-                msgContext.getConfigurationContext().getAxisConfiguration().getClusterManager();
-        if (clusterManager == null ||
-            clusterManager.getContextManager() == null ||
-            clusterManager.getMemberCount() == 0) {
-            return;
-        }
-
-        AxisOperation axisOperation = msgContext.getAxisOperation();
-        if (axisOperation == null) {
+        if (!doReplication(msgContext)) {
             return;
         }
         log.debug("Going to replicate state...");
@@ -53,6 +45,57 @@ public final class Replicator {
         } catch (Exception e) {
             String message = "Could not replicate the state";
             throw new ClusteringFault(message, e);
+        }
+    }
+
+    public static void replicate(AbstractContext abstractContext) throws ClusteringFault {
+        if (!doReplication(abstractContext)) {
+            return;
+        }
+        log.debug("Going to replicate state...");
+        try {
+            replicateState(abstractContext);
+        } catch (Exception e) {
+            String message = "Could not replicate the state";
+            throw new ClusteringFault(message, e);
+        }
+    }
+
+    /**
+     * Do replication only if context replication is enabled.
+     * Also note that if there are no members, we need not do any replication
+     *
+     * @param abstractContext
+     * @return true - State needs to be replicated
+     *         false - otherwise
+     */
+    private static boolean doReplication(AbstractContext abstractContext) {
+        ClusterManager clusterManager =
+                abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
+        return clusterManager != null &&
+               clusterManager.getContextManager() != null &&
+               clusterManager.getContextManager().isContextClusterable(abstractContext) &&
+               clusterManager.getMemberCount() != 0;
+    }
+
+    private static void replicateState(AbstractContext abstractContext) throws ClusteringFault {
+        ClusterManager clusterManager =
+                abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
+        if (clusterManager != null) {
+            ContextManager contextManager = clusterManager.getContextManager();
+            if (contextManager == null) {
+                String msg = "Cannot replicate contexts since " +
+                             "ContextManager is not specified in the axis2.xml file.";
+                throw new ClusteringFault(msg);
+            }
+            if (!abstractContext.getPropertyDifferences().isEmpty()) {
+                String msgUUID = contextManager.updateContext(abstractContext);
+                waitForACKs(contextManager, msgUUID);
+            }
+        } else {
+            String msg = "Cannot replicate contexts since " +
+                         "ClusterManager is not specified in the axis2.xml file.";
+            throw new ClusteringFault(msg);
         }
     }
 
@@ -94,23 +137,7 @@ public final class Replicator {
                 String msgUUID =
                         contextManager.updateContexts((AbstractContext[]) contexts.
                                 toArray(new AbstractContext[contexts.size()]));
-
-                long start = System.currentTimeMillis();
-
-                // Wait till all members have ACKed receipt & successful processing of
-                // the message with UUID 'msgUUID'
-                do {
-
-                    // Wait sometime before checking whether message is ACKed
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException ignored) {
-                    }
-                    if (System.currentTimeMillis() - start > 40000) {
-                        throw new ClusteringFault("ACKs not received from all members within 40 sec. " +
-                                                  "Aborting wait.");
-                    }
-                } while (!contextManager.isMessageAcknowledged(msgUUID));
+                waitForACKs(contextManager, msgUUID);
             }
 
         } else {
@@ -118,5 +145,25 @@ public final class Replicator {
                          "ClusterManager is not specified in the axis2.xml file.";
             throw new ClusteringFault(msg);
         }
+    }
+
+    private static void waitForACKs(ContextManager contextManager,
+                                    String msgUUID) throws ClusteringFault {
+        long start = System.currentTimeMillis();
+
+        // Wait till all members have ACKed receipt & successful processing of
+        // the message with UUID 'msgUUID'
+        do {
+
+            // Wait sometime before checking whether message is ACKed
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+            }
+            if (System.currentTimeMillis() - start > 40000) {
+                throw new ClusteringFault("ACKs not received from all members within 40 sec. " +
+                                          "Aborting wait.");
+            }
+        } while (!contextManager.isMessageAcknowledged(msgUUID));
     }
 }
