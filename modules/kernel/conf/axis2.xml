@@ -225,8 +225,8 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
-    <transportSender name="jms"
-                     class="org.apache.axis2.transport.jms.JMSSender"/>
+    <!--<transportSender name="jms"-->
+                     <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
 
     <!-- ================================================= -->
     <!-- Mail Transport Sender  -->
