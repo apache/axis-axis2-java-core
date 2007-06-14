@@ -59,7 +59,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         public MessageContext oldMessageContext;
     }
 
-    public void replicateState(MessageContext messageContext) throws ClusteringFault {
+    protected void replicateState(MessageContext messageContext) throws ClusteringFault {
         Replicator.replicate(messageContext);
     }
 

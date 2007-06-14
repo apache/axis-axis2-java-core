@@ -73,7 +73,6 @@ public final class Replicator {
                 abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
         return clusterManager != null &&
                clusterManager.getContextManager() != null &&
-               clusterManager.getContextManager().isContextClusterable(abstractContext) &&
                clusterManager.getMemberCount() != 0;
     }
 
