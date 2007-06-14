@@ -21,19 +21,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
 /**
- * This is takes care of the IN-OUT sync MEP in the server side
+ * This is takes care of the IN-ONLY MEP on the server side
+ *
+ * TODO: Deprecate this and use AMR directly?
  */
 public abstract class AbstractInMessageReceiver extends AbstractMessageReceiver {
-
-    public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
-
-    public final void receive(final MessageContext messageCtx) throws AxisFault {
-        ThreadContextDescriptor tc = setThreadContext(messageCtx);
-        try {
-            invokeBusinessLogic(messageCtx);
-            replicateState(messageCtx);
-        } finally {
-            restoreThreadContext(tc);
-        }
-    }
 }

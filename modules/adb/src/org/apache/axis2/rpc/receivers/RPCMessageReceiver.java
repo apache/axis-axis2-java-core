@@ -39,8 +39,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
-
-
     private static Log log = LogFactory.getLog(RPCMessageReceiver.class);
 
     /**

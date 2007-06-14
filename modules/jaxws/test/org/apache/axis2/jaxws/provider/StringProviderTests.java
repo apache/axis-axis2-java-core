@@ -22,14 +22,13 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
-import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
 
 public class StringProviderTests extends ProviderTestCase {
 
     String endpointUrl = "http://localhost:8080/axis2/services/StringProviderService";
-    String xmlString = "<invoke>test input</invoke>";
+    String xmlString = "<invoke>test input</invokeBusinessLogic>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
 
     protected void setUp() throws Exception {
@@ -64,7 +63,7 @@ public class StringProviderTests extends ProviderTestCase {
         
         Dispatch<String> dispatch = getDispatch();
         
-        String request = "<invoke>hello world</invoke>";
+        String request = "<invoke>hello world</invokeBusinessLogic>";
         String response = dispatch.invoke(request);
         assertTrue(request.equals(response));
     }
@@ -159,7 +158,7 @@ public class StringProviderTests extends ProviderTestCase {
         
         Dispatch<String> dispatch = getDispatch();
         
-        String request = "<invoke>throwWebServiceException</invoke>";
+        String request = "<invoke>throwWebServiceException</invokeBusinessLogic>";
         try {
             String response = dispatch.invoke(request);
             fail("Expected Exception");

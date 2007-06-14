@@ -37,63 +37,11 @@ import java.lang.reflect.Method;
  *
  * @see RawXMLINOnlyMessageReceiver
  * @see RawXMLINOutMessageReceiver
+ * @deprecated use RawXMLINOutMessageReceiver and the DO_ASYNC property instead....
  */
-public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
-
-    private Method findOperation(AxisOperation op, Class implClass) {
-        String methodName = op.getName().getLocalPart();
-        Method[] methods = implClass.getMethods();
-
-        for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(methodName) &&
-                    methods[i].getParameterTypes().length == 1 &&
-                    OMElement.class.getName().equals(
-                            methods[i].getParameterTypes()[0].getName()) &&
-                    OMElement.class.getName().equals(methods[i].getReturnType().getName())) {
-                return methods[i];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Invokes the bussiness logic invocation on the service implementation class
-     *
-     * @param msgContext    the incoming message context
-     * @param newmsgContext the response message context
-     * @throws AxisFault on invalid method (wrong signature) or behaviour (return null)
-     */
-    public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
-            throws AxisFault {
-        try {
-
-            // get the implementation class for the Web Service
-            Object obj = getTheImplementationObject(msgContext);
-
-            // find the WebService method
-            Class implClass = obj.getClass();
-
-            AxisOperation opDesc = msgContext.getAxisOperation();
-            Method method = findOperation(opDesc, implClass);
-
-            if (method != null) {
-                OMElement result = (OMElement) method.invoke(
-                        obj, new Object[]{msgContext.getEnvelope().getBody().getFirstElement()});
-                SOAPFactory fac = getSOAPFactory(msgContext);
-                SOAPEnvelope envelope = fac.getDefaultEnvelope();
-
-                if (result != null) {
-                    envelope.getBody().addChild(result);
-                }
-
-                newmsgContext.setEnvelope(envelope);
-
-            } else {
-                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut"));
-            }
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
-        }
+public class RawXMLINOutAsyncMessageReceiver extends RawXMLINOutMessageReceiver {
+    public void receive(final MessageContext messageCtx) throws AxisFault {
+        messageCtx.setProperty(DO_ASYNC, Boolean.TRUE);
+        super.receive(messageCtx);
     }
 }

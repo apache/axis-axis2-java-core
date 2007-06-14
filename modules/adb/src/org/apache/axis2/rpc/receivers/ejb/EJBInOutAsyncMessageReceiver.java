@@ -3,6 +3,7 @@ package org.apache.axis2.rpc.receivers.ejb;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -19,7 +20,16 @@ import org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver;
 * limitations under the License.
 */
 
-public class EJBInOutAsyncMessageReceiver extends RPCInOutAsyncMessageReceiver {
+/**
+ * An EJBInOutAsyncMessageReceiver
+ *
+ * @deprecated you can just use EJBMessageReceiver
+ */
+public class EJBInOutAsyncMessageReceiver extends RPCMessageReceiver {
+    public void receive(final MessageContext messageCtx) throws AxisFault {
+        messageCtx.setProperty(DO_ASYNC, Boolean.TRUE);
+        super.receive(messageCtx);
+    }
 
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         return EJBUtil.makeNewServiceObject(msgContext);

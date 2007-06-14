@@ -41,31 +41,36 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
         implements MessageReceiver {
 
     private Method findOperation(AxisOperation op, Class implClass) {
-        String methodName = op.getName().getLocalPart();
-        Method[] methods = implClass.getMethods();
+        Method method = (Method)(op.getParameterValue("myMethod"));
+        if (method != null) return method;
 
-        for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(methodName) &&
-                    methods[i].getParameterTypes().length == 1 &&
-                    OMElement.class.getName().equals(
-                            methods[i].getParameterTypes()[0].getName()) &&
-                    "void".equals(methods[i].getReturnType().getName())) {
-                return methods[i];
+        String methodName = op.getName().getLocalPart();
+        try {
+            // Looking for a method of the form "void method(OMElement)"
+            method = implClass.getMethod(methodName, new Class [] { OMElement.class });
+            if (method.getReturnType().equals(void.class)) {
+                try {
+                    op.addParameter("myMethod", method);
+                } catch (AxisFault axisFault) {
+                    // Do nothing here
+                }
+                return method;
             }
+        } catch (NoSuchMethodException e) {
+            // Fall through
         }
 
         return null;
     }
 
     /**
-     * Invokes the bussiness logic invocation on the service implementation class
+     * Invokes the business logic invocation on the service implementation class
      *
      * @param msgContext the incoming message context
      * @throws AxisFault on invalid method (wrong signature)
      */
     public void invokeBusinessLogic(MessageContext msgContext) throws AxisFault {
         try {
-
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
 
@@ -75,12 +80,12 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
             AxisOperation op = msgContext.getAxisOperation();
             Method method = findOperation(op, implClass);
 
-            if (method != null) {
-                method.invoke(
-                        obj, new Object[]{msgContext.getEnvelope().getBody().getFirstElement()});
-            } else {
+            if (method == null) {
                 throw new AxisFault(Messages.getMessage("methodDoesNotExistInOnly"));
             }
+
+            method.invoke(obj,
+                          new Object [] { msgContext.getEnvelope().getBody().getFirstElement() });
 
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
