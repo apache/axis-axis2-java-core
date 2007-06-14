@@ -117,7 +117,7 @@ public class AxisBindingOperation extends AxisDescription {
      * @return The generated binding element
      */
     public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                              String type,  Map nameSpaceMap) {
+                              String type,  Map nameSpaceMap, String serviceName) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingOpElement =
@@ -178,7 +178,7 @@ public class AxisBindingOperation extends AxisDescription {
         property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_LOCATION);
         if (property != null) {
             bindingOpElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.ATTRIBUTE_LOCATION, whttp, property));
+                    WSDL2Constants.ATTRIBUTE_LOCATION, whttp, serviceName + "/" + property));
         }
         property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
         if (property != null) {

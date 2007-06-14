@@ -117,7 +117,7 @@ public class AxisBinding extends AxisDescription {
      * @return The generated binding element
      */
 public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                          String interfaceName,  Map nameSpaceMap, String addressingFlag) {
+                          String interfaceName,  Map nameSpaceMap, String addressingFlag, String serviceName) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingElement;
@@ -197,7 +197,7 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         Iterator iterator = this.getChildren();
         while (iterator.hasNext()) {
             AxisBindingOperation axisBindingOperation = (AxisBindingOperation) iterator.next();
-            bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap));
+            bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap, serviceName));
         }
         WSDLSerializationUtil.addWSDLDocumentationElement(this, bindingElement, omFactory, wsdl);
         return bindingElement;
