@@ -261,6 +261,10 @@ public class TextImplEx extends NodeImplEx implements Text {
         return textNode.getData();
     }
 
+    public String getNodeValue() {
+        return textNode.getData();
+    }
+
     /**
      * If this is a Text node then this method will set its value, otherwise it sets the value of
      * the immediate (Text) child of this node. The value of the immediate child of this node can be
@@ -272,6 +276,10 @@ public class TextImplEx extends NodeImplEx implements Text {
      *                               child node or has a child node that is not a Text node
      */
     public void setValue(String value) {
+        textNode.setData(value);
+    }
+
+    public void setNodeValue(String value) {
         textNode.setData(value);
     }
 
