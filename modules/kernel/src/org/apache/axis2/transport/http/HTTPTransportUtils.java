@@ -224,9 +224,7 @@ public class HTTPTransportUtils {
                             msgContext,
                             handleGZip(msgContext, in), 
                             contentType));
-
-            AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
-            return engine.receive(msgContext);
+            return AxisEngine.receive(msgContext);
         } catch (SOAPProcessingException e) {
             throw AxisFault.makeFault(e);
         } catch (AxisFault e) {

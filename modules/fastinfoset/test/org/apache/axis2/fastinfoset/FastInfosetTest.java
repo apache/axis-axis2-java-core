@@ -69,7 +69,7 @@ public class FastInfosetTest extends TestCase {
 		serverCount++;
 		
 		service = AxisService.createService("org.apache.axis2.fastinfoset.SimpleAddService", 
-				server.getConfigurationContext().getAxisConfiguration(), RPCMessageReceiver.class);
+				server.getConfigurationContext().getAxisConfiguration());
 
 		server.getConfigurationContext().getAxisConfiguration().addService(
                 service);

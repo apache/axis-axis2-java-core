@@ -18,6 +18,7 @@ package org.apache.axis2.util;
 
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.async.AsyncResult;
@@ -62,23 +63,23 @@ public class CallbackReceiver implements MessageReceiver {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
         
-        try {
             // check weather the result is a fault.
+        try {
             SOAPEnvelope envelope = result.getResponseEnvelope();
-            SOAPFault fault = envelope.getBody().getFault();
-            OperationContext opContext =messageCtx.getOperationContext();
-            if(opContext!=null&&!opContext.isComplete()){
+            OperationContext opContext = messageCtx.getOperationContext();
+            if (opContext != null && !opContext.isComplete()) {
                 opContext.addMessageContext(messageCtx);
             }
-            if (fault == null) {
-                // if there is not fault call the onComplete method
-                callback.onComplete(result);
-            } else {
-                // else call the on error method with the fault
-                AxisFault axisFault = Utils.getInboundFaultFromMessageContext(messageCtx);
+            if (envelope.getBody().hasFault()) {
+                AxisFault axisFault =
+                        Utils.getInboundFaultFromMessageContext(messageCtx);
                 callback.onError(axisFault);
+            } else {
+                callback.onComplete(result);
             }
-        } finally {
+        } catch (Exception e) {
+            callback.onError(e);
+        }  finally {
             callback.setComplete(true);
         }
     }

@@ -26,7 +26,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
@@ -57,36 +56,18 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             super(axisOp, sc, options);
         }
 
-        protected MessageContext send(MessageContext msgctx) throws AxisFault {
-            AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
-            // create the responseMessageContext
-            MessageContext responseMessageContext =
-                    msgctx.getConfigurationContext().createMessageContext();
-
-            // This is a hack - Needs to change
-            responseMessageContext.setOptions(options);
+        protected void timeOut() throws AxisFault {
+           //Nothing to worry
+        }
 
 
-            responseMessageContext.setServerSide(false);
-            responseMessageContext.setMessageID(msgctx.getMessageID());
-            addMessageContext(responseMessageContext);
-            responseMessageContext.setServiceContext(msgctx.getServiceContext());
-            responseMessageContext.setAxisMessage(
-                    msgctx.getAxisOperation().getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
-
-            //sending the message
-            engine.send(msgctx);
-            responseMessageContext.setDoingREST(msgctx.isDoingREST());
-
-            responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
-                    .getProperty(MessageContext.TRANSPORT_IN));
-            responseMessageContext.setTransportIn(msgctx.getTransportIn());
-            responseMessageContext.setTransportOut(msgctx.getTransportOut());
-            responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-                                               msgctx.getProperty(
-                                                       MessageContext.TRANSPORT_HEADERS));
-
+        /**
+         * If there is a fault then need to handle that
+         * @param responseMessageContext responseMessageContext
+         * @throws AxisFault
+         */
+        protected void handleResponse(MessageContext responseMessageContext) throws AxisFault {
             SOAPEnvelope envelope = responseMessageContext.getEnvelope();
             if (envelope == null) {
                 // If request is REST we assume the responseMessageContext is REST, so
@@ -107,7 +88,6 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
                 }
             }
-            return null;
         }
     }
 }

@@ -92,7 +92,6 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                             "' in class " + ImplClass.getName());
                 }
             }
-
             Object resObject = null;
             if (inAxisMessage != null) {
                 if (inAxisMessage.getElementQName() == null) {
@@ -160,7 +159,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
             throw new AxisFault(msg, e);
         } catch(RuntimeException e) {
-            throw new AxisFault(e.getMessage(), e);
+            throw AxisFault.makeFault(e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();

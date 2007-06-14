@@ -247,17 +247,28 @@ public abstract class OperationClient {
         }
     }
 
-    protected void prepareMessageContext(ConfigurationContext cc, MessageContext mc)
+    /**
+     * prepareMessageContext gets a fresh new MessageContext ready to be sent.
+     * It sets up the necessary properties, transport information, etc.
+     *
+     * @param configurationContext the active ConfigurationContext
+     * @param mc the MessageContext to be configured
+     * @throws AxisFault if there is a problem
+     */
+    protected void prepareMessageContext(ConfigurationContext configurationContext,
+                                         MessageContext mc)
             throws AxisFault {
         // set options on the message context
         if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
             mc.setSoapAction(options.getAction());
         }
-        mc.setOptions(options);
+
+        mc.setOptions(new Options(options));
         mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         // do Target Resolution
-        TargetResolver targetResolver = cc.getAxisConfiguration().getTargetResolverChain();
+        TargetResolver targetResolver =
+                configurationContext.getAxisConfiguration().getTargetResolverChain();
         if (targetResolver != null) {
             targetResolver.resolveTarget(mc);
         }
@@ -267,7 +278,7 @@ public abstract class OperationClient {
         if (senderTransport == null) {
             EndpointReference toEPR = (options.getTo() != null) ? options
                     .getTo() : mc.getTo();
-            senderTransport = ClientUtils.inferOutTransport(cc
+            senderTransport = ClientUtils.inferOutTransport(configurationContext
                     .getAxisConfiguration(), toEPR, mc);
         }
         mc.setTransportOut(senderTransport);

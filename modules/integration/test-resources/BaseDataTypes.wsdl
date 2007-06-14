@@ -1038,11 +1038,10 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="BaseDataTypesHttpBinding"
-                  type="axis2:BaseDataTypesPortType">
+   <wsdl:binding name="BaseDataTypesHttpBinding" type="axis2:BaseDataTypesPortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="retUInt">
-            <http:operation location="retUInt"/>
+            <http:operation location="BaseDataTypes/retUInt"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retUInt"/>
             </wsdl:input>
@@ -1051,7 +1050,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retSingle">
-            <http:operation location="retSingle"/>
+            <http:operation location="BaseDataTypes/retSingle"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retSingle"/>
             </wsdl:input>
@@ -1060,7 +1059,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retTimeSpan">
-            <http:operation location="retTimeSpan"/>
+            <http:operation location="BaseDataTypes/retTimeSpan"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retTimeSpan"/>
             </wsdl:input>
@@ -1069,7 +1068,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDateTime">
-            <http:operation location="retDateTime"/>
+            <http:operation location="BaseDataTypes/retDateTime"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retDateTime"/>
             </wsdl:input>
@@ -1078,7 +1077,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retGuid">
-            <http:operation location="retGuid"/>
+            <http:operation location="BaseDataTypes/retGuid"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retGuid"/>
             </wsdl:input>
@@ -1087,7 +1086,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retByteArray">
-            <http:operation location="retByteArray"/>
+            <http:operation location="BaseDataTypes/retByteArray"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retByteArray"/>
             </wsdl:input>
@@ -1096,7 +1095,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retByte">
-            <http:operation location="retByte"/>
+            <http:operation location="BaseDataTypes/retByte"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retByte"/>
             </wsdl:input>
@@ -1105,7 +1104,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retSByte">
-            <http:operation location="retSByte"/>
+            <http:operation location="BaseDataTypes/retSByte"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retSByte"/>
             </wsdl:input>
@@ -1114,7 +1113,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retShort">
-            <http:operation location="retShort"/>
+            <http:operation location="BaseDataTypes/retShort"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retShort"/>
             </wsdl:input>
@@ -1123,7 +1122,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUri">
-            <http:operation location="retUri"/>
+            <http:operation location="BaseDataTypes/retUri"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retUri"/>
             </wsdl:input>
@@ -1132,7 +1131,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retQName">
-            <http:operation location="retQName"/>
+            <http:operation location="BaseDataTypes/retQName"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retQName"/>
             </wsdl:input>
@@ -1141,7 +1140,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
-            <http:operation location="retFloat"/>
+            <http:operation location="BaseDataTypes/retFloat"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retFloat"/>
             </wsdl:input>
@@ -1150,7 +1149,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retObject">
-            <http:operation location="retObject"/>
+            <http:operation location="BaseDataTypes/retObject"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retObject"/>
             </wsdl:input>
@@ -1159,7 +1158,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retBool">
-            <http:operation location="retBool"/>
+            <http:operation location="BaseDataTypes/retBool"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retBool"/>
             </wsdl:input>
@@ -1168,7 +1167,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDouble">
-            <http:operation location="retDouble"/>
+            <http:operation location="BaseDataTypes/retDouble"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retDouble"/>
             </wsdl:input>
@@ -1177,7 +1176,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retDecimal">
-            <http:operation location="retDecimal"/>
+            <http:operation location="BaseDataTypes/retDecimal"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retDecimal"/>
             </wsdl:input>
@@ -1186,7 +1185,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retLong">
-            <http:operation location="retLong"/>
+            <http:operation location="BaseDataTypes/retLong"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retLong"/>
             </wsdl:input>
@@ -1195,7 +1194,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retInt">
-            <http:operation location="retInt"/>
+            <http:operation location="BaseDataTypes/retInt"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retInt"/>
             </wsdl:input>
@@ -1204,7 +1203,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retChar">
-            <http:operation location="retChar"/>
+            <http:operation location="BaseDataTypes/retChar"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retChar"/>
             </wsdl:input>
@@ -1213,7 +1212,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retString">
-            <http:operation location="retString"/>
+            <http:operation location="BaseDataTypes/retString"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retString"/>
             </wsdl:input>
@@ -1222,7 +1221,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUShort">
-            <http:operation location="retUShort"/>
+            <http:operation location="BaseDataTypes/retUShort"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retUShort"/>
             </wsdl:input>
@@ -1231,7 +1230,7 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retULong">
-            <http:operation location="retULong"/>
+            <http:operation location="BaseDataTypes/retULong"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="retULong"/>
             </wsdl:input>

@@ -70,7 +70,8 @@ public abstract class Callback {
      *
      * @param complete
      */
-    public synchronized void setComplete(boolean complete) {
+    public final synchronized void setComplete(boolean complete) {
         this.complete = complete;
+        notify();
     }
 }
