@@ -69,6 +69,7 @@
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
+                                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>
@@ -84,6 +85,7 @@
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
+                                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>
