@@ -40,7 +40,18 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * This contains all the configuration information for Axis2.
+ * <p>Axis2 states are held in two information models, called description hierarchy 
+ * and context hierarchy. Description hierarchy hold deployment configuration 
+ * and it's values does not change unless deployment configuration change occurs 
+ * where Context hierarchy hold run time information. Both hierarchies consists 
+ * four levels, Global, Service Group, Operation and Message. Please look at 
+ * "Information Model" section  of "Axis2 Architecture Guide" for more information.</p>
+ * 
+ * <p>Configuration Context hold Global level run-time information. This allows
+ * same configurations to be used by two Axis2 instances and most Axis2 wide 
+ * configurations can changed by setting name value pairs of the configurationContext. 
+ * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager.</p> 
+
  */
 public class ConfigurationContext extends AbstractContext {
 
