@@ -67,7 +67,7 @@ public class IntegrationTest extends TestCase {
                 port +
                 "/axis2/services/Echo";
     }
-
+    
     public static Test suite() {
         return new TestSetup(new TestSuite(IntegrationTest.class)) {
             public void setUp() throws Exception {
@@ -96,6 +96,37 @@ public class IntegrationTest extends TestCase {
     }
 
 
+    public void testSendReceiveMessageWithEmptyNSPrefix() {
+        try {
+            MessageFactory mf = MessageFactory.newInstance();
+            SOAPMessage request = mf.createMessage();
+
+            SOAPPart sPart = request.getSOAPPart();
+            SOAPEnvelope env = sPart.getEnvelope();
+            SOAPBody body = env.getBody();
+
+            //Namespace prefix is empty
+            body.addBodyElement(new QName("http://fakeNamespace2.org","echo"))
+            							.addTextNode("This is some text");
+
+            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+            SOAPMessage response = sCon.call(request, getAddress());
+            assertFalse(response.getAttachments().hasNext());
+            assertEquals(0, response.countAttachments());
+
+            String requestStr = printSOAPMessage(request);
+            String responseStr = printSOAPMessage(response);
+            assertTrue(responseStr.indexOf("echo") > -1);
+            sCon.close();
+        } catch (SOAPException e) {
+            e.printStackTrace();
+            fail("Unexpected Exception while running test: " + e);
+        } catch (IOException e) {
+            fail("Unexpected Exception while running test: " + e);
+        }
+    }
+    
+    
     public void testSendReceiveSimpleSOAPMessage() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
