@@ -71,7 +71,23 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * MessageContext holds service specific state information.
+ * <p>Axis2 states are held in two information models, called description hierarchy
+ *  and context hierarchy. Description hierarchy hold deployment configuration 
+ *  and it's values does not change unless deployment configuration change 
+ *  occurs where Context hierarchy hold run time information. Both hierarchies 
+ *  consists four levels, Global, Service Group, Operation and Message. Please 
+ *  look at "Information Model" section  of "Axis2 Architecture Guide" for more 
+ *  information.</p>
+ *  <p>MessageContext hold run time information about one Message invocation. It 
+ *  hold reference to OperationContext, ServiceGroupContext, and Configuration 
+ *  Context tied with current message. For an example if you need accesses to other 
+ *  messages of the current invocation, you can get to them via OperationContext. 
+ *  Addition to class attributes define in Message context, message context stores 
+ *  the information as name value pairs. Those name value pairs,and class attributes 
+ *  tweak the execution behavior of message context and some of them can be find in 
+ *  org.apache.axis2.Constants class. (TODO we should provide list of supported 
+ *  options). You may set them at any level of context hierarchy and they will 
+ *  affect invocations related to their child elements. </p>
  */
 public class MessageContext extends AbstractContext implements Externalizable {
 
