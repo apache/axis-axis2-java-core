@@ -47,6 +47,12 @@
     <parameter name="password">axis2</parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
+    <!--ServicesDirectory only works on the following cases-->
+    <!---File based configurator and in that case the value should be a file URL (http:// not allowed)-->
+    <!---When creating URL Based configurator with URL “file://”  -->
+    <!--- War based configurator with expanded case , -->
+
+    <!--All the other scenarios it will be ignored.-->
     <!--<parameter name="ServicesDirectory">service</parameter>-->
     <!--To override repository/modules you need to uncomment following parameter and value SHOULD be absolute file path-->
     <!--<parameter name="ModulesDirectory">modules</parameter>-->
