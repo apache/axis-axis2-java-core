@@ -2451,7 +2451,7 @@
                     select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                     <xsl:variable name="javaName" select="@javaname"/>
                     <xsl:variable name="namespace" select="@nsuri"/>
-                    <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
+                    <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$javaName"/></xsl:variable>
 
                     <xsl:if test="$propertyName != 'extraAttributes'">
                     // handle attribute "<xsl:value-of select="$propertyName"/>"
