@@ -1,8 +1,6 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -25,19 +23,27 @@ import java.util.*;
 */
 
 public class TypeTable {
-    private HashMap simpleTypetoxsd;
-    private HashMap complexTypeMap;
-
-    private static final Log log = LogFactory.getLog(TypeTable.class);
+    
+    private static HashMap  simpleTypetoxsd;
     private static final QName ANY_TYPE = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs");
 
+    private HashMap complexTypeMap;
+
     public TypeTable() {
-        simpleTypetoxsd = new HashMap();
+        //complex type table is resetted every time this is
+        //instantiated
         complexTypeMap = new HashMap();
-        populateSimpleTypes();
     }
 
-    private void populateSimpleTypes() {
+    /* statically populate the simple type map  - this is not likely to
+    * change and we need not populate it over and over */
+    static{
+          populateSimpleTypes();
+    }
+
+    /* populate the simpletype hashmap */
+    private static void populateSimpleTypes() {
+        simpleTypetoxsd = new HashMap();
         //todo pls use the types from org.apache.ws.commons.schema.constants.Constants
         simpleTypetoxsd.put("int",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "int", "xs"));
@@ -120,6 +126,11 @@ public class TypeTable {
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));
     }
 
+    /**
+     * Return the schema type QName given the type class name
+     * @param typeName  the name of the type
+     * @return   the name of the simple type or null if it is not a simple type
+     */
     public QName getSimpleSchemaTypeName(String typeName) {
         QName qName = (QName) simpleTypetoxsd.get(typeName);
         if(qName == null){
@@ -130,20 +141,25 @@ public class TypeTable {
         return qName;
     }
 
+    /**
+     * Return whether the given type is a simple type or not
+     * @param typeName the name of the type
+     * @return  true if the type is a simple type
+     */
     public boolean isSimpleType(String typeName) {
-        Iterator keys = simpleTypetoxsd.keySet().iterator();
-        while (keys.hasNext()) {
-            String s = (String) keys.next();
-            if (s.equals(typeName)) {
-                return true;
-            }
-        }
-        if(typeName.startsWith("java.lang")||typeName.startsWith("javax.")){
+        
+        if (simpleTypetoxsd.keySet().contains(typeName)){
+            return true;
+        }else if(typeName.startsWith("java.lang")||typeName.startsWith("javax.")){
             return true;
         }
         return false;
     }
 
+    /**
+     * Return the complex type map
+     * @return  the map with complex types
+     */
     public Map getComplexSchemaMap() {
         return complexTypeMap;
     }
@@ -156,6 +172,12 @@ public class TypeTable {
         return (QName) complexTypeMap.get(name);
     }
 
+    /**
+     * Get the qname for a type
+     * first try the simple types if not try the complex types
+     * @param typeName  name of the type
+     * @return  the Qname for this type
+     */
     public QName getQNamefortheType(String typeName) {
         QName type = getSimpleSchemaTypeName(typeName);
         if (type == null) {
