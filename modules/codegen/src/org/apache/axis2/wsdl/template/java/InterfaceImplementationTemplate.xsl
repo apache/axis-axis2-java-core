@@ -151,6 +151,22 @@
     /**
      * Default Constructor
      */
+    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext) throws org.apache.axis2.AxisFault {
+        <xsl:for-each select="endpoint">
+            <xsl:choose>
+                <xsl:when test="position()=1">
+                    this(configurationContext,"<xsl:value-of select="."/>" );
+                </xsl:when>
+                <xsl:otherwise>
+                    //this(configurationContext,"<xsl:value-of select="."/>" );
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    }
+
+    /**
+     * Default Constructor
+     */
     public <xsl:value-of select="@name"/>() throws org.apache.axis2.AxisFault {
         <xsl:for-each select="endpoint">
             <xsl:choose>
