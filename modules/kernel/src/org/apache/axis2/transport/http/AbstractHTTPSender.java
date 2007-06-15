@@ -21,15 +21,13 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthPolicy;
@@ -44,7 +42,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -90,108 +87,6 @@ public abstract class AbstractHTTPSender {
                                 + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
-    }
-
-    /**
-     * Helper method for Proxy and NTLM authentication
-     *
-     * @param client HttpClient in which to place proxy config
-     * @param proxySetting TransportOutDescription
-     * @param config HostConfiguraiton in which to place proxy config
-     * @param msgCtx the active MessageContext
-     * @throws AxisFault in case of problems
-     */
-    protected void configProxyAuthentication(HttpClient client,
-                                             TransportOutDescription proxySetting,
-                                             HostConfiguration config,
-                                             MessageContext msgCtx)
-            throws AxisFault {
-        Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
-        String usrName;
-        String domain;
-        String passwd;
-        Credentials proxyCred = null;
-        String proxyHostName = null;
-        int proxyPort = -1;
-
-        if (proxyParam != null) {
-            String value = (String) proxyParam.getValue();
-            String split[] = value.split(":");
-
-            // values being hard coded due best practise
-            usrName = split[0];
-            domain = split[1];
-            passwd = split[2];
-
-            OMElement proxyParamElement = proxyParam.getParameterElement();
-            Iterator ite = proxyParamElement.getAllAttributes();
-
-            while (ite.hasNext()) {
-                OMAttribute att = (OMAttribute) ite.next();
-
-                if (att.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)) {
-                    proxyHostName = att.getAttributeValue();
-                }
-
-                if (att.getLocalName().equalsIgnoreCase(PROXY_PORT)) {
-                    proxyPort = Integer.parseInt(att.getAttributeValue());
-                }
-            }
-
-            if (domain.length() == 0 || domain.equals(ANONYMOUS)) {
-                if (usrName.equals(ANONYMOUS) && passwd.equals(ANONYMOUS)) {
-                    proxyCred = new UsernamePasswordCredentials("", "");
-                } else {
-                    proxyCred = new UsernamePasswordCredentials(usrName,
-                            passwd);    // proxy
-                }
-            } else {
-                proxyCred = new NTCredentials(usrName, passwd, proxyHostName,
-                        domain);    // NTLM authentication with additionals prams
-            }
-        }
-
-        HttpTransportProperties.ProxyProperties proxyProperties =
-                (HttpTransportProperties.ProxyProperties) msgCtx
-                        .getProperty(HTTPConstants.PROXY);
-
-        if (proxyProperties != null) {
-            if (proxyProperties.getProxyPort() != -1) {
-                proxyPort = proxyProperties.getProxyPort();
-            }
-
-            proxyHostName = proxyProperties.getProxyHostName();
-            if (proxyHostName == null
-                    || proxyHostName.length() == 0) {
-                throw new AxisFault("Proxy Name is not valid");
-            }
-
-            if (proxyProperties.getUserName().equals(ANONYMOUS)
-                    || proxyProperties.getPassWord().equals(ANONYMOUS)) {
-                proxyCred = new UsernamePasswordCredentials("", "");
-            }
-            if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                    !proxyProperties.getPassWord().equals(ANONYMOUS)) {
-                proxyCred = new UsernamePasswordCredentials(
-                        proxyProperties.getUserName().trim(),
-                        proxyProperties
-                                .getPassWord().trim()); // Basic Authentication
-            }
-            if (!proxyProperties.getDomain().equals(ANONYMOUS)) {
-                if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                        !proxyProperties.getPassWord().equals(ANONYMOUS) &&
-                        !proxyProperties.getDomain().equals(ANONYMOUS)) {
-                    proxyCred = new NTCredentials(
-                            proxyProperties.getUserName().trim(),
-                            proxyProperties.getPassWord().trim(), proxyHostName,
-                            proxyProperties
-                                    .getDomain().trim()); // NTLM Authentication
-                }
-            }
-        }
-
-        client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
-        config.setProxy(proxyHostName, proxyPort);
     }
 
     /**
@@ -314,10 +209,7 @@ public abstract class AbstractHTTPSender {
      */
     protected HostConfiguration getHostConfiguration(HttpClient client,
                                                      MessageContext msgCtx,
-                                                     URL targetURL)
-            throws AxisFault {
-        boolean isProxyListed = isProxyListed(msgCtx);    // list the proxy
-
+                                                     URL targetURL)throws AxisFault {
 
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
@@ -340,7 +232,7 @@ public abstract class AbstractHTTPSender {
                 (Protocol)msgCtx.getOptions().getProperty(HTTPConstants.CUSTOM_PROTOCOL_HANDLER);
 
         // setting the real host configuration
-        // I assume the 90% case, or even 99% case will be no protocol handler case. 
+        // I assume the 90% case, or even 99% case will be no protocol handler case.
         if (protocolHandler == null) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
@@ -348,12 +240,15 @@ public abstract class AbstractHTTPSender {
         }
 
         if (isAuthenticationEnabled) {
-            // Basic, Digest, NTLM and custom authentications. 
+            // Basic, Digest, NTLM and custom authentications.
             this.setAuthenticationInfo(client, msgCtx, config);
         }
         // proxy configuration
-        if (isProxyListed) {
-            this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
+
+        if (ProxyConfiguration.isProxyEnabled(msgCtx,targetURL)) {
+            log.debug("ProxyConfiguration");
+            ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+            proxyConfiguration.configure(msgCtx,client,config);
         }
 
         return config;
@@ -536,48 +431,6 @@ public abstract class AbstractHTTPSender {
                 httpClient.getParams().setSoTimeout((int) timeout);
             }
         }
-    }
-
-    private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
-        boolean returnValue = false;
-        Parameter par = null;
-
-        proxyOutSetting = msgCtx.getConfigurationContext()
-                .getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
-
-        if (proxyOutSetting != null) {
-            par = proxyOutSetting.getParameter(HTTPConstants.PROXY);
-        }
-
-        OMElement hostElement = null;
-
-        if (par != null) {
-            hostElement = par.getParameterElement();
-        }
-
-        if (hostElement != null) {
-            Iterator ite = hostElement.getAllAttributes();
-
-            while (ite.hasNext()) {
-                OMAttribute attribute = (OMAttribute) ite.next();
-
-                if (attribute.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)) {
-                    returnValue = true;
-                }
-            }
-        }
-
-        HttpTransportProperties.ProxyProperties proxyProperties;
-
-        if ((proxyProperties =
-                (HttpTransportProperties.ProxyProperties) msgCtx.getProperty(
-                        HTTPConstants.PROXY)) != null) {
-            if (proxyProperties.getProxyHostName() != null) {
-                returnValue = true;
-            }
-        }
-
-        return returnValue;
     }
 
     public void setFormat(OMOutputFormat format) {
