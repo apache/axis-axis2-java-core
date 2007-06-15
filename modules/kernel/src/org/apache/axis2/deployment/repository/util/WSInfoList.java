@@ -105,7 +105,7 @@ public class WSInfoList implements DeploymentConstants {
             if (!currentJars.contains(itemName)) {
                 tempvector.add(fileitem);
                 WSInfo wsInfo = new WSInfo(fileitem.getFileName(), fileitem.getLastModifiedDate());
-                deploymentEngine.addWSToUndeploy(wsInfo);    // this is to be undeployed
+                deploymentEngine.addWSToUndeploy(wsInfo);  
             }
         }
         for (int i = 0; i < tempvector.size(); i++) {

@@ -29,10 +29,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Enumeration;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
@@ -250,7 +248,6 @@ public class RepositoryListener implements DeploymentConstants {
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        // TODO: Should this allow expanded directories like services/modules do?
                         if (!file.isDirectory() && extension.equals(
                                 DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
