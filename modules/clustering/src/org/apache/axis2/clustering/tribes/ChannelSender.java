@@ -92,10 +92,10 @@ public class ChannelSender implements MessageSender {
         try {
             if (member.isReady()) {
                 channel.send(new Member[]{member}, cmd, 0);
-                log.debug("Sent " + cmd + " to " + member.getName());
+                log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }
         } catch (ChannelException e) {
-            String message = "Could not send message to " + member.getName() +
+            String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();
             log.warn(message);
         }

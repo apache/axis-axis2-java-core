@@ -16,6 +16,7 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,21 +26,12 @@ public class TribesUtil {
     private static Log log = LogFactory.getLog(TribesUtil.class);
 
     public static void printMembers(Member[] members) {
-
-
         if (members != null) {
             int length = members.length;
             if (length > 0) {
                 log.info("Members of current cluster");
                 for (int i = 0; i < length; i++) {
-                    byte[] hostBts = members[i].getHost();
-                    String host = null;
-                    if (hostBts != null) {
-                        for (int j = 0; j < hostBts.length; j++) {
-                            host = host == null ? ("" + hostBts[j]) : (host + "." + hostBts[j]);
-                        }
-                    }
-                    log.info("Member" + (i + 1) + " " + members[i].getName());
+                    log.info("Member" + (i + 1) + " " + getHost(members[i]));
                 }
             } else {
                 log.info("No members in current cluster");
@@ -47,4 +39,19 @@ public class TribesUtil {
         }
     }
 
+    public static String getHost(Member member) {
+        byte[] hostBytes = member.getHost();
+        StringBuffer host = new StringBuffer();
+        if (hostBytes != null) {
+            for (int i = 0; i < hostBytes.length; i++) {
+                int hostByte = hostBytes[i] >= 0 ? (int) hostBytes[i] : (int) hostBytes[i] + 256;
+                host.append(hostByte).append(".");
+            }
+        }
+        return host.append(":").append(member.getPort()).toString();
+    }
+
+    public static String getLocalHost(Channel channel) {
+        return getHost(channel.getLocalMember(true));
+    }
 }

@@ -131,7 +131,7 @@ public class TribesClusterManager implements ClusterManager {
                 channelListener.setContextManager(contextManager);
 
                 Member[] members = channel.getMembers();
-                log.info("Local Tribes Member " + channel.getLocalMember(true).getName());
+                log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
                 TribesUtil.printMembers(members);
 
                 // If there is at least one member in the Tribe, get the current state from a member
@@ -151,9 +151,9 @@ public class TribesClusterManager implements ClusterManager {
                         members = channel.getMembers();
                         int memberIndex = random.nextInt(members.length);
                         Member member = members[memberIndex];
-                        if (!sentMembersList.contains(member.getName())) {
+                        if (!sentMembersList.contains(TribesUtil.getHost(member))) {
                             sender.sendToMember(new GetStateCommand(), member);
-                            sentMembersList.add(member.getName());
+                            sentMembersList.add(TribesUtil.getHost(member));
                             log.debug("WAITING FOR STATE UPDATE...");
                             Thread.sleep(1000);
                         }

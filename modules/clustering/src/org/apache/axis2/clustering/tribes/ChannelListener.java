@@ -94,7 +94,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             && !(msg instanceof GetStateResponseCommand)) {
             return;
         }
-        log.debug("RECEIVED MESSAGE " + msg + " from " + sender.getName());
+        log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
 
         // Need to process ACKs as soon as they are received since otherwise,
         // unnecessary retransmissions will take place

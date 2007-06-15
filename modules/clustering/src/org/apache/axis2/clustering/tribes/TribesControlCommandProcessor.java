@@ -61,7 +61,7 @@ public class TribesControlCommandProcessor {
             channelSender.sendToMember(getStateRespCmd, sender);
         } else if (command instanceof AckCommand) {
             AckCommand cmd = (AckCommand) command;
-            cmd.setMemberId(sender.getName());
+            cmd.setMemberId(TribesUtil.getHost(sender));
             cmd.execute(configurationContext);
         } else {
             command.execute(configurationContext);
