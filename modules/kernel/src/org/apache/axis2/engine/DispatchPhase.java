@@ -13,6 +13,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
@@ -105,17 +106,22 @@ public class DispatchPhase extends Phase {
             msgContext.setAxisService(msgContext.getServiceContext().getAxisService());
         }
 
-        //TODO: The same thing should probably happen for a IN-OUT if addressing is enabled and the replyTo/faultTo are not anonymous 
+        
+        //We do not send the status even though it is In-Only to allow Sandesha to send a ack
+        //https://issues.apache.org/jira/browse/AXIS2-2191. At F2F 2007 summer june, we decided may be 
+        //providing a option might not give us that much. I will keep the code commented so we might want to do this later. 
+//        if (msgContext.getAxisOperation().getMessageExchangePattern()
+//                .equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
+//            Object requestResponseTransport =
+//                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+//            if (requestResponseTransport != null) {
+//                ((RequestResponseTransport) requestResponseTransport)
+//                        .acknowledgeMessage(msgContext);
+//            }
+//        }
+        
         if (msgContext.getAxisOperation().getMessageExchangePattern()
-                .equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
-            Object requestResponseTransport =
-                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-            if (requestResponseTransport != null) {
-                ((RequestResponseTransport) requestResponseTransport)
-                        .acknowledgeMessage(msgContext);
-            }
-        } else if (msgContext.getAxisOperation().getMessageExchangePattern()
-                .equals(WSDL20_2004_Constants.MEP_URI_IN_OUT))
+                .equals(WSDL2Constants.MEP_URI_IN_OUT))
         {   // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
             // then we don't need to keep the transport waiting.
             Object requestResponseTransport =
