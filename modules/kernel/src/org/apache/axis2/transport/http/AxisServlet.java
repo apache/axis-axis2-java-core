@@ -363,7 +363,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             throws AxisFault {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
-        AxisEngine engine = new AxisEngine(configContext);
         MessageContext faultContext =
                 MessageContextBuilder.createFaultMessageContext(msgContext, e);
         msgContext.setEnvelope(faultContext.getEnvelope());
