@@ -611,7 +611,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
                                                           wsdl);
                     addExtensionElement(fac, fault, FAULT_LOCAL_NAME, SOAP_USE, use,
-                                        ATTRIBUTE_NAME, faultyMessage.getName(), soap12);
+                                        ATTRIBUTE_NAME, faultyMessage.getName(), soap);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),
                                        null);
                     // TODO adding policies for fault messages
