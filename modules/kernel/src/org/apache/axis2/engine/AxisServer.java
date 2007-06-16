@@ -22,24 +22,36 @@ import org.apache.axis2.description.AxisService;
 *
 *
 */
+
 /**
  * This class provide a very convenient way of creating server and deploying services.
  * Once someone call start method it will fire up configuration context and start up the listeners.
  *  One can provide repository location and axis.xml as system properties.
  */
+
 public class AxisServer {
 
-    private ConfigurationContext configContext;
+    protected ConfigurationContext configContext;
+    protected ListenerManager listenerManager;
+    private boolean startOnDeploy;
+    private boolean started = false;
+
 
     /**
-     * Will create a configuration context from the avialable data and then it
-     * will start the listener manager
-     * @throws AxisFault if something went wrong
+     * If you do not want Axis2 to start the server automatically then pass the "false" else "true"
+     * @param startOnDeploy : boolean
      */
-    public void strat()throws AxisFault {
-        configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
-        ListenerManager listenerManager = new ListenerManager();
-        listenerManager.startSystem(configContext);
+    public AxisServer(boolean startOnDeploy){
+        this.startOnDeploy = startOnDeploy;
+        listenerManager = new ListenerManager();
+    }
+
+
+    /**
+     * Server will start automatically if you call deployService
+     */
+    public AxisServer() {
+        this(true);
     }
 
     /**
@@ -49,25 +61,69 @@ public class AxisServer {
      */
     public void deployService(String serviceClassName) throws AxisFault{
         if(configContext==null){
-            strat();
+            configContext = getConfigurationContext();
         }
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         AxisService service = AxisService.createService(serviceClassName,axisConfig);
         axisConfig.addService(service);
+        if(startOnDeploy){
+            start();
+        }
     }
 
+    /**
+     * Will create a configuration context from the avialable data and then it
+     * will start the listener manager
+     * @throws AxisFault if something went wrong
+     */
+    protected void start()throws AxisFault {
+        if(configContext==null){
+            configContext = getConfigurationContext();
+        }
+        if(!started){
+            listenerManager.startSystem(configContext);
+            started = true;
+        }
+    }
+
+    /**
+     * Stop the server, automatically terminates the listener manager as well.
+     * @throws AxisFault
+     */
     public void stop() throws AxisFault{
         if(configContext!=null){
             configContext.terminate();
         }
     }
 
+    /**
+     * Set the configuration context. Please call this before you call deployService or start method
+     *
+     * @param configContext ConfigurationContext
+     */
+    public void setConfigurationContext(ConfigurationContext configContext) {
+        this.configContext = configContext;
+    }
 
-    public ConfigurationContext getConfigContext() {
+    /**
+     * Creates a default configuration context if one is not set already via setConfigurationContext
+     *
+     * @return ConfigurationContext
+     * @throws AxisFault
+     */
+    public ConfigurationContext getConfigurationContext() throws AxisFault {
+        if(configContext == null){
+            configContext = createDefaultConfigurationContext();
+        }
         return configContext;
     }
 
-    public void setConfigContext(ConfigurationContext configContext) {
-        this.configContext = configContext;
+    /**
+     * Users extending this class can override this method to supply a custom ConfigurationContext
+     * @return ConfigurationContext
+     * @throws AxisFault
+     */
+    protected ConfigurationContext createDefaultConfigurationContext() throws AxisFault {
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
     }
 }
