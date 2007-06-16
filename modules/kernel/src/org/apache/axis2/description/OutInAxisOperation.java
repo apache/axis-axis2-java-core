@@ -189,6 +189,10 @@ class OutInAxisOperationClient extends OperationClient {
                 useAsync = useAsyncOption.booleanValue();
             }
         }
+        EndpointReference replyTo = mc.getReplyTo();
+        if(replyTo!=null&&!replyTo.hasAnonymousAddress()){
+            useAsync = true;
+        }
 
         if (useAsync || options.isUseSeparateListener()) {
             sendAsync(useAsync, mc);
@@ -248,17 +252,18 @@ class OutInAxisOperationClient extends OperationClient {
             useCustomListener = Boolean.TRUE;
         }
         if (useCustomListener == null || !useCustomListener.booleanValue()) {
+            if(mc.getReplyTo()==null){
+                EndpointReference replyToFromTransport =
+                        mc.getConfigurationContext().getListenerManager().
+                                getEPRforService(sc.getAxisService().getName(),
+                                        axisOp.getName().getLocalPart(), mc
+                                        .getTransportIn().getName());
 
-            EndpointReference replyToFromTransport =
-                    mc.getConfigurationContext().getListenerManager().
-                            getEPRforService(sc.getAxisService().getName(),
-                                    axisOp.getName().getLocalPart(), mc
-                                    .getTransportIn().getName());
-
-            if (mc.getReplyTo() == null) {
-                mc.setReplyTo(replyToFromTransport);
-            } else {
-                mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                if (mc.getReplyTo() == null) {
+                    mc.setReplyTo(replyToFromTransport);
+                } else {
+                    mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                }
             }
         }
 

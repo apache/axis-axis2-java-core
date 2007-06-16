@@ -164,7 +164,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();
             log.error(msg, e);
-            throw new AxisFault(msg, e);
+            throw AxisFault.makeFault(e);
         }
     }
 }
