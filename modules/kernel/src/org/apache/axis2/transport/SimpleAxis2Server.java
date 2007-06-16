@@ -19,12 +19,10 @@ package org.apache.axis2.transport;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.engine.AxisServer;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.OptionsValidator;
-import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,7 +30,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleAxis2Server extends AxisServer {
+public class SimpleAxis2Server {
 
     private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
 
@@ -40,14 +38,6 @@ public class SimpleAxis2Server extends AxisServer {
 
     public static int DEFAULT_PORT = 8080;
 
-    public SimpleAxis2Server (
-            String repoLocation,
-            String confLocation) throws Exception {
-        super(false);
-        configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(repoLocation,
-                        confLocation);
-    }
 
     /**
      * @param args
@@ -92,8 +82,12 @@ public class SimpleAxis2Server extends AxisServer {
         }
 
         try {
-            SimpleAxis2Server server = new SimpleAxis2Server(repoLocation, confLocation);
-            server.start();
+            ConfigurationContext configctx = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(repoLocation,
+                                                              confLocation);
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configctx);
+            listenerManager.start();
             log.info("[SimpleAxisServer] Started");
         } catch (Throwable t) {
             log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);

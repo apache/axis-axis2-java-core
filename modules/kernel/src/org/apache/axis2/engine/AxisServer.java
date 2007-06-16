@@ -29,37 +29,17 @@ import org.apache.axis2.description.AxisService;
  */
 public class AxisServer {
 
-    protected ConfigurationContext configContext;
-    protected ListenerManager listenerManager;
-    private boolean startOnDeploy;
-    private boolean started = false;
-
-    /**
-     * @param startOnDeploy - Should the server be started automatically when the first service is deployed
-     * @throws Exception
-     */
-    public AxisServer(boolean startOnDeploy) throws Exception {
-        this.startOnDeploy = startOnDeploy;
-    }
-
-    /**
-     * Users extending this class can override this method to supply a custom ConfigurationContext
-     * @return
-     * @throws AxisFault
-     */
-    protected ConfigurationContext createDefaultConfigurationContext() throws AxisFault {
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
-    }
+    private ConfigurationContext configContext;
 
     /**
      * Will create a configuration context from the avialable data and then it
      * will start the listener manager
      * @throws AxisFault if something went wrong
      */
-    public void start()throws AxisFault {
-        listenerManager = new ListenerManager();
-        listenerManager.startSystem(getConfigurationContext());
-        started = true;
+    public void strat()throws AxisFault {
+        configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
+        ListenerManager listenerManager = new ListenerManager();
+        listenerManager.startSystem(configContext);
     }
 
     /**
@@ -68,43 +48,26 @@ public class AxisServer {
      * @throws AxisFault : If something went wrong
      */
     public void deployService(String serviceClassName) throws AxisFault{
-        AxisConfiguration axisConfig = getConfigurationContext().getAxisConfiguration();
+        if(configContext==null){
+            strat();
+        }
+        AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         AxisService service = AxisService.createService(serviceClassName,axisConfig);
         axisConfig.addService(service);
-        if(!started && startOnDeploy){
-            start();
-        }
     }
 
-    /**
-     * Stop the server, automatically terminates the listener manager as well.
-     * @throws AxisFault
-     */
     public void stop() throws AxisFault{
         if(configContext!=null){
             configContext.terminate();
         }
     }
 
-    /**
-     * Creates a default configuration context if one is not set already via setConfigurationContext
-     * 
-     * @return
-     * @throws AxisFault
-     */
-    public ConfigurationContext getConfigurationContext() throws AxisFault {
-        if(configContext == null){
-            configContext = createDefaultConfigurationContext();
-        }
+
+    public ConfigurationContext getConfigContext() {
         return configContext;
     }
 
-    /**
-     * Set the configuration context. Please call this before you call deployService or start method
-     * 
-     * @param configContext
-     */
-    public void setConfigurationContext(ConfigurationContext configContext) {
+    public void setConfigContext(ConfigurationContext configContext) {
         this.configContext = configContext;
     }
 }
