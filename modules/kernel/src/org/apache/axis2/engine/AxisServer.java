@@ -36,7 +36,7 @@ public class AxisServer {
      * will start the listener manager
      * @throws AxisFault if something went wrong
      */
-    public void strat()throws AxisFault {
+    public void start()throws AxisFault {
         configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
         ListenerManager listenerManager = new ListenerManager();
         listenerManager.startSystem(configContext);
@@ -49,7 +49,7 @@ public class AxisServer {
      */
     public void deployService(String serviceClassName) throws AxisFault{
         if(configContext==null){
-            strat();
+            start();
         }
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
         AxisService service = AxisService.createService(serviceClassName,axisConfig);
