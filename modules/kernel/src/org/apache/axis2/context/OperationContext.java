@@ -171,7 +171,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
     //----------------------------------------------------------------
 
     /**
-     * Simple constructor
+     * Simple constructor (needed for deserialization, shouldn't be used otherwise!)
      */
     public OperationContext() {
         super(null);

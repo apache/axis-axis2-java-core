@@ -305,12 +305,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
      * Update the list of modules that is required to be engaged globally.
      */
     protected void processModuleRefs(Iterator moduleRefs, AxisConfiguration config) {
-        List globalModules = config.getGlobalModules();
         while (moduleRefs.hasNext()) {
             OMElement moduleref = (OMElement) moduleRefs.next();
             OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
-            globalModules.add(refName);
+            axisConfig.addGlobalModuleRef(refName);
         }
     }
 

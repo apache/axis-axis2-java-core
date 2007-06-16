@@ -52,12 +52,8 @@ public class AxisConfiguration extends AxisDescription {
      */
     private HashMap dataLocators = new HashMap();
     private HashMap dataLocatorClassNames = new HashMap();
-    /**
-     * Field modules
-     */
-    // private final HashMap defaultModules = new HashMap();
-    //
-    // To store all the available modules (including version)
+
+    /** This is a Map of String name -> AxisModule for all available Modules. */
     private final HashMap allModules = new HashMap();
 
     // To store mapping between default version and module name
@@ -91,7 +87,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Field engagedModules
      */
-    private final List engagedModules;
+    private final ArrayList engagedModules;
 
     private Hashtable faultyModules;
 
@@ -295,8 +291,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
-            String moduleName = (String) enModule.next();
-            axisServiceGroup.engageModule(getModule(moduleName));
+            axisServiceGroup.engageModule((AxisModule)enModule.next());
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -430,11 +425,10 @@ public class AxisConfiguration extends AxisDescription {
         boolean isEngagable;
         if (module != null) {
             String moduleName = module.getName();
-            for (Iterator iterator = engagedModules.iterator(); iterator
-                    .hasNext();) {
-                String thisModule = (String) iterator.next();
+            for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
+                AxisModule thisModule = (AxisModule)iterator.next();
 
-                isEngagable = Utils.checkVersion(moduleName, thisModule);
+                isEngagable = Utils.checkVersion(moduleName, thisModule.getName());
                 if (!isEngagable) {
                     return;
                 }
@@ -448,7 +442,7 @@ public class AxisConfiguration extends AxisDescription {
                     .next();
             serviceGroup.engageModule(module);
         }
-        engagedModules.add(module.getName());
+        engagedModules.add(module);
     }
 
     /**
@@ -472,7 +466,7 @@ public class AxisConfiguration extends AxisDescription {
                         .next();
                 axisServiceGroup.removeFromEngageList(module.getName());
             }
-            engagedModules.remove(module.getName());
+            engagedModules.remove(module);
         }
     }
 
@@ -539,16 +533,29 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method getEngagedModules.
+     * getEngagedModules() returns a copy of the list of engaged modules
      *
-     * @return Collection
+     * @return Collection a collection, containing AxisModules
      */
     public Collection getEngagedModules() {
-        return engagedModules;
+        return (Collection)engagedModules.clone();
     }
 
-    public List getGlobalModules() {
-        return globalModuleList;
+    /**
+     * Add an AxisModule to the list of globally deployed modules.
+     *
+     * TODO: should this check for duplicate names?
+     *
+     * @param module name of AxisModule to add to list.
+     */
+    public void addGlobalModuleRef(String moduleName) {
+        globalModuleList.add(moduleName);
+    }
+
+    public void engageGlobalModules() throws AxisFault {
+        for (Iterator i = globalModuleList.iterator(); i.hasNext();) {
+            engageModule((String)i.next());
+        }
     }
 
     public Hashtable getFaultyModules() {
@@ -779,10 +786,12 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public boolean isEngaged(String moduleName) {
+        AxisModule module = (AxisModule)allModules.get(moduleName);
+        if (module == null) return false;
         boolean isEngaged = engagedModules.contains(moduleName);
-        AxisModule defaultModule = getDefaultModule(moduleName);
-        if (!isEngaged && defaultModule != null) {
-            isEngaged = engagedModules.contains(defaultModule.getName());
+        if (!isEngaged) {
+            AxisModule defaultModule = getDefaultModule(moduleName);
+            isEngaged = engagedModules.contains(defaultModule);
         }
         return isEngaged;
     }

@@ -235,7 +235,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
 
             if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
-                log.warn("We don't support methods overloading. Ignoring [" + jMethod.getQualifiedName() + "]");
+                log.warn("We don't support method overloading. Ignoring [" +
+                        jMethod.getQualifiedName() + "]");
                 continue;
             }
 
@@ -427,11 +428,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     eltOuter.getQName());
 
 
-            JClass tempClass = javaType;
             Set propertiesSet = new HashSet();
             Set propertiesNames = new HashSet();
 
-            JProperty[] tempProperties = tempClass.getDeclaredProperties();
+            JProperty[] tempProperties = javaType.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
                 propertiesSet.add(tempProperties[i]);
             }

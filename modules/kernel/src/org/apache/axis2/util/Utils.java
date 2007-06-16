@@ -244,14 +244,16 @@ public class Utils {
     }
 
     /**
-     * To get the name of the module , where archive name is combination of module name + its version
-     * The format of the module version will be like follow
-     * moduleName-00.0000 as an exmple addressing-01.0001.aar
+     * Get the name of the module , where archive name is combination of module name + its version
+     * The format of the name is as follows:
+     *   moduleName-00.0000
+     * Example: "addressing-01.0001.mar" would return "addressing"
+     * @param moduleName the name of the module archive
+     * @return the module name parsed out of the file name
      */
-
     public static String getModuleName(String moduleName) {
-        char version_seperator = '-';
-        int version_index = moduleName.lastIndexOf(version_seperator);
+        char delimiter = '-';
+        int version_index = moduleName.lastIndexOf(delimiter);
         if (version_index > 0) {
             return moduleName.substring(0, version_index);
         } else {

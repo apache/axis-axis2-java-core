@@ -77,6 +77,8 @@ public class MessageContextBuilder {
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
+
+        // TODO: Should this be specifying (or defaulting to) the "response" relationshipType??
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
 
         newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
@@ -101,11 +103,6 @@ public class MessageContextBuilder {
         newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
 
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
-
-        ServiceContext serviceContext = inMessageContext.getServiceContext();
-        if (serviceContext != null) {
-            newmsgCtx.setServiceContext(serviceContext);
-        }
 
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
                               inMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
@@ -253,17 +250,11 @@ public class MessageContextBuilder {
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
 
-        String contentType = (String) processingContext
-                .getProperty(Constants.Configuration.CONTENT_TYPE_OF_FAULT);
-        if (contentType != null) {
-            faultContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
-        }
-
         // Register the fault message context
-        if (processingContext.getAxisOperation() != null &&
-                processingContext.getOperationContext() != null) {
-            processingContext.getAxisOperation()
-                    .addFaultMessageContext(faultContext, processingContext.getOperationContext());
+        OperationContext operationContext = processingContext.getOperationContext();
+        if (operationContext != null) {
+            processingContext.getAxisOperation().addFaultMessageContext(faultContext,
+                                                                        operationContext);
         }
 
         faultContext.setProcessingFault(true);
@@ -271,18 +262,20 @@ public class MessageContextBuilder {
         // Set wsa:Action for response message
         
         // Use specified value if available
-        AxisOperation op = processingContext.getAxisOperation();
-        if (op != null && op.getFaultAction() != null) {
-            faultContext.setWSAAction(op.getFaultAction());
-        } else { //If, for some reason there is no value set, should use a sensible action.
-            faultContext.setWSAAction(Final.WSA_SOAP_FAULT_ACTION);
+
+        String faultAction = (e instanceof AxisFault) ? ((AxisFault)e).getFaultAction() : null;
+
+        if (faultAction == null) {
+            AxisOperation op = processingContext.getAxisOperation();
+            if (op != null && op.getFaultAction() != null) {
+                // TODO: Should the op be able to pick a fault action based on the fault?
+                faultAction = op.getFaultAction();
+            } else { //If, for some reason there is no value set, should use a sensible action.
+                faultAction = Final.WSA_SOAP_FAULT_ACTION;
+            }
         }
-        // override if the fault action has been set in the AxisFault
-        if (e instanceof AxisFault) {
-        	if(((AxisFault)e).getFaultAction() != null){
-        		faultContext.setWSAAction(((AxisFault)e).getFaultAction());
-        	}
-        }
+
+        faultContext.setWSAAction(faultAction);
 
         // there are some information  that the fault thrower wants to pass to the fault path.
         // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
@@ -290,11 +283,13 @@ public class MessageContextBuilder {
                 processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInfoForHeaders != null) {
             faultContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInfoForHeaders);
+
+            // Note that this overrides any action set above
             faultContext.setWSAAction(Final.WSA_FAULT_ACTION);
         }
 
-        // if the exception is due to a problem in the faultTo header itself, we can not use those
-        // fault informatio to send the error. Try to send using replyTo, leave it to transport
+        // if the exception is due to a problem in the faultTo header itself, we can not use that
+        // fault information to send the error. Try to send using replyTo, else leave it to transport
         boolean shouldSendFaultToFaultTo =
                 AddressingHelper.shouldSendFaultToFaultTo(processingContext);
         EndpointReference faultTo = processingContext.getFaultTo();
@@ -331,6 +326,7 @@ public class MessageContextBuilder {
         faultContext.setEnvelope(envelope);
 
         //get the SOAP headers, user is trying to send in the fault
+        // TODO: Rationalize this mechanism a bit - maybe headers should live in the fault?
         List soapHeadersList =
                 (List) processingContext.getProperty(SOAPConstants.HEADER_LOCAL_NAME);
         if (soapHeadersList != null) {
@@ -341,6 +337,7 @@ public class MessageContextBuilder {
             }
         }
 
+        // TODO: Transport-specific stuff in here?  Why?  Is there a better way?
         // now add HTTP Headers
         faultContext.setProperty(HTTPConstants.HTTP_HEADERS,
                                  processingContext.getProperty(HTTPConstants.HTTP_HEADERS));

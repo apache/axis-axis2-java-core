@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collection;
 
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
@@ -399,16 +400,11 @@ public abstract class AxisDescription implements ParameterInclude,
      */
     public abstract void engageModule(AxisModule axisModule) throws AxisFault;
 
-//    /**
-//     * @deprecate Please use String version instead
-//     * @param moduleName
-//     * @return
-//     */
-//    public abstract boolean isEngaged(QName moduleName);
-
     public abstract boolean isEngaged(String moduleName);
 
-     private Policy getApplicablePolicy(AxisDescription axisDescription) {
+//    public Collection getEngagedModules() { return null; }
+
+    private Policy getApplicablePolicy(AxisDescription axisDescription) {
 
         if (axisDescription instanceof AxisOperation) {
             AxisOperation operation = (AxisOperation) axisDescription;

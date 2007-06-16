@@ -44,6 +44,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
@@ -1287,8 +1288,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
         this.setParent(operationContext);
 
         if (operationContext != null) {
-            if ((serviceContext != null) && (operationContext.getParent() == null)) {
-                operationContext.setParent(serviceContext);
+            if (serviceContext == null) {
+                setServiceContext(operationContext.getServiceContext());
+            } else {
+                if (operationContext.getParent() != serviceContext) {
+                    throw new AxisError("ServiceContext in OperationContext does not match !");
+                }
             }
 
             this.setAxisOperation(operationContext.getAxisOperation());
@@ -1354,8 +1359,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (serviceContext != null) {
             if ((operationContext != null)
-                    && (operationContext.getParent() != null)) {
-                operationContext.setParent(context);
+                    && (operationContext.getParent() != context)) {
+                throw new AxisError("ServiceContext and OperationContext.parent do not match!");
             }
             // setting configcontext using configuration context in service context
             if (configurationContext == null) {

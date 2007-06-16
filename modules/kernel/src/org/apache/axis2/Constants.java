@@ -269,7 +269,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD_POST = "POST";
 
         public static final String CONTENT_TYPE = "ContentType";
-        public static final String CONTENT_TYPE_OF_FAULT = "ContentTypeOfFault";
 
         public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
 

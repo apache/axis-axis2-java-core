@@ -554,10 +554,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * @throws org.apache.axis2.AxisFault : If smt goes wrong
      */
     public void engageModules() throws AxisFault {
-        for (Iterator iterator = axisConfig.getGlobalModules().iterator(); iterator.hasNext();) {
-            String name = (String) iterator.next();
-            axisConfig.engageModule(name);
-        }
+        axisConfig.engageGlobalModules();
     }
 
     /**

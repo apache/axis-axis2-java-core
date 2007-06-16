@@ -20,9 +20,7 @@ package org.apache.axis2.engine;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -54,8 +52,6 @@ public class AxisEngine {
 
     private static boolean RESUMING_EXECUTION = true;
     private static boolean NOT_RESUMING_EXECUTION = false;
-    private static boolean IS_INBOUND = true;
-    private static boolean IS_OUTBOUND = false;
 
     /**
      * Constructor AxisEngine
@@ -117,7 +113,7 @@ public class AxisEngine {
         }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases;
-        if (msgContext.isFault()|| msgContext.isProcessingFault()) {
+        if (msgContext.isFault() || msgContext.isProcessingFault()) {
             preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlowPhases();
             msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
         } else {
@@ -129,7 +125,7 @@ public class AxisEngine {
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         try {
-            InvocationResponse pi = invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
+            InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
             if (pi.equals(InvocationResponse.CONTINUE)) {
                 if (msgContext.isServerSide()) {
@@ -165,6 +161,17 @@ public class AxisEngine {
         return InvocationResponse.CONTINUE;
     }
 
+    private static void processFault(MessageContext msgContext, AxisFault e) {
+        try {
+            MessageContext faultMC = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+
+            // Figure out where this goes
+            sendFault(faultMC);
+        } catch (AxisFault axisFault) {
+            log.error(axisFault);
+        }
+    }
+
     /**
      * Take the execution chain from the msgContext , and then take the current Index
      * and invoke all the phases in the arraylist
@@ -175,7 +182,7 @@ public class AxisEngine {
      *         the next step in the message processing should be.
      * @throws AxisFault
      */
-    public static InvocationResponse invoke(MessageContext msgContext, boolean inbound, boolean resuming)
+    private static InvocationResponse invoke(MessageContext msgContext, boolean resuming)
             throws AxisFault {
 
         if (msgContext.getCurrentHandlerIndex() == -1) {
@@ -261,7 +268,7 @@ public class AxisEngine {
         //the point at which the message was resumed and provide another API
         //to allow the full unwind if the message is going to be discarded.
         //invoke the phases
-        InvocationResponse pi = invoke(msgContext, IS_INBOUND, RESUMING_EXECUTION);
+        InvocationResponse pi = invoke(msgContext, RESUMING_EXECUTION);
         //invoking the MR
 
         if (pi.equals(InvocationResponse.CONTINUE)) {
@@ -303,7 +310,7 @@ public class AxisEngine {
         //the point at which the message was resumed and provide another API
         //to allow the full unwind if the message is going to be discarded.
         //invoke the phases
-        InvocationResponse pi = invoke(msgContext, IS_OUTBOUND, RESUMING_EXECUTION);
+        InvocationResponse pi = invoke(msgContext, RESUMING_EXECUTION);
         //Invoking Transport Sender
         if (pi.equals(InvocationResponse.CONTINUE)) {
             // write the Message to the Wire
@@ -363,7 +370,7 @@ public class AxisEngine {
         msgContext.setExecutionChain(outPhases);
         msgContext.setFLOW(MessageContext.OUT_FLOW);
         try {
-            InvocationResponse pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+            InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
             if (pi.equals(InvocationResponse.CONTINUE)) {
                 // write the Message to the Wire
@@ -428,7 +435,7 @@ public class AxisEngine {
             msgContext.setExecutionChain((ArrayList) outFaultPhases.clone());
             msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
             try {
-                InvocationResponse pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+                InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
                 if (pi.equals(InvocationResponse.SUSPEND)) {
                     log.warn(msgContext.getLogIDString() +
@@ -453,7 +460,7 @@ public class AxisEngine {
         msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext()
                 .getAxisConfiguration().getOutFaultFlowPhases().clone());
         msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
-        InvocationResponse pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+        InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
         if (pi.equals(InvocationResponse.CONTINUE)) {
             // Actually send the SOAP Fault

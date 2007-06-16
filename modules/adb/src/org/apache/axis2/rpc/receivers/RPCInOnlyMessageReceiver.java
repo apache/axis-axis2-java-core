@@ -88,22 +88,18 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             }
         } catch (InvocationTargetException e) {
-            String msg = null;
-
             Throwable cause = e.getCause();
-
             if (cause != null) {
-                msg = cause.getMessage();
+                String msg = cause.getMessage();
                 if (msg == null) {
                     msg = "Exception occurred while trying to invoke service method " +
                             method.getName();
                 }
-                log.error(msg, e);
-                if (cause instanceof AxisFault) {
-                    throw (AxisFault)cause;
-                }
+                log.error(msg, cause);
+            } else {
+                cause = e;
             }
-            throw new AxisFault(msg, e);
+            throw AxisFault.makeFault(cause);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();

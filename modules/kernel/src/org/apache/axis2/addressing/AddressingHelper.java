@@ -88,6 +88,7 @@ public class AddressingHelper {
         // fault informatio to send the error. Try to send using replyTo, leave it to transport
         boolean doNotSendFaultUsingFaultTo = false;
         if (faultInfoForHeaders != null) {
+            // TODO: This should probably store a QName instead of a String.. currently we rely on prefix string matching!!
             String problemHeaderName = (String) ((Map) faultInfoForHeaders)
                     .get(AddressingConstants.Final.FAULT_HEADER_PROB_HEADER_QNAME);
             doNotSendFaultUsingFaultTo = (problemHeaderName != null && (AddressingConstants

@@ -117,16 +117,15 @@ public class AxisHttpService {
         MessageContext msgContext = configurationContext.createMessageContext();
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
 
-        if (conn instanceof HttpInetConnection) {
-            HttpInetConnection inetconn = (HttpInetConnection) conn;
+        if (conn != null) {
             msgContext.setProperty(MessageContext.REMOTE_ADDR,
-                                   inetconn.getRemoteAddress().getHostAddress());
+                                   conn.getRemoteAddress().getHostAddress());
             msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
-                                   inetconn.getLocalAddress().getHostAddress());
+                                   conn.getLocalAddress().getHostAddress());
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Remote address of the connection : " +
-                          inetconn.getRemoteAddress().getHostAddress());
+                          conn.getRemoteAddress().getHostAddress());
             }
         }
 
@@ -261,6 +260,7 @@ public class AxisHttpService {
             msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
                                    new SimpleHTTPRequestResponseTransport());
 
+
             this.worker.service(request, response, msgContext);
         } catch (SocketException ex) {
             // Socket is unreliable. 
@@ -269,8 +269,6 @@ public class AxisHttpService {
             // HTTP protocol violation. Transport is unrelaible
             throw ex;
         } catch (Throwable e) {
-
-            AxisEngine engine = new AxisEngine(this.configurationContext);
 
             msgContext.setProperty(MessageContext.TRANSPORT_OUT,
                                    response.getOutputStream());
@@ -297,7 +295,7 @@ public class AxisHttpService {
                     response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal server error");
                 }
             }
-            engine.sendFault(faultContext);
+            AxisEngine.sendFault(faultContext);
         }
     }
 

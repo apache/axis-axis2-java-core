@@ -231,8 +231,21 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         return InvocationResponse.CONTINUE;
     }
 
+    /**
+     * Send a message (which must be a response) via the OutputStream sitting in the
+     * MessageContext TRANSPORT_OUT property.  Since this class is used for both requests and
+     * responses, we split the logic - this method always gets called when we're
+     * writing to the HTTP response stream, and sendUsingCommons() is used for requests.
+     *
+     * @param msgContext the active MessageContext
+     * @param format output formatter for our message
+     * @throws AxisFault if a general problem arises
+     * @throws XMLStreamException if there's a problem writing
+     */
     private void sendUsingOutputStream(MessageContext msgContext,
                                        OMOutputFormat format) throws AxisFault, XMLStreamException {
+
+        
 
         OutputStream out = (OutputStream) msgContext
                 .getProperty(MessageContext.TRANSPORT_OUT);
