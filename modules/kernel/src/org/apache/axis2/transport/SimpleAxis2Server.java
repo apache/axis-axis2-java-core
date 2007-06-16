@@ -43,9 +43,10 @@ public class SimpleAxis2Server extends AxisServer {
     public SimpleAxis2Server (
             String repoLocation,
             String confLocation) throws Exception {
-       configContext = ConfigurationContextFactory
-                    .createConfigurationContextFromFileSystem(repoLocation,
-                                                              confLocation);
+        super(false);
+        configContext = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(repoLocation,
+                        confLocation);
     }
 
     /**

@@ -31,10 +31,22 @@ public class AxisServer {
 
     protected ConfigurationContext configContext;
     protected ListenerManager listenerManager;
+    private boolean startOnDeploy;
+    private boolean started = false;
 
-    public AxisServer() throws Exception {
+    /**
+     * @param startOnDeploy - Should the server be started automatically when the first service is deployed
+     * @throws Exception
+     */
+    public AxisServer(boolean startOnDeploy) throws Exception {
+        this.startOnDeploy = startOnDeploy;
     }
 
+    /**
+     * Users extending this class can override this method to supply a custom ConfigurationContext
+     * @return
+     * @throws AxisFault
+     */
     protected ConfigurationContext createDefaultConfigurationContext() throws AxisFault {
         return ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
     }
@@ -47,6 +59,7 @@ public class AxisServer {
     public void start()throws AxisFault {
         listenerManager = new ListenerManager();
         listenerManager.startSystem(getConfigurationContext());
+        started = true;
     }
 
     /**
@@ -58,8 +71,15 @@ public class AxisServer {
         AxisConfiguration axisConfig = getConfigurationContext().getAxisConfiguration();
         AxisService service = AxisService.createService(serviceClassName,axisConfig);
         axisConfig.addService(service);
+        if(!started && startOnDeploy){
+            start();
+        }
     }
 
+    /**
+     * Stop the server, automatically terminates the listener manager as well.
+     * @throws AxisFault
+     */
     public void stop() throws AxisFault{
         if(configContext!=null){
             configContext.terminate();
