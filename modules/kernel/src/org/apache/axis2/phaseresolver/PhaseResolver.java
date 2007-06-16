@@ -17,15 +17,14 @@
 
 package org.apache.axis2.phaseresolver;
 
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class PhaseResolver
@@ -54,143 +53,53 @@ public class PhaseResolver {
         this.axisConfig = axisconfig;
     }
 
+    private void engageModuleToFlow(Flow flow, List handlerChain) throws PhaseException {
+        phaseHolder = new PhaseHolder(handlerChain);
+        if (flow != null) {
+            for (int j = 0; j < flow.getHandlerCount(); j++) {
+                HandlerDescription metadata = flow.getHandler(j);
+                phaseHolder.addHandler(metadata);
+            }
+        }
+    }
+
+    private void engageModuleToOperation(AxisOperation axisOperation,
+                                         AxisModule axisModule,
+                                         int flowType) throws PhaseException {
+        List phases = new ArrayList();
+        Flow flow = null;
+        switch(flowType){
+            case PhaseMetadata.IN_FLOW : {
+                phases.addAll(axisConfig.getInFlowPhases());
+                phases.addAll(axisOperation.getRemainingPhasesInFlow());
+                flow = axisModule.getInFlow();
+                break;
+            }
+            case PhaseMetadata.OUT_FLOW : {
+                phases.addAll(axisOperation.getPhasesOutFlow());
+                phases.addAll(axisConfig.getOutFlowPhases());
+                flow = axisModule.getOutFlow();
+                break;
+            }
+            case PhaseMetadata.FAULT_OUT_FLOW : {
+                phases.addAll(axisOperation.getPhasesOutFaultFlow());
+                phases.addAll(axisConfig.getOutFaultFlowPhases());
+                flow = axisModule.getFaultOutFlow();
+                break;
+            }
+            case PhaseMetadata.FAULT_IN_FLOW : {
+                phases.addAll(axisOperation.getPhasesInFaultFlow());
+                phases.addAll(axisConfig.getInFaultFlowPhases());
+                flow = axisModule.getFaultInFlow();
+                break;
+            }
+        }
+        engageModuleToFlow(flow,phases);
+    }
     public void engageModuleToOperation(AxisOperation axisOperation, AxisModule module)
             throws PhaseException {
-        Flow flow = null;
-
         for (int type = IN_FLOW; type < OUT_FAULT_FLOW; type++) {
-            switch (type) {
-                case PhaseMetadata.IN_FLOW : {
-                    ArrayList phases = new ArrayList();
-
-                    if (axisConfig != null) {
-                        Iterator itr_axis_config =
-                                axisConfig.getInFlowPhases().iterator();
-
-                        while (itr_axis_config.hasNext()) {
-                            Object o = itr_axis_config.next();
-
-                            phases.add(o);
-                        }
-                    }
-
-                    Iterator itr_ops = axisOperation.getRemainingPhasesInFlow().iterator();
-
-                    while (itr_ops.hasNext()) {
-                        Object o = itr_ops.next();
-
-                        phases.add(o);
-                    }
-
-                    phaseHolder = new PhaseHolder(phases);
-
-                    break;
-                }
-
-                case PhaseMetadata.OUT_FLOW : {
-                    ArrayList phases = new ArrayList();
-                    Iterator itr_ops = axisOperation.getPhasesOutFlow().iterator();
-
-                    while (itr_ops.hasNext()) {
-                        Object o = itr_ops.next();
-
-                        phases.add(o);
-                    }
-
-                    if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getOutFlowPhases().iterator();
-
-                        while (itr_axis_config.hasNext()) {
-                            Object o = itr_axis_config.next();
-
-                            phases.add(o);
-                        }
-                    }
-
-                    phaseHolder = new PhaseHolder(phases);
-
-                    break;
-                }
-
-                case PhaseMetadata.FAULT_IN_FLOW : {
-                    ArrayList phases = new ArrayList();
-
-                    if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getInFaultFlowPhases().iterator();
-
-                        while (itr_axis_config.hasNext()) {
-                            Object o = itr_axis_config.next();
-
-                            phases.add(o);
-                        }
-                    }
-
-                    Iterator itr_ops = axisOperation.getPhasesInFaultFlow().iterator();
-
-                    while (itr_ops.hasNext()) {
-                        Object o = itr_ops.next();
-
-                        phases.add(o);
-                    }
-
-                    phaseHolder = new PhaseHolder(phases);
-
-                    break;
-                }
-
-                case PhaseMetadata.FAULT_OUT_FLOW : {
-                    ArrayList phases = new ArrayList();
-                    Iterator itr_ops = axisOperation.getPhasesOutFaultFlow().iterator();
-                    while (itr_ops.hasNext()) {
-                        Object o = itr_ops.next();
-
-                        phases.add(o);
-                    }
-                    if (axisConfig != null) {
-                        Iterator itr_axis_config = axisConfig.getOutFaultFlowPhases().iterator();
-                        while (itr_axis_config.hasNext()) {
-                            Object o = itr_axis_config.next();
-                            phases.add(o);
-                        }
-                    }
-                    phaseHolder = new PhaseHolder(phases);
-                    break;
-                }
-            }
-
-            switch (type) {
-                case PhaseMetadata.IN_FLOW : {
-                    flow = module.getInFlow();
-
-                    break;
-                }
-
-                case PhaseMetadata.OUT_FLOW : {
-                    flow = module.getOutFlow();
-
-                    break;
-                }
-
-                case PhaseMetadata.FAULT_IN_FLOW : {
-                    flow = module.getFaultInFlow();
-
-                    break;
-                }
-
-                case PhaseMetadata.FAULT_OUT_FLOW : {
-                    flow = module.getFaultOutFlow();
-
-                    break;
-                }
-            }
-
-            if (flow != null) {
-                for (int j = 0; j < flow.getHandlerCount(); j++) {
-                    HandlerDescription metadata = flow.getHandler(j);
-
-                    phaseHolder.addHandler(metadata);
-                }
-            }
+            engageModuleToOperation(axisOperation, module, type);
         }
     }
 
@@ -295,6 +204,19 @@ public class PhaseResolver {
                 phase.removeHandler(handler);
                 break;
             }
+        }
+    }
+
+    public void engageModuleToMessage(AxisMessage axisMessage, AxisModule axisModule)
+            throws PhaseException {
+        String direction = axisMessage.getDirection();
+        AxisOperation axisOperation = axisMessage.getAxisOperation();
+        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equalsIgnoreCase(direction)) {
+            engageModuleToOperation(axisOperation, axisModule, PhaseMetadata.OUT_FLOW);
+        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equalsIgnoreCase(direction)) {
+            engageModuleToOperation(axisOperation, axisModule, PhaseMetadata.IN_FLOW);
+        } else if (WSDLConstants.MESSAGE_LABEL_FAULT_VALUE.equals(direction)) {
+            //TODO : Need to handle fault correctly
         }
     }
 }

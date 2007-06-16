@@ -18,6 +18,9 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.modules.Module;
+import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.ws.commons.schema.*;
 
@@ -43,6 +46,14 @@ public class AxisMessage extends AxisDescription {
     private String direction;
     private String messagePartName;
 
+    // To store deploy-time module refs
+    private ArrayList modulerefs;
+
+    /**
+     * list of engaged modules
+     */
+    private ArrayList engagedModules = new ArrayList();
+
     // private PolicyInclude policyInclude;
 
 
@@ -57,6 +68,7 @@ public class AxisMessage extends AxisDescription {
 	public AxisMessage() {
         soapHeaders = new ArrayList();
         handlerChain = new ArrayList();
+        modulerefs = new ArrayList();
     }
 
     public ArrayList getMessageFlow() {
@@ -175,13 +187,58 @@ public class AxisMessage extends AxisDescription {
         return soapHeaders;
     }
 
+    /**
+     *
+     * We do not support adding module operations when engaging a module to an AxisMessage
+     * @param axisModule AxisModule to engage
+     * @throws AxisFault something went wrong
+     */
     public void engageModule(AxisModule axisModule) throws AxisFault {
-        throw new UnsupportedOperationException("Sorry we do not support this");
+        if (axisModule == null) {
+            return;
+        }
+        Iterator module_itr = engagedModules.iterator();
+        boolean isEngagable;
+        String moduleName = axisModule.getName();
+        while (module_itr.hasNext()) {
+            AxisModule module = (AxisModule) module_itr.next();
+            String modu = module.getName();
+            isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
+            if (!isEngagable) {
+                return ;
+            }
+        }
+
+        Module module = axisModule.getModule();
+        if (module != null) {
+            module.engageNotify(this);
+        }
+        AxisConfiguration axisConfig = getAxisConfiguration();
+        PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
+        phaseResolver.engageModuleToMessage(this, axisModule);
+        engagedModules.add(axisModule);
     }
 
     public boolean isEngaged(String moduleName) {
-        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
-
+        Iterator engagedModuleItr = engagedModules.iterator();
+        while (engagedModuleItr.hasNext()) {
+            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
+            if (axisModule.getName().equals(moduleName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    public ArrayList getModulerefs() {
+        return modulerefs;
+    }
+
+    public void addModuleRefs(String moduleName) {
+        modulerefs.add(moduleName);
+    }
+
+    public AxisOperation getAxisOperation(){
+        return (AxisOperation) getParent();
+    }
 }

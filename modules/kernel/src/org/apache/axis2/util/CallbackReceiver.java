@@ -47,7 +47,7 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     public Callback lookupCallback(String msgID) {
-        return (Callback) callbackStore.get(msgID);
+        return (Callback) callbackStore.remove(msgID);
     }
 
     public void receive(MessageContext messageCtx) throws AxisFault {

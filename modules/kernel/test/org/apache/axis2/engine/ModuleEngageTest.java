@@ -17,32 +17,28 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.ModuleHandler1;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.description.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import java.util.List;
 
 public class ModuleEngageTest extends TestCase {
-    AxisConfiguration ac;
+    AxisConfiguration axisConfig;
 
-    public void testModuleEngageMent() throws PhaseException,
-            DeploymentException,
-            AxisFault,
+    public void testModuleEngagement() throws AxisFault,
             XMLStreamException {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
-        ac = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
+        axisConfig = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
                 .getAxisConfiguration();
-        AxisModule module = ac.getModule("module1");
+        AxisModule module = axisConfig.getModule("module1");
         assertNotNull(module);
-        ac.engageModule("module1");
-        AxisService service = ac.getService("service2");
+        axisConfig.engageModule("module1");
+        AxisService service = axisConfig.getService("service2");
         assertNotNull(service);
         AxisOperation moduleOperation = service.getOperation(
                 new QName("creatSeq"));
