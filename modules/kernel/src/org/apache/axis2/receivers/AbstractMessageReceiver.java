@@ -93,7 +93,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         } catch (AxisFault fault) {
             // If we're in-only, eat this.  Otherwise, toss it upwards!
             if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
-                log.debug(fault);
+                log.error(fault);
             } else {
                 throw fault;
             }
