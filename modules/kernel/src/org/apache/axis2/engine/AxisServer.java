@@ -29,7 +29,15 @@ import org.apache.axis2.description.AxisService;
  */
 public class AxisServer {
 
-    private ConfigurationContext configContext;
+    protected ConfigurationContext configContext;
+    protected ListenerManager listenerManager;
+
+    public AxisServer() throws Exception {
+    }
+
+    protected ConfigurationContext createDefaultConfigurationContext() throws AxisFault {
+        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
+    }
 
     /**
      * Will create a configuration context from the avialable data and then it
@@ -37,9 +45,8 @@ public class AxisServer {
      * @throws AxisFault if something went wrong
      */
     public void start()throws AxisFault {
-        configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null);
-        ListenerManager listenerManager = new ListenerManager();
-        listenerManager.startSystem(configContext);
+        listenerManager = new ListenerManager();
+        listenerManager.startSystem(getConfigurationContext());
     }
 
     /**
@@ -48,10 +55,7 @@ public class AxisServer {
      * @throws AxisFault : If something went wrong
      */
     public void deployService(String serviceClassName) throws AxisFault{
-        if(configContext==null){
-            start();
-        }
-        AxisConfiguration axisConfig = configContext.getAxisConfiguration();
+        AxisConfiguration axisConfig = getConfigurationContext().getAxisConfiguration();
         AxisService service = AxisService.createService(serviceClassName,axisConfig);
         axisConfig.addService(service);
     }
@@ -62,12 +66,25 @@ public class AxisServer {
         }
     }
 
-
-    public ConfigurationContext getConfigContext() {
+    /**
+     * Creates a default configuration context if one is not set already via setConfigurationContext
+     * 
+     * @return
+     * @throws AxisFault
+     */
+    public ConfigurationContext getConfigurationContext() throws AxisFault {
+        if(configContext == null){
+            configContext = createDefaultConfigurationContext();
+        }
         return configContext;
     }
 
-    public void setConfigContext(ConfigurationContext configContext) {
+    /**
+     * Set the configuration context. Please call this before you call deployService or start method
+     * 
+     * @param configContext
+     */
+    public void setConfigurationContext(ConfigurationContext configContext) {
         this.configContext = configContext;
     }
 }
