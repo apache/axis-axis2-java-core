@@ -158,11 +158,11 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
         ServiceClient sender;
-
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(5000);
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
         sender.engageModule("addressing");

@@ -50,7 +50,7 @@ import java.util.*;
  * <p>Configuration Context hold Global level run-time information. This allows
  * same configurations to be used by two Axis2 instances and most Axis2 wide 
  * configurations can changed by setting name value pairs of the configurationContext. 
- * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager.</p> 
+ * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager. 
 
  */
 public class ConfigurationContext extends AbstractContext {

@@ -214,8 +214,8 @@ public class UtilServer {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo",
-                        "target/test-resources/integrationRepo/conf/axis2.xml");
+                        Constants.TESTING_PATH +"/integrationRepo",
+                        Constants.TESTING_PATH + "/integrationRepo/conf/axis2.xml");
         AxisModule axisModule = DeploymentEngine.buildModule(file,
                                                              configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
