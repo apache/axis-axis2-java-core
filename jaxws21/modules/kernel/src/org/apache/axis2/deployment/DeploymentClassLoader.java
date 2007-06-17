@@ -247,7 +247,10 @@ public class DeploymentClassLoader extends URLClassLoader {
     }
 
     public InputStream getResourceAsStream(String name) {
-        URL url =findResource(name);
+        URL url = findResource(name);
+        if(url == null) {
+            url = getResource(name);
+        }
         if(url!=null){
             try {
                 return url.openStream();

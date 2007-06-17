@@ -202,7 +202,7 @@ public class TCPServer implements Runnable, TransportListener {
         }
         if (ip == null) {
             try {
-                ip = HttpUtils.getIpAddress();
+                ip = HttpUtils.getIpAddress(configContext.getAxisConfiguration());
             } catch (SocketException e) {
                 throw AxisFault.makeFault(e);
             }

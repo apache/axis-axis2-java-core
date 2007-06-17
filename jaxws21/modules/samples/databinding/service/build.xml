@@ -25,7 +25,7 @@
 			<arg line="-sd"/>
 			<arg line="-o ${target}"/> <!-- Output directory in which to generate files --> <!-- NB it generates to the src folder under this directory!! -->
 			<classpath>
-				<fileset dir="${env.AXIS2_HOME}\lib">
+				<fileset dir="..\..\lib">
 					<include name="*.jar"/>
 				</fileset>
 			</classpath>

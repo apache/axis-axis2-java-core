@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 *
 */
 
-public class ModuleHandler1 extends AbstractHandler implements Handler {
+public class ModuleHandler1 extends AbstractHandler  {
     private static final Log log = LogFactory.getLog(ModuleHandler1 .class);
     private String message;
     private String name;

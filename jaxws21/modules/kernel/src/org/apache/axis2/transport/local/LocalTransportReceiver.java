@@ -21,6 +21,8 @@ import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
@@ -48,37 +50,51 @@ public class LocalTransportReceiver {
         this.sender = sender;
     }
 
-    public void processMessage(InputStream in, EndpointReference to, String action) throws AxisFault {
+    public void processMessage(InputStream in, EndpointReference to, String action)
+            throws AxisFault {
+        MessageContext msgCtx = confContext.createMessageContext();
+        TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
+                Constants.TRANSPORT_LOCAL);
+        TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
+                Constants.TRANSPORT_LOCAL);
         try {
-            TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
-                    Constants.TRANSPORT_LOCAL);
-            TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
-                    Constants.TRANSPORT_LOCAL);
 
             tOut.setSender(new LocalResponder(sender));
 
-            MessageContext msgCtx = confContext.createMessageContext();
             msgCtx.setTransportIn(tIn);
             msgCtx.setTransportOut(tOut);
+            msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
             msgCtx.setTo(to);
             msgCtx.setWSAAction(action);
             msgCtx.setServerSide(true);
-            msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
             InputStreamReader streamReader = new InputStreamReader(in);
-            OMXMLParserWrapper builder = BuilderUtil.getBuilder(streamReader);
+            OMXMLParserWrapper builder;
+            try {
+                builder = BuilderUtil.getBuilder(streamReader);
+            } catch (XMLStreamException e) {
+                throw AxisFault.makeFault(e);
+            }
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgCtx.setEnvelope(envelope);
 
-            AxisEngine engine = new AxisEngine(confContext);
+            AxisEngine.receive(msgCtx);
+        } catch (AxisFault e) {
+            // write the fault back.
+            try {
+                MessageContext faultContext =
+                        MessageContextBuilder.createFaultMessageContext(msgCtx, e);
+                
+                faultContext.setTransportOut(tOut);
+                faultContext.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
-            engine.receive(msgCtx);
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        } catch (FactoryConfigurationError e) {
-            throw AxisFault.makeFault(e);
+                AxisEngine.sendFault(faultContext);
+            } catch (AxisFault axisFault) {
+                // can't handle this, so just throw it
+                throw axisFault;
+            }
         }
     }
 }

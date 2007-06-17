@@ -17,6 +17,7 @@ import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;
@@ -234,7 +235,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
 
             if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
-                log.warn("We don't support methods overloading. Ignoring [" + jMethod.getQualifiedName() + "]");
+                log.warn("We don't support method overloading. Ignoring [" +
+                        jMethod.getQualifiedName() + "]");
                 continue;
             }
 
@@ -250,6 +252,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 JClass[] extypes = jMethod.getExceptionTypes() ;
                 for (int j= 0 ; j < extypes.length ; j++) {
                     JClass extype = extypes[j] ;
+                    if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                        continue;
+                    }
                     methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
                     sequence = new XmlSchemaSequence();
                     generateSchemaForType(sequence, extype, extype.getSimpleName());
@@ -383,6 +388,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     tgtNamespace =
                             resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName());
                     tgtNamespacepfx = (String)targetNamespacePrefixMap.get(tgtNamespace);
+                    generateSchema(sup);
                 }
 
                 if (tgtNamespacepfx == null) {
@@ -422,11 +428,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     eltOuter.getQName());
 
 
-            JClass tempClass = javaType;
             Set propertiesSet = new HashSet();
             Set propertiesNames = new HashSet();
 
-            JProperty[] tempProperties = tempClass.getDeclaredProperties();
+            JProperty[] tempProperties = javaType.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
                 propertiesSet.add(tempProperties[i]);
             }
@@ -568,6 +573,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         if (isArrayType) {
             type = type.getArrayComponentType();
+        }
+        if(AxisFault.class.getName().equals(type)){
+            return null;
         }
         String classTypeName;
         if (type == null) {

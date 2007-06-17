@@ -3,8 +3,11 @@ package org.apache.axis2.wsdl.codegen.writer;
 import org.apache.axis2.util.FileWriter;
 import org.apache.ws.commons.schema.XmlSchema;
 
+import javax.xml.transform.OutputKeys;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Map;
+import java.util.HashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -41,7 +44,9 @@ public class SchemaWriter {
                                                                                               ".")),
                                                              ".xsd");
                 FileOutputStream fos = new FileOutputStream(outputFile);
-                schema.write(fos);
+
+                //set the options for the schemas
+                schema.write(fos,getDefaultOptionMap());
                 fos.flush();
                 fos.close();
             }
@@ -49,5 +54,14 @@ public class SchemaWriter {
             throw new RuntimeException("Schema writing failed!", e);
         }
     }
+
+    private Map getDefaultOptionMap(){
+        Map options = new HashMap();
+        options.put(OutputKeys.OMIT_XML_DECLARATION,"no");
+        options.put(OutputKeys.INDENT,"yes");
+
+        return options;
+    }
+
 
 }

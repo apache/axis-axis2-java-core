@@ -32,7 +32,7 @@ public class CustomDeployerTest extends TestCase {
         // OK, let's see what we've got here...
         assertTrue("Init was not called", CustomDeployer.initCalled);
         assertEquals("Wrong directory", "widgets", CustomDeployer.directory);
-        assertEquals("Wrong extension", "svc", CustomDeployer.extension);
+        assertEquals("Wrong extension", ".svc", CustomDeployer.extension);
         assertEquals("Wrong number of deployed items", 2, CustomDeployer.deployedItems);
         assertTrue("George wasn't found", CustomDeployer.georgeDeployed);
         assertTrue("Mary wasn't found", CustomDeployer.maryDeployed);

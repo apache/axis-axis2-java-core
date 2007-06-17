@@ -24,17 +24,18 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class hold all the phases found in the services.xml and server.xml
  */
 public class PhaseHolder {
-    private ArrayList phaseList;
+    private List phaseList;
 
     public PhaseHolder() {
     }
 
-    public PhaseHolder(ArrayList phases) {
+    public PhaseHolder(List phases) {
         this.phaseList = phases;
     }
 

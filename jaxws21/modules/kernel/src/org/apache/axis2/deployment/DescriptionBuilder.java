@@ -503,7 +503,8 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @param parent           <code>ParameterInclude</code>
      */
     protected void processParameters(Iterator parameters,
-                                     ParameterInclude parameterInclude, ParameterInclude parent)
+                                     ParameterInclude parameterInclude,
+                                     ParameterInclude parent)
             throws DeploymentException {
         while (parameters.hasNext()) {
             // this is to check whether some one has locked the parmeter at the
@@ -513,8 +514,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             // setting parameterElement
             parameter.setParameterElement(parameterElement);
             // setting parameter Name
-            OMAttribute paramName = parameterElement.getAttribute(new QName(
-                    ATTRIBUTE_NAME));
+            OMAttribute paramName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
             if (paramName == null) {
                 throw new DeploymentException(Messages.getMessage(
                         DeploymentErrorMsgs.BAD_PARAMETER_ARGUMENT,

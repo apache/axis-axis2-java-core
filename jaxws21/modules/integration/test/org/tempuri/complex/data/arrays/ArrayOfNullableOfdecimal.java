@@ -13,4 +13,7 @@ public class ArrayOfNullableOfdecimal {
         return this.decimal;
     }
 
+    public void setDecimal(BigDecimal[] decimal) {
+        this.decimal = decimal;
+    }
 }

@@ -22,17 +22,8 @@ import org.apache.axis2.context.MessageContext;
 
 /**
  * This is takes care of the IN-OUT sync MEP in the server side
+ *
+ * @deprecated not needed, since in-only MessageReceivers can throw faults
  */
 public abstract class AbstractRobustInMessageReceiver extends AbstractMessageReceiver {
-
-    public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
-
-    public final void receive(final MessageContext messageCtx) throws AxisFault {
-        ThreadContextDescriptor tc = setThreadContext(messageCtx);
-        try {
-            invokeBusinessLogic(messageCtx);
-        } finally {
-            restoreThreadContext(tc);
-        }
-    }
 }

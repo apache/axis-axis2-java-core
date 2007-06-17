@@ -739,7 +739,7 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.set(returnArray, i, convertToDateTime(o.toString()));
+                    Array.set(returnArray, i, o);
                 }
             }
         } else {

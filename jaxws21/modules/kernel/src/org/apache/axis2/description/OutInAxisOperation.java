@@ -18,7 +18,6 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -190,9 +189,13 @@ class OutInAxisOperationClient extends OperationClient {
                 useAsync = useAsyncOption.booleanValue();
             }
         }
+        EndpointReference replyTo = mc.getReplyTo();
+        if(replyTo!=null&&!replyTo.hasAnonymousAddress()){
+            useAsync = true;
+        }
 
         if (useAsync || options.isUseSeparateListener()) {
-            sendAsync(useAsync, mc, cc);
+            sendAsync(useAsync, mc);
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
@@ -205,17 +208,17 @@ class OutInAxisOperationClient extends OperationClient {
         }
     }
 
-    private void sendAsync(boolean useAsync, MessageContext mc, ConfigurationContext cc)
+    private void sendAsync(boolean useAsync, MessageContext mc)
             throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("useAsync=" + useAsync + ", seperateListener=" +
                     options.isUseSeparateListener());
         }
         /**
-             * We are following the async path. If the user hasn't set a callback object then we must
+         * We are following the async path. If the user hasn't set a callback object then we must
          * block until the whole MEP is complete, as they have no other way to get their reply message.
          */
-        CallbackReceiver callbackReceiver = null;
+        CallbackReceiver callbackReceiver;
         if (axisOp.getMessageReceiver() != null &&
                 axisOp.getMessageReceiver() instanceof CallbackReceiver) {
             callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
@@ -239,7 +242,7 @@ class OutInAxisOperationClient extends OperationClient {
         }
 
         /**
-             * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
+         * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
          * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the
          * response message.
          */
@@ -249,104 +252,68 @@ class OutInAxisOperationClient extends OperationClient {
             useCustomListener = Boolean.TRUE;
         }
         if (useCustomListener == null || !useCustomListener.booleanValue()) {
+            if(mc.getReplyTo()==null){
+                EndpointReference replyToFromTransport =
+                        mc.getConfigurationContext().getListenerManager().
+                                getEPRforService(sc.getAxisService().getName(),
+                                        axisOp.getName().getLocalPart(), mc
+                                        .getTransportIn().getName());
 
-            EndpointReference replyToFromTransport =
-                    mc.getConfigurationContext().getListenerManager().
-                            getEPRforService(sc.getAxisService().getName(),
-                                             axisOp.getName().getLocalPart(), mc
-                                    .getTransportIn().getName());
-
-            if (mc.getReplyTo() == null) {
-                mc.setReplyTo(replyToFromTransport);
-            } else {
-                mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                if (mc.getReplyTo() == null) {
+                    mc.setReplyTo(replyToFromTransport);
+                } else {
+                    mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                }
             }
         }
 
         //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
         mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
-        AxisEngine engine = new AxisEngine(cc);
         mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
-        engine.send(mc);
-
+        AxisEngine.send(mc);
         if (internalCallback != null) {
             long timeout = options.getTimeOutInMilliSeconds();
-            long waitTime = timeout;
-            long startTime = System.currentTimeMillis();
-
             synchronized (internalCallback) {
-                while (! internalCallback.isComplete() && waitTime >= 0) {
+                if (!internalCallback.isComplete() && timeout >= 0) {
                     try {
                         internalCallback.wait(timeout);
                     } catch (InterruptedException e) {
                         // We were interrupted for some reason, keep waiting
                         // or throw new AxisFault( "Callback was interrupted by someone?" );
                     }
-                    // The wait finished, compute remaining time
-                    // - wait can end prematurely, see Object.wait( int timeout )
-                    waitTime = timeout - (System.currentTimeMillis() - startTime);
+                    if (!internalCallback.isComplete()) {
+                       timeOut();
+                        return;
+                    }
                 }
             }
             // process the result of the invocation
-            if (internalCallback.envelope != null) {
-                // The call ended normally, so there is nothing to do
-            } else {
-                if (internalCallback.error instanceof AxisFault) {
-                    throw (AxisFault) internalCallback.error;
-                } else if (internalCallback.error != null) {
+            if (internalCallback.envelope == null) {
+                if (internalCallback.error == null) {
+                    log.error("Callback had neither error nor response");
+                }
+                if (options.isExceptionToBeThrownOnSOAPFault()) {
                     throw AxisFault.makeFault(internalCallback.error);
-                } else if (! internalCallback.isComplete()) {
-                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
-                } else {
-                    throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
                 }
             }
         }
     }
 
     /**
-     * @param msgctx
-     * @return Returns MessageContext.
-     * @throws AxisFault Sends the message using a two way transport and waits for a response
+     * If there is no response after  the specified timeout interval
+     * sendAync method will call this method.
+     * @throws AxisFault AxisFault saying time out
      */
-    protected MessageContext send(MessageContext msgctx) throws AxisFault {
+    protected void timeOut() throws AxisFault{
+         throw new AxisFault( Messages.getMessage("responseTimeOut"));
+    }
 
-        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
-
-        // create the responseMessageContext
-
-        MessageContext responseMessageContext =
-                msgctx.getConfigurationContext().createMessageContext();
-
-        // This is a hack - Needs to change
-//        responseMessageContext.setOptions(options);
-
-        responseMessageContext.setServerSide(false);
-        responseMessageContext.setMessageID(msgctx.getMessageID());
-        addMessageContext(responseMessageContext);
-        responseMessageContext.setServiceContext(msgctx.getServiceContext());
-        responseMessageContext.setAxisMessage(
-                axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
-
-        //sending the message
-        engine.send(msgctx);
-
-//        // By now we should have a new MessageContext in the IN message
-//        OperationContext operation = msgctx.getOperationContext();
-//        MessageContext response = operation.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-//        if (response == null) {
-//            // Nothing!
-//            throw new AxisFault("No response message!");
-//        }
-//        engine.receive(response);
-
-        responseMessageContext.setDoingREST(msgctx.isDoingREST());
-
-        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
-                .getProperty(MessageContext.TRANSPORT_IN));
-        responseMessageContext.setTransportIn(msgctx.getTransportIn());
-        responseMessageContext.setTransportOut(msgctx.getTransportOut());
-
+    /**
+     * When Operation client get the response back after sending the
+     * message will call this method to handle the response.
+     * @throws AxisFault if something went wrong
+     */
+    protected void handleResponse(MessageContext responseMessageContext) throws AxisFault{
         // Options object reused above so soapAction needs to be removed so
         // that soapAction+wsa:Action on response don't conflict
         responseMessageContext.setSoapAction(null);
@@ -379,13 +346,49 @@ class OutInAxisOperationClient extends OperationClient {
             if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }
-             if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
+            if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
                 }
             }
         }
+    }
+
+    /**
+     * @param msgctx
+     * @return Returns MessageContext.
+     * @throws AxisFault Sends the message using a two way transport and waits for a response
+     */
+    protected MessageContext send(MessageContext msgctx) throws AxisFault {
+
+        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
+
+        // create the responseMessageContext
+
+        MessageContext responseMessageContext =
+                msgctx.getConfigurationContext().createMessageContext();
+
+        // This is a hack - Needs to change
+//        responseMessageContext.setOptions(options);
+
+        responseMessageContext.setServerSide(false);
+        responseMessageContext.setMessageID(msgctx.getMessageID());
+        addMessageContext(responseMessageContext);
+        responseMessageContext.setServiceContext(msgctx.getServiceContext());
+        responseMessageContext.setAxisMessage(
+                axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+
+        //sending the message
+        engine.send(msgctx);
+
+        responseMessageContext.setDoingREST(msgctx.isDoingREST());
+
+        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
+                .getProperty(MessageContext.TRANSPORT_IN));
+        responseMessageContext.setTransportIn(msgctx.getTransportIn());
+        responseMessageContext.setTransportOut(msgctx.getTransportOut());
+        handleResponse(responseMessageContext);
         return responseMessageContext;
     }
 
@@ -440,6 +443,7 @@ class OutInAxisOperationClient extends OperationClient {
 
         private Exception error;
 
+
         public void onComplete(AsyncResult result) {
             if (log.isDebugEnabled()) {
                 log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onComplete");
@@ -452,19 +456,6 @@ class OutInAxisOperationClient extends OperationClient {
             this.envelope.buildWithAttachments();
             if (log.isDebugEnabled()) {
                 log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onComplete");
-            }
-        }
-
-        public void setComplete(boolean complete) {
-            if (log.isDebugEnabled()) {
-                log.debug("Entry: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
-            }
-            super.setComplete(complete);
-            synchronized (this) {
-                notify();
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Exit: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
             }
         }
 

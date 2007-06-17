@@ -50,6 +50,7 @@ public final class AckManager {
 
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
+
         boolean isAcknowledged = false;
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         List memberList = ack.getMemberList();
@@ -62,14 +63,14 @@ public final class AckManager {
         } else {
             for (int i = 0; i < members.length; i++) {
                 Member member = members[i];
-                if (!memberList.contains(member.getName())) {
-                    log.debug("[NO ACK] from member " + member.getName());
+                String memberHost = TribesUtil.getHost(member);
+                if (member.isReady() && !memberList.contains(memberHost)) {
+                    log.debug("[NO ACK] from member " + memberHost);
                     log.debug("ACKed member list=" + memberList);
+
                     // At this point, resend the original message back to the node which has not
                     // sent an ACK
-                    if (member.isReady()) {
-                        sender.sendToMember(ack.getCommand(), member);
-                    }
+                    sender.sendToMember(ack.getCommand(), member);
 
                     //TODO: Enhancement, Check whether this is a new member. If then send the msg
                     isAcknowledged = false;

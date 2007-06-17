@@ -39,9 +39,9 @@ public class ElementReferenceTest extends TestCase {
         atbRequestCheckEligibility.setNameAsOnCard("cardname");
         atbRequestCheckEligibility.setYearOfRedemption(2);
 
-        OMElement omElement = echCheckEligibility1.getOMElement(CheckEligibility1.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
 
         try {
+            OMElement omElement = echCheckEligibility1.getOMElement(CheckEligibility1.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             CheckEligibility1 result = CheckEligibility1.Factory.parse(xmlReader);
@@ -74,9 +74,9 @@ public class ElementReferenceTest extends TestCase {
         atbRequestCheckEligibility[1].setNameAsOnCard("cardname");
         atbRequestCheckEligibility[1].setYearOfRedemption(2);
 
-        OMElement omElement = echCheckEligibility2.getOMElement(CheckEligibility2.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
 
         try {
+            OMElement omElement = echCheckEligibility2.getOMElement(CheckEligibility2.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
             String omElementString = omElement.toStringWithConsume();
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             CheckEligibility2 result = CheckEligibility2.Factory.parse(xmlReader);

@@ -10,13 +10,13 @@
 <body lang="en">
 <h1>Migrating from Apache Axis 1.x to Axis2</h1>
 
-<p>For all those users who are familiar with Axis 1.x series will be assisted
-through this document to switch to Axis2 series. We begin by listing the
-improvements in Axis2 in comparison with Axis1. This is followed by
-guidelines for the migration.</p>
+<p>This document is intended for helping Axis 1.x users migrate to the
+Axis2 series. We'll begin by listing the
+improvements in Axis2 in comparison with Axis1. This will be followed by
+guidelines for migration to the new version.</p>
 
 <p><i>Send your feedback or questions to: <a
-href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>.
+href="mailto:axis-user@ws.apache.org?subject=[Axis2]">axis-user@ws.apache.org</a></i>.
 (Subscription details are available on the <a
 href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
 prefix subject with [Axis2]. </p>
@@ -37,28 +37,27 @@ prefix subject with [Axis2]. </p>
 
 <p>Axis1.x and Axis2 have evolved from different architectures.</p>
 
-<p><strong>Speed</strong> - Axis2 is based on StAX API, which gives greater
-speed than SAX event based parsing that has been used in Axis1.x.</p>
+<p><strong>Speed</strong> - Axis2 is based on the StAX API, which gives greater
+speed than the SAX event based parsing used in Axis1.x.</p>
 
 <p><strong>Stability</strong> - Axis2 has fixed phases as well as
 user-defined phases for extensions. This allows far more stability as well as
 flexibility than Axis1.x.</p>
 
-<p><strong>Transport framework</strong> - Simple abstraction in the designing
-of transports (i.e., senders and listeners for SOAP over various protocols
-such as SMTP, etc), allows far more flexibility and the core of the engine is
-completely transport-independent.</p>
+<p><strong>Transport framework</strong> - Transports (i.e., senders and listeners 
+for SOAP over various protocols such as HTTP, SMTP, etc.), have been abstracted
+away from the Axis2 engine.  Having a transport-independent Axis engine allows 
+far more flexibility in transport options.</p>
 
-<p><strong>WSDL support</strong> - Axis2 supports versions 1.1 and 2.0, which
-allow you to create stubs and skeletons to manipulate the web services
-arena.</p>
+<p><strong>WSDL 2.0 support</strong> - Axis2 supports both WSDL versions 1.1 and 2.0, which
+are used by Axis2's code generation tools to create web service skeletons and client stubs.</p>
 
-<p><strong>Component - oriented architecture</strong> - The components are
-.mar and .aar archives . Easily reusable components such as handlers and
-modules allow pattern processing for your applications or distribution to
-partners. Axis2 is more concerned on the "Module" concept rather the
-"Handler" concept. Modules contain handlers that have been ordered through
-the phase rules. These are ordered to specific service(s).</p>
+<p><strong>Component-oriented architecture</strong> - Axis2 components consist of
+handlers and modules in .mar and .aar archives.  These easily reusable components 
+allow extended functionality such as pattern processing for your applications or distribution to
+partners. Axis2 emphasizes the "Module" concept over the
+"Handler" concept of Axis 1.x. Modules contain handlers that are ordered by
+phase rules. These are attached to specific service(s).</p>
 <a name="start"></a>
 
 <h2>Getting Started</h2>
@@ -123,36 +122,35 @@ public class EchoBlockingClient {
 }
 </pre>
 
-<p>It has been clearly depicted that the invocation in Axis2 is dealt with
-the SOAP body element itself. Here the invocation is synchronous, but Axis2
+<p>The above code demonstrates that Axis2 service invocations deal with the SOAP 
+body element itself. The simple shows a synchronous invocation, but Axis2
 can handle asynchronous invocations as well. The "payload" variable above
-contains the SOAP body element which should go in the SOAP envelope.</p>
+contains the SOAP body element which will go in the SOAP envelope.</p>
 
-<p>Once the service is called through the stub in Axis2, the "payload" will
-be according to the data binding framework that will be used. So the extra
-work of "payload" will vanish.</p>
+<p>Once the service is called by the client stub in Axis2, the "payload" will
+be bound according to the data binding framework in use. So the extra
+work of parsing the "payload" will vanish.</p>
 
-<p>Apart from synchronous invocation, Axis2 also supports asynchronous
-invocation through sendReceiveNonblocking(). Synchronous/Asynchronous
-invocations can handle both single and double HTTP connections.</p>
+<p>Axis2 supports asynchronous invocation through sendReceiveNonblocking(). 
+Synchronous/Asynchronous invocations can handle both single and double 
+HTTP connections.</p>
 
 <p>With this advanced architecture, Axis2 is capable of handling megabytes of
-requests and responses, which is far from the capabilities of Axis1.x.</p>
+requests and responses, well above the capabilities of Axis1.x.</p>
 <a name="custom_deployment"></a>
 
 <h2>Custom Deployment of Services, Handlers, and Modules</h2>
 
-<p>In Axis 1.x, the deployment of services was via WSDD, which in my opinion
-was highly cumbersome. Service deployment in Axis2 is straight forward and
-dynamic. Dynamic behavior is from the "Administrator" facility given by the
-development in the server side. It's just a matter of creating the .aar file
-and deploying it. More details regarding this is given in the Axis2 user
-guide.</p>
+<p>In Axis 1.x, the deployment of services was via the rather cumbersome WSDD.
+Service deployment in Axis2 is straightforward and dynamic using the web-based
+Axis2 Admin application.  Deployment is just a matter of creating the service
+archive (.aar) file and deploying it. More details regarding this is given
+in the Axis2 user guide.</p>
 
 <p>Axis2 has moved away from the "Handler concept" and is more into the
 "Module concept". Abstractly speaking, the module concept is a collection of
 handlers with rules that govern which modules are created as .mar files. It
-has module.xml, which is the brain behind manipulating the handlers.</p>
+uses a module.xml file to specify handler configuration and activation.</p>
 
 <p>When a service is called through a handler, it is just a matter of giving
 a reference to the module that includes the handler in the services.xml
@@ -338,7 +336,7 @@ the module.xml :</b></p>
 commons-httpclient.</p>
 
 <p>It should be noted that axis2.xml should be configured to call the commons
-transports with the statement,</p>
+transports in this manner:</p>
 <pre>...
 &lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt; 
    &lt;parameter name="PROTOCOL" locked="false"&gt;HTTP/1.1&lt;/parameter&gt; 
@@ -350,11 +348,11 @@ transports with the statement,</p>
 <h2>Data Binding Support</h2>
 
 <p>ADB is used to provide data binding support. In Axis2, XML is manipulated
-via AXIOM, which is based on the StAX API. XML gives full schema support.
+via AXIOM, which is based on the StAX API. AXIOM provides full XML schema support.
 Thus, serialization and de-serialization of XML is handled in Axis2 via the
 xml-data binding framework.</p>
 
-<p>Below is an example of migrating an WSDL based Axis 1.x Web Service to
+<p>Below is an example of migrating a WSDL based Axis 1.x Web Service to
 Axis2.</p>
 
 <p>First, let's take a look at a simple document/literal style WSDL used in
@@ -453,7 +451,7 @@ simple.wsdl required for Axis2 is that 'soap:address location' be changed
 to:</p>
 <pre>&lt;soap:address location="http://localhost:8080/axis2/services/SimpleEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
 
-<p>In Axis2, the default databinding uses ADB. However, XMLBeans and JaxMe
+<p>In Axis2, the default databinding uses ADB. However, XMLBeans, JiBX and JaxMe
 are also supported. This example uses XMLBeans. For Axis2, our example uses
 the following Ant task:</p>
 <pre>&lt;target name="wsdl2java"&gt;
@@ -588,17 +586,18 @@ org/simple/endpoint/SimpleEndpointSkeleton.java from:</p>
          */
         public SimpleLoginResponseDocument simpleLogin
                   (simplens.types.SimpleLoginDocument simpleLoginDocument){
-                //Todo fill this with the necessary business logic
-
+  
                 SimpleLoginResponseDocument retDoc =
                     SimpleLoginResponseDocument.Factory.newInstance();
                  
                 SimpleLoginResponse retElement =
                     SimpleLoginResponse.Factory.newInstance();
+  
                 // Get parameters passed in 
                 SimpleLogin simpleLogin = simpleLoginDocument.getSimpleLogin();
                 String userName = simpleLogin.getUserName();
                 String password = simpleLogin.getUserPassword();
+
                 // do something with those variables...
 
                 retElement.setWebUserName(userName);
@@ -614,7 +613,7 @@ in the Axis2.war under WEB-INF/services. Point a browser to
 http://localhost:8080/axis2/listServices, and you should see the service
 'SimpleService' ready for action. See the Axis2 user guide for more info.</p>
 
-<p>The last step is the client. Our Axis 1.x client for this example is:</p>
+<p>The last step is constructing the client. Our Axis 1.x client for this example is:</p>
 <pre>package org;
 
 import simpleNS.*;
@@ -684,7 +683,7 @@ alternatively a 'Fire and forget'. See the user guide for more details.</p>
 <p>Axis1.x and Axis2 have different ways of seeing the SOAP stack. So the
 best way to migrate is to follow the <a href="userguide.html">User's
 Guide</a> and the <a href="Axis2ArchitectureGuide.html">Architecture
-Guide</a> of Axis2 properly. Axis2 is very straight forward and friendly to
-use than its predecessor.</p>
+Guide</a> of Axis2 properly.  We are confident you will find Axis2 very 
+straightforward and more friendly to use than its predecessor.</p>
 </body>
 </html>

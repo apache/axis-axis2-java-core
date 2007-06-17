@@ -43,7 +43,6 @@
 		<module>modules/mtompolicy</module>
 		<module>modules/parent</module>
 		<module>modules/ping</module>
-		<module>modules/scripting</module>
 		<module>modules/samples/version</module>
 		<module>modules/soapmonitor</module>
 		<module>modules/spring</module>
@@ -65,10 +64,12 @@
 				<jdk>1.5</jdk>
 			</activation>
 			<modules>
+				<module>modules/scripting</module>
 				<module>modules/jaxbri</module>
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
+                                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>
@@ -84,6 +85,7 @@
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
+                                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>

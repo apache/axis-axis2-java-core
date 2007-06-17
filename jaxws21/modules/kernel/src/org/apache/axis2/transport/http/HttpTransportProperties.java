@@ -60,28 +60,20 @@ public class HttpTransportProperties {
 
     public static class ProxyProperties {
         protected int proxyPort = -1;
-        protected String domain;
-        protected String passWord;
-        protected String proxyHostName;
-        protected String userName;
+        protected String domain = null;
+        protected String passWord = null;
+        protected String proxyHostName = null;
+        protected String userName = null;
 
         public ProxyProperties() {
         }
 
         public String getDomain() {
-            if (domain == null || domain.length() == 0) {
-                return "anonymous";
-            } else {
-                return domain;
-            }
+            return domain;
         }
 
         public String getPassWord() {
-            if (passWord == null || passWord.length() == 0) {
-                return "anonymous";
-            } else {
-                return passWord;
-            }
+            return passWord;
         }
 
         public String getProxyHostName() {
@@ -93,11 +85,7 @@ public class HttpTransportProperties {
         }
 
         public String getUserName() {
-            if (userName == null || userName.length() == 0) {
-                return "anonymous";
-            } else {
-                return userName;
-            }
+            return userName;
         }
 
         public void setDomain(String domain) {

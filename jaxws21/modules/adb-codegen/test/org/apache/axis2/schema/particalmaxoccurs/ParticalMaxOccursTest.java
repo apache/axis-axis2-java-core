@@ -50,9 +50,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType1.setTestParticalSequenceMaxOccursType1Sequence(testSequences);
 
-        OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalSequenceMaxOccurs1.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalSequenceMaxOccurs1.MY_QNAME,
+                       OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -87,9 +87,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType2.setTestParticalSequenceMaxOccursType2Sequence(testSequences);
 
-        OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalSequenceMaxOccurs2.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalSequenceMaxOccurs2.MY_QNAME,
+                     OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -126,9 +126,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType3.setTestParticalSequenceMaxOccursType3Sequence(testSequences);
 
-        OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalSequenceMaxOccurs3.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalSequenceMaxOccurs3.MY_QNAME,
+                      OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -167,9 +167,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalSequenceMaxOccursType4Sequence[2] = new TestParticalSequenceMaxOccursType4Sequence();
         testParticalSequenceMaxOccursType4Sequence[2].setParm3(getNewCustomType());
 
-        OMElement omElement = testParticalSequenceMaxOccurs4.getOMElement(TestParticalSequenceMaxOccurs4.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalSequenceMaxOccurs4.getOMElement(TestParticalSequenceMaxOccurs4.MY_QNAME,
+                     OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -221,9 +221,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalSequenceMaxOccursType5Sequence[2].setParm1(new TestCustomType[]{getNewCustomType()});
         testParticalSequenceMaxOccursType5Sequence[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-        OMElement omElement = testParticalSequenceMaxOccurs5.getOMElement(TestParticalSequenceMaxOccurs5.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalSequenceMaxOccurs5.getOMElement(TestParticalSequenceMaxOccurs5.MY_QNAME,
+                    OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -272,9 +272,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalSequenceMaxOccurs6.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalSequenceMaxOccurs6.MY_QNAME,
+                     OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -301,9 +301,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalChoiceMaxOccursType.setParm1("Param1");
 
-        OMElement omElement =
-                testParticalChoiceMaxOccurs.getOMElement(TestParticalChoiceMaxOccurs.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                     testParticalChoiceMaxOccurs.getOMElement(TestParticalChoiceMaxOccurs.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM string ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -331,9 +331,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType1.setTestParticalChoiceMaxOccursType1Choice(testChoices);
 
-        OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalChoiceMaxOccurs1.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+       try {
+            OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalChoiceMaxOccurs1.MY_QNAME,
+                   OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -364,9 +364,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType2.setTestParticalChoiceMaxOccursType2Choice(testChoices);
 
-        OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalChoiceMaxOccurs2.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalChoiceMaxOccurs2.MY_QNAME,
+                      OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -401,9 +401,9 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType3.setTestParticalChoiceMaxOccursType3Choice(testChoices);
 
-        OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalChoiceMaxOccurs3.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalChoiceMaxOccurs3.MY_QNAME,
+                     OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -442,9 +442,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalChoiceMaxOccursType4Choice[2] = new TestParticalChoiceMaxOccursType4Choice();
         testParticalChoiceMaxOccursType4Choice[2].setParm3(getNewCustomType());
 
-        OMElement omElement = testParticalChoiceMaxOccurs4.getOMElement(TestParticalChoiceMaxOccurs4.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement = testParticalChoiceMaxOccurs4.getOMElement(TestParticalChoiceMaxOccurs4.MY_QNAME,
+                      OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -492,9 +492,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalChoiceMaxOccursType5Choice[2] = new TestParticalChoiceMaxOccursType5Choice();
         testParticalChoiceMaxOccursType5Choice[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-        OMElement omElement = testParticalChoiceMaxOccurs5.getOMElement(TestParticalChoiceMaxOccurs5.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+       try {
+            OMElement omElement = testParticalChoiceMaxOccurs5.getOMElement(TestParticalChoiceMaxOccurs5.MY_QNAME,
+                   OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -541,9 +541,9 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalChoiceMaxOccurs6.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalChoiceMaxOccurs6.MY_QNAME,
+                    OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

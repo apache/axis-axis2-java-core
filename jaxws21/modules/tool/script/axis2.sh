@@ -35,16 +35,16 @@ USER_COMMANDS=""
 prearg=""
 for arg in "$@"
 do
-   if [ $arg != -classpath ] && [ $arg != -cp ] && [ $prearg != -classpath ] && [ $prearg != -cp  ]
+   if [ "$arg" != -classpath ] && [ "$arg" != -cp ] && [ "$prearg" != -classpath ] && [ "$prearg" != -cp  ]
    then
       USER_COMMANDS="$USER_COMMANDS ""$arg"
    fi
 
-   if [ $prearg=-classpath ] || [ $prearg=-cp  ]
+   if [ "$prearg"=-classpath ] || [ "$prearg"=-cp  ]
    then
       AXIS2_CLASSPATH="$arg":"$AXIS2_CLASSPATH"
    fi
-   prearg=$arg
+   prearg="$arg"
 done 
 
 

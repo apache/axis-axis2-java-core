@@ -1,7 +1,5 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.util.FileWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 /*
@@ -20,7 +18,7 @@ import java.io.FileOutputStream;
  * limitations under the License.
  */
 
-public class PolicyFileWriter extends ClassWriter {
+public class PolicyFileWriter extends FileWriter {
 
     public PolicyFileWriter(File outputFileLocation) {
         this.outputFileLocation = outputFileLocation;
@@ -28,7 +26,7 @@ public class PolicyFileWriter extends ClassWriter {
 
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation,
+        File outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
                                                      packageName,
                                                      fileName,
                                                      ".xml");

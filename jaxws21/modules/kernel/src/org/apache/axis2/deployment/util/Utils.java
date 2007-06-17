@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -167,8 +168,9 @@ public class Utils {
         int count;
         File f;
         if(tmpDir == null) {
-        new File(System.getProperty("java.io.tmpdir")).mkdirs();
-            f = File.createTempFile("axis2", suffix);
+            new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs();
+            File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
+            f = File.createTempFile("axis2", suffix,tempFile);
         } else {
             f = File.createTempFile("axis2", suffix, tmpDir);
         }
@@ -281,8 +283,11 @@ public class Utils {
             // other looks.
             implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
             if (implInfoParam != null) {
-                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, ((String)
-                        implInfoParam.getValue()).trim());
+                String className = ((String)implInfoParam.getValue()).trim();
+                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, className);
+                if(serviceObjectMaker.getModifiers() != Modifier.PUBLIC){
+                    throw new AxisFault("Service class "+ className + " must have public as access Modifier");
+                }
 
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.
@@ -367,8 +372,11 @@ public class Utils {
                 if (jmethod.getExceptionTypes().length > 0) {
                     JClass[] extypes = jmethod.getExceptionTypes() ;
                     for (int j= 0 ; j < extypes.length ; j++) {
-                        AxisMessage faultMessage = new AxisMessage();
                         JClass extype = extypes[j] ;
+                        if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                            continue;
+                        }
+                        AxisMessage faultMessage = new AxisMessage();
                         String exname = extype.getSimpleName() ;
                         if(extypes.length>1){
                             faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
@@ -421,8 +429,11 @@ public class Utils {
         if (jmethod.getExceptionTypes().length > 0) {
             JClass[] extypes = jmethod.getExceptionTypes() ;
             for (int j= 0 ; j < extypes.length ; j++) {
-                AxisMessage faultMessage = new AxisMessage();
                 JClass extype = extypes[j] ;
+                if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                    continue;
+                }
+                AxisMessage faultMessage = new AxisMessage();
                 String exname = extype.getSimpleName() ;
                 if(extypes.length >1){
                     faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);

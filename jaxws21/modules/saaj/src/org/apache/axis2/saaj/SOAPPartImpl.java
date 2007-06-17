@@ -15,6 +15,31 @@
  */
 package org.apache.axis2.saaj;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.util.StAXUtils;
@@ -47,30 +72,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
-
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
 
@@ -1194,27 +1195,28 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     public String getValue() {
-        return null;  //TODO - Not yet implemented
-    }        //if(mimeHeaderSet){
+    	//There are no immediate child text nodes to soap part
+        return null;        
+    }        
 
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
-        //TODO - Not yet implemented
+    	throw new SOAPException("Cannot set the parent element of SOAPPart");
     }
 
     public SOAPElement getParentElement() {
-        return null;  //TODO - Not yet implemented
+        return null;  //SOAP part is the root element
     }
 
     public void detachNode() {
-        //TODO - Not yet implemented
+        //nothing to do here
     }
 
     public void recycleNode() {
-        //TODO - Not yet implemented
+        //nothing to do here
     }
 
     public void setValue(String value) {
-        //TODO - Not yet implemented
+    	throw new IllegalStateException("Cannot set value of SOAPPart.");
     }
 }

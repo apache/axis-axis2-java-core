@@ -595,7 +595,7 @@ public class CodeGenerationUtility {
             }
             StringBuffer pathBuilder = new StringBuffer();
             for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
-                pathBuilder.append("/" + iter.next());
+                pathBuilder.append(File.separator + iter.next());
             }
             systemId = pathBuilder.toString().substring(1);
 
@@ -630,7 +630,7 @@ public class CodeGenerationUtility {
                     //if the systemId actually had a scheme then as per the URL
                     //constructor, the context URL scheme should be ignored
                     baseUri = (baseUri == null) ? "file:///" : baseUri;
-                    URL url = new URL(new URL(baseUri), systemId);
+                    URL url = new URL(baseUri + systemId);
                     return new InputSource(url.openStream());
                 }
                 return XMLUtils.getEmptyInputSource();

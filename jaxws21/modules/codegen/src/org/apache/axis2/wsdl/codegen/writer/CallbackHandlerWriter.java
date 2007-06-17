@@ -18,7 +18,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import java.io.File;
 
-public class CallbackHandlerWriter extends ClassWriter {
+public class CallbackHandlerWriter extends FileWriter {
 
     public CallbackHandlerWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);

@@ -22,6 +22,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -71,9 +72,12 @@ public class UpdateServiceContextCommand extends UpdateContextCommand {
             }
             String scope = axisService.getScope();
             if (sgCtx == null) {
-                sgCtx = new ServiceGroupContext(configurationContext,
-                                                configurationContext.getAxisConfiguration().
-                                                        getServiceGroup(serviceGroupName));
+                AxisServiceGroup serviceGroup =
+                        configurationContext.getAxisConfiguration().getServiceGroup(serviceGroupName);
+                if(serviceGroup == null){
+                    return;
+                }
+                sgCtx = new ServiceGroupContext(configurationContext, serviceGroup);
                 sgCtx.setId(serviceGroupContextId);
                 if (scope.equals(Constants.SCOPE_APPLICATION)) {
                     configurationContext.

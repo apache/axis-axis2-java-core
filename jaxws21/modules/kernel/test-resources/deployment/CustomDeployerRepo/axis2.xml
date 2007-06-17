@@ -109,7 +109,7 @@
     </messageFormatters>
 
     <!-- Test custom deployment by registering for "svc" files, and the "widgets" dir -->
-    <deployer extension="svc" directory="widgets"
+    <deployer extension=".svc" directory="widgets"
             class="org.apache.axis2.deployment.deployers.CustomDeployer"/>
 
     <!-- ================================================= -->

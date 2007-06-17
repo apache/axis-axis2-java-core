@@ -57,6 +57,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      */
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         this.codeGenConfiguration = configuration;
+        
         if (!configuration.isParametersWrapped()) {
 
             // A check to avoid nasty surprises - Since unwrapping is not

@@ -181,7 +181,10 @@ public class CStructWriter implements BeanWriter {
      *
      * @see org.apache.axis2.schema.writer.BeanWriter
      */
-    public String write(QName qName, Map typeMap, BeanWriterMetaInfoHolder metainf)
+    public String write(QName qName,
+                        Map typeMap,
+                        BeanWriterMetaInfoHolder metainf,
+                        boolean isAbstract)
             throws SchemaCompilationException {
 
         try {

@@ -112,7 +112,6 @@ public class JavaBeanWriter implements BeanWriter {
      * meaning when the classes are supposed to be wrapped so the
      *
      * @return Returns Map.
-     * @throws SchemaCompilationException
      * @see BeanWriter#getModelMap()
      */
     public Map getModelMap() {
@@ -210,7 +209,7 @@ public class JavaBeanWriter implements BeanWriter {
         try {
             QName qName = element.getQName();
 
-            return process(qName, metainf, typeMap, true);
+            return process(qName, metainf, typeMap, true, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SchemaCompilationException(e);
@@ -219,23 +218,23 @@ public class JavaBeanWriter implements BeanWriter {
     }
 
     /**
-     * @param complexType
+     * `
+     * @param qName
      * @param typeMap
      * @param metainf
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if
-     *                                it wasn't called
-     * @throws org.apache.axis2.schema.SchemaCompilationException
-     *
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType,
-     *      java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
+     * @param isAbstract
+     * @return
+     * @throws SchemaCompilationException
      */
-    public String write(QName qName, Map typeMap,
-                        BeanWriterMetaInfoHolder metainf)
+    public String write(QName qName,
+                        Map typeMap,
+                        BeanWriterMetaInfoHolder metainf,
+                        boolean isAbstract)
             throws SchemaCompilationException {
 
         try {
             // determine the package for this type.
-            return process(qName, metainf, typeMap, false);
+            return process(qName, metainf, typeMap, false,isAbstract);
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -288,7 +287,7 @@ public class JavaBeanWriter implements BeanWriter {
                 qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
             }
             metainf.addtStatus(qName, SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
-            return process(qName, metainf, typeMap, true);
+            return process(qName, metainf, typeMap, true, false);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -374,8 +373,11 @@ public class JavaBeanWriter implements BeanWriter {
      * @return Returns String.
      * @throws Exception
      */
-    private String process(QName qName, BeanWriterMetaInfoHolder metainf,
-                           Map typeMap, boolean isElement)
+    private String process(QName qName,
+                           BeanWriterMetaInfoHolder metainf,
+                           Map typeMap,
+                           boolean isElement,
+                           boolean isAbstract)
             throws Exception {
         String fullyQualifiedClassName = metainf.getOwnClassName();
         if (fullyQualifiedClassName == null)
@@ -406,7 +408,7 @@ public class JavaBeanWriter implements BeanWriter {
         if (wrapClasses) {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className,
-                            originalName, basePackageName, qName, isElement,
+                            originalName, basePackageName, qName, isElement,isAbstract,
                             metainf, propertyNames, typeMap));
 
         } else {
@@ -414,7 +416,7 @@ public class JavaBeanWriter implements BeanWriter {
             Document model = XSLTUtils.getDocument();
             // make the XML
             model.appendChild(getBeanElement(model, className, originalName,
-                    basePackageName, qName, isElement, metainf, propertyNames,
+                    basePackageName, qName, isElement,isAbstract, metainf, propertyNames,
                     typeMap));
 
             if (writeClasses) {
@@ -470,6 +472,7 @@ public class JavaBeanWriter implements BeanWriter {
                                    String packageName,
                                    QName qName,
                                    boolean isElement,
+                                   boolean isAbstract,
                                    BeanWriterMetaInfoHolder metainf,
                                    ArrayList propertyNames,
                                    Map typeMap)
@@ -485,6 +488,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (!wrapClasses) {
             XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
+        }
+
+        if (isAbstract){
+           XSLTUtils.addAttribute(model, "isAbstract", "yes", rootElt);
         }
 
         if (!writeClasses) {

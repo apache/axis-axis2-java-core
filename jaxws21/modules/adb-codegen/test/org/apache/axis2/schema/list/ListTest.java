@@ -36,9 +36,9 @@ public class ListTest extends TestCase {
         testListStringElement.setTestListStringElement(testListString);
         testListString.setString(new String[]{"string1","string2"});
 
-        OMElement omElement = testListStringElement.getOMElement(TestListStringElement.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-        try {
+       try {
+           OMElement omElement = testListStringElement.getOMElement(TestListStringElement.MY_QNAME,
+                       OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -59,8 +59,8 @@ public class ListTest extends TestCase {
                         new QName("http://www.google","test3")});
         testListQNameElement.setTestListQNameElement(testListQName);
 
-        OMElement omElement = testListQNameElement.getOMElement(TestListQNameElement.MY_QNAME,OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testListQNameElement.getOMElement(TestListQNameElement.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -86,8 +86,8 @@ public class ListTest extends TestCase {
         testString3.setTestString("test");
         testListOurs.setTestString(new TestString[]{testString1,testString2,testString3});
 
-        OMElement omElement = testListOursElement.getOMElement(TestListOursElement.MY_QNAME,OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = testListOursElement.getOMElement(TestListOursElement.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -107,9 +107,9 @@ public class ListTest extends TestCase {
         superTestListStringElement.setSuperTestListStringElement(superTestListString);
         superTestListString.setString(new String[]{"test1","test2","test3"});
 
-        OMElement omElement = superTestListStringElement.getOMElement(SuperTestListStringElement.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+       try {
+           OMElement omElement = superTestListStringElement.getOMElement(SuperTestListStringElement.MY_QNAME,
+                   OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -130,9 +130,9 @@ public class ListTest extends TestCase {
 
         innerListSimpleType.setInnerListSimpleType_type0(list);
 
-        OMElement omElement = testInnerListSimpleType.getOMElement(TestInnerListSimpleType.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement = testInnerListSimpleType.getOMElement(TestInnerListSimpleType.MY_QNAME,
+                      OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

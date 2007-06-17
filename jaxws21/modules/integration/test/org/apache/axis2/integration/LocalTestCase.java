@@ -37,6 +37,7 @@ import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
+import org.apache.axiom.soap.SOAP12Constants;
 
 /**
  * LocalTestCase is an extendable base class which provides common functionality
@@ -78,6 +79,8 @@ public class LocalTestCase extends TestCase {
         serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_ONLY,
                                         new RawXMLINOnlyMessageReceiver());
         serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_OUT,
+                                        new RawXMLINOutMessageReceiver());
+        serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
                                         new RawXMLINOutMessageReceiver());
 
         ///////////////////////////////////////////////////////////////////////
@@ -133,12 +136,7 @@ public class LocalTestCase extends TestCase {
      * @throws AxisFault if there's a problem
      */
     protected ServiceClient getClient() throws AxisFault {
-        TransportOutDescription td = new TransportOutDescription("local");
-        td.setSender(sender);
-
-        Options opts = new Options();
-        opts.setTransportOut(td);
-
+        Options opts = getOptions();
         ServiceClient client = new ServiceClient(clientCtx, null);
         client.setOptions(opts);
         return client;
@@ -153,12 +151,7 @@ public class LocalTestCase extends TestCase {
      * @throws AxisFault if there's a problem
      */
     protected RPCServiceClient getRPCClient() throws AxisFault {
-        TransportOutDescription td = new TransportOutDescription("local");
-        td.setSender(sender);
-
-        Options opts = new Options();
-        opts.setTransportOut(td);
-
+        Options opts = getOptions();
         RPCServiceClient client = new RPCServiceClient(clientCtx, null);
         client.setOptions(opts);
         return client;
@@ -174,18 +167,28 @@ public class LocalTestCase extends TestCase {
      * @throws AxisFault if there's a problem
      */
     protected ServiceClient getClient(String serviceName, String operationName) throws AxisFault {
-        TransportOutDescription td = new TransportOutDescription("local");
-        td.setSender(sender);
-
-        Options opts = new Options();
-        opts.setTransportOut(td);
-        
         String url = LocalTransportReceiver.CONFIG_CONTEXT.getServiceContextPath()+"/"+serviceName;
 
+        Options opts = getOptions();
         opts.setTo(new EndpointReference(url));
         opts.setAction(operationName);
         ServiceClient client = new ServiceClient(clientCtx, null);
         client.setOptions(opts);
         return client;
+    }
+
+    /**
+     * Get an Options object initialized with the right transport info, defaulting to SOAP 1.2
+     *
+     * @return pre-initialized Options object
+     */
+    protected Options getOptions() {
+        TransportOutDescription td = new TransportOutDescription("local");
+        td.setSender(sender);
+
+        Options opts = new Options();
+        opts.setTransportOut(td);
+        opts.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        return opts;
     }
 }

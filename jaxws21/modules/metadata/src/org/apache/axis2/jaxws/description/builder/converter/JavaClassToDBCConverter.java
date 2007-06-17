@@ -1,14 +1,11 @@
 package org.apache.axis2.jaxws.description.builder.converter;
 
-import org.apache.axis2.jaxws.description.builder.BindingTypeAnnot;
-import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.builder.FieldDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.ServiceModeAnnot;
-import org.apache.axis2.jaxws.description.builder.WebFaultAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceProviderAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
@@ -18,12 +15,16 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import org.apache.axis2.jaxws.description.builder.BindingTypeAnnot;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.FieldDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.ServiceModeAnnot;
+import org.apache.axis2.jaxws.description.builder.WebFaultAnnot;
+import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.WebServiceProviderAnnot;
+import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 
 public class JavaClassToDBCConverter {
 
@@ -52,18 +53,17 @@ public class JavaClassToDBCConverter {
         HashMap<String, DescriptionBuilderComposite> dbcMap = new HashMap<String,
                 DescriptionBuilderComposite>();
         for (int i = 0; i < classes.size(); i++) {
-            serviceClass = classes.get(i);
-            DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
-            introspectClass(composite);
-            dbcMap.put(composite.getClassName(), composite);
+            buildDBC(dbcMap, classes.get(i));
             if (seiClassName != null && !seiClassName.equals("")) {
-                DescriptionBuilderComposite seiComposite = new DescriptionBuilderComposite();
                 try {
-                    serviceClass =
+                    Class seiClass =
                             Thread.currentThread().getContextClassLoader().loadClass(seiClassName);
-                    if (serviceClass != null) {
-                        introspectClass(seiComposite);
-                        dbcMap.put(seiComposite.getClassName(), seiComposite);
+                    buildDBC(dbcMap, seiClass);
+                    
+                    // Also try to see if the SEI has any super interfaces  
+                    Class[] interfaces = seiClass.getInterfaces();
+                    for (int j = 0; j < interfaces.length; j++) {
+                        buildDBC(dbcMap, interfaces[i]);                            
                     }
                 }
                 catch (ClassNotFoundException e) {
@@ -77,6 +77,13 @@ public class JavaClassToDBCConverter {
         return dbcMap;
     }
 
+    private void buildDBC(HashMap<String, DescriptionBuilderComposite> dbcMap, Class clazz) {
+        serviceClass = clazz;
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+        introspectClass(composite);
+        dbcMap.put(composite.getClassName(), composite);        
+    }
+    
     /**
      * This method will drive the introspection of the class-level information. It will store the
      * gathered information in the pertinent data members of the <code>DescriptionBuilderComposite</code>

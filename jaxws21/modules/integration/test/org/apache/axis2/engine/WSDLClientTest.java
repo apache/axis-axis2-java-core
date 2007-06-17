@@ -42,8 +42,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
     protected void setUp() throws Exception {
         service = AxisService.createService(Echo.class.getName(),
                                             UtilServer
-                                                    .getConfigurationContext().getAxisConfiguration(),
-                                            RPCMessageReceiver.class);
+                                                    .getConfigurationContext().getAxisConfiguration());
         service.setName(serviceName.getLocalPart());
         UtilServer.deployService(service);
     }

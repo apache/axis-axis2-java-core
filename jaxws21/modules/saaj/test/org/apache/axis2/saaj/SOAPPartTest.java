@@ -94,10 +94,6 @@ public class SOAPPartTest extends TestCase {
                 while (attrs.hasNext()) {
                     Name attrName = (Name)attrs.next();
                     assertNotNull(attrName);
-                    //System.out.println(indent + " Attribute name is " +
-                    //                   attrName.getQualifiedName());
-                    //System.out.println(indent + " Attribute value is " +
-                    //                   element.getAttributeValue(attrName));
                 }
 
                 Iterator iter2 = element.getChildElements();
@@ -187,5 +183,4 @@ public class SOAPPartTest extends TestCase {
             fail("Unexpected Exception " + e);
         }
     }
-
 }

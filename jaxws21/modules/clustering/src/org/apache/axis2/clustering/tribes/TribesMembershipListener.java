@@ -28,12 +28,12 @@ public class TribesMembershipListener implements MembershipListener {
     private static Log log = LogFactory.getLog(TribesMembershipListener.class);
 
     public void memberAdded(Member member) {
-        log.info("New member " + member.getName() + " joined cluster.");
+        log.info("New member " + TribesUtil.getHost(member) + " joined cluster.");
        //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
     public void memberDisappeared(Member member) {
-        log.info("Member " + member.getName() + " left cluster");
+        log.info("Member " + TribesUtil.getHost(member) + " left cluster");
 //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 }

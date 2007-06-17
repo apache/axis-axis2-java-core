@@ -545,11 +545,11 @@ public class SOAPEnvelopeTest extends TestCase {
         }
     }
 
-    //TODO : check
-    public void _testSetEncodingStyle() throws Exception {
+    public void testSetEncodingStyle() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         envelope.setEncodingStyle("http://example.com/MyEncodings");
         assertNotNull(envelope.getEncodingStyle());
+        assertEquals("http://example.com/MyEncodings",envelope.getEncodingStyle());
     }
 
     public void testElementAfterBody() throws Exception {

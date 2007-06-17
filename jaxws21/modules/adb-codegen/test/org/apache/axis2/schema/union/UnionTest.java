@@ -43,9 +43,9 @@ public class UnionTest extends TestCase {
         record2.setElem1(dateOrDateTimeType);
         dateOrDateTimeType.setObject(testObject);
 
-        OMElement omElement = record2.getOMElement(Record2.MY_QNAME,
-                OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = record2.getOMElement(Record2.MY_QNAME,
+                     OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -93,8 +93,8 @@ public class UnionTest extends TestCase {
         unionQNameTestElement.setUnionQNameTestElement(unionQNameTest);
         unionQNameTest.setObject(new QName("http://www.google.com","test"));
 
-        OMElement omElement = unionQNameTestElement.getOMElement(UnionQNameTestElement.MY_QNAME,OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement = unionQNameTestElement.getOMElement(UnionQNameTestElement.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -112,9 +112,9 @@ public class UnionTest extends TestCase {
         PackingType_T_type2 packingType_t_type2 = new PackingType_T_type2();
         packingType_t_type2.setPackingType_T_type2("MINOR_a");
         packingType_t.setObject(packingType_t_type2);
-
-        OMElement omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
+        OMElement omElement;
         try {
+            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -131,8 +131,8 @@ public class UnionTest extends TestCase {
         packingType_t_type3.setPackingType_T_type3("PROP_a");
         packingType_t.setObject(packingType_t_type3);
 
-        omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
-        try {
+         try {
+            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -147,8 +147,8 @@ public class UnionTest extends TestCase {
         testInnerUnionType.setTestInnerUnionType(packingType_t);
         packingType_t.setObject(PackingType_T_type4.TAR);
 
-        omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
         try {
+            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

@@ -36,8 +36,9 @@ public class AllTest extends TestCase {
         update.setArg1(true);
         update.setId(2);
 
-        OMElement omElement = update.getOMElement(Update.MY_QNAME, OMAbstractFactory.getOMFactory());
+
         try {
+            OMElement omElement = update.getOMElement(Update.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("om string ==> " + omElementString);
             omElementString = "<ns1:Update xmlns:ns1=\"http://tempuri.org/\"><ns1:arg1>true</ns1:arg1><ns1:id>2</ns1:id><ns1:arg0>test</ns1:arg0></ns1:Update>";

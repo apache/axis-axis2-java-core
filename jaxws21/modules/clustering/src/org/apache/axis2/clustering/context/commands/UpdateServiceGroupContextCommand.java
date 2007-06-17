@@ -55,8 +55,10 @@ public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
         // If the ServiceGroupContext is not found, create it
         if (sgCtx == null) {
             AxisServiceGroup axisServiceGroup =
-                    configContext.getAxisConfiguration()
-                            .getServiceGroup(serviceGroupName);
+                    configContext.getAxisConfiguration().getServiceGroup(serviceGroupName);
+            if(axisServiceGroup == null){
+                return;
+            }
             sgCtx = new ServiceGroupContext(configContext, axisServiceGroup);
             sgCtx.setId(serviceGroupContextId);
             configContext.addServiceGroupContextIntoSoapSessionTable(sgCtx);  // TODO: Check this

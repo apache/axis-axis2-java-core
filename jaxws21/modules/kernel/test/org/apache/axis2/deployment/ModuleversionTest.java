@@ -75,21 +75,21 @@ public class ModuleversionTest extends TestCase {
         boolean found2 = false;
         boolean found3 = false;
         while (engageModules.hasNext()) {
-            String qName = (String) engageModules.next();
+            String qName = ((AxisModule) engageModules.next()).getName();
             if (qName.equals("Module2-0.95")) {
                 found1 = true;
             }
         }
         engageModules = axiConfiguration.getEngagedModules().iterator();
         while (engageModules.hasNext()) {
-            String name = (String) engageModules.next();
+            String name = ((AxisModule) engageModules.next()).getName();
             if (name.equals("Module1")) {
                 found2 = true;
             }
         }
         engageModules = axiConfiguration.getEngagedModules().iterator();
         while (engageModules.hasNext()) {
-            String qName = (String) engageModules.next();
+            String qName = ((AxisModule) engageModules.next()).getName();
             if (qName.equals("testModule-1.93")) {
                 found3 = true;
             }

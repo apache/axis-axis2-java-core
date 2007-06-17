@@ -15,12 +15,10 @@
  */
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.util.FileWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class CServiceXMLWriter extends ClassWriter {
+public class CServiceXMLWriter extends FileWriter {
 
 
     public CServiceXMLWriter(String outputFileLocation) {
@@ -34,7 +32,7 @@ public class CServiceXMLWriter extends ClassWriter {
 
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        outputFile = FileWriter.createClassFile(outputFileLocation,
+        outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
                                                 "",
                                                 "services",
                                                 ".xml");

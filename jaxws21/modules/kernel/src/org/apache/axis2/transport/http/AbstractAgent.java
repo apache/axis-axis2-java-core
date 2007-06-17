@@ -115,6 +115,7 @@ public class AbstractAgent {
                               HttpServletRequest httpServletRequest,
                               HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
+        httpServletResponse.setContentType("text/html"); 
         httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
                 .include(httpServletRequest, httpServletResponse);
 

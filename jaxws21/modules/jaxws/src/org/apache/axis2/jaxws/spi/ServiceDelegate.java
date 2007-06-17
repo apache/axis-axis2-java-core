@@ -416,10 +416,29 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     "Unable to getPort for port QName " + portName);
         }
 
-        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, endpointDesc, features);
-
-        Class[] seiClazz = new Class[] { sei, org.apache.axis2.jaxws.spi.BindingProvider.class };
-        Object proxyClass = Proxy.newProxyInstance(getClassLoader(sei), seiClazz, proxyHandler);
+        String[] interfacesNames = 
+            new String [] {sei.getName(), org.apache.axis2.jaxws.spi.BindingProvider.class.getName()};
+        
+        // As required by java.lang.reflect.Proxy, ensure that the interfaces
+        // for the proxy are loadable by the same class loader. 
+        Class[] interfaces = null;
+        // First, let's try loading the interfaces with the SEI classLoader
+        ClassLoader classLoader = getClassLoader(sei);
+        try {
+            interfaces = loadClasses(classLoader, interfacesNames);
+        } catch (ClassNotFoundException e1) {
+            // Let's try with context classLoader now
+            classLoader = getContextClassLoader();
+            try {
+                interfaces = loadClasses(classLoader, interfacesNames);
+            } catch (ClassNotFoundException e2) {
+                // TODO: NLS
+                throw ExceptionFactory.makeWebServiceException("Unable to load proxy classes", e2);
+            }
+        }
+        
+        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc, features);
+        Object proxyClass = Proxy.newProxyInstance(classLoader, interfaces, proxyHandler);
         return sei.cast(proxyClass);
     }
 
@@ -517,10 +536,29 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     "Unable to getPort for epr " + axis2EPR);
         }
 
-        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, endpointDesc, axis2EPR, addressingNamespace, features);
+        String[] interfacesNames = 
+            new String [] {sei.getName(), org.apache.axis2.jaxws.spi.BindingProvider.class.getName()};
+        
+        // As required by java.lang.reflect.Proxy, ensure that the interfaces
+        // for the proxy are loadable by the same class loader. 
+        Class[] interfaces = null;
+        // First, let's try loading the interfaces with the SEI classLoader
+        ClassLoader classLoader = getClassLoader(sei);
+        try {
+            interfaces = loadClasses(classLoader, interfacesNames);
+        } catch (ClassNotFoundException e1) {
+            // Let's try with context classLoader now
+            classLoader = getContextClassLoader();
+            try {
+                interfaces = loadClasses(classLoader, interfacesNames);
+            } catch (ClassNotFoundException e2) {
+                // TODO: NLS
+                throw ExceptionFactory.makeWebServiceException("Unable to load proxy classes", e2);
+            }
+        }
 
-        Class[] seiClazz = new Class[] { sei, org.apache.axis2.jaxws.spi.BindingProvider.class };
-        Object proxyClass = Proxy.newProxyInstance(getClassLoader(sei), seiClazz, proxyHandler);
+        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc, axis2EPR, addressingNamespace, features);
+        Object proxyClass = Proxy.newProxyInstance(classLoader, interfaces, proxyHandler);
         return sei.cast(proxyClass);        
     }
 
@@ -601,6 +639,65 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         return cl;
     }
+    
+    /** @return ClassLoader */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
+    }
+    
+    /**
+     * Return the class for this name
+     *
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize,
+                                 final ClassLoader classLoader) throws ClassNotFoundException {
+        // NOTE: This method must remain protected because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classLoader);
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException)e.getException();
+        }
+
+        return cl;
+    }
+    
+    private static Class[] loadClasses(ClassLoader classLoader, String[] classNames)
+        throws ClassNotFoundException {
+        Class[] classes = new Class[classNames.length];
+        for (int i = 0; i < classNames.length; i++) {
+            classes[i] = forName(classNames[i], true, classLoader);
+        }
+        return classes;
+    }
+    
 }
 
 /**

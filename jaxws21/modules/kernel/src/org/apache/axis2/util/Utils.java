@@ -33,6 +33,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
@@ -88,6 +89,26 @@ public class Utils {
                                             className,
                                             opName);
     }
+    
+    
+    public static AxisService createSimpleInOnlyService(QName serviceName,
+            MessageReceiver messageReceiver,
+            QName opName)
+        throws AxisFault {
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        
+        AxisOperation axisOp = new InOnlyAxisOperation(opName);
+        
+        axisOp.setMessageReceiver(messageReceiver);
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
+        service.addOperation(axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(),
+        axisOp);
+        
+        return service;
+    }
+    
 
     public static AxisService createSimpleService(QName serviceName,
                                                   MessageReceiver messageReceiver, String className,
@@ -223,14 +244,16 @@ public class Utils {
     }
 
     /**
-     * To get the name of the module , where archive name is combination of module name + its version
-     * The format of the module version will be like follow
-     * moduleName-00.0000 as an exmple addressing-01.0001.aar
+     * Get the name of the module , where archive name is combination of module name + its version
+     * The format of the name is as follows:
+     *   moduleName-00.0000
+     * Example: "addressing-01.0001.mar" would return "addressing"
+     * @param moduleName the name of the module archive
+     * @return the module name parsed out of the file name
      */
-
     public static String getModuleName(String moduleName) {
-        char version_seperator = '-';
-        int version_index = moduleName.lastIndexOf(version_seperator);
+        char delimiter = '-';
+        int version_index = moduleName.lastIndexOf(delimiter);
         if (version_index > 0) {
             return moduleName.substring(0, version_index);
         } else {

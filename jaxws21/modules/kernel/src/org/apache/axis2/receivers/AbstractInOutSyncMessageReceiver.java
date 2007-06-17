@@ -25,26 +25,20 @@ import org.apache.axis2.util.MessageContextBuilder;
 /**
  * This is the Absract IN-OUT MEP MessageReceiver. The
  * protected abstract methods are only for the sake of breaking down the logic
+ *
+ * @deprecated use AbstractInOutMessageReceiver
  */
 public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageReceiver {
     public abstract void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
             throws AxisFault;
 
-    public final void receive(MessageContext msgContext) throws AxisFault {
+    public final void invokeBusinessLogic(MessageContext msgContext) throws AxisFault {
         MessageContext outMsgContext = MessageContextBuilder.createOutMessageContext(msgContext);
         outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
-        ThreadContextDescriptor tc = setThreadContext(msgContext);
-        try {
-            invokeBusinessLogic(msgContext, outMsgContext);
-        } finally {
-            restoreThreadContext(tc);
-        }
+        invokeBusinessLogic(msgContext, outMsgContext);
+        replicateState(msgContext);
 
-        AxisEngine engine =
-                new AxisEngine(
-                        msgContext.getConfigurationContext());
-
-        engine.send(outMsgContext);
+        AxisEngine.send(outMsgContext);
     }
 }

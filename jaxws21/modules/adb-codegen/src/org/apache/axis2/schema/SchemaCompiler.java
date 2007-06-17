@@ -11,13 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -55,6 +49,10 @@ public class SchemaCompiler {
     private HashMap processedElementRefMap;
     private HashMap simpleTypesMap;
     private HashMap changedTypeMap;
+
+    private HashSet changedSimpleTypeSet;
+    private HashSet changedComplexTypeSet;
+    private HashSet changedElementSet;
 
     // this map is necessary to retain the metainformation of types. The reason why these
     // meta info 'bags' would be useful later is to cater for the extensions and restrictions
@@ -138,6 +136,10 @@ public class SchemaCompiler {
         processedTypeMetaInfoMap = new HashMap();
         processedElementRefMap = new HashMap();
         nillableElementList = new ArrayList();
+
+        changedComplexTypeSet = new HashSet();
+        changedSimpleTypeSet = new HashSet();
+        changedElementSet = new HashSet();
 
         //load the writer and initiliaze the base types
         writer = SchemaPropertyLoader.getBeanWriterInstance();
@@ -356,6 +358,26 @@ public class SchemaCompiler {
         if (options.isWrapClasses()) {
             writer.writeBatch();
         }
+
+        // resets the changed types
+        XmlSchemaComplexType xmlSchemaComplexType = null;
+        for (Iterator iter = changedComplexTypeSet.iterator();iter.hasNext();){
+            xmlSchemaComplexType = (XmlSchemaComplexType) iter.next();
+            xmlSchemaComplexType.setName(null);
+        }
+
+        XmlSchemaSimpleType xmlSchemaSimpleType = null;
+        for (Iterator iter = changedSimpleTypeSet.iterator();iter.hasNext();){
+            xmlSchemaSimpleType = (XmlSchemaSimpleType) iter.next();
+            xmlSchemaSimpleType.setName(null);
+        }
+
+        XmlSchemaElement xmlSchemaElement = null;
+        for (Iterator iter = changedElementSet.iterator();iter.hasNext();){
+            xmlSchemaElement = (XmlSchemaElement) iter.next();
+            xmlSchemaElement.setSchemaTypeName(null);
+        }
+
     }
 
     /**
@@ -527,6 +549,7 @@ public class SchemaCompiler {
                     if (schemaType instanceof XmlSchemaComplexType) {
                         //set a name
                         schemaType.setName(generatedTypeName.getLocalPart());
+                        changedComplexTypeSet.add(schemaType);
                         // Must do this up front to support recursive types
                         String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(schemaType.getQName());
                         processedTypemap.put(schemaType.getQName(), fullyQualifiedClassName);
@@ -551,6 +574,7 @@ public class SchemaCompiler {
                     } else if (schemaType instanceof XmlSchemaSimpleType) {
                         //set a name
                         schemaType.setName(generatedTypeName.getLocalPart());
+                        changedSimpleTypeSet.add(schemaType);
                         // Must do this up front to support recursive types
                         String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(schemaType.getQName());
                         processedTypemap.put(schemaType.getQName(), fullyQualifiedClassName);
@@ -572,7 +596,6 @@ public class SchemaCompiler {
                         xsElt.addMetaInfo(
                                 SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                 className);
-
                     }
                 }
             } else {
@@ -921,7 +944,7 @@ public class SchemaCompiler {
      */
     private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder);
+        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder, complexType.isAbstract());
         processedTypeMetaInfoMap.put(complexType.getQName(), metaInfHolder);
         return javaClassName;
     }
@@ -938,7 +961,7 @@ public class SchemaCompiler {
 
     private String writeComplexParticle(QName qname,BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder);
+       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder,false);
         processedTypeMetaInfoMap.put(qname, metaInfHolder);
         return javaClassName;
     }
@@ -2403,6 +2426,8 @@ public class SchemaCompiler {
                 // we have to set this otherwise the ours attribute would not set properly if refered to this simple
                 // type from any other element
                 xsElt.setSchemaTypeName(fakeQname);
+                changedElementSet.add(xsElt);
+
             } else {
                 fakeQname = qname;
             }

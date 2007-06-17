@@ -23,30 +23,83 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clustering.context.Replicator;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.classloader.MultiParentClassLoader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
+    protected static final Log log = LogFactory.getLog(AbstractMessageReceiver.class);
+
     public static final String SCOPE = "scope";
     protected String serviceTCCL = null;
     public static final String SAVED_TCCL = "_SAVED_TCCL_";
     public static final String SAVED_MC = "_SAVED_MC_";
-
+    public static final String DO_ASYNC = "messageReceiver.invokeOnSeparateThread";
 
     // Place to store previous values
     public class ThreadContextDescriptor {
         public ClassLoader oldClassLoader;
         public MessageContext oldMessageContext;
+    }
+
+    protected void replicateState(MessageContext messageContext) throws ClusteringFault {
+        Replicator.replicate(messageContext);
+    }
+
+    /**
+     * Do the actual work of the MessageReceiver.  Must be overridden by concrete subclasses.
+     *
+     * @param messageCtx active MessageContext
+     * @throws AxisFault if a problem occurred
+     */
+    protected abstract void invokeBusinessLogic(MessageContext messageCtx) throws AxisFault;
+
+    /**
+     *
+     * @param messageCtx active MessageContext
+     * @throws AxisFault if a problem occurred
+     */
+    public void receive(final MessageContext messageCtx) throws AxisFault {
+        if (messageCtx.isPropertyTrue(DO_ASYNC)) {
+            EndpointReference replyTo = messageCtx.getReplyTo();
+            if (replyTo != null && !replyTo.hasAnonymousAddress()) {
+                AsyncMessageReceiverWorker worker = new AsyncMessageReceiverWorker(messageCtx);
+                messageCtx.getEnvelope().build();
+                messageCtx.getConfigurationContext().getThreadPool().execute(worker);
+                return;
+            }
+        }
+
+        ThreadContextDescriptor tc = setThreadContext(messageCtx);
+        try {
+            invokeBusinessLogic(messageCtx);
+        } catch (AxisFault fault) {
+            // If we're in-only, eat this.  Otherwise, toss it upwards!
+            if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
+                log.error(fault);
+            } else {
+                throw fault;
+            }
+        } finally {
+            restoreThreadContext(tc);
+        }
     }
 
     /**
@@ -56,26 +109,23 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * access to the MessageContext (getCurrentContext()).  So we toss these
      * things in TLS.
      *
-     * @param msgContext
+     * @param msgContext the current MessageContext
+     * @return a ThreadContextDescriptor containing the old values
      */
-    protected ThreadContextDescriptor
-            setThreadContext(MessageContext msgContext) {
+    protected ThreadContextDescriptor setThreadContext(MessageContext msgContext) {
         ThreadContextDescriptor tc = new ThreadContextDescriptor();
         tc.oldMessageContext = (MessageContext) MessageContext.currentMessageContext.get();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         tc.oldClassLoader = contextClassLoader;
 
-        AxisService service =
-                msgContext.getAxisService();
-        String serviceTCCL = (String) service.getParameterValue(
-                Constants.SERVICE_TCCL);
+        AxisService service = msgContext.getAxisService();
+        String serviceTCCL = (String) service.getParameterValue(Constants.SERVICE_TCCL);
         if (serviceTCCL != null) {
             serviceTCCL = serviceTCCL.trim().toLowerCase();
 
-
             if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
                 Thread.currentThread().setContextClassLoader(
-                        new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
+                        new MultiParentClassLoader(new URL[] {}, new ClassLoader[] {
                                 msgContext.getAxisService().getClassLoader(),
                                 contextClassLoader,
                         }));
@@ -95,7 +145,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     /**
-     * Method makeNewServiceObject.
+     * Create a new service object.  Override if you want to customize how
+     * this happens in your own MessageReceiver.
      *
      * @param msgContext
      * @return Returns Object.
@@ -103,8 +154,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
-            AxisService service =
-                    msgContext.getAxisService();
+            AxisService service = msgContext.getAxisService();
             ClassLoader classLoader = service.getClassLoader();
 
             // allow alternative definition of makeNewServiceObject
@@ -114,10 +164,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 Class serviceObjectMaker = Loader.loadClass(classLoader, ((String)
                         serviceObjectParam.getValue()).trim());
 
-                // Find static getServiceObject() method, call it if there   
-                Method method = serviceObjectMaker.
-                        getMethod("getServiceObject",
-                                  new Class[]{AxisService.class});
+                // Find static getServiceObject() method, call it if there
+                Method method = serviceObjectMaker.getMethod("getServiceObject",
+                                                             new Class[]{AxisService.class});
                 if (method != null) {
                     return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
                 }
@@ -151,11 +200,13 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     /**
-     * Method getTheImplementationObject.
+     * Retrieve the implementation object.  This will either return a cached
+     * object if present in the ServiceContext, or create a new one via
+     * makeNewServiceObject() (and then cache that).
      *
-     * @param msgContext
-     * @return Returns Object.
-     * @throws AxisFault
+     * @param msgContext the active MessageContext
+     * @return the appropriate back-end service object.
+     * @throws AxisFault if there's a problem
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
         ServiceContext serviceContext = msgContext.getServiceContext();
@@ -171,6 +222,40 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                                                msgContext.getServiceContext());
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
+        }
+    }
+
+    public class AsyncMessageReceiverWorker implements Runnable {
+    	private MessageContext messageCtx;
+
+    	public AsyncMessageReceiverWorker(MessageContext messageCtx){
+    		this.messageCtx = messageCtx;
+    	}
+
+        public void run() {
+            try {
+                ThreadContextDescriptor tc = setThreadContext(messageCtx);
+                try {
+                    invokeBusinessLogic(messageCtx);
+                } finally {
+                    restoreThreadContext(tc);
+                }
+            } catch (AxisFault e) {
+                // If we're IN-ONLY, swallow this.  Otherwise, send it.
+                if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
+                    log.debug(e);
+                } else {
+                    try {
+                        MessageContext faultContext =
+                                MessageContextBuilder.createFaultMessageContext(messageCtx, e);
+
+                        AxisEngine.sendFault(faultContext);
+                    } catch (AxisFault axisFault) {
+                        log.error(e);
+                    }
+                    log.error(e);
+                }
+            }
         }
     }
 }

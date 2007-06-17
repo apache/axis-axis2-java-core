@@ -20,7 +20,8 @@
 
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type) and @type!='']">
 
-            private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
+            private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
+            throws org.apache.axis2.AxisFault{
             org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
             (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
             org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
@@ -62,7 +63,7 @@
                                 <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
                                     <xsl:value-of select="@type"/> param<xsl:value-of select="position()"/>,
                                 </xsl:for-each><xsl:value-of select="$inputElementType"/> dummyWrappedType,
-                                boolean optimizeContent){
+                                boolean optimizeContent) throws org.apache.axis2.AxisFault{
 
                                 <xsl:value-of select="$inputElementType"/> wrappedType = <xsl:value-of select="$inputElementType"/>.Factory.newInstance();
 
@@ -95,7 +96,8 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <!-- Assumption - the parameter is always an XMLBeans -->
-                                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent){
+                                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent)
+                                throws org.apache.axis2.AxisFault{
                                 org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                                 if (param != null){
                                 envelope.getBody().addChild(toOM(param, optimizeContent));
@@ -123,7 +125,8 @@
 
                         <!-- Assumption - This is an XMLBeans element-->
                         <xsl:if test="generate-id($outElement) = generate-id(key('paramsOut', $outElementType)[1])">
-                            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
+                            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent)
+                            throws org.apache.axis2.AxisFault {
                             org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                             if (param != null){
                             envelope.getBody().addChild(toOM(param, optimizeContent));
@@ -179,7 +182,7 @@
         public org.apache.xmlbeans.XmlObject fromOM(
         org.apache.axiom.om.OMElement param,
         java.lang.Class type,
-        java.util.Map extraNamespaces){
+        java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
         try{
         <xsl:for-each select="param[@type!='' and not(@primitive)]">
 

@@ -40,8 +40,8 @@ public class ComplexExtenstionTest extends TestCase {
         extendedComplexType.setParentElement1("test1");
         extendedComplexType.setParentElement2("test2");
 
-        OMElement omElement = testComplexElement.getOMElement(TestComplexElement.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
         try {
+            OMElement omElement = testComplexElement.getOMElement(TestComplexElement.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

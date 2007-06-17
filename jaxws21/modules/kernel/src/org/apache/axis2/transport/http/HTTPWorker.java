@@ -287,7 +287,6 @@ public class HTTPWorker implements Worker {
             isTwoChannel = operationContext.getProperty(Constants.DIFFERENT_EPR);
         }
 
-
         if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
             if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
                 response.setStatus(HttpStatus.SC_ACCEPTED);

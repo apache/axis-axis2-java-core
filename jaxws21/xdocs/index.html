@@ -8,12 +8,18 @@
 <body lang="en">
 <h1>Welcome to Apache Axis2/Java</h1>
 
-<h2>27th April 2007 - Apache Axis2/Java Version @axis2_version@ Released!</h2>
+<p>Based on the Axis2 architecture, there are two implementations of the
+Apache Axis2 Web services engine - Apache Axis2/Java and Apache Axis2/C</p>
+
+<p>While you will find all the information on Apache Axis2/Java here, you can
+visit the <a href="http://ws.apache.org/axis2/c/"><strong>Apache
+Axis2/C</strong></a> Web site for Axis2/C implementation information.</p>
+
+<h2>27th April 2007 - Apache Axis2/Java Version 1.2 Released!</h2>
 
 <p>[ <a
 href="http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
-] | [ <a href="@axis2_version_dir@/index.html"><strong>Documents
-Home</strong></a> ]</p>
+] | [ <a href="1_2/index.html"><strong>Documents Home</strong></a> ]</p>
 
 <p>Apache Axis2 is the core engine for Web services. It is a complete
 re-design and re-write of the widely used <a
@@ -78,7 +84,7 @@ available or under development include:</p>
   <li><a
     href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
     target="_blank">WS-Security</a> - Supported by <a
-    href="http://ws.apache.org/axis2/modules/rampart/@axis2_version_dir@/security-module.html">Apache
+    href="http://ws.apache.org/axis2/modules/rampart/1_2/security-module.html">Apache
     Rampart</a></li>
   <li><a href="http://www.w3.org/Submission/ws-addressing/"
     target="_blank">WS-Addressing</a> -Module included as part of Axis2
@@ -103,13 +109,14 @@ specification implementations. The key features offered are as follows:</p>
     its own light-weight object model, AXIOM, for message processing which is
     extensible, highly performant and is developer convenient.</p>
   </li>
-  <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment"></a>Hot
-    Deployment</strong> - Axis2 is equipped with the capability of deploying
-    Web services and handlers while the system is up and running. In other
-    words, new services can be added to the system without having to shut
-    down the server. Simply drop the required Web service archive into the
-    services directory in the repository, and the deployment model will
-    automatically deploy the service and make it available for use.</p>
+  <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment"
+    id="Hot_Deployment"></a>Hot Deployment</strong> - Axis2 is equipped with
+    the capability of deploying Web services and handlers while the system is
+    up and running. In other words, new services can be added to the system
+    without having to shut down the server. Simply drop the required Web
+    service archive into the services directory in the repository, and the
+    deployment model will automatically deploy the service and make it
+    available for use.</p>
   </li>
   <li><p style="margin-bottom: 0in"><strong>Asynchronous Web
     services</strong> - Axis2 now supports asynchronous Web services and
@@ -176,9 +183,8 @@ to prefix the subject of the mail with [Axis2].</p>
 
 <h2>Features of Axis2 Latest Version</h2>
 
-<p>Apache Axis2 Version @axis2_version@ comes with performance improvements
-and bug fixes over the 1.1.1 release. Check out the complete list of features
-below.</p>
+<p>Apache Axis2 Version 1.2 comes with performance improvements and bug fixes
+over the 1.1.1 release. Check out the complete list of features below.</p>
 
 <h3>Programming Model</h3>
 <ul>
@@ -187,8 +193,8 @@ below.</p>
   <li>Support for POJO and Spring services and clients</li>
   <li>Support for any message exchange pattern</li>
   <li>Synchronous and asynchronous calls</li>
-  <li>Archived service deployment model supporting full service
-     encapsulation with versioning support</li>
+  <li>Archived service deployment model supporting full service encapsulation
+    with versioning support</li>
   <li>Archived module deployment model supporting controlled extensibility
     with versioning support</li>
   <li><a href="#Hot_Deployment">Hot deployment</a></li>
@@ -242,24 +248,23 @@ Release</a></h2>
 target="_blank">Download Tool Plug-ins</a>]</p>
 <ol type="1">
   <li>Axis2 Web Application (Web App)</li>
-  <li>WSDL2WS- <a
-    href="tools/@axis2_version_dir@/eclipse/wsdl2java-plugin.html"
+  <li>WSDL2WS- <a href="tools/1_2/eclipse/wsdl2java-plugin.html"
     target="_blank">eclipse plug-in</a><a>/</a> <a
-    href="tools/@axis2_version_dir@/CodegenToolReference.html"
-    target="_blank">Command line version</a><a>/</a><a
-    href="tools/@axis2_version_dir@/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
+    href="tools/1_2/CodegenToolReference.html" target="_blank">Command line
+    version</a><a>/</a><a
+    href="tools/1_2/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
     target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a
-    href="tools/@axis2_version_dir@/maven-plugins/maven-wsdl2code-plugin.html"
+    href="tools/1_2/maven-plugins/maven-wsdl2code-plugin.html"
     target="_blank">Maven2 WSDL2Code Plug-in</a></li>
   <li>Service Archive Wizard- <a
-    href="tools/@axis2_version_dir@/eclipse/servicearchiver-plugin.html"
+    href="tools/1_2/eclipse/servicearchiver-plugin.html"
     target="_blank">eclipse plug-in</a>/ <a
-    href="tools/@axis2_version_dir@/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
+    href="tools/1_2/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
     target="_blank">IntelliJ IDEA plug-in</a>/ <a
-    href="tools/@axis2_version_dir@/maven-plugins/maven-aar-plugin.html"
+    href="tools/1_2/maven-plugins/maven-aar-plugin.html"
     target="_blank">Maven2 AAR Plug-in</a></li>
   <li>Java2WSDL- <a
-    href="tools/@axis2_version_dir@/maven-plugins/maven-java2wsdl-plugin.html"
+    href="tools/1_2/maven-plugins/maven-java2wsdl-plugin.html"
     target="_blank">Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 

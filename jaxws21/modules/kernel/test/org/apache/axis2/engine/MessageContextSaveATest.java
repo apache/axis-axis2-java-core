@@ -683,8 +683,8 @@ public class MessageContextSaveATest extends TestCase {
                 assertTrue(comparesOk);
 
                 // check executed list
-                Iterator restored_executed_it = restoredSimpleMsg.getInboundExecutedPhases();
-                Iterator orig_executed_it = simpleMsg.getInboundExecutedPhases();
+                Iterator restored_executed_it = restoredSimpleMsg.getExecutedPhases();
+                Iterator orig_executed_it = simpleMsg.getExecutedPhases();
                 if ((restored_executed_it != null) && (orig_executed_it != null)) {
                     while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                         Object p1 = restored_executed_it.next();
@@ -832,8 +832,8 @@ public class MessageContextSaveATest extends TestCase {
                 assertTrue(comparesOk);
 
                 // check executed list
-                Iterator restored_executed_it = restoredSimpleMsg.getInboundExecutedPhases();
-                Iterator orig_executed_it = simpleMsg.getInboundExecutedPhases();
+                Iterator restored_executed_it = restoredSimpleMsg.getExecutedPhases();
+                Iterator orig_executed_it = simpleMsg.getExecutedPhases();
                 if ((restored_executed_it != null) && (orig_executed_it != null)) {
                     while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                         Object p1 = restored_executed_it.next();
@@ -1240,8 +1240,8 @@ public class MessageContextSaveATest extends TestCase {
                         assertTrue(comparesOk);
 
                         // check executed list
-                        Iterator restored_executed_it = msgContext2.getInboundExecutedPhases();
-                        Iterator orig_executed_it = msgContext.getInboundExecutedPhases();
+                        Iterator restored_executed_it = msgContext2.getExecutedPhases();
+                        Iterator orig_executed_it = msgContext.getExecutedPhases();
                         if ((restored_executed_it != null) && (orig_executed_it != null)) {
                             while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                                 Object p1 = restored_executed_it.next();

@@ -19,9 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.clustering.context.Replicator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -274,24 +272,7 @@ public abstract class AbstractContext {
     }
 
     public void flush() throws AxisFault {
-
-        ConfigurationContext configContext = getRootContext();
-        if (configContext == null) {
-            throw new AxisFault(Messages.getMessage("cannotFlushRootNull"));
-        }
-
-        AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
-        ClusterManager clusterManager = axisConfiguration.getClusterManager();
-
-        //Calling the ClusterManager probably to replicate the updated state of the context.
-        if (clusterManager != null) {
-            ContextManager contextManager = clusterManager.getContextManager();
-            if (contextManager != null && contextManager.isContextClusterable(this)) {
-                contextManager.updateContext(this);
-            }
-        }
-
-        //Other logic needed for flushing the contexts
+        Replicator.replicate(this);
     }
 
     public abstract ConfigurationContext getRootContext();

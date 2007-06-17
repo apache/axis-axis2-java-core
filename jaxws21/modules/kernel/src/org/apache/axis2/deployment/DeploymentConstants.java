@@ -82,6 +82,7 @@ public interface DeploymentConstants {
     String TAG_HOT_UPDATE = "hotupdate";
     String TAG_ANTI_JAR_LOCKING = "antiJARLocking";
     String TAG_HOT_DEPLOYMENT = "hotdeployment";
+    String TAG_EXPOSE = "expose";
     String TAG_EXTRACT_SERVICE_ARCHIVE = "extractServiceArchive";
     String TAG_DISPATCH_ORDER = "dispatchOrder";
     String TAG_DISPATCHER = "dispatcher";

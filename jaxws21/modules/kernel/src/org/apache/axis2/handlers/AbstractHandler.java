@@ -17,7 +17,6 @@
 
 package org.apache.axis2.handlers;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
@@ -51,7 +50,6 @@ public abstract class AbstractHandler implements Handler {
     /**
      * Method init.
      *
-     * @param handlerdesc
      */
     public void init(HandlerDescription handlerdesc) {
         this.handlerDesc = handlerdesc;
@@ -90,7 +88,7 @@ public abstract class AbstractHandler implements Handler {
     /**
      * Method getParameter.
      *
-     * @param name
+     * @param name name of the parameter
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {

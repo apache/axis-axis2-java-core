@@ -17,7 +17,6 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.FileWriter;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
@@ -33,9 +32,9 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class ClassWriter {
+public abstract class FileWriter {
 
-    private static final Log log = LogFactory.getLog(ClassWriter.class);
+    private static final Log log = LogFactory.getLog(FileWriter.class);
 
     protected File outputFileLocation = null;
     protected File outputFile = null;
@@ -118,7 +117,7 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void createOutFile(String packageName, String fileName) throws Exception {
-        outputFile = FileWriter.createClassFile(outputFileLocation,
+        outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
                                                 packageName,
                                                 fileName,
                                                 getFileExtensionForLanguage(language));

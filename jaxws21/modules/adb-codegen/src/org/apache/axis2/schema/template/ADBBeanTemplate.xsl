@@ -68,7 +68,7 @@
             */
         </xsl:if>
 
-        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
+        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> <xsl:if test="@isAbstract">abstract</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
         <xsl:if test="$union and not($restriction) and not($extension)"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
@@ -675,9 +675,9 @@
         * @param factory
         * @return org.apache.axiom.om.OMElement
         */
-       public org.apache.axiom.om.OMElement getOMElement(
+       public org.apache.axiom.om.OMElement getOMElement (
                final javax.xml.namespace.QName parentQName,
-               final org.apache.axiom.om.OMFactory factory){
+               final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
 
 
         <xsl:choose>
@@ -710,7 +710,8 @@
 
          public void serialize(final javax.xml.namespace.QName parentQName,
                                final org.apache.axiom.om.OMFactory factory,
-                               javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                               javax.xml.stream.XMLStreamWriter xmlWriter)
+            throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
             <xsl:choose>
 
             <xsl:when test="$simple and $union">
@@ -760,7 +761,7 @@
                        </xsl:choose>
                   </xsl:for-each>
                       } else {
-                          throw new RuntimeException("Invalid object type");
+                          throw new org.apache.axis2.databinding.ADBException("Invalid object type");
                       }
                 xmlWriter.writeEndElement();
             </xsl:when>
@@ -884,7 +885,7 @@
                                     }
                                     <xsl:if test="not(@optional)">
                                       else {
-                                          throw new RuntimeException("required attribute <xsl:value-of select="$varName"/> is null");
+                                          throw new org.apache.axis2.databinding.ADBException("required attribute <xsl:value-of select="$varName"/> is null");
                                       }
                                     </xsl:if>
                                 </xsl:when>
@@ -936,7 +937,7 @@
                                       }
                                     <xsl:if test="not(@optional)">
                                       else {
-                                          throw new RuntimeException("required attribute <xsl:value-of select="$varName"/> is null");
+                                          throw new org.apache.axis2.databinding.ADBException("required attribute <xsl:value-of select="$varName"/> is null");
                                       }
                                     </xsl:if>
                                 </xsl:otherwise>
@@ -997,13 +998,13 @@
                                     <xsl:choose>
                                         <xsl:when test="$particleClassType">
                                             if (<xsl:value-of select="$varName"/>==null){
-                                                 throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                 throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             }
                                            <xsl:value-of select="$varName"/>.serialize(null,factory,xmlWriter);
                                         </xsl:when>
                                         <xsl:otherwise>
                                             if (<xsl:value-of select="$varName"/>==null){
-                                                 throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                 throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             }
                                            <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                                factory,xmlWriter);
@@ -1026,14 +1027,14 @@
                                                         // we don't have to do any thing since minOccures is zero
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                                 }
 
                                             }
                                      } else {
-                                        throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                        throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                      }
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -1073,7 +1074,7 @@
                                                         // we don't have to do any thing since minOccures is zero
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                                 }
@@ -1107,7 +1108,7 @@
                                                xmlWriter.writeEndElement();
                                         </xsl:when>
                                         <xsl:otherwise>
-                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                         </xsl:otherwise>
                                     </xsl:choose>
                                     }
@@ -1173,7 +1174,7 @@
                                               // we have to do nothing since minOccurs is zero
                                         </xsl:when>
                                         <xsl:otherwise>
-                                             throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                             throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                         </xsl:otherwise>
                                     </xsl:choose>
                                     }
@@ -1206,7 +1207,7 @@
                                        xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                             }
@@ -1265,7 +1266,7 @@
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                  </xsl:choose>
                             }
@@ -1368,7 +1369,7 @@
                                                            // we have to do nothing since minOccurs is zero
                                                        </xsl:when>
                                                        <xsl:otherwise>
-                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                        </xsl:otherwise>
 
                                                    </xsl:choose>
@@ -1404,7 +1405,7 @@
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                              }
@@ -1425,13 +1426,13 @@
                                                 // we have to do nothing since minOccures zero
                                             </xsl:when>
                                             <xsl:otherwise>
-                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
                                 }
                             } else {
-                                throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle any - non array case-->
@@ -1440,7 +1441,7 @@
                             if (<xsl:value-of select="$varName"/> != null) {
                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle all other cases -->
@@ -1487,7 +1488,7 @@
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                   </xsl:when>
                                                   <xsl:otherwise>
-                                                     throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                     throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                   </xsl:otherwise>
                                               </xsl:choose>
                                           }else{
@@ -1538,7 +1539,7 @@
                                                          writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                       </xsl:when>
                                                       <xsl:otherwise>
-                                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                       </xsl:otherwise>
                                                   </xsl:choose>
                                                } else {
@@ -1606,7 +1607,7 @@
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
-                                   throw new RuntimeException("Property cannot be null!");
+                                   throw new org.apache.axis2.databinding.ADBException("Property cannot be null!");
                                  }
                                  <xsl:value-of select="$varName"/>.serialize(MY_QNAME,factory,xmlWriter);
                             </xsl:otherwise>
@@ -1647,7 +1648,7 @@
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                     throw new RuntimeException("Value cannot be null !!");
+                                                     throw new org.apache.axis2.databinding.ADBException("Value cannot be null !!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                          }else{
@@ -1698,7 +1699,7 @@
                                                          writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                       </xsl:when>
                                                       <xsl:otherwise>
-                                                         throw new RuntimeException("property value cannot be null!!");
+                                                         throw new org.apache.axis2.databinding.ADBException("property value cannot be null!!");
                                                       </xsl:otherwise>
                                                   </xsl:choose>
                                                } else {
@@ -1862,7 +1863,8 @@
         * databinding method to get an XML representation of this object
         *
         */
-        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName){
+        public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName)
+                    throws org.apache.axis2.databinding.ADBException{
 
 
         <xsl:choose>
@@ -1891,7 +1893,7 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
                                     elementList.add(<xsl:value-of select="$varName"/>);
                                 </xsl:otherwise>
@@ -1916,7 +1918,7 @@
                                                 // nothing to do
                                             </xsl:when>
                                             <xsl:otherwise>
-                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null !!");
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null !!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
@@ -1930,7 +1932,7 @@
                                         elementList.add(<xsl:value-of select="$varName"/>);
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                        throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                              }
@@ -1957,7 +1959,7 @@
                                                     // have to do nothing
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                           }
@@ -1979,7 +1981,7 @@
                                     elementList.add(null);
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                 </xsl:otherwise>
                                </xsl:choose>
                             }
@@ -2002,14 +2004,14 @@
                                                 // have to do nothing
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
 
                                 }
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle any - non array case-->
@@ -2018,7 +2020,7 @@
                                 elementList.add(org.apache.axis2.databinding.utils.Constants.OM_ELEMENT_KEY);
                                 elementList.add(<xsl:value-of select="$varName"/>);
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle binary - Since it is a Datahandler, we can just add it to the list
@@ -2046,7 +2048,7 @@
                                         if (<xsl:value-of select="$varName"/> != null){
                                             elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                         } else {
-                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                         }
                                     </xsl:otherwise>
                                 </xsl:choose>
@@ -2172,7 +2174,7 @@
             <!-- generate methods for a union type -->
               public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader,
                                                      java.lang.String namespaceURI,
-                                                     java.lang.String type) {
+                                                     java.lang.String type) throws org.apache.axis2.databinding.ADBException {
 
                     <xsl:value-of select="$name"/> object = null;
                     try {
@@ -2185,7 +2187,7 @@
                         }
                         return object;
                     } catch (java.lang.Exception e) {
-                        throw new RuntimeException("Error in parsing value");
+                        throw new org.apache.axis2.databinding.ADBException("Error in parsing value");
                     }
                }
         </xsl:if>
@@ -2200,7 +2202,9 @@
                select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
 
 
-            public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader, java.lang.String content) {
+            public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader,
+                                                                    java.lang.String content)
+                                                                    throws org.apache.axis2.databinding.ADBException {
 
                 <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
                 java.lang.String[] values = content.split(" +");
@@ -2250,7 +2254,7 @@
                     object.set<xsl:value-of select="$javaName"/>(objectValues);
                     return object;
                 } catch (java.lang.Exception e) {
-                    throw new RuntimeException();
+                    throw new org.apache.axis2.databinding.ADBException();
                 }
 
             }
@@ -2334,7 +2338,9 @@
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
             <xsl:variable name="isEnumFacet" select="property/enumFacet"/>
-            <xsl:if test="not($isEnumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
+            <xsl:if test="not($isEnumFacet)"><xsl:value-of select="$name"/> object =
+                <xsl:choose><xsl:when test="@isAbstract">null;</xsl:when><xsl:otherwise>new <xsl:value-of select="$name"/>();</xsl:otherwise></xsl:choose>
+            </xsl:if>
             <xsl:if test="$isEnumFacet">
                 <xsl:value-of select="$name"/> object = null;
                 // initialize a hash map to keep values
@@ -2417,6 +2423,9 @@
                               }
                         </xsl:otherwise>
                     </xsl:choose>
+                    <xsl:if test="@isAbstract">
+                        throw new org.apache.axis2.databinding.ADBException("The an abstract class can not be instantiated !!!");
+                    </xsl:if>
 
                   }
 
@@ -2442,7 +2451,7 @@
                     select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                     <xsl:variable name="javaName" select="@javaname"/>
                     <xsl:variable name="namespace" select="@nsuri"/>
-                    <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
+                    <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$javaName"/></xsl:variable>
 
                     <xsl:if test="$propertyName != 'extraAttributes'">
                     // handle attribute "<xsl:value-of select="$propertyName"/>"
@@ -2530,7 +2539,7 @@
                                </xsl:if>
                            </xsl:when>
                            <xsl:otherwise>
-                               throw new RuntimeException("Required attribute <xsl:value-of select="$propertyName"/> is missing");
+                               throw new org.apache.axis2.databinding.ADBException("Required attribute <xsl:value-of select="$propertyName"/> is missing");
                            </xsl:otherwise>
                        </xsl:choose>
                     }
@@ -3331,7 +3340,7 @@
                             <xsl:if test="$ordered and $min!=0 and not(@innerchoice='yes')">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             </xsl:if>
                             <xsl:if test="$particleClassType and ($choice or ($min=0))">
@@ -3347,7 +3356,7 @@
                             <xsl:if test="not($particleClass)">
                                 if (reader.isStartElement())
                                 // A start element we are not expecting indicates a trailing invalid property
-                                throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                             </xsl:if>
                         </xsl:if>
 
@@ -3356,7 +3365,7 @@
                           <xsl:if test="not(property/enumFacet) and not($choice and $hasParticleType)">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
-                                        throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                        throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                              }
                           </xsl:if>
                              } else {
@@ -3494,10 +3503,10 @@
                * Auto generated getter method
                * Overridden from <xsl:value-of select="$restriction"/>
                *
-               * @throws RuntimeException
+               * @throws org.apache.axis2.databinding.ADBException
                */
                public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-                   throw new java.lang.RuntimeException();
+                   throw new java.lang.org.apache.axis2.databinding.ADBException("property has removed");
                }
 
                /**
@@ -3505,10 +3514,10 @@
                * Overridden from <xsl:value-of select="$restriction"/>
                *
                * @param param <xsl:value-of select="$javaName"/>
-               * @throws RuntimeException
+               * @throws org.apache.axis2.databinding.ADBException
                */
                public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                      throw new java.lang.RuntimeException();
+                      throw new org.apache.axis2.databinding.ADBException();
                }
 
                </xsl:when>
@@ -3526,12 +3535,12 @@
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                          <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new org.apache.axis2.databinding.ADBException();
                               }
                          </xsl:if>
                          <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new org.apache.axis2.databinding.ADBException();
                               }
                          </xsl:if>
                          }
@@ -3701,12 +3710,12 @@
                               protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                              <xsl:if test="not(@unbound)">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new org.apache.axis2.databinding.ADBException();
                               }
                               </xsl:if>
                               <xsl:if test="$min!=0">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new java.lang.RuntimeException();
+                                throw new org.apache.axis2.databinding.ADBException();
                               }
                               </xsl:if>
                               }
@@ -3836,7 +3845,7 @@
                                         this.<xsl:value-of select="$varName"/>=param;
                                     }
                                     else {
-                                        throw new java.lang.RuntimeException();
+                                        throw new org.apache.axis2.databinding.ADBException();
                                     }
                                 </xsl:when>
                                 <xsl:when test="(@lenFacet)">
@@ -3844,7 +3853,7 @@
                                         this.<xsl:value-of select="$varName"/>=param;
                                     }
                                     else {
-                                        throw new java.lang.RuntimeException();
+                                        throw new org.apache.axis2.databinding.ADBException();
                                     }
                                 </xsl:when>
                                 <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
@@ -3854,7 +3863,7 @@
                                         this.<xsl:value-of select="$varName"/>=param;
                                     }
                                     else {
-                                        throw new java.lang.RuntimeException();
+                                        throw new org.apache.axis2.databinding.ADBException();
                                     }
                                 </xsl:when>
                                 <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
@@ -3863,7 +3872,7 @@
                                         this.<xsl:value-of select="$varName"/>=param;
                                     }
                                     else {
-                                        throw new java.lang.RuntimeException();
+                                        throw new org.apache.axis2.databinding.ADBException();
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -3928,7 +3937,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
               public static org.apache.axiom.om.OMElement getOMElement(
                       final <xsl:value-of select="$fullyQualifiedName"/> bean,
                       final javax.xml.namespace.QName parentQName,
-                      final org.apache.axiom.om.OMFactory factory){
+                      final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
 
                org.apache.axiom.om.OMDataSource dataSource = getOMDataSource(bean,parentQName, factory);
 
@@ -3953,7 +3962,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
     public static org.apache.axiom.om.OMDataSource getOMDataSource(
             final <xsl:value-of select="$fullyQualifiedName"/> bean,
             final javax.xml.namespace.QName parentQName,
-            final org.apache.axiom.om.OMFactory factory){
+            final org.apache.axiom.om.OMFactory factory)throws org.apache.axis2.databinding.ADBException{
 
 
         org.apache.axiom.om.OMDataSource dataSource =
@@ -4088,7 +4097,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
                                    <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
@@ -4134,7 +4143,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 // we don't have to do any thing since minOccures is zero
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                   throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                   throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                         }
@@ -4168,7 +4177,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                        xmlWriter.writeEndElement();
                                 </xsl:when>
                                 <xsl:otherwise>
-                                       throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                       throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                 </xsl:otherwise>
                             </xsl:choose>
                             }
@@ -4231,7 +4240,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                               // we have to do nothing since minOccurs is zero
                                         </xsl:when>
                                         <xsl:otherwise>
-                                             throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                             throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                         </xsl:otherwise>
                                     </xsl:choose>
                                     }
@@ -4264,7 +4273,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                        xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                             }
@@ -4323,7 +4332,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                  </xsl:choose>
                             }
@@ -4413,7 +4422,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                        // we have to do nothing since minOccurs is zero
                                                    </xsl:when>
                                                    <xsl:otherwise>
-                                                       throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                       throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                    </xsl:otherwise>
 
                                                </xsl:choose>
@@ -4449,7 +4458,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                              }
@@ -4470,13 +4479,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 // we have to do nothing since minOccures zero
                                             </xsl:when>
                                             <xsl:otherwise>
-                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
                                 }
                             } else {
-                                throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle any - non array case-->
@@ -4485,7 +4494,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             if (<xsl:value-of select="$varName"/> != null) {
                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle all other cases -->
@@ -4532,7 +4541,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                   </xsl:when>
                                                   <xsl:otherwise>
-                                                     throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                     throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                   </xsl:otherwise>
                                               </xsl:choose>
                                           }else{
@@ -4627,7 +4636,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
-                                   throw new RuntimeException("Property cannot be null!");
+                                   throw new org.apache.axis2.databinding.ADBException("Property cannot be null!");
                                  }
                                  <xsl:value-of select="property/@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
@@ -4670,7 +4679,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                     throw new RuntimeException("Value cannot be null !!");
+                                                     throw new org.apache.axis2.databinding.ADBException("Value cannot be null !!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                          }else{
@@ -5480,7 +5489,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:if test="$ordered and $min!=0">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
-                                    throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                    throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             </xsl:if>
                         </xsl:for-each>
@@ -5490,7 +5499,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 reader.next();
                             if (reader.isStartElement())
                                 // A start element we are not expecting indicates a trailing invalid property
-                                throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                         </xsl:if>
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
@@ -5498,7 +5507,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                           <xsl:if test="not(property/enumFacet)">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
-                                        throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
+                                        throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                              }
                           </xsl:if>
                              } else reader.next();  <!-- At neither a start nor an end element, skip it -->
@@ -5515,7 +5524,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         }
 
 
-     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName){
+     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName)
+        throws org.apache.axis2.databinding.ADBException{
 
         <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
          (<xsl:value-of select="@package"/>.<xsl:value-of select="@name"/>)beanObject;
@@ -5546,7 +5556,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
-                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
                                     elementList.add(<xsl:value-of select="$varName"/>);
                                 </xsl:otherwise>
@@ -5571,7 +5581,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 // nothing to do
                                             </xsl:when>
                                             <xsl:otherwise>
-                                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null !!");
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null !!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
@@ -5585,7 +5595,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         elementList.add(<xsl:value-of select="$varName"/>);
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                        throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     </xsl:otherwise>
                                 </xsl:choose>
                              }
@@ -5612,7 +5622,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     // have to do nothing
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                           }
@@ -5634,7 +5644,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     elementList.add(null);
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                 </xsl:otherwise>
                                </xsl:choose>
                             }
@@ -5657,14 +5667,14 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 // have to do nothing
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     }
 
                                 }
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle any - non array case-->
@@ -5673,7 +5683,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 elementList.add(org.apache.axis2.databinding.utils.Constants.OM_ELEMENT_KEY);
                                 elementList.add(<xsl:value-of select="$varName"/>);
                             } else {
-                               throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                             }
                         </xsl:when>
                         <!-- handle binary - Since it is a Datahandler, we can just add it to the list
@@ -5701,7 +5711,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         if (<xsl:value-of select="$varName"/> != null){
                                             elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                         } else {
-                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                         }
                                     </xsl:otherwise>
                                 </xsl:choose>
@@ -5836,7 +5846,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                   }
 
               </xsl:for-each>
-             throw new java.lang.RuntimeException("Unsupported type " + namespaceURI + " " + typeName);
+             throw new org.apache.axis2.databinding.ADBException("Unsupported type " + namespaceURI + " " + typeName);
           }
 
         }

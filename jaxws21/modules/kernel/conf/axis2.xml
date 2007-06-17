@@ -47,6 +47,12 @@
     <parameter name="password">axis2</parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
+    <!--ServicesDirectory only works on the following cases-->
+    <!---File based configurator and in that case the value should be a file URL (http:// not allowed)-->
+    <!---When creating URL Based configurator with URL “file://”  -->
+    <!--- War based configurator with expanded case , -->
+
+    <!--All the other scenarios it will be ignored.-->
     <!--<parameter name="ServicesDirectory">service</parameter>-->
     <!--To override repository/modules you need to uncomment following parameter and value SHOULD be absolute file path-->
     <!--<parameter name="ModulesDirectory">modules</parameter>-->
@@ -65,6 +71,9 @@
 
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
+
+    <!-- Following parameter will set the host name for the epr-->
+    <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
 
     <!-- If you have a front end host which exposes this webservice using a different public URL  -->
     <!-- use this parameter to override autodetected url -->
@@ -222,8 +231,8 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
-    <transportSender name="jms"
-                     class="org.apache.axis2.transport.jms.JMSSender"/>
+    <!--<transportSender name="jms"-->
+                     <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
 
     <!-- ================================================= -->
     <!-- Mail Transport Sender  -->

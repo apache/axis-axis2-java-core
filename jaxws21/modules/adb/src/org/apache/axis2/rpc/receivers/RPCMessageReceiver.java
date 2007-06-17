@@ -39,8 +39,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
-
-
     private static Log log = LogFactory.getLog(RPCMessageReceiver.class);
 
     /**
@@ -76,13 +74,22 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
             QName elementQName;
-            String methodName = op.getName().getLocalPart();
-            Method[] methods = ImplClass.getMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals(methodName)) {
-                    method = methods[i];
-                    break;
+            method = (Method)(op.getParameterValue("myMethod"));
+            if (method == null) {
+                String methodName = op.getName().getLocalPart();
+                Method[] methods = ImplClass.getMethods();
+
+                for (int i = 0; i < methods.length; i++) {
+                    if (methods[i].getName().equals(methodName)) {
+                        method = methods[i];
+                        op.addParameter("myMethod", method);
+                        break;
+                    }
+                }
+                if (method == null) {
+                    throw new AxisFault("No such method '" + methodName +
+                            "' in class " + ImplClass.getName());
                 }
             }
             Object resObject = null;
@@ -151,11 +158,13 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 throw (AxisFault)cause;
             }
             throw new AxisFault(msg, e);
+        } catch(RuntimeException e) {
+            throw AxisFault.makeFault(e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
                     method.getName();
             log.error(msg, e);
-            throw new AxisFault(msg, e);
+            throw AxisFault.makeFault(e);
         }
     }
 }

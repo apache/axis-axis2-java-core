@@ -632,9 +632,14 @@ public class JAXBUtils {
                             // by JAXB should be added.
                             if (!clazz.isInterface()
                                     && (clazz.isEnum() ||
-                                    ClassUtils.getDefaultPublicConstructor(clazz) != null)
+                                        ClassUtils.getDefaultPublicConstructor(clazz) != null)
                                     && !ClassUtils.isJAXWSClass(clazz)
                                     && !java.lang.Exception.class.isAssignableFrom(clazz)) {
+
+                                // Ensure that all the referenced classes are loadable too
+                                clazz.getDeclaredMethods();
+                                clazz.getDeclaredFields();
+
                                 if (log.isDebugEnabled()) {
                                     log.debug("Adding class: " + file);
                                 }
@@ -661,7 +666,6 @@ public class JAXBUtils {
                                         e.toString());
                                 log.debug(JavaUtils.stackToString(e));
                             }
-                            e.printStackTrace();
                         }
 
                     }
@@ -708,8 +712,8 @@ public class JAXBUtils {
                     log.debug("Tried to load class " + className +
                             " while constructing a JAXBContext.  This class will be skipped.  Processing Continues.");
                     log.debug("  The reason that class could not be loaded:" + e.toString());
+                    log.debug(JavaUtils.stackToString(e));
                 }
-                e.printStackTrace();
             }
         }
     }

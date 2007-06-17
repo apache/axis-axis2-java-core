@@ -18,7 +18,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import java.io.File;
 
-public class InterfaceImplementationWriter extends ClassWriter {
+public class InterfaceImplementationWriter extends FileWriter {
     public InterfaceImplementationWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }

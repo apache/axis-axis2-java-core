@@ -69,7 +69,10 @@ public interface BeanWriter {
      * @return Returns String.
      * @throws SchemaCompilationException
      */
-    public String write(QName qname, Map typeMap, BeanWriterMetaInfoHolder metainf)
+    public String write(QName qname,
+                        Map typeMap,
+                        BeanWriterMetaInfoHolder metainf,
+                        boolean isAbstract)
             throws SchemaCompilationException;
 
     /**

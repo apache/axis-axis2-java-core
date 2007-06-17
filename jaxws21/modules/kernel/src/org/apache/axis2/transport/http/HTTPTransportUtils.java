@@ -224,9 +224,7 @@ public class HTTPTransportUtils {
                             msgContext,
                             handleGZip(msgContext, in), 
                             contentType));
-
-            AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
-            return engine.receive(msgContext);
+            return AxisEngine.receive(msgContext);
         } catch (SOAPProcessingException e) {
             throw AxisFault.makeFault(e);
         } catch (AxisFault e) {
@@ -252,7 +250,9 @@ public class HTTPTransportUtils {
                                                 String contentType) {
         int soapVersion = VERSION_UNKNOWN;
         // remove the starting and trailing " from the SOAP Action
-        if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
+        if ((soapActionHeader != null) 
+                && soapActionHeader.length() > 0 
+                && soapActionHeader.charAt(0) == '\"'
                 && soapActionHeader.endsWith("\"")) {
             soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
         }

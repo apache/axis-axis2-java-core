@@ -96,9 +96,9 @@ if $cygwin; then
   JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
 fi
 
-export AXIS2_HOME=$AXIS2_HOME
-export JAVA_HOME=$JAVA_HOME
-export AXIS2_CLASSPATH=$AXIS2_CLASSPATH
+export AXIS2_HOME="$AXIS2_HOME"
+export JAVA_HOME="$JAVA_HOME"
+export AXIS2_CLASSPATH="$AXIS2_CLASSPATH"
 
 
 echo " Using AXIS2_HOME:   $AXIS2_HOME"

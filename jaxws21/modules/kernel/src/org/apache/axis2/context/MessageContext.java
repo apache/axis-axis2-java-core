@@ -44,6 +44,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
@@ -71,7 +72,23 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * MessageContext holds service specific state information.
+ * <p>Axis2 states are held in two information models, called description hierarchy
+ *  and context hierarchy. Description hierarchy hold deployment configuration 
+ *  and it's values does not change unless deployment configuration change 
+ *  occurs where Context hierarchy hold run time information. Both hierarchies 
+ *  consists four levels, Global, Service Group, Operation and Message. Please 
+ *  look at "Information Model" section  of "Axis2 Architecture Guide" for more 
+ *  information.</p>
+ *  <p>MessageContext hold run time information about one Message invocation. It 
+ *  hold reference to OperationContext, ServiceGroupContext, and Configuration 
+ *  Context tied with current message. For an example if you need accesses to other 
+ *  messages of the current invocation, you can get to them via OperationContext. 
+ *  Addition to class attributes define in Message context, message context stores 
+ *  the information as name value pairs. Those name value pairs,and class attributes 
+ *  tweak the execution behavior of message context and some of them can be find in 
+ *  org.apache.axis2.Constants class. (TODO we should provide list of supported 
+ *  options). You may set them at any level of context hierarchy and they will 
+ *  affect invocations related to their child elements. </p>
  */
 public class MessageContext extends AbstractContext implements Externalizable {
 
@@ -249,14 +266,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private ArrayList executionChain;
 
     /**
-     * @serial The chain of executed Handlers/Phases from inbound processing
+     * @serial The chain of executed Handlers/Phases from processing
      */
-    private LinkedList inboundExecutedPhases;
-
-    /**
-     * @serial The chain of executed Handlers/Phases from outbound processing
-     */
-    private LinkedList outboundExecutedPhases;
+    private LinkedList executedPhases;
 
     /**
      * @serial Flag to indicate if we are doing REST
@@ -413,16 +425,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private transient ArrayList metaExecutionChain = null;
 
     /**
-     * The ordered list of metadata for inbound executed phases
+     * The ordered list of metadata for executed phases
      * used during re-constitution of the message context
      */
-    private transient LinkedList metaInboundExecuted = null;
-
-    /**
-     * The ordered list of metadata for outbound executed phases
-     * used during re-constitution of the message context
-     */
-    private transient LinkedList metaOutboundExecuted = null;
+    private transient LinkedList metaExecuted = null;
 
     /**
      * Index into the executuion chain of the currently executing handler
@@ -478,16 +484,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private transient boolean reconcileAxisMessage = false;
 
     /**
-     * Indicates whether the inbound executed phase list
+     * Indicates whether the executed phase list
      * was reset before the restored list has been reconciled
      */
-    private transient boolean inboundReset = false;
-
-    /**
-     * Indicates whether the outbound executed phase list
-     * was reset before the restored list has been reconciled
-     */
-    private transient boolean outboundReset = false;
+    private transient boolean executedPhasesReset = false;
 
     //----------------------------------------------------------------
     // end MetaData section
@@ -610,101 +610,51 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     /**
-     * Add a Phase to the collection of executed phases for the inbound path.
+     * Add a Phase to the collection of executed phases for the path.
      * Phases will be inserted in a LIFO data structure.
      *
      * @param phase The phase to add to the list.
      */
-    public void addInboundExecutedPhase(Handler phase) {
-        if (inboundExecutedPhases == null) {
-            inboundExecutedPhases = new LinkedList();
+    public void addExecutedPhase(Handler phase) {
+        if (executedPhases == null) {
+            executedPhases = new LinkedList();
         }
-        inboundExecutedPhases.addFirst(phase);
+        executedPhases.addFirst(phase);
     }
 
     /**
-     * Remove the first Phase in the collection of executed phases for the
-     * inbound path.
+     * Remove the first Phase in the collection of executed phases
      */
-    public void removeFirstInboundExecutedPhase() {
-        if (inboundExecutedPhases != null) {
-            inboundExecutedPhases.removeFirst();
+    public void removeFirstExecutedPhase() {
+        if (executedPhases != null) {
+            executedPhases.removeFirst();
         }
     }
 
     /**
-     * Get an iterator over the inbound executed phase list.
+     * Get an iterator over the executed phase list.
      *
      * @return An Iterator over the LIFO data structure.
      */
-    public Iterator getInboundExecutedPhases() {
+    public Iterator getExecutedPhases() {
         if (LoggingControl.debugLoggingAllowed) {
-            checkActivateWarning("getInboundExecutedPhases");
+            checkActivateWarning("getExecutedPhases");
         }
-        if (inboundExecutedPhases == null) {
-            inboundExecutedPhases = new LinkedList();
+        if (executedPhases == null) {
+            executedPhases = new LinkedList();
         }
-        return inboundExecutedPhases.iterator();
+        return executedPhases.iterator();
     }
 
     /**
-     * Reset the list of executed inbound phases.
+     * Reset the list of executed phases.
      * This is needed because the OutInAxisOperation currently invokes
      * receive() even when a fault occurs, and we will have already executed
      * the flowComplete on those before receiveFault() is called.
      */
-    public void resetInboundExecutedPhases() {
-        inboundReset = true;
-        inboundExecutedPhases = new LinkedList();
-    }
-
-    /**
-     * Add a Phase to the collection of executed phases for the outbound path.
-     * Phases will be inserted in a LIFO data structure.
-     *
-     * @param phase The phase to add to the list.
-     */
-    public void addOutboundExecutedPhase(Handler phase) {
-        if (outboundExecutedPhases == null) {
-            outboundExecutedPhases = new LinkedList();
-        }
-        outboundExecutedPhases.addFirst(phase);
-    }
-
-    /**
-     * Remove the first Phase in the collection of executed phases for the
-     * outbound path.
-     */
-    public void removeFirstOutboundExecutedPhase() {
-        if (outboundExecutedPhases != null) {
-            outboundExecutedPhases.removeFirst();
-        }
-    }
-
-    /**
-     * Get an iterator over the outbound executed phase list.
-     *
-     * @return An Iterator over the LIFO data structure.
-     */
-    public Iterator getOutboundExecutedPhases() {
-        if (LoggingControl.debugLoggingAllowed) {
-            checkActivateWarning("getOutboundExecutedPhases");
-        }
-        if (outboundExecutedPhases == null) {
-            outboundExecutedPhases = new LinkedList();
-        }
-        return outboundExecutedPhases.iterator();
-    }
-
-    /**
-     * Reset the list of executed outbound phases.
-     * This is needed because the OutInAxisOperation currently invokes
-     * receive() even when a fault occurs, and we will have already executed
-     * the flowComplete on those before receiveFault() is called.
-     */
-    public void resetOutboundExecutedPhases() {
-        outboundReset = true;
-        outboundExecutedPhases = new LinkedList();
+    public void resetExecutedPhases() {
+        executedPhasesReset = true;
+        executedPhases = new LinkedList();
     }
 
     /**
@@ -874,7 +824,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * AxisConfiguration </li>
      * </ol>
      *
-     * @param key
+     * @param key name of desired parameter
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
@@ -1016,6 +966,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     /**
+     * Get any RelatesTos of a particular type associated with this MessageContext
+     * TODO: Shouldn't this return a List?
+     *
+     * @param type the relationship type
      * @return Returns RelatesTo.
      */
     public RelatesTo getRelatesTo(String type) {
@@ -1334,8 +1288,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
         this.setParent(operationContext);
 
         if (operationContext != null) {
-            if ((serviceContext != null) && (operationContext.getParent() == null)) {
-                operationContext.setParent(serviceContext);
+            if (serviceContext == null) {
+                setServiceContext(operationContext.getServiceContext());
+            } else {
+                if (operationContext.getParent() != serviceContext) {
+                    throw new AxisError("ServiceContext in OperationContext does not match !");
+                }
             }
 
             this.setAxisOperation(operationContext.getAxisOperation());
@@ -1401,8 +1359,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (serviceContext != null) {
             if ((operationContext != null)
-                    && (operationContext.getParent() != null)) {
-                operationContext.setParent(context);
+                    && (operationContext.getParent() != context)) {
+                throw new AxisError("ServiceContext and OperationContext.parent do not match!");
             }
             // setting configcontext using configuration context in service context
             if (configurationContext == null) {
@@ -2399,7 +2357,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
         //---------------------------------------------------------
-        // LinkedList inboundExecutedPhases
+        // LinkedList executedPhases
         //---------------------------------------------------------
         // The strategy is to save some metadata about each
         // member of the list and the order of the list.
@@ -2421,217 +2379,98 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    UTF          - description string
         //    boolean      - empty flag
         //---------------------------------------------------------
-        String inExecListDesc = logCorrelationIDString + ".inboundExecutedPhases";
+        String execListDesc = logCorrelationIDString + ".executedPhases";
 
-        int inExecListSize = 0;
+        int execListSize = 0;
 
-        if (inboundExecutedPhases != null) {
-            inExecListSize = inboundExecutedPhases.size();
+        if (executedPhases != null) {
+            execListSize = executedPhases.size();
         }
 
-        if (inExecListSize > 0) {
+        if (execListSize > 0) {
             // start writing data to the output stream
-            out.writeUTF(inExecListDesc);
+            out.writeUTF(execListDesc);
             out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-            out.writeInt(inExecListSize);
+            out.writeInt(execListSize);
 
             // put the metadata on each member of the list into a buffer
 
-            int inExecNextIndex = 0;
+            int execNextIndex = 0;
 
-            Iterator inIterator = inboundExecutedPhases.iterator();
+            Iterator iterator = executedPhases.iterator();
 
-            while (inIterator.hasNext()) {
-                Object inObj = inIterator.next();
-                String inObjClass = inObj.getClass().getName();
+            while (iterator.hasNext()) {
+                Object obj = iterator.next();
+                String objClass = obj.getClass().getName();
                 // start the meta data entry for this object
-                MetaDataEntry inMdEntry = new MetaDataEntry();
-                inMdEntry.setClassName(inObjClass);
+                MetaDataEntry mdEntry = new MetaDataEntry();
+                mdEntry.setClassName(objClass);
 
                 // get the correct object-specific name
-                String inQnameAsString;
+                String qnameAsString;
 
-                if (inObj instanceof Phase) {
-                    Phase inPhaseObj = (Phase) inObj;
-                    inQnameAsString = inPhaseObj.getName();
+                if (obj instanceof Phase) {
+                    Phase inPhaseObj = (Phase) obj;
+                    qnameAsString = inPhaseObj.getName();
 
                     // add the list of handlers to the meta data
-                    setupPhaseList(inPhaseObj, inMdEntry);
-                } else if (inObj instanceof Handler) {
-                    Handler inHandlerObj = (Handler) inObj;
-                    inQnameAsString = inHandlerObj.getName();
+                    setupPhaseList(inPhaseObj, mdEntry);
+                } else if (obj instanceof Handler) {
+                    Handler inHandlerObj = (Handler) obj;
+                    qnameAsString = inHandlerObj.getName();
                 } else {
                     // TODO: will there be any other kinds of objects in the list
-                    inQnameAsString = "NULL";
+                    qnameAsString = "NULL";
                 }
 
-                inMdEntry.setQName(inQnameAsString);
-
+                mdEntry.setQName(qnameAsString);
 
                 if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
-                            ":writeExternal(): ***BEFORE Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class [" +
-                            inObjClass + "] qname [" + inQnameAsString + "]");
+                            ":writeExternal(): ***BEFORE Executed List OBJ WRITE*** executedPhases entry class [" +
+                            objClass + "] qname [" + qnameAsString + "]");
                 }
 
-                ObjectStateUtils.writeObject(out, inMdEntry, logCorrelationIDString +
-                        ".inboundExecutedPhases:entry class [" + inObjClass + "] qname [" +
-                        inQnameAsString + "]");
+                ObjectStateUtils.writeObject(out, mdEntry, logCorrelationIDString +
+                        ".executedPhases:entry class [" + objClass + "] qname [" +
+                        qnameAsString + "]");
 
                 // update the index so that the index
                 // now indicates the next entry that
                 // will be attempted
-                inExecNextIndex++;
+                execNextIndex++;
 
                 if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString + ":writeExternal(): " +
-                            "***AFTER Inbound Executed List OBJ WRITE*** " +
-                            "inboundExecutedPhases entry class [" + inObjClass + "] " +
-                            "qname [" + inQnameAsString + "]");
+                            "***AFTER Executed List OBJ WRITE*** " +
+                            "executedPhases entry class [" + objClass + "] " +
+                            "qname [" + qnameAsString + "]");
                 }
             } // end while entries in execution chain
 
             // done with the entries in the execution chain
             // add the end-of-list marker
-            MetaDataEntry inLastEntry = new MetaDataEntry();
-            inLastEntry.setClassName(MetaDataEntry.END_OF_LIST);
+            MetaDataEntry lastEntry = new MetaDataEntry();
+            lastEntry.setClassName(MetaDataEntry.END_OF_LIST);
 
-            ObjectStateUtils.writeObject(out, inLastEntry, logCorrelationIDString +
-                    ".inboundExecutedPhases:  last entry ");
-            inExecNextIndex++;
+            ObjectStateUtils.writeObject(out, lastEntry, logCorrelationIDString +
+                    ".executedPhases:  last entry ");
+            execNextIndex++;
 
-            // inExecNextIndex also gives us the number of entries
+            // execNextIndex also gives us the number of entries
             // that were actually saved as opposed to the
-            // number of entries in the inboundExecutedPhases
-            out.writeInt(inExecNextIndex);
+            // number of entries in the executedPhases
+            out.writeInt(execNextIndex);
 
         } else {
             // general case: handle "null" or "empty"
 
-            out.writeUTF(inExecListDesc);
+            out.writeUTF(execListDesc);
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(
-                        logCorrelationIDString + ":writeExternal(): inboundExecutedPhases is NULL");
-            }
-        }
-
-        //---------------------------------------------------------
-        // LinkedList outboundExecutedPhases
-        //---------------------------------------------------------
-        // The strategy is to save some metadata about each
-        // member of the list and the order of the list.
-        // Then when the message context is re-constituted,
-        // try to match up with phases and handlers on the
-        // engine.
-        //
-        // Non-null list:
-        //    UTF          - description string
-        //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //    objects      - MetaDataEntry object per list entry
-        //                        last entry will be empty MetaDataEntry
-        //                        with MetaDataEntry.LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last empty entry
-        //
-        // Empty list:
-        //    UTF          - description string
-        //    boolean      - empty flag
-        //---------------------------------------------------------
-        String outExecListDesc = logCorrelationIDString + ".outboundExecutedPhases";
-
-        int outExecListSize = 0;
-
-        if (outboundExecutedPhases != null) {
-            outExecListSize = outboundExecutedPhases.size();
-        }
-
-        if (outExecListSize > 0) {
-            // start writing data to the output stream
-            out.writeUTF(outExecListDesc);
-            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-            out.writeInt(outExecListSize);
-
-            // put the metadata on each member of the list into a buffer
-
-            int outExecNextIndex = 0;
-
-            Iterator outIterator = outboundExecutedPhases.iterator();
-
-            while (outIterator.hasNext()) {
-                Object outObj = outIterator.next();
-                String outObjClass = outObj.getClass().getName();
-                // start the meta data entry for this object
-                MetaDataEntry outMdEntry = new MetaDataEntry();
-                outMdEntry.setClassName(outObjClass);
-
-                // get the correct object-specific name
-                String outQnameAsString;
-
-                if (outObj instanceof Phase) {
-                    Phase outPhaseObj = (Phase) outObj;
-                    outQnameAsString = outPhaseObj.getName();
-
-                    // add the list of handlers to the meta data
-                    setupPhaseList(outPhaseObj, outMdEntry);
-                } else if (outObj instanceof Handler) {
-                    Handler outHandlerObj = (Handler) outObj;
-                    outQnameAsString = outHandlerObj.getName();
-                } else {
-                    // TODO: will there be any other kinds of objects in the list
-                    outQnameAsString = "NULL";
-                }
-
-                outMdEntry.setQName(outQnameAsString);
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString +
-                            ":writeExternal(): ***BEFORE Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class [" +
-                            outObjClass + "] qname [" + outQnameAsString + "]");
-                }
-
-                ObjectStateUtils.writeObject(out, outMdEntry, logCorrelationIDString +
-                        ".outboundExecutedPhases:entry class [" + outObjClass + "] qname [" +
-                        outQnameAsString + "]");
-
-                // update the index so that the index
-                // now indicates the next entry that
-                // will be attempted
-                outExecNextIndex++;
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString +
-                            ":writeExternal(): ***AFTER Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class [" +
-                            outObjClass + "] qname [" + outQnameAsString + "]");
-                }
-
-            } // end while entries
-
-            // done with the entries
-            // add the end-of-list marker
-            MetaDataEntry outLastEntry = new MetaDataEntry();
-            outLastEntry.setClassName(MetaDataEntry.END_OF_LIST);
-
-            ObjectStateUtils.writeObject(out, outLastEntry, logCorrelationIDString +
-                    ".outboundExecutedPhases:  last entry ");
-            outExecNextIndex++;
-
-            // outExecNextIndex also gives us the number of entries
-            // that were actually saved as opposed to the
-            // number of entries in the outboundExecutedPhases
-            out.writeInt(outExecNextIndex);
-
-        } else {
-            // general case: handle "null" or "empty"
-
-            out.writeUTF(outExecListDesc);
-            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":writeExternal(): outboundExecutedPhases is NULL");
+                        logCorrelationIDString + ":writeExternal(): executedPhases is NULL");
             }
         }
 
@@ -3242,7 +3081,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
         //---------------------------------------------------------
-        // LinkedList inboundExecutedPhases
+        // LinkedList executedPhases
         //---------------------------------------------------------
         // Restore the metadata about each member of the list
         // and the order of the list.
@@ -3267,8 +3106,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         // the local chain is not enabled until the
         // list has been reconstituted
-        inboundExecutedPhases = null;
-        metaInboundExecuted = null;
+        executedPhases = null;
+        metaExecuted = null;
 
         in.readUTF();
         boolean gotInExecList = in.readBoolean();
@@ -3278,12 +3117,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
-                        ":readExternal(): inbound executed phases:  expected number of entries [" +
+                        ":readExternal(): executed phases:  expected number of entries [" +
                         expectedNumberInExecList + "]");
             }
 
             // setup the list
-            metaInboundExecuted = new LinkedList();
+            metaExecuted = new LinkedList();
 
             // process the objects
             boolean keepGoing = true;
@@ -3294,7 +3133,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
                 // get the object
                 Object tmpObj = ObjectStateUtils
-                        .readObject(in, "MessageContext.metaInboundExecuted MetaDataEntry");
+                        .readObject(in, "MessageContext.metaExecuted MetaDataEntry");
 
                 count++;
 
@@ -3313,7 +3152,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                         keepGoing = false;
                     } else {
                         // add the entry to the meta data list
-                        metaInboundExecuted.add(mdObj);
+                        metaExecuted.add(mdObj);
 
                         tmpQNameAsStr = mdObj.getQNameAsString();
 
@@ -3339,125 +3178,15 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
-                        ":readExternal(): adjusted number of entries InboundExecutedPhases [" +
+                        ":readExternal(): adjusted number of entries executedPhases [" +
                         adjustedNumberInExecList + "]    ");
             }
         }
 
-        if ((metaInboundExecuted == null) || (metaInboundExecuted.isEmpty())) {
+        if ((metaExecuted == null) || (metaExecuted.isEmpty())) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
-                        ":readExternal(): meta data for InboundExecutedPhases list is NULL");
-            }
-        }
-
-        //---------------------------------------------------------
-        // LinkedList outboundExecutedPhases
-        //---------------------------------------------------------
-        // Restore the metadata about each member of the list
-        // and the order of the list.
-        // This metadata will be used to match up with phases
-        // and handlers on the engine.
-        //
-        // Non-null list:
-        //    UTF          - description string
-        //    boolean      - active flag
-        //    int          - expected number of entries in the list
-        //                        not including the last entry marker
-        //    objects      - MetaDataEntry object per list entry
-        //                        last entry will be empty MetaDataEntry
-        //                        with MetaDataEntry.LAST_ENTRY marker
-        //    int          - adjusted number of entries in the list
-        //                        includes the last empty entry
-        //
-        // Empty list:
-        //    UTF          - description string
-        //    boolean      - empty flag
-        //---------------------------------------------------------
-
-        // the local chain is not enabled until the
-        // list has been reconstituted
-        outboundExecutedPhases = null;
-        metaOutboundExecuted = null;
-
-        in.readUTF();
-        boolean gotOutExecList = in.readBoolean();
-
-        if (gotOutExecList == ObjectStateUtils.ACTIVE_OBJECT) {
-            int expectedNumberOutExecList = in.readInt();
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":readExternal(): outbound executed phases:  expected number of entries [" +
-                        expectedNumberOutExecList + "]");
-            }
-
-            // setup the list
-            metaOutboundExecuted = new LinkedList();
-
-            // process the objects
-            boolean keepGoing = true;
-            int count = 0;
-
-            while (keepGoing) {
-                // stop when we get to the end-of-list marker
-
-                // get the object
-                Object tmpObj = ObjectStateUtils
-                        .readObject(in, "MessageContext.metaOutboundExecuted MetaDataEntry");
-
-                count++;
-
-                MetaDataEntry mdObj = (MetaDataEntry) tmpObj;
-
-                // get the class name, then add it to the list
-                String tmpClassNameStr;
-                String tmpQNameAsStr;
-                String tmpHasList = "no list";
-
-                if (mdObj != null) {
-                    tmpClassNameStr = mdObj.getClassName();
-
-                    if (tmpClassNameStr.equalsIgnoreCase(MetaDataEntry.END_OF_LIST)) {
-                        // this is the last entry
-                        keepGoing = false;
-                    } else {
-                        // add the entry to the meta data list
-                        metaOutboundExecuted.add(mdObj);
-
-                        tmpQNameAsStr = mdObj.getQNameAsString();
-
-                        if (!mdObj.isListEmpty()) {
-                            tmpHasList = "has list";
-                        }
-
-                        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                            log.trace(logCorrelationIDString +
-                                    ":readExternal(): OutboundExecutedPhases: meta data class [" +
-                                    tmpClassNameStr + "] qname [" + tmpQNameAsStr + "]  index [" +
-                                    count + "]   [" + tmpHasList + "]");
-                        }
-                    }
-                } else {
-                    // some error occurred
-                    keepGoing = false;
-                }
-
-            } // end while keep going
-
-            int adjustedNumberOutExecList = in.readInt();
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":readExternal(): adjusted number of entries OutboundExecutedPhases [" +
-                        adjustedNumberOutExecList + "]    ");
-            }
-        }
-
-        if ((metaOutboundExecuted == null) || (metaOutboundExecuted.isEmpty())) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":readExternal(): meta data for OutboundExecutedPhases list is NULL");
+                        ":readExternal(): meta data for executedPhases list is NULL");
             }
         }
 
@@ -3934,38 +3663,22 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         // reconcile the lists for the executed phases
         //-------------------------------------------------------
-        if (metaInboundExecuted != null) {
+        if (metaExecuted != null) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
-                        ":activate(): reconciling the inbound executed chain...");
+                        ":activate(): reconciling the executed chain...");
             }
 
-            if (!(inboundReset)) {
-                inboundExecutedPhases =
-                        restoreExecutedList(inboundExecutedPhases, metaInboundExecuted);
-            }
-        }
-
-        if (inboundExecutedPhases == null) {
-            inboundExecutedPhases = new LinkedList();
-        }
-
-
-        if (metaOutboundExecuted != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":activate(): reconciling the outbound executed chain...");
-            }
-
-            if (!(outboundReset)) {
-                outboundExecutedPhases =
-                        restoreExecutedList(outboundExecutedPhases, metaOutboundExecuted);
+            if (!(executedPhasesReset)) {
+                executedPhases =
+                        restoreExecutedList(executedPhases, metaExecuted);
             }
         }
 
-        if (outboundExecutedPhases == null) {
-            outboundExecutedPhases = new LinkedList();
+        if (executedPhases == null) {
+            executedPhases = new LinkedList();
         }
+
 
         //-------------------------------------------------------
         // finish up remaining links
@@ -4178,37 +3891,20 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         // reconcile the lists for the executed phases
         //-------------------------------------------------------
-        if (metaInboundExecuted != null) {
+        if (metaExecuted != null) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
-                        ":activateWithOperationContext(): reconciling the inbound executed chain...");
+                        ":activateWithOperationContext(): reconciling the executed chain...");
             }
 
-            if (!(inboundReset)) {
-                inboundExecutedPhases =
-                        restoreExecutedList(inboundExecutedPhases, metaInboundExecuted);
-            }
-        }
-
-        if (inboundExecutedPhases == null) {
-            inboundExecutedPhases = new LinkedList();
-        }
-
-
-        if (metaOutboundExecuted != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString +
-                        ":activateWithOperationContext(): reconciling the outbound executed chain...");
-            }
-
-            if (!(outboundReset)) {
-                outboundExecutedPhases =
-                        restoreExecutedList(outboundExecutedPhases, metaOutboundExecuted);
+            if (!(executedPhasesReset)) {
+                executedPhases =
+                        restoreExecutedList(executedPhases, metaExecuted);
             }
         }
 
-        if (outboundExecutedPhases == null) {
-            outboundExecutedPhases = new LinkedList();
+        if (executedPhases == null) {
+            executedPhases = new LinkedList();
         }
 
         //-------------------------------------------------------
@@ -4448,14 +4144,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
         copy.setCurrentPhaseIndex(currentPhaseIndex);
 
         //---------------------------------------------------------
-        // LinkedList inboundExecutedPhases
+        // LinkedList executedPhases
         //---------------------------------------------------------
-        copy.setInboundExecutedPhasesExplicit(inboundExecutedPhases);
-
-        //---------------------------------------------------------
-        // LinkedList outboundExecutedPhases
-        //---------------------------------------------------------
-        copy.setOutboundExecutedPhasesExplicit(outboundExecutedPhases);
+        copy.setExecutedPhasesExplicit(executedPhases);
 
         //---------------------------------------------------------
         // options
@@ -4550,13 +4241,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
         isSOAP11 = t;
     }
 
-
-    public void setInboundExecutedPhasesExplicit(LinkedList inb) {
-        inboundExecutedPhases = inb;
-    }
-
-    public void setOutboundExecutedPhasesExplicit(LinkedList outb) {
-        outboundExecutedPhases = outb;
+    public void setExecutedPhasesExplicit(LinkedList inb) {
+        executedPhases = inb;
     }
 
     public void setSelfManagedDataMapExplicit(LinkedHashMap map) {

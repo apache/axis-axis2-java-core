@@ -18,7 +18,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import java.io.File;
 
-public class TestClassWriter extends ClassWriter {
+public class TestClassWriter extends FileWriter {
 
     public TestClassWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);

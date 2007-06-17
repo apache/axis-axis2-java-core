@@ -40,8 +40,8 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle1.setTestInnerParticle1Sequence_type0(testInnerParticle1Sequence_type0);
         testInnerParticle1.setParam4("Param4");
 
-        OMElement omElement = testInnerParticle1.getOMElement(TestInnerParticle1.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+            OMElement omElement = testInnerParticle1.getOMElement(TestInnerParticle1.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -68,9 +68,9 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle2.setTestInnerParticle2Choice_type5(testInnerParticle2Choice_type1);
         testInnerParticle2.setParam4("Param4");
 
-        OMElement omElement =
-                testInnerParticle2.getOMElement(TestInnerParticle2.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+       try {
+            OMElement omElement =
+                   testInnerParticle2.getOMElement(TestInnerParticle2.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -91,9 +91,9 @@ public class InnerParticlesTest extends TestCase {
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         testInnerParticle3.setParam1("Param1");
 
-        OMElement omElement =
-                testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                     testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -115,9 +115,9 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle3Choice_type1.setParam3("Param3");
         testInnerParticle3.setTestInnerParticle3Choice_type1(testInnerParticle3Choice_type1);
 
-        OMElement omElement =
-                testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                    testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -143,9 +143,9 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle3.setTestInnerParticle3Choice_type1(testInnerParticle3Choice_type1);
         testInnerParticle3.setParam4("Param4");
 
-        OMElement omElement =
-                testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement =
+                      testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -164,9 +164,9 @@ public class InnerParticlesTest extends TestCase {
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam1("Param1");
 
-        OMElement omElement =
-                testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+             OMElement omElement =
+                      testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -190,9 +190,9 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle4Sequence_type2.setParam3("Param3");
         testInnerParticle4.setTestInnerParticle4Sequence_type2(testInnerParticle4Sequence_type2);
 
-        OMElement omElement =
-                testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                     testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -214,9 +214,9 @@ public class InnerParticlesTest extends TestCase {
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam4("Param4");
 
-        OMElement omElement =
-                testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+         try {
+            OMElement omElement =
+                      testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -248,9 +248,9 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle5.setTestInnerParticle5Sequence_type4(testInnerParticle2Choice_type1);
         testInnerParticle5.setParam6("Param6");
 
-        OMElement omElement =
-                testInnerParticle5.getOMElement(TestInnerParticle5.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                    testInnerParticle5.getOMElement(TestInnerParticle5.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

@@ -31,8 +31,6 @@ import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.util.Loader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;
@@ -61,7 +59,6 @@ public class BeanUtil {
 
     private static int nsCount = 1;
 
-    private static final Log log = LogFactory.getLog(BeanUtil.class);
 
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
@@ -150,8 +147,15 @@ public class BeanUtil {
                     continue;
                 }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
-                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                    Method readMethod = propDesc.getReadMethod();
+                    Object value;
+                    if(readMethod!=null){
+                      value = readMethod.invoke(beanObject,
                                                                    null);
+                    } else {
+                        throw new AxisFault("can not find read method for : "  + propDesc.getName());
+                    }
+
                     if (elemntNameSpace != null) {
                         object.add(new QName(elemntNameSpace.getNamespaceURI(),
                                              propDesc.getName(), elemntNameSpace.getPrefix()));
@@ -162,8 +166,15 @@ public class BeanUtil {
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
-                        Object value = propDesc.getReadMethod().invoke(beanObject,
-                                                                       null);
+
+                        Method readMethod = propDesc.getReadMethod();
+                        Object value;
+                        if(readMethod!=null){
+                            value = readMethod.invoke(beanObject,
+                                    null);
+                        } else {
+                            throw new AxisFault("can not find read method for : "  + propDesc.getName());
+                        }
                         if (value != null) {
                             int i1 = Array.getLength(value);
                             for (int j = 0; j < i1; j++) {
@@ -329,7 +340,7 @@ public class BeanUtil {
                     throw AxisFault.makeFault(ce);
                 }
             }
-   
+
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = beanClass.getComponentType();
@@ -355,6 +366,8 @@ public class BeanUtil {
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
+                } else if ("java.lang.Object".equals(beanClass.getName())){
+                    return beanElement.getFirstOMChild();
                 }
                 HashMap properties = new HashMap();
                 BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
@@ -363,15 +376,14 @@ public class BeanUtil {
                     PropertyDescriptor proprty = propDescs[i];
                     properties.put(proprty.getName(), proprty);
                 }
-                boolean tuched = false;
                 Iterator elements = beanElement.getChildren();
+                if (beanObj == null) {
+                    beanObj = objectSupplier.getObject(beanClass);
+                }
                 while (elements.hasNext()) {
                     // the beanClass could be an abstract one.
                     // so create an instance only if there are elements, in
                     // which case a concrete subclass is available to instantiate.
-                    if (beanObj == null) {
-                        beanObj = objectSupplier.getObject(beanClass);
-                    }
                     OMElement parts;
                     Object objValue = elements.next();
                     if (objValue instanceof OMElement) {
@@ -405,14 +417,9 @@ public class BeanUtil {
                         if (writeMethod != null) {
                             writeMethod.invoke(beanObj, parms);
                         }
-                        tuched = true;
                     }
                 }
-                if (tuched) {
-                    return beanObj;
-                } else {
-                    return null;
-                }
+                return beanObj;
             }
         } catch (IllegalAccessException e) {
             throw new AxisFault("IllegalAccessException : " + e);
@@ -609,8 +616,12 @@ public class BeanUtil {
                                          helper, true, objectSupplier);
                 valueList.add(o);
             }
-            retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
-                                                          valueList);
+            if(valueList.get(0)==null){
+                retObjs[count] = null;
+            } else {
+                retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
+                        valueList);
+            }
             if (!done) {
                 return omElement;
             }
@@ -685,7 +696,11 @@ public class BeanUtil {
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg == null) {
-                objects.add("item" + i);
+                if (partName == null) {
+                    objects.add("item" + argCount);
+                } else {
+                    objects.add(partName);
+                }
                 objects.add(arg);
                 continue;
             }

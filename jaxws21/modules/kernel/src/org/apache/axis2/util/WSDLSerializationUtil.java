@@ -227,8 +227,9 @@ public class WSDLSerializationUtil {
     public static OMElement generateHTTPBinding(OMFactory fac, AxisService axisService,
                                                 OMNamespace wsdl, OMNamespace whttp, OMNamespace tns) {
         OMElement binding = fac.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
+        String serviceName = axisService.getName();
         binding.addAttribute(
-                fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, axisService.getName() +
+                fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, serviceName +
                         Java2WSDLConstants.HTTP_BINDING));
         binding.addAttribute(fac.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME, null, tns
                 .getPrefix() + ":" + WSDL2Constants.DEFAULT_INTERFACE_NAME));
@@ -244,7 +245,7 @@ public class WSDLSerializationUtil {
             opElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
                                                          tns.getPrefix() + ":" + name));
             opElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_LOCATION, whttp,
-                                                         name));
+                                                         serviceName + "/" + name));
         }
         return binding;
     }
@@ -287,9 +288,6 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
         for (int i = 0; i < eprs.length; i++) {
             String name = "";
             String epr = eprs[i];
-            if (!epr.endsWith("/")) {
-                epr = epr + "/";
-            }
             if (epr.startsWith("https://")) {
                 name = WSDL2Constants.DEFAULT_HTTPS_PREFIX;
             }

@@ -40,6 +40,10 @@ public class ListenerManager {
     private static final Log log = LogFactory.getLog(ListenerManager.class);
 
     public static ConfigurationContext defaultConfigurationContext;
+    public static ListenerManager getDefaultListenerManager() {
+        if (defaultConfigurationContext == null) return null;
+        return defaultConfigurationContext.getListenerManager();
+    }
 
     private ConfigurationContext configctx;
     private HashMap startedTransports = new HashMap();

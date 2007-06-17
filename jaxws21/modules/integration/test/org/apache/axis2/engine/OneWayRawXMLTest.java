@@ -14,35 +14,63 @@
 
 package org.apache.axis2.engine;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.util.Utils;
 
-public class OneWayRawXMLTest extends LocalTestCase {
-
+public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
+    public static Test suite() {
+        return getTestSetup(new TestSuite(OneWayRawXMLTest.class));
+    }
+    
 	private boolean received;
+    protected AxisService service;
     protected void setUp() throws Exception {
-    	super.setUp();
-    	serverConfig.addMessageReceiver(WSDL2Constants.MEP_URI_IN_ONLY, new MessageReceiver(){
-			public void receive(MessageContext messageCtx) throws AxisFault {
-			    SOAPEnvelope envelope = messageCtx.getEnvelope();
+    	service = Utils.createSimpleInOnlyService(serviceName,new MessageReceiver(){
+            public void receive(MessageContext messageCtx) throws AxisFault {
+                SOAPEnvelope envelope = messageCtx.getEnvelope();
                 TestingUtils.compareWithCreatedOMElement(envelope.getBody().getFirstElement());
-            	received = true;
-			}
-    	});
-    	deployClassAsService(Echo.SERVICE_NAME, Echo.class);
+                received = true;
+            }
+        },
+                operationName);
+        UtilServer.deployService(service);
     }
 
     public void testOneWay() throws Exception {
-        ServiceClient sender = getClient(Echo.SERVICE_NAME, "echoOMElementNoResponse");
+        ConfigurationContext configContext =
+            ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                    Constants.TESTING_PATH + "integrationRepo/", null);
+        ServiceClient sender = new ServiceClient(configContext, null);
+        Options op = new Options();
+//        op.setTo(new EndpointReference(
+// //               "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
+//                "http://127.0.0.1:" + 5556
+//                        + "/axis2/services/"+service.getName()+"/"+operationName.getLocalPart()));
+        op.setTo(targetEPR);
+        op.setAction("urn:SomeAction");
+        sender.setOptions(op);
         sender.fireAndForget(TestingUtils.createDummyOMElement());
         int index = 0;
         while (!received) {
-            Thread.sleep(10);
+            Thread.sleep(1000);
             index++;
             if (index == 20) {
                 throw new AxisFault("error Occured");

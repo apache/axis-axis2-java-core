@@ -40,9 +40,9 @@ public class GroupTest extends TestCase {
         testSequenceGroup.setSequenceParam2("sequenceParam2");
         testGroupSequenceElement.setTestSequenceGroup(testSequenceGroup);
 
-        OMElement omElement =
-                testGroupSequenceElement.getOMElement(TestSequenceGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
+            OMElement omElement =
+                    testGroupSequenceElement.getOMElement(TestSequenceGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader =
@@ -74,9 +74,10 @@ public class GroupTest extends TestCase {
 
         testSequenceNestedGroupElement.setTestSequenceNestedGroup(testSequenceNestedGroup);
 
-        OMElement omElement =
-                testSequenceNestedGroupElement.getOMElement(TestSequenceNestedGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+       try {
+           OMElement omElement =
+                    testSequenceNestedGroupElement.getOMElement(TestSequenceNestedGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
+
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader =
@@ -101,9 +102,9 @@ public class GroupTest extends TestCase {
         testChoiceGroup.setChoiceParam1("choiceParam1");
         testGroupChoiceElement.setTestChoiceGroup(testChoiceGroup);
 
-        OMElement omElement =
-                testGroupChoiceElement.getOMElement(TestChoiceGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+       try {
+           OMElement omElement =
+                   testGroupChoiceElement.getOMElement(TestChoiceGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader =
@@ -132,9 +133,9 @@ public class GroupTest extends TestCase {
 
         testChoiceNestedGroupElement.setTestChoiceNestedGroup(testChoiceNestedGroup);
 
-        OMElement omElement =
-                testChoiceNestedGroupElement.getOMElement(testChoiceNestedGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-        try {
+       try {
+           OMElement omElement =
+                   testChoiceNestedGroupElement.getOMElement(testChoiceNestedGroupElement.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader =
@@ -153,9 +154,9 @@ public class GroupTest extends TestCase {
          testAttributeGroup.setAttribute1("Attribute1");
          testAttributeGroup.setParam1("Param1");
 
-         OMElement omElement =
-                 testAttributeGroup.getOMElement(TestAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
          try {
+             OMElement omElement =
+                       testAttributeGroup.getOMElement(TestAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
              String omElementString = omElement.toStringWithConsume();
              System.out.println("OM Element ==> " + omElementString);
              XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -176,9 +177,9 @@ public class GroupTest extends TestCase {
          testNestedAttributeGroupElement.setAttribute2("Attribute2");
          testNestedAttributeGroupElement.setParam1("Param1");
 
-         OMElement omElement =
-                 testNestedAttributeGroupElement.getOMElement(TestNestedAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
-         try {
+        try {
+            OMElement omElement =
+                    testNestedAttributeGroupElement.getOMElement(TestNestedAttributeGroupElement.MY_QNAME,OMAbstractFactory.getOMFactory());
              String omElementString = omElement.toStringWithConsume();
              System.out.println("OM Element ==> " + omElementString);
              XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

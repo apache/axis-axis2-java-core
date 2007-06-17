@@ -18,6 +18,9 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
+
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.MessageContextBuilder;
@@ -26,58 +29,12 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * This is takes care of the IN-OUT sync MEP in the server side
+ *
+ * @deprecated no longer needed, going away after 1.3
  */
-public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageReceiver {
-    private static final Log log = LogFactory.getLog(AbstractInOutAsyncMessageReceiver.class);
-
-    public abstract void invokeBusinessLogic(MessageContext inMessage,
-                                             MessageContext outMessage) throws AxisFault;
-
-    public final void receive(final MessageContext messageCtx) {
-        final ServerCallback callback = new ServerCallback() {
-            public void handleResult(MessageContext result) throws AxisFault {
-                AxisEngine engine =
-                        new AxisEngine(messageCtx.getOperationContext().getServiceContext()
-                                .getConfigurationContext());
-                engine.send(result);
-                result.getTransportOut().getSender().cleanup(result);
-            }
-
-            public void handleFault(AxisFault fault) throws AxisFault {
-                AxisEngine engine =
-                        new AxisEngine(messageCtx.getOperationContext().getServiceContext()
-                                .getConfigurationContext());
-                MessageContext faultContext =
-                        MessageContextBuilder.createFaultMessageContext(messageCtx, fault);
-
-                engine.sendFault(faultContext);
-            }
-        };
-        Runnable theadedTask = new Runnable() {
-            public void run() {
-                try {
-                    MessageContext newmsgCtx =
-                            MessageContextBuilder.createOutMessageContext(messageCtx);
-                    newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
-                    ThreadContextDescriptor tc = setThreadContext(messageCtx);
-                    try {
-                        invokeBusinessLogic(messageCtx, newmsgCtx);
-                    } finally {
-                        restoreThreadContext(tc);
-                    }
-                    callback.handleResult(newmsgCtx);
-                } catch (AxisFault e) {
-                    try {
-                        callback.handleFault(e);
-                    } catch (AxisFault axisFault) {
-                        log.error(e);
-                    }
-                    log.error(e);
-                }
-            }
-        };
-
-        messageCtx.getEnvelope().build();
-        messageCtx.getConfigurationContext().getThreadPool().execute(theadedTask);
+public abstract class AbstractInOutAsyncMessageReceiver extends AbstractInOutMessageReceiver {
+    public void receive(final MessageContext messageCtx) throws AxisFault {
+        messageCtx.setProperty(DO_ASYNC, Boolean.TRUE);
+        super.receive(messageCtx);
     }
 }

@@ -38,6 +38,7 @@ import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.MessageReceiver;
@@ -50,6 +51,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -484,7 +486,14 @@ public class AxisService extends AxisDescription {
                     }
                 }
                 // this operation is a control operation.
-                axisOperation.setControlOperation(true);
+                Parameter expose = axisOperation.getParameter(DeploymentConstants.TAG_EXPOSE);
+                if(expose!=null){
+                    if(JavaUtils.isTrue(expose.getValue(), false)){
+                        axisOperation.setControlOperation(true);
+                    }
+                } else {
+                    axisOperation.setControlOperation(true);
+                }
                 this.addOperation(axisOperation);
             }
         }
@@ -618,7 +627,7 @@ public class AxisService extends AxisDescription {
 
         PolicyInclude policyInclude = new PolicyInclude(operation);
         PolicyInclude axisOperationPolicyInclude = axisOperation.getPolicyInclude();
-        
+
         if (axisOperationPolicyInclude != null) {
             Policy policy = axisOperationPolicyInclude.getPolicy();
             if (policy != null) {
@@ -626,7 +635,7 @@ public class AxisService extends AxisDescription {
             }
         }
         operation.setPolicyInclude(policyInclude);
-        
+
         operation.setWsamappingList(axisOperation.getWsamappingList());
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
@@ -788,17 +797,17 @@ public class AxisService extends AxisDescription {
      * Release the list of schema objects.
      * <P>
      * In some environments, this can provide significant relief
-     * of memory consumption in the java heap, as long as the 
+     * of memory consumption in the java heap, as long as the
      * need for the schema list has completed.
      */
     public void releaseSchemaList() {
         if (schemaList != null) {
-            // release the schema list 
+            // release the schema list
             schemaList.clear();
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("releaseSchemaList: schema list has been released."); 
+            log.debug("releaseSchemaList: schema list has been released.");
         }
     }
 
@@ -832,7 +841,7 @@ public class AxisService extends AxisDescription {
         }
         String requestIP;
         try {
-            requestIP = HttpUtils.getIpAddress();
+            requestIP = HttpUtils.getIpAddress(getAxisConfiguration());
         } catch (SocketException e) {
             throw new AxisFault("Cannot get local IP address", e);
         }
@@ -1488,19 +1497,42 @@ public class AxisService extends AxisDescription {
     /**
      * To create an AxisService using given service impl class name
      * first generate schema corresponding to the given java class , next for each methods AxisOperation
-     * will be created.
+     * will be created. If the method is in-out it will uses RPCMessageReceiver else
+     * RPCInOnlyMessageReceiver
      * <p/>
      * Note : Inorder to work this properly RPCMessageReceiver should be available in the class path
      * otherewise operation can not continue
      *
-     * @param implClass
-     * @param axisConfig
-     * @return return created AxisSrevice
+     * @param implClass Service implementation class
+     * @param axisConfig Current AxisConfiguration
+     * @return return created AxisSrevice the creted service , it can either be null or valid service
      */
     public static AxisService createService(String implClass,
-                                            AxisConfiguration axisConfig,
-                                            Class messageReceiverClass) throws AxisFault {
-        return createService(implClass, axisConfig, messageReceiverClass, null, null);
+                                            AxisConfiguration axisConfig) throws AxisFault {
+
+        try {
+            HashMap messageReciverMap = new HashMap();
+            Class inOnlyMessageReceiver = Loader.loadClass(
+                    "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+            MessageReceiver messageReceiver =
+                    (MessageReceiver) inOnlyMessageReceiver.newInstance();
+            messageReciverMap.put(
+                    WSDL2Constants.MEP_URI_IN_ONLY,
+                    messageReceiver);
+            messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,messageReceiver);
+            Class inoutMessageReceiver = Loader.loadClass(
+                    "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+            MessageReceiver inOutmessageReceiver =
+                    (MessageReceiver) inoutMessageReceiver.newInstance();
+            messageReciverMap.put(
+                    WSDL2Constants.MEP_URI_IN_OUT,
+                    inOutmessageReceiver);
+
+            return createService(implClass,axisConfig,messageReciverMap,null,null);
+        } catch (Exception e) {
+            log.error(e);
+        }
+        return null;
     }
 
     /**
@@ -1666,123 +1698,6 @@ public class AxisService extends AxisDescription {
                              schemaNamespace,
                              axisConfiguration.getServiceClassLoader());
 
-
-    }
-
-    /**
-     * To create a service for a given Java class with user defined schema and target
-     * namespaces. This method should be used iff, the operations in the service class is homogeneous.
-     *
-     * @param implClass            : full name of the class
-     * @param axisConfig           : current AxisConfgiuration
-     * @param messageReceiverClass : Message receiver that you want to use
-     * @param targetNameSpace      : Service namespace
-     * @param schemaNameSpace      : Schema namespace
-     * @throws AxisFault
-     */
-
-    public static AxisService createService(String implClass,
-                                            AxisConfiguration axisConfig,
-                                            Class messageReceiverClass,
-                                            String targetNameSpace,
-                                            String schemaNameSpace) throws AxisFault {
-        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
-        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
-        parameter.setParameterElement(paraElement);
-        AxisService axisService = new AxisService();
-        axisService.setUseDefaultChains(false);
-        axisService.addParameter(parameter);
-
-        if (schemaNameSpace == null) {
-            schemaNameSpace = axisService.getSchematargetNamespace();
-        }
-
-        int index = implClass.lastIndexOf(".");
-        String serviceName;
-        if (index > 0) {
-            serviceName = implClass.substring(index + 1, implClass.length());
-        } else {
-            serviceName = implClass;
-        }
-
-        axisService.setName(serviceName);
-        axisService.setClassLoader(axisConfig.getServiceClassLoader());
-
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
-        SchemaGenerator schemaGenerator;
-        ArrayList excludeOpeartion = new ArrayList();
-
-
-        NamespaceMap map = new NamespaceMap();
-        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
-                Java2WSDLConstants.AXIS2_XSD);
-        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
-                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-        axisService.setNameSpacesMap(map);
-
-
-        try {
-            schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
-                                                  implClass, schemaNameSpace,
-                                                  axisService.getSchemaTargetNamespacePrefix());
-            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
-            axisService.setElementFormDefault(false);
-            Utils.addExcludeMethods(excludeOpeartion);
-            schemaGenerator.setExcludeMethods(excludeOpeartion);
-            axisService.addSchema(schemaGenerator.generateSchema());
-            axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
-            axisService.setTypeTable(schemaGenerator.getTypeTable());
-            if (targetNameSpace == null) {
-                targetNameSpace = schemaGenerator.getSchemaTargetNameSpace();
-            }
-            if (targetNameSpace != null && !"".equals(targetNameSpace)) {
-                axisService.setTargetNamespace(targetNameSpace);
-            }
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
-        }
-
-        JMethod[] method = schemaGenerator.getMethods();
-        TypeTable table = schemaGenerator.getTypeTable();
-
-        PhasesInfo pinfo = axisConfig.getPhasesInfo();
-
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
-            AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
-
-            // loading message receivers
-            try {
-                MessageReceiver messageReceiver =
-                        (MessageReceiver) messageReceiverClass.newInstance();
-                operation.setMessageReceiver(messageReceiver);
-            } catch (IllegalAccessException e) {
-                throw new AxisFault(
-                        "IllegalAccessException occurred during message receiver loading"
-                                + e.getMessage());
-            } catch (InstantiationException e) {
-                throw new AxisFault(
-                        "InstantiationException occurred during message receiver loading"
-                                + e.getMessage());
-            }
-            pinfo.setOperationPhases(operation);
-            axisService.addOperation(operation);
-        }
-        return axisService;
-
-    }
-
-    public static AxisService createService(String implClass,
-                                            AxisConfiguration axisConfig) throws AxisFault {
-        Class clazz;
-        try {
-            clazz = Loader.loadClass("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault("ClassNotFoundException occured during message receiver loading"
-                    + e.getMessage());
-        }
-
-        return createService(implClass, axisConfig, clazz);
 
     }
 

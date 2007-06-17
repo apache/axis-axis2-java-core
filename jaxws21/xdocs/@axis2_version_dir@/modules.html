@@ -145,43 +145,43 @@ module. It contains details such as the Implementation class of the module
 (in this example it is the "LoggingModule" class and various handlers that
 will run in different phases). The "module.xml" for the logging module will
 be as follows:</p>
-<pre>&lt;module name="logging" class="userguide.loggingmodule.LoggingModule "&gt;
-   &lt;inflow&gt;
+<pre>&lt;module name="logging" class="userguide.loggingmodule.LoggingModule"&gt;
+   &lt;InFlow&gt;
         &lt;handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
         &lt;order phase="loggingPhase" /&gt;
         &lt;/handler&gt;
-   &lt;/inflow&gt;
+   &lt;/InFlow&gt;
 
-   &lt;outflow&gt;
+   &lt;OutFlow&gt;
         &lt;handler name="OutFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
         &lt;order phase="loggingPhase"/&gt;
         &lt;/handler&gt;
-   &lt;/outflow&gt;
+   &lt;/OutFlow&gt;
 
-   &lt;Outfaultflow&gt;
+   &lt;OutFaultFlow&gt;
         &lt;handler name="FaultOutFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
         &lt;order phase="loggingPhase"/&gt;
         &lt;/handler&gt;
-   &lt;/Outfaultflow&gt;
+   &lt;/OutFaultFlow&gt;
 
-   &lt;INfaultflow&gt;
+   &lt;InFaultFlow&gt;
         &lt;handler name="FaultInFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
         &lt;order phase="loggingPhase"/&gt;
         &lt;/handler&gt;
-   &lt;/INfaultflow&gt;
+   &lt;/InFaultFlow&gt;
 &lt;/module&gt;</pre>
 
 <p>As you can see, there are four flows defined in the "module.xml"</p>
 <ol>
-  <li>inflow - Represents the handler chain that will run when a message is
+  <li>InFlow Represents the handler chain that will run when a message is
     coming in. </li>
-  <li><p style="margin-bottom: 0in">outflow - Represents the handler chain
+  <li><p style="margin-bottom: 0in">OutFlow Represents the handler chain
     that will run when the message is going out. </p>
   </li>
-  <li><p style="margin-bottom: 0in">Outfaultflow - Represents the handler
+  <li><p style="margin-bottom: 0in">OutFaultFlow - Represents the handler
     chain that will run when there is a fault, and the fault is going out.</p>
   </li>
-  <li><p>INfaultflow - Represents the handler chain that will run when there
+  <li><p>InFaultFlow - Represents the handler chain that will run when there
     is a fault, and the fault is coming in. </p>
   </li>
 </ol>

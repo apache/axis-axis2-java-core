@@ -80,7 +80,6 @@ public class DefaultNamespacesTest extends TestCase {
             assertEquals(resultType.getAttribute1(), "attribute1");
             assertEquals(resultType.getAttribute2(), new QName("http://tempuri.org/defaultnamepaces", "attribute2"));
         } catch (XMLStreamException e) {
-
             fail();
         } catch (Exception e) {
             e.printStackTrace();

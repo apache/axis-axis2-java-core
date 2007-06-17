@@ -182,9 +182,6 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 bindings.add(axisEndpoint.getBinding());
                 for (int i = 0; i < eprs.length; i++) {
                     String epr = eprs[i];
-                    if (!epr.endsWith("/")) {
-                        epr = epr + "/";
-                    }
                     OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, epr);
                     boolean endpointAlreadyAdded = false;
                     Iterator endpointsAdded = serviceElement.getChildren();
@@ -214,7 +211,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                         .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
                                                    interfaceName,
                                                    axisService.getNameSpacesMap(),
-                                                   axisService.getWSAddressingFlag()));
+                                                   axisService.getWSAddressingFlag(),
+                                                   axisService.getName()));
             }
 
             descriptionElement.addChild(serviceElement);

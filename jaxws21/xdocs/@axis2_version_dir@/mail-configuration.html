@@ -13,19 +13,13 @@
 <p>This document provides guidelines on how to configure Axis2 in order to
 get the mail transport working.</p>
 
-<p><i>Send your feedback or questions to: <a
-href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>.
-(Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
-prefix subject with [Axis2]. </p>
-
 <h2>Content</h2>
 <ul>
   <li><a href="#intro">Introduction</a></li>
   <li><a href="#sender">Transport Sender</a></li>
   <li><a href="#receiver">Transport Receiver</a></li>
-  <li><a href="#server">Using Mail Transport in the Server Side</a></li>
-  <li><a href="#james">Configure James as SMTP and POP Server</a></li>
+  <li><a href="#server">Using Mail Transport on the Server Side</a></li>
+  <li><a href="#james">Configuring James as an SMTP and POP Server</a></li>
   <li><a href="#included">Using the Included Mail Server</a></li>
 </ul>
 <a name="intro"></a>
@@ -60,7 +54,7 @@ been mapped to a Parameter object. Mapping has been done as follows,</p>
 <ul>
   <li>Every JavaMail property can be set to @name of the &lt;parameter/&gt;.
     Thus, an SSL connection is mapped the way it is done in JavaMail</li>
-  <li>Few properties, such as password,, are set to @name with the prefix
+  <li>A few properties, such as the password, are set to @name with the prefix
     "transport"</li>
 </ul>
 
@@ -74,7 +68,7 @@ activated by adding the following entry to the axis2.xml file.</p>
   </pre>
 </source>
 <p>At runtime, tuning a client to set the mail transport is as easy as
-follows,</p>
+follows:</p>
 <source><pre>...
 
 Options options =  new Options();
@@ -137,7 +131,7 @@ let's use this transport listener to pop from a specified gmail account.</p>
 &lt;/transportReceiver&gt;</pre>
 </source><a name="server"></a>
 
-<h2>Using Mail Transport in the Server Side</h2>
+<h2>Using Mail Transport on the Server Side</h2>
 
 <p>If the Mail Listener is to be started as a standalone mail listener, it
 can be done with the following command with the all the Axis2 jars and the
@@ -145,7 +139,7 @@ mail dependency jars in the classpath.</p>
 <source><pre>java org.apache.axis2.transport.mail.SimpleMailListener repository-directory</pre>
 </source><a name="client"></a>
 
-<h2>Using Mail Transport in the Client Side</h2>
+<h2>Using Mail Transport on the Client Side</h2>
 
 <p>The following code segment shows how to send a one-way (IN-Only MEP) SOAP
 message using the mail transport. This needs the Transport Sender to be
@@ -168,7 +162,7 @@ configured.</p>
         servicClient.sendRobust(payload);</pre>
 </source><a name="james"></a>
 
-<h2>Configure James as SMTP and POP Server</h2>
+<h2>Configuring James as an SMTP and POP Server</h2>
 
 <p>Download <a href="http://james.apache.org/">Apache James</a> and start
 James. Connect to the James server via Telnet as administrator James using

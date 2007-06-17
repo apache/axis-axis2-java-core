@@ -51,9 +51,9 @@ public class Base64BinaryTest extends TestCase {
         contentType_type0.setContentType_type0("test content type");
         base64Binary.setContentType(contentType_type0);
 
-        OMElement omElement = testBase64Binary.getOMElement(TestBase64Binary.MY_QNAME, OMAbstractFactory.getOMFactory());
 
         try {
+            OMElement omElement = testBase64Binary.getOMElement(TestBase64Binary.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
@@ -86,9 +86,9 @@ public class Base64BinaryTest extends TestCase {
         contentType_type0.setContentType_type0("test content type");
         hexBinary.setContentType(contentType_type0);
 
-        OMElement omElement = testHexBinary.getOMElement(TestBase64Binary.MY_QNAME, OMAbstractFactory.getOMFactory());
 
         try {
+            OMElement omElement = testHexBinary.getOMElement(TestBase64Binary.MY_QNAME, OMAbstractFactory.getOMFactory());
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));

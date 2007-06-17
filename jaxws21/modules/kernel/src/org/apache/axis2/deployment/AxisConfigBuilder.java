@@ -305,12 +305,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
      * Update the list of modules that is required to be engaged globally.
      */
     protected void processModuleRefs(Iterator moduleRefs, AxisConfiguration config) {
-        List globalModules = config.getGlobalModules();
         while (moduleRefs.hasNext()) {
             OMElement moduleref = (OMElement) moduleRefs.next();
             OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
-            globalModules.add(refName);
+            axisConfig.addGlobalModuleRef(refName);
         }
     }
 
@@ -467,7 +466,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                 (TransportListener) receiverClass.newInstance();
                         transportIN.setReceiver(receiver);
                     } catch (NoClassDefFoundError e) {
-                        log.info(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
+                        throw new DeploymentException(e);
                     } catch (ClassNotFoundException e) {
                         throw new DeploymentException(e);
                     } catch (IllegalAccessException e) {
@@ -529,6 +528,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addTransportOut(transportout);
                 } catch (NoClassDefFoundError e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
+                    throw new DeploymentException(e);
                 } catch (ClassNotFoundException e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);

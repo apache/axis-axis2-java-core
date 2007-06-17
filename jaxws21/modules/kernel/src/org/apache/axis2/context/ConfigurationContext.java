@@ -40,7 +40,18 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * This contains all the configuration information for Axis2.
+ * <p>Axis2 states are held in two information models, called description hierarchy 
+ * and context hierarchy. Description hierarchy hold deployment configuration 
+ * and it's values does not change unless deployment configuration change occurs 
+ * where Context hierarchy hold run time information. Both hierarchies consists 
+ * four levels, Global, Service Group, Operation and Message. Please look at 
+ * "Information Model" section  of "Axis2 Architecture Guide" for more information.</p>
+ * 
+ * <p>Configuration Context hold Global level run-time information. This allows
+ * same configurations to be used by two Axis2 instances and most Axis2 wide 
+ * configurations can changed by setting name value pairs of the configurationContext. 
+ * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager.</p> 
+
  */
 public class ConfigurationContext extends AbstractContext {
 
@@ -529,8 +540,32 @@ public class ConfigurationContext extends AbstractContext {
         if (listenerManager != null) {
             listenerManager.stop();
         }
+        cleanupTemp();
     }
 
+    /**
+     * This include all the major changes we have done from 1.2
+     * release to 1.3 release. This will include API changes , class
+     * deprecating etc etc.
+     */
+    private void cleanupTemp(){
+        File tempFile =  (File)axisConfiguration.getParameterValue(
+                Constants.Configuration.ARTIFACTS_TEMP_DIR);
+        if(tempFile==null){
+            tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
+        }
+        deleteTempFiles(tempFile);
+    }
+
+    private void deleteTempFiles(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                deleteTempFiles(new File(dir, children[i]));
+            }
+        }
+        dir.delete();
+    }
 
     public String getServiceContextPath() {
         if (cachedServicePath == null) {

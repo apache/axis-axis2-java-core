@@ -285,10 +285,16 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     if (line.length() > 0) {
                         line = metainf + "/" + line;
                         try {
-                            AxisService service = reader.getAxisServiceFromWsdl(
+                            List services = reader.getAxisServiceFromWsdl(
                                     serviceClassLoader.getResourceAsStream(line),
                                     serviceClassLoader, line);
-                            servicesMap.put(service.getName(), service);
+                            if(services!=null){
+                                for (int i = 0; i < services.size(); i++) {
+                                    AxisService axisService = (AxisService) services.get(i);
+                                    servicesMap.put(axisService.getName(), axisService);
+                                }
+                            }
+
                         } catch (Exception e) {
                             throw new DeploymentException(e);
                         }
@@ -548,10 +554,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * @throws org.apache.axis2.AxisFault : If smt goes wrong
      */
     public void engageModules() throws AxisFault {
-        for (Iterator iterator = axisConfig.getGlobalModules().iterator(); iterator.hasNext();) {
-            String name = (String) iterator.next();
-            axisConfig.engageModule(name);
-        }
+        axisConfig.engageGlobalModules();
     }
 
     /**

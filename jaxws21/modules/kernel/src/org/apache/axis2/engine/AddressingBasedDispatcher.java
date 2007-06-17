@@ -59,6 +59,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     /**
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
+     * @noinspection MethodReturnOfConcreteClass
      */
     public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
         // first check we can dispatch using the relates to
@@ -74,7 +75,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                         msgctx.getConfigurationContext()
                                 .getOperationContext(relatesTo);
 
-                if (operationContext != null) {
+                if (operationContext != null) //noinspection TodoComment
+                {
 //                    if(operationContext.isComplete()){
 //                        // If the dispatch happens because of the RelatesTo and the mep is complete
 //                        // we should throw a more descriptive fault.

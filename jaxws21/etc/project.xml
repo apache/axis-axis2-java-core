@@ -19,7 +19,6 @@
  -->
 
 <project>
-    <name>Axis2</name>
     <pomVersion>3</pomVersion>
     <!-- a unique name for this project -->
     <name>Apache Axis2</name>
@@ -34,7 +33,6 @@
         <logo>http://www.apache.org/images/asf-logo.gif</logo>
     </organization>
     <inceptionYear>2004</inceptionYear>
-    <package>org.apache.axis2</package>
     <logo>http://ws.apache.org/axis2/images/axis.jpg</logo>
     <description>Axis2 is an effort to re-design and totally re-implement both Axis/Java and
         (eventually) Axis/C++ on a new architecture. Evolving from the now standard "handler chain"

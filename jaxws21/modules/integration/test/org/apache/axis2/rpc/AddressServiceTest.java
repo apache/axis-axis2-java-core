@@ -107,7 +107,7 @@ public class AddressServiceTest extends LocalTestCase
         Object[] result = serviceClient.invokeBlocking(opAddEntry, opAddEntryArgs, new Class[]{Entry[].class});
         assertNotNull(result);
         Entry[] entries = (Entry[]) result[0];
-        assertEquals(entries.length, 1);
+        assertEquals(entries.length, 0);
     }
 
     public void testEntry3() throws Exception {

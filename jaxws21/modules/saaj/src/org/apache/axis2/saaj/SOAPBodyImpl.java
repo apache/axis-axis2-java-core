@@ -497,7 +497,11 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElement(qname.getLocalPart()));
-        } else {
+        }else if(null == qname.getPrefix() || "".equals(qname.getPrefix().trim())) {
+            childEle = new SOAPBodyElementImpl(
+                    (ElementImpl)getOwnerDocument().createElementNS(qname.getNamespaceURI(),
+                                                                            qname.getLocalPart()));
+        }else {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElementNS(qname.getNamespaceURI(),
                                                                     qname.getPrefix() + ":" +

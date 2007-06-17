@@ -151,6 +151,22 @@
     /**
      * Default Constructor
      */
+    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext) throws org.apache.axis2.AxisFault {
+        <xsl:for-each select="endpoint">
+            <xsl:choose>
+                <xsl:when test="position()=1">
+                    this(configurationContext,"<xsl:value-of select="."/>" );
+                </xsl:when>
+                <xsl:otherwise>
+                    //this(configurationContext,"<xsl:value-of select="."/>" );
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    }
+
+    /**
+     * Default Constructor
+     */
     public <xsl:value-of select="@name"/>() throws org.apache.axis2.AxisFault {
         <xsl:for-each select="endpoint">
             <xsl:choose>
@@ -655,6 +671,7 @@
                            _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
                     public void onComplete(
                             org.apache.axis2.client.async.AsyncResult result) {
+                        try{
                         java.lang.Object object = fromOM(result.getResponseEnvelope().getBody().getFirstElement(),
                                <xsl:value-of select="$outputtype"/>.class,
                                getEnvelopeNamespaces(result.getResponseEnvelope())
@@ -675,6 +692,9 @@
                                    (<xsl:value-of select="$outputtype"/>)object);
                                 </xsl:otherwise>
                             </xsl:choose>
+                        } catch(org.apache.axis2.AxisFault e){
+                           callback.receiveError<xsl:value-of select="@name"/>(e); 
+                        }
 
                     }
 

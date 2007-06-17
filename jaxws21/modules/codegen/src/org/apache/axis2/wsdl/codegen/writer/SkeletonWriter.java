@@ -18,7 +18,7 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import java.io.File;
 
-public class SkeletonWriter extends ClassWriter {
+public class SkeletonWriter extends FileWriter {
 
 
     public SkeletonWriter(String outputFileLocation) {

@@ -120,6 +120,7 @@ public class POJODeployer implements Deployer {
                                 messageReciverMap.put(
                                         WSDL2Constants.MEP_URI_IN_ONLY,
                                         messageReceiver);
+                                messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,messageReceiver);
                                 Class inoutMessageReceiver = Loader.loadClass(
                                         "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
                                 MessageReceiver inOutmessageReceiver =

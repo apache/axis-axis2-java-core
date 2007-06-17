@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.util.FileWriter;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.w3c.dom.Document;
@@ -26,7 +25,7 @@ import java.util.Map;
  * limitations under the License.
  */
 
-public class AntBuildWriter extends ClassWriter {
+public class AntBuildWriter extends FileWriter {
 
     private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
 
@@ -44,7 +43,7 @@ public class AntBuildWriter extends ClassWriter {
     }
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation,
+        File outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
                                                      "",
                                                      "build",
                                                      ".xml");
