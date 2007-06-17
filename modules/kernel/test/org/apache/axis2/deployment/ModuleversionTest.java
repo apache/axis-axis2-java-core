@@ -41,69 +41,60 @@ public class ModuleversionTest extends TestCase {
     }
 
     public void testCalculateDefaultModuleVersions() throws AxisFault {
-        AxisConfiguration axiConfiguration = new AxisConfiguration();
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
         AxisModule module1 = new AxisModule();
         module1.setName("Module1");
-        axiConfiguration.addModule(module1);
+        axisConfiguration.addModule(module1);
 
         AxisModule module2 = new AxisModule();
         module2.setName("Module2-0.94");
-        axiConfiguration.addModule(module2);
+        axisConfiguration.addModule(module2);
 
         AxisModule module3 = new AxisModule();
         module3.setName("Module2-0.95");
-        axiConfiguration.addModule(module3);
+        axisConfiguration.addModule(module3);
 
         AxisModule module4 = new AxisModule();
         module4.setName("Module2-0.93");
-        axiConfiguration.addModule(module4);
+        axisConfiguration.addModule(module4);
 
         AxisModule module5 = new AxisModule();
         module5.setName("testModule-1.93");
-        axiConfiguration.addModule(module5);
+        axisConfiguration.addModule(module5);
 
-        Utils.calculateDefaultModuleVersion(axiConfiguration.getModules(), axiConfiguration);
-        assertEquals(module1, axiConfiguration.getDefaultModule("Module1"));
-        assertEquals(module3, axiConfiguration.getDefaultModule("Module2"));
-        assertEquals(module5, axiConfiguration.getDefaultModule("testModule"));
-        axiConfiguration.engageModule("Module2");
-        axiConfiguration.engageModule("Module1");
-        axiConfiguration.engageModule("testModule", "1.93");
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        assertEquals(module1, axisConfiguration.getDefaultModule("Module1"));
+        assertEquals(module3, axisConfiguration.getDefaultModule("Module2"));
+        assertEquals(module5, axisConfiguration.getDefaultModule("testModule"));
+        axisConfiguration.engageModule("Module2");
+        axisConfiguration.engageModule("Module1");
+        axisConfiguration.engageModule("testModule", "1.93");
 
-        Iterator engageModules = axiConfiguration.getEngagedModules().iterator();
+        Iterator engageModules = axisConfiguration.getEngagedModules().iterator();
         boolean found1 = false;
         boolean found2 = false;
         boolean found3 = false;
         while (engageModules.hasNext()) {
-            String qName = ((AxisModule) engageModules.next()).getName();
-            if (qName.equals("Module2-0.95")) {
+            String name = ((AxisModule)engageModules.next()).getName();
+            if (name.equals("Module2-0.95")) {
                 found1 = true;
             }
-        }
-        engageModules = axiConfiguration.getEngagedModules().iterator();
-        while (engageModules.hasNext()) {
-            String name = ((AxisModule) engageModules.next()).getName();
             if (name.equals("Module1")) {
                 found2 = true;
             }
-        }
-        engageModules = axiConfiguration.getEngagedModules().iterator();
-        while (engageModules.hasNext()) {
-            String qName = ((AxisModule) engageModules.next()).getName();
-            if (qName.equals("testModule-1.93")) {
+            if (name.equals("testModule-1.93")) {
                 found3 = true;
             }
         }
 
-
         if (!found1) {
-            fail("this should fail");
+            fail("Didn't find Module2-0.95");
         }
         if (!found2) {
-            fail("this should fail");
+            fail("Didn't find Module1");
         }
         if (!found3) {
-            fail("this should fail");
+            fail("Didn't find testModule-1.93");
         }
     }
 }
