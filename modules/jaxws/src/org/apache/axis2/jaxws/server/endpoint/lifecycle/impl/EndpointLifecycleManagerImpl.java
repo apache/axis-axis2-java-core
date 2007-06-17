@@ -35,6 +35,10 @@ import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectio
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleException;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -109,7 +113,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
             return serviceimpl;
         } else {
             // create a new service impl class for that service
-            serviceimpl = createServiceInstance(serviceImplClass);
+            serviceimpl = createServiceInstance(msgContext.getAxisService(), serviceImplClass);
             this.endpointInstance = serviceimpl;
             this.endpointClazz = serviceImplClass;
             if (log.isDebugEnabled()) {
@@ -249,7 +253,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
         return false;
     }
 
-    private Object createServiceInstance(Class serviceImplClass) {
+    private Object createServiceInstance(AxisService service, Class serviceImplClass) {
         if (log.isDebugEnabled()) {
             log.debug("Creating new instance of service endpoint");
         }
@@ -261,11 +265,31 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 
         Object instance = null;
         try {
+            // allow alternative definition of makeNewServiceObject
+            if (service != null && service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
+                ClassLoader classLoader = service.getClassLoader();
+
+                Parameter serviceObjectParam =
+                        service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
+                Class serviceObjectMaker = Loader.loadClass(classLoader, ((String)
+                        serviceObjectParam.getValue()).trim());
+
+                // Find static getServiceObject() method, call it if there
+                Method method = serviceObjectMaker.
+                        getMethod("getServiceObject",
+                                new Class[]{AxisService.class});
+                if (method != null) {
+                    return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
+                }
+            }
             instance = serviceImplClass.newInstance();
         } catch (IllegalAccessException e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                     "EndpointControllerErr6", serviceImplClass.getName()));
         } catch (InstantiationException e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                    "EndpointControllerErr6", serviceImplClass.getName()));
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                     "EndpointControllerErr6", serviceImplClass.getName()));
         }
