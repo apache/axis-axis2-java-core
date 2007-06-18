@@ -45,10 +45,10 @@ Axis2 services being deployed</strong>.</p>
 follows, in order to configure the JMSListener and the JMS Sender</p>
 <pre><strong>axis2.xml</strong>
     &lt;transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener"&gt;
-      &lt;parameter name="default" locked="false"&gt;                
-        &lt;parameter name="java.naming.factory.initial" locked="false"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;
-        &lt;parameter name="java.naming.provider.url" locked="false"&gt;tcp://localhost:61616&lt;/parameter&gt;        
-        &lt;parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false"&gt;QueueConnectionFactory&lt;/parameter&gt;
+      &lt;parameter name="default"&gt;
+        &lt;parameter name="java.naming.factory.initial"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;
+        &lt;parameter name="java.naming.provider.url"&gt;tcp://localhost:61616&lt;/parameter&gt;
+        &lt;parameter name="transport.jms.ConnectionFactoryJNDIName"&gt;QueueConnectionFactory&lt;/parameter&gt;
       &lt;/parameter&gt;
     &lt;/transportReceiver&gt;
 
@@ -67,10 +67,10 @@ You can also specify the parameters "java.naming.security.principal" and
 connection factory. The example shown above uses an ActiveMQ JMS
 implementation.</p>
 <pre><strong>axis2.xml</strong>
-  &lt;parameter name="myTopicConnectionFactory" locked="false"&gt;</pre>
-<pre>    &lt;parameter name="java.naming.factory.initial" locked="false"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;</pre>
-<pre>    &lt;parameter name="java.naming.provider.url" locked="false"&gt;tcp://localhost:61616&lt;/parameter&gt;</pre>
-<pre>    &lt;parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false"&gt;TopicConnectionFactory&lt;/parameter&gt;</pre>
+  &lt;parameter name="myTopicConnectionFactory"&gt;</pre>
+<pre>    &lt;parameter name="java.naming.factory.initial"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;</pre>
+<pre>    &lt;parameter name="java.naming.provider.url"&gt;tcp://localhost:61616&lt;/parameter&gt;</pre>
+<pre>    &lt;parameter name="transport.jms.ConnectionFactoryJNDIName"&gt;TopicConnectionFactory&lt;/parameter&gt;</pre>
 <pre>  &lt;/parameter&gt;</pre>
 
 <p>If it is required or applicable, you are free to define additional (local)

@@ -2,11 +2,11 @@
 
 
     <moduleConfig name="testModule">
-        <parameter name="testModulePara" locked="false">N/A</parameter>
+        <parameter name="testModulePara">N/A</parameter>
     </moduleConfig>
 
     <moduleConfig name="testModule2">
-        <parameter name="testModulePara2" locked="false">N/A</parameter>
+        <parameter name="testModulePara2">N/A</parameter>
     </moduleConfig>
 
     <phaseOrder type="InFlow">

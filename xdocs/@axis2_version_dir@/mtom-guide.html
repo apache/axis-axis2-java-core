@@ -254,7 +254,7 @@ user can enableMTOM on the server side for outgoing messages,</p>
   Base64 encoded strings. This configuration can be overriden in services.xml
   on the basis of per service and per operation.</p>
 </blockquote>
-<pre>&lt;parameter name="enableMTOM" locked="false"&gt;true&lt;/parameter&gt;</pre>
+<pre>&lt;parameter name="enableMTOM"&gt;true&lt;/parameter&gt;</pre>
 
 <p>You must restart the server after setting this parameter.</p>
 <a name="24"></a>
@@ -559,7 +559,7 @@ over SwA.</p>
 
 <p>This can be set using the axis2.xml as follows.</p>
 <source><pre>  
-        &lt;parameter name="enableSwA" locked="false"&gt;true&lt;/parameter&gt;</pre>
+        &lt;parameter name="enableSwA"&gt;true&lt;/parameter&gt;</pre>
 </source>
 <p>"enableSwA" can also be set using the client side Options as follows</p>
 <source><pre>  
@@ -692,10 +692,10 @@ file caching.</p>
     &lt;!-- ================================================= --&gt;
     &lt;!-- Parameters --&gt;
     &lt;!-- ================================================= --&gt;
-    &lt;parameter name="cacheAttachments" locked="false"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="attachmentDIR" locked="false"&gt;<em>temp directory</em>&lt;/parameter&gt;
+    &lt;parameter name="cacheAttachments"&gt;true&lt;/parameter&gt;
+    &lt;parameter name="attachmentDIR"&gt;<em>temp directory</em>&lt;/parameter&gt;
 
-    &lt;parameter name="sizeThreshold" locked="false"&gt;<em>4000</em>&lt;/parameter&gt;
+    &lt;parameter name="sizeThreshold"&gt;<em>4000</em>&lt;/parameter&gt;
     .........
     .........
 &lt;/axisconfig&gt;</pre>

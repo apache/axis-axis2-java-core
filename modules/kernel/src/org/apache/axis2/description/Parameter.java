@@ -98,7 +98,7 @@ public class Parameter implements Externalizable {
 
     /**
      * to store the parameter element
-     * <parameter name="ServiceClass1" locked="false">
+     * <parameter name="ServiceClass1">
      * org.apache.axis2.sample.echo.EchoImpl</parameter>
      */
     private OMElement parameterElement;

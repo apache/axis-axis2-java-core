@@ -2,14 +2,14 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="hotdeployment" locked="false">true</parameter>
-    <parameter name="hotupdate" locked="false">false</parameter>
-    <parameter name="enableMTOM" locked="false">true</parameter>
+    <parameter name="hotdeployment">true</parameter>
+    <parameter name="hotupdate">false</parameter>
+    <parameter name="enableMTOM">true</parameter>
 
-    <parameter name="userName" locked="false">admin</parameter>
-    <parameter name="password" locked="false">axis2</parameter>
+    <parameter name="userName">admin</parameter>
+    <parameter name="password">axis2</parameter>
 
-    <parameter name="seralizeLocation" locked="false">./target</parameter>
+    <parameter name="seralizeLocation">./target</parameter>
 
 
     <!-- ================================================= -->
@@ -22,22 +22,22 @@
     <!-- Transport Ins -->
     <!-- ================================================= -->
     <transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer">
-        <parameter name="port" locked="false">6060</parameter>
+        <parameter name="port">6060</parameter>
     </transportReceiver>
 
-    <parameter name="extractServiceArchive" locked="false">true</parameter>
+    <parameter name="extractServiceArchive">true</parameter>
 
     <!-- Uncomment this one with the appropriate papameters to enable the SMTP transport Receiver
  <transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">
-       <parameter name="transport.mail.pop3.host" locked="false">127.0.0.1</parameter>
-       <parameter name="transport.mail.pop3.user" locked="false">axis2</parameter>
-       <parameter name="transport.mail.pop3.password" locked="false">axis2</parameter>
-       <parameter name="transport.mail.pop3.port" locked="false">110</parameter>
-       <parameter name="transport.mail.replyToAddress" locked="false">axis2@127.0.0.1</parameter>
+       <parameter name="transport.mail.pop3.host">127.0.0.1</parameter>
+       <parameter name="transport.mail.pop3.user">axis2</parameter>
+       <parameter name="transport.mail.pop3.password">axis2</parameter>
+       <parameter name="transport.mail.pop3.port">110</parameter>
+       <parameter name="transport.mail.replyToAddress">axis2@127.0.0.1</parameter>
    </transportReceiver> -->
 
     <transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer">
-        <parameter name="port" locked="false">6060</parameter>
+        <parameter name="port">6060</parameter>
     </transportReceiver>
 
     <!-- ================================================= -->
@@ -47,11 +47,11 @@
     <transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
     <transportSender name="local" class="org.apache.axis2.transport.local.LocalTransportSender"/>
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
+        <parameter name="PROTOCOL">HTTP/1.0</parameter>
     </transportSender>
     <transportSender name="https"
                      class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
+        <parameter name="PROTOCOL">HTTP/1.1</parameter>
     </transportSender>
 
     <phaseOrder type="InFlow">

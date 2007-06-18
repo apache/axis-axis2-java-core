@@ -2,10 +2,10 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
-    <parameter name="ServicePara1" locked="false">true</parameter>
+    <parameter name="ServicePara1">true</parameter>
     <parameter name="ServicePara2" locked="true">true</parameter>
 
-    <parameter name="modulePara1" locked="false">true</parameter>
+    <parameter name="modulePara1">true</parameter>
     <parameter name="modulePara2" locked="true">true</parameter>
 
   <phaseOrder type="InFlow">

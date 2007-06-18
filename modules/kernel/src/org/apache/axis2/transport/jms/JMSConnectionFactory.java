@@ -50,23 +50,23 @@ import java.util.Map;
  * <p/>
  * e.g.
  * <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
- * <parameter name="myTopicConnectionFactory" locked="false">
- * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">TopicConnectionFactory</parameter>
- * <parameter name="transport.jms.Destination" locked="false">myTopicOne, myTopicTwo</parameter>
+ * <parameter name="myTopicConnectionFactory">
+ * <parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination">myTopicOne, myTopicTwo</parameter>
  * </parameter>
- * <parameter name="myQueueConnectionFactory" locked="false">
- * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">QueueConnectionFactory</parameter>
- * <parameter name="transport.jms.Destination" locked="false">myQueueOne, myQueueTwo</parameter>
+ * <parameter name="myQueueConnectionFactory">
+ * <parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName">QueueConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination">myQueueOne, myQueueTwo</parameter>
  * </parameter>
- * <parameter name="default" locked="false">
- * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">ConnectionFactory</parameter>
- * <parameter name="transport.jms.Destination" locked="false">myDestinationOne, myDestinationTwo</parameter>
+ * <parameter name="default">
+ * <parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName">ConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination">myDestinationOne, myDestinationTwo</parameter>
  * </parameter>
  * </transportReceiver>
  */

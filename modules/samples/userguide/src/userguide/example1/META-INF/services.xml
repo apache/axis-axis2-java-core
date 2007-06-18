@@ -2,7 +2,7 @@
     <description>
         This is a sample Web Service with two operations,echo and ping.
     </description>
-    <parameter name="ServiceClass" locked="false">userguide.example1.MyService</parameter>
+    <parameter name="ServiceClass">userguide.example1.MyService</parameter>
     <operation name="echo">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <actionMapping>urn:echo</actionMapping>

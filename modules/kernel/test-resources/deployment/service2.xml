@@ -1,7 +1,7 @@
 <service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath">
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="false">Colombo</parameter>
+    <parameter name="para2">Colombo</parameter>
 
     <!--  Service TypeMapping -->
     <typeMapping>Type mappping should come here</typeMapping>
@@ -56,7 +56,7 @@
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
         <module ref="uri">
             <parameter name="para3" locked="xsd:true">10</parameter>
-            <parameter name="para4" locked="false">LSF</parameter>
+            <parameter name="para4">LSF</parameter>
         </module>
 
         <InFlow>

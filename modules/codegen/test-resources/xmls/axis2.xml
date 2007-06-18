@@ -2,12 +2,12 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="enableMTOM" locked="false">false</parameter>
+    <parameter name="enableMTOM">false</parameter>
 
-    <parameter name="userName" locked="false">admin</parameter>
-    <parameter name="password" locked="false">axis2</parameter>
+    <parameter name="userName">admin</parameter>
+    <parameter name="password">axis2</parameter>
 
-    <parameter name="seralizeLocation" locked="false">.</parameter>
+    <parameter name="seralizeLocation">.</parameter>
 
     <!-- ================================================= -->
     <!-- Message Receivers -->

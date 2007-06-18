@@ -1,7 +1,7 @@
 <service name="">
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="false">Colombo</parameter>
+    <parameter name="para2">Colombo</parameter>
     <description>
         This is a testing service , to test the system is working or not
     </description>

@@ -23,7 +23,7 @@
             <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
                              class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
         </messageReceivers>
-        <parameter locked="false" name="ServiceClass">org.apache.axis2.jaxws.calculator.CalculatorService</parameter>
+        <parameter name="ServiceClass">org.apache.axis2.jaxws.calculator.CalculatorService</parameter>
         <operation name="invoke" mep="http://www.w3.org/2004/08/wsdl/in-out">
             <actionMapping/>
         </operation>

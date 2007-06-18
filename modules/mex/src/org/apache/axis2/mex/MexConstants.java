@@ -68,7 +68,7 @@ public interface MexConstants {
      * MEX Configuration 
      * 
      * Sample mex configuration:
-     * <parameter name="metadataexchange" locked="false">
+     * <parameter name="metadataexchange">
      *     <outputform dialect="http://schemas.xmlsoap.org/wsdl/" forms="location" />
      *     <outputform forms="inline,reference,location" />
      * </parameter> 

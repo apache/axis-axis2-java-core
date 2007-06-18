@@ -49,7 +49,7 @@ public class ServiceXMLCreater {
         "\t\t<messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-only\" class=\"org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver\" />\n" +
         "\t\t<messageReceiver  mep=\"http://www.w3.org/2004/08/wsdl/in-out\"  class=\"org.apache.axis2.rpc.receivers.RPCMessageReceiver\"/>\n" +
         "\t</messageReceivers>\n" + 
-        "\t<parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n" ; 
+        "\t<parameter name=\"ServiceClass\">" + serviceClass + "</parameter>\n" ; 
         serviceXML = serviceXML + "</service>\n";
         return serviceXML;
     }

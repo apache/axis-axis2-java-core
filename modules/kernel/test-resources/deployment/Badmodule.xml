@@ -1,6 +1,6 @@
 <module name="module1" class="module1.java">
     <parameter name="para123" locked="xsd:true">10</parameter>
-    <parameter name="para245" locked="false">Colombo</parameter>
+    <parameter name="para245">Colombo</parameter>
     <!--  Module TypeMapping -->
     <typeMapping>Type mappping should come here</typeMapping>
     <InFlow>

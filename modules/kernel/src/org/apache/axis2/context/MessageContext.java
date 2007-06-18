@@ -696,7 +696,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * </ol>
      * <p/> and the way of specifying module configuration is as follows
      * <moduleConfig name="addressing"> <parameter name="addressingPara"
-     * locked="false">N/A</parameter> </moduleConfig>
+     * >N/A</parameter> </moduleConfig>
      *
      * @param key        :
      *                   Parameter Name

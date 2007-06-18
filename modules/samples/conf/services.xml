@@ -1,4 +1,4 @@
 <service name="">
-    <parameter name="ServiceClass" locked="false">userguide.sample1.EchoXML</parameter>
+    <parameter name="ServiceClass">userguide.sample1.EchoXML</parameter>
     <operation name="echo" qname="echo"/>
 </service>

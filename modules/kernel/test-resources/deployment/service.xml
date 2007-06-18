@@ -1,7 +1,7 @@
 <service provider="xsd:anyprovider" style="rpcI" contextPath="services">
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="false">Colombo</parameter>
+    <parameter name="para2">Colombo</parameter>
 
     <!--  Service TypeMapping -->
     <typeMapping>Type mappping should come here</typeMapping>

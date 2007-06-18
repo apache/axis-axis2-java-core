@@ -81,8 +81,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     public void init(ConfigurationContext confContext,
                      TransportOutDescription transportOut) throws AxisFault {
 
-        // <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter> or
-        // <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter> is
+        // <parameter name="PROTOCOL">HTTP/1.0</parameter> or
+        // <parameter name="PROTOCOL">HTTP/1.1</parameter> is
         // checked
         Parameter version = transportOut
                 .getParameter(HTTPConstants.PROTOCOL_VERSION);

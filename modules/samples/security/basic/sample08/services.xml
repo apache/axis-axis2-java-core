@@ -20,7 +20,7 @@
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
 	</operation>    
-	<parameter name="ServiceClass" locked="false">org.apache.rampart.samples.sample08.SimpleService</parameter>
+	<parameter name="ServiceClass">org.apache.rampart.samples.sample08.SimpleService</parameter>
 	
 	<module ref="rampart" />
 	
