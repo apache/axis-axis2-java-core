@@ -35,7 +35,6 @@ import sun.misc.Queue;
 
 import java.io.Serializable;
 
-
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
 
@@ -132,7 +131,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
-        long start = System.currentTimeMillis();
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
             contextManager.process(ctxCmd);
@@ -153,7 +151,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             controlCommandProcessor.process((ControlCommand) msg,
                                             sender);
         }
-        System.err.println("######### Time to process=" + (System.currentTimeMillis() - start));
     }
 
     /**

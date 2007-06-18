@@ -21,6 +21,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,8 @@ public final class AckManager {
                                           String memberId) {
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         if (ack != null) {
-            List memberList = ack.getMemberList();
-            if (!memberList.contains(memberId)) {  // If the member has not already ACKed
-                memberList.add(memberId);
+            if (!ack.hasACKed(memberId)) {  // If the member has not already ACKed
+                ack.addACK(memberId);
             }
         }
     }
@@ -53,7 +53,6 @@ public final class AckManager {
 
         boolean isAcknowledged = false;
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
-        List memberList = ack.getMemberList();
 
         // Check that all members in the memberList are same as the total member list,
         // which will indicate that all members have ACKed the message
@@ -64,14 +63,15 @@ public final class AckManager {
             for (int i = 0; i < members.length; i++) {
                 Member member = members[i];
                 String memberHost = TribesUtil.getHost(member);
-                if (member.isReady() && !memberList.contains(memberHost)) {
+                if (member.isReady() && !ack.hasACKed(memberHost)) {
                     log.debug("[NO ACK] from member " + memberHost);
-                    log.debug("ACKed member list=" + memberList);
 
                     // If a new member joined the cluster recently,
                     // we need to retransmit the message to this member, if an ACK has not been
-                    // received from this member.
-                    if (member.getMemberAliveTime() < 1000) { // TODO: Check
+                    // received from this member. We retransmit only once.
+                    if (member.getMemberAliveTime() < 5000 &&
+                        !ack.isRestransmittedToMember(memberHost)) { // TODO: Check
+
                         sender.sendToMember(ack.getCommand(), member);
                         log.debug("Retransimitting msg " + ack.getCommand().getUniqueId() +
                                   " to member " + memberHost);
@@ -95,17 +95,30 @@ public final class AckManager {
     private static class MessageACK {
         private ContextClusteringCommand command;
         private List memberList = new Vector();
+        private List retransmittedList = new ArrayList();
 
         public MessageACK(ContextClusteringCommand command) {
             this.command = command;
+        }
+
+        public void addACK(String memberId) {
+            memberList.add(memberId);
         }
 
         public ContextClusteringCommand getCommand() {
             return command;
         }
 
-        public List getMemberList() {
-            return memberList;
+        public boolean hasACKed(String memberId) {
+            return memberList.contains(memberId);
+        }
+
+        public void addToRestransmittedList(String memberId) {
+            retransmittedList.add(memberId);
+        }
+
+        public boolean isRestransmittedToMember(String memberId) {
+            return retransmittedList.contains(memberId);
         }
     }
 }

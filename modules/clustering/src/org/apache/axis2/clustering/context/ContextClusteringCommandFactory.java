@@ -16,9 +16,17 @@
 package org.apache.axis2.clustering.context;
 
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.clustering.context.commands.*;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
+import org.apache.axis2.clustering.context.commands.UpdateConfigurationContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateServiceContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateServiceGroupContextCommand;
 import org.apache.axis2.clustering.tribes.AckManager;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.AbstractContext;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.PropertyDifference;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,6 +106,8 @@ public final class ContextClusteringCommandFactory {
                 AckManager.addInitialAcknowledgement(cmd);
             }
         }
+
+        //TODO: This is causing a concurrency issue. Need to look into this
         context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
         return cmd;
     }
@@ -117,31 +127,31 @@ public final class ContextClusteringCommandFactory {
 
             // Sometimes, there can be failures, so if an exception occurs, we retry
             // TODO: Need to investigate these failures. Looks like this is becuase the contexts are not synchronized
-            while (true) {
-                Map diffs = context.getPropertyDifferences();
-                try {
-                    for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                        String key = (String) iter.next();
-                        Object prop = context.getPropertyNonReplicable(key);
+//            while (true) {
+            Map diffs = context.getPropertyDifferences();
+//                try {
+            for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
+                String key = (String) iter.next();
+                Object prop = context.getPropertyNonReplicable(key);
 
-                        // First check whether it is serializable
-                        if (prop instanceof Serializable) {
+                // First check whether it is serializable
+                if (prop instanceof Serializable) {
 
-                            // Next check whether it matches an excluded pattern
-                            if (!isExcluded(key,
-                                            context.getClass().getName(),
-                                            excludedPropertyPatterns)) {
-                                log.debug("sending property =" + key + "-" + prop);
-                                PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                                diff.setValue(prop);
-                                updateCmd.addProperty(diff);
-                            }
-                        }
+                    // Next check whether it matches an excluded pattern
+                    if (!isExcluded(key,
+                                    context.getClass().getName(),
+                                    excludedPropertyPatterns)) {
+                        log.debug("sending property =" + key + "-" + prop);
+                        PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                        diff.setValue(prop);
+                        updateCmd.addProperty(diff);
                     }
-                    break;
-                } catch (Exception ignored) {
                 }
             }
+//                    break;
+//                } catch (Exception ignored) {
+//                }
+//            }
         } else {
             for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
                 String key = (String) iter.next();

@@ -133,9 +133,9 @@ public final class Replicator {
 
             // Do the actual replication here
             if (!contexts.isEmpty()) {
-                String msgUUID =
-                        contextManager.updateContexts((AbstractContext[]) contexts.
-                                toArray(new AbstractContext[contexts.size()]));
+                AbstractContext[] contextArray =
+                        (AbstractContext[]) contexts.toArray(new AbstractContext[contexts.size()]);
+                String msgUUID = contextManager.updateContexts(contextArray);
                 waitForACKs(contextManager, msgUUID, msgContext.getRootContext());
             }
 
