@@ -17,6 +17,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axis2.util.AxisPolicyLocator;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.neethi.PolicyRegistry;
@@ -155,9 +156,9 @@ public class PolicyInclude {
             Policy p;
 
             if (policyElement instanceof PolicyReference) {
-                PolicyRegistry r = getPolicyRegistry();
+                AxisPolicyLocator locator = new AxisPolicyLocator(description);
                 p = (Policy) ((PolicyReference) policyElement)
-                        .normalize(getPolicyRegistry(), false);
+                        .normalize(locator, false);
 
             } else if (policyElement instanceof Policy) {
                 p = (Policy) policyElement;
