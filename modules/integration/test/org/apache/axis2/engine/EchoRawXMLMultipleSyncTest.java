@@ -100,6 +100,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
 
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(50000);
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
