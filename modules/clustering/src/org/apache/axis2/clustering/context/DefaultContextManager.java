@@ -19,6 +19,7 @@ package org.apache.axis2.clustering.context;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.clustering.tribes.ChannelSender;
@@ -147,7 +148,9 @@ public class DefaultContextManager implements ContextManager {
                             }
                         } while (sender == null);
                         try {
-                            sender.sendToGroup(cmd);
+                            long tts = sender.sendToGroup(cmd);
+                            configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                                   new Long(tts));
                         } catch (ClusteringFault clusteringFault) {
                             throw new RuntimeException(clusteringFault);
                         }
@@ -155,7 +158,9 @@ public class DefaultContextManager implements ContextManager {
                 };
                 processorThread.start();
             } else {
-                sender.sendToGroup(cmd);
+                long tts = sender.sendToGroup(cmd);
+                configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                       new Long(tts));
             }
         }
     }

@@ -17,6 +17,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
@@ -41,7 +42,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
     private TribesControlCommandProcessor controlCommandProcessor;
-    private ChannelSender sender;
+    private ChannelSender channelSender;
 
     /**
      * The messages received are enqued. Another thread, messageProcessor, will
@@ -64,9 +65,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
-        this.sender = sender;
+        this.channelSender = sender;
         this.configurationContext = configurationContext;
-        startMessageProcessor();
+//        startMessageProcessor();
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -98,22 +99,28 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
         // Need to process ACKs as soon as they are received since otherwise,
         // unnecessary retransmissions will take place
-        if(msg instanceof AckCommand){
+        /*if (msg instanceof AckCommand) {
             try {
                 controlCommandProcessor.process((AckCommand) msg, sender);
             } catch (Exception e) {
                 log.error(e);
             }
             return;
+        }*/
+
+        try {
+            processMessage(msg,sender);
+        } catch (Exception e) {
+            log.error(e);
         }
 
         // Add the commands to be precessed to the cmdQueue
-        synchronized (cmdQueue) {
+        /*synchronized (cmdQueue) {
             cmdQueue.enqueue(new MemberMessage(msg, sender));
         }
         if (!messageProcessor.isAlive()) {
             startMessageProcessor();
-        }
+        }*/
     }
 
     private void startMessageProcessor() {
@@ -121,6 +128,32 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         messageProcessor.setDaemon(true);
         messageProcessor.setPriority(Thread.MAX_PRIORITY);
         messageProcessor.start();
+    }
+
+
+    private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
+        long start = System.currentTimeMillis();
+        if (msg instanceof ContextClusteringCommand && contextManager != null) {
+            ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
+            contextManager.process(ctxCmd);
+
+            // Sending ACKs for ContextClusteringCommandCollection or
+            // UpdateContextCommand is sufficient
+            if (msg instanceof ContextClusteringCommandCollection ||
+                msg instanceof UpdateContextCommand) {
+                AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
+
+                // Send the ACK
+                this.channelSender.sendToMember(ackCmd, sender);
+            }
+        } else if (msg instanceof ConfigurationClusteringCommand &&
+                   configurationManager != null) {
+            configurationManager.process((ConfigurationClusteringCommand) msg);
+        } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
+            controlCommandProcessor.process((ControlCommand) msg,
+                                            sender);
+        }
+        System.err.println("######### Time to process=" + (System.currentTimeMillis() - start));
     }
 
     /**
@@ -158,28 +191,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                         Thread.sleep(1);
                         continue;
                     }
-
-                    Serializable msg = memberMessage.getMessage();
-                    if (msg instanceof ContextClusteringCommand && contextManager != null) {
-                        ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
-                        contextManager.process(ctxCmd);
-
-                        // Sending ACKs for ContextClusteringCommandCollection or
-                        // UpdateContextCommand is sufficient
-                        if (msg instanceof ContextClusteringCommandCollection ||
-                            msg instanceof UpdateContextCommand) {
-                            AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
-
-                            // Send the ACK
-                            sender.sendToMember(ackCmd, memberMessage.getSender());
-                        }
-                    } else if (msg instanceof ConfigurationClusteringCommand &&
-                               configurationManager != null) {
-                        configurationManager.process((ConfigurationClusteringCommand) msg);
-                    } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
-                        controlCommandProcessor.process((ControlCommand) msg,
-                                                        memberMessage.getSender());
-                    }
+                    processMessage(memberMessage.getMessage(), memberMessage.getSender());
                 } catch (Throwable e) {
                     log.error("Could not process message ", e);
                 }

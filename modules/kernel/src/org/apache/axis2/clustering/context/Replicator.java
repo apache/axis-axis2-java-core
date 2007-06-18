@@ -18,6 +18,7 @@ package org.apache.axis2.clustering.context;
 
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -88,7 +89,7 @@ public final class Replicator {
             }
             if (!abstractContext.getPropertyDifferences().isEmpty()) {
                 String msgUUID = contextManager.updateContext(abstractContext);
-                waitForACKs(contextManager, msgUUID);
+                waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
             }
         } else {
             String msg = "Cannot replicate contexts since " +
@@ -135,7 +136,7 @@ public final class Replicator {
                 String msgUUID =
                         contextManager.updateContexts((AbstractContext[]) contexts.
                                 toArray(new AbstractContext[contexts.size()]));
-                waitForACKs(contextManager, msgUUID);
+                waitForACKs(contextManager, msgUUID, msgContext.getRootContext());
             }
 
         } else {
@@ -146,7 +147,8 @@ public final class Replicator {
     }
 
     private static void waitForACKs(ContextManager contextManager,
-                                    String msgUUID) throws ClusteringFault {
+                                    String msgUUID,
+                                    ConfigurationContext configCtx) throws ClusteringFault {
         long start = System.currentTimeMillis();
 
         // Wait till all members have ACKed receipt & successful processing of
@@ -155,11 +157,17 @@ public final class Replicator {
 
             // Wait sometime before checking whether message is ACKed
             try {
-                Thread.sleep(50);
+                Long tts =
+                        (Long) configCtx.getPropertyNonReplicable(ClusteringConstants.TIME_TO_SEND);
+                if (tts == null) {
+                    Thread.sleep(40);
+                } else if (tts.longValue() >= 0) {
+                    Thread.sleep(tts.longValue() + 5); // Time to recv ACK + time in queue & processing replication request
+                }
             } catch (InterruptedException ignored) {
             }
-            if (System.currentTimeMillis() - start > 40000) {
-                throw new ClusteringFault("ACKs not received from all members within 40 sec. " +
+            if (System.currentTimeMillis() - start > 15000) {
+                throw new ClusteringFault("ACKs not received from all members within 15 sec. " +
                                           "Aborting wait.");
             }
         } while (!contextManager.isMessageAcknowledged(msgUUID));

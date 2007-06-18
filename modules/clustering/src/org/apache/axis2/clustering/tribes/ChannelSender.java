@@ -28,17 +28,20 @@ public class ChannelSender implements MessageSender {
     private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
 
-    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+    public long sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if (channel == null) {
-            return;
+            return 0;
         }
+        long timeToSend = 0;
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {
-                    channel.send(channel.getMembers(), msg, 0); 
+                    long start = System.currentTimeMillis();
+                    channel.send(channel.getMembers(), msg, Channel.SEND_OPTIONS_USE_ACK);
+                    timeToSend = System.currentTimeMillis() - start;
                     log.debug("Sent " + msg + " to group");
                     break;
                 } catch (ChannelException e) {
@@ -50,6 +53,7 @@ public class ChannelSender implements MessageSender {
                 break;
             }
         }
+        return timeToSend;
     }
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
@@ -59,23 +63,27 @@ public class ChannelSender implements MessageSender {
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          msg,
-                         0);
+                         Channel.SEND_OPTIONS_USE_ACK);
             log.debug("Sent " + msg + " to self");
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
         }
     }
 
-    public void sendToGroup(Throwable throwable) throws ClusteringFault {
+    public long sendToGroup(Throwable throwable) throws ClusteringFault {
         if (channel == null) {
-            return;
+            return 0;
         }
+
+        long timeToSend = 0;
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {
-                    channel.send(channel.getMembers(), throwable, 0);
+                    long start = System.currentTimeMillis();
+                    channel.send(channel.getMembers(), throwable, Channel.SEND_OPTIONS_USE_ACK);
+                    timeToSend = System.currentTimeMillis() - start;
                     log.debug("Sent " + throwable + " to group");
                 } catch (ChannelException e) {
                     String message = "Error sending exception message : " + throwable +
@@ -86,12 +94,16 @@ public class ChannelSender implements MessageSender {
                 break;
             }
         }
+        return timeToSend;
     }
 
-    public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
+    public long sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
+        long timeToSend = 0;
         try {
             if (member.isReady()) {
-                channel.send(new Member[]{member}, cmd, 0);
+                long start = System.currentTimeMillis();
+                channel.send(new Member[]{member}, cmd, Channel.SEND_OPTIONS_USE_ACK);
+                timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }
         } catch (ChannelException e) {
@@ -99,6 +111,7 @@ public class ChannelSender implements MessageSender {
                              ". Reason " + e.getMessage();
             log.warn(message);
         }
+        return timeToSend;
     }
 
     public Channel getChannel() {

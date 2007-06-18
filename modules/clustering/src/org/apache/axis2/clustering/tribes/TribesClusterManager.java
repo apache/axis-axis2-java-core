@@ -152,10 +152,13 @@ public class TribesClusterManager implements ClusterManager {
                         int memberIndex = random.nextInt(members.length);
                         Member member = members[memberIndex];
                         if (!sentMembersList.contains(TribesUtil.getHost(member))) {
-                            sender.sendToMember(new GetStateCommand(), member);
+                            long tts = sender.sendToMember(new GetStateCommand(), member);
+                            configurationContext.
+                                    setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                             new Long(tts));
                             sentMembersList.add(TribesUtil.getHost(member));
                             log.debug("WAITING FOR STATE UPDATE...");
-                            Thread.sleep(1000);
+                            Thread.sleep(tts + 5);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -25,4 +25,5 @@ public final class ClusteringConstants {
     public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
     public static final String DOMAIN = "domain";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
+    public static final String TIME_TO_SEND = "local_cluster.time.to.send";
 }

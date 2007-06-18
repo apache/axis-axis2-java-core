@@ -116,6 +116,7 @@ public final class ContextClusteringCommandFactory {
         if (!includeAllProperties) {
 
             // Sometimes, there can be failures, so if an exception occurs, we retry
+            // TODO: Need to investigate these failures. Looks like this is becuase the contexts are not synchronized
             while (true) {
                 Map diffs = context.getPropertyDifferences();
                 try {

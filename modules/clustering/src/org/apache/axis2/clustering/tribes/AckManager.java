@@ -68,11 +68,15 @@ public final class AckManager {
                     log.debug("[NO ACK] from member " + memberHost);
                     log.debug("ACKed member list=" + memberList);
 
-                    // At this point, resend the original message back to the node which has not
-                    // sent an ACK
-                    sender.sendToMember(ack.getCommand(), member);
+                    // If a new member joined the cluster recently,
+                    // we need to retransmit the message to this member, if an ACK has not been
+                    // received from this member.
+                    if (member.getMemberAliveTime() < 1000) { // TODO: Check
+                        sender.sendToMember(ack.getCommand(), member);
+                        log.debug("Retransimitting msg " + ack.getCommand().getUniqueId() +
+                                  " to member " + memberHost);
+                    }
 
-                    //TODO: Enhancement, Check whether this is a new member. If then send the msg
                     isAcknowledged = false;
                     break;
                 } else {
