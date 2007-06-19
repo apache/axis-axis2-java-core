@@ -1872,6 +1872,11 @@
                  java.util.ArrayList elementList = new java.util.ArrayList();
                  java.util.ArrayList attribList = new java.util.ArrayList();
 
+                <xsl:if test="$extension">
+                    attribList.add(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema-instance","type"));
+                    attribList.add(new javax.xml.namespace.QName("<xsl:value-of select="$nsuri"/>","<xsl:value-of select="$originalName"/>"));
+                </xsl:if>
+
                 <xsl:for-each select="property[not(@attribute)]">
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>

@@ -19,6 +19,7 @@ import com.mynamespace.testinnerparticle.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.ADBException;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -26,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
+
 
 
 public class InnerParticlesTest extends TestCase {
@@ -267,6 +269,40 @@ public class InnerParticlesTest extends TestCase {
             fail();
         }
 
+    }
+
+    public void testIntterParticalExtension(){
+         TestInnterParticleExtension testInnterParticleExtension = new TestInnterParticleExtension();
+
+        TestInnterParticleExtensionChildComplexType testInnterParticleExtensionChildComplexType =
+                new TestInnterParticleExtensionChildComplexType();
+        testInnterParticleExtension.setTestInnterParticleExtension(testInnterParticleExtensionChildComplexType);
+
+        TestInnterParticleExtensionParentComplexTypeChoice_type6 testInnterParticleExtensionParentComplexTypeChoice_type0 =
+                new TestInnterParticleExtensionParentComplexTypeChoice_type6();
+        testInnterParticleExtensionChildComplexType.setTestInnterParticleExtensionParentComplexTypeChoice_type6(testInnterParticleExtensionParentComplexTypeChoice_type0);
+
+        testInnterParticleExtensionParentComplexTypeChoice_type0.setParam1("param1");
+        testInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
+
+        try {
+            OMElement omElement = testInnterParticleExtension.getOMElement(TestInnterParticleExtension.MY_QNAME,
+                                                            OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnterParticleExtension result = TestInnterParticleExtension.Factory.parse(xmlReader);
+            assertTrue(result.getTestInnterParticleExtension() instanceof TestInnterParticleExtensionChildComplexType);
+            TestInnterParticleExtensionChildComplexType resultComplexType =
+                    (TestInnterParticleExtensionChildComplexType) result.getTestInnterParticleExtension();
+            assertEquals(resultComplexType.getTestInnterParticleExtensionParentComplexTypeChoice_type6().getParam2(),"param2");
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
     }
 
 
