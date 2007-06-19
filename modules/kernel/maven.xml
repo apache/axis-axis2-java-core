@@ -20,6 +20,12 @@
         	<ant:ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true" dir="test-resources/"/>
         </j:jelly>
         <ant:copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
+	    <ant:path
+		   id="ModuleLoadingTest.resource"
+		   location="${basedir}/test-resources/deployment/ClasspathModule"/>
+	    <maven:addPath
+		   id="maven.dependency.classpath"
+		   refid="ModuleLoadingTest.resource"/>
       </j:if>
     </postGoal>
 	

@@ -24,21 +24,21 @@ import junit.framework.TestCase;
 
 public class ModuleLoadingTest extends TestCase {
     public void testModuleLoading() throws Exception {
-//        String repoRoot = AbstractTestCase.basedir + "/test-resources/deployment/repositories/moduleLoadTest";
-//        AxisConfiguration ac =
-//                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoRoot)
-//                        .getAxisConfiguration();
-//
-//        // Make sure we got the exploded module in the repo/modules dir
-//        AxisModule module = ac.getModule("explodedModule");
-//        assertNotNull(module);
-//        String val = (String)module.getParameter("color").getValue();
-//        assertEquals("green", val);
-//
-//        // Make sure we got the module that's outside the repo, but in the classpath
-//        module = ac.getModule("classpathModule");
-//        assertNotNull("Didn't find classpath module!", module);
-//        val = (String)module.getParameter("color").getValue();
-//        assertEquals("Parameter wasn't set correctly", "blue", val);
+        String repoRoot = AbstractTestCase.basedir + "/test-resources/deployment/repositories/moduleLoadTest";
+        AxisConfiguration ac =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoRoot)
+                        .getAxisConfiguration();
+
+        // Make sure we got the exploded module in the repo/modules dir
+        AxisModule module = ac.getModule("explodedModule");
+        assertNotNull(module);
+        String val = (String)module.getParameter("color").getValue();
+        assertEquals("green", val);
+
+        // Make sure we got the module that's outside the repo, but in the classpath
+        module = ac.getModule("classpathModule");
+        assertNotNull("Didn't find classpath module!", module);
+        val = (String)module.getParameter("color").getValue();
+        assertEquals("Parameter wasn't set correctly", "blue", val);
     }
 }
