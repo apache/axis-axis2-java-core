@@ -369,9 +369,6 @@ class OutInAxisOperationClient extends OperationClient {
         MessageContext responseMessageContext =
                 msgctx.getConfigurationContext().createMessageContext();
 
-        // This is a hack - Needs to change
-//        responseMessageContext.setOptions(options);
-
         responseMessageContext.setServerSide(false);
         responseMessageContext.setMessageID(msgctx.getMessageID());
         addMessageContext(responseMessageContext);
