@@ -10,9 +10,11 @@
   public void jspInit() {
     ServletContext context = this.getServletConfig().getServletContext();
     ConfigurationContext configctx = (ConfigurationContext) context.getAttribute(AxisServlet.CONFIGURATION_CONTEXT);
-    Parameter parameter = configctx.getAxisConfiguration().getParameter(Constants.HTTP_FRONTEND_HOST_URL);
-    if (parameter != null) {
-      frontendHostUrl = (String) parameter.getValue();
+    if (configctx != null){
+        Parameter parameter = configctx.getAxisConfiguration().getParameter(Constants.HTTP_FRONTEND_HOST_URL);
+        if (parameter != null) {
+          frontendHostUrl = (String) parameter.getValue();
+        }
     }
   }
 
