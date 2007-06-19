@@ -51,9 +51,9 @@ public class WSInfo {
         this.lastModifiedDate = lastModifiedDate;
         this.deployer = deployer;
         //TODO: This is a temporary fix for the hot update in custom deployers
-//        if (!(deployer instanceof ServiceDeployer)) {
-//           this.type=2;
-//        }
+        if (!(deployer instanceof ServiceDeployer)) {
+           this.type=2;
+        }
     }
 
     public String getFileName() {
