@@ -412,7 +412,7 @@ class EndpointInterfaceDescriptionImpl
                     new ArrayList<OperationDescription>();
             OperationDescription[] allOperations = getOperations();
             for (OperationDescription operation : allOperations) {
-                if (operation.getName().equals(operationQName)) {
+                if (operation.getName().getLocalPart().equals(operationQName.getLocalPart())) {
                     matchingOperations.add(operation);
                 }
             }

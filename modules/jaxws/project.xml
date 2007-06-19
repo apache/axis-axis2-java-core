@@ -88,9 +88,6 @@
     </resources>
 
         <unitTest>
-            <excludes>
-		<exclude>**/JAXWSTest.java</exclude>
-            </excludes>
             <includes>
                 <include>**/*Test.java</include>
             </includes>
