@@ -19,11 +19,9 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -35,6 +33,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 
@@ -67,6 +66,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     protected String addressingNamespace;
 
     private Binding binding;  // force subclasses to use the lazy getter
+    
+    private EndpointReferenceFactory eprFactory =
+        (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
 
     public BindingProvider(ServiceDelegate svcDelegate,
                            EndpointDescription epDesc,
@@ -226,15 +228,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
 
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
-        //TODO NLS enable.
-        if (!SubmissionEndpointReference.class.isAssignableFrom(clazz) &&
-            !W3CEndpointReference.class.isAssignableFrom(clazz))
-            throw ExceptionFactory.makeWebServiceException("Unrecognized class type " + clazz.getCanonicalName());
-        
         T jaxwsEPR = null;
         String bindingID = endpointDesc.getClientBindingID();
-        String addressingNamespace =
-            SubmissionEndpointReference.class.isAssignableFrom(clazz) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        String addressingNamespace = eprFactory.getAddressingNamespace(clazz);
         
         if (BindingUtils.isSOAPBinding(bindingID)) {
             try {
@@ -268,7 +264,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                     this.addressingNamespace = addressingNamespace;                    
                 }
             
-                jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(epr, clazz);
+                jaxwsEPR = clazz.cast(EndpointReferenceConverter.convertFromAxis2(epr, addressingNamespace));
             }
             catch (Exception e) {
                 //TODO NLS enable.

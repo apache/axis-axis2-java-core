@@ -20,9 +20,6 @@ package org.apache.axis2.jaxws.addressing.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.PrivilegedExceptionAction;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -35,17 +32,17 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
 
 public final class EndpointReferenceConverter {
     
     private static OMFactory omFactory = OMAbstractFactory.getOMFactory();
+    private static EndpointReferenceFactory eprFactory =
+        (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
     
     private EndpointReferenceConverter() {
     }
@@ -56,29 +53,19 @@ public final class EndpointReferenceConverter {
      * 
      * @param <T>
      * @param axis2EPR
-     * @param clazz
+     * @param addressingNamespace
      * @return
      * @throws AxisFault
      */
-    public static <T extends EndpointReference> T convertFromAxis2(org.apache.axis2.addressing.EndpointReference axis2EPR, final Class<T> clazz)
-    throws AxisFault, NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException, Exception {
-        String addressingNamespace =
-            SubmissionEndpointReference.class.isAssignableFrom(clazz) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+    public static EndpointReference convertFromAxis2(org.apache.axis2.addressing.EndpointReference axis2EPR, String addressingNamespace)
+    throws AxisFault, Exception {
         QName qname = new QName(addressingNamespace, "EndpointReference", "wsa");
         OMElement omElement =
             EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
         Element eprElement = XMLUtils.toDOM(omElement);
         Source eprInfoset = new DOMSource(eprElement);
         
-        Constructor constructor =
-            (Constructor) AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws NoSuchMethodException {
-                            return clazz.getConstructor(Source.class);
-                        }
-                    });
-
-        return clazz.cast(constructor.newInstance(eprInfoset));
+        return eprFactory.createEndpointReference(eprInfoset, addressingNamespace);
     }
     
     /**

@@ -124,7 +124,8 @@ public class SubmissionEndpointReference extends EndpointReference {
             otherAttributes.putAll(subEPR.otherAttributes);
         }
         catch (Exception e) {
-            throw new WebServiceException("Unable to create W3C endpoint reference.", e);
+            //TODO NLS enable.
+            throw new WebServiceException("Unable to create Submission endpoint reference.", e);
         }        
     }
     

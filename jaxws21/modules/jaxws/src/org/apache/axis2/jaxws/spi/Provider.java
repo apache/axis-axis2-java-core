@@ -111,7 +111,8 @@ public class Provider extends javax.xml.ws.spi.Provider {
                 }            
             }
             
-            w3cEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, W3CEndpointReference.class);
+            w3cEPR =
+                (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Final.WSA_NAMESPACE);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -167,19 +168,14 @@ public class Provider extends javax.xml.ws.spi.Provider {
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             xformer.transform(eprInfoset, new StreamResult(baos));
+            
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
             org.apache.axis2.addressing.EndpointReference axis2EPR =
                 new org.apache.axis2.addressing.EndpointReference("");
             String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
-            Class<? extends EndpointReference> clazz = null;
             
-            if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
-                clazz = SubmissionEndpointReference.class;
-            else
-                clazz = W3CEndpointReference.class;
-            
-            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, clazz);
+            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.

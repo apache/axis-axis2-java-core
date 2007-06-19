@@ -110,6 +110,7 @@ public final class W3CEndpointReference extends EndpointReference {
             otherAttributes.putAll(w3cEPR.otherAttributes);
         }
         catch (Exception e) {
+            //TODO NLS enable.
             throw new WebServiceException("Unable to create W3C endpoint reference.", e);
         }
     }

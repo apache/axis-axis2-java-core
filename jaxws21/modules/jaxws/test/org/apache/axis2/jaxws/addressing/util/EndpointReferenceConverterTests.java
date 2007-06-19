@@ -91,7 +91,7 @@ public class EndpointReferenceConverterTests extends XMLTestCase {
         org.apache.axis2.addressing.EndpointReference axis2EPR =
             EndpointReferenceHelper.fromOM(omElement);
         W3CEndpointReference jaxwsEPR =
-            EndpointReferenceConverter.convertFromAxis2(axis2EPR, W3CEndpointReference.class);
+            (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Final.WSA_NAMESPACE);
         assertXMLEqual(EPR200508, jaxwsEPR.toString());
      
         org.apache.axis2.addressing.EndpointReference axis2Result =
@@ -116,7 +116,7 @@ public class EndpointReferenceConverterTests extends XMLTestCase {
         assertXMLEqual(EPR200508, eprElement.toString());
 
         W3CEndpointReference jaxwsResult =
-            EndpointReferenceConverter.convertFromAxis2(axis2EPR, W3CEndpointReference.class);
+            (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Final.WSA_NAMESPACE);
         assertXMLEqual(EPR200508, jaxwsResult.toString());
     }
     
@@ -129,7 +129,7 @@ public class EndpointReferenceConverterTests extends XMLTestCase {
         org.apache.axis2.addressing.EndpointReference axis2EPR =
             EndpointReferenceHelper.fromOM(omElement);
         SubmissionEndpointReference jaxwsEPR =
-            EndpointReferenceConverter.convertFromAxis2(axis2EPR, SubmissionEndpointReference.class);
+            (SubmissionEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Submission.WSA_NAMESPACE);
         assertXMLEqual(EPR200408, jaxwsEPR.toString());
      
         org.apache.axis2.addressing.EndpointReference axis2Result =
@@ -154,13 +154,13 @@ public class EndpointReferenceConverterTests extends XMLTestCase {
         assertXMLEqual(EPR200408, eprElement.toString());
 
         SubmissionEndpointReference jaxwsResult =
-            EndpointReferenceConverter.convertFromAxis2(axis2EPR, SubmissionEndpointReference.class);
+            (SubmissionEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Submission.WSA_NAMESPACE);
         assertXMLEqual(EPR200408, jaxwsResult.toString());
     }
     
     public void testFailures() throws Exception {
         try {
-            EndpointReferenceConverter.convertFromAxis2(null, W3CEndpointReference.class);
+            EndpointReferenceConverter.convertFromAxis2(null, Final.WSA_NAMESPACE);
             fail("Expected a failure.");
         }
         catch (Exception e) {
@@ -168,7 +168,7 @@ public class EndpointReferenceConverterTests extends XMLTestCase {
         }
 
         try {
-            EndpointReferenceConverter.convertFromAxis2(null, SubmissionEndpointReference.class);
+            EndpointReferenceConverter.convertFromAxis2(null, Submission.WSA_NAMESPACE);
             fail("Expected a failure.");
         }
         catch (Exception e) {

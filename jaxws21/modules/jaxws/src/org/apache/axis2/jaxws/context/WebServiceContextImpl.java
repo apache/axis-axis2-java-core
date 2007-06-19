@@ -23,8 +23,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.w3c.dom.Element;
 
 import java.security.Principal;
@@ -66,10 +64,6 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
-        if (!SubmissionEndpointReference.class.isAssignableFrom(clazz) &&
-                !W3CEndpointReference.class.isAssignableFrom(clazz))
-            throw ExceptionFactory.makeWebServiceException("Unrecognized class type " + clazz.getCanonicalName());
-            
         T jaxwsEPR = null;
         
         

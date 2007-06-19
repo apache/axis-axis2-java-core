@@ -22,7 +22,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -208,10 +207,6 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     @Override
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
-        if (!SubmissionEndpointReference.class.isAssignableFrom(clazz) &&
-                !W3CEndpointReference.class.isAssignableFrom(clazz))
-            throw ExceptionFactory.makeWebServiceException("Unrecognized class type " + clazz.getCanonicalName());
-            
         T jaxwsEPR = null;
         
         
