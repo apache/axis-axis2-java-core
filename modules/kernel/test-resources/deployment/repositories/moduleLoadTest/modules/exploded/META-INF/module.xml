@@ -1,0 +1,4 @@
+<!-- name attr is "explodedModule", but directory name is "exploded".  Attr wins. -->
+<module name="explodedModule">
+    <parameter name="color">green</parameter>
+</module>

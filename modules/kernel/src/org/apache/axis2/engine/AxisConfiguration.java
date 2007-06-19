@@ -546,12 +546,17 @@ public class AxisConfiguration extends AxisDescription {
      *
      * TODO: should this check for duplicate names?
      *
-     * @param module name of AxisModule to add to list.
+     * @param moduleName name of AxisModule to add to list.
      */
     public void addGlobalModuleRef(String moduleName) {
         globalModuleList.add(moduleName);
     }
 
+    /**
+     * Engage all the previously added global modules.
+     *
+     * @throws AxisFault if an individual engageModule() fails
+     */
     public void engageGlobalModules() throws AxisFault {
         for (Iterator i = globalModuleList.iterator(); i.hasNext();) {
             engageModule((String)i.next());
@@ -669,6 +674,16 @@ public class AxisConfiguration extends AxisDescription {
      */
     public HashMap getModules() {
         return allModules;
+    }
+
+    /**
+     * Get a list of the global modules
+     *
+     * @return the global module list.  BE CAREFUL, this list is mutable.
+     * @deprecated please use addGlobalModule()
+     */
+    public List getGlobalModules() {
+        return globalModuleList;
     }
 
     /**

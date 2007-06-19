@@ -118,7 +118,14 @@
 					<include>**/**</include>
 				</includes>
 			</testResource>
-		</testResources>
+            <testResource>
+                <targetPath>../test-resources/deployment/ClasspathModule</targetPath>
+                <directory>test-resources/deployment/ClasspathModule</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </testResource>            
+        </testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>

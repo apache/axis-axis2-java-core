@@ -29,8 +29,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
@@ -102,11 +104,9 @@ public class RepositoryListener implements DeploymentConstants {
     protected void loadClassPathModules() {
         ModuleDeployer deployer = deploymentEngine.getModuleDeployer();
 
-        /* WORKING (Glen)
         // Find Modules on the class path (i.e. if classpath includes "addressing.mar" then
         // addressing will be available for engaging)
 
-        // TODO: Confirm correct class loader
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             Enumeration moduleURLs = loader.getResources("META-INF/module.xml");
@@ -114,17 +114,13 @@ public class RepositoryListener implements DeploymentConstants {
                 URL url = (URL)moduleURLs.nextElement();
                 String fileName = url.toString();
                 fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                System.out.println(fileName);
                 File f = new File(new URI(fileName));
-                System.out.println(f.getAbsolutePath());
                 addFileToDeploy(f, deployer);
             }
         } catch (Exception e) {
             // Oh well, log the problem
-            log.error(e);
+            log.info(e);
         }
-
-        */
 
         String classPath = getLocation();
 
