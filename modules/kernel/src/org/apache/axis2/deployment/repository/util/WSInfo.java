@@ -26,9 +26,10 @@ public class WSInfo {
 
     public static final int TYPE_SERVICE = 0;
     public static final int TYPE_MODULE = 1;
+    public static final int TYPE_CUSTOM_DEPLOYER_SERVICE = 2;
 
     /**
-     * To check whether the file is a module or a servise
+     * To check whether the file is a module or a service
      */
     private int type = TYPE_SERVICE;
 
@@ -52,7 +53,7 @@ public class WSInfo {
         this.deployer = deployer;
         //TODO: This is a temporary fix for the hot update in custom deployers
         if (!(deployer instanceof ServiceDeployer)) {
-           this.type=2;
+           this.type=TYPE_CUSTOM_DEPLOYER_SERVICE;
         }
     }
 
