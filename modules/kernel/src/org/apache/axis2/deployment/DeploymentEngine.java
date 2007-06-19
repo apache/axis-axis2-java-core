@@ -53,6 +53,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     //to keep the web resource location if any
     protected static String webLocationString = null;
+    protected Scheduler scheduler;
 
     public static void setWebLocationString(String webLocationString) {
         DeploymentEngine.webLocationString = webLocationString;
@@ -598,7 +599,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * @param listener : RepositoryListener
      */
     protected void startSearch(RepositoryListener listener) {
-        Scheduler scheduler = new Scheduler();
+        scheduler = new Scheduler();
 
         scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
     }
@@ -1070,5 +1071,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     public Deployer getDeployerForExtension(String extension) {
         return (Deployer)extensionToDeployerMappingMap.get(extension);
+    }
+
+    /**
+     * Clean up the mess
+     */
+    public void cleanup() {
+        if(scheduler != null){
+            scheduler.cleanup();
+        }
     }
 }

@@ -127,8 +127,10 @@ public class AxisConfiguration extends AxisDescription {
 
     private ClusterManager clusterManager;
 
+    private AxisConfigurator configurator;
+
     /**
-     * Constructor AxisConfigurationImpl.
+     * Constructor AxisConfiguration.
      */
     public AxisConfiguration() {
         moduleConfigmap = new HashMap();
@@ -1057,5 +1059,19 @@ public class AxisConfiguration extends AxisDescription {
         setInFaultPhases(phasesInfo.getGlobalInFaultPhases());
         setGlobalOutPhase(phasesInfo.getGlobalOutPhaseList());
         setOutFaultPhases(phasesInfo.getOUT_FaultPhases());
+    }
+
+    public AxisConfigurator getConfigurator() {
+        return configurator;
+    }
+
+    public void setConfigurator(AxisConfigurator configurator) {
+        this.configurator = configurator;
+    }
+
+    public void cleanup(){
+        if(configurator != null){
+            configurator.cleanup();
+        }
     }
 }

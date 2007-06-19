@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.IOException;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -103,7 +104,7 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
      * @throws AxisFault
      */
     public synchronized AxisConfiguration getAxisConfiguration() throws AxisFault {
-        InputStream configStream;
+        InputStream configStream = null;
         try {
             if (axis2xml != null && !"".equals(axis2xml)) {
                 configStream = new FileInputStream(axis2xml);
@@ -114,6 +115,14 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
             axisConfig = populateAxisConfiguration(configStream);
         } catch (FileNotFoundException e) {
             throw new AxisFault("System can not find the given axis2.xml " + axis2xml);
+        } finally {
+            if(configStream != null) {
+                try {
+                    configStream.close();
+                } catch (IOException e) {
+                    throw AxisFault.makeFault(e);
+                }
+            }
         }
         Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
         if (axis2repoPara != null) {
@@ -124,6 +133,7 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
         } else {
             loadFromClassPath();
         }
+        axisConfig.setConfigurator(this);
         return axisConfig;
     }
 

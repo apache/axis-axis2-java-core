@@ -540,6 +540,7 @@ public class ConfigurationContext extends AbstractContext {
         if (listenerManager != null) {
             listenerManager.stop();
         }
+        axisConfiguration.cleanup();
         cleanupTemp();
     }
 

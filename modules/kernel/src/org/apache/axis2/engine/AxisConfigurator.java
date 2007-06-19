@@ -40,4 +40,9 @@ public interface AxisConfigurator {
      * @throws AxisFault
      */
     void engageGlobalModules() throws AxisFault;
+
+    /**
+     * Clean up the mess
+     */
+    void cleanup();
 }
