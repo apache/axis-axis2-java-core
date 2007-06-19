@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,11 +80,11 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() , WSInfo.TYPE_MODULE);
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() ,WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -115,7 +116,7 @@ public class RepositoryListener implements DeploymentConstants {
                 String fileName = url.toString();
                 fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
                 File f = new File(new URI(fileName));
-                addFileToDeploy(f, deployer);
+                addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
             }
         } catch (Exception e) {
             // Oh well, log the problem
@@ -140,7 +141,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        addFileToDeploy(file, deployer);
+                        addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -165,7 +166,7 @@ public class RepositoryListener implements DeploymentConstants {
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
-                            addFileToDeploy(file, deployer);
+                            addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
                         }
                     }
                 }
@@ -247,7 +248,7 @@ public class RepositoryListener implements DeploymentConstants {
                         if (!file.isDirectory() && extension.equals(
                                 DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
-                                            deploymentEngine.getDeployerForExtension(extension));
+                                            deploymentEngine.getDeployerForExtension(extension),WSInfo.TYPE_CUSTOM);
                         }
                     }
                 }
@@ -270,19 +271,19 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_SERVICE);
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
                         // If we found a deployer for this type of file, use it.  Otherwise
                         // ignore the file.
                         if (deployer != null) {
-                            addFileToDeploy(file, deployer);
+                            addFileToDeploy(file, deployer,WSInfo.TYPE_SERVICE);
                         }
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_CUSTOM);
                     }
                 }
             }
@@ -292,7 +293,7 @@ public class RepositoryListener implements DeploymentConstants {
     /** Method invoked from the scheduler to start the listener. */
     public void startListener() {
         checkServices();
-        update();
+//        update();
     }
 
     /** Updates WSInfoList object. */
@@ -305,7 +306,7 @@ public class RepositoryListener implements DeploymentConstants {
         update();
     }
 
-    public void addFileToDeploy(File file, Deployer deployer) {
-        wsInfoList.addWSInfoItem(file, deployer);
+    public void addFileToDeploy(File file, Deployer deployer , int type) {
+        wsInfoList.addWSInfoItem(file, deployer ,type);
     }
 }
