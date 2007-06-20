@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.context.Replicator;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -129,13 +128,12 @@ public abstract class AbstractContext {
         addPropertyDifference(key);
     }
 
-    private void addPropertyDifference(String key) {
+    private synchronized void addPropertyDifference(String key) {
         // Add the property differences only if Context replication is enabled,
         // and there are members in the cluster
         ClusterManager clusterManager = getRootContext().getAxisConfiguration().getClusterManager();
         if (clusterManager != null &&
-            clusterManager.getContextManager() != null &&
-            clusterManager.getMemberCount() != 0) {
+            clusterManager.getContextManager() != null) {
             propertyDifferences.put(key, new PropertyDifference(key, false));
         }
     }
@@ -160,7 +158,7 @@ public abstract class AbstractContext {
      *
      * @param key
      */
-    public void removeProperty(String key) {
+    public synchronized void removeProperty(String key) {
         if (properties != null) {
             properties.remove(key);
         }
@@ -174,7 +172,7 @@ public abstract class AbstractContext {
      *
      * @param key
      */
-    public void removePropertyNonReplicable(String key) {
+    public synchronized void removePropertyNonReplicable(String key) {
         if (properties != null) {
             properties.remove(key);
         }
@@ -186,8 +184,8 @@ public abstract class AbstractContext {
      *
      * @return The property differences
      */
-    public Map getPropertyDifferences() {
-        return Collections.unmodifiableMap(propertyDifferences);
+    public synchronized Map getPropertyDifferences() {
+        return propertyDifferences;
     }
 
     /**
@@ -195,7 +193,7 @@ public abstract class AbstractContext {
      * it should call this method to avoid retransmitting stuff that has already
      * been sent.
      */
-    public void clearPropertyDifferences() {
+    public synchronized void clearPropertyDifferences() {
         propertyDifferences.clear();
     }
 

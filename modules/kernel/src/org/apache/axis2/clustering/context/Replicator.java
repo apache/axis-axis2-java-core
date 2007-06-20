@@ -44,6 +44,7 @@ public final class Replicator {
             replicateState(msgContext);
         } catch (Exception e) {
             String message = "Could not replicate the state";
+            log.error(message, e);
             throw new ClusteringFault(message, e);
         }
     }
@@ -57,6 +58,7 @@ public final class Replicator {
             replicateState(abstractContext);
         } catch (Exception e) {
             String message = "Could not replicate the state";
+            log.error(message, e);
             throw new ClusteringFault(message, e);
         }
     }
@@ -73,8 +75,7 @@ public final class Replicator {
         ClusterManager clusterManager =
                 abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
         return clusterManager != null &&
-               clusterManager.getContextManager() != null &&
-               clusterManager.getMemberCount() != 0;
+               clusterManager.getContextManager() != null;
     }
 
     private static void replicateState(AbstractContext abstractContext) throws ClusteringFault {
@@ -160,7 +161,7 @@ public final class Replicator {
                 Long tts =
                         (Long) configCtx.getPropertyNonReplicable(ClusteringConstants.TIME_TO_SEND);
                 if (tts == null) {
-                    Thread.sleep(40);
+                    Thread.sleep(5);
                 } else if (tts.longValue() >= 0) {
                     Thread.sleep(tts.longValue() + 5); // Time to recv ACK + time in queue & processing replication request
                 }

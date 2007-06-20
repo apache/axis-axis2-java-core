@@ -116,9 +116,10 @@ public class TribesClusterManager implements ClusterManager {
             mcastProps.setProperty("tcpListenPort", "4000");
             mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
-//            TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-//            tcpFailureDetector.setPrevious(nbc);
-//            channel.addInterceptor(tcpFailureDetector);
+            /*TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+            tcpFailureDetector.setPrevious(nbc);
+            channel.addInterceptor(tcpFailureDetector);
+            tcpFailureDetector.*/
 
             channel.addChannelListener(channelListener);
             TribesMembershipListener membershipListener = new TribesMembershipListener();
@@ -241,12 +242,5 @@ public class TribesClusterManager implements ClusterManager {
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
         }
-    }
-
-    public int getMemberCount() {
-        if (channel != null) {
-            return channel.getMembers().length;
-        }
-        return 0;
     }
 }

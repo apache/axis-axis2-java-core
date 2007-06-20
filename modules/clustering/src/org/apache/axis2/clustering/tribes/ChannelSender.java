@@ -36,6 +36,7 @@ public class ChannelSender implements MessageSender {
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
+        //TODO: Sometimes Tribes ncorrectly detects that a member has left a group
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {

@@ -67,10 +67,4 @@ public interface ClusterManager extends ParameterInclude {
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
-    /**
-     * Get the total number of members in the cluster
-     * 
-     * @return The total number of members in the cluster
-     */
-    int getMemberCount();
 }
