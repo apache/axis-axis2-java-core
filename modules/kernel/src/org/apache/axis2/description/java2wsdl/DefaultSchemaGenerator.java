@@ -1,49 +1,21 @@
 package org.apache.axis2.description.java2wsdl;
 
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.ws.commons.schema.utils.NamespacePrefixList;
-import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.java2wsdl.AnnotationConstants;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jam.JAnnotation;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JField;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JPackage;
-import org.codehaus.jam.JParameter;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.ws.commons.schema.utils.NamespacePrefixList;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.Iterator;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -79,39 +51,40 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected ClassLoader classLoader;
 
-    private String className;
+    protected String className;
 
     protected TypeTable typeTable = new TypeTable();
 
     // to keep loadded method using JAM
-    private JMethod methods[];
+    protected JMethod methods[];
 
     //to store byte code method using Axis 1.x codes
-    private MethodTable methodTable;
+    protected MethodTable methodTable;
 
-    private String schemaTargetNameSpace;
+    protected String schemaTargetNameSpace;
 
-    private String schema_namespace_prefix;
+    protected String schema_namespace_prefix;
 
-    private String attrFormDefault = null;
+    protected String attrFormDefault = null;
 
-    private String elementFormDefault = null;
+    protected String elementFormDefault = null;
 
-    private ArrayList excludeMethods = new ArrayList();
+    protected ArrayList excludeMethods = new ArrayList();
 
     protected ArrayList extraClasses = null;
 
-    private boolean useWSDLTypesNamespace = false;
+    protected boolean useWSDLTypesNamespace = false;
 
     protected Map pkg2nsmap = null;
 
-    private NamespaceGenerator nsGen = null;
+    protected NamespaceGenerator nsGen = null;
 
-    private String targetNamespace = null;
+    protected String targetNamespace = null;
     //to keep the list of operation which uses MR other than RPC MR
-    private ArrayList nonRpcMethods = new ArrayList();
+    protected ArrayList nonRpcMethods = new ArrayList();
 
     protected Class serviceClass = null;
+    protected AxisService service;
 
     public NamespaceGenerator getNsGen() throws Exception {
         if (nsGen == null) {
@@ -125,11 +98,13 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     public DefaultSchemaGenerator(ClassLoader loader, String className,
-                           String schematargetNamespace,
-                           String schematargetNamespacePrefix)
+                                  String schematargetNamespace,
+                                  String schematargetNamespacePrefix,
+                                  AxisService service)
             throws Exception {
         this.classLoader = loader;
         this.className = className;
+        this.service = service;
 
         serviceClass = Class.forName(className, true, loader);
         methodTable = new MethodTable(serviceClass);
@@ -171,14 +146,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         jam_service_parms.includeClass(className);
 
         for (int count = 0; count < getExtraClasses().size(); ++count) {
-            jam_service_parms.includeClass((String)getExtraClasses().get(count));
+            jam_service_parms.includeClass((String) getExtraClasses().get(count));
         }
         JamService service = factory.createService(jam_service_parms);
         QName extraSchemaTypeName;
         JamClassIterator jClassIter = service.getClasses();
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
-            JClass jclass = (JClass)jClassIter.next();
+            JClass jclass = (JClass) jClassIter.next();
             if (getQualifiedName(jclass).equals(className)) {
                 /**
                  * Schema genertaion done in two stage 1. Load all the methods and
@@ -209,7 +184,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return schemaMap.values();
     }
 
-    private JMethod[] processMethods(JMethod[] declaredMethods) throws Exception {
+    protected JMethod[] processMethods(JMethod[] declaredMethods) throws Exception {
         ArrayList list = new ArrayList();
         //short the elements in the array
         Arrays.sort(declaredMethods);
@@ -230,11 +205,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             String methodName = getSimpleName(jMethod);
             // no need to think abt this method , since that is system
             // config method
-            if (excludeMethods.contains(getSimpleName(jMethod))) {
+            if (excludeMethods.contains(methodName)) {
                 continue;
             }
 
-            if (uniqueMethods.get(getSimpleName(jMethod)) != null) {
+            if (uniqueMethods.get(methodName) != null) {
                 log.warn("We don't support method overloading. Ignoring [" +
                         jMethod.getQualifiedName() + "]");
                 continue;
@@ -244,35 +219,56 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 // no need to generate Schema for non public methods
                 continue;
             }
-
+            boolean addToService = false;
+            AxisOperation axisOperation = service.getOperation(new QName(methodName));
+            if (axisOperation == null) {
+                axisOperation = Utils.getAxisOperationForJmethod(jMethod);
+                addToService = true;
+            }
             // Maintain a list of methods we actually work with
             list.add(jMethod);
 
             if (jMethod.getExceptionTypes().length > 0) {
-                JClass[] extypes = jMethod.getExceptionTypes() ;
-                for (int j= 0 ; j < extypes.length ; j++) {
-                    JClass extype = extypes[j] ;
-                    if(AxisFault.class.getName().equals(extype.getQualifiedName())){
+                JClass[] extypes = jMethod.getExceptionTypes();
+                for (int j = 0; j < extypes.length; j++) {
+                    JClass extype = extypes[j];
+                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
                         continue;
                     }
-                    methodSchemaType = createSchemaTypeForMethodPart(extype.getSimpleName()+ "Fault");
+                    String partQname = extype.getSimpleName() + "Fault";
+                    methodSchemaType = createSchemaTypeForMethodPart(partQname);
                     sequence = new XmlSchemaSequence();
                     generateSchemaForType(sequence, extype, extype.getSimpleName());
                     methodSchemaType.setParticle(sequence);
+                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
+                        continue;
+                    }
+                    AxisMessage faultMessage = new AxisMessage();
+                    if (extypes.length > 1) {
+                        faultMessage.setName(methodName + "Fault" + j);
+                    } else {
+                        faultMessage.setName(methodName + "Fault");
+                    }
+                    faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
+                    axisOperation.setFaultMessages(faultMessage);
                 }
             }
-            uniqueMethods.put(getSimpleName(jMethod), jMethod);
-            //create the schema type for the method wrapper
-
-            uniqueMethods.put(getSimpleName(jMethod), jMethod);
+            uniqueMethods.put(methodName, jMethod);
             JParameter[] paras = jMethod.getParameters();
             String parameterNames[] = null;
+            AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inMessage != null) {
+                inMessage.setName(methodName + Java2WSDLConstants.MESSAGE_SUFFIX);
+            }
             if (paras.length > 0) {
                 parameterNames = methodTable.getParameterNames(methodName);
                 sequence = new XmlSchemaSequence();
 
-                methodSchemaType = createSchemaTypeForMethodPart(getSimpleName(jMethod));
+                methodSchemaType = createSchemaTypeForMethodPart(methodName);
                 methodSchemaType.setParticle(sequence);
+                inMessage.setElementQName(typeTable.getQNamefortheType(methodName));
+                service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
+                        axisOperation);
             }
 
             for (int j = 0; j < paras.length; j++) {
@@ -300,8 +296,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             JClass returnType = jMethod.getReturnType();
 
             if (!returnType.isVoidType()) {
+                String partQname = methodName + RESPONSE;
                 methodSchemaType =
-                        createSchemaTypeForMethodPart(getSimpleName(jMethod) + RESPONSE);
+                        createSchemaTypeForMethodPart(partQname);
                 sequence = new XmlSchemaSequence();
                 methodSchemaType.setParticle(sequence);
                 JAnnotation returnAnnon =
@@ -318,7 +315,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 } else {
                     generateSchemaForType(sequence, returnType, returnName);
                 }
-
+                AxisMessage outMessage = axisOperation.getMessage(
+                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                outMessage.setElementQName(typeTable.getQNamefortheType(partQname));
+                outMessage.setName(partQname);
+                service.addMessageElementQNameToOperationMapping(methodSchemaType.getQName(),
+                        axisOperation);
+            }
+            if (addToService) {
+                service.addOperation(axisOperation);
             }
         }
         return (JMethod[]) list.toArray(new JMethod[list.size()]);
@@ -343,7 +348,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     /**
      * Generate schema construct for given type
-     * 
+     *
      * @param javaType
      */
     private QName generateSchema(JClass javaType) throws Exception {
@@ -356,10 +361,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             String targetNameSpace = resolveSchemaNamespace(packageName);
 
             XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
-            String targetNamespacePrefix = (String)targetNamespacePrefixMap.get(targetNameSpace);
+            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
             if (targetNamespacePrefix == null) {
                 targetNamespacePrefix = generatePrefix();
-                targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix) ;
+                targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix);
             }
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
@@ -374,8 +379,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             JClass sup = javaType.getSuperclass();
 
-            if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
-                !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
+            if ((sup != null) && !("java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
+                    !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
                 String superClassName = sup.getQualifiedName();
                 String superclassname = getSimpleName(sup);
                 String tgtNamespace;
@@ -387,16 +392,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 } else {
                     tgtNamespace =
                             resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName());
-                    tgtNamespacepfx = (String)targetNamespacePrefixMap.get(tgtNamespace);
+                    tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
                     generateSchema(sup);
                 }
 
                 if (tgtNamespacepfx == null) {
                     tgtNamespacepfx = generatePrefix();
-                    targetNamespacePrefixMap.put(tgtNamespace, tgtNamespacepfx) ;
+                    targetNamespacePrefixMap.put(tgtNamespace, tgtNamespacepfx);
                 }
 
-                QName basetype = new QName(tgtNamespace,superclassname,tgtNamespacepfx) ;
+                QName basetype = new QName(tgtNamespace, superclassname, tgtNamespacepfx);
 
 
                 complexExtension.setBaseTypeName(basetype);
@@ -423,7 +428,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             // adding this type to the table
             typeTable.addComplexSchema(name, eltOuter.getQName());
-             // adding this type's package to the table, to support inheritance.
+            // adding this type's package to the table, to support inheritance.
             typeTable.addComplexSchema(javaType.getContainingPackage().getQualifiedName(),
                     eltOuter.getQName());
 
@@ -436,7 +441,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 propertiesSet.add(tempProperties[i]);
             }
 
-            JProperty[] properties = (JProperty[])propertiesSet.toArray(new JProperty[0]);
+            JProperty[] properties = (JProperty[]) propertiesSet.toArray(new JProperty[0]);
             Arrays.sort(properties);
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
@@ -448,7 +453,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 propertiesNames.add(propname);
 
                 this.generateSchemaforFieldsandProperties(xmlSchema, sequence, property.getType(),
-                                                          propname, isArryType);
+                        propname, isArryType);
 
             }
 
@@ -484,7 +489,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
             // end patch for Annogen -21
 
-            JField[] froperties = (JField[])FieldMap.values().toArray(new JField[0]);
+            JField[] froperties = (JField[]) FieldMap.values().toArray(new JField[0]);
             Arrays.sort(froperties);
 
             for (int i = 0; i < froperties.length; i++) {
@@ -493,7 +498,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 boolean isArryType = field.getType().isArrayType();
 
                 this.generateSchemaforFieldsandProperties(xmlSchema, sequence, field.getType(),
-                                                          field.getSimpleName(), isArryType);
+                        field.getSimpleName(), isArryType);
             }
 
 
@@ -503,9 +508,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
 
     // moved code common to Fields & properties out of above method 
-    private void generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
-                                                      XmlSchemaSequence sequence, JClass type,
-                                                      String name, boolean isArryType)
+    protected void generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
+                                                        XmlSchemaSequence sequence, JClass type,
+                                                        String name, boolean isArryType)
             throws Exception {
 
         String propertyName;
@@ -525,12 +530,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
             sequence.getItems().add(elt1);
 
-            if (isArryType && (!propertyName.equals("base64Binary"))){
+            if (isArryType && (!propertyName.equals("base64Binary"))) {
                 elt1.setMaxOccurs(Long.MAX_VALUE);
             }
-            elt1.setMinOccurs(0) ;
-            if(type.isPrimitiveType() == false) {
-               elt1.setNillable(true) ;
+            elt1.setMinOccurs(0);
+            if (!type.isPrimitiveType()) {
+                elt1.setNillable(true);
             }
         } else {
             if (isArryType) {
@@ -548,15 +553,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             elt1.setMinOccurs(0);
             elt1.setNillable(true);
 
-            if (!((NamespaceMap)xmlSchema.getNamespaceContext()).values().
+            if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                     contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
                 XmlSchemaImport importElement = new XmlSchemaImport();
                 importElement.setNamespace(
                         typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
                 xmlSchema.getItems().add(importElement);
-                ((NamespaceMap)xmlSchema.getNamespaceContext()).
+                ((NamespaceMap) xmlSchema.getNamespaceContext()).
                         put(generatePrefix(),
-                            typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+                                typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
             }
         }
 
@@ -574,7 +579,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArrayType) {
             type = type.getArrayComponentType();
         }
-        if(AxisFault.class.getName().equals(type)){
+        if (AxisFault.class.getName().equals(type)) {
             return null;
         }
         String classTypeName;
@@ -594,31 +599,33 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (schemaTypeName == null) {
             schemaTypeName = generateSchema(type);
             addContentToMethodSchemaType(sequence,
-                                         schemaTypeName,
-                                         partName,
-                                         isArrayType);
+                    schemaTypeName,
+                    partName,
+                    isArrayType);
             String schemaNamespace;
             schemaNamespace = resolveSchemaNamespace(getQualifiedName(type.getContainingPackage()));
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
 
         } else {
             addContentToMethodSchemaType(sequence,
-                                         schemaTypeName,
-                                         partName,
-                                         isArrayType);
+                    schemaTypeName,
+                    partName,
+                    isArrayType);
         }
 
         return schemaTypeName;
     }
 
-    private void addContentToMethodSchemaType(XmlSchemaSequence sequence,
-                                              QName schemaTypeName,
-                                              String paraName,
-                                              boolean isArray) {
+    protected void addContentToMethodSchemaType(XmlSchemaSequence sequence,
+                                                QName schemaTypeName,
+                                                String paraName,
+                                                boolean isArray) {
         XmlSchemaElement elt1 = new XmlSchemaElement();
         elt1.setName(paraName);
         elt1.setSchemaTypeName(schemaTypeName);
-        sequence.getItems().add(elt1);
+        if (sequence != null) {
+            sequence.getItems().add(elt1);
+        }
 
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
@@ -633,9 +640,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 new QName(this.schemaTargetNameSpace, localPartName, this.schema_namespace_prefix);
 
         XmlSchemaComplexType complexType = getComplexTypeForElement(xmlSchema, elementName);
-        if(complexType == null) {
+        if (complexType == null) {
             complexType = new XmlSchemaComplexType(xmlSchema);
-    
+
             XmlSchemaElement globalElement = new XmlSchemaElement();
             globalElement.setSchemaType(complexType);
             globalElement.setName(localPartName);
@@ -648,12 +655,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return complexType;
     }
 
-    private XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
+    protected XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
         Iterator iterator = xmlSchema.getItems().getIterator();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             XmlSchemaObject object = (XmlSchemaObject) iterator.next();
-            if(object instanceof XmlSchemaElement && ((XmlSchemaElement)object).getQName().equals(name)){
-                return (XmlSchemaComplexType)((XmlSchemaElement)object).getSchemaType();
+            if (object instanceof XmlSchemaElement && ((XmlSchemaElement) object).getQName().equals(name)) {
+                return (XmlSchemaComplexType) ((XmlSchemaElement) object).getSchemaType();
             }
         }
         return null;
@@ -662,7 +669,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     private XmlSchema getXmlSchema(String targetNamespace) {
         XmlSchema xmlSchema;
 
-        if ((xmlSchema = (XmlSchema)schemaMap.get(targetNamespace)) == null) {
+        if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
             String targetNamespacePrefix = null;
 
             if (targetNamespace.equals(schemaTargetNameSpace) &&
@@ -698,7 +705,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return methods;
     }
 
-    private String generatePrefix() {
+    protected String generatePrefix() {
         return NAME_SPACE_PREFIX + prefixCount++;
     }
 
@@ -711,14 +718,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return schemaTargetNameSpace;
     }
 
-    private void addImport(XmlSchema xmlSchema, QName schemaTypeName) {
+    protected void addImport(XmlSchema xmlSchema, QName schemaTypeName) {
         NamespacePrefixList map = xmlSchema.getNamespaceContext();
-        if (map instanceof NamespaceMap && !((NamespaceMap)map).values().
+        if (map instanceof NamespaceMap && !((NamespaceMap) map).values().
                 contains(schemaTypeName.getNamespaceURI())) {
             XmlSchemaImport importElement = new XmlSchemaImport();
             importElement.setNamespace(schemaTypeName.getNamespaceURI());
             xmlSchema.getItems().add(importElement);
-            ((NamespaceMap)xmlSchema.getNamespaceContext()).
+            ((NamespaceMap) xmlSchema.getNamespaceContext()).
                     put(generatePrefix(), schemaTypeName.getNamespaceURI());
         }
     }
@@ -739,7 +746,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         this.elementFormDefault = elementFormDefault;
     }
 
-    private XmlSchemaForm getAttrFormDefaultSetting() {
+    protected XmlSchemaForm getAttrFormDefaultSetting() {
         if (FORM_DEFAULT_UNQUALIFIED.equals(getAttrFormDefault())) {
             return new XmlSchemaForm(XmlSchemaForm.UNQUALIFIED);
         } else {
@@ -747,7 +754,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    private XmlSchemaForm getElementFormDefaultSetting() {
+    protected XmlSchemaForm getElementFormDefaultSetting() {
         if (FORM_DEFAULT_UNQUALIFIED.equals(getElementFormDefault())) {
             return new XmlSchemaForm(XmlSchemaForm.UNQUALIFIED);
         } else {
@@ -766,17 +773,17 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         this.extraClasses = extraClasses;
     }
 
-    private String resolveSchemaNamespace(String packageName) throws Exception {
+    protected String resolveSchemaNamespace(String packageName) throws Exception {
         //if all types must go into the wsdl types schema namespace
         if (useWSDLTypesNamespace) {
             //return schemaTargetNameSpace;
-            return (String)pkg2nsmap.get("all");
+            return (String) pkg2nsmap.get("all");
         } else {
             if (pkg2nsmap != null && !pkg2nsmap.isEmpty()) {
                 //if types should go into namespaces that are mapped against the package name for the type
                 if (pkg2nsmap.get(packageName) != null) {
                     //return that mapping
-                    return (String)pkg2nsmap.get(packageName);
+                    return (String) pkg2nsmap.get(packageName);
                 } else {
                     return getNsGen().schemaNamespaceFromPackageName(packageName).toString();
                 }
@@ -847,5 +854,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (nonRpcMethods != null) {
             this.nonRpcMethods = nonRpcMethods;
         }
+    }
+
+    public void setAxisService(AxisService service) {
+        this.service = service;
     }
 }

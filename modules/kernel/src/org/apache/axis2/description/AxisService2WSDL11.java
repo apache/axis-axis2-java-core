@@ -279,7 +279,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                 if(axismessage.getMessagePartName() != null) {
                 	messagePart.addAttribute(ATTRIBUTE_NAME, axismessage.getMessagePartName(), null);
             	} else {
-            		messagePart.addAttribute(ATTRIBUTE_NAME, "parameters", null);
+            		messagePart.addAttribute(ATTRIBUTE_NAME, axismessage.getPartName(), null);
             	}
                 messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                                          WSDLSerializationUtil.getPrefix(schemaElementName.getNamespaceURI(), axisService.getNameSpacesMap()) + ":"

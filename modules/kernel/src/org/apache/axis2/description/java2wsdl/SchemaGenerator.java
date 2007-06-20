@@ -1,6 +1,7 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.codehaus.jam.JMethod;
+import org.apache.axis2.description.AxisService;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -49,4 +50,6 @@ public interface SchemaGenerator {
     String getTargetNamespace();
 
     void setNonRpcMethods(ArrayList nonRpcMethods);
+
+    void setAxisService(AxisService service);
 }

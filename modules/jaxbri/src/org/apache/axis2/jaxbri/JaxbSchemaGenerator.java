@@ -51,7 +51,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
                                String schematargetNamespace,
                                String schematargetNamespacePrefix)
             throws Exception {
-        super(loader, className, schematargetNamespace, schematargetNamespacePrefix);
+        super(loader, className, schematargetNamespace, schematargetNamespacePrefix,null);
     }
 
     public Collection generateSchema() throws Exception {
@@ -117,7 +117,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
         return itr.next();
     }
 
-    private List<Class<?>> processMethods(Method[] declaredMethods) throws Exception {
+    protected List<Class<?>> processMethods(Method[] declaredMethods) throws Exception {
         List<Class<?>> list = new ArrayList<Class<?>>();
 
         for (int i = 0; i < declaredMethods.length; i++) {

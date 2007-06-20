@@ -18,6 +18,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -48,6 +49,7 @@ public class AxisMessage extends AxisDescription {
 
     // To store deploy-time module refs
     private ArrayList modulerefs;
+    private String partName = Java2WSDLConstants.PARAMETERS;
 
     /**
      * list of engaged modules
@@ -240,5 +242,14 @@ public class AxisMessage extends AxisDescription {
 
     public AxisOperation getAxisOperation(){
         return (AxisOperation) getParent();
+    }
+
+
+    public String getPartName() {
+        return partName;
+    }
+
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
 }
