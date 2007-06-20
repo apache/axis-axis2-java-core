@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.service.Lifecycle;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
@@ -39,11 +40,42 @@ import java.util.Iterator;
 public class DependencyManager {
     private static final Log log = LogFactory.getLog(DependencyManager.class);
     public final static String SERVICE_INIT_METHOD = "init";
-    public final static String SERVICE_START_METHOD = "startUp";
     public final static String SERVICE_DESTROY_METHOD = "destroy";
 
-    public static void initServiceClass(Object obj,
-                                        ServiceContext serviceContext) {
+    /**
+     * Initialize a new service object.  Essentially, check to see if the object wants to receive
+     * an init() call - if so, call it.
+     *
+     * @param obj the service object
+     * @param serviceContext the active ServiceContext
+     * @throws AxisFault if there's a problem initializing
+     * 
+     * @deprecated please use initServiceObject()
+     */
+    public static void initServiceClass(Object obj, ServiceContext serviceContext)
+            throws AxisFault {
+        initServiceObject(obj, serviceContext);
+    }
+
+    /**
+     * Initialize a new service object.  Essentially, check to see if the object wants to receive
+     * an init() call - if so, call it.
+     *
+     * @param obj the service object
+     * @param serviceContext the active ServiceContext
+     * @throws AxisFault if there's a problem initializing
+     */
+    public static void initServiceObject(Object obj, ServiceContext serviceContext)
+            throws AxisFault {
+        // This is the way to do things into the future.
+        if (obj instanceof Lifecycle) {
+            ((Lifecycle)obj).init(serviceContext);
+            return;
+        }
+
+        // ...however, we also still support the old way for now.  Note that introspecting for
+        // a method like this is something like 10 times slower than the above instanceof check.
+
         Class classToLoad = obj.getClass();
         // We can not call classToLoad.getDeclaredMethed() , since there
         //  can be insatnce where mutiple services extends using one class
@@ -73,8 +105,8 @@ public class DependencyManager {
     /**
      * To init all the services in application scope
      *
-     * @param serviceGroupContext
-     * @throws AxisFault
+     * @param serviceGroupContext the ServiceGroupContext from which to extract all the services
+     * @throws AxisFault if there's a problem initializing
      */
     public static void initService(ServiceGroupContext serviceGroupContext) throws AxisFault {
         AxisServiceGroup serviceGroup = serviceGroupContext.getDescription();
@@ -92,7 +124,7 @@ public class DependencyManager {
                             ((String) implInfoParam.getValue()).trim());
                     Object serviceImpl = implClass.newInstance();
                     serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
-                    initServiceClass(serviceImpl, serviceContext);
+                    initServiceObject(serviceImpl, serviceContext);
                 } catch (Exception e) {
                     AxisFault.makeFault(e);
                 }
@@ -101,13 +133,20 @@ public class DependencyManager {
     }
 
     /**
-     * To startup service when user puts load-on-startup parameter
+     * Notify a service object that it's on death row.
+     * @param serviceContext the active ServiceContext
      */
-
-
     public static void destroyServiceObject(ServiceContext serviceContext) {
         Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
         if (obj != null) {
+            // If this is a Lifecycle object, just call it.
+            if (obj instanceof Lifecycle) {
+                ((Lifecycle)obj).destroy(serviceContext);
+                return;
+            }
+
+            // For now, we also use "raw" introspection to try and find the destroy method.
+
             Class classToLoad = obj.getClass();
             Method method =
                     null;

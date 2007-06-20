@@ -218,8 +218,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             // create a new service impl class for that service
             serviceimpl = makeNewServiceObject(msgContext);
             //Service initialization
-            DependencyManager.initServiceClass(serviceimpl,
-                                               msgContext.getServiceContext());
+            DependencyManager.initServiceObject(serviceimpl, msgContext.getServiceContext());
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
         }

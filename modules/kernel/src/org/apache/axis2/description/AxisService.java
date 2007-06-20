@@ -2265,4 +2265,8 @@ public class AxisService extends AxisDescription {
     public void setOperationsNameList(List operationsNameList) {
         this.operationsNameList = operationsNameList;
     }
+
+    public AxisServiceGroup getAxisServiceGroup() {
+        return (AxisServiceGroup)getParent();
+    }
 }

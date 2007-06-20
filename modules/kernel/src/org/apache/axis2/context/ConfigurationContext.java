@@ -248,12 +248,27 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    public void addServiceGroupContextIntoApplicationScopeTable(ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextIntoApplicationScopeTable
+            (ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContexts == null) {
             applicationSessionServiceGroupContexts = new Hashtable();
         }
         applicationSessionServiceGroupContexts.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
+    }
+
+    /**
+     * Deploy a service to the embedded AxisConfiguration, and initialize it.
+     *
+     * @param service service to deploy
+     * @throws AxisFault if there's a problem
+     */
+    public void deployService(AxisService service) throws AxisFault {
+        axisConfiguration.addService(service);
+        if (Constants.SCOPE_APPLICATION.equals(service.getScope())) {
+            ServiceGroupContext sgc = createServiceGroupContext(service.getAxisServiceGroup());
+            DependencyManager.initService(sgc);
+        }
     }
 
     public AxisConfiguration getAxisConfiguration() {
