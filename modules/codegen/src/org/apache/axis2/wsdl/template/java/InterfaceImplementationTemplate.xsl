@@ -122,11 +122,22 @@
 
     }
 
+    /**
+      *Constructor that takes in a configContext
+      */
+
+    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
+       java.lang.String targetEndpoint)
+       throws org.apache.axis2.AxisFault {
+         this(configurationContext,targetEndpoint,false);
+   }
+
+
    /**
-    Constructor that takes in a configContext
-    */
+     * Constructor that takes in a configContext  and useseperate listner
+     */
    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
-        java.lang.String targetEndpoint)
+        java.lang.String targetEndpoint, boolean isUseSeperateListner)
         throws org.apache.axis2.AxisFault {
          //To populate AxisService
          populateAxisService();
@@ -141,6 +152,7 @@
 
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
+        _serviceClient.getOptions().setUseSeparateListener(isUseSeperateListner);
         <xsl:if test="starts-with($soapVersion,'http://www.w3.org/2003/05/soap-envelope')">
             //Set the soap version
             _serviceClient.getOptions().setSoapVersionURI(org.apache.axiom.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
