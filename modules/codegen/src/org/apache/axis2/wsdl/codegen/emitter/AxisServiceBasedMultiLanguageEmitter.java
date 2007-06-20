@@ -65,6 +65,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2126,6 +2127,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(messageExchangePattern) + "",
                 methodElement);
         addAttribute(doc, "mepURI", messageExchangePattern, methodElement);
+        Parameter wsdl2StyleParameter = axisOperation.getParameter(WSDL2Constants.OPERATION_STYLE);
+        if (wsdl2StyleParameter != null) {
+        	// provide WSDL2 styles to allow templates to take advantage of them, if desired 
+            addAttribute(doc, "wsdl2Styles", arrayToString((URI[])wsdl2StyleParameter.getValue()), methodElement);
+        }
 
         // check for this operation to be handled directly by databinding code generation
         Parameter dbmethname = axisOperation.getParameter(Constants.DATABINDING_GENERATED_RECEIVER);
@@ -2295,6 +2301,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         }
         return methodElement;
+    }
+
+    /**
+     * Returns a comma-separated list of the string representations of the array elements.
+     * @param array the array to be processed
+     * @return the empty string "" if array is null or empty, the array element if size is 1,
+     * or a comma-separated list when size > 1.
+     */
+    private String arrayToString(Object[] array) {
+    	if (array == null || array.length == 0) {
+    		return "";
+    	}
+    	int size = array.length;
+    	if (size == 1) {
+    		return String.valueOf(array[0]);
+    	}
+    	StringBuffer result = new StringBuffer(String.valueOf(array[0]));
+    	for (int i=1; i<size; i++) {
+    		result.append(",");
+    		result.append(String.valueOf(array[i]));
+    	}
+    	return result.toString();
     }
 
     /**
