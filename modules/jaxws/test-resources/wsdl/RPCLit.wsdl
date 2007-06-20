@@ -251,7 +251,7 @@
 
    <wsdl:message name="testHeaderResponse">
 
-      <wsdl:part name="headerReturn" element="impl:headerReturn"/>
+      <wsdl:part name="headerReturn" type="impl:headerReturn" />
 
    </wsdl:message>
    
