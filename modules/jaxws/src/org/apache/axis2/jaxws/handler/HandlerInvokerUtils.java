@@ -18,111 +18,111 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
-import org.apache.axis2.jaxws.context.utils.ContextUtils;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+
 import java.util.List;
 
 public class HandlerInvokerUtils {
 
     /**
      * Invoke Inbound Handlers
-     *
      * @param requestMsgCtx
      */
-    public static boolean invokeInboundHandlers(MessageContext msgCtx,
-            List<Handler> handlers, EndpointDescription endpointDesc, HandlerChainProcessor.MEP mep, boolean isOneWay) {
+    public static boolean invokeInboundHandlers(MEPContext mepMessageCtx, List<Handler> handlers,
+                                                HandlerChainProcessor.MEP mep, boolean isOneWay) {
 
         String bindingProto = null;
-        if (mep.equals(HandlerChainProcessor.MEP.REQUEST))  // inbound request; must be on the server
-            bindingProto = endpointDesc.getBindingType();
-        else // inbound response; must be on the client
-            bindingProto = endpointDesc.getClientBindingID();
+        if (mep.equals(HandlerChainProcessor.MEP.REQUEST)) // inbound request; must be on the server
+            bindingProto = mepMessageCtx.getEndpointDesc().getBindingType();
+        else
+            // inbound response; must be on the client
+            bindingProto = mepMessageCtx.getEndpointDesc().getClientBindingID();
         Protocol proto = Protocol.getProtocolForBinding(bindingProto);
         
+
         HandlerChainProcessor processor = new HandlerChainProcessor(handlers, proto);
         // if not one-way, expect a response
         boolean success = true;
         try {
-            if (msgCtx.getMessage().isFault()) {
-        		processor.processFault(msgCtx,
-                                       HandlerChainProcessor.Direction.IN);
+            if (mepMessageCtx.getMessageObject().isFault()) {
+                processor.processFault(mepMessageCtx, HandlerChainProcessor.Direction.IN);
             } else {
-        		success = processor.processChain(msgCtx,
-                                                               HandlerChainProcessor.Direction.IN,
-                                                               mep,
-                                                               !isOneWay);
+                success =
+                        processor.processChain(mepMessageCtx,
+                                               HandlerChainProcessor.Direction.IN,
+                                               mep,
+                                               !isOneWay);
             }
         } catch (RuntimeException re) {
             /*
-                * handler framework should only throw an exception here if
-                * we are in the client inbound case.  Make sure the message
-                * context and message are transformed.
-                */
-        	HandlerChainProcessor.convertToFaultMessage(msgCtx, re, proto);
+             * handler framework should only throw an exception here if
+             * we are in the client inbound case.  Make sure the message
+             * context and message are transformed.
+             */
+            HandlerChainProcessor.convertToFaultMessage(mepMessageCtx, re, proto);
+            // done invoking inbound handlers, be sure to set the access lock flag on the context to true
+            mepMessageCtx.setApplicationAccessLocked(true);
             return false;
         }
-        
+
         if (!success && mep.equals(HandlerChainProcessor.MEP.REQUEST)) {
             // uh-oh.  We've changed directions on the server inbound handler processing,
             // This means we're now on an outbound flow, and the endpoint will not
             // be called.  Be sure to mark the context and message as such.
+
+            // done invoking inbound handlers, be sure to set the access lock flag on the context to true
+            mepMessageCtx.setApplicationAccessLocked(true);
             return false;
         }
+        // done invoking inbound handlers, be sure to set the access lock flag on the context to true
+        mepMessageCtx.setApplicationAccessLocked(true);
         return true;
 
     }
 
     /**
      * Invoke OutboundHandlers
-     *
+     * 
      * @param msgCtx
      */
-    public static boolean invokeOutboundHandlers(MessageContext msgCtx,
-            List<Handler> handlers, EndpointDescription endpointDesc, HandlerChainProcessor.MEP mep, boolean isOneWay) {
-        
+    public static boolean invokeOutboundHandlers(MEPContext mepMessageCtx, List<Handler> handlers,
+                                                 HandlerChainProcessor.MEP mep, boolean isOneWay) {
+
         if (handlers == null)
             return true;
 
         String bindingProto = null;
-        if (mep.equals(HandlerChainProcessor.MEP.REQUEST))  // outbound request; must be on the client
-            bindingProto = endpointDesc.getClientBindingID();
-        else // outbound response; must be on the server
-            bindingProto = endpointDesc.getBindingType();
+        if (mep.equals(HandlerChainProcessor.MEP.REQUEST)) // outbound request; must be on the client
+            bindingProto = mepMessageCtx.getEndpointDesc().getClientBindingID();
+        else
+            // outbound response; must be on the server
+            bindingProto = mepMessageCtx.getEndpointDesc().getBindingType();
         Protocol proto = Protocol.getProtocolForBinding(bindingProto);
-        
+
         HandlerChainProcessor processor = new HandlerChainProcessor(handlers, proto);
         // if not one-way, expect a response
         boolean success = true;
         try {
-            if (msgCtx.getMessage().isFault()) {
-        		processor.processFault(msgCtx,
-                                       HandlerChainProcessor.Direction.OUT);
+            if (mepMessageCtx.getMessageObject().isFault()) {
+                processor.processFault(mepMessageCtx, HandlerChainProcessor.Direction.OUT);
             } else {
-        		success = processor.processChain(msgCtx,
-                                                               HandlerChainProcessor.Direction.OUT,
-                                                               mep, !isOneWay);
+                success =
+                        processor.processChain(mepMessageCtx,
+                                               HandlerChainProcessor.Direction.OUT,
+                                               mep,
+                                               !isOneWay);
             }
         } catch (RuntimeException re) {
             /*
-                * handler framework should only throw an exception here if
-                * we are in the server outbound case.  Make sure the message
-                * context and message are transformed.
-                */
-        	HandlerChainProcessor.convertToFaultMessage(msgCtx, re, proto);
+             * handler framework should only throw an exception here if
+             * we are in the server outbound case.  Make sure the message
+             * context and message are transformed.
+             */
+            HandlerChainProcessor.convertToFaultMessage(mepMessageCtx, re, proto);
             return false;
         }
 
@@ -135,5 +135,5 @@ public class HandlerInvokerUtils {
         return true;
 
     }
-    
+
 }

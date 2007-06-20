@@ -16,13 +16,17 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import javax.xml.ws.WebServiceException;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,13 +94,19 @@ public abstract class InvocationController {
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
-                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
 
         if (success) {
             prepareRequest(request);
             response = doInvoke(request);
             prepareResponse(response);
+            
+            // make sure request and response contexts share a single parent
+            response.setMEPContext(request.getMEPContext());
 
             /*
              * TODO TODO TODO review
@@ -116,8 +126,10 @@ public abstract class InvocationController {
             response.setEndpointDescription(request.getEndpointDescription());
 
             // Invoke inbound handlers.
-            HandlerInvokerUtils.invokeInboundHandlers(response, ic.getHandlers(), request
-                            .getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+            HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
+                                                      ic.getHandlers(),
+                                                      HandlerChainProcessor.MEP.RESPONSE,
+                                                      false);
         } else { // the outbound handler chain must have had a problem, and
                     // we've reversed directions
             response = MessageContextUtils.createMinimalResponseMessageContext(request);
@@ -157,7 +169,11 @@ public abstract class InvocationController {
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
 
         if (success) {
             prepareRequest(request);
@@ -198,7 +214,11 @@ public abstract class InvocationController {
 
         // Invoke outbound handlers.
         // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
         if (success) {
             prepareRequest(request);
             resp = doInvokeAsync(request);
@@ -255,8 +275,11 @@ public abstract class InvocationController {
         Future<?> future = null;
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
-                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
         if (success) {
             prepareRequest(request);
             future = doInvokeAsync(request, asyncHandler);

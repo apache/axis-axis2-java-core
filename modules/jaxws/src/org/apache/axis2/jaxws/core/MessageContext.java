@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.core;
 
+import javax.xml.ws.handler.MessageContext.Scope;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -52,6 +53,14 @@ public class MessageContext {
     private QName operationName;    //FIXME: This should become the OperationDescription
     private Message message;
     private Mode mode;
+    
+    /*
+     * JAXWS runtime uses a request and response mc, but we need to know the pair.
+     * We will use this mepCtx as a wrapper to the request and response message contexts
+     * where the requestMC and responseMC have the same parent MEPContext to
+     * preserve the relationship.
+     */
+    private MEPContext mepCtx;
 
     // If a local exception is thrown, the exception is placed on the message context.
     // It is not converted into a Message.
@@ -65,6 +74,12 @@ public class MessageContext {
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         properties = new HashMap<String, Object>();
 
+        /*
+         * Instead of creating a member MEPContext object every time, we will
+         * rely on users of this MessageContext class to create a new
+         * MEPContext and call setMEPContext(MEPContext)
+         */
+        
         if (mc != null) {
             axisMsgCtx = mc;
             message = MessageUtils.getMessageFromMessageContext(mc);
@@ -180,5 +195,22 @@ public class MessageContext {
      */
     public void setLocalException(Throwable t) {
         localException = t;
+    }
+    
+    /**
+     * Set the wrapper MEPContext.  Internally, this method also sets
+     * the MEPContext's children so the pointer is bi-directional; you can
+     * get the MEPContext from the MessageContext and vice-versa.
+     * 
+     * @param mepCtx
+     */
+    public void setMEPContext(MEPContext mepCtx) {
+        this.mepCtx = mepCtx;
+        // and set parent's child pointer
+        this.mepCtx.setResponseMessageContext(this);
+    }
+
+    public MEPContext getMEPContext() {
+        return mepCtx;
     }
 }

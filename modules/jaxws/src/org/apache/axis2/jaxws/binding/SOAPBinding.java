@@ -28,7 +28,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
 
-import java.net.URI;
+import java.util.AbstractSet;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -95,6 +96,9 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
      * @see javax.xml.ws.soap.SOAPBinding#getRoles()
      */
     public Set<String> getRoles() {
+        // do not allow null roles, per the JAX-WS CTS
+        if (roles == null)
+            roles = new HashSet<String>();
         return roles;
     }
 

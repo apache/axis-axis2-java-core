@@ -27,6 +27,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
@@ -109,10 +110,8 @@ public class EndpointController {
          * Since we're on the server, and there apparently is no Binding object
          * anywhere to be found...
          */
-        if (ic.getHandlers() == null) {
             ic.setHandlers(new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc.getPortInfo()));
-        }
-        
+
         if (!bindingTypesMatch(requestMsgCtx, endpointDesc.getServiceDescription())) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
             // only if protocol is soap12 and MISmatches the endpoint do we halt processing
@@ -157,12 +156,11 @@ public class EndpointController {
 
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
-            boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx,
-                    ic.getHandlers(),
-                                                                        requestMsgCtx.getEndpointDescription(),
-                                                                        HandlerChainProcessor.MEP.REQUEST,
-                                                                        isOneWay(
-                                                                                requestMsgCtx.getAxisMessageContext()));
+            boolean success =
+                    HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx.getMEPContext(),
+                                                              ic.getHandlers(),
+                                                              HandlerChainProcessor.MEP.REQUEST,
+                                                              isOneWay(requestMsgCtx.getAxisMessageContext()));
 
             if (success) {
 
@@ -170,22 +168,20 @@ public class EndpointController {
                 EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance);
                 try {
                     responseMsgContext = dispatcher.invoke(requestMsgCtx);
+                    // we want the responseMsgContext to have the same parent as the requestMC
+                    responseMsgContext.setMEPContext(requestMsgCtx.getMEPContext());
                 } finally {
                     // Passed pivot point
                     requestMsgCtx.getMessage().setPostPivot();
                 }
-
-                // The response MessageContext should be set on the InvocationContext
-                ic.setResponseMessageContext(responseMsgContext);
 
                 // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
                 // always exactly one EndpointDescription on a server invoke
                 // Also, if the message is oneWay, don't bother with response handlers.  The responseMsgContext is probably NULL
                 // anyway, and would cause an NPE.
                 if (!isOneWay(requestMsgCtx.getAxisMessageContext())) {
-                HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext,
+                    HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext.getMEPContext(),
                         ic.getHandlers(),
-                                                           requestMsgCtx.getEndpointDescription(),
                                                            HandlerChainProcessor.MEP.RESPONSE,
                                                            false);
                 }
@@ -356,7 +352,7 @@ public class EndpointController {
                     .create(Protocol.soap11);  // always soap11 according to the spec
             msg.setXMLFault(xmlfault);
             MessageContext responseMsgCtx =
-                    MessageContextUtils.createFaultMessageContext(requestMsgCtx, null);
+                    MessageContextUtils.createFaultMessageContext(requestMsgCtx);
             responseMsgCtx.setMessage(msg);
             return responseMsgCtx;
         } catch (XMLStreamException e) {

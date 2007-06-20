@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -121,6 +122,7 @@ public class AxisInvocationController extends InvocationController {
             // Collect the response MessageContext and envelope
             axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             response = new MessageContext(axisResponseMsgCtx);
+            response.setMEPContext(request.getMEPContext());
 
             // If the Message object is still null, then it's possible that a
             // local AxisFault was thrown and we need to save it for later throwing

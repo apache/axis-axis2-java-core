@@ -27,6 +27,8 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
+import org.apache.axis2.jaxws.core.InvocationContextImpl;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
@@ -91,6 +93,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             EndpointController endpointCtlr = new EndpointController();
 
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
+            requestMsgCtx.setMEPContext(new MEPContext(requestMsgCtx));
 
             Binding binding = (Binding)axisRequestMsgCtx.getProperty(PARAM_BINDING);
             InvocationContext ic = InvocationContextFactory.createInvocationContext(binding);

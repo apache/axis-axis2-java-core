@@ -42,10 +42,30 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
 import org.apache.axis2.jaxws.TestLogger;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
+/**
+ * @author rott
+ *
+ */
 public class AddNumbersHandlerTests extends TestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersHandlerService";
-    
+
+
+    /**
+     * Client app sends 10, 10 as params to sum.  No client-side handlers are configured
+     * for this scenario.  The server-side AddNumbersLogicalHandler is instantiated with a
+     * variable "deduction" with value 1.  Upon class initialization using PostConstruct
+     * annotation, that internal variable is changed to value 2.  The inbound AddNumbersLogicalHandler
+     * subtracts 1 from the first param, then outbound it subtracts 2 from the result sum.
+     * 
+     * This test accomplishes three things (which also carry over to other tests since they all use
+     * the same endpoint and server-side handlers:
+     * 1)  PostConstruct annotation honored in the handler framework for handler instantiation
+     * 2)  AddNumbersLogicalHandler also sets two message context properties, one with APPLICATION
+     *     scope, which the endpoint checks.
+     * 3)  Handlers are sharing properties, both APPLICATION scoped and HANDLER scoped
+     * 3)  General handler framework functionality; make sure handlers are instantiated and called
+     */
     public void testAddNumbersHandler() {
 		try{
             TestLogger.logger.debug("----------------------------------");
@@ -64,7 +84,7 @@ public class AddNumbersHandlerTests extends TestCase {
             TestLogger.logger.debug("----------------------------------");
 		} catch(Exception e) {
 			e.printStackTrace();
-			fail();
+            fail(e.getMessage());
 		}
 	}
 
@@ -107,15 +127,28 @@ public class AddNumbersHandlerTests extends TestCase {
             
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
+            p.getRequestContext().put("myClientKey", "myClientVal");
 
             List<Handler> handlers = p.getBinding().getHandlerChain();
             if (handlers == null)
                 handlers = new ArrayList<Handler>();
             handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
             p.getBinding().setHandlerChain(handlers);
 
             int total = proxy.addNumbersHandler(10,10);
             
+            // see if I can get an APPLICATION scoped property set during outbound flow.  I should be able to do this according to 4.2.1
+            assertNotNull("Should be able to retrieve APPLICATION scoped property, but could not.", ((String)p.getResponseContext().get("AddNumbersClientProtocolHandlerOutboundAppScopedProperty")));
+            // should NOT be able to get this HANDLER scoped property though
+            assertNull("Should not be able to retrieve HANDLER scoped property, but was able.", (String)p.getResponseContext().get("AddNumbersClientProtocolHandlerOutboundHandlerScopedProperty"));
+            // should be able to get this APPLICATION scoped property set during inbound flow
+            assertNotNull("Should be able to retrieve APPLICATION scoped property, but could not.", (String)p.getResponseContext().get("AddNumbersClientProtocolHandlerInboundAppScopedProperty"));
+            // should NOT be able to get this HANDLER scoped property though
+            assertNull("Should not be able to retrieve HANDLER scoped property, but was able.", (String)p.getResponseContext().get("AddNumbersClientProtocolHandlerInboundHandlerScopedProperty"));
+            // should be able to get this APPLICATION scoped property set by this client
+            assertNotNull("Should be able to retrieve APPLICATION scoped property, but could not.", (String)p.getResponseContext().get("myClientKey"));
+
             assertEquals("With handler manipulation, total should be 4 less than a proper sumation.", 16, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
             TestLogger.logger.debug("----------------------------------");
@@ -126,7 +159,9 @@ public class AddNumbersHandlerTests extends TestCase {
     }
     
     /*
-     * uses a custom HandlerResolver instead of the default
+     * uses a custom HandlerResolver instead of the default.  MyHandlerResolver
+     * puts the AddNumbersClientLogicalHandler and AddNumbersClientProtocolHandler
+     * in the flow.  Results should be the same as testAddNumbersClientHandler.
      */
     public void testAddNumbersClientHandlerMyResolver() {
         try{
@@ -135,21 +170,19 @@ public class AddNumbersHandlerTests extends TestCase {
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
             
-            // There's a HandlerChain annotation on the SEI, but since
-            // we're using our own handlerresolver that returns an empty list
-            // no client-side handlers will be run
-            service.setHandlerResolver(new MyHandlerResolver());
-            
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
             
             BindingProvider p = (BindingProvider)proxy;
             
+            service.setHandlerResolver(new MyHandlerResolver());
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
 
             int total = proxy.addNumbersHandler(10,10);
             
-            assertEquals("With server-side only handler manipulation, total should be a 17.", 17, total);
+            assertEquals("With handler manipulation, total should be 4 less than a proper sumation.",
+                         16,
+                         total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
@@ -245,6 +278,7 @@ public class AddNumbersHandlerTests extends TestCase {
                 handlers = new ArrayList<Handler>();
             handlers.add(new AddNumbersClientLogicalHandler());
             handlers.add(new AddNumbersClientLogicalHandler2());
+            handlers.add(new AddNumbersClientProtocolHandler());
             p.getBinding().setHandlerChain(handlers);
 
             
@@ -319,7 +353,10 @@ public class AddNumbersHandlerTests extends TestCase {
     class MyHandlerResolver implements HandlerResolver {
 
         public List<Handler> getHandlerChain(PortInfo portinfo) {
-            return new ArrayList<Handler>();
+            ArrayList<Handler> handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
+            return handlers;
         }
         
     }

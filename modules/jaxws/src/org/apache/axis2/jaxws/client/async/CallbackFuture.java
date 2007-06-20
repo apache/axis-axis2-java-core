@@ -98,6 +98,8 @@ public class CallbackFuture extends Callback {
         try {
             response = AsyncUtils.createJAXWSMessageContext(result);
             response.setInvocationContext(invocationCtx);
+            // make sure request and response contexts share a single parent
+            response.setMEPContext(invocationCtx.getRequestMessageContext().getMEPContext());
         } catch (WebServiceException e) {
             cft.setError(e);
             if (debug) {
@@ -125,8 +127,9 @@ public class CallbackFuture extends Callback {
             try {
                 faultMessageContext  = AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
                 faultMessageContext.setInvocationContext(invocationCtx);
-            }
-            catch (WebServiceException wse) {
+                // make sure request and response contexts share a single parent
+                faultMessageContext.setMEPContext(invocationCtx.getRequestMessageContext().getMEPContext());
+            } catch (WebServiceException wse) {
                 cft.setError(wse);
             }
 

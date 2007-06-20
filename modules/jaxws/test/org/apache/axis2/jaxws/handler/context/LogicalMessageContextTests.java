@@ -34,6 +34,7 @@ import javax.xml.ws.handler.LogicalMessageContext;
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -227,6 +228,7 @@ public class LogicalMessageContextTests extends TestCase {
         msg.setBodyBlock(block);
         
         MessageContext mc = new MessageContext();
+        mc.setMEPContext(new MEPContext(mc));
         mc.setMessage(msg);
         
         LogicalMessageContext lmc = MessageContextFactory.createLogicalMessageContext(mc);
@@ -243,6 +245,7 @@ public class LogicalMessageContextTests extends TestCase {
         msg.setXMLFault(fault);
         
         MessageContext mc = new MessageContext();
+        mc.setMEPContext(new MEPContext(mc));
         mc.setMessage(msg);
         
         LogicalMessageContext lmc = MessageContextFactory.createLogicalMessageContext(mc);

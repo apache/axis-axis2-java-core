@@ -56,6 +56,8 @@ public class PollingFuture extends Callback {
         try {
             responseMsgCtx = AsyncUtils.createJAXWSMessageContext(result);
             responseMsgCtx.setInvocationContext(invocationCtx);
+            // make sure request and response contexts share a single parent
+            responseMsgCtx.setMEPContext(invocationCtx.getRequestMessageContext().getMEPContext());
         } catch (WebServiceException e) {
             response.onError(e, null);
             if (debug) {
@@ -83,8 +85,9 @@ public class PollingFuture extends Callback {
                 faultMessageContext =
                         AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
                 faultMessageContext.setInvocationContext(invocationCtx);
-            }
-            catch (WebServiceException wse) {
+                // make sure request and response contexts share a single parent
+                faultMessageContext.setMEPContext(invocationCtx.getRequestMessageContext().getMEPContext());
+            } catch (WebServiceException wse) {
                 response.onError(wse, null);
             }
 
