@@ -32,91 +32,199 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-clustering</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxbri</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws-api</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <version>${version}</version>
             <artifactId>axis2-jaxws</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <version>${version}</version>
             <artifactId>axis2-jibx</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-json</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-mtompolicy</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj-api</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-xmlbeans</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>
