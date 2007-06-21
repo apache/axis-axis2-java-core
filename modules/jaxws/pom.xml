@@ -27,6 +27,10 @@
 	<name>Apache Axis 2.0 - JAXWS</name>
 	<description>Axis2 JAXWS Implementation</description>
 	<dependencies>
+                 <dependency>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-annotation_1.0_spec</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
