@@ -154,6 +154,10 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>apache-activemq</artifactId>
         </dependency>
@@ -318,6 +322,20 @@
                                 <property name="wsdl.output.base.dir" value="target/wsdl"/>
                                 <!-- make the dirs -->
                                 <mkdir dir="${wsdl.output.base.dir}"/>
+
+								<echo>Compiling ComplexDataTypes.wsdl</echo>
+								<mkdir dir="${wsdl.output.base.dir}/complexdatatype"/>
+								
+								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<arg line="-o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
+								</java>
+								<javac fork="true" destdir="target/classes" debug="on">
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<src path="target/wsdl/complexdatatype"/>
+								</javac>
 
                                 <echo>Compiling DocumentUnwrappingTest.wsdl</echo>
                                 <mkdir dir="${wsdl.output.base.dir}/documentunwrapping"/>
