@@ -392,6 +392,13 @@ public class AxisInvocationController extends InvocationController {
             // Get the SOAP Action (if needed)
             String soapAction = ClientUtils.findSOAPAction(requestMsgCtx);
             options.setAction(soapAction);
+            // get the timeout from the request message context options as it may have been
+            // set by the user; if it was not set by the user we will just be setting the
+            // timeout on the operation client to the default so it will not have a negative
+            // effect; this logic is reliant on the fact the JAX-WS MessageContext is delegating
+            // to the Axis2 Options object and not storing its own property bag
+            long timeout = axisRequest.getOptions().getTimeOutInMilliSeconds();
+            options.setTimeOutInMilliSeconds(timeout);
 
             // Use the OperationClient to send the request and put the contents
             // of the response in the response MessageContext.
