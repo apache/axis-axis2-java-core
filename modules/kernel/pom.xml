@@ -55,6 +55,11 @@
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>${stax.api.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>${stax.impl.groupid}</groupId>
 			<artifactId>${stax.impl.artifactid}</artifactId>
