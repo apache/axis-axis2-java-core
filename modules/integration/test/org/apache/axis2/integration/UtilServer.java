@@ -65,7 +65,7 @@ public class UtilServer {
     }
 
     public static synchronized void start() throws Exception {
-        start(org.apache.axis2.Constants.TESTING_REPOSITORY);
+        start(TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY));
     }
 
 
@@ -141,7 +141,7 @@ public class UtilServer {
 
     public static ConfigurationContext getNewConfigurationContext(
             String repository, String axis2xml) throws Exception {
-        File file = new File(repository);
+        File file = new File(TestingUtils.prefixBaseDirectory(repository));
         if (!file.exists()) {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
@@ -180,7 +180,7 @@ public class UtilServer {
         TestCase.assertTrue(file.exists());
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
                                                              configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
@@ -200,7 +200,7 @@ public class UtilServer {
     }
 
     private static File getAddressingMARFile() {
-        File dir = new File(org.apache.axis2.Constants.TESTING_REPOSITORY + "/modules");
+        File dir = new File(TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY + "/modules"));
         File[] files = dir.listFiles(new AddressingFilter());
         TestCase.assertTrue(files.length == 1);
         File file = files[0];
@@ -214,8 +214,8 @@ public class UtilServer {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                        Constants.TESTING_PATH +"/integrationRepo",
-                        Constants.TESTING_PATH + "/integrationRepo/conf/axis2.xml");
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH +"/integrationRepo"),
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "/integrationRepo/conf/axis2.xml"));
         AxisModule axisModule = DeploymentEngine.buildModule(file,
                                                              configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);

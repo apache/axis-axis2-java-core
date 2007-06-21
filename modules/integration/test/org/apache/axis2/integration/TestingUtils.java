@@ -22,6 +22,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 
+import java.io.File;
+import java.io.IOException;
+
 public class TestingUtils {
     public static OMElement createDummyOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -53,4 +56,13 @@ public class TestingUtils {
         TestCase.assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
     }
 
+    public static String prefixBaseDirectory(String path) {
+        String baseDir;
+        try {
+            baseDir = new File(System.getProperty("basedir", ".")).getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return baseDir + "/" + path;
+    }
 }

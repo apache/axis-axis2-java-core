@@ -41,6 +41,7 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,7 +73,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -93,7 +94,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
+        FileDataSource fileDataSource = new FileDataSource(TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg"));
         expectedDH = new DataHandler(fileDataSource);
         expectedTextData = new OMTextImpl(expectedDH, true, fac);
         data.addChild(expectedTextData);
@@ -128,7 +129,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         };
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         sender.setOptions(options);
@@ -155,7 +156,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
 
         ServiceClient sender = new ServiceClient(configContext, null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
@@ -185,7 +186,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
 
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.engageModule(new QName("addressing"));

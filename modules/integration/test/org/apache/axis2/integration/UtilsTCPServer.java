@@ -17,6 +17,7 @@
 package org.apache.axis2.integration;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -58,7 +59,7 @@ public class UtilsTCPServer {
 
             // start tcp server
 
-            File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
+            File file = new File(TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY));
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");

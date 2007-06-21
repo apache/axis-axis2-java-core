@@ -81,6 +81,7 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
         options.setTo(targetEPR);
         options.setCallTransportCleanup(true);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setTimeOutInMilliSeconds(50000);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         ServiceClient sender = new ServiceClient(configContext, null);
@@ -104,8 +105,8 @@ public class EchoRawXMLMultipleSyncTest extends UtilServerBasedTestCase implemen
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo",
-                        "target/test-resources/integrationRepo/conf/axis2.xml");
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo/conf/axis2.xml"));
         ServiceClient sender = new ServiceClient(configContext, null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
         options.setAction("urn:echoOMElement");

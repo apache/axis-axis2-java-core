@@ -36,6 +36,7 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,7 +66,7 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMLoadTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -113,7 +114,7 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            "target/test-resources/integrationRepo", null);
+                            TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);

@@ -85,8 +85,8 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo",
-                        "target/test-resources/integrationRepo/conf/axis2.xml");
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo/conf/axis2.xml"));
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setAction("urn:echoOMElement");

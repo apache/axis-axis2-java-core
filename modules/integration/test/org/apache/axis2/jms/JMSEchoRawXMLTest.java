@@ -44,6 +44,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsJMSServer;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.transport.jms.JMSConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -182,7 +183,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLCompleteSync() throws Exception {
         ConfigurationContext configContext = UtilServer.createClientConfigurationContext(
-                "target/test-resources/jms-enabled-client-repository");
+                TestingUtils.prefixBaseDirectory("target/test-resources/jms-enabled-client-repository"));
 
         OMElement payload = createPayload();
 
@@ -205,8 +206,8 @@ public class JMSEchoRawXMLTest extends TestCase {
     public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        Constants.TESTING_REPOSITORY,
-                        Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY),
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_REPOSITORY + "/conf/axis2.xml"));
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();

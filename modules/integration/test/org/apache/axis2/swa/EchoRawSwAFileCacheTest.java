@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 
 public class EchoRawSwAFileCacheTest extends EchoRawSwATest {
@@ -38,7 +39,7 @@ public class EchoRawSwAFileCacheTest extends EchoRawSwATest {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawSwAFileCacheTest.class),
-                             Constants.TESTING_PATH + "SwA-fileCache-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "SwA-fileCache-enabledRepository"));
     }
 
     protected void setUp() throws Exception {

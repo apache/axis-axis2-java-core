@@ -35,7 +35,7 @@ import org.apache.axis2.util.Utils;
 
 public class EchoRawXMLChunkedTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private static final String CLIENT_HOME = Constants.TESTING_PATH + "chunking-enabledRepository";
+    private static final String CLIENT_HOME = TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "chunking-enabledRepository");
 
     public EchoRawXMLChunkedTest() {
         super(EchoRawXMLChunkedTest.class.getName());

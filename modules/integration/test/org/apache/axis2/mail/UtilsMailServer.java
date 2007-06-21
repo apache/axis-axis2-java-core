@@ -18,6 +18,7 @@ package org.apache.axis2.mail;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.mail.Constants;
@@ -53,7 +54,7 @@ public class UtilsMailServer {
 
     public static ConfigurationContext createServerConfigurationContext() throws Exception {
         if (SERVER_CONFIG_CONTEXT == null) {
-            File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
+            File file = new File(TestingUtils.prefixBaseDirectory(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH));
             TestCase.assertTrue(
                     "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                     file.exists());
@@ -67,7 +68,7 @@ public class UtilsMailServer {
 
     public static ConfigurationContext createClientConfigurationContext() throws Exception {
         if (CLIENT_CONFIG_CONTEXT == null) {
-            File file = new File(MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH);
+            File file = new File(TestingUtils.prefixBaseDirectory(MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH));
             TestCase.assertTrue(
                     "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
                     file.exists());

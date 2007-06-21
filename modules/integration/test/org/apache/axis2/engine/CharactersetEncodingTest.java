@@ -32,6 +32,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +50,7 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(CharactersetEncodingTest.class),
-                             Constants.TESTING_PATH + "chunking-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "chunking-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -84,7 +85,7 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
 
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            Constants.TESTING_PATH + "chunking-enabledRepository", null);
+                            TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "chunking-enabledRepository"), null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

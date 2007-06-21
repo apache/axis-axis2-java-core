@@ -36,6 +36,7 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
@@ -46,7 +47,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
         implements TestConstants {
 
     private OMElement data;
-    private String fileName = "test-resources/mtom/test.jpg";
+    private String fileName = TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg");
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
@@ -58,7 +59,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMCommonsChunkingTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -102,7 +103,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "commons-http-enabledRepository"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);

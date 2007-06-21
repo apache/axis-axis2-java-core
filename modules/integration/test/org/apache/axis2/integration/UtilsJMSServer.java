@@ -57,7 +57,7 @@ public class UtilsJMSServer {
 
     public static synchronized void start() throws Exception {
         // start JMS Listener
-        File file = new File(REPOSITORY_JMS);
+        File file = new File(TestingUtils.prefixBaseDirectory(REPOSITORY_JMS));
         System.out.println(file.getAbsoluteFile());
         if (!file.exists()) {
             throw new Exception("Repository directory does not exist");

@@ -1,6 +1,7 @@
 package org.tempuri;
 
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
+import org.apache.axis2.integration.TestingUtils;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.Diff;
@@ -28,7 +29,7 @@ import java.io.StringReader;
 
 public class BaseDataTypesTest extends XMLTestCase {
 
-    private String wsdlLocation = System.getProperty("basedir", ".") + "/" + "test-resources/BaseDataTypes.wsdl";
+    private String wsdlLocation = TestingUtils.prefixBaseDirectory("test-resources/BaseDataTypes.wsdl");
 
     public void test1() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
