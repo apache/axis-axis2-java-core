@@ -103,6 +103,14 @@
                 <module>true</module>
             </properties>
         </dependency> 
+        <dependency>
+            <groupId>httpcomponents-httpcore</groupId>
+            <artifactId>jakarta-httpcore-nio</artifactId>
+            <version>${jakarta.httpcore.nio.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency> 
         <!--added this to support to keep WSDL information in AxisService-->
          <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
