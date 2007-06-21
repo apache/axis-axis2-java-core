@@ -197,6 +197,17 @@
         </dependency>
     </dependencies>
     <build>
+       <sourceModifications>
+           <sourceModification>
+               <className>Ignore.NIO.SSL</className>
+               <excludes>
+                   <exclude>**/*NIOSSL*.java</exclude>
+                   <exclude>**/SSLServerIOEventDispatch.java</exclude>
+				   <exclude>**/SSLClientIOEventDispatch.java</exclude>
+               </excludes>
+           </sourceModification>
+       </sourceModifications>
+    
 		<resources>
 			<resource>
 				<directory>conf</directory>
