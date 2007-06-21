@@ -232,6 +232,10 @@ public class JMSListener implements TransportListener {
                             Context.SECURITY_CREDENTIALS, (String) p.getValue());
                 } else if (JMSConstants.CONFAC_JNDI_NAME_PARAM.equals(p.getName())) {
                     jmsConFactory.setJndiName((String) p.getValue());
+                } else if (JMSConstants.CONFAC_JNDI_NAME_USER.equals(p.getName())) {
+                    jmsConFactory.setJndiUser((String) p.getValue());
+                } else if (JMSConstants.CONFAC_JNDI_NAME_PASS.equals(p.getName())) {
+                    jmsConFactory.setJndiPass((String) p.getValue());
                 } else if (JMSConstants.DEST_PARAM.equals(p.getName())) {
                     StringTokenizer st =
                             new StringTokenizer((String) p.getValue(), " ,");
