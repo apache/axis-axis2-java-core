@@ -25,6 +25,7 @@ import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.ClusteringContextListener;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
@@ -162,7 +163,7 @@ public class TribesClusterManager implements ClusterManager {
                             Thread.sleep(tts + 5);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e);
                         break;
                     }
                     numberOfTries ++;
@@ -170,6 +171,9 @@ public class TribesClusterManager implements ClusterManager {
                 configurationContext.
                         setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
                                                  "true");
+                ClusteringContextListener contextListener = new ClusteringContextListener();
+                //TODO: May need to set the context listener somewhere to be useful
+                configurationContext.addContextListener(contextListener);
             }
         } catch (ChannelException e) {
             String message = "Error starting Tribes channel";

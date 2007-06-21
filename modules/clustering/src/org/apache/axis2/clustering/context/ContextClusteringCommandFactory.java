@@ -21,6 +21,8 @@ import org.apache.axis2.clustering.context.commands.UpdateConfigurationContextCo
 import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
 import org.apache.axis2.clustering.context.commands.UpdateServiceContextCommand;
 import org.apache.axis2.clustering.context.commands.UpdateServiceGroupContextCommand;
+import org.apache.axis2.clustering.context.commands.DeleteServiceGroupContextCommand;
+import org.apache.axis2.clustering.context.commands.DeleteServiceContextCommand;
 import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
@@ -154,7 +156,8 @@ public final class ContextClusteringCommandFactory {
                     if (prop instanceof Serializable) { // First check whether it is serializable
 
                         // Next check whether it matches an excluded pattern
-                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns))
+                        {
                             log.debug("sending property =" + key + "-" + prop);
                             PropertyDifference diff = new PropertyDifference(key, prop, false);
                             updateCmd.addProperty(diff);
@@ -203,5 +206,27 @@ public final class ContextClusteringCommandFactory {
             }
         }
         return false;
+    }
+
+    public static ContextClusteringCommand getRemoveCommand(AbstractContext abstractContext) {
+        if (abstractContext instanceof ServiceGroupContext) {
+            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
+            DeleteServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
+            cmd.setServiceGroupContextId(sgCtx.getId());
+            
+            return cmd;
+        } else if (abstractContext instanceof ServiceContext) {
+            ServiceContext serviceCtx = (ServiceContext) abstractContext;
+            DeleteServiceContextCommand cmd = new DeleteServiceContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            cmd.setServiceGroupName(serviceCtx.getGroupName());
+            cmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
+            cmd.setServiceName(serviceCtx.getAxisService().getName());
+
+            return cmd;
+        }
+        return null;
     }
 }

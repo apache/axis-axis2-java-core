@@ -70,6 +70,12 @@ public class DefaultContextManager implements ContextManager {
         return cmd.getUniqueId();
     }
 
+    public String removeContext(AbstractContext context) throws ClusteringFault {
+        ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
+        processor.process(cmd);
+        return cmd.getUniqueId();
+    }
+
     public boolean isContextClusterable(AbstractContext context) {
         return (context instanceof ConfigurationContext) ||
                (context instanceof ServiceContext) ||
