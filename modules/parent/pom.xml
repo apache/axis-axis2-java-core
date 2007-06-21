@@ -628,6 +628,16 @@
 				<artifactId>jakarta-httpcore</artifactId>
 				<version>${jakarta.httpcore.version}</version>
 			</dependency>
+                        <dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>jakarta-httpcore-nio</artifactId>
+                                <version>${jakarta.httpcore.version}</version>
+                        </dependency>
+                        <!--<dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>jakarta-httpcore-niossl</artifactId>
+                                <version>${jakarta.httpcore.version}</version>
+                        </dependency>-->
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
