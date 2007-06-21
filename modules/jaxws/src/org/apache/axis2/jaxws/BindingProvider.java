@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws;
 
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
@@ -80,12 +81,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
 
     public Binding getBinding() {
-
-        // TODO support HTTP binding when available
-
-        // The default Binding is the SOAPBinding
         if (binding == null) {
-            binding = new SOAPBinding(endpointDesc);
+            binding = BindingUtils.createBinding(endpointDesc);
+
             // TODO should we allow the ServiceDelegate to figure out the
             // default handlerresolver? Probably yes, since a client app may
             // look for one there.
