@@ -33,7 +33,7 @@
 		<module>modules/addressing</module>
 		<module>modules/codegen</module>
 		<module>modules/fastinfoset</module>
-		<!--<module>modules/integration</module>-->
+		<module>modules/integration</module>
 		<module>modules/java2wsdl</module>
 		<module>modules/jibx</module>
 		<module>modules/json</module>
