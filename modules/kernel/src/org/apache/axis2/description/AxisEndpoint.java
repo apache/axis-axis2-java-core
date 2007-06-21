@@ -110,7 +110,6 @@ public class AxisEndpoint extends AxisDescription {
 
     public boolean isEngaged(String moduleName) {
         throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
-
     }
 
     public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace whttp, String epr) {

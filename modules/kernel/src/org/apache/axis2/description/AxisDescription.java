@@ -18,6 +18,8 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collection;
+import java.util.Map;
 
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
@@ -42,6 +45,8 @@ public abstract class AxisDescription implements ParameterInclude,
     private PolicyInclude policyInclude = null;
 
     private HashMap children;
+
+    protected Map engagedModules;
 
     // Holds the documentation details for each element
     private String documentation;
@@ -99,6 +104,14 @@ public abstract class AxisDescription implements ParameterInclude,
             return null;
         }
         return param.getValue();
+    }
+
+    public boolean isParameterTrue(String name) {
+        Parameter param = getParameter(name);
+        if (param == null) {
+            return false;
+        }
+        return JavaUtils.isTrue(param.getValue());
     }
 
     public ArrayList getParameters() {
@@ -397,12 +410,74 @@ public abstract class AxisDescription implements ParameterInclude,
      * Engage a Module at this level
      *
      * @param axisModule the Module to engage
+     * @throws AxisFault if there's a problem engaging
      */
-    public abstract void engageModule(AxisModule axisModule) throws AxisFault;
+    public void engageModule(AxisModule axisModule) throws AxisFault {
+        engageModule(axisModule, this);
+    }
 
-    public abstract boolean isEngaged(String moduleName);
+    /**
+     * Engage a Module at this level, keeping track of which level the engage was originally
+     * called from.  This is meant for internal use only.
+     *
+     * @param axisModule module to engage
+     * @param source the AxisDescription which originally called engageModule()
+     * @throws AxisFault if there's a problem engaging
+     */
+    public void engageModule(AxisModule axisModule, AxisDescription source) throws AxisFault {
+        if (engagedModules == null) engagedModules = new HashMap();
+        String moduleName = axisModule.getName();
+        for (Iterator iterator = engagedModules.values().iterator(); iterator.hasNext();) {
+            String existing = ((AxisModule)iterator.next()).getName();
+            if (!Utils.checkVersion(moduleName, existing)) {
+                throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
+                                                        getClass().getName(),
+                                                        moduleName,
+                                                        existing));
+            }
+        }
 
-//    public Collection getEngagedModules() { return null; }
+        // If we have anything specific to do, let that happen
+        onEngage(axisModule, source);
+
+            engagedModules.put(axisModule.getName(), axisModule);
+    }
+
+    protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
+        // Default version does nothing, feel free to override
+    }
+
+    static Collection NULL_MODULES = new ArrayList(0);
+    public Collection getEngagedModules() {
+        return engagedModules == null ? NULL_MODULES : engagedModules.values();
+    }
+
+    /**
+     * Check if a given module is engaged at this level.
+     *
+     * @param moduleName module to investigate.
+     * @return true if engaged, false if not.
+     * TODO: Handle versions?  isEngaged("addressing") should be true even for versioned modulename...
+     */
+    public boolean isEngaged(String moduleName) {
+        if (engagedModules != null) {
+            return engagedModules.keySet().contains(moduleName);
+        }
+        return false;
+    }
+
+    public void disengageModule(AxisModule module) throws AxisFault {
+        if ((module == null) || (engagedModules == null)) return;
+        String moduleName = module.getName();
+        if (isEngaged(moduleName)) {
+            onDisengage(module);
+            engagedModules.remove(module.getName());
+        }
+    }
+
+    protected void onDisengage(AxisModule module) throws AxisFault {
+        // Base version does nothing
+    }
 
     private Policy getApplicablePolicy(AxisDescription axisDescription) {
 

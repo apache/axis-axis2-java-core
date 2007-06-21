@@ -18,8 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
-import org.apache.neethi.PolicyRegistry;
-import org.apache.neethi.PolicyRegistryImpl;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -1023,7 +1021,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // Check if the action is already set as we don't want to
                 // override it
                 // with the Default Action Pattern
-                ArrayList inputActions = axisOperation.getWsamappingList();
+                ArrayList inputActions = axisOperation.getWSAMappingList();
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
                     action = WSDL11ActionHelper
@@ -1115,7 +1113,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // Check if the action is already set as we don't want to
                 // override it
                 // with the Default Action Pattern
-                ArrayList inputActions = axisOperation.getWsamappingList();
+                ArrayList inputActions = axisOperation.getWSAMappingList();
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
                     action = WSDL11ActionHelper.getActionFromOutputElement(dif,

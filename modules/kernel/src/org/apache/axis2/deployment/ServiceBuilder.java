@@ -309,7 +309,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             for (int i = 0; i < ops.size(); i++) {
                 AxisOperation operationDesc = (AxisOperation) ops.get(i);
-                ArrayList wsamappings = operationDesc.getWsamappingList();
+                ArrayList wsamappings = operationDesc.getWSAMappingList();
                 if (wsamappings == null) {
                     continue;
                 }

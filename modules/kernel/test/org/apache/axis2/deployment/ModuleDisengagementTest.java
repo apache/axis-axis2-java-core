@@ -32,168 +32,184 @@ import java.util.ArrayList;
 */
 
 public class ModuleDisengagementTest extends TestCase {
-    AxisConfiguration er;
+    AxisConfiguration config;
     String serviceName = "testService";
     QName opName = new QName("testOperation");
 
     protected void setUp() throws Exception {
         String filename =
                 AbstractTestCase.basedir + "/test-resources/deployment/moduleDisEngegeRepo";
-        er = ConfigurationContextFactory.
+        config = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
         AxisService testService = new AxisService();
         testService.setName(serviceName);
         AxisOperation testOperation = new InOutAxisOperation();
         testOperation.setName(opName);
         testService.addOperation(testOperation);
-        er.addService(testService);
+
+        testOperation = new InOutAxisOperation();
+        testOperation.setName(new QName("oper2"));
+        testService.addOperation(testOperation);
+        
+        config.addService(testService);
     }
 
-    public void testGloalDisengagement() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+    public void testGlobalDisengagement() throws AxisFault {
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        Phase predisptah;
+        Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
-        assertNotNull(predisptah);
-        assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        phase = (Phase) globalinflow.get(2);
+        assertNotNull(phase);
+        assertEquals(phase.getHandlerCount(), 0);
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        er.engageModule(module.getName());
-        assertEquals(predisptah.getHandlerCount(), 2);
+
+        config.engageModule(module.getName());
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
-        er.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 0);
+
+        config.disengageModule(module);
+        assertEquals(0, phase.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 
     public void testServiceDisengagement() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        Phase predisptah;
+        Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
-        assertNotNull(predisptah);
-        assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        phase = (Phase) globalinflow.get(2);
+        assertNotNull(phase);
+        assertEquals(0, phase.getHandlerCount());
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
+
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        er.engageModule(module.getName());
-        assertEquals(predisptah.getHandlerCount(), 2);
+
+        config.engageModule(module.getName());
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
+
         service.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 
 
-    public void testGlobalChcek() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+    public void testGlobalCheck() throws AxisFault {
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        er.engageModule(module.getName());
-        er.disengageModule(module);
-        er.engageModule(module.getName());
+        config.engageModule(module.getName());
+        config.disengageModule(module);
+        config.engageModule(module.getName());
     }
 
     public void testOperationDisengagement() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        Phase predisptah;
+        Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
-        assertNotNull(predisptah);
-        assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        phase = (Phase) globalinflow.get(2);
+        assertNotNull(phase);
+        assertEquals(phase.getHandlerCount(), 0);
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
-        er.engageModule(module.getName());
-        assertEquals(predisptah.getHandlerCount(), 2);
+
+        config.engageModule(module.getName());
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
+
         operation.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 
-    public void testServiceEnageServiceDisengag() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+    public void testServiceEngageServiceDisengage() throws AxisFault {
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(2);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
+
         service.engageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, predisptah.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
+
         service.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 0);
+        assertEquals(0, predisptah.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 
-    public void testServiceEnageOperationDisengag() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+    public void testServiceEngageOperationDisengage() throws AxisFault {
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        Phase predisptah;
+        Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
-        assertNotNull(predisptah);
-        assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        phase = (Phase) globalinflow.get(2);
+        assertNotNull(phase);
+        assertEquals(phase.getHandlerCount(), 0);
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
         userPhase = (Phase) operation.getRemainingPhasesInFlow().get(1);
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
+
         service.engageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
+
         operation.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 
-    public void testOperationEnageOperationDisengage() throws AxisFault {
-        AxisModule module = er.getModule("testModule");
+    public void testOperationEngageOperationDisengage() throws AxisFault {
+        AxisModule module = config.getModule("testModule");
         assertNotNull(module);
-        Phase predisptah;
+        Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = er.getInFlowPhases();
+        ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
-        assertNotNull(predisptah);
-        assertEquals(predisptah.getHandlerCount(), 0);
-        AxisService service = er.getService(serviceName);
+        phase = (Phase) globalinflow.get(2);
+        assertNotNull(phase);
+        assertEquals(phase.getHandlerCount(), 0);
+        AxisService service = config.getService(serviceName);
         assertNotNull(service);
         AxisOperation operation = service.getOperation(opName);
         assertNotNull(operation);
@@ -201,10 +217,10 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(userPhase);
         assertEquals(0, userPhase.getHandlerCount());
         operation.engageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 2);
+        assertEquals(2, phase.getHandlerCount());
         assertEquals(1, userPhase.getHandlerCount());
         operation.disengageModule(module);
-        assertEquals(predisptah.getHandlerCount(), 0);
+        assertEquals(0, phase.getHandlerCount());
         assertEquals(0, userPhase.getHandlerCount());
     }
 

@@ -68,7 +68,7 @@ public class PhaseResolver {
                                          int flowType) throws PhaseException {
         List phases = new ArrayList();
         Flow flow = null;
-        switch(flowType){
+        switch (flowType) {
             case PhaseMetadata.IN_FLOW : {
                 phases.addAll(axisConfig.getInFlowPhases());
                 phases.addAll(axisOperation.getRemainingPhasesInFlow());
@@ -94,8 +94,9 @@ public class PhaseResolver {
                 break;
             }
         }
-        engageModuleToFlow(flow,phases);
+        engageModuleToFlow(flow, phases);
     }
+
     public void engageModuleToOperation(AxisOperation axisOperation, AxisModule module)
             throws PhaseException {
         for (int type = IN_FLOW; type < OUT_FAULT_FLOW; type++) {

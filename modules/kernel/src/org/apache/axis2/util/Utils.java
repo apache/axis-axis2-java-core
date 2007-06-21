@@ -283,14 +283,14 @@ public class Utils {
     }
 
     /**
-     * Will check whether a given module can be engage or not
-     * if the version mismamathc then thow en exception
+     * 
      * - if he trying to engage the same module then method will returen false
      * - else it will return true
      *
-     * @param deployingModuleName
-     * @param deployedModulename
-     * @throws AxisFault
+     * @param deployingModuleName the module we're currently deploying
+     * @param deployedModulename an existing module
+     * @return true if these are different modules, false if they're the same
+     * @throws AxisFault if two different versions of the same module are deployed
      */
     public static boolean checkVersion(String deployingModuleName,
                                        String deployedModulename) throws AxisFault {
@@ -304,9 +304,10 @@ public class Utils {
                     throw new AxisFault("trying to engage two different module versions " +
                             module1version + " : " + module2version);
                 } else {
-                    return false;
+                    return true;
                 }
-            } else if (module2version == null) {
+            } else if (module2version != null) {
+                // TODO: Check default version?
                 return false;
             }
         }

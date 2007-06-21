@@ -22,7 +22,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.util.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +34,6 @@ public class AxisServiceGroup extends AxisDescription {
     // to store module ref at deploy time parsing
     private ArrayList modulesList = new ArrayList();
 
-    // to store service Group engagedModules name
-    private ArrayList engagedModules;
-
     // to store modeule configuration info
     private HashMap moduleConfigmap;
 
@@ -49,7 +45,6 @@ public class AxisServiceGroup extends AxisDescription {
 
     public AxisServiceGroup() {
         moduleConfigmap = new HashMap();
-        engagedModules = new ArrayList();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -89,7 +84,7 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
-            Iterator modules = this.engagedModules.iterator();
+            Iterator modules = getEngagedModules().iterator();
 
             while (modules.hasNext()) {
                 String moduleName = (String) modules.next();
@@ -110,73 +105,40 @@ public class AxisServiceGroup extends AxisDescription {
 
         service.setLastupdate();
         addChild(service);
+        if (axisConfig != null) {
+            axisConfig.addToAllServicesMap(service);
+        }
     }
 
+    /**
+     *
+     * @param service
+     * @throws Exception
+     * @deprecated please use addService() instead
+     */
     public void addToGroup(AxisService service) throws Exception {
-        if (service == null) {
-            return;
-        }
-        service.setParent(this);
-
-        AxisConfiguration axisConfig = (AxisConfiguration) getParent();
-
-        if (axisConfig != null) {
-            Iterator modules = this.engagedModules.iterator();
-
-            while (modules.hasNext()) {
-                String moduleName = (String) modules.next();
-                AxisModule axisModule = axisConfig.getModule(moduleName);
-
-                if (axisModule != null) {
-                    Module moduleImpl = axisModule.getModule();
-                    if (moduleImpl != null) {
-                        // notyfying module for service engagement
-                        moduleImpl.engageNotify(service);
-                    }
-                    service.engageModule(axisModule);
-                } else {
-                    throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
-                }
-            }
-        }
-        service.setLastupdate();
-        addChild(service);
-        if (axisConfig != null) {
-            axisConfig.addToAllServicesMap(service.getName(), service);
-        }
+        addService(service);
     }
 
-    public void addToengagedModules(String moduleName) {
-        engagedModules.add(moduleName);
-    }
-
-    public void removeFromEngageList(String moduleName) {
-        engagedModules.remove(moduleName);
-    }
-
-    public void engageModule(AxisModule module) throws AxisFault {
-        String moduleName = module.getName();
-        boolean isEngagable;
-        for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
-            String modu = (String) iterator.next();
-            isEngagable = Utils.checkVersion(moduleName, modu);
-            if (!isEngagable) {
-                return;
-            }
-        }
+    /**
+     * When a module gets engaged on a ServiceGroup, we have to engage it for each Service.
+     *
+     * @param module the newly-engaged AxisModule
+     * @param engager
+     * @throws AxisFault if there is a problem
+     */
+    protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
         for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
-            axisService.engageModule(module);
+            axisService.engageModule(module, engager);
         }
-        addToengagedModules(moduleName);
     }
 
-    public void disengageModule(AxisModule module) throws AxisFault {
+    public void onDisengage(AxisModule module) throws AxisFault {
         for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
             axisService.disengageModule(module);
         }
-        removeFromEngageList(module.getName());
     }
 
     public void removeService(String name) throws AxisFault {
@@ -187,14 +149,6 @@ public class AxisServiceGroup extends AxisDescription {
         }
 
         removeChild(name);
-    }
-
-    public AxisConfiguration getAxisDescription() {
-        return (AxisConfiguration) getParent();
-    }
-
-    public ArrayList getEngagedModules() {
-        return engagedModules;
     }
 
     public ModuleConfiguration getModuleConfig(String moduleName) {
@@ -243,23 +197,7 @@ public class AxisServiceGroup extends AxisDescription {
         return this.serviceGroupName;
     }
 
-    public boolean isEngaged(String moduleName) {
-        AxisModule module = getAxisDescription().getModule(moduleName);
-        if (module == null) {
-            return false;
-        }
-
-        for (Iterator engagedModuleItr = engagedModules.iterator();
-             engagedModuleItr.hasNext();) {
-            String axisModule = (String) engagedModuleItr.next();
-            if (axisModule.equals(module.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-        public boolean isFoundWebResources() {
+    public boolean isFoundWebResources() {
         return foundWebResources;
     }
 

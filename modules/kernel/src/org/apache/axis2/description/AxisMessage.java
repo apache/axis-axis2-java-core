@@ -19,11 +19,13 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -51,13 +53,7 @@ public class AxisMessage extends AxisDescription {
     private ArrayList modulerefs;
     private String partName = Java2WSDLConstants.PARAMETERS;
 
-    /**
-     * list of engaged modules
-     */
-    private ArrayList engagedModules = new ArrayList();
-
     // private PolicyInclude policyInclude;
-
 
     public String getMessagePartName() {
 		return messagePartName;
@@ -141,7 +137,7 @@ public class AxisMessage extends AxisDescription {
                 XmlSchemaObjectCollection includes = schema.getIncludes();
                 if (includes != null) {
                     Iterator includesIter = includes.getIterator();
-                    Object object = null;
+                    Object object;
                     while (includesIter.hasNext()) {
                         object = includesIter.next();
                         if (object instanceof XmlSchemaImport) {
@@ -190,46 +186,15 @@ public class AxisMessage extends AxisDescription {
     }
 
     /**
-     *
      * We do not support adding module operations when engaging a module to an AxisMessage
+     * 
      * @param axisModule AxisModule to engage
+     * @param engager
      * @throws AxisFault something went wrong
      */
-    public void engageModule(AxisModule axisModule) throws AxisFault {
-        if (axisModule == null) {
-            return;
-        }
-        Iterator module_itr = engagedModules.iterator();
-        boolean isEngagable;
-        String moduleName = axisModule.getName();
-        while (module_itr.hasNext()) {
-            AxisModule module = (AxisModule) module_itr.next();
-            String modu = module.getName();
-            isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
-            if (!isEngagable) {
-                return ;
-            }
-        }
-
-        Module module = axisModule.getModule();
-        if (module != null) {
-            module.engageNotify(this);
-        }
-        AxisConfiguration axisConfig = getAxisConfiguration();
-        PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
+    public void onEngage(AxisModule axisModule, AxisDescription engager) throws AxisFault {
+        PhaseResolver phaseResolver = new PhaseResolver(getAxisConfiguration());
         phaseResolver.engageModuleToMessage(this, axisModule);
-        engagedModules.add(axisModule);
-    }
-
-    public boolean isEngaged(String moduleName) {
-        Iterator engagedModuleItr = engagedModules.iterator();
-        while (engagedModuleItr.hasNext()) {
-            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().equals(moduleName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public ArrayList getModulerefs() {

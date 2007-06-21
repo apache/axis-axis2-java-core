@@ -48,7 +48,6 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,7 +110,9 @@ public class AxisService extends AxisDescription {
     // Maps httpLocations to corresponding operations. Used to dispatch rest messages.
     private HashMap httpLocationDispatcherMap = null;
 
+    /** Map from String(action URI) -> AxisOperation */
     private HashMap operationsAliasesMap = null;
+
     // Collection of aliases that are invalid for this service because they are duplicated across
     // multiple operations under this service.
     private List invalidOperationsAliases = null;
@@ -119,9 +120,6 @@ public class AxisService extends AxisDescription {
 
     // to store module ref at deploy time parsing
     private ArrayList moduleRefs = null;
-
-    // to store engaged modules
-    private ArrayList engagedModules = null;
 
     // to store the wsdl definition , which is build at the deployment time
     // to keep the time that last update time of the service
@@ -305,7 +303,6 @@ public class AxisService extends AxisDescription {
         httpLocationDispatcherMap = new HashMap();
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
-        engagedModules = new ArrayList();
         schemaList = new ArrayList();
         serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
                 .doPrivileged(new PrivilegedAction() {
@@ -465,32 +462,36 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Adds an operation to a service if a module is required to do so.
+     * Add any control operations defined by a Module to this service.
      *
-     * @param module
+     * @param module the AxisModule which has just been engaged
+     * @throws AxisFault if a problem occurs
      */
-    public void addModuleOperations(AxisModule module) throws AxisFault {
+    void addModuleOperations(AxisModule module) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
+        PhaseResolver phaseResolver = new PhaseResolver(getAxisConfiguration());
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             if (this.getOperation(axisOperation.getName()) == null) {
-                ArrayList wsamappings = axisOperation.getWsamappingList();
+                ArrayList wsamappings = axisOperation.getWSAMappingList();
                 if (wsamappings != null) {
                     for (int j = 0, size = wsamappings.size(); j < size; j++) {
                         String mapping = (String) wsamappings.get(j);
                         mapActionToOperation(mapping, axisOperation);
                     }
                 }
-                // this operation is a control operation.
-                Parameter expose = axisOperation.getParameter(DeploymentConstants.TAG_EXPOSE);
-                if(expose!=null){
-                    if(JavaUtils.isTrue(expose.getValue(), false)){
-                        axisOperation.setControlOperation(true);
-                    }
+                // If we've set the "expose" parameter for this operation, it's normal (non-
+                // control) and therefore it will appear in generated WSDL.  If we haven't,
+                // it's a control operation and will be ignored at WSDL-gen time.
+                if (axisOperation.isParameterTrue(DeploymentConstants.TAG_EXPOSE)) {
+                    axisOperation.setControlOperation(false);
                 } else {
                     axisOperation.setControlOperation(true);
                 }
+
+                phaseResolver.engageModuleToOperation(axisOperation, module);
+
                 this.addOperation(axisOperation);
             }
         }
@@ -563,7 +564,7 @@ public class AxisService extends AxisDescription {
             mapActionToOperation(action, axisOperation);
         }
 
-        ArrayList wsamappings = axisOperation.getWsamappingList();
+        ArrayList wsamappings = axisOperation.getWSAMappingList();
         if (wsamappings != null) {
             for (int j = 0, size = wsamappings.size(); j < size; j++) {
                 String mapping = (String) wsamappings.get(j);
@@ -631,7 +632,7 @@ public class AxisService extends AxisDescription {
         }
         operation.setPolicyInclude(policyInclude);
 
-        operation.setWsamappingList(axisOperation.getWsamappingList());
+        operation.setWsamappingList(axisOperation.getWSAMappingList());
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
         operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
@@ -657,39 +658,18 @@ public class AxisService extends AxisDescription {
      * Engages a module. It is required to use this method.
      *
      * @param axisModule
+     * @param engager
      */
-    public void engageModule(AxisModule axisModule)
+    public void onEngage(AxisModule axisModule, AxisDescription engager)
             throws AxisFault {
-        if (axisModule == null) {
-            throw new AxisFault(Messages.getMessage("modulenf"));
-        }
-        Iterator itr_engageModules = engagedModules.iterator();
-        boolean isEngagable;
-        String moduleName = axisModule.getName();
-        while (itr_engageModules.hasNext()) {
-            AxisModule module = (AxisModule) itr_engageModules.next();
-            String modu = module.getName();
-            isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
-            if (!isEngagable) {
-                return;
-            }
-        }
-
-        Module moduleImpl = axisModule.getModule();
-        if (moduleImpl != null) {
-            // notyfying module for service engagement
-            moduleImpl.engageNotify(this);
-        }
         // adding module operations
         addModuleOperations(axisModule);
 
         Iterator operations = getOperations();
-
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            axisOperation.engageModule(axisModule);
+            axisOperation.engageModule(axisModule, engager);
         }
-        engagedModules.add(axisModule);
     }
 
     /**
@@ -817,13 +797,6 @@ public class AxisService extends AxisDescription {
         }
         schema.setNamespaceContext(map);
         return schema;
-    }
-
-    public AxisConfiguration getAxisConfiguration() {
-        if (getParent() != null) {
-            return (AxisConfiguration) getParent().getParent();
-        }
-        return null;
     }
 
     public void setEPRs(String[] eprs) {
@@ -1063,15 +1036,6 @@ public class AxisService extends AxisDescription {
         }
 
         return operationList;
-    }
-
-    /**
-     * Method getEngagedModules.
-     *
-     * @return Returns Collection.
-     */
-    public Collection getEngagedModules() {
-        return engagedModules;
     }
 
     public URL getFileName() {
@@ -1370,36 +1334,24 @@ public class AxisService extends AxisDescription {
         return exposedTransports.contains(transport);
     }
 
-    public void disengageModule(AxisModule module) {
-        AxisConfiguration axisConfig = getAxisConfiguration();
-        if (axisConfig != null) {
-            PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
-            if (axisConfig.isEngaged(module.getName())) {
-                removeModuleOperations(module);
-                Iterator operations = getChildren();
-                while (operations.hasNext()) {
-                    AxisOperation axisOperation = (AxisOperation) operations.next();
-                    phaseResolver.disengageModuleFromOperationChain(module, axisOperation);
-                    axisOperation.removeFromEngagedModuleList(module);
-                }
-            } else {
-                if (isEngaged(module.getName())) {
-                    phaseResolver.disengageModuleFromGlobalChains(module);
-                    removeModuleOperations(module);
-                    Iterator operations = getChildren();
-                    while (operations.hasNext()) {
-                        AxisOperation axisOperation = (AxisOperation) operations.next();
-                        phaseResolver.disengageModuleFromOperationChain(module, axisOperation);
-                        axisOperation.removeFromEngagedModuleList(module);
-                    }
-                }
-            }
+    public void onDisengage(AxisModule module) throws AxisFault {
+        Iterator operations = getChildren();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            axisOperation.disengageModule(module);
         }
-        engagedModules.remove(module);
+        removeModuleOperations(module);
+        AxisConfiguration config = getAxisConfiguration();
+        if (!config.isEngaged(module.getName())) {
+            PhaseResolver phaseResolver = new PhaseResolver(config);
+            phaseResolver.disengageModuleFromGlobalChains(module);
+        }
     }
 
     /**
-     * To remove module operations added at the time of engagement
+     * Remove any operations which were added by a given module.
+     *
+     * @param module the module in question
      */
     private void removeModuleOperations(AxisModule module) {
         HashMap moduleOerations = module.getOperations();
@@ -1410,21 +1362,6 @@ public class AxisService extends AxisDescription {
                 removeOperation(operation.getName());
             }
         }
-    }
-
-    public boolean isEngaged(String moduleName) {
-        AxisModule module = getAxisConfiguration().getModule(moduleName);
-        if (module == null) {
-            return false;
-        }
-        Iterator engagedModuleItr = engagedModules.iterator();
-        while (engagedModuleItr.hasNext()) {
-            AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().equals(module.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     //#######################################################################################
@@ -1693,7 +1630,7 @@ public class AxisService extends AxisDescription {
         AxisOperation operation = getOperation(opName);
         if (operation != null) {
             removeChild(opName);
-            ArrayList mappingList = operation.getWsamappingList();
+            ArrayList mappingList = operation.getWSAMappingList();
             if (mappingList != null) {
                 for (int i = 0; i < mappingList.size(); i++) {
                     String actionMapping = (String) mappingList.get(i);

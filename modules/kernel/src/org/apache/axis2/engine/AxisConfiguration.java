@@ -84,11 +84,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     private List globalModuleList;
 
-    /**
-     * Field engagedModules
-     */
-    private final ArrayList engagedModules;
-
     private Hashtable faultyModules;
 
     /**
@@ -134,7 +129,6 @@ public class AxisConfiguration extends AxisDescription {
      */
     public AxisConfiguration() {
         moduleConfigmap = new HashMap();
-        engagedModules = new ArrayList();
         globalModuleList = new ArrayList();
         messageReceivers = new HashMap();
         messageBuilders = new HashMap();
@@ -271,11 +265,6 @@ public class AxisConfiguration extends AxisDescription {
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
-            String serviceName = axisService.getName();
-            if (allServices.get(serviceName) != null) {
-                throw new AxisFault(Messages.getMessage("twoservicecannothavesamename",
-                                                        axisService.getName()));
-            }
             if (axisService.getSchematargetNamespace() == null) {
                 axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
@@ -291,17 +280,30 @@ public class AxisConfiguration extends AxisDescription {
                 }
             }
         }
-        Iterator enModule = engagedModules.iterator();
+        Iterator enModule = getEngagedModules().iterator();
         while (enModule.hasNext()) {
             axisServiceGroup.engageModule((AxisModule)enModule.next());
         }
         services = axisServiceGroup.getServices();
+        ArrayList servicesIAdded = new ArrayList();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
 
             Map endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();
-            addToAllServicesMap(serviceName, axisService);
+            try {
+                addToAllServicesMap(axisService);
+            } catch (AxisFault axisFault) {
+                // Whoops, must have been a duplicate!  If we had a problem here, we have to
+                // remove all the ones we added...
+                for (Iterator i = servicesIAdded.iterator(); i.hasNext();) {
+                    AxisService service = (AxisService)i.next();
+                    allServices.remove(service.getName());
+                }
+                // And toss this in case anyone wants it?
+                throw axisFault;
+            }
+            servicesIAdded.add(axisService);
             if (endpoints != null) {
                 Iterator endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
@@ -319,8 +321,18 @@ public class AxisConfiguration extends AxisDescription {
         addChild(axisServiceGroup);
     }
 
-    public void addToAllServicesMap(String serviceName, AxisService axisService) {
-        allServices.put(serviceName, axisService);
+    public void addToAllServicesMap(AxisService axisService) throws AxisFault {
+        String serviceName = axisService.getName();
+        AxisService oldService = (AxisService)allServices.get(serviceName);
+        if (oldService == null) {
+            allServices.put(serviceName, axisService);
+        } else {
+            // If we were already there, that's fine.  If not, fault!
+            if (oldService != axisService) {
+                throw new AxisFault(Messages.getMessage("twoservicecannothavesamename",
+                                                        axisService.getName()));
+            }
+        }
     }
 
     public AxisServiceGroup removeServiceGroup(String serviceGroupName) throws AxisFault {
@@ -423,52 +435,28 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void engageModule(AxisModule module) throws AxisFault {
-        boolean isEngagable;
-        if (module != null) {
-            String moduleName = module.getName();
-            for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
-                AxisModule thisModule = (AxisModule)iterator.next();
-
-                isEngagable = Utils.checkVersion(moduleName, thisModule.getName());
-                if (!isEngagable) {
-                    return;
-                }
-            }
-        } else {
-            throw new AxisFault(Messages.getMessage("refertoinvalidmodule"));
-        }
+    public void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
         Iterator servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups
-                    .next();
-            serviceGroup.engageModule(module);
+            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
+            serviceGroup.engageModule(module, engager);
         }
-        engagedModules.add(module);
     }
 
     /**
      * To dis-engage a module from the system. This will remove all the handlers
      * belonging to this module from all the handler chains.
      *
-     * @param module
+     * @param module module to disengage
      */
-    public void disengageModule(AxisModule module) {
-        if (module != null && isEngaged(module.getName())) {
-            PhaseResolver phaseResolver = new PhaseResolver(this);
-            phaseResolver.disengageModuleFromGlobalChains(module);
-            Iterator serviceItr = getServices().values().iterator();
-            while (serviceItr.hasNext()) {
-                AxisService axisService = (AxisService) serviceItr.next();
-                axisService.disengageModule(module);
-            }
-            Iterator serviceGroups = getServiceGroups();
-            while (serviceGroups.hasNext()) {
-                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups
-                        .next();
-                axisServiceGroup.removeFromEngageList(module.getName());
-            }
-            engagedModules.remove(module);
+    public void onDisengage(AxisModule module) throws AxisFault {
+        PhaseResolver phaseResolver = new PhaseResolver(this);
+        phaseResolver.disengageModuleFromGlobalChains(module);
+
+        Iterator serviceGroups = getServiceGroups();
+        while (serviceGroups.hasNext()) {
+            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
+            axisServiceGroup.disengageModule(module);
         }
     }
 
@@ -532,15 +520,6 @@ public class AxisConfiguration extends AxisDescription {
             serviceGroup.removeService(name);
             log.debug(Messages.getMessage("serviceremoved", name));
         }
-    }
-
-    /**
-     * getEngagedModules() returns a copy of the list of engaged modules
-     *
-     * @return Collection a collection, containing AxisModules
-     */
-    public Collection getEngagedModules() {
-        return (Collection)engagedModules.clone();
     }
 
     /**
@@ -765,18 +744,6 @@ public class AxisConfiguration extends AxisDescription {
 
     // To get all the services in the system
     public HashMap getServices() {
-        Iterator sgs = getServiceGroups();
-
-        while (sgs.hasNext()) {
-            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) sgs.next();
-            Iterator servics = axisServiceGroup.getServices();
-
-            while (servics.hasNext()) {
-                AxisService axisService = (AxisService) servics.next();
-                addToAllServicesMap(axisService.getName(), axisService);
-            }
-        }
-
         return allServices;
     }
 
@@ -805,10 +772,10 @@ public class AxisConfiguration extends AxisDescription {
     public boolean isEngaged(String moduleName) {
         AxisModule module = (AxisModule)allModules.get(moduleName);
         if (module == null) return false;
-        boolean isEngaged = engagedModules.contains(moduleName);
+        boolean isEngaged = super.isEngaged(moduleName);
         if (!isEngaged) {
             AxisModule defaultModule = getDefaultModule(moduleName);
-            isEngaged = engagedModules.contains(defaultModule);
+            isEngaged = engagedModules != null && engagedModules.values().contains(defaultModule);
         }
         return isEngaged;
     }

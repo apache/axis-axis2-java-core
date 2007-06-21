@@ -451,7 +451,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                            ArrayList serviceList,
                                            URL serviceLocation,
                                            AxisConfiguration axisConfig) throws AxisFault {
-        serviceGroup.setParent(axisConfig);
+//        serviceGroup.setParent(axisConfig);
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
 
