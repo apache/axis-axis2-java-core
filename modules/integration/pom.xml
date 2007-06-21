@@ -502,6 +502,8 @@
                         <configuration>
                             <tasks>
                             <property name="addressing_version" value="${version}"/>
+                            <property name="groovy.all.version" value="${groovy.all.version}"/>
+                            <property name="maven.repo.local" value="${user.home}/.m2/repository"/>
 								<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
         	                         dir="." target="build-repos"/>
                             </tasks>
