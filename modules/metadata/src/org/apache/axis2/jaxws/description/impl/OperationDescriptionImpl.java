@@ -18,10 +18,12 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
@@ -205,7 +207,9 @@ class OperationDescriptionImpl
         } else {
             this.axisOperation = createAxisOperation();
         }
-    }
+        // Register understood headers on axisOperation
+        registerMustUnderstandHeaders();
+}
 
     /**
      * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must be
@@ -346,6 +350,8 @@ class OperationDescriptionImpl
             parameterDescriptions = createParameterDescriptions();
             faultDescriptions = createFaultDescriptions();
         }
+        // Register understood headers on axisOperation
+        registerMustUnderstandHeaders();
     }
 
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
@@ -1617,5 +1623,48 @@ class OperationDescriptionImpl
             return string.toString();
         }
         return string.toString();
+    }
+    
+    /** 
+     * Adds a list of SOAP header QNames that are understood by JAXWS for this operation to the
+     * AxisOperation.  This will be used by Axis2 to verify that all headers marked as
+     * mustUnderstand have been or will be processed.
+     * 
+     * Server side headers considered understood [JAXWS 2.0 Sec 10.2.1 page 117]
+     * - SEI method params that are in headers 
+     * - Headers processed by application handlers (TBD)
+     * 
+     * Client side headers considered understood: None
+     *
+     */
+    private void registerMustUnderstandHeaders() {
+        
+        // REVIEW: If client side (return value, OUT or INOUT params) needs to be supported then
+        // this needs to process client and server differently.
+
+        AxisOperation theAxisOperation = getAxisOperation(); 
+        if (theAxisOperation == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("The axis operation is null, so header QNames could not be registered.  OpDesc = " + this);
+            }
+            return;
+        }
+
+        // If any IN or INOUT parameters are in the header, then add their QNames to the list
+        ParameterDescription paramDescs[] = getParameterDescriptions();
+        if (paramDescs != null && paramDescs.length > 0) {
+            for (ParameterDescription paramDesc : paramDescs) {
+                if (paramDesc.isHeader() 
+                        && (paramDesc.getMode() == WebParam.Mode.IN 
+                                || paramDesc.getMode() == WebParam.Mode.INOUT)) {
+                    QName headerQN = new QName(paramDesc.getTargetNamespace(), 
+                                               paramDesc.getParameterName());
+                    theAxisOperation.registerUnderstoodHeaderQName(headerQN);
+                    if (log.isDebugEnabled()) {
+                        log.debug("OpDesc: understoodQName added to AxisOperation (if not null) " + headerQN);
+                    }
+                }
+            }
+        }
     }
 }

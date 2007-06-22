@@ -70,11 +70,29 @@ public class AxisEngine {
 
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
+            QName headerQName = headerBlock.getQName();
 
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
             if (headerBlock.isProcessed() || !headerBlock.getMustUnderstand()) {
                 continue;
+            }
+            // Check if another component, such as the message receiver, has  registered that 
+            // they will process this header
+            AxisOperation axisOperation = msgContext.getAxisOperation();
+            if (axisOperation != null) {
+                ArrayList understoodHeaderList = (ArrayList) axisOperation.getUnderstoodHeaderQNames();
+                if (understoodHeaderList != null && !understoodHeaderList.isEmpty()) {
+                    if (understoodHeaderList.contains(headerQName)) {
+                        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                            log.debug("MustUnderstand header registered as understood on AxisOperation: " + headerQName);
+                        }    
+                        continue;
+                    }
+                }
+            }
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug("MustUnderstand header not processed or registered as understood " + headerQName);
             }
 
             // Oops, throw an appropriate MustUnderstand fault!!

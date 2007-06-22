@@ -59,6 +59,20 @@ public abstract class AxisOperation extends AxisDescription
 
     // to store mepURL
     private String mepURI;
+    // List of Header QNames that have been registered as understood, for example by message receivers.
+    // This list DOES NOT contain QNames for headers understood by handlers (e.g. security or sandesha)
+    // This list is used in the Axis2 Engine checkMustUnderstand processing to identify headers 
+    // marked as mustUnderstand which  have not yet been processed (via dispatch handlers), 
+    // but which will be processed by the message receiver.
+    // REVIEW: (1) This only supports a single list of understood headers; should there be 
+    // different lists for INPUT messages and OUTPUT messages?
+    // (2) This probably needs to support SOAP actors/roles
+    // (3) Strictly speaking, per the SOAP spec, all mustUnderstand checks should be performed
+    // before processing begins on the message.  So, ideally, even the QoSes should register
+    // the headers (and roles) they understand and the mustUnderstand checks should be done before
+    // they are invoked.  There are issues with that, however, in terms of targeting the operation, and
+    // the possible encryption of headers.
+    private ArrayList understoodHeaderQNames = new ArrayList();
 
     private MessageReceiver messageReceiver;
 
@@ -555,4 +569,29 @@ public abstract class AxisOperation extends AxisDescription
         return getChildren();
     }
     
+    /**
+     * Return the list of SOAP header QNames that have been registered as understood by
+     * message receivers, for example.  Note that this list DOES NOT contain the QNames that are
+     * understood by handlers run prior to the message receiver.  This is used in the Axis2 
+     * Engine checkMustUnderstand processing to identify headers marked as mustUnderstand which
+     * have not yet been processed (via dispatch handlers), but which will be processed by
+     * the message receiver.
+     * 
+     * @return ArrayList of handler QNAames registered as understood by the message receiver.
+     */
+    public ArrayList getUnderstoodHeaderQNames() {
+        return understoodHeaderQNames;
+    }
+
+    /**
+     * Add a SOAP header QName to the list of headers understood by this operation.  This is used
+     * by other (non dispatch handler) components such as a message receiver to register that it
+     * will process a header.
+     * @param understoodHeader
+     */
+    public void registerUnderstoodHeaderQName(QName understoodHeader) {
+        if (understoodHeader != null) {
+            understoodHeaderQNames.add(understoodHeader);
+        }
+    }
  }
