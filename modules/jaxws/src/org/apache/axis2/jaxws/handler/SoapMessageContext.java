@@ -18,18 +18,28 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import org.apache.axis2.jaxws.core.MEPContext;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,13 +49,60 @@ import java.util.Set;
  */
 public class SoapMessageContext extends BaseMessageContext implements
         javax.xml.ws.handler.soap.SOAPMessageContext {
-
+    private static final Log log = LogFactory.getLog(SoapMessageContext.class);
     public SoapMessageContext(MessageContext messageCtx) {
         super(messageCtx);
     }
 
     public Object[] getHeaders(QName qname, JAXBContext jaxbcontext, boolean flag) {
-        return null;
+        if(log.isDebugEnabled()){
+            log.debug("Getting all Headers for Qname: "+qname);
+        }
+
+        if(qname == null){
+            if(log.isDebugEnabled()){
+                log.debug("Invalid QName, QName cannot be null");
+            }
+            ExceptionFactory.makeWebServiceException(Messages.getMessage(""));
+        }
+        if(jaxbcontext == null){
+            if(log.isDebugEnabled()){
+                log.debug("Invalid JAXBContext, JAXBContext cannot be null");
+            }
+            ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAPMessageContextErr2"));
+        }
+
+        if(flag == false){
+            //TODO: Implement, In this case we need to only return headers targetted at roles 
+            // currently played by this SOAPNode. 
+
+        }
+        List<Object> list = new ArrayList<Object>();
+        String namespace = qname.getNamespaceURI();
+        String localPart = qname.getLocalPart();
+        BlockFactory blockFactory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        Message m = messageCtx.getMessage();
+        JAXBBlockContext jbc = new JAXBBlockContext(jaxbcontext);
+        if(m.getNumHeaderBlocks()>0){
+            Block hb = m.getHeaderBlock(namespace, localPart, jbc, blockFactory);
+            if(hb!=null){
+                try{
+
+                    Object bo = hb.getBusinessObject(false);
+                    if(bo!=null){
+                        if(log.isDebugEnabled()){
+                            log.debug("Extracted BO from Header Block");
+                        }
+                        list.add(bo);
+                    }
+
+                }catch(XMLStreamException e){
+                    ExceptionFactory.makeWebServiceException(e);
+                }
+            }
+        }
+        return list.toArray(new Object[0]);
+        
     }
 
     public SOAPMessage getMessage() {
