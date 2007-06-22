@@ -246,8 +246,9 @@
         <copy file="../samples/deprecated/groovy/src/sample/groovy/META-INF/services.xml"
                   tofile="target/sample/groovy/META-INF/services.xml"/>
 
-        <copy file="${maven.repo.local}/groovy/groovy-all/${groovy.all.version}/groovy-all-${groovy.all.version}.jar"
-                  tofile="target/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
+	    <copy todir="target/sample/groovy/lib/" flatten="true">
+			<fileset dir="${maven.repo.local}/groovy/" includes="**/groovy-all-${groovy.all.version}.jar"/>
+		</copy>
 
 		<!-- Groovy repository -->
 		<mkdir dir="target/groovyRepo"/>
