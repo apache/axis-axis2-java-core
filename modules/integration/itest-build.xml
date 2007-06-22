@@ -236,7 +236,7 @@
                   tofile="target/sample/groovy/GroovyRcv.groovy"/>
         
         <javac fork="true" destdir="target/classes" debug="on">
-            <classpath refid="maven.runtime.classpath"/>
+            <classpath refid="maven.dependency.classpath"/>
             <src path="../samples/deprecated/groovy/src/sample/groovy"/>
         </javac>
         <copy file="target/classes/sample/groovy/GroovyReceiver.class"
