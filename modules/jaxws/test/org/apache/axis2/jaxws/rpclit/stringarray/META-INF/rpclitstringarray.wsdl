@@ -69,7 +69,7 @@
   </binding>
   <service name="RPCLitStringArrayService">
     <port name="EchoPort" binding="tns:EchoPortBinding">
-      <soap:address location="http://localhost:7777/axis2/services/RPCLitStringArrayService"/>
+      <soap:address location="http://localhost:8080/axis2/services/RPCLitStringArrayService"/>
     </port>
   </service>
 </definitions>
