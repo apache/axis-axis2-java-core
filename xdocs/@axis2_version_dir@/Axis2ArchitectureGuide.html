@@ -9,16 +9,10 @@
 </head>
 
 <body lang="en-US" dir="ltr">
-<h1 align="center">eApache Axis2 Architecture Guide</h1>
+<h1 align="center">Apache Axis2 Architecture Guide</h1>
 
 <p>This document gives an introduction to Axis2's modular architecture with
 explanations on every module.</p>
-
-<p><i>Send your feedback to: <a
-href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>.
-(Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
-prefix subject with [Axis2].</p>
 
 <h2>Contents</h2>
 <ul>
@@ -165,8 +159,8 @@ are as follows:
 
 <p>Axis2 architecture is modular. Therefore, Axis2 Framework is built up of
 core modules that collectively make up the core architecture of Axis2.
-Non-core/other modules are layered on top of this core
-modules/architecture.</p>
+Non-core/other modules are layered on top of these core
+modules.</p>
 <a name="bmcore"></a>
 
 <h3>Core Modules:</h3>
@@ -181,8 +175,8 @@ modules/architecture.</p>
     makes sense to delegate this task to a separate sub-project under the Web
     services project, allowing that sub-project (<a
     href="http://ws.apache.org/commons/axiom/index.html">AXIOM</a> or AXis
-    Object Model) to provide a simple API for SOAP and XML info-set. It will
-    hide the complexities of the efficient XML processing within the
+    Object Model) to provide a simple API for SOAP and XML info-set. It 
+    hides the complexities of efficient XML processing within its
     implementation.</p>
   </li>
   <li><a href="#bmSOAPPM">SOAP Processing Model</a> - This controls the
@@ -215,12 +209,12 @@ modules/architecture.</p>
 <ul>
   <li><a href="#bmWSDL">Code Generation</a> - Axis2 provides a code
     generation tool that generates server side and client side code along
-    with descriptors and a test case. The generated code would simplify the
-    service deployment and the service invocation. This would increase the
+    with descriptors and a test case. The generated code simplifies the
+    service deployment and the service invocation, increasing the
     usability of Axis2.</li>
   <li><p><a href="#bmDB">Data Binding</a> - The basic client API of Axis2
-    lets the users process SOAP at the infoset level, where as data binding
-    extends it to make it more convenient to the users by encapsulating the
+    lets the users process SOAP at the infoset level, whereas data binding
+    extends it to make it more convenient to users by encapsulating the
     infoset layer and providing a programming language specific interface.</p>
   </li>
 </ul>
@@ -240,7 +234,7 @@ height="189" border="0" align="bottom" usemap="#Graphic2Map"></p>
 
 <h2>Information Model</h2>
 
-<p>Information Model has two main hierarchies-Contexts and Descriptions. This
+<p>The Information Model has two main hierarchies--Contexts and Descriptions. This
 model is described in UML notations below.</p>
 
 <p><img src="images/archi-guide/contexts.png" name="Graphic3" align="bottom"
@@ -253,11 +247,11 @@ the given relationship holds between A and B.)</p>
 Description hierarchy represents the static data. This data may be loaded
 from a configuration file that exists throughout the lifetime of Axis2. For
 example, deployed Web services, operations, etc. On the other hand, the
-context hierarchy holds more dynamic information about the things that have
-more than one instance (e.g.Message Context).</p>
+context hierarchy holds more dynamic information about objects that can have
+more than one instance (e.g., Message Contexts).</p>
 
 <p>These two hierarchies create a model that provides the ability to search
-for key value pairs. When the values are searched at a given level, they are
+for key-value pairs. When the values are searched at a given level, they are
 searched while moving up the hierarchy until a match is found. In the
 resulting model, the lower levels override the values in the upper levels.
 For example, when a value is looked up in the Message Context and is not
@@ -266,10 +260,10 @@ The Search is first done up the hierarchy, and if the starting point is a
 Context then it searches in the Description hierarchy as well.</p>
 
 <p>This allows the user to declare and override values, with the result being
-a very flexible configuration model. The flexibility could be the
-<em>Achilles</em> heel for the system as the search is expensive, specially
-for something that does not exist. Yet in the final analysis, developers
-believe that the flexibility would serve better in this instant.</p>
+a very flexible configuration model. This flexibility could be the
+<em>Achilles heel</em> for the system, however, as searches are expensive, especially
+for parameters that turn out not to exist. Yet in the final analysis, the Axis Team
+believes that this flexibility serves developers better overall.</p>
 
 <table width="955" border="1" cellpadding="2" cellspacing="3">
   <col width="112"><col width="371"><col width="103"><col width="336"><tbody>
@@ -287,8 +281,8 @@ believe that the flexibility would serve better in this instant.</p>
       </td>
       <td width="103"><p>Axis Configuration</p>
       </td>
-      <td width="336"><p>Holds all global configurations. Transports, global
-        modules, parameters, and services etc.</p>
+      <td width="336"><p>Holds all global configurations: transports, global
+        modules, parameters, services, etc.</p>
       </td>
     </tr>
     <tr>
@@ -296,7 +290,7 @@ believe that the flexibility would serve better in this instant.</p>
       </td>
       <td width="371"><p>Holds information about a particular usage of the
         respective service group. The life of a Service Group Context starts
-        when a user starts interacting with a service that belong to this
+        when a user starts interacting with a service that belongs to this
         service group. This can be used to share information between services
         (within the same service group) in a single interaction.</p>
       </td>
@@ -324,7 +318,7 @@ believe that the flexibility would serve better in this instant.</p>
       <td width="112"><p>Operation Context</p>
       </td>
       <td width="371"><p>Holds the information about the current MEP
-        instance, maintain the messages in the current MEP etc.</p>
+        instance, maintains the messages in the current MEP etc.</p>
       </td>
       <td width="103"><p>AxisOperation</p>
       </td>
@@ -336,7 +330,7 @@ believe that the flexibility would serve better in this instant.</p>
 
         <p>Message Context</p>
       </td>
-      <td width="371"><p>Holds all the information about the Message
+      <td width="371"><p>Holds all the information about the message
         currently being executed.</p>
       </td>
       <td width="103"><p>AxisMessage</p>
@@ -351,7 +345,7 @@ believe that the flexibility would serve better in this instant.</p>
 
 <h2>XML Processing Model</h2>
 
-<p>As we mentioned above, the XML processing model of Axis2 has become a
+<p>As mentioned above, the XML processing model of Axis2 has become a
 separate sub-project, called <a
 href="http://ws.apache.org/commons/axiom/index.html">Apache Axiom</a>, in the
 Apache Web services project. Please refer to the <a href="OMTutorial.html">OM
@@ -365,16 +359,16 @@ align="bottom" width="755" height="348" border="0"></p>
 
 <p>The architecture identified two basic actions a SOAP processor should
 perform, sending and receiving SOAP messages. The architecture provides two
-Pipes ('Flows'), to perform these two basic actions. The Axis Engine or the
-driver of Axis2 defines two methods send() and receive() to implement these
-two Pipes. The two pipes are named <i><b>In</b> Pipe</i> and <i><b>Out</b>
-Pipe</i>, and the complex Message Exchange Patterns (MEPs) are constructed by
+pipes (or flows) to perform these two basic actions. The Axis Engine or the
+driver of Axis2 defines two methods, send() and receive(), to implement these
+two pipes. The two pipes are named <i><b>In</b> Pipe</i> and <i><b>Out</b>
+Pipe</i>, and complex Message Exchange Patterns (MEPs) are constructed by
 combining these two pipes.</p>
 
 <p>Extensibility of the SOAP processing model is provided through handlers.
 When a SOAP message is being processed, the handlers that are registered will
 be executed. The handlers can be registered in global, service, or operation
-scopes and the final handler chain is calculated combining the handlers from
+scope and the final handler chain is calculated combining the handlers from
 all the scopes.</p>
 
 <p>The handlers act as interceptors and they process parts of the SOAP
@@ -382,7 +376,7 @@ message and provide add-on services. Usually handlers work on the SOAP
 headers, yet they may access or change the SOAP body as well.</p>
 
 <p>When a SOAP message is being sent through the Client API, an <i>Out
-Pipe</i> would begin, the <i>Out Pipe</i> invokes the handlers and end with a
+Pipe</i> activates.  The <i>Out Pipe</i> will invoke the handlers and end with a
 Transport Sender that sends the SOAP message to the target endpoint. The SOAP
 message is received by a Transport Receiver at the target endpoint, which
 reads the SOAP message and starts the <i>In Pipe</i>. The <em>In Pipe</em>
@@ -396,11 +390,11 @@ However, Axis2 always views the SOAP message in terms of processing a single
 message. The combination of the messages are layered on top of that basic
 framework.</p>
 
-<p>The two pipes does not differentiate between the Server and the Client.
+<p>The two pipes do not differentiate between the Server and the Client.
 The SOAP Processing Model handles the complexity and provides two abstract
-pipes to the user. The different areas or the stages of the pipes are given
-names, and according to Axis2 slang, they are named 'phases'. A Handler
-always runs inside a phase, and the phase provides a mechanism to specify the
+pipes to the user. The different areas or the stages of the pipes are
+called 'phases' within Axis2.  A Handler
+always runs inside a specific phase, and the phase provides a mechanism to specify the
 ordering of handlers. Both Pipes have built-in phases, and both define the
 areas for 'User Phases' which can be defined by the user.</p>
 <a name="default"></a>
@@ -446,7 +440,7 @@ happen in the server or in the client.</p>
   <li><strong>Transport Phase</strong> - The handlers are in the phase that
     processes transport specific information such as validating incoming
     messages by looking at various transport headers, adding data into
-    message context, etc.</li>
+    message contexts, etc.</li>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
     handlers in this phase is to populate message context to do the
     dispatching. For example, processing of addressing headers of the SOAP
@@ -457,7 +451,7 @@ happen in the server or in the client.</p>
     destined for.<br>
     The post condition of the dispatch phase (any phase can contain a post
     condition) checks whether a service and an operation were found by the
-    dispatchers. If not, the execution will halt and give a "service not
+    dispatchers. If not, the execution will halt and return a "service not
     found' error.</li>
   <li><strong>User Defined Phases</strong> - Users can engage their custom
     handlers here.</li>
@@ -472,7 +466,7 @@ happen in the server or in the client.</p>
 </ol>
 
 <p>There may be other handlers in any of these phases. Users may use custom
-handlers to override the mechanics in each of these phases.</p>
+handlers to override the processing logic in each of these phases.</p>
 <a name="outgoing"></a>
 
 <h3>Processing of the Outgoing Message</h3>
@@ -612,13 +606,13 @@ interaction.</p>
 <ol>
   <li>Message Exchange Pattern (MEP)</li>
   <li>The behavior of the transport, whether it's One-Way or Two-Way</li>
-  <li>Synchronous/ Asynchronous behavior of the Client API</li>
+  <li>Synchronous/Asynchronous behavior of the Client API</li>
 </ol>
 
 <p>Variations of the three parameters can result in an indefinite number of
 scenarios. Even though Axis2 is built on a core that supports any messaging
-interaction, the developers were compelled to provide in-built support for
-only two most widely used Message Exchange Patterns (MEPs).</p>
+interaction, the developers were compelled to provide built-in support for
+only the two most widely used Message Exchange Patterns (MEPs).</p>
 
 <p>The two supported MEPs are One-Way and the In-Out (Request-Response)
 scenarios in the Client API. The implementation is based on a class called
@@ -629,7 +623,7 @@ Client API supports.</p>
 <h3>One Way Messaging Support</h3>
 
 <p>The One-Way support is provided by the <code>fireAndForget</code> method
-of <code>ServiceClient</code>. For one way invocations, one can use HTTP ,
+of <code>ServiceClient</code>. For one way invocations, one can use HTTP,
 SMTP and TCP transports. In the case of the HTTP transport, the return
 channel is not used, and the HTTP 202 OK is returned in the return
 channel.</p>
@@ -664,7 +658,7 @@ and Transport Receivers. These are accessed via the AxisConfiguration.</p>
 the message. The outgoing transport is decided based on the addressing
 information (wsa:ReplyTo and wsa:FaultTo). If addressing information is not
 available and if the server is trying to respond, then the out going
-transport will be the outputstream of the incoming transport (if it is
+transport will be the output stream of the incoming transport (if it is
 two-way transport).</p>
 
 <p>At the client side, the user is free to specify the transport to be
@@ -691,10 +685,10 @@ message.</p>
     org.apache.axis2.transport.http.SimpleHTTPServer provided by Axis2. The
     transport sender uses commons-httpclient to connect and send the SOAP
     message.</li>
-  <li>TCP - This is the simplest transport, but needs the WS - Addressing
+  <li>TCP - This is the simplest transport, but needs WS-Addressing
     support to be functional.</li>
   <li>SMTP - This works off a single email account. Transport receiver is a
-    thread that checks for emails in fixed time intervals.</li>
+    thread that checks for emails at fixed time intervals.</li>
   <li>JMS</li>
 </ol>
 <a name="bmWSDL" id="bmWSDL"></a>
@@ -715,12 +709,12 @@ describes how this shows up in the architecture of the tool.</p>
 alt="" align="bottom" border="0"></p>
 
 <p>The fact here is that it is the same information that is extracted from
-the WSDL no matter what code is generated. First, an AxisService is populated
+the WSDL no matter what output code is generated. First, an AxisService is populated
 from a WSDL. Then the code generator extracts information from the
 AxisService and creates an XML, which is language independent. This emitted
-XML is then parsed with the relevant XSL to generate code for the relevant
-language. No matter what the output language is, the process is the same
-except for the template that is being used.</p>
+XML is then parsed with the relevant XSL to generate code in the desired
+output language. No matter what the output language is, the process is the same
+except for the XSL template that is used.</p>
 <a name="bmDB" id="bmDB"></a>
 
 <h2>Data Binding</h2>
@@ -753,19 +747,19 @@ border="0"></p>
   <li><strong>JAX-Me</strong> - JaxMe support has been added in a similar
     manner to XMLbeans and serves as another option for the user</li>
   <li><strong>JibX</strong> - This is the most recent addition to the family
-    of databinding extensions, and it is also another option the users have
+    of databinding extensions, and it is also another option users have
     for data binding.</li>
 </ol>
 <a name="serial" id="serial"></a>
 
 <h3>Serialization and De-Serialization of Data bound classes</h3>
 
-<p>AXIOM is based on a StAX API (Streaming API for XML). Xml-beans supports
-StAX API. Data binding in Axis2 is achieved through interfacing the AXIOM
-with the Xml-beans using the StAX API, which is supported by both parties. At
+<p>AXIOM is based on the StAX API (Streaming API for XML). Xml-beans also supports
+this API. Data binding in Axis2 is achieved through interfacing the AXIOM
+with the Xml-beans using the StAX API. At
 the time of code generation, there will be utility methods generated inside
-the stub (or the message receiver) that can de-serialize from AXIOM to data
-bound object and serialize from data bound object to AXIOM. For example, if
+the stub (or the message receiver) that can de-serialize from AXIOM to a data
+bound object and serialize from a data bound object to AXIOM. For example, if
 the WSDL has an operation called "echoString", once the code is generated,
 the following methods will be generated inside the relevant classes.</p>
 <pre>public static

@@ -16,20 +16,13 @@
 <p>This document provides configuration information required for your
 Application Server to run Apache Axis2 to its fullest potential.</p>
 
-<p>Send your feedback or questions to: <a
-href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a>.
-( Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
-prefix subject with [Axis2].</p>
-<a></a>
-
 <h3>WebLogic/ WebSphere</h3>
 
 <p><strong>1. Use exploded configuration to deploy Axis2 WAR</strong></p>
 
 <p>We recommend using the exploded configuration to deploy Axis2 WAR in
 WebLogic and WebSphere application servers to support the hotupdate/
-hotdeployment features in Axis2. However, if you do want to deploy custom
+hotdeployment features in Axis2. However, if you want to deploy custom
 WARs, say in a clustering environment, you need to add two additional files
 into the WEB-INF named "services.list" and "modules.list" under the modules
 and services directory respectively.</p>
@@ -75,13 +68,13 @@ information:</p>
 <p><strong>2. Lack of namespacing on serialised items</strong></p>
 
 <p>BEA WebLogic Server 9.0 comes with its own StAX implementation. This
-results in lack of namespacing on serialised items. In turn, WeLogic server
+results in lack of namespacing on serialised items. In turn, WebLogic server
 (WLS) breaks with AXIOM on the WLS classpath. Hence a filtering classloader
 is required:</p>
 
 <p></p>
 
-<p>Adding the following to weblogic-application.xml should resolve the
+<p>Adding the following to weblogic-application.xml should resolve this
 issue:</p>
 <pre>&lt;prefer-application-packages&gt;
 &lt;package-name&gt;com.ctc.wstx.*&lt;/package-name&gt;
@@ -91,7 +84,7 @@ issue:</p>
 
 <p></p>
 
-<p>Note that the classes - Xerces, StAX API, Woodstox need to be on the
-application classpath</p>
+<p>Note that the libraries listed--Xerces, StAX API, Woodstox--need to be on the
+application classpath.</p>
 </body>
 </html>
