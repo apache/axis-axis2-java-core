@@ -11,6 +11,7 @@ public class JiBXClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -21,8 +22,8 @@ public class JiBXClient{
     /* fire and forget */
     public static void update(StockQuoteServiceStub stub){
         try{
-            stub.update("ABC", new Double(42.35));
-            System.err.println("done");
+            stub.update("CDE", new Double(42.35));
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -32,7 +33,7 @@ public class JiBXClient{
     /* two way call/receive */
     public static void getPrice(StockQuoteServiceStub stub){
         try{
-            System.err.println(stub.getPrice("ABC"));
+            System.err.println(stub.getPrice("CDE"));
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");

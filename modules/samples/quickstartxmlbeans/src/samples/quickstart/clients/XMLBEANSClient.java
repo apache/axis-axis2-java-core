@@ -15,6 +15,7 @@ public class XMLBEANSClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -27,11 +28,11 @@ public class XMLBEANSClient{
         try{
             UpdateDocument reqDoc = UpdateDocument.Factory.newInstance();
             UpdateDocument.Update req = reqDoc.addNewUpdate();
-            req.setSymbol ("ABC");
+            req.setSymbol ("BCD");
             req.setPrice (42.32);
 
             stub.update(reqDoc);
-            System.err.println("done");
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -43,7 +44,7 @@ public class XMLBEANSClient{
         try{
             GetPriceDocument reqDoc = GetPriceDocument.Factory.newInstance();
             GetPriceDocument.GetPrice req = reqDoc.addNewGetPrice();
-            req.setSymbol("ABC");
+            req.setSymbol("BCD");
 
             GetPriceResponseDocument res =
                 stub.getPrice(reqDoc);

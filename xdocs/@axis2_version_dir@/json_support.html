@@ -13,13 +13,6 @@
 P { margin-bottom: 0.08in }
 -->
 
-
-
-
-
-
-
-
         </style>
 </head>
 
@@ -28,14 +21,14 @@ P { margin-bottom: 0.08in }
 
 <p>This document explains the JSON support implementation in Axis2. It
 includes an introduction to JSON, an outline as to why JSON support is useful
-to Axis2 and how to it should be used. Document also provides details on test
+to Axis2 and how it should be used. This document also provides details on test
 cases and samples.</p>
 
 <h3>What is JSON?</h3>
 
 <p><a href="http://www.json.org/">JSON</a> (Java Script Object Notation) is
-another data exchangeable format like XML, but it is more lightweight and
-easily readable. It is based on a subset of JavaScript language. Therefore,
+another data exchangeable format like XML, but more lightweight and
+easily readable. It is based on a subset of the JavaScript language. Therefore,
 JavaScript can understand JSON, and it can make JavaScript objects by using
 JSON strings. JSON is based on key-value pairs and it uses colons to separate
 keys and values. JSON doesn't use end tags, and it uses braces (curly
@@ -69,7 +62,7 @@ string"}}}</font></p>
 
 <p><font size="2">{"foo.root":{"data":"my json string"}}</font></p>
 
-<p>JSON support implementation is a new feature in <a
+<p>JSON support is a new feature in <a
 href="http://ws.apache.org/axis2/">Apache Axis2/Java</a>. It will become a
 crucial improvement in the future with applications like JavaScript Web
 services.</p>
@@ -80,7 +73,7 @@ services.</p>
 stack that delivers incoming messages into target applications. In most
 cases, these messages are SOAP messages. In addition, it is also possible to
 send REST messages through Axis2. Both types of messages use XML as their
-data exchangeable format. So if we can use XML as a format, why not use JSON
+data exchangeable format. So if we can use XML as a format, why use JSON
 as another format?</p>
 
 <p>There are many advantages of implementing JSON support in Axis2. Mainly,
@@ -94,7 +87,7 @@ JSON string can be shipped in a JSONDataSource.</p>
 <p>Other than for that, there are some extra advantages of using JSON in
 comparison to XML. Although the conversation “XML or JSON?” is still a
 hot topic, many people accept the fact that JSON can be passed and built
-easily by machines than in the case of XML. </p>
+more easily by machines than XML. </p>
 
 <p>For more details of this implementation architecture, refer to the article
 <a href="http://wso2.org/library/768">"JSON Support for Apache Axis2"</a></p>
@@ -172,8 +165,8 @@ used in the axis2.xml.</p>
 exact JSON content type that is used by that service, and you have to use
 that content type in your client as well.</p>
 
-<p>HTTP POST method is used as the default to send JSON messages through
-Axis2, if the HTTP method is not set by the user. But if you want to send
+<p>HTTP POST is used as the default method to send JSON messages through
+Axis2, if the HTTP method is not explicitly set by the user. But if you want to send
 JSON in HTTP GET method as a parameter, you can do that by just setting an
 option on the client side.</p>
 
@@ -211,8 +204,8 @@ parameter “output=json”. The Yahoo search service sends the response as a
 the axis2.xml. All the results are shown in a GUI. To run the sample, execute
 the ant script.</p>
 
-<p>These two applications are good examples of using JSON support for Axis2.
-You can understand the architecture of JSON support implementation in Axis2
-by looking at these samples.</p>
+<p>These two applications provide good examples of using JSON within Axis2.
+By reviewing these samples, you will be able to better understand Axis2's 
+JSON support implementation.</p>
 </body>
 </html>
