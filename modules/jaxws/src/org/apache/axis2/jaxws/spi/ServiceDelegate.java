@@ -34,8 +34,10 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -352,7 +354,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor() {
-        return Executors.newFixedThreadPool(20, new JAXWSThreadFactory());
+    	ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
+    			ExecutorFactory.class);
+    	return executorFactory.getExecutorInstance();
     }
 
     private boolean isValidServiceName() {
@@ -482,59 +486,4 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         return classes;
     }
     
-}
-
-/**
- * Factory to create threads in the ThreadPool Executor.  We provide a factory so the threads can be
- * set as daemon threads so that they do not prevent the JVM from exiting normally when the main
- * client thread is finished.
- */
-class JAXWSThreadFactory implements ThreadFactory {
-    private static final Log log = LogFactory.getLog(JAXWSThreadFactory.class);
-    private static int groupNumber = 0;
-    private int threadNumber = 0;
-    // We put the threads into a unique thread group only for ease of identifying them
-    private ThreadGroup threadGroup = null;
-
-    public Thread newThread(final Runnable r) {
-        if (threadGroup == null) {
-            try {
-                threadGroup = (ThreadGroup)AccessController.doPrivileged(
-                        new PrivilegedExceptionAction() {
-                            public Object run() {
-                                return new ThreadGroup(
-                                        "JAX-WS Default Executor Group " + groupNumber++);
-                            }
-                        }
-                );
-            } catch (PrivilegedActionException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception thrown from AccessController: " + e);
-                }
-                throw ExceptionFactory.makeWebServiceException(e.getException());
-            }
-        }
-
-        threadNumber++;
-        Thread returnThread = null;
-        try {
-            returnThread = (Thread)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() {
-                            Thread newThread = new Thread(threadGroup, r);
-                            newThread.setDaemon(true);
-                            return newThread;
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw ExceptionFactory.makeWebServiceException(e.getException());
-        }
-
-        return returnThread;
-    }
-
 }
