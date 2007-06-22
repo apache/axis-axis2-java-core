@@ -302,6 +302,8 @@ public class JAXBUtils {
                 String pkg = it.next();
                 fullList.addAll(getAllClassesFromPackage(pkg, cl));
             }
+            //Lets add all common array classes
+            addCommonArrayClasses(fullList);
             Class[] classArray = fullList.toArray(new Class[0]);
             JAXBContext context = JAXBContext_newInstance(classArray);
             if (context != null) {
@@ -672,6 +674,7 @@ public class JAXBUtils {
                 }
             }
         }
+        
         return classes;
     }
 

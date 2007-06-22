@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.namespace.QName;
@@ -97,6 +98,33 @@ public class XMLRootElementUtil {
         }
 
         return new QName(namespace, name);
+    }
+    
+    /**
+     * @param clazz
+     * @return namespace of root element qname or null if this is not object does not represent a root element
+     */
+    public static String getEnumValue(Enum myEnum){
+		Field f;
+		String value;
+		try {
+			f = myEnum.getClass().getField(myEnum.name());
+			
+			f.setAccessible(true);
+			
+			XmlEnumValue xev = f.getAnnotation(XmlEnumValue.class);
+			if (xev == null){
+				value = f.getName();
+			} else {
+				value = xev.value();
+			}
+		} catch (SecurityException e) {
+			value = null;
+		} catch (NoSuchFieldException e) {
+			value = null;
+		}
+		
+		return value;
     }
 
     /**

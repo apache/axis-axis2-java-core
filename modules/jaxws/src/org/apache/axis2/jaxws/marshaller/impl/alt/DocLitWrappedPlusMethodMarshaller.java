@@ -222,6 +222,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                         Class actualType = pd.getParameterActualType();
                         if (MethodMarshallerUtils.isNotJAXBRootElement(actualType, marshalDesc)) {
                             blkContext.setProcessType(actualType);
+                            blkContext.setIsxmlList(pd.isListType());
                         }
                     }
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blkContext,
@@ -247,7 +248,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 } else {
                     // Header result: Get the value from the headers
                     Element returnElement =
-                            MethodMarshallerUtils.getReturnElement(packages, message, null, true,
+                            MethodMarshallerUtils.getReturnElement(packages, message, null, false, true,
                                                                    operationDesc.getResultTargetNamespace(),
                                                                    operationDesc.getResultPartName(),
                                                                    false);
@@ -379,6 +380,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                             Annotation annos[] = actualType.getAnnotations();
                             if (annos == null || annos.length == 0) {
                                 blkContext.setProcessType(actualType);
+                                blkContext.setIsxmlList(pd.isListType());
                             }
                         }
                     }
@@ -507,8 +509,11 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     Class byJavaType =
                             MethodMarshallerUtils.isNotJAXBRootElement(returnType, marshalDesc) ? returnType : null;
 
-                    MethodMarshallerUtils.toMessage(returnElement, returnType,
-                                                    marshalDesc, m,
+                    MethodMarshallerUtils.toMessage(returnElement, 
+                    								returnType,
+                    								operationDesc.isListType(),
+                                                    marshalDesc,
+                                                    m,
                                                     byJavaType,
                                                     true);
                 }

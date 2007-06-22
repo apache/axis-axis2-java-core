@@ -66,6 +66,7 @@ import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
+import org.apache.axis2.jaxws.rpclit.stringarray.tests.RPCLitStringArrayTests;
 import org.apache.axis2.jaxws.sample.AddNumbersHandlerTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
@@ -199,7 +200,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BindingProviderTests.class);
         // Commented due to test failure...
 //        suite.addTestSuite(StringListTests.class);
-        
+        suite.addTestSuite(RPCLitStringArrayTests.class);
         // ------ Endpoint Tests ------
         suite.addTestSuite(BasicEndpointTests.class);
 
