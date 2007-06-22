@@ -14,10 +14,10 @@
 
 <p>The EJB message receiver allows one to access stateless session EJBs
 (Enterprise JavaBeans) through Web services. The example used in this guide
-illustrates how to use EJB provider that ships with axis2 to access EJBs
-deployed on a J2EE server such as Geronimo or Jboss.</p>
+illustrates how to use the EJB provider that ships with Axis2 to access EJBs
+deployed on a J2EE server such as Geronimo or JBoss.</p>
 
-<p>This example explains how to use Geronimo 1.1 and Jboss 4.0.4.GA as
+<p>This example explains how to use Geronimo 1.1 and JBoss 4.0.4.GA as
 application server. </p>
 
 <p>The following steps will take you through the example through which we
@@ -25,7 +25,7 @@ will explain how to use an EJB provider in Axis2</p>
 
 <h2>1. Creating a Simple Stateless Session EJB</h2>
 
-<p>First, we need to create a stateless session EJB. Use the following files
+<p>First we need to create a stateless session EJB. Use the following files
 to make an EJB for testing:</p>
 <pre>Remote interface (Hello.java)
 package my.ejb;
@@ -41,7 +41,7 @@ public interface Hello extends EJBObject, HelloBusiness {
 import java.rmi.RemoteException;
 
 public interface HelloBusiness {
-public String sayHello(String name) throws RemoteException;
+   public String sayHello(String name) throws RemoteException;
 }</pre>
 
 <p>2, Remote home interface - HelloHome.java</p>
@@ -51,7 +51,7 @@ import javax.ejb.CreateException;
 import java.rmi.RemoteException;
 
 public interface HelloHome extends EJBHome {
-public Hello create() throws CreateException, RemoteException;
+   public Hello create() throws CreateException, RemoteException;
 }</pre>
 
 <p>3. Bean class - HelloBean.java</p>
@@ -62,17 +62,17 @@ import javax.ejb.EJBException;
 import javax.ejb.CreateException;
 
 public class HelloBean implements SessionBean {
-public void setSessionContext(SessionContext sessionContext) throws
-EJBException {}
+   public void setSessionContext(SessionContext sessionContext) throws
+      EJBException {}
 
-public void ejbRemove() throws EJBException {}
-public void ejbActivate() throws EJBException {}
-public void ejbPassivate() throws EJBException {}
-public void ejbCreate() throws CreateException {}
-public String sayHello(String name) {
+   public void ejbRemove() throws EJBException {}
+   public void ejbActivate() throws EJBException {}
+   public void ejbPassivate() throws EJBException {}
+   public void ejbCreate() throws CreateException {}
 
-    return "Hello " + name + ", Have a nice day!";
-    }
+   public String sayHello(String name) {
+      return "Hello " + name + ", Have a nice day!";
+   }
 
 }</pre>
 
@@ -106,7 +106,7 @@ public String sayHello(String name) {
 &lt;/ejb-jar&gt;</pre>
 
 <p>Now we have to write application server specific deployment descriptor(s)
-for the Hello EJB. Following listing shows an example Geronimo/OpenEJB
+for the Hello EJB. The following listing shows an example Geronimo/OpenEJB
 deployment descriptor (openejb-jar.xml)</p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;openejb-jar 
@@ -156,7 +156,7 @@ HelloEJB.jar
              +--HelloHome.class
  </pre>
 
-<p>Deploy HelloEJB.jar on appropriate J2EE application server.</p>
+<p>Next, deploy the HelloEJB.jar file onto the appropriate J2EE application server.</p>
 
 <h2>Creating the Axis2 Service Archive</h2>
 
@@ -252,14 +252,14 @@ RPCServiceClient serviceClient = new RPCServiceClient();
 Options options = serviceClient.getOptions();
 
 EndpointReference targetEPR = new
-EndpointReference("http://localhost:8080/axis2/services/HelloBeanService");
+   EndpointReference("http://localhost:8080/axis2/services/HelloBeanService");
 
 options.setTo(targetEPR);
 QName hello = new QName("http://ejb.my/xsd", "sayHello");
 Object[] helloArgs = new Object[] {"John"};
 
 System.out.println(serviceClient.invokeBlocking(hello,
-helloArgs).getFirstElement().getText());
+   helloArgs).getFirstElement().getText());
 
 ...</pre>
 </body>
