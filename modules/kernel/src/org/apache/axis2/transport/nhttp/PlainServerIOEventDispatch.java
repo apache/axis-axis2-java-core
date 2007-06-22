@@ -27,7 +27,7 @@ import org.apache.http.params.HttpParams;
 
 public class PlainServerIOEventDispatch implements IOEventDispatch {
 
-    private static final String NHTTP_CONN = "SYNAPSE.NHTTP_CONN";
+    private static final String NHTTP_CONN = "AXIS2.NHTTP_CONN";
     
     private final NHttpServiceHandler handler;
     private final HttpParams params;

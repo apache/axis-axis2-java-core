@@ -188,7 +188,7 @@ public class HttpCoreNIOSender extends AbstractHandler implements TransportSende
                 cfg.getProperty(HttpConnectionParams.STALE_CONNECTION_CHECK, 0) == 1)
             .setBooleanParameter(HttpConnectionParams.TCP_NODELAY,
                 cfg.getProperty(HttpConnectionParams.TCP_NODELAY, 1) == 1)
-            .setParameter(HttpProtocolParams.USER_AGENT, "Synapse-HttpComponents-NIO");
+            .setParameter(HttpProtocolParams.USER_AGENT, "Axis2-HttpComponents-NIO");
         return params;
     }
 

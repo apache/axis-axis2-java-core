@@ -35,8 +35,8 @@ import org.apache.http.params.HttpParams;
 
 public class SSLClientIOEventDispatch implements IOEventDispatch {
 
-    private static final String NHTTP_CONN = "SYNAPSE.NHTTP_CONN";
-    private static final String SSL_SESSION = "SYNAPSE.SSL_SESSION";
+    private static final String NHTTP_CONN = "AXIS2.NHTTP_CONN";
+    private static final String SSL_SESSION = "AXIS2.SSL_SESSION";
 
     private final NHttpClientHandler handler;
     private final HttpParams params;

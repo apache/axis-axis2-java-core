@@ -118,7 +118,7 @@ public class HttpCoreNIOListener implements TransportListener {
                 cfg.getProperty(HttpConnectionParams.STALE_CONNECTION_CHECK, 0) == 1)
             .setBooleanParameter(HttpConnectionParams.TCP_NODELAY,
                 cfg.getProperty(HttpConnectionParams.TCP_NODELAY, 1) == 1)
-            .setParameter(HttpProtocolParams.ORIGIN_SERVER, "Synapse-HttpComponents-NIO");
+            .setParameter(HttpProtocolParams.ORIGIN_SERVER, "Axis2-HttpComponents-NIO");
         return params;
     }
 

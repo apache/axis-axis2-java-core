@@ -147,6 +147,7 @@ public class ClientWorker implements Runnable {
                 responseMsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                     MessageContext.DEFAULT_CHAR_SET_ENCODING);
             }
+            // TODO: FIXME:
             // workaround for Axis2 TransportUtils.createSOAPMessage() issue, where a response
             // of content type "text/xml" is thought to be REST if !MC.isServerSide(). This
             // question is still under debate and due to the timelines, I am commiting this
