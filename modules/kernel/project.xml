@@ -23,10 +23,11 @@
     <name>Apache Axis 2.0 - Kernel</name>
     <id>axis2-kernel</id>
     <groupId>org.apache.axis2</groupId>
-    <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
+    <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,
+    </description>
 
     <dependencies>
-       <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
@@ -38,7 +39,7 @@
         </dependency>
 
         <!-- external JARs -->
-        
+
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -63,14 +64,14 @@
                 <module>true</module>
             </properties>
         </dependency>
-      <dependency>
-        <groupId>servletapi</groupId>
-        <artifactId>servletapi</artifactId>
-        <version>${servletapi.version}</version>
-        <properties>
-          <module>true</module>
-        </properties>
-      </dependency>
+        <dependency>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>${servletapi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -87,14 +88,14 @@
                 <module>true</module>
             </properties>
         </dependency>
-       <dependency>
-          <groupId>commons-fileupload</groupId>
-          <artifactId>commons-fileupload</artifactId>
-          <version>${commons.fileupload.version}</version>
-          <properties>
-              <module>true</module>
-          </properties>
-       </dependency>      
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons.fileupload.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>httpcomponents-httpcore</groupId>
             <artifactId>jakarta-httpcore</artifactId>
@@ -102,7 +103,7 @@
             <properties>
                 <module>true</module>
             </properties>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>httpcomponents-httpcore</groupId>
             <artifactId>jakarta-httpcore-nio</artifactId>
@@ -110,9 +111,9 @@
             <properties>
                 <module>true</module>
             </properties>
-        </dependency> 
+        </dependency>
         <!--added this to support to keep WSDL information in AxisService-->
-         <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
@@ -157,20 +158,20 @@
                 <module>true</module>
             </properties>
         </dependency>
-        
-	<dependency>
-	    <groupId>jaxen</groupId>
-	    <artifactId>jaxen</artifactId>
-	    <version>${jaxen.version}</version>
-	    <properties>
-	        <module>true</module>
-	    </properties>
-	    <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
-	 </dependency>
-	
-	<!--for java2wsdl generation we use JAM , so there should be a dependency on the annogen jar or-->
+
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>${jaxen.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
+        </dependency>
+
+        <!--for java2wsdl generation we use JAM , so there should be a dependency on the annogen jar or-->
         <!--XML Beans-->
-         <dependency>
+        <dependency>
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
             <version>${annogen.version}</version>
@@ -195,50 +196,55 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>jakarta-httpcore-niossl</artifactId>
+            <version>4.0-alpha4</version>
+        </dependency>
     </dependencies>
     <build>
-       <sourceModifications>
-           <sourceModification>
-               <className>Ignore.NIO.SSL</className>
-               <excludes>
-                   <exclude>**/*NIOSSL*.java</exclude>
-                   <exclude>**/SSLServerIOEventDispatch.java</exclude>
-				   <exclude>**/SSLClientIOEventDispatch.java</exclude>
-               </excludes>
-           </sourceModification>
-       </sourceModifications>
-    
-		<resources>
-			<resource>
-				<directory>conf</directory>
-				<excludes>
-					<exclude>**/*.properties</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src</directory>
-				<includes>
-					<include>**/*.properties</include>
-					<include>**/*.xml</include>
-					<include>**/*.xsl</include>
-				</includes>
-			</resource>
-			<resource>
-      <directory>../../</directory>
-      <targetPath>META-INF</targetPath>
-      <includes>
-        <include>NOTICE.txt</include>
-        <include>LICENSE.txt</include>
-      </includes>
-   </resource>
-		</resources>
-	<unitTest>
-      <resources>
-		<resource>
-		  <targetPath>../test-resources</targetPath>
-	      <directory>test-resources</directory>
-	    </resource>
-	  </resources>
-	</unitTest>
+        <sourceModifications>
+            <sourceModification>
+                <className>Ignore.NIO.SSL</className>
+                <excludes>
+                    <exclude>**/*NIOSSL*.java</exclude>
+                    <exclude>**/SSLServerIOEventDispatch.java</exclude>
+                    <exclude>**/SSLClientIOEventDispatch.java</exclude>
+                </excludes>
+            </sourceModification>
+        </sourceModifications>
+
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.xsl</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+        <unitTest>
+            <resources>
+                <resource>
+                    <targetPath>../test-resources</targetPath>
+                    <directory>test-resources</directory>
+                </resource>
+            </resources>
+        </unitTest>
     </build>
 </project>
