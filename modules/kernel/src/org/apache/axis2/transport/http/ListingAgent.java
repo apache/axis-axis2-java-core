@@ -262,9 +262,20 @@ public class ListingAgent extends AbstractAgent {
                         //user specified no name and there is only one schema
                         //so pump that out
                     } else {
-                        XmlSchema schema = axisService.getSchema(0);
-                        if (schema != null) {
-                            schema.write(new OutputStreamWriter(out, "UTF8"));
+                        ArrayList list = axisService.getSchema();
+                        if (list.size() > 0) {
+                            XmlSchema schema = axisService.getSchema(0);
+                            if (schema != null) {
+                                schema.write(new OutputStreamWriter(out, "UTF8"));
+                                out.flush();
+                                out.close();
+                            }
+                        } else {
+                            res.setContentType("text/xml");
+                            String xsdNotFound = "<error>" +
+                                    "<description>Unable to access schema for this service</description>" +
+                                    "</error>";
+                            out.write(xsdNotFound.getBytes());
                             out.flush();
                             out.close();
                         }
