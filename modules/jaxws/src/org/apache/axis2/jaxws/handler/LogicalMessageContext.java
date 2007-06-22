@@ -40,7 +40,7 @@ public class LogicalMessageContext extends BaseMessageContext implements
      * @see javax.xml.ws.handler.LogicalMessageContext#getMessage()
      */
     public LogicalMessage getMessage() {
-        return new LogicalMessageImpl(messageCtx.getMEPContext().getMessageObject());
+        return new LogicalMessageImpl(messageCtx.getMEPContext());
     }
 
 }
