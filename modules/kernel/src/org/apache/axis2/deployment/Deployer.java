@@ -23,7 +23,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 
 /**
  * This interface is used to provide the custom deployment mechanism , where you
- * can write your owm Deployer to process a particular type and make that to
+ * can write your own Deployer to process a particular type and make that to
  * a service or a module.
  */
 public interface Deployer {
