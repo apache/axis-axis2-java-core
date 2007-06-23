@@ -54,17 +54,23 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     private static Log LOG = LogFactory.getLog(DefaultHttpConnectionManager.class);
 
     private final ConfigurationContext configurationContext;
+
+    /** The thread pool used to execute processors. */
     private final Executor executor;
+
     private final WorkerFactory workerfactory;
+
     private final HttpParams params;
+
+    /** The list of processors. */
+    // XXX: is this list really needed?
     private final List processors;
 
     private HttpFactory httpFactory = null;
 
-    public DefaultHttpConnectionManager(
-            final ConfigurationContext configurationContext,
-            final Executor executor,
-            final WorkerFactory workerfactory,
+
+    public DefaultHttpConnectionManager(final ConfigurationContext configurationContext,
+            final Executor executor, final WorkerFactory workerfactory,
             final HttpParams params) {
         super();
         if (configurationContext == null) {
@@ -86,7 +92,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         this.processors = new LinkedList();
     }
 
-    public DefaultHttpConnectionManager(
+	public DefaultHttpConnectionManager(
             final ConfigurationContext configurationContext,
             final Executor executor,
             final WorkerFactory workerfactory,
@@ -97,6 +103,12 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     }
 
 
+    /**
+     * Removes the destroyed processors.
+     * 
+     * @see IOProcessor#destroy()
+     */
+    //XXX: is this method really needed? Processors are removed as soon as they complete
     private synchronized void cleanup() {
         for (Iterator i = this.processors.iterator(); i.hasNext();) {
             IOProcessor processor = (IOProcessor) i.next();
@@ -106,19 +118,37 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         }
     }
 
+
+    /**
+     * Adds the specified {@linkplain IOProcessor} to the list of processors in 
+     * progress.
+     * 
+     * @param processor The processor to add.
+     * @throws NullPointerException If processor is <code>null</code>.
+     */
     private synchronized void addProcessor(final IOProcessor processor) {
         if (processor == null) {
-            return;
+            throw new NullPointerException("The processor can't be null");
         }
         this.processors.add(processor);
     }
 
-    private synchronized void removeProcessor(final IOProcessor processor) {
+
+    /**
+     * Removes the specified {@linkplain IOProcessor} from the list of
+     * processors.
+     * 
+     * @param processor The processor to remove.
+     * @throws NullPointerException If processor is <code>null</code>.
+     */
+    synchronized void removeProcessor(final IOProcessor processor)
+        throws NullPointerException {
         if (processor == null) {
-            return;
+            throw new NullPointerException("The processor can't be null");
         }
         this.processors.remove(processor);
     }
+
 
     public void process(final AxisHttpConnection conn) {
         if (conn == null) {
@@ -149,12 +179,8 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             responseFactory = new DefaultHttpResponseFactory();
         }
 
-        AxisHttpService httpService = new AxisHttpService(
-                httpProcessor,
-                connStrategy,
-                responseFactory,
-                this.configurationContext,
-                this.workerfactory.newWorker());
+        AxisHttpService httpService = new AxisHttpService(httpProcessor, connStrategy,
+            responseFactory, this.configurationContext, this.workerfactory.newWorker());
         httpService.setParams(this.params);
 
         // Create I/O processor to execute HTTP service
@@ -168,14 +194,12 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             }
 
         };
-        IOProcessor processor = new HttpServiceProcessor(
-                httpService,
-                conn,
-                callback);
+        IOProcessor processor = new HttpServiceProcessor(httpService, conn, callback);
 
         addProcessor(processor);
         this.executor.execute(processor);
     }
+
 
     public synchronized void shutdown() {
         for (int i = 0; i < this.processors.size(); i++) {

@@ -36,41 +36,62 @@ import org.apache.http.HttpException;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpExecutionContext;
 
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicBoolean;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
  * I/O processor intended to process requests and fill in responses.
- *
+ * 
  * @author Chuck Williams
  */
 public class HttpServiceProcessor implements IOProcessor {
 
     private static final Log LOG = LogFactory.getLog(HttpServiceProcessor.class);
 
-    private volatile boolean terminated;
+    /** Counter used to create unique IDs. */
+    private static AtomicLong counter = new AtomicLong(0L);
+
+    private AtomicBoolean terminated;
 
     private final AxisHttpService httpservice;
+
     private final AxisHttpConnection conn;
+
     private final IOProcessorCallback callback;
 
-    public HttpServiceProcessor(
-            final AxisHttpService httpservice,
-            final AxisHttpConnection conn,
-            final IOProcessorCallback callback) {
+    /**
+     * Unique identifier used by {@linkplain #equals(Object)} and
+     * {@linkplain #hashCode()}.
+     * <p>
+     * This field is needed to allow the equals method to work properly when this
+     * HttpServiceProcessor has to be removed from the list of processors.
+     * 
+     * @see DefaultHttpConnectionManager
+     */
+    private final long id;
+
+
+    public HttpServiceProcessor(final AxisHttpService httpservice,
+            final AxisHttpConnection conn, final IOProcessorCallback callback) {
         super();
         this.httpservice = httpservice;
         this.conn = conn;
         this.callback = callback;
-        this.terminated = false;
+        this.terminated = new AtomicBoolean(false);
+
+        id = counter.incrementAndGet();
     }
+
 
     public void run() {
         LOG.debug("New connection thread");
         HttpContext context = new HttpExecutionContext(null);
         try {
-            while (!Thread.interrupted() && !isDestroyed() && this.conn.isOpen()) {
+            while (! Thread.interrupted() && ! isDestroyed() && this.conn.isOpen()) {
                 this.httpservice.handleRequest(this.conn, context);
             }
         } catch (ConnectionClosedException ex) {
@@ -89,30 +110,68 @@ public class HttpServiceProcessor implements IOProcessor {
             }
         } finally {
             destroy();
-            if (this.callback != null) {
-                this.callback.completed(this);
+            if (this.callback == null) {
+                throw new NullPointerException("The callback object can't be null");
             }
+            this.callback.completed(this);
         }
     }
+
 
     public void close() throws IOException {
         this.conn.close();
     }
 
+
     public void destroy() {
-        if (this.terminated) {
-            return;
-        }
-        this.terminated = true;
-        try {
-            this.conn.shutdown();
-        } catch (IOException ex) {
-            LOG.debug("I/O error shutting down connection");
+        if (this.terminated.compareAndSet(false, true)) {
+            try {
+//                this.conn.shutdown();
+                close();
+            } catch (IOException ex) {
+                LOG.debug("I/O error shutting down connection");
+            }
         }
     }
 
+
     public boolean isDestroyed() {
-        return this.terminated;
+        return this.terminated.get();
+    }
+
+
+    // -------------------------------------------------- Methods from Object
+
+    /**
+     * Returns the unique ID of this HttpServiceProcessor.
+     * 
+     * @return The unique ID of this HttpServiceProcessor.
+     */
+    public int hashCode() {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
+
+
+   /**
+    * Indicates whether some other object is "equal to" this one.
+    * 
+    * @return <code>true</code> if this HttpServiceProcessor refere to the same 
+    * object as obj or they have the same {@linkplain #id}, <code>false</code> otherwise.
+    */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final HttpServiceProcessor other = (HttpServiceProcessor) obj;
+        if (id != other.id)
+            return false;
+        return true;
     }
 
 }
