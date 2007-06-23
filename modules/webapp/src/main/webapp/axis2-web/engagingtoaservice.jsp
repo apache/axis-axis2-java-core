@@ -4,7 +4,7 @@
                                                                              java.util.Collection,
                                                                              java.util.HashMap,
                                                                              java.util.Iterator"
-         errorPage="" %>
+         %>
 <%
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

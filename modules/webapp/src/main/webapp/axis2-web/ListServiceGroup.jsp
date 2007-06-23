@@ -4,6 +4,8 @@
 <%@ page import="javax.xml.namespace.QName" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="org.apache.axis2.description.AxisModule" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
  /*
@@ -33,7 +35,7 @@
     while (axisServiceGroupIter.hasNext()) {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisServiceGroupIter.next();
         String groupName = axisServiceGroup.getServiceGroupName();
-        ArrayList modules = axisServiceGroup.getEngagedModules();
+        Collection modules = axisServiceGroup.getEngagedModules();
         Iterator axisServiceIter = axisServiceGroup.getServices();
 %>
 <h2><%=groupName%></h2><ul>
@@ -53,8 +55,9 @@
 %>
 <I>Engaged modules</I><ul>
     <%
-        for (int i = 0; i < modules.size(); i++) {
-            String modulDesc = (String) modules.get(i);
+        for (Iterator iterator = modules.iterator(); iterator.hasNext();) {
+            AxisModule axisOperation = (AxisModule) iterator.next();
+            String modulDesc = axisOperation.getName();
     %>
     <li><%=modulDesc%></li>
     <%

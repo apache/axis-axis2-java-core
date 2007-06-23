@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.AxisModule,
                                                                              org.apache.axis2.description.AxisServiceGroup,
-                                                                             java.util.Collection" errorPage="" %>
+                                                                             java.util.Collection" %>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%

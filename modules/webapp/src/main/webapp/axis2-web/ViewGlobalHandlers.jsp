@@ -31,7 +31,7 @@
                     getAttribute(Constants.GLOBAL_HANDLERS);
              if(axisConfig != null ){
                  ArrayList handlers ;
-                 ArrayList phases = axisConfig.getGlobalInFlow();
+                 ArrayList phases = axisConfig.getInFlowPhases();
                  %>
                  <h3> In Flow Up To and Including Dispatcher </h3>
                  <ul>
@@ -56,7 +56,7 @@
                  %>
                  </ul>
                  <%
-                 phases = axisConfig.getInFaultFlow();
+                 phases = axisConfig.getInFaultFlowPhases();
                  %>
                  <h3> In Fault Flow </h3>
                  <ul>
@@ -82,7 +82,7 @@
                  </ul>
                  <%
 
-                 phases = axisConfig.getGlobalOutPhases();
+                 phases = axisConfig.getOutFlowPhases();
                  %>
                  <h3> Out Flow </h3>
                  <ul>
@@ -107,7 +107,7 @@
                  %>
                  </ul>
                  <%
-                 phases = axisConfig.getOutFaultFlow();
+                 phases = axisConfig.getOutFaultFlowPhases();
                  %>
                  <h3> Out Fault Flow </h3>
                  <ul>
