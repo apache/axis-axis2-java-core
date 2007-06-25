@@ -18,13 +18,10 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * 
@@ -319,7 +316,7 @@ class DescriptionBuilderUtils {
         if (classLoader != null) {
             // Use the specified classloader to load the class.
             try {
-                returnClass = forName(classToLoad, false, classLoader);
+                returnClass = ClassLoaderUtils.forName(classToLoad, false, classLoader);
             }
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
             //does not extend Exception, so lets catch everything that extends Throwable
@@ -332,13 +329,13 @@ class DescriptionBuilderUtils {
         } else {
             //Use the thread context class loader to load the class.
             try {
-                returnClass = forName(classToLoad, false,
-                                   getContextClassLoader());
+                returnClass = ClassLoaderUtils.forName(classToLoad, false,
+                                                       ClassLoaderUtils.getContextClassLoader());
             }
             catch (Throwable ex) {
                 //Use the default classloader to load the class.
                 try {
-                    returnClass = forName(classToLoad);
+                    returnClass = ClassLoaderUtils.forName(classToLoad);
                 }
                 //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
                 //does not extend Exception
@@ -352,78 +349,4 @@ class DescriptionBuilderUtils {
         return returnClass;
     }
 
-    /** @return ClassLoader */
-    private static ClassLoader getContextClassLoader() {
-        // NOTE: This method must remain private because it uses AccessController
-        ClassLoader cl = null;
-        try {
-            cl = (ClassLoader)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw ExceptionFactory.makeWebServiceException(e.getException());
-        }
-
-        return cl;
-    }
-
-    /**
-     * Return the class for this name
-     *
-     * @return Class
-     */
-    private static Class forName(final String className, final boolean initialize,
-                                 final ClassLoader classloader) throws ClassNotFoundException {
-        // NOTE: This method must remain private because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
-
-    /**
-     * Return the class for this name
-     *
-     * @return Class
-     */
-    private static Class forName(final String className) throws ClassNotFoundException {
-        // NOTE: This method must remain private because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
 }

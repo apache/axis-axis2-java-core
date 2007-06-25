@@ -18,6 +18,31 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.InputStream;
+import java.security.PrivilegedAction;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import javax.jws.HandlerChain;
+import javax.jws.WebService;
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPBinding;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.SOAPBinding;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -42,39 +67,11 @@ import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.http.HTTPBinding;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
-import java.io.InputStream;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 /** @see ../EndpointDescription */
 /*
@@ -519,8 +516,8 @@ class EndpointDescriptionImpl
                 } else {
                     try {
                         // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
-                        seiClass = forName(seiClassName, false,
-                                           getContextClassLoader());
+                        seiClass = ClassLoaderUtils.forName(seiClassName, false,
+                                                            ClassLoaderUtils.getContextClassLoader());
                         // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
                         // does not extend Exception, so lets catch everything that extends Throwable
                         // rather than just Exception.
@@ -1621,55 +1618,6 @@ class EndpointDescriptionImpl
             }
         }
         return wsdlComposite;
-    }
-
-    /**
-     * Return the class for this name
-     *
-     * @return Class
-     */
-    private static Class forName(final String className, final boolean initialize,
-                                 final ClassLoader classloader) throws ClassNotFoundException {
-        // NOTE: This method must remain protected because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException)e.getException();
-        }
-
-        return cl;
-    }
-
-    /** @return ClassLoader */
-    private static ClassLoader getContextClassLoader() {
-        // NOTE: This method must remain private because it uses AccessController
-        ClassLoader cl = null;
-        try {
-            cl = (ClassLoader)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (RuntimeException)e.getException();
-        }
-
-        return cl;
     }
 
     public String toString() {
