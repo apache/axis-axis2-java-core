@@ -173,7 +173,7 @@ public abstract class InvocationController {
                 HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
                                                            ic.getHandlers(),
                                                            HandlerChainProcessor.MEP.REQUEST,
-                                                           false);
+                                                           true);
 
         if (success) {
             prepareRequest(request);

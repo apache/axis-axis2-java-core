@@ -390,7 +390,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             opDesc = opDesc.getSyncOperation();
         }
         if (msg != null && msg.isFault()) {
-            Object object = MethodMarshallerFactory.getMarshaller(opDesc, false)
+            Object object = MethodMarshallerFactory.getMarshaller(opDesc, true)
                     .demarshalFaultResponse(msg, opDesc);
             if (log.isDebugEnabled() && object != null) {
                 log.debug("A fault was found and processed.");
