@@ -17,6 +17,8 @@ package org.apache.axis2.engine;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.dispatchers.RequestURIBasedOperationDispatcher;
+import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
+import org.apache.axis2.dispatchers.RequestURIBasedDispatcher;
 import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
 
