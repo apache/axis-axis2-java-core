@@ -16,17 +16,13 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
-import javax.xml.ws.WebServiceException;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
-import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,7 +87,7 @@ public abstract class InvocationController {
         MessageContext request = ic.getRequestMessageContext();
         MessageContext response = null;
 
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
 
         // Invoke outbound handlers.
         boolean success =
@@ -134,7 +130,8 @@ public abstract class InvocationController {
                     // we've reversed directions
             response = MessageContextUtils.createMinimalResponseMessageContext(request);
             // since we've reversed directions, the message has "become a
-            // response message" (section 9.3.2.1, footnote superscript 2)
+            // make sure request and response contexts share a single parent
+            response.setMEPContext(request.getMEPContext());
             response.setMessage(request.getMessage());
         }
         ic.setResponseMessageContext(response);
@@ -166,7 +163,7 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
 
         // Invoke outbound handlers.
         boolean success =
@@ -208,7 +205,7 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
 
         Response resp = null;
 
@@ -270,7 +267,7 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
 
         Future<?> future = null;
 

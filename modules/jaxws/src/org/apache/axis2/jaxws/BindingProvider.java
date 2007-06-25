@@ -199,6 +199,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         @Override
         public synchronized Object put(String key, Object value) {
+            // super.put rightly throws a NullPointerException if key or value is null, so don't continue if that's the case
+            if (value == null)
+                return null;
             if (PropertyValidator.validate(key, value)) {
                 return super.put(key, value);
             } else {

@@ -269,10 +269,11 @@ public class HandlerChainProcessor {
                 // it's a response, so we can safely assume that 
                 // ALL the handlers were invoked on the request,
                 // so we need to close ALL of them
-                if (direction.equals(Direction.IN))
+                if (direction.equals(Direction.IN)) {
                     callCloseHandlers(handlers.size() - 1, 0, direction);
-                else
+                } else {
                     callCloseHandlers(0, handlers.size() - 1, direction);
+                }
                 if (savedException != null) {
                     // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw any
                     // other runtime exception --> No response" case.
@@ -488,8 +489,8 @@ public class HandlerChainProcessor {
             throw ExceptionFactory.makeWebServiceException(ex);
         }
 
-	}
-    
+    }
+
 
     private void initContext(Direction direction) {
         soapMC = MessageContextFactory.createSoapMessageContext(mepCtx.getMessageContext());

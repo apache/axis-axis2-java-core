@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.core;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 
@@ -108,8 +107,10 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
     
     public Scope getScope(String s) {
         if (scopes.get(s) == null) {
-            // JAX-WS default 9.4.1
-            return Scope.HANDLER;
+            // JAX-WS default 9.4.1.  However, we try to set the scope for
+            // every incoming property to HANDLER.  If a property is coming from
+            // the axis2 Options bag, we want those to be APPLICATION scoped.
+            return Scope.APPLICATION;
         }
         return scopes.get(s);
     }
@@ -223,24 +224,32 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
     public Object put(String key, Object value) {
         // TODO careful:  endpoints may overwrite pre-existing key/value pairs.
         // Those key/value pairs may already have a scope attached to them, which
-        // means an endpoint could "put" a property and immediately do a "get" which
-        // would return null.
+        // means an endpoint could "put" a property that is wrongly scoped
+        if (scopes.get(key) == null) {  // check the scopes object directly, not through getScope()!!
+            setScope(key, Scope.HANDLER);
+        }
         if (requestMC.getProperties().containsKey(key)) {
-            return requestMC.getProperties().put(key, value);
+            return requestMC.setProperty(key, value);
         }
         if (responseMC != null) {
-            return responseMC.getProperties().put(key, value);
+            return responseMC.setProperty(key, value);
         }
-        return requestMC.getProperties().put(key, value);
+        return requestMC.setProperty(key, value);
     }
 
     public void putAll(Map t) {
         // TODO similar problem as "put"
+        for(Iterator it = t.entrySet().iterator(); it.hasNext();) {
+            Entry<String, Object> entry = (Entry)it.next();
+            if (getScope(entry.getKey()) == null) {
+                setScope(entry.getKey(), Scope.HANDLER);
+            }
+        }
         if (responseMC != null) {
-            responseMC.getProperties().putAll(t);
+            responseMC.setProperties(t);
         }
         else {
-            requestMC.getProperties().putAll(t);
+            requestMC.setProperties(t);
         }
     }
 
@@ -330,7 +339,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
      * 
      * @return
      */
-    private Map<String, Object> getApplicationScopedProperties() {
+    public Map<String, Object> getApplicationScopedProperties() {
         Map<String, Object> tempMap = new HashMap<String, Object>();
         // better performance:
         if (!scopes.containsValue(Scope.APPLICATION)) {

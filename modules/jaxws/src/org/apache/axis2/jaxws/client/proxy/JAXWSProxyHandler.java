@@ -183,11 +183,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // be sure to use whatever handlerresolver is registered on the Service
         requestIC.setHandlers(bnd.getHandlerChain());
 
-        // Before we invoke, copy all of the properties from the client request
-        // context to the MessageContext
-        // TODO: Add the plug point for property migration
-        request.getProperties().putAll(getRequestContext());
-
         requestIC.setRequestMessageContext(request);
         requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
 
@@ -334,7 +329,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         request.setMessage(message);
 
         // TODO: What happens here might be affected by the property migration plugpoint.  
-        request.getProperties().putAll(getRequestContext());
+        request.setProperties(getRequestContext());
 
         if (log.isDebugEnabled()) {
             log.debug("Request MessageContext created successfully.");
