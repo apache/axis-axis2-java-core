@@ -16,38 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.server.endpoint.injection.impl;
+package org.apache.axis2.jaxws.lifecycle;
 
+public class LifecycleException extends Exception {
 
-public class ResourceInjectionException extends Exception {
-
-    /**
-     *
-     */
-    public ResourceInjectionException() {
+    public LifecycleException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /** @param message  */
-    public ResourceInjectionException(String message) {
+    public LifecycleException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * @param message
      * @param cause
      */
-    public ResourceInjectionException(String message, Throwable cause) {
+    public LifecycleException(String message, Throwable cause) {
         super(message, cause);
-        // TODO Auto-generated constructor stub
     }
 
     /** @param cause  */
-    public ResourceInjectionException(Throwable cause) {
+    public LifecycleException(Throwable cause) {
         super(cause);
-        // TODO Auto-generated constructor stub
     }
 
 }

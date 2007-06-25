@@ -18,23 +18,13 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
-import org.apache.axis2.jaxws.runtime.description.injection.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
@@ -43,11 +33,20 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /* 
  * This class should be created by the ServiceDelegate.
@@ -141,7 +140,7 @@ public class HandlerResolverImpl implements HandlerResolver {
         // which is where one might get the portinfo object.  We still have the 
         // passed-in variable, however, due to the spec
 
-        ArrayList handlers = new ArrayList<Handler>();
+        ArrayList<Handler> handlers = new ArrayList<Handler>();
 
 		/*
 		 * TODO: do a better job checking that the return value matches up
@@ -172,21 +171,17 @@ public class HandlerResolverImpl implements HandlerResolver {
                 // or will schema not allow it?
                 String portHandler = handlerType.getHandlerClass().getValue();
                 Handler handler;
-                // instantiate portHandler class
+                              
+                // Create temporary MessageContext to pass information to HandlerLifecycleManager
+                MessageContext ctx = new MessageContext();
+                ctx.setEndpointDescription(endpointDesc);
+                
+                HandlerLifecycleManager hlm = createHandlerlifecycleManager();
+                    
+                //  instantiate portHandler class 
                 try {
-                    // TODO: review: ok to use system classloader?
-                    handler = (Handler) loadClass(portHandler).newInstance();
-                    // TODO: must also do resource injection according to JAXWS 9.3.1
-                    callHandlerPostConstruct(handler, endpointDesc.getServiceDescription());
-                } catch (ClassNotFoundException e) {
-                    // TODO: should we just ignore this problem?
-                    // TODO: NLS log and throw
-                    throw ExceptionFactory.makeWebServiceException(e);
-                } catch (InstantiationException ie) {
-                    // TODO: should we just ignore this problem?
-                    // TODO: NLS log and throw
-                    throw ExceptionFactory.makeWebServiceException(ie);
-                } catch (IllegalAccessException e) {
+                    handler = hlm.createHandlerInstance(ctx, loadClass(portHandler));
+                } catch (Exception e) {
                     // TODO: should we just ignore this problem?
                     // TODO: NLS log and throw
                     throw ExceptionFactory.makeWebServiceException(e);
@@ -215,7 +210,12 @@ public class HandlerResolverImpl implements HandlerResolver {
         return handlers;
     }
 
-
+    private HandlerLifecycleManager createHandlerlifecycleManager() {
+        HandlerLifecycleManagerFactory elmf = (HandlerLifecycleManagerFactory)FactoryRegistry
+                .getFactory(HandlerLifecycleManagerFactory.class);
+        return elmf.createHandlerLifecycleManager();
+    }
+    
     private static Class loadClass(String clazz) throws ClassNotFoundException {
         try {
             return forName(clazz, true, getContextClassLoader());
@@ -274,55 +274,6 @@ public class HandlerResolverImpl implements HandlerResolver {
         return cl;
     }
 
-	private static void callHandlerPostConstruct(Handler handler, ServiceDescription serviceDesc) throws WebServiceException {
-        ResourceInjectionServiceRuntimeDescription resInj = ResourceInjectionServiceRuntimeDescriptionBuilder.create(serviceDesc, handler.getClass());
-        if (resInj != null) {
-            Method pcMethod = resInj.getPostConstructMethod();
-            if (pcMethod != null) {
-                if(log.isDebugEnabled()){
-                    log.debug("Invoking Method with @PostConstruct annotation");
-                }
-                invokeMethod(handler, pcMethod, null);
-                if(log.isDebugEnabled()){
-                    log.debug("Completed invoke on Method with @PostConstruct annotation");
-                }
-            }
-        }
-    }
-
-
-    /*
-      * Helper method to destroy all instantiated Handlers once the runtime
-      * is done with them.
-	 */
-    private static void callHandlerPreDestroy(Handler handler, ServiceDescription serviceDesc) throws WebServiceException {
-        ResourceInjectionServiceRuntimeDescription resInj = ResourceInjectionServiceRuntimeDescriptionBuilder.create(serviceDesc, handler.getClass());
-        if (resInj != null) {
-            Method pcMethod = resInj.getPreDestroyMethod();
-            if (pcMethod != null) {
-                if(log.isDebugEnabled()){
-                    log.debug("Invoking Method with @PostConstruct annotation");
-                }
-                invokeMethod(handler, pcMethod, null);
-                if(log.isDebugEnabled()){
-                    log.debug("Completed invoke on Method with @PostConstruct annotation");
-                }
-            }
-        }
-    }
-    
-    private static void invokeMethod(Handler handlerInstance, Method m, Object[] params) throws WebServiceException{
-        try{
-            m.invoke(handlerInstance, params);
-        }catch(InvocationTargetException e){
-            // TODO perhaps a "HandlerLifecycleException" would be better?
-            throw ExceptionFactory.makeWebServiceException(e);
-        }catch(IllegalAccessException e){
-            // TODO perhaps a "HandlerLifecycleException" would be better?
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-    
     private static boolean chainResolvesToPort(HandlerChainType handlerChainType, PortInfo portinfo) {
         
         List<String> protocolBindings = handlerChainType.getProtocolBindings();

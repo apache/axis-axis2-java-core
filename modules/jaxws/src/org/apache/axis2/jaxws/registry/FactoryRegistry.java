@@ -17,6 +17,7 @@
 
 package org.apache.axis2.jaxws.registry;
 
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;
@@ -58,6 +59,7 @@ public class FactoryRegistry {
         table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
         table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
         table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+        table.put(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
         table.put(EndpointDispatcherFactory.class, new EndpointDispatcherFactory());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());

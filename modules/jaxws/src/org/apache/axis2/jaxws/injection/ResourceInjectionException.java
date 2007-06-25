@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.server.endpoint.lifecycle;
+package org.apache.axis2.jaxws.injection;
 
-import org.apache.axis2.jaxws.lifecycle.LifecycleException;
+public class ResourceInjectionException extends Exception {
 
-public class EndpointLifecycleException extends LifecycleException {
-
-    public EndpointLifecycleException() {
+    /**
+     *
+     */
+    public ResourceInjectionException() {
         super();
     }
 
     /** @param message  */
-    public EndpointLifecycleException(String message) {
+    public ResourceInjectionException(String message) {
         super(message);
     }
 
@@ -35,12 +36,12 @@ public class EndpointLifecycleException extends LifecycleException {
      * @param message
      * @param cause
      */
-    public EndpointLifecycleException(String message, Throwable cause) {
+    public ResourceInjectionException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /** @param cause  */
-    public EndpointLifecycleException(Throwable cause) {
+    public ResourceInjectionException(Throwable cause) {
         super(cause);
     }
 

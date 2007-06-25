@@ -16,32 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.server.endpoint.lifecycle;
+package org.apache.axis2.jaxws.handler.lifecycle.factory;
 
-import org.apache.axis2.jaxws.lifecycle.LifecycleException;
+import org.apache.axis2.jaxws.handler.lifecycle.impl.HandlerLifecycleManagerImpl;
 
-public class EndpointLifecycleException extends LifecycleException {
+public class HandlerLifecycleManagerFactory {
 
-    public EndpointLifecycleException() {
-        super();
+    public HandlerLifecycleManagerFactory() {
     }
-
-    /** @param message  */
-    public EndpointLifecycleException(String message) {
-        super(message);
+    
+    public HandlerLifecycleManager createHandlerLifecycleManager() {
+        return new HandlerLifecycleManagerImpl();
     }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public EndpointLifecycleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /** @param cause  */
-    public EndpointLifecycleException(Throwable cause) {
-        super(cause);
-    }
-
 }

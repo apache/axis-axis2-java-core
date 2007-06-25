@@ -16,28 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.server.endpoint.lifecycle;
+package org.apache.axis2.jaxws.handler.lifecycle.factory;
+
+import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 
 /*
- * EndpointLifecycleManager is responsible to invoke lifycycle methods on Endpoint. An Endpoint could be a 
- * Java Bean Endpoint or Provider Endpoint. Lifecycle manager should be invoked with proper Endpoint Object.
+ * HandlerLifecycleManager is responsible to invoke lifycycle methods on Handler.
  */
+public interface HandlerLifecycleManager {
 
-public interface EndpointLifecycleManager {
-
-    /**
-     * EndpointLifecycleManager will create a service instance. It will inject Resources and then call
-     * the lifecycle methods on the service instance.
-     *
-     * @param mc
-     * @param serviceImplClass
-     * @return
-     */
-    public Object createServiceInstance(MessageContext mc, Class serviceImplClass)
+    public Handler createHandlerInstance(MessageContext mc, Class handlerClass)
             throws LifecycleException, ResourceInjectionException;
 
     /*

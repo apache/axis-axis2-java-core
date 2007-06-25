@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.injection;
 
-import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
+import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
