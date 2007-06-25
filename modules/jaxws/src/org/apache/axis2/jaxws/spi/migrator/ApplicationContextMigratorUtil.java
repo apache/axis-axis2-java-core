@@ -54,6 +54,15 @@ public class ApplicationContextMigratorUtil {
             configurationContext.setProperty(contextMigratorListID, migratorList);
         }
 
+        // Check to make sure we haven't already added this migrator to the list.
+        ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+        while (itr.hasNext()) {
+            ApplicationContextMigrator m = itr.next();
+            if (m.getClass().equals(migrator.getClass())) {
+                return;
+            }
+        }
+        
         if (log.isDebugEnabled()) {
             log.debug("Adding ApplicationContextMigrator: " + migrator.getClass().getName());
         }
