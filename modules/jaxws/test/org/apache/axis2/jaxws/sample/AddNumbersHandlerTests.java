@@ -23,14 +23,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.xml.namespace.QName;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
+import javax.xml.ws.Service;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
@@ -89,6 +101,44 @@ public class AddNumbersHandlerTests extends TestCase {
 		}
 	}
     
+    public void testAddNumbersHandlerDispatch() {
+        try {
+            QName serviceName =
+                    new QName("http://org/test/addnumbershandler", "AddNumbersHandlerService");
+            QName portName =
+                    new QName("http://org/test/addnumbershandler", "AddNumbersHandlerPort");
+
+            Service myService = Service.create(serviceName);
+            myService.addPort(portName, null, axisEndpoint);
+            Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
+
+            // set handler chain for binding provider
+            Binding binding = ((BindingProvider) myDispatch).getBinding();
+
+            // create a new list or use the existing one
+            List<Handler> handlers = binding.getHandlerChain();
+        
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
+            binding.setHandlerChain(handlers);
+            
+            //Invoke the Dispatch
+            TestLogger.logger.debug(">> Invoking Async Dispatch");
+            Source response = myDispatch.invoke(createRequestSource());
+            String resString = getString(response);
+            if (!resString.contains("<return>16</return>")) {
+                fail("Response string should contain <return>17</return>, but does not.  The resString was: \"" + resString + "\"");
+            }
+
+            TestLogger.logger.debug("----------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
     /*
      * JAXWS 9.2.1.1 conformance test
      */
@@ -146,7 +196,15 @@ public class AddNumbersHandlerTests extends TestCase {
         }
         TestLogger.logger.debug("----------------------------------");
     }
-    
+
+
+    /**
+     * testAddNumbersClientHandler performs the same tests as testAddNumbersHandler, except
+     * that two client-side handlers are also inserted into the flow.  The inbound AddNumbersClientLogicalHandler
+     * checks that the properties set here in this method (the client app) and the properties set in the
+     * outbound AddNumbersClientProtocolHandler are accessible.  These properties are also checked here in
+     * the client app.  AddNumbersClientLogicalHandler also subtracts 1 from the sum on the inbound flow.
+     */
     public void testAddNumbersClientHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
@@ -295,7 +353,12 @@ public class AddNumbersHandlerTests extends TestCase {
             assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
         }
     }
-    
+
+    /**
+     * test results should be the same as testAddNumbersClientHandler, except that
+     * AddNumbersClientLogicalHandler2 doubles the first param on outbound.  Async, of course.
+     *
+     */
     public void testAddNumbersClientHandlerAsync() {
         try{
             TestLogger.logger.debug("----------------------------------");
@@ -394,7 +457,36 @@ public class AddNumbersHandlerTests extends TestCase {
             handlers.add(new AddNumbersClientProtocolHandler());
             return handlers;
         }
-        
+
     }
     
+    private String getString(Source source) throws Exception {
+        if (source == null) {
+            return null;
+        }
+        StringWriter writer = new StringWriter();
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        Result result = new StreamResult(writer);
+        t.transform(source, result);
+        return writer.getBuffer().toString();
+
+    }
+    
+    /**
+     * Create a Source request to be used by Dispatch<Source>
+     */
+    private Source createRequestSource() {
+
+        String reqString = null;
+
+        String ns = "http://org/test/addnumbershandler";
+        String operation = "addNumbersHandler";
+
+        reqString = "<" + operation + 
+                    " xmlns=\"" + ns + "\">" +
+                    "<arg0>10</arg0><arg1>10</arg1>" +
+                    "</" + operation + ">";
+
+        return new StreamSource(new StringReader(reqString));
+    }
 }
