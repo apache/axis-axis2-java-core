@@ -17,13 +17,10 @@
 
 package org.apache.axis2.transport.mail;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.*;
@@ -33,6 +30,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,9 +41,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Hashtable;
 
 /**
  * This is the implementation for Mail Listener in Axis2. It has the full capability
@@ -412,11 +410,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         String soapAction;
 
                         /* Set the Charactorset Encoding */
-                        if (BuilderUtil.getCharSetEncoding(part.getContentType()) != null) {
+                        String contentType = part.getContentType();
+                        String charSetEncoding = BuilderUtil.getCharSetEncoding(contentType);
+                        if (charSetEncoding != null) {
                             msgContext.setProperty(
                                     org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
-                                    BuilderUtil.getCharSetEncoding(
-                                            part.getContentType()));
+                                    charSetEncoding);
                         } else {
                             msgContext.setProperty(
                                     org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
@@ -437,14 +436,27 @@ public class SimpleMailListener implements Runnable, TransportListener {
                             msgContext.setTo(new EndpointReference(contentDescription));
                         }
 
-                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >
-                            -1) {
+                        if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                             TransportUtils
-                                    .processContentTypeForAction(part.getContentType(), msgContext);
+                                    .processContentTypeForAction(contentType, msgContext);
+                        } else {
+                            // According to the mail sepec, mail transport should support only
+                            // application/soap+xml;
+                            String message = "According to the mail sepec, mail transport " +
+                                             "should support only application/soap+xml";
+                            log.error(message);
+                            throw new AxisFault(message);
+                        }
+
+                        String cte = getMailHeaderFromPart(part, "Content-Transfer-Encoding");
+                        if (!(cte != null && cte.equalsIgnoreCase("base64"))) {
+                            String message = "Processing of Content-Transfer-Encoding faild.";
+                            log.error(message);
+                            throw new AxisFault(message);
                         }
                         InputStream inputStream = part.getInputStream();
                         SOAPEnvelope envelope = TransportUtils
-                                .createSOAPMessage(msgContext, inputStream, part.getContentType());
+                                .createSOAPMessage(msgContext, inputStream, contentType);
                         msgContext.setEnvelope(envelope);
                     }
                 }
