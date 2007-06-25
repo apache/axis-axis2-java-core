@@ -45,7 +45,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     protected ServiceDelegate serviceDelegate;
 
-    private Binding binding;  // force subclasses to use the lazy getter
+    private Binding binding = null;
 
     public BindingProvider(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
         endpointDesc = epDesc;
@@ -70,6 +70,19 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         if (endpointAddress != null) {
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
         }
+        
+        // JAXWS 9.2.1.1 requires that we go ahead and create the binding object
+        // so we can also set the handlerchain
+        if (binding == null) {
+            binding = BindingUtils.createBinding(endpointDesc);
+            
+            // TODO should we allow the ServiceDelegate to figure out the default handlerresolver?  Probably yes, since a client app may look for one there.
+            HandlerResolver handlerResolver =
+                    serviceDelegate.getHandlerResolver() != null ? serviceDelegate.getHandlerResolver()
+                            : new HandlerResolverImpl(endpointDesc);
+            binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
+        }
+
     }
 
     public ServiceDelegate getServiceDelegate() {
@@ -81,17 +94,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
 
     public Binding getBinding() {
-        if (binding == null) {
-            binding = BindingUtils.createBinding(endpointDesc);
-
-            // TODO should we allow the ServiceDelegate to figure out the
-            // default handlerresolver? Probably yes, since a client app may
-            // look for one there.
-            HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver() != null ? serviceDelegate
-                            .getHandlerResolver()
-                            : new HandlerResolverImpl(endpointDesc);
-            binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
-        }
         return binding;
     }
     

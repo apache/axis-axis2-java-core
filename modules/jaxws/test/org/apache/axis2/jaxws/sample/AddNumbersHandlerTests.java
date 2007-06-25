@@ -87,6 +87,37 @@ public class AddNumbersHandlerTests extends TestCase {
             fail(e.getMessage());
 		}
 	}
+    
+    /*
+     * JAXWS 9.2.1.1 conformance test
+     */
+    public void testAddNumbersHandlerResolver() {
+        try {
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            
+            service.setHandlerResolver(new MyHandlerResolver());
+
+            BindingProvider p = (BindingProvider) proxy;
+            
+            /*
+             * despite setting MyHandlerResolver on the service, we should get an empty
+             * list from the getBinding().getHandlerChain() call below.  JAXWS 9.2.1.1 conformance
+             */
+            List<Handler> list = p.getBinding().getHandlerChain();
+            
+            assertTrue("List should be empty.  We've not conformed to JAXWS 9.2.1.1.", list.isEmpty());
+
+            TestLogger.logger.debug("----------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
     // TODO: disabled until handler support is more complete
     public void _testAddNumbersHandlerWithFault() {
@@ -169,12 +200,12 @@ public class AddNumbersHandlerTests extends TestCase {
             TestLogger.logger.debug("test: " + getName());
             
             AddNumbersHandlerService service = new AddNumbersHandlerService();
+            service.setHandlerResolver(new MyHandlerResolver());
             
             AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
             
             BindingProvider p = (BindingProvider)proxy;
             
-            service.setHandlerResolver(new MyHandlerResolver());
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
 

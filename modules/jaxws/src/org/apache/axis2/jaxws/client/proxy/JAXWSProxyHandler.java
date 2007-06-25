@@ -181,8 +181,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
          */
         
         // be sure to use whatever handlerresolver is registered on the Service
-        //HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver();
-        //bnd.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         requestIC.setHandlers(bnd.getHandlerChain());
 
         // Before we invoke, copy all of the properties from the client request
