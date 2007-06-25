@@ -84,22 +84,26 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
-            Iterator modules = getEngagedModules().iterator();
-
-            while (modules.hasNext()) {
-                String moduleName = (String) modules.next();
-                AxisModule axisModule = axisConfig.getModule(moduleName);
-
-                if (axisModule != null) {
-                    Module moduleImpl = axisModule.getModule();
-                    if (moduleImpl != null) {
-                        // notyfying module for service engagement
-                        moduleImpl.engageNotify(service);
+            for (Iterator iterator = getEngagedModules().iterator(); iterator.hasNext();) {
+                Object o = iterator.next();
+                AxisModule axisModule;
+                if (o instanceof AxisModule) {
+                    axisModule = (AxisModule) o;
+                } else if (o instanceof String) { //Should this be checked
+                    String moduleName = (String) o;
+                    axisModule = axisConfig.getModule(moduleName);
+                    if (axisModule == null) {
+                        throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
                     }
-                    service.engageModule(axisModule);
                 } else {
-                    throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
+                    throw new AxisFault(Messages.getMessage("modulenotavailble"));
                 }
+                Module moduleImpl = axisModule.getModule();
+                if (moduleImpl != null) {
+                    // notyfying module for service engagement
+                    moduleImpl.engageNotify(service);
+                }
+                service.engageModule(axisModule);
             }
         }
 
