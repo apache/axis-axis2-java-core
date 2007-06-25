@@ -21,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
@@ -1168,12 +1169,24 @@ public class JavaBeanWriter implements BeanWriter {
      */
     private void parse(Document doc, File outputFile) throws Exception {
         OutputStream outStream = new FileOutputStream(outputFile);
-        XSLTTemplateProcessor.parse(outStream, doc, this.templateCache
-                .newTransformer());
+        XSLTTemplateProcessor.parse(outStream, doc, getTransformer());
         outStream.flush();
         outStream.close();
 
         PrettyPrinter.prettify(outputFile);
+    }
+
+    private Transformer getTransformer() throws TransformerConfigurationException, SchemaCompilationException {
+        try {
+            return this.templateCache
+                    .newTransformer();
+        } catch (Exception e){
+            // Under some peculiar conditions (classloader issues), just scrap the old templateCache,
+            // create a new one and try again.
+            loadTemplate();
+            return this.templateCache
+                    .newTransformer();
+        }
     }
 
     /**
