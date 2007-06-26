@@ -547,7 +547,15 @@ class EndpointDescriptionImpl
                 }
             }
         } else {
-            //TODO: process a WebServiceProvider
+            if (log.isDebugEnabled()) {
+                log.debug("WebServiceProvider without WSDL encountered");
+            }
+            // REVIEW: Currently this is only supported for HTTP Bindings; SOAPBindings
+            //     for providers currently require that there be WSDL.
+            String bindingType = getBindingType();
+            if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+                endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(composite, this);
+            }
         }
     }
 

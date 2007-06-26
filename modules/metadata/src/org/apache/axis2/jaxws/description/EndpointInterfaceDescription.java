@@ -49,6 +49,14 @@ import java.lang.reflect.Method;
  */
 
 public interface EndpointInterfaceDescription {
+    
+    /**
+     * The name of a special operation added to EndpointInterfaceDescriptions for provider 
+     * endpoints that do not specify WSDL, and therefore do not have specific WSDL operations
+     * created. Note that this is currently only supported for HTTP bindings, not for SOAP bindings.
+     */
+    public static String JAXWS_NOWSDL_PROVIDER_OPERATION_NAME = "jaxwsNoWSDLProviderOperation";
+
     public abstract EndpointDescription getEndpointDescription();
 
     public abstract String getTargetNamespace();
