@@ -190,5 +190,18 @@ public interface OperationDescription {
 
     public void setOperationRuntimeDesc(OperationRuntimeDescription ord);
 
+    /**
+     * For JAX-WS client-side async operations, this will return the corresponding sync 
+     * OperationDescription.
+     * 
+     * Note that if this method is used within the metadata layer, it is possible that it will return
+     * null.  That will happen if the metadata layer is constructed from annotations on the SEI 
+     * (not WSDL).  In that case, it is possible that the async methods on the SEI are processed 
+     * before the sync method.  In that case, there will be no sync method yet.  If this method
+     * is called outside the metadata layer, then if the async methods exist, the sync method
+     * should also exist.  
+     * 
+     * @return OperationDescription corresponding to the sync operation, or null (see note above).
+     */
     public OperationDescription getSyncOperation();
 }

@@ -162,7 +162,9 @@ class OperationDescriptionImpl
     private Boolean webResultHeader;
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
-    private OperationDescription syncOperationDescription;
+    // For JAX-WS client async methods, this is the corresponding Sync method; for everything else,
+    // this is "this".
+    private OperationDescription syncOperationDescription = null;
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
@@ -727,37 +729,46 @@ class OperationDescriptionImpl
         return webMethodOperationName;
     }
 
-    //Review:
-    //Adding method to get Sync operation's Operation Description
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.OperationDescription#getSyncOperation()
+     */
     public OperationDescription getSyncOperation() {
-        OperationDescription opDesc = this;
-        if (!isJAXWSAsyncClientMethod()) {
-            return this;
-        }
-        if (this.syncOperationDescription != null) {
-            return syncOperationDescription;
-        }
-        String webMethodAnnoName = getOperationName();
-        String javaMethodName = getJavaMethodName();
-        if (webMethodAnnoName != null && webMethodAnnoName.length() > 0 &&
-                webMethodAnnoName != javaMethodName) {
-            EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
-            if (eid != null) {
-                //searching for opDesc of sync operation.
-                OperationDescription[] ods = null;
-                ods = eid.getOperationForJavaMethod(webMethodAnnoName);
-                if (ods != null) {
-                    for (OperationDescription od : ods) {
-                        if (od.getJavaMethodName().equals(webMethodAnnoName)) {
-                            opDesc = od;
-                            break;
+
+        if (syncOperationDescription != null) {
+            // No need to do anything; the sync operation has already been set and will be
+            // returned below
+        } else if (!isJAXWSAsyncClientMethod()) {
+            // The current OpDesc is not an async operation.  Cache it, then return it below.
+            syncOperationDescription = this;
+        } else {
+            // We haven't found a sync opdesc for this operation yet, so try again.  See the 
+            // comments in the interface declaration for this method on why this might occur.
+            OperationDescription opDesc = null;
+            
+            String webMethodAnnoName = getOperationName();
+            String javaMethodName = getJavaMethodName();
+            if (webMethodAnnoName != null && webMethodAnnoName.length() > 0 &&
+                    webMethodAnnoName != javaMethodName) {
+                EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
+                if (eid != null) {
+                    //searching for opDesc of sync operation.
+                    OperationDescription[] ods = null;
+                    ods = eid.getOperationForJavaMethod(webMethodAnnoName);
+                    if (ods != null) {
+                        for (OperationDescription od : ods) {
+                            if (od.getJavaMethodName().equals(webMethodAnnoName)
+                                    && !od.isJAXWSAsyncClientMethod()) {
+                                opDesc = od;
+                                break;
+                            }
                         }
                     }
                 }
             }
+            // Note that opDesc might still be null
+            syncOperationDescription = opDesc;
         }
-        syncOperationDescription = opDesc;
-        return opDesc;
+        return syncOperationDescription;
     }
 
     public String getAction() {
