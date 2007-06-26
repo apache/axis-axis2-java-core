@@ -105,11 +105,12 @@ public class AxisServiceGroup extends AxisDescription {
                 }
                 service.engageModule(axisModule);
             }
-            service.setLastupdate();
-            addChild(service);
-            if (axisConfig != null) {
-                axisConfig.addToAllServicesMap(service);
-            }
+
+        }
+        service.setLastupdate();
+        addChild(service);
+        if (axisConfig != null) {
+            axisConfig.addToAllServicesMap(service);
         }
     }
 
