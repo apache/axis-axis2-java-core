@@ -331,5 +331,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          */
         public static final String TRANSPORT_INFO_MAP = "TransportInfoMap";
         
+        /**
+         * If this is set to a Boolean 'true' value, then RequestResponseTransport instances will
+         * not be signalled by the Dispatch phase. This is useful for modules that add wish to
+         * send extra messages in the backchannel.
+         */
+        public static final String DISABLE_RESPONSE_ACK = "DisableResponseAck";
+        
     }
 }

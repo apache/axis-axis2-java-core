@@ -37,6 +37,7 @@ import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -358,4 +359,79 @@ public class TransportUtils {
         }
         return messageFormatterProperty;
     }
+    
+    
+        /**
+         * This is a helper method to get the response written flag from the RequestResponseTransport
+         * instance.
+         */
+        public static boolean isResponseWritten(MessageContext messageContext) {
+            RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
+            if (reqResTransport != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found RequestResponseTransport returning isResponseWritten()");
+                }
+                return reqResTransport.isResponseWritten();
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Did not find RequestResponseTransport returning false from get"
+                            + "ResponseWritten()");
+                }
+                return false;
+            }
+        }
+    
+       /**
+         * This is a helper method to set the response written flag on the RequestResponseTransport
+         * instance.
+        */
+       public static void setResponseWritten(MessageContext messageContext, boolean responseWritten) {
+            RequestResponseTransport reqResTransport = getRequestResponseTransport(messageContext);
+            if (reqResTransport != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found RequestResponseTransport setting response written");
+                }
+                reqResTransport.setResponseWritten(responseWritten);
+            } else {
+                if (log.isDebugEnabled()) {
+                   log.debug("Did not find RequestResponseTransport cannot set response written");
+               }
+           }
+       }
+   
+       /**
+        * This is an internal helper method to retrieve the RequestResponseTransport instance
+        * from the MessageContext object. The MessageContext may be the response MessageContext so
+        * in that case we will have to retrieve the request MessageContext from the OperationContext.
+        */
+       private static RequestResponseTransport getRequestResponseTransport(MessageContext messageContext) {
+    	   try {
+    		   // If this is the request MessageContext we should find it directly by the getProperty()
+               // method
+               if (messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL) 
+            		   != null) {
+                   return (RequestResponseTransport) messageContext.getProperty(
+                		   RequestResponseTransport.TRANSPORT_CONTROL);
+               }
+                // If this is the response MessageContext we need to look for the request MessageContext
+        		else if (messageContext.getOperationContext() != null
+        				&& messageContext.getOperationContext()
+                      		.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE) != null) {
+        						return (RequestResponseTransport) messageContext.
+        						getOperationContext().getMessageContext(
+        								WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(
+        										RequestResponseTransport.TRANSPORT_CONTROL);
+        		} 
+        		else {
+        			return null;
+        		} 
+    	   }
+           catch(AxisFault af) {
+           	// probably should not be fatal, so just log the message
+           	String msg = Messages.getMessage("getMessageContextError", af.toString());
+           	log.debug(msg);
+           	return null;
+           }
+    }
+    
 }

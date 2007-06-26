@@ -37,9 +37,10 @@ import org.apache.axis2.transport.RequestResponseTransport;
  */
 public class HttpCoreRequestResponseTransport implements RequestResponseTransport {
 
-    private static final Log log = LogFactory.getLog(HttpCoreRequestResponseTransport.class);
+	private static final Log log = LogFactory.getLog(HttpCoreRequestResponseTransport.class);
     private RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
     private MessageContext msgContext = null;
+    private boolean responseWritten = false;
 
     HttpCoreRequestResponseTransport(MessageContext msgContext) {
         this.msgContext = msgContext;
@@ -66,4 +67,12 @@ public class HttpCoreRequestResponseTransport implements RequestResponseTranspor
 
     public void signalFaultReady(AxisFault fault) {
     }
+    
+    public boolean isResponseWritten() {
+		return responseWritten;
+	}
+
+	public void setResponseWritten(boolean responseWritten) {
+		this.responseWritten = responseWritten;
+	}
 }

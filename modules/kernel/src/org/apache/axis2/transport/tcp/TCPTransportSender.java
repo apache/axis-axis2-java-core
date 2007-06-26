@@ -102,12 +102,8 @@ public class TCPTransportSender extends AbstractHandler implements TransportSend
             }
         }
 
-        // TODO fix this, we do not set the value if the operation context is
-        // not available
-        if (msgContext.getOperationContext() != null) {
-            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
-                                                         Constants.VALUE_TRUE);
-        }
+        TransportUtils.setResponseWritten(msgContext, true);
+        
         return InvocationResponse.CONTINUE;
     }
 

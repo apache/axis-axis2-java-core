@@ -301,9 +301,10 @@ public class AxisHttpService {
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
 
-        private CountDownLatch responseReadySignal = new CountDownLatch(1);
+		private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
         AxisFault faultToBeThrownOut = null;
+        private boolean responseWritten = false;
 
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
@@ -332,6 +333,14 @@ public class AxisHttpService {
             faultToBeThrownOut = fault;
             signalResponseReady();
         }
+        
+        public boolean isResponseWritten() {
+			return responseWritten;
+		}
+
+		public void setResponseWritten(boolean responseWritten) {
+			this.responseWritten = responseWritten;
+		}
 
     }
 

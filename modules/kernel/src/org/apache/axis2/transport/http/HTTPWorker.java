@@ -32,6 +32,7 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.RequestResponseTransport;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.server.AxisHttpRequest;
 import org.apache.axis2.transport.http.server.AxisHttpResponse;
 import org.apache.axis2.transport.http.server.HttpUtils;
@@ -280,14 +281,12 @@ public class HTTPWorker implements Worker {
         
         // Finalize response
         OperationContext operationContext = msgContext.getOperationContext();
-        Object contextWritten = null;
         Object isTwoChannel = null;
         if (operationContext != null) {
-            contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
             isTwoChannel = operationContext.getProperty(Constants.DIFFERENT_EPR);
         }
 
-        if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
+        if (TransportUtils.isResponseWritten(msgContext)) {
             if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
                 response.setStatus(HttpStatus.SC_ACCEPTED);
             }

@@ -20,6 +20,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 
@@ -106,35 +107,32 @@ public class DispatchPhase extends Phase {
             msgContext.setAxisService(msgContext.getServiceContext().getAxisService());
         }
 
-        
-        //We do not send the status even though it is In-Only to allow Sandesha to send a ack
-        //https://issues.apache.org/jira/browse/AXIS2-2191. At F2F 2007 summer june, we decided may be 
-        //providing a option might not give us that much. I will keep the code commented so we might want to do this later. 
-//        if (msgContext.getAxisOperation().getMessageExchangePattern()
-//                .equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
-//            Object requestResponseTransport =
-//                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-//            if (requestResponseTransport != null) {
-//                ((RequestResponseTransport) requestResponseTransport)
-//                        .acknowledgeMessage(msgContext);
-//            }
-//        }
-        
-        if (msgContext.getAxisOperation().getMessageExchangePattern()
-                .equals(WSDL2Constants.MEP_URI_IN_OUT))
-        {   // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
-            // then we don't need to keep the transport waiting.
-            Object requestResponseTransport =
-                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
-            if (requestResponseTransport != null) {
-                if (AddressingHelper.isReplyRedirected(msgContext) &&
-                        AddressingHelper.isFaultRedirected(msgContext)) {
-                    ((RequestResponseTransport) requestResponseTransport)
-                            .acknowledgeMessage(msgContext);
-                }
-            }
+        // We should send an early ack to the transport whever possible, but some modules need
+        // to use the backchannel, so we need to check if they have disabled this code.
+        Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
+        if(disableAck == null || disableAck.booleanValue() == false) {
+        	String mepString = msgContext.getAxisOperation().getMessageExchangePattern();
+        	if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)
+	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
+	            Object requestResponseTransport =
+	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+	            if (requestResponseTransport != null) {
+	                ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
+	            }
+	        } else if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_OUT)
+	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)) { // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
+	            // then we don't need to keep the transport waiting.
+	            Object requestResponseTransport =
+	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+	            if (requestResponseTransport != null) {
+	                if (AddressingHelper.isReplyRedirected(msgContext)
+	                        && AddressingHelper.isFaultRedirected(msgContext)) {
+	                    ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
+	                }
+	            }
+	        }        
         }
-
+        
 
         ArrayList operationChain = msgContext.getAxisOperation().getRemainingPhasesInFlow();
         msgContext.setExecutionChain((ArrayList) operationChain.clone());
