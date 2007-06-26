@@ -1505,6 +1505,7 @@ public class AxisService extends AxisDescription {
         SchemaGenerator schemaGenerator;
         ArrayList excludeOpeartion = new ArrayList();
         AxisService service = new AxisService();
+        service.setParent(axisConfiguration);
         service.setName(serviceName);
 
         try {

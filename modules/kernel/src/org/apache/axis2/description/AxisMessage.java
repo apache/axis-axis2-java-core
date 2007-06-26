@@ -55,6 +55,9 @@ public class AxisMessage extends AxisDescription {
 
     // private PolicyInclude policyInclude;
 
+    //To chcek whether the message is wrapped or unwrapped
+    private boolean wrapped = true;
+
     public String getMessagePartName() {
 		return messagePartName;
 	}
@@ -216,5 +219,14 @@ public class AxisMessage extends AxisDescription {
 
     public void setPartName(String partName) {
         this.partName = partName;
+    }
+
+
+    public boolean isWrapped() {
+        return wrapped;
+    }
+
+    public void setWrapped(boolean wrapped) {
+        this.wrapped = wrapped;
     }
 }

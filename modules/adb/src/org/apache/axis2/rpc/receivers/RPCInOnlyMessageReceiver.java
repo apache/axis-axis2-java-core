@@ -16,7 +16,6 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
@@ -26,7 +25,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -48,8 +46,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     .getFirstElement();
 
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            String messageNameSpace;
-            QName elementQName;
+            String messageNameSpace = null;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -59,32 +56,11 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                 }
             }
             if (inAxisMessage != null) {
-                if (inAxisMessage.getElementQName() == null) {
-                    // method accept empty SOAPbody
-                    method.invoke(obj, new Object[0]);
-                } else {
-                    elementQName = inAxisMessage.getElementQName();
-                    messageNameSpace = elementQName.getNamespaceURI();
-                    OMNamespace namespace = methodElement.getNamespace();
-                    if (messageNameSpace != null) {
-                        if (namespace == null ||
-                                !messageNameSpace.equals(namespace.getNamespaceURI())) {
-                            throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found " +
-                                    methodElement.getNamespace().getNamespaceURI());
-                        }
-                    } else if (namespace != null) {
-                        throw new AxisFault(
-                                "namespace mismatch. Axis Oepration expects non-namespace " +
-                                        "qualified element. But received a namespace qualified element");
-                    }
-
-                    Object[] objectArray = RPCUtil.processRequest(methodElement, method,
-                                                                  inMessage
-                                                                          .getAxisService().getObjectSupplier());
-                    method.invoke(obj, objectArray);
-                }
+                RPCUtil.invokeServiceClass(inAxisMessage,
+                        method,
+                        obj,
+                        messageNameSpace,
+                        methodElement,inMessage);
 
             }
         } catch (InvocationTargetException e) {

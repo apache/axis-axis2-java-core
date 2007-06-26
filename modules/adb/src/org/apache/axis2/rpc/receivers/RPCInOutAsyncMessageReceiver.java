@@ -29,7 +29,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -70,7 +69,6 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
 
             AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
-            QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -81,32 +79,11 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
             Object resObject = null;
             if (inaxisMessage != null) {
-                if (inaxisMessage.getElementQName() == null) {
-                    // method accept empty SOAPbody
-                    resObject = method.invoke(obj, new Object[0]);
-                } else {
-                    elementQName = inaxisMessage.getElementQName();
-                    messageNameSpace = elementQName.getNamespaceURI();
-                    OMNamespace namespace = methodElement.getNamespace();
-                    if (messageNameSpace != null) {
-                        if (namespace == null ||
-                                !messageNameSpace.equals(namespace.getNamespaceURI())) {
-                            throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found " + methodElement.getNamespace().getNamespaceURI());
-                        }
-                    } else if (namespace != null) {
-                        throw new AxisFault(
-                                "namespace mismatch. Axis Oepration expects non-namespace " +
-                                        "qualified element. But received a namespace qualified element");
-                    }
-
-                    Object[] objectArray = RPCUtil.processRequest(methodElement,
-                                                                  method, inMessage
-                            .getAxisService().getObjectSupplier());
-                    resObject = method.invoke(obj, objectArray);
-                }
-
+                resObject = RPCUtil.invokeServiceClass(inaxisMessage,
+                        method,
+                        obj,
+                        messageNameSpace,
+                        methodElement,inMessage);
             }
 
 
@@ -123,7 +100,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                                                    service.getSchemaTargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
-            RPCUtil.processResponse(resObject, service,
+            RPCUtil.processResponseAsDocLitWrapped(resObject, service,
                                     method, envelope, fac, ns, bodyContent, outMessage);
         } catch (InvocationTargetException e) {
             String msg = null;

@@ -178,6 +178,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         generateSchemaForType(null, paras[0].getType(), parameterName);
                         inMessage.setElementQName(typeTable.getQNamefortheType(parameterName));
                         inMessage.setPartName(parameterName);
+                        inMessage.setWrapped(false);
                         service.addMessageElementQNameToOperationMapping(typeTable.getQNamefortheType(parameterName),
                                 axisOperation);
                     }
@@ -211,7 +212,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                     }
                 } else {
                     generateSchemaForType(null, returnType, methodName + RESULT);
-
+                    outMessage.setWrapped(false);
                 }
                 outMessage.setElementQName(typeTable.getQNamefortheType(methodName + RESULT));
                 outMessage.setName(methodName + "ResponseMessage");
@@ -289,7 +290,9 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             String schemaNamespace = resolveSchemaNamespace(getQualifiedName(
                     type.getContainingPackage()));
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
-
+            if(sequence==null){
+                 generateSchemaForSingleElement(schemaTypeName, partName, isArrayType, type);
+            }
         } else {
             if (sequence == null) {
                 generateSchemaForSingleElement(schemaTypeName, partName, isArrayType, type);
