@@ -170,22 +170,21 @@ public class EndpointController {
                 EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance);
                 try {
                     responseMsgContext = dispatcher.invoke(requestMsgCtx);
-                    // we want the responseMsgContext to have the same parent as the requestMC
-                    responseMsgContext.setMEPContext(requestMsgCtx.getMEPContext());
                 } finally {
                     // Passed pivot point
                     requestMsgCtx.getMessage().setPostPivot();
                 }
 
-                // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
-                // always exactly one EndpointDescription on a server invoke
-                // Also, if the message is oneWay, don't bother with response handlers.  The responseMsgContext is probably NULL
-                // anyway, and would cause an NPE.
+                // Invoke the outbound response handlers.
+                // If the message is one way, we should not invoke the response handlers.  There is no response
+                // MessageContext since a one way invocation is considered to have a "void" return.
                 if (!isOneWay(requestMsgCtx.getAxisMessageContext())) {
+                    responseMsgContext.setMEPContext(requestMsgCtx.getMEPContext());
+                    
                     HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext.getMEPContext(),
-                        ic.getHandlers(),
-                                                           HandlerChainProcessor.MEP.RESPONSE,
-                                                           false);
+                                                               ic.getHandlers(),
+                                                               HandlerChainProcessor.MEP.RESPONSE,
+                                                               false);
                 }
             } else
             { // the inbound handler chain must have had a problem, and we've reversed directions
