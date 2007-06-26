@@ -25,7 +25,7 @@
                                         <xsl:value-of select="@type"/>.MY_QNAME,
                                         org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                             } catch(org.apache.axis2.databinding.ADBException e){
-                                throw new org.apache.axis2.AxisFault(e.getMessage());
+                                throw org.apache.axis2.AxisFault.makeFault(e);
                             }
                     </xsl:when>
                     <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
@@ -36,7 +36,7 @@
                              return param.getOMElement(<xsl:value-of select="@type"/>.MY_QNAME,
                                           org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                         } catch(org.apache.axis2.databinding.ADBException e){
-                            throw new org.apache.axis2.AxisFault(e.getMessage());
+                            throw org.apache.axis2.AxisFault.makeFault(e);
                         }
                     </xsl:otherwise>
             </xsl:choose>
@@ -103,7 +103,7 @@
 
                                 return emptyEnvelope;
                                } catch(org.apache.axis2.databinding.ADBException e){
-                                    throw new org.apache.axis2.AxisFault(e.getMessage());
+                                    throw org.apache.axis2.AxisFault.makeFault(e);
                                }
                                }
 
@@ -125,7 +125,7 @@
                                             <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                             return emptyEnvelope;
                                             } catch(org.apache.axis2.databinding.ADBException e){
-                                                throw new org.apache.axis2.AxisFault(e.getMessage());
+                                                throw org.apache.axis2.AxisFault.makeFault(e);
                                             }
                                     </xsl:when>
                                     <xsl:when test="$inputElementType = 'org.apache.axiom.om.OMElement'">
@@ -140,7 +140,7 @@
                                                 emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                                 return emptyEnvelope;
                                             } catch(org.apache.axis2.databinding.ADBException e){
-                                                throw new org.apache.axis2.AxisFault(e.getMessage());
+                                                throw org.apache.axis2.AxisFault.makeFault(e);
                                             }
                                     </xsl:otherwise>
                             </xsl:choose>
@@ -247,7 +247,7 @@
 
                          return emptyEnvelope;
                     } catch(org.apache.axis2.databinding.ADBException e){
-                        throw new org.apache.axis2.AxisFault(e.getMessage());
+                        throw org.apache.axis2.AxisFault.makeFault(e);
                     }
                     }
                     </xsl:if>
@@ -388,7 +388,7 @@
                 }
            </xsl:for-each>
         } catch (java.lang.Exception e) {
-        throw new org.apache.axis2.AxisFault(e.getMessage());
+        throw org.apache.axis2.AxisFault.makeFault(e);
         }
            return null;
         }
