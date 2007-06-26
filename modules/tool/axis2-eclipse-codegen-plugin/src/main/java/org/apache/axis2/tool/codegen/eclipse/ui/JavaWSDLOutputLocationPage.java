@@ -59,8 +59,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 	 * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
 	 */
 	protected void initializeDefaultSettings() {
-		settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, System
-				.getProperty("user.dir"));
+		settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, "");
 		settings.put(JAVA_OUTPUT_WSDL_NAME, "services.wsdl");
 		settings.put(PREF_JAVA_OUTPUT_FILESYATEM, true);
 		settings.put(PREF_JAVA_OUTPUT_WORKSPACE, false);
