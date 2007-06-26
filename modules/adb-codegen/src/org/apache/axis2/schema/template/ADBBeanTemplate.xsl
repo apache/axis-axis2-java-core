@@ -453,10 +453,10 @@
                                                if (param==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (param==java.lang.Double.NaN) {
+                                               if (java.lang.Double.isNaN(param)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (param==java.lang.Float.NaN) {
+                                               if (java.lang.Float.isNaN(param)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
                                                if (param==java.lang.Short.MIN_VALUE) {
@@ -903,10 +903,10 @@
                                                    if (<xsl:value-of select="$varName"/>!=java.lang.Byte.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:when test="$propertyType='double'">
-                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Double.NaN) {
+                                                   if (!java.lang.Double.isNaN(<xsl:value-of select="$varName"/>)) {
                                                </xsl:when>
                                                <xsl:when test="$propertyType='float'">
-                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Float.NaN) {
+                                                   if (!java.lang.Float.isNaN(<xsl:value-of select="$varName"/>)) {
                                                </xsl:when>
                                                <xsl:when test="$propertyType='short'">
                                                    if (<xsl:value-of select="$varName"/>!=java.lang.Short.MIN_VALUE) {
@@ -1292,10 +1292,10 @@
                                                    if (<xsl:value-of select="$varName"/>[i]!=java.lang.Byte.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='double'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Double.NaN) {
+                                                   if (!java.lang.Double.isNaN(<xsl:value-of select="$varName"/>[i])) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='float'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Float.NaN) {
+                                                   if (!java.lang.Float.isNaN(<xsl:value-of select="$varName"/>[i])) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='short'">
                                                    if (<xsl:value-of select="$varName"/>[i]!=java.lang.Short.MIN_VALUE) {
@@ -1522,10 +1522,10 @@
                                                if (<xsl:value-of select="$varName"/>==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (<xsl:value-of select="$varName"/>==java.lang.Double.NaN) {
+                                               if (java.lang.Double.isNaN(<xsl:value-of select="$varName"/>)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (<xsl:value-of select="$varName"/>==java.lang.Float.NaN) {
+                                               if (java.lang.Float.isNaN(<xsl:value-of select="$varName"/>)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
                                                if (<xsl:value-of select="$varName"/>==java.lang.Short.MIN_VALUE) {
@@ -1682,10 +1682,10 @@
                                                if (<xsl:value-of select="$varName"/>==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (<xsl:value-of select="$varName"/>==java.lang.Double.NaN) {
+                                               if (java.lang.Double.isNaN(<xsl:value-of select="$varName"/>)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (<xsl:value-of select="$varName"/>==java.lang.Float.NaN) {
+                                               if (java.lang.Float.isNaN(<xsl:value-of select="$varName"/>)) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
                                                if (<xsl:value-of select="$varName"/>==java.lang.Short.MIN_VALUE) {
