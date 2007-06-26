@@ -135,6 +135,7 @@ class ServiceDescriptionImpl
      * @param serviceImplClass
      */
     ServiceDescriptionImpl(Class serviceImplClass, AxisService axisService) {
+        isServerSide = true;
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
         EndpointDescriptionImpl endpointDescription =

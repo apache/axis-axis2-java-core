@@ -176,6 +176,11 @@ class OperationDescriptionImpl
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
         this.operationQName = new QName("", getOperationName());
+        if (getEndpointInterfaceDescription().getEndpointDescription() != null) {
+            if (!getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription().isServerSide()) {
+                axisOperation = createClientAxisOperation();
+            }
+        }
     }
 
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
@@ -213,8 +218,44 @@ class OperationDescriptionImpl
 }
 
     /**
-     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must be
-     * created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the
+     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
+     * be created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the 
+     * ParamaterDescription is used to setup the AxisMessage correctly for use in SOAP Body-based
+     * dispatching on incoming DOC/LIT/BARE messages.
+     */
+    private AxisOperation createClientAxisOperation() {
+        AxisOperation newAxisOperation = null;
+        try {
+            if (isOneWay()) {
+                newAxisOperation =
+                        AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_OUT_ONLY);
+            } else {
+                newAxisOperation =
+                        AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_OUT_IN);
+            }
+            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+            //                                              ROBUST_IN_ONLY
+            //      Determine how these MEP's should be handled, if at all
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to build AxisOperation for OperationDescrition; caught exception.",
+                          e);
+            }
+            // TODO: NLS & RAS
+            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation",
+                                                           e);
+        }
+
+        newAxisOperation.setName(determineOperationQName(seiMethod));
+        
+        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().addOperation(newAxisOperation);
+        
+        return newAxisOperation;
+    }
+    
+    /**
+     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
+     * be created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the 
      * ParamaterDescription is used to setup the AxisMessage correctly for use in SOAP Body-based
      * dispatching on incoming DOC/LIT/BARE messages.
      */
