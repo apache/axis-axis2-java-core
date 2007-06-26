@@ -41,7 +41,6 @@ import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import java.net.URL;
 
 public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
         implements TestConstants {
@@ -108,21 +107,17 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
         sender.setOptions(options);
         options.setTo(targetEPR);
 
-        sender.sendReceive(payload);
-        this.campareWithCreatedOMElement(data);
+        OMElement ret = sender.sendReceive(payload);
+        ret.build();
+        this.compareWithCreatedOMElement(ret);
 
     }
 
-    private URL getResourceAsStream(String path) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return cl.getResource(path);
-    }
-
-    private void campareWithCreatedOMElement(OMElement element) {
+    private void compareWithCreatedOMElement(OMElement element) {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String originalTextValue = data.getFirstElement().getText();
-        String returnedTextValue = firstChild.getText();
+        String returnedTextValue = firstChild.getFirstElement().getText();
         TestCase.assertEquals(returnedTextValue, originalTextValue);
     }
 
