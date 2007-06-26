@@ -102,9 +102,9 @@ public class SOAPMonitorService extends HttpServlet {
       ServletConfig config = super.getServletConfig();
       String port = config.getInitParameter(SOAPMonitorConstants.SOAP_MONITOR_PORT);
       if (port == null) {
-        // No port defined, so let the system assign a port
+        log.error("SOAPMonitorService can't find ServletConfig init parameter 'port'");
         port = "0";
-      } 
+      }
       try {
         // Try to open the server socket
         server_socket = new ServerSocket(Integer.parseInt(port));
@@ -112,6 +112,8 @@ public class SOAPMonitorService extends HttpServlet {
         // Let someone know we could not open the socket
         log.error("Unable to open server socket using port: " + port);
         log.error(ex.getMessage(), ex);
+        // Fail as loudly as possible for those without logging configured
+        config.getServletContext().log("Unable to open server socket using port "+port+":", ex);
         server_socket = null;
       }
       if (server_socket != null) {
