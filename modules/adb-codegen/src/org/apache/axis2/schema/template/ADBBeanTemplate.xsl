@@ -2461,7 +2461,14 @@
                     <xsl:if test="$propertyName != 'extraAttributes'">
                     // handle attribute "<xsl:value-of select="$propertyName"/>"
                     java.lang.String <xsl:value-of select="$attribName"/> =
-                      reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                        <xsl:choose>
+                            <xsl:when test="string-length(normalize-space($namespace)) > 0">
+                                reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                            </xsl:when>
+                            <xsl:otherwise>
+                                reader.getAttributeValue(null,"<xsl:value-of select="$propertyName"/>");
+                            </xsl:otherwise>
+                        </xsl:choose>
                    if (<xsl:value-of select="$attribName"/>!=null){
                          java.lang.String content = <xsl:value-of select="$attribName"/>;
                         <xsl:choose>
