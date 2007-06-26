@@ -109,9 +109,9 @@ public class UnionTest extends TestCase {
         TestInnerUnionType testInnerUnionType = new TestInnerUnionType();
         PackingType_T packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
-        PackingType_T_type2 packingType_t_type2 = new PackingType_T_type2();
-        packingType_t_type2.setPackingType_T_type2("MINOR_a");
-        packingType_t.setObject(packingType_t_type2);
+        PackingType_T_type0 packingType_t_type0 = new PackingType_T_type0();
+        packingType_t_type0.setPackingType_T_type0("MINOR_a");
+        packingType_t.setObject(packingType_t_type0);
         OMElement omElement;
         try {
             omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME, OMAbstractFactory.getOMFactory());
@@ -119,7 +119,7 @@ public class UnionTest extends TestCase {
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(packingType_t_type2.toString(),result.getTestInnerUnionType().getObject().toString());
+            assertEquals(packingType_t_type0.toString(),result.getTestInnerUnionType().getObject().toString());
         } catch (Exception e) {
             assertTrue(false);
         }
@@ -127,9 +127,9 @@ public class UnionTest extends TestCase {
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
-        PackingType_T_type3 packingType_t_type3 = new PackingType_T_type3();
-        packingType_t_type3.setPackingType_T_type3("PROP_a");
-        packingType_t.setObject(packingType_t_type3);
+        PackingType_T_type1 packingType_t_type1 = new PackingType_T_type1();
+        packingType_t_type1.setPackingType_T_type1("PROP_a");
+        packingType_t.setObject(packingType_t_type1);
 
          try {
             omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
@@ -137,7 +137,7 @@ public class UnionTest extends TestCase {
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(packingType_t_type3.toString(),result.getTestInnerUnionType().getObject().toString());
+            assertEquals(packingType_t_type1.toString(),result.getTestInnerUnionType().getObject().toString());
         } catch (Exception e) {
             assertTrue(false);
         }
@@ -145,7 +145,7 @@ public class UnionTest extends TestCase {
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
-        packingType_t.setObject(PackingType_T_type4.TAR);
+        packingType_t.setObject(PackingType_T_type2.TAR);
 
         try {
             omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
@@ -153,7 +153,7 @@ public class UnionTest extends TestCase {
             System.out.println("OM Element ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(PackingType_T_type4.TAR,result.getTestInnerUnionType().getObject());
+            assertEquals(PackingType_T_type2.TAR,result.getTestInnerUnionType().getObject());
         } catch (Exception e) {
             assertTrue(false);
         }

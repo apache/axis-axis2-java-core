@@ -142,9 +142,9 @@ public class SimpleRestrictionTest extends TestCase {
         address.setLine1("line1");
         address.setLine2("line2");
         address.setState("state");
-        Zip_type3 ziptype = new Zip_type3();
+        Zip_type1 ziptype = new Zip_type1();
         address.setZip(ziptype);
-        ziptype.setZip_type2("C");
+        ziptype.setZip_type0("C");
 
         try {
             OMElement omElement = personElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
@@ -160,7 +160,7 @@ public class SimpleRestrictionTest extends TestCase {
             assertEquals(resultAddress.getLine1(),"line1");
             assertEquals(resultAddress.getLine2(),"line2");
             assertEquals(resultAddress.getState(),"state");
-            assertEquals(resultAddress.getZip().getZip_type2(),"C");
+            assertEquals(resultAddress.getZip().getZip_type0(),"C");
         } catch (Exception e) {
             e.printStackTrace();
             assertFalse(true);

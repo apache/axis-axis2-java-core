@@ -34,10 +34,10 @@ public class InnerChoiceTest extends TestCase {
         testSequence.setSequence1("test sequence");
         testSequence.setSequence2(3);
 
-        TestInnerSequence1Choice_type2 testInnerSequence1Choice_type2 = new TestInnerSequence1Choice_type2();
-        testInnerSequence1Choice_type2.setChoice1("test choice");
-        testInnerSequence1Choice_type2.setChoice2(5);
-        testSequence.setTestInnerSequence1Choice_type2(testInnerSequence1Choice_type2);
+        TestInnerSequence1Choice_type0 TestInnerSequence1Choice_type0 = new TestInnerSequence1Choice_type0();
+        TestInnerSequence1Choice_type0.setChoice1("test choice");
+        TestInnerSequence1Choice_type0.setChoice2(5);
+        testSequence.setTestInnerSequence1Choice_type0(TestInnerSequence1Choice_type0);
 
         try {
             OMElement omElement = testSequence.getOMElement(TestInnerSequence1.MY_QNAME,
@@ -48,7 +48,7 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence1 result = TestInnerSequence1.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "test sequence");
             assertEquals(result.getSequence2(), 3);
-            assertEquals(result.getTestInnerSequence1Choice_type2().getChoice2(), 5);
+            assertEquals(result.getTestInnerSequence1Choice_type0().getChoice2(), 5);
 
             // writtig result back
             XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(System.out);
@@ -65,9 +65,9 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence2 testSequence = new TestInnerSequence2();
         testSequence.setSequence1("sequence");
         testSequence.setSequence2(3);
-        TestInnerSequence2Choice_type1 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type1();
+        TestInnerSequence2Choice_type0 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type0();
         testInnerSequence2Choice_type1.setChoice1(new String[]{"choice1", "choice2"});
-        testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
+        testSequence.setTestInnerSequence2Choice_type0(testInnerSequence2Choice_type1);
 
         try {
             OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
@@ -78,7 +78,7 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence2 result = TestInnerSequence2.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "sequence");
             assertEquals(result.getSequence2(), 3);
-            assertTrue(isEqual(result.getTestInnerSequence2Choice_type1().getChoice1(), new String[]{"choice1", "choice2"}));
+            assertTrue(isEqual(result.getTestInnerSequence2Choice_type0().getChoice1(), new String[]{"choice1", "choice2"}));
         } catch (Exception e) {
             fail();
         }
@@ -88,9 +88,9 @@ public class InnerChoiceTest extends TestCase {
         TestInnerSequence2 testSequence = new TestInnerSequence2();
         testSequence.setSequence1("sequence");
         testSequence.setSequence2(3);
-        TestInnerSequence2Choice_type1 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type1();
+        TestInnerSequence2Choice_type0 testInnerSequence2Choice_type1 = new TestInnerSequence2Choice_type0();
         testInnerSequence2Choice_type1.setChoice2(new int[]{2, 4});
-        testSequence.setTestInnerSequence2Choice_type1(testInnerSequence2Choice_type1);
+        testSequence.setTestInnerSequence2Choice_type0(testInnerSequence2Choice_type1);
 
          try {
              OMElement omElement = testSequence.getOMElement(TestInnerSequence2.MY_QNAME,
@@ -101,7 +101,7 @@ public class InnerChoiceTest extends TestCase {
             TestInnerSequence2 result = TestInnerSequence2.Factory.parse(xmlReader);
             assertEquals(result.getSequence1(), "sequence");
             assertEquals(result.getSequence2(), 3);
-            assertTrue(isEqual(result.getTestInnerSequence2Choice_type1().getChoice2(), new int[]{2, 4}));
+            assertTrue(isEqual(result.getTestInnerSequence2Choice_type0().getChoice2(), new int[]{2, 4}));
         } catch (Exception e) {
             fail();
         }
