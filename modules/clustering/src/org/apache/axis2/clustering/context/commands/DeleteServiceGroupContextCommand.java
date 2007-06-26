@@ -16,25 +16,22 @@
 package org.apache.axis2.clustering.context.commands;
 
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
+import org.apache.axis2.description.AxisServiceGroup;
 
 /**
- * 
+ *
  */
 public class DeleteServiceGroupContextCommand extends ContextClusteringCommand {
-    private String serviceGroupName;
     private String serviceGroupContextId;
-
-    public void setServiceGroupName(String serviceGroupName) {
-        this.serviceGroupName = serviceGroupName;
-    }
 
     public void setServiceGroupContextId(String serviceGroupContextId) {
         this.serviceGroupContextId = serviceGroupContextId;
     }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        // TODO: Implementation
+        configurationContext.removeServiceGroupContext(serviceGroupContextId);
     }
 }
