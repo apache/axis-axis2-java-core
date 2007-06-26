@@ -1838,6 +1838,38 @@ public class SchemaCompiler {
             }
 
 
+        } else if (particle instanceof XmlSchemaGroupRef){
+
+            XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) particle;
+            QName groupQName = xmlSchemaGroupRef.getRefName();
+            if (groupQName != null) {
+                if (!processedTypemap.containsKey(groupQName)) {
+                    // processe the schema here
+                    XmlSchema resolvedParentSchema = resolveParentSchema(groupQName, parentSchema);
+                    XmlSchemaGroup xmlSchemaGroup = getGroup(groupQName, resolvedParentSchema);
+                    if (xmlSchemaGroup != null) {
+                        processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                    } else {
+                        throw new SchemaCompilationException("Refered Group " + groupQName.getLocalPart() + " can not be found ");
+                    }
+                }
+            } else {
+                throw new SchemaCompilationException("Referenced name is null");
+            }
+            boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1;
+
+            // add this as an array to the original class
+            metainfHolder.registerMapping(groupQName, groupQName, findClassName(groupQName, isArray));
+            if (isArray) {
+                metainfHolder.addtStatus(groupQName, SchemaConstants.ARRAY_TYPE);
+            }
+            metainfHolder.addtStatus(groupQName, SchemaConstants.PARTICLE_TYPE_ELEMENT);
+            metainfHolder.addMaxOccurs(groupQName, xmlSchemaGroupRef.getMaxOccurs());
+            metainfHolder.addMinOccurs(groupQName, xmlSchemaGroupRef.getMinOccurs());
+            metainfHolder.setHasParticleType(true);
+            metainfHolder.setOrdered(true);
+            metainfHolder.registerQNameIndex(groupQName,metainfHolder.getOrderStartPoint() + 1);
+
         }
     }
 
