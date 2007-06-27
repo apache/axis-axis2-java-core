@@ -434,14 +434,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement omElement = (OMElement) moduleVersions.next();
             String name = omElement.getAttributeValue(new QName(ATTRIBUTE_NAME));
             if (name == null) {
-                throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
+                throw new DeploymentException(Messages.getMessage("modulenamecannotbenull"));
             }
-            String defaultVeriosn =
+            String version =
                     omElement.getAttributeValue(new QName(ATTRIBUTE_DEFAULT_VERSION));
-            if (defaultVeriosn == null) {
-                throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
+            if (version == null) {
+                throw new DeploymentException(Messages.getMessage("moduleversioncannotbenull"));
             }
-            axisConfig.addDefaultModuleVersion(name, defaultVeriosn);
+            axisConfig.addDefaultModuleVersion(name, version);
         }
     }
 
