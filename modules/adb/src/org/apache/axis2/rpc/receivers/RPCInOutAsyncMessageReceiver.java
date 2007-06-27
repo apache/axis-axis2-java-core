@@ -24,6 +24,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -100,8 +102,17 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                                                    service.getSchemaTargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
-            RPCUtil.processResponseAsDocLitWrapped(resObject, service,
-                                    method, envelope, fac, ns, bodyContent, outMessage);
+            Parameter generateBare = service.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
+            if (generateBare!=null && "true".equals(generateBare.getValue())) {
+                RPCUtil.processResonseAsDocLitBare(resObject, service,
+                        envelope, fac, ns,
+                        bodyContent, outMessage);
+            } else {
+                RPCUtil.processResponseAsDocLitWrapped(resObject, service,
+                        method, envelope, fac, ns,
+                        bodyContent, outMessage);
+            }
+             outMessage.setEnvelope(envelope);
         } catch (InvocationTargetException e) {
             String msg = null;
             Throwable cause = e.getCause();
