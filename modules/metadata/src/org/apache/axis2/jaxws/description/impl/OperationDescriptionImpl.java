@@ -433,21 +433,27 @@ class OperationDescriptionImpl
     void addToAxisService(AxisService axisService) {
         AxisOperation newAxisOperation = getAxisOperation();
         QName axisOpQName = newAxisOperation.getName();
-        if (axisService.getOperation(axisOpQName) == null) {
+        AxisOperation axisOperation = axisService.getOperation(axisOpQName);
+        if (axisOperation == null) {
             axisService.addOperation(newAxisOperation);
             // For a Doc/Lit/Bare operation, we also need to add the element mapping
-            if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
-                    && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
-                    && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle
-                    .BARE) {
-                AxisMessage axisMessage =
-                        newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (axisMessage != null) {
-                    QName elementQName = axisMessage.getElementQName();
-                    if (!DescriptionUtils.isEmpty(elementQName)) {
-                        axisService.addMessageElementQNameToOperationMapping(elementQName,
-                                                                             newAxisOperation);
-                    }
+        }
+        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
+                && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
+                && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle
+                .BARE) {
+            AxisMessage axisMessage =
+                    null;
+            if (axisOperation!=null) {
+                axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            } else {
+                axisMessage = newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            }
+            if (axisMessage != null) {
+                QName elementQName = axisMessage.getElementQName();
+                if (!DescriptionUtils.isEmpty(elementQName)) {
+                    axisService.addMessageElementQNameToOperationMapping(elementQName,
+                            newAxisOperation);
                 }
             }
         }
