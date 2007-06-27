@@ -219,6 +219,9 @@
                     <path>
                         <xsl:attribute name="refid">axis2.class.path</xsl:attribute>
                     </path>
+                    <pathelement>
+                        <xsl:attribute name="location">${classes}</xsl:attribute>
+                    </pathelement>
                 </path>
                 <mkdir>
                     <xsl:attribute name="dir">${build}/test-reports/</xsl:attribute>
