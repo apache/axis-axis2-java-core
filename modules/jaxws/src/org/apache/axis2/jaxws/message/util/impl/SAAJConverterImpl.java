@@ -21,6 +21,9 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -30,6 +33,7 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -114,6 +118,8 @@ public class SAAJConverterImpl implements SAAJConverter {
       */
     public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
             throws WebServiceException {
+        // Before we do the conversion, we have to fix the QNames for fault elements
+        _fixFaultElements(saajEnvelope);        
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
         // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
@@ -487,6 +493,68 @@ public class SAAJConverterImpl implements SAAJConverter {
         // TODO NLS
         throw ExceptionFactory
                 .makeWebServiceException(Messages.getMessage("SAAJConverterErr2", event));
+    }
+    
+    
+    /*
+     * A utility method to fix the localnames of elements with an Axis2 SAAJ
+     * tree.  The SAAJ impl relies on the Axiom SOAP APIs, which represent 
+     * all faults as SOAP 1.2.  This has to be corrected before we can convert
+     * to OM or the faults will not be handled correctly. 
+     */
+    private void _fixFaultElements(SOAPEnvelope env) {
+        try {
+            // If we have a SOAP 1.2 envelope, then there's nothing to do.
+            if (env.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                return;
+            }
+            
+            SOAPBody body = env.getBody();
+            if (body != null && body.hasFault()) {
+                SOAPFault fault = body.getFault();
+                
+                Iterator itr = fault.getChildElements();
+                while (itr.hasNext()) {
+                    SOAPElement se = (SOAPElement) itr.next();
+                    if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) { 
+                        // Axis2 SAAJ stores the acutal faultcode text under a SOAPFaultValue object, so we have to 
+                        // get that and add it as a text node under the original element.
+                        Node value = se.getFirstChild();
+                        if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
+                            org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
+                            ElementImpl e = valueElement.getElement();
+                            String content = e.getText();
+                            
+                            SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME));
+                            child.addTextNode(content);
+                            
+                            se.detachNode();
+                        }
+                    }
+                    else if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+                        se.setElementQName(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
+                    }
+                    else if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
+                        se.setElementQName(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME));
+                        // Axis2 SAAJ stores the acutal faultstring text under a SOAPFaultValue object, so we have to 
+                        // get that and add it as a text node under the original element.
+                        Node value = se.getFirstChild();
+                        if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
+                            org.apache.axis2.saaj.SOAPElementImpl valueElement = (org.apache.axis2.saaj.SOAPElementImpl) value;
+                            ElementImpl e = valueElement.getElement();
+                            String content = e.getText();
+                           
+                            SOAPElement child = fault.addChildElement(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME));
+                            child.addTextNode(content);
+                            
+                            se.detachNode();
+                        }
+                    }
+                }
+            }
+        } catch (SOAPException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 
     /**

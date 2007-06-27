@@ -20,9 +20,11 @@ package org.apache.axis2.jaxws.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -35,6 +37,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.message.Block;
@@ -42,6 +49,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -86,8 +94,7 @@ public class LogicalMessageImpl implements LogicalMessage {
             // able to create a copy of itself just yet.
             Payloads payloads = createPayloads(content);
             
-            Block cacheBlock = factory.createFrom(payloads.CACHE_PAYLOAD, context, block.getQName());
-            mepCtx.getMessageObject().setBodyBlock(cacheBlock);
+            _setPayload(payloads.CACHE_PAYLOAD, context, factory);
             
             payload = payloads.HANDLER_PAYLOAD;
         } catch (XMLStreamException e) {
@@ -120,7 +127,28 @@ public class LogicalMessageImpl implements LogicalMessage {
         Block block = factory.createFrom(object, context, null);
         
         if (mepCtx.getMessageObject() != null) {
-            mepCtx.getMessageObject().setBodyBlock(block);
+            if (!mepCtx.getMessageObject().isFault()) {
+                mepCtx.getMessageObject().setBodyBlock(block);
+            }
+            else {
+                mepCtx.getMessageObject().setBodyBlock(block);
+                
+                // If the payload is a fault, then we can't set it back on the message
+                // as a block.  Blocks are OMSourcedElements, and faults cannot be OMSourcedElements.  
+                try {
+                    SOAPEnvelope env = (SOAPEnvelope) mepCtx.getMessageObject().getAsOMElement();
+                    String content = env.toStringWithConsume();
+                   
+                    MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+                    StringReader sr = new StringReader(content);
+                    XMLStreamReader stream = StAXUtils.createXMLStreamReader(sr);
+                    Message msg = mf.createFrom(stream, mepCtx.getMessageObject().getProtocol());
+                   
+                    mepCtx.setMessage(msg);
+                } catch (Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
         }
     }
 

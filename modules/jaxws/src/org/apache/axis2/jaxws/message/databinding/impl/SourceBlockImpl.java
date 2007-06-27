@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -251,5 +252,56 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
         }
 
         return cl;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
+     */
+    public Object getBusinessObject(boolean consume) throws XMLStreamException,
+                                                    WebServiceException {
+        if (consumed) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1",
+                                                                               this.getClass()
+                                                                                   .getName()));
+        }
+        
+        if (busObject != null) {
+            busObject = _getBOFromBO(busObject, busContext, consume);
+        } else {
+            // If the message is a fault, there are some special gymnastics that we have to do
+            // to get this working for all of the handler scenarios.  
+            boolean hasFault = false;
+            if ((parent != null && parent.isFault()) || 
+                omElement.getQName().getLocalPart().equals(SOAP11Constants.SOAPFAULT_LOCAL_NAME)) {
+                hasFault = true;
+            }
+            
+            // Transform reader into business object
+            if (!hasFault) {
+                XMLStreamReader reader;
+                if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
+                    reader = omElement.getXMLStreamReaderWithoutCaching();
+                } else {
+                    reader = omElement.getXMLStreamReader();
+                }
+                busObject = _getBOFromReader(reader, busContext);    
+            }
+            else {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                omElement.serialize(baos);
+                
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                busObject = new StreamSource(bais);
+            }
+            
+            omElement = null;
+        }
+
+        // Save the businessObject in a local variable
+        // so that we can reset the Block if consume was indicated
+        Object newBusObject = busObject;
+        setConsumed(consume);
+        return newBusObject;
     }
 }

@@ -58,15 +58,15 @@ public abstract class BlockImpl implements Block {
 
     private static Log log = LogFactory.getLog(BlockImpl.class);
 
-    private Object busObject;
-    private Object busContext;
+    protected Object busObject;
+    protected Object busContext;
 
-    private OMElement omElement = null;
+    protected OMElement omElement = null;
 
-    private QName qName;
-    private BlockFactory factory;
-    private boolean consumed = false;
-    private Message parent;
+    protected QName qName;
+    protected BlockFactory factory;
+    protected boolean consumed = false;
+    protected Message parent;
 
     /**
      * A Block has the following components

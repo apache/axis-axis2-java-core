@@ -171,7 +171,7 @@ public class AddNumbersHandlerTests extends TestCase {
     }
 
     // TODO: disabled until handler support is more complete
-    public void _testAddNumbersHandlerWithFault() {
+    public void testAddNumbersHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
