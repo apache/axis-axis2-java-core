@@ -1822,8 +1822,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Object key = keys.next();
             String className = (String) classNameMap.get(key);
 
+            String realClassName = className;
+            if (className.endsWith("[]")){
+               realClassName = realClassName.substring(0,realClassName.indexOf("[]"));
+            }
             //this is a generated class name - update the name
-            if (!TypeTesterUtil.hasPackage(className) && !TypeTesterUtil.isPrimitive(className)) {
+            if (!TypeTesterUtil.hasPackage(realClassName) && !TypeTesterUtil.isPrimitive(realClassName)) {
                 classNameMap.put(key, fullyQulifiedIncludingClassNamePrefix + "." + className);
                 instantiatableMessageClassNames.put(key,
                         fullyQulifiedIncludingClassNamePrefix + "$" +
