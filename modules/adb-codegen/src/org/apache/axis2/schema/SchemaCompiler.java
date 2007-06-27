@@ -722,6 +722,11 @@ public class SchemaCompiler {
     private XmlSchema resolveParentSchema(QName schemaTypeName, XmlSchema currentSchema)
             throws SchemaCompilationException {
         String targetNamespace = schemaTypeName.getNamespaceURI();
+
+        // if the current schema has the same namespace we use it
+        if (currentSchema.getTargetNamespace().equals(targetNamespace)){
+            return currentSchema;
+        }
         Object loadedSchema = loadedSchemaMap.get(targetNamespace);
         if (loadedSchema != null) {
             return (XmlSchema) loadedSchema;
@@ -1012,7 +1017,7 @@ public class SchemaCompiler {
            if (xmlSchemaAttributeGroup != null){
                processAttributes(xmlSchemaAttributeGroup.getAttributes(),metaInfHolder,parentSchema);
            } else {
-               throw new SchemaCompilationException("Can not find an attribute group for group reference"
+               throw new SchemaCompilationException("Can not find an attribute group for group reference "
                        + attributeGroupRefName.getLocalPart());
            }
         } else {
