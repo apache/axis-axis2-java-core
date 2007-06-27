@@ -460,17 +460,11 @@ public abstract class AbstractHTTPSender {
             HttpConnectionManager connManager =
                     (HttpConnectionManager) msgContext.getProperty(
                             HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
-            if(connManager==null){
-                connManager =
-                        new SimpleHttpConnectionManager();
-                msgContext.getConfigurationContext().
-                        setProperty(
-                                HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER,
-                                connManager);
-            }
-            if(msgContext.isServerSide()){
-                httpClient = new HttpClient();
+            if(connManager != null){
+                httpClient = new HttpClient(connManager);
             } else {
+                //Multi threaded http connection manager has set as the default 
+                connManager = new MultiThreadedHttpConnectionManager();
                 httpClient = new HttpClient(connManager);
             }
         }
