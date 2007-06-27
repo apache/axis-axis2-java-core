@@ -456,7 +456,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdl4jBindingOperation = (BindingOperation) iterator.next();
             wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
 
-            axisBindingOperation.setName(new QName("", wsdl4jBindingOperation.getName()));
+            axisBindingOperation.setName(new QName(targetNamespace, wsdl4jBindingOperation.getName()));
             addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
             axisOperation = axisService.getOperation(new QName(targetNamespace, wsdl4jOperation.getName()));
