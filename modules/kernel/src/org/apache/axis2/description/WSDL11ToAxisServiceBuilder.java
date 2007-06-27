@@ -485,6 +485,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 AxisMessage axisInMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                //  from binding message to AxisMessage
+                List soapHeaders =
+                            (List) axisBindingInMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisInMessage.addSoapHeader(headerMessage);
+                        }
+                    }
 
                 if (isSetMessageQNames) {
                     addQNameReference(axisInMessage, wsdl4jOperation,
@@ -511,6 +521,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 copyExtensibleElements(wsdl4jBindingOutput.getExtensibilityElements(),
                                        wsdl4jDefinition,
                                        axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
+
+                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                //  from binding message to AxisMessage
+                List soapHeaders =
+                        (List) axisBindingOutMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                if (soapHeaders != null) {
+                    for (int i = 0; i < soapHeaders.size(); i++) {
+                        SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                        axisOutMessage.addSoapHeader(headerMessage);
+                    }
+                }
 
                 if (isSetMessageQNames) {
                     addQNameReference(axisOutMessage, wsdl4jOperation,
