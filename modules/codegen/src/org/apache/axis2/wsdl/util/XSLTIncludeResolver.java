@@ -76,6 +76,8 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
                 supporterTemplateStream = getClass().getResourceAsStream(templateName);
                 return new StreamSource(supporterTemplateStream);
             }
+        } else if ((href != null) && (!href.equals("externalTemplate"))){
+            return getSourceFromTemplateName(href);
         }
         //if nothing could be found return an empty source
         return getEmptySource();
