@@ -741,6 +741,8 @@ public class AxisService extends AxisDescription {
             }
         } else {
             operationsAliasesMap.put(action, axisOperation);
+            //Adding operation name to the mapping table
+            operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
         }
     }
 
