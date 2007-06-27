@@ -62,6 +62,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      * this class must extend SNodeImpl
      */
     protected ElementImpl element;
+    private String encodingStyle;
 
     public SOAPElementImpl(ElementImpl element) {
         super(element.getOMFactory());
@@ -325,7 +326,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#getEncodingStyle()
       */
     public String getEncodingStyle() {
-        return ((DocumentImpl)getOwnerDocument()).getCharsetEncoding();
+        return this.encodingStyle;
     }
 
     /* (non-Javadoc)
@@ -544,7 +545,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
                                 "Invalid Encoding style : " + encodingStyle);
                     }
                 }
-                ((DocumentImpl)getOwnerDocument()).setCharsetEncoding(encodingStyle);
+                this.encodingStyle = encodingStyle;
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid Encoding style : "
                         + encodingStyle + ":" + e);
