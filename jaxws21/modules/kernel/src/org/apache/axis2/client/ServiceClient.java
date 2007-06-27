@@ -44,6 +44,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 
 import javax.wsdl.Definition;
@@ -58,7 +60,8 @@ import java.util.ArrayList;
  * configure various aspects of the service access.
  */
 public class ServiceClient {
-
+    protected static final Log log = LogFactory.getLog(ServiceClient.class);
+    
     /**
      * Base name used for a service created without an existing configuration.
      */
@@ -345,7 +348,11 @@ public class ServiceClient {
     public void disengageModule(String moduleName) {
         AxisModule module = axisConfig.getModule(moduleName);
         if (module != null) {
-            axisService.disengageModule(module);
+            try {
+                axisService.disengageModule(module);
+            } catch (AxisFault axisFault) {
+                log.error(axisFault);
+            }
         }
     }
 

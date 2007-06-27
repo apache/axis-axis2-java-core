@@ -43,6 +43,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>jakarta-httpcore</artifactId>
 		</dependency>
+               <dependency>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>jakarta-httpcore-nio</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
@@ -51,6 +55,11 @@
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>${stax.api.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>${stax.impl.groupid}</groupId>
 			<artifactId>${stax.impl.artifactid}</artifactId>
@@ -92,6 +101,53 @@
 			<artifactId>commons-logging</artifactId>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>java14</id>
+			<activation>
+				<jdk>1.4</jdk>
+			</activation>
+            <build>
+                <plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<inherited>true</inherited>
+						<configuration>
+                            <excludes>
+                                <exclude>**/*NIOSSL*.java</exclude>
+                                <exclude>**/SSLServerIOEventDispatch.java</exclude>
+                                <exclude>**/SSLClientIOEventDispatch.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+		</profile>
+		<profile>
+			<id>java15</id>
+			<activation>
+				<jdk>1.5</jdk>
+			</activation>
+			<dependencies>
+                <dependency>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>jakarta-httpcore-niossl</artifactId>
+                </dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>java16</id>
+			<activation>
+				<jdk>1.6</jdk>
+			</activation>
+			<dependencies>
+                <dependency>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>jakarta-httpcore-niossl</artifactId>
+                </dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
@@ -118,7 +174,13 @@
 					<include>**/**</include>
 				</includes>
 			</testResource>
-		</testResources>
+            <testResource>
+                <directory>test-resources/deployment/ClasspathModule</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </testResource>            
+        </testResources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>

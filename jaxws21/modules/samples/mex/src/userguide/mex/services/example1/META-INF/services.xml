@@ -19,9 +19,9 @@
     <description>
      Sample web service to demostrate use of Default Axis2 Data Locator to handle ws-mex GetMetadata request.       
      </description>
-    <parameter name="ServiceClass" locked="false">userguide.mex.services.example1.Version</parameter>
+    <parameter name="ServiceClass">userguide.mex.services.example1.Version</parameter>
     <operation name="getVersion">
-    <parameter name="metadataExchange" locked="false">
+    <parameter name="metadataExchange">
       <outputform dialect="http://schemas.xmlsoap.org/wsdl/" forms="inline,location"/>
       <outputform forms="location"/>
      </parameter>

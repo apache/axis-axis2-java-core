@@ -83,6 +83,14 @@ public class JMSConnectionFactory {
      */
     private String jndiName = null;
     /**
+     * The JNDI name of the actual connection factory username
+     */
+    private String jndiUser = null;
+    /**
+     * The JNDI name of the actual connection factory password
+     */
+    private String jndiPass = null;
+    /**
      * Map of destination JNDI names to service names
      */
     private Map serviceJNDINameMapping = null;
@@ -171,6 +179,24 @@ public class JMSConnectionFactory {
     }
 
     /**
+     * Get the JNDI name of the actual factory username
+     *
+     * @return the jndi name of the actual connection factory username
+     */
+	public void setJndiUser(String jndiUser) {
+		this.jndiUser = jndiUser;
+	}
+
+    /**
+     * Get the JNDI name of the actual factory password
+     *
+     * @return the jndi name of the actual connection factory password
+     */
+	public void setJndiPass(String jndiPass) {
+		this.jndiPass = jndiPass;
+	}
+
+    /**
      * Add a listen destination on this connection factory on behalf of the given service
      *
      * @param destinationJndi destination JNDI name
@@ -186,7 +212,13 @@ public class JMSConnectionFactory {
 
             Connection con = null;
             try {
-                con = conFactory.createConnection();
+            	if ((jndiUser == null) || (jndiPass == null)){
+            		// User the OS username and credentials
+                    con = conFactory.createConnection();
+            	} else{
+            		// use an explicit username and password
+                    con = conFactory.createConnection(jndiUser, jndiPass);
+            	}
                 Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 Queue queue = session.createQueue(destinationJndi);
                 destinationName = queue.getQueueName();
@@ -208,7 +240,7 @@ public class JMSConnectionFactory {
                 }
             }
         }
-        
+
         serviceDestinationMapping.put(destinationName, serviceName);
         log.info("Mapping JNDI name : " + destinationJndi + " and JMS Destination name : " +
             destinationName + " against service : " + serviceName);
@@ -259,6 +291,24 @@ public class JMSConnectionFactory {
     }
 
     /**
+     * Get the JNDI name of the actual factory username
+     *
+     * @return the jndi name of the actual connection factory username
+     */
+	public String getJndiUser() {
+		return jndiUser;
+	}
+
+    /**
+     * Get the JNDI name of the actual factory password
+     *
+     * @return the jndi name of the actual connection factory password
+     */
+    public String getJndiPass() {
+		return jndiPass;
+	}
+
+	/**
      * Get the actual underlying connection factory
      *
      * @return actual connection factory
@@ -305,7 +355,13 @@ public class JMSConnectionFactory {
                     "Connection factory must be 'connected' before listening");
         } else {
             try {
-                connection = conFactory.createConnection();
+            	if ((jndiUser == null) || (jndiPass == null)){
+            		// User the OS username and credentials
+                    connection = conFactory.createConnection();
+            	} else{
+            		// use an explicit username and password
+            		connection = conFactory.createConnection(jndiUser, jndiPass);
+            	}
             } catch (JMSException e) {
                 handleException("Error creating a JMS connection using the " +
                         "factory : " + jndiName, e);

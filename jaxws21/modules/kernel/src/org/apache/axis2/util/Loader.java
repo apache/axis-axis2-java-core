@@ -218,6 +218,9 @@ public class Loader {
                     return c;
                 }
             }
+        } catch (UnsupportedClassVersionError e) {
+            log.error(e.getMessage(), e);
+            throw e;
         } catch (Throwable e) {
             log.debug(e);
         }
@@ -244,6 +247,9 @@ public class Loader {
                     return c;
                 }
             }
+        } catch (UnsupportedClassVersionError e) {
+            log.error(e.getMessage(), e);
+            throw e;
         } catch (Throwable e) {
             log.debug(e);
         }

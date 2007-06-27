@@ -23,13 +23,10 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleExcepti
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 
-
 public class EndpointLifecycleManagerFactory {
-
 
     public EndpointLifecycleManagerFactory() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public EndpointLifecycleManager createEndpointLifecycleManager(Object endpointInstance)

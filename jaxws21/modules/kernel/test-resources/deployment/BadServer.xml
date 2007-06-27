@@ -1,6 +1,6 @@
 <axisconfig name="AxisJava2.0">
     <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="false">Colombo</parameter>
+    <parameter name="para2">Colombo</parameter>
     <handler name="h1" class="org.apache.axis2.engine.registry.SpeakingHandler">
         <order phase="p1" phaseFirst="true"/>
         <parameter name="para8" locked="xsd:true">123</parameter>
@@ -12,7 +12,7 @@
     <!--
       <module ref="uri">
           <parameter name="para3" locked="xsd:true">10</parameter>
-          <parameter name="para4" locked="false">LSF</parameter>
+          <parameter name="para4">LSF</parameter>
       </module>
      -->
     <phaseOrder>

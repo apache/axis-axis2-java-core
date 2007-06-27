@@ -120,6 +120,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
             MessageContext requestMsgCtx = new MessageContext();
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            /*
+             * TODO: review: make sure the handlers are set on the InvocationContext
+             * This implementation of the JAXWS runtime does not use Endpoint, which
+             * would normally be the place to initialize and store the handler list.
+             * In lieu of that, we will have to intialize and store them on the 
+             * InvocationContext.  also see the InvocationContextFactory.  On the client
+             * side, the binding is not yet set when we call into that factory, so the
+             * handler list doesn't get set on the InvocationContext object there.  Thus
+             * we gotta do it here.
+             */
+
+            // be sure to use whatever handlerresolver is registered on the Service
+            invocationContext.setHandlers(getBinding().getHandlerChain());
 
             Message requestMsg = null;
             try {

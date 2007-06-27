@@ -6,24 +6,12 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentClassLoader;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.AnnotationConstants;
-import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.*;
+import org.apache.axis2.description.java2wsdl.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -34,29 +22,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JClass;
 
 import javax.xml.namespace.QName;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -111,6 +85,10 @@ public class Utils {
 
         try {
             handlerClass = Loader.loadClass(loader1, handlername);
+            if(handlerClass.getPackage().getName().equals("org.apache.axis2.engine")){
+                log.warn("Dispatcher " + handlerClass.getName() + " is now deprecated. Please edit axis2.xml " +
+                        "and replace with the same class in org.apache.axis2.dispatchers package");
+            }
             handler = (Handler) handlerClass.newInstance();
             handler.init(desc);
             desc.setHandler(handler);
@@ -128,15 +106,15 @@ public class Utils {
             InputStream in = url.openStream();
             String fileName = url.getFile();
             int index = fileName.lastIndexOf('/');
-            if(index != -1) {
-                fileName = fileName.substring(index+1);
+            if (index != -1) {
+                fileName = fileName.substring(index + 1);
             }
             File f = createTempFile(fileName, in, tmpDir);
             in.close();
             ZipInputStream zin;
             FileInputStream fin = new FileInputStream(f);
-                array.add(f.toURL());
-                zin = new ZipInputStream(fin);
+            array.add(f.toURL());
+            zin = new ZipInputStream(fin);
 
             ZipEntry entry;
             String entryName;
@@ -167,14 +145,14 @@ public class Utils {
         byte data[] = new byte[2048];
         int count;
         File f;
-        if(tmpDir == null) {
+        if (tmpDir == null) {
             new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs();
             File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
-            f = File.createTempFile("axis2", suffix,tempFile);
+            f = File.createTempFile("axis2", suffix, tempFile);
         } else {
             f = File.createTempFile("axis2", suffix, tmpDir);
         }
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.info("Created temporary file : " + f.getAbsolutePath());
         }
         f.deleteOnExit();
@@ -196,7 +174,7 @@ public class Utils {
      * files inside the "lib/" or "Lib/" subdirectory of the passed directory.
      *
      * @param parent parent ClassLoader which will be the parent of the result of this method
-     * @param file a File which must be a directory for this to be useful
+     * @param file   a File which must be a directory for this to be useful
      * @return a new ClassLoader pointing to both the passed dir and jar files under lib/
      * @throws DeploymentException if problems occur
      */
@@ -261,10 +239,11 @@ public class Utils {
 
     /**
      * This guy will create a AxisService using java reflection
-     * @param axisService the target AxisService
-     * @param axisConfig the in-scope AxisConfiguration
+     *
+     * @param axisService       the target AxisService
+     * @param axisConfig        the in-scope AxisConfiguration
      * @param excludeOperations a List of Strings (or null), each containing a method to exclude
-     * @param nonRpcMethods a List of Strings (or null), each containing a non-rpc method name
+     * @param nonRpcMethods     a List of Strings (or null), each containing a non-rpc method name
      * @throws Exception if a problem occurs
      */
     public static void fillAxisService(AxisService axisService,
@@ -283,20 +262,20 @@ public class Utils {
             // other looks.
             implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
             if (implInfoParam != null) {
-                String className = ((String)implInfoParam.getValue()).trim();
+                String className = ((String) implInfoParam.getValue()).trim();
                 Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, className);
-                if(serviceObjectMaker.getModifiers() != Modifier.PUBLIC){
-                    throw new AxisFault("Service class "+ className + " must have public as access Modifier");
+                if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
+                    throw new AxisFault("Service class " + className + " must have public as access Modifier");
                 }
 
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                  new Class[]{AxisService.class});
+                                new Class[]{AxisService.class});
                 Object obj = null;
                 if (method != null) {
                     obj = method.invoke(serviceObjectMaker.newInstance(),
-                                        new Object[]{axisService});
+                            new Object[]{axisService});
                 }
                 if (obj == null) {
                     log.warn("ServiceObjectSupplier implmentation Object could not be found");
@@ -315,10 +294,19 @@ public class Utils {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
-        SchemaGenerator schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
-                                                              serviceClass.trim(),
-                                                              axisService.getSchematargetNamespace(),
-                                                              axisService.getSchemaTargetNamespacePrefix());
+        SchemaGenerator schemaGenerator;
+        Parameter generateBare = axisService.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
+        if (generateBare != null && "true".equals(generateBare.getValue())) {
+            schemaGenerator = new DocLitBareSchemaGenerator(serviceClassLoader,
+                    serviceClass.trim(),
+                    axisService.getSchematargetNamespace(),
+                    axisService.getSchemaTargetNamespacePrefix(), axisService);
+        } else {
+            schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
+                    serviceClass.trim(),
+                    axisService.getSchematargetNamespace(),
+                    axisService.getSchemaTargetNamespacePrefix(), axisService);
+        }
         schemaGenerator.setExcludeMethods(excludeOperations);
         schemaGenerator.setNonRpcMethods(nonRpcMethods);
         if (!axisService.isElementFormDefault()) {
@@ -335,8 +323,7 @@ public class Utils {
             axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
         }
 
-        JMethod [] method = schemaGenerator.getMethods();
-        TypeTable table = schemaGenerator.getTypeTable();
+        JMethod[] method = schemaGenerator.getMethods();
         PhasesInfo pinfo = axisConfig.getPhasesInfo();
 
 
@@ -345,112 +332,42 @@ public class Utils {
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the operation there in services.xml then try to set it schema element name
-            if (operation != null) {
-                AxisMessage inMessage = operation.getMessage(
-                        WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (inMessage != null) {
-                    inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
-                    QName complexSchemaType = table.getComplexSchemaType(jmethod.getSimpleName());
-                    inMessage.setElementQName(complexSchemaType);
-                    if (complexSchemaType != null) {
-                        axisService.addMessageElementQNameToOperationMapping(complexSchemaType,
-                                                                             operation);
-                    }
-                }
-                if (!jmethod.getReturnType().isVoidType()) {
-                    AxisMessage outMessage = operation.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                    QName qNamefortheType = table.getQNamefortheType(jmethod.getSimpleName() +
-                            Java2WSDLConstants.RESPONSE);
-                    outMessage.setElementQName(qNamefortheType);
-                    if (qNamefortheType != null) {
-                        axisService.addMessageElementQNameToOperationMapping(qNamefortheType,
-                                                                             operation);
-                    }
-                    outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
-                }
-                if (jmethod.getExceptionTypes().length > 0) {
-                    JClass[] extypes = jmethod.getExceptionTypes() ;
-                    for (int j= 0 ; j < extypes.length ; j++) {
-                        JClass extype = extypes[j] ;
-                        if(AxisFault.class.getName().equals(extype.getQualifiedName())){
-                            continue;
-                        }
-                        AxisMessage faultMessage = new AxisMessage();
-                        String exname = extype.getSimpleName() ;
-                        if(extypes.length>1){
-                            faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
-                        } else{
-                            faultMessage.setName(jmethod.getSimpleName() + "Fault");
-                        }
-                        faultMessage.setElementQName(
-                                table.getComplexSchemaType(exname + "Fault"));
-                        operation.setFaultMessages(faultMessage);
-                    }
-
-                }
-            } else {
-                operation = getAxisOperationforJmethod(jmethod, table);
-                MessageReceiver mr = axisService.getMessageReceiver(
-                        operation.getMessageExchangePattern());
-                if (mr != null) {
-                    operation.setMessageReceiver(mr);
-                } else {
-                    mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
-                    operation.setMessageReceiver(mr);
-                }
-                pinfo.setOperationPhases(operation);
-                axisService.addOperation(operation);
+            if (operation == null) {
+                operation = axisService.getOperation(new QName(jmethod.getSimpleName()));
             }
+            MessageReceiver mr = axisService.getMessageReceiver(
+                    operation.getMessageExchangePattern());
+            if (mr != null) {
+            } else {
+                mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
+            }
+            if (operation.getMessageReceiver() == null) {
+                operation.setMessageReceiver(mr);
+            }
+            pinfo.setOperationPhases(operation);
+            axisService.addOperation(operation);
             if (operation.getInputAction() == null) {
                 operation.setSoapAction("urn:" + opName);
             }
         }
     }
 
-    public static AxisOperation getAxisOperationforJmethod(JMethod jmethod,
-                                                           TypeTable table) throws AxisFault {
+    public static AxisOperation getAxisOperationForJmethod(JMethod jmethod) throws AxisFault {
         AxisOperation operation;
-        String opName = jmethod.getSimpleName();
         if (jmethod.getReturnType().isVoidType()) {
             if (jmethod.getExceptionTypes().length > 0) {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY);
+                operation = AxisOperationFactory.getAxisOperation(
+                        WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY);
             } else {
-                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+                operation = AxisOperationFactory.getAxisOperation(
+                        WSDLConstants.MEP_CONSTANT_IN_ONLY);
             }
         } else {
-            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
-            AxisMessage outMessage = operation.getMessage(
-                    WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                    Java2WSDLConstants.RESPONSE));
-            outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
+            operation = AxisOperationFactory.getAxisOperation(
+                    WSDLConstants.MEP_CONSTANT_IN_OUT);
         }
-        if (jmethod.getExceptionTypes().length > 0) {
-            JClass[] extypes = jmethod.getExceptionTypes() ;
-            for (int j= 0 ; j < extypes.length ; j++) {
-                JClass extype = extypes[j] ;
-                if(AxisFault.class.getName().equals(extype.getQualifiedName())){
-                    continue;
-                }
-                AxisMessage faultMessage = new AxisMessage();
-                String exname = extype.getSimpleName() ;
-                if(extypes.length >1){
-                    faultMessage.setName(jmethod.getSimpleName() + "Fault" + j);
-                } else {
-                    faultMessage.setName(jmethod.getSimpleName() + "Fault" );
-                }
-                faultMessage.setElementQName(
-                        table.getComplexSchemaType(exname + "Fault"));
-                operation.setFaultMessages(faultMessage);
-            }
-        }
+        String opName = jmethod.getSimpleName();
         operation.setName(new QName(opName));
-        AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        if (inMessage != null) {
-            inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
-            inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
-        }
         JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
         if (methodAnnon != null) {
             String action = methodAnnon.getValue(AnnotationConstants.ACTION).asString();
@@ -514,12 +431,12 @@ public class Utils {
                     }
                     File inputFile = Utils.createTempFile(servicename,
                             fin,
-                            (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                            (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     DeploymentFileData filedata = new DeploymentFileData(inputFile);
 
                     filedata.setClassLoader(false,
-                                            moduleClassLoader,
-                            (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                            moduleClassLoader,
+                            (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     HashMap wsdlservice = archiveReader.processWSDLs(filedata);
                     if (wsdlservice != null && wsdlservice.size() > 0) {
                         Iterator servicesitr = wsdlservice.values().iterator();
@@ -571,15 +488,15 @@ public class Utils {
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             if ("..".equals(token)) {
-                if (! clean.isEmpty() && ! "..".equals(clean.getLast())) {
+                if (!clean.isEmpty() && !"..".equals(clean.getLast())) {
                     clean.removeLast();
-                    if (! st.hasMoreTokens()) {
+                    if (!st.hasMoreTokens()) {
                         isDir = true;
                     }
                 } else {
                     clean.add("..");
                 }
-            } else if (! ".".equals(token) && ! "".equals(token)) {
+            } else if (!".".equals(token) && !"".equals(token)) {
                 clean.add(token);
             }
         }
@@ -603,7 +520,7 @@ public class Utils {
         Stack parentStack = new Stack();
         Stack childStack = new Stack();
         if (parent != null) {
-            String [] values = parent.split("/");
+            String[] values = parent.split("/");
             if (values.length > 0) {
                 for (int i = 0; i < values.length; i++) {
                     String value = values[i];
@@ -611,7 +528,7 @@ public class Utils {
                 }
             }
         }
-        String [] values = childPath.split("/");
+        String[] values = childPath.split("/");
         if (values.length > 0) {
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
@@ -673,7 +590,7 @@ public class Utils {
      * To add the exclude method when generating scheams , here the exclude methods
      * will be session releated axis2 methods
      */
-    public static void addExcludeMethods(ArrayList excludeList){
+    public static void addExcludeMethods(ArrayList excludeList) {
         excludeList.add("init");
         excludeList.add("setOperationContext");
         excludeList.add("startUp");
@@ -683,7 +600,7 @@ public class Utils {
 
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
-        if(extractJars) {
+        if (extractJars) {
             URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
             return new DeploymentClassLoader(urls1, null, serviceClassLoader);
         } else {

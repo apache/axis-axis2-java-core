@@ -88,9 +88,6 @@
     </resources>
 
         <unitTest>
-            <excludes>
-		<exclude>**/JAXWSTest.java</exclude>
-            </excludes>
             <includes>
                 <include>**/*Test.java</include>
             </includes>
@@ -137,6 +134,11 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxbapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-annotation_1.0_spec</artifactId>
+            <version>${geronimo.spec.annotation.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>

@@ -94,7 +94,17 @@ public class ModuleBuilder extends DescriptionBuilder {
                 }
             }
 
-// process service description
+            // Get our name and version.  If this is NOT present, we'll try to figure it out
+            // from the file name (e.g. "addressing-1.0.mar").  If the attribute is there, we
+            // always respect it.
+            OMAttribute nameAtt = moduleElement.getAttribute(new QName("name"));
+            if (nameAtt != null) {
+                String moduleName = nameAtt.getAttributeValue();
+                if (moduleName != null && !"".equals(moduleName))
+                    module.setName(moduleName);
+            }
+
+            // Process service description
             OMElement descriptionElement =
                     moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION));
 

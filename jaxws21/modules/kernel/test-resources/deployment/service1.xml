@@ -1,7 +1,7 @@
 <service provider="xsd:anyprovider" style="xsd:anyURI" contextPath="xsd:anycontextPath">
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
-    <parameter name="para2" locked="false">Colombo</parameter>
+    <parameter name="para2">Colombo</parameter>
 
     <module ref="module1"></module>
     <module ref="module2"></module>
@@ -59,7 +59,7 @@
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">
         <module ref="uri">
             <parameter name="para3" locked="xsd:true">10</parameter>
-            <parameter name="para4" locked="false">LSF</parameter>
+            <parameter name="para4">LSF</parameter>
         </module>
 
         <InFlow>

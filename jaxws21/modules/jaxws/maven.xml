@@ -260,6 +260,14 @@
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
     	</java>
     	
+    	<ant:echo>Generating java from rpclitstringarray.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
+    	</java>    	
+    	
     	<ant:echo>Generating java from StringList.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs2}"/>
@@ -581,9 +589,27 @@
 			</ant:fileset>
 		</ant:copy>
 		
+		<!--
+		  AddNumbersHandlerService is a bit of a special service.  The files refered to by
+		  the HandlerChain annotation(s) must live in a place relative to the class or interface
+		  that carries the annotation.  maven does not automagically copy non-class file resources,
+		  so we have to copy them explicitly to their relevent locations.
+
+		  The real problem, however, is that we don't have good separation of our server-side samples
+		  from the client side.  This means we have a mix-mashed classpath we have to deal with.  For
+		  this AddNumbersHandler case, it will use the classpath at target/test-classes, not
+		  target/test-classes/services/AddNumbersHandlerService, so we need to make sure the
+		  files refered to by the HandlerChain annotation(s) are in the classpath location, not
+		  the desired server-side location.  We need to fix our test config.
+		-->
+
 		<ant:copy toDir="target/test-classes/services/AddNumbersHandlerService/">
 			<ant:fileset dir="target/test-classes">
 			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbershandler/**"/>
+			</ant:fileset>
+			<!-- copy the AddNumbersHandlers.xml file to the server where it won't be found until we fix our test config. -->
+			<ant:fileset dir="test">
+			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbershandler/AddNumbersHandlers.xml"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/addnumbershandler">
 			   <ant:include name="META-INF/**"/>
@@ -592,6 +618,24 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+
+		<!-- delete the impl class so we don't accidentally pick it up from the wrong place in the classpath
+		     Although this does not fix the problem of looking in the wrong place for the file refered by @HandlerChain -->
+		<ant:delete file="target/test-classes/org/apache/axis2/jaxws/sample/addnumbershandler/AddNumbersHandlerPortTypeImpl.class"/>
+
+		<!-- We have to explicitly copy the xml file refered to by the client interface HandlerChain annotation -->
+		<ant:copy toDir="target/test-classes/">
+			<ant:fileset dir="test">
+			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbershandler/AddNumbersClientHandlers.xml"/>
+			</ant:fileset>
+		</ant:copy>
+
+		<ant:copy toDir="target/test-classes/">
+			<ant:fileset dir="test">
+			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbershandler/AddNumbersHandlers.xml"/>
+			</ant:fileset>
+		</ant:copy>
+		
 
 		<ant:copy toDir="target/test-classes/services/GreeterService/">
 			<ant:fileset dir="target/test-classes">
@@ -728,7 +772,18 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>	
-		
+		<ant:copy toDir="target/test-classes/services/RPCLitStringArrayService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/rpclit/stringarray/**"/>
+			   <ant:include name="org/test/rpclit/stringarray/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/rpclit/stringarray/">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>	
 
 	</postGoal>
 
@@ -737,7 +792,6 @@
         <jar destfile="target/jaxws-api-${jaxws.version}.jar">
             <ant:fileset dir="target/classes">
             	<ant:exclude name="com/ibm/webservices/**"/>
-            	<ant:exclude name="META-INF/services/**"/>
             </ant:fileset>
         </jar>
     	<jar destfile="target/jaxws-impl-${jaxws.version}.jar">

@@ -122,7 +122,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
             URLConnection urlCon = url.openConnection();
             InputStream is = null;
             try {
-                is = urlCon.getInputStream();
+                is = getInputStream(urlCon);
             }
             catch(IOException e) {
                 if(log.isDebugEnabled()) {
@@ -476,6 +476,29 @@ public class WSDL4JWrapper implements WSDLWrapper {
     public String getTargetNamespace() {
         // TODO Auto-generated method stub
         return wsdlDefinition.getTargetNamespace();
+    }
+    
+    /**
+     * This method provides a Java2 Security compliant way to obtain the InputStream
+     * for a given URLConnection object. This is needed as a given URLConnection object
+     * may be an instance of a FileURLConnection object which would require access 
+     * permissions if Java2 Security was enabled.
+     */
+    private InputStream getInputStream(URLConnection urlCon) throws Exception {
+    	final URLConnection finalURLCon = urlCon;
+    	InputStream is = null;
+    	try {
+    		is = (InputStream) AccessController.doPrivileged(
+        			new PrivilegedExceptionAction() {
+    					public Object run() throws IOException {
+    						return finalURLCon.getInputStream();
+    					}
+        			});
+    	}
+    	catch(PrivilegedActionException e) {
+    		throw e.getException();
+    	}
+    	return is;
     }
 
 }

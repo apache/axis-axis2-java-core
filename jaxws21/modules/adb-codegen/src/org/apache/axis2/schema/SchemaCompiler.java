@@ -1136,7 +1136,7 @@ public class SchemaCompiler {
 
             //process the particle of this node
             if (extension.getParticle() != null) {
-                processParticle(null,extension.getParticle(), metaInfHolder, parentSchema);
+                processParticle(extension.getBaseTypeName(),extension.getParticle(), metaInfHolder, parentSchema);
             }
 
             // process attributes

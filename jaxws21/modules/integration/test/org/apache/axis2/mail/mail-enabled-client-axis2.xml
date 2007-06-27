@@ -2,22 +2,22 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="hotdeployment" locked="false">true</parameter>
-    <parameter name="hotupdate" locked="false">false</parameter>
-    <parameter name="enableMTOM" locked="false">false</parameter>
-    <parameter name="sendStacktraceDetailsWithFaults" locked="false">true</parameter>
+    <parameter name="hotdeployment">true</parameter>
+    <parameter name="hotupdate">false</parameter>
+    <parameter name="enableMTOM">false</parameter>
+    <parameter name="sendStacktraceDetailsWithFaults">true</parameter>
 
-    <parameter name="userName" locked="false">admin</parameter>
-    <parameter name="password" locked="false">axis2</parameter>
+    <parameter name="userName">admin</parameter>
+    <parameter name="password">axis2</parameter>
 
     <!-- If you have a frontend host which exposes this webservice using a different public URL  -->
     <!-- use this parameter to override autodetected url -->
-    <!--<parameter name="httpFrontendHostUrl" locked="false">https://someotherhost/context</parameter>-->
+    <!--<parameter name="httpFrontendHostUrl">https://someotherhost/context</parameter>-->
 
 
     <!--    The way of adding listener to the system-->
     <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
-    <!--        <parameter name="RSS_URL" locked="false">http://127.0.0.1/rss</parameter>-->
+    <!--        <parameter name="RSS_URL">http://127.0.0.1/rss</parameter>-->
     <!--    </listener>-->
 
     <!-- ================================================= -->
@@ -38,26 +38,26 @@
     <!-- ================================================= -->
     <transportReceiver name="http"
                        class="org.apache.axis2.transport.http.SimpleHTTPServer">
-        <parameter name="port" locked="false">6060</parameter>
+        <parameter name="port">6060</parameter>
         <!--If you want to give your own host address for EPR generation-->
         <!--uncommet following paramter , and set as you required.-->
-        <!--<parameter name="hostname" locked="false">http://myApp.com/ws</parameter>-->
+        <!--<parameter name="hostname">http://myApp.com/ws</parameter>-->
     </transportReceiver>
 
     <transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">
-        <parameter name="mail.pop3.host" locked="false">127.0.0.1</parameter>
-        <parameter name="mail.pop3.user" locked="false">bar@127.0.0.1</parameter>
-        <parameter name="mail.pop3.port" locked="false">1134</parameter>
-        <parameter name="transport.mail.pop3.password" locked="false">axis2</parameter>
-        <parameter name="transport.mail.replyToAddress" locked="false">bar@127.0.0.1</parameter>
+        <parameter name="mail.pop3.host">127.0.0.1</parameter>
+        <parameter name="mail.pop3.user">bar@127.0.0.1</parameter>
+        <parameter name="mail.pop3.port">1134</parameter>
+        <parameter name="transport.mail.pop3.password">axis2</parameter>
+        <parameter name="transport.mail.replyToAddress">bar@127.0.0.1</parameter>
     </transportReceiver>
 
     <transportReceiver name="tcp"
                        class="org.apache.axis2.transport.tcp.TCPServer">
-        <parameter name="port" locked="false">6060</parameter>
+        <parameter name="port">6060</parameter>
         <!--If you want to give your own host address for EPR generation-->
         <!--uncommet following paramter , and set as you required.-->
-        <!--<parameter name="hostname" locked="false">tcp://myApp.com/ws</parameter>-->
+        <!--<parameter name="hostname">tcp://myApp.com/ws</parameter>-->
     </transportReceiver>
 
     <!-- ================================================= -->
@@ -70,20 +70,20 @@
                      class="org.apache.axis2.transport.local.LocalTransportSender"/>
     <transportSender name="http"
                      class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
-        <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
+        <parameter name="PROTOCOL">HTTP/1.1</parameter>
+        <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
     <transportSender name="https"
                      class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
-        <parameter name="Transfer-Encoding" locked="false">chunked</parameter>
+        <parameter name="PROTOCOL">HTTP/1.1</parameter>
+        <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
 
     <transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender">
-        <parameter name="mail.smtp.host" locked="false">127.0.0.1</parameter>
-        <parameter name="mail.smtp.user" locked="false">bar</parameter>
-        <parameter name="transport.mail.smtp.password" locked="false">axis2</parameter>
-        <parameter name="transport.mail.smtp.port" locked="false">1049</parameter>
+        <parameter name="mail.smtp.host">127.0.0.1</parameter>
+        <parameter name="mail.smtp.user">bar</parameter>
+        <parameter name="transport.mail.smtp.password">axis2</parameter>
+        <parameter name="transport.mail.smtp.port">1049</parameter>
     </transportSender>
 
     <!-- ================================================= -->
@@ -94,7 +94,7 @@
 
     <!--Configuring module , providing parameters for modules whether they refer or not-->
     <!--<moduleConfig name="addressing">-->
-    <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
+    <!--<parameter name="addressingPara">N/A</parameter>-->
     <!--</moduleConfig>-->
 
     <!-- ================================================= -->
@@ -104,11 +104,11 @@
         <!--  System pre defined phases       -->
          <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
         </phase>
@@ -116,16 +116,16 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
                 <order phase="Dispatch"/>
             </handler>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
         </phase>
@@ -145,26 +145,26 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
                 <order phase="Dispatch"/>
             </handler>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
         </phase>

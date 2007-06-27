@@ -25,6 +25,7 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.HttpClient;
@@ -56,7 +57,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
 
@@ -104,7 +105,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
         httppost.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
                                           myretryhandler);
         httppost.setRequestEntity(new InputStreamRequestEntity(
-                new FileInputStream("test-resources/mtom/wmtom.bin")));
+                new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/mtom/wmtom.bin"))));
 
         httppost.setRequestHeader("Content-Type",
                                   "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");

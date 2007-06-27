@@ -225,13 +225,42 @@
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	          	        	      tofile="target/test-resources/SwA-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
+        
+        <mkdir dir="target/sample/groovy"/>
+        <mkdir dir="target/sample/groovy/lib"/>
+        <mkdir dir="target/sample/groovy/META-INF"/>
+        <mkdir dir="target/sample/groovy/sample"/>
+        <mkdir dir="target/sample/groovy/sample/groovy"/>
+
+        <copy file="../samples/deprecated/groovy/src/sample/groovy/GroovyRcv.groovy"
+                  tofile="target/sample/groovy/GroovyRcv.groovy"/>
+        
+        <javac fork="true" destdir="target/classes" debug="on">
+            <classpath refid="maven.dependency.classpath"/>
+            <src path="../samples/deprecated/groovy/src/sample/groovy"/>
+        </javac>
+        <copy file="target/classes/sample/groovy/GroovyReceiver.class"
+                  tofile="target/sample/groovy/sample/groovy/GroovyReceiver.class"/>
+        <delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
+
+        <copy file="../samples/deprecated/groovy/src/sample/groovy/META-INF/services.xml"
+                  tofile="target/sample/groovy/META-INF/services.xml"/>
+
+	    <copy todir="target/sample/groovy/lib/" flatten="true">
+			<fileset dir="${maven.repo.local}/groovy/" includes="**/groovy-all-${groovy.all.version}.jar"/>
+		</copy>
+
 		<!-- Groovy repository -->
 		<mkdir dir="target/groovyRepo"/>
 		<mkdir dir="target/groovyRepo/conf"/>
 		<mkdir dir="target/groovyRepo/services"/>
 		<mkdir dir="target/groovyRepo/modules"/>
-		<copy file="../samples/target/groovy/groovyService.aar"    	                      
-    	            	  tofile="target/groovyRepo/services/groovyService.aar"/>
+
+        <jar destfile="target/groovyRepo/services/groovyService.aar">
+            <fileset dir="target/sample/groovy">
+            </fileset>
+        </jar>
+
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	                  tofile="target/groovyRepo/modules/addressing-${addressing_version}.mar"/>
 		<copy file="conf/axis2.xml"

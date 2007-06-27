@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.handler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.axis2.jaxws.core.MEPContext;
 import java.util.List;
 
 import javax.xml.soap.SOAPBody;
@@ -55,9 +56,11 @@ public class HandlerChainProcessor {
         REQUEST, RESPONSE
     };
 
-    private javax.xml.ws.handler.MessageContext currentMC;
+    private javax.xml.ws.handler.MessageContext currentMC;  // just a pointer
+    private LogicalMessageContext logicalMC = null;
+    private SoapMessageContext soapMC = null;
 
-    private MessageContext mc;
+    private MEPContext mepCtx;
 
     private List<Handler> handlers = null;
 
@@ -148,12 +151,13 @@ public class HandlerChainProcessor {
 	 * 1.  Has the MessageContext.MESSAGE_OUTBOUND_PROPERTY changed, indicating reversal of message direction
 	 * 2.  Has the message been converted to a fault message? (indicated by a flag in the message)
 	 */
-	public boolean processChain(MessageContext mc, Direction direction, MEP mep, boolean expectResponse) {
+    public boolean processChain(MEPContext mepCtx, Direction direction, MEP mep,
+                                boolean expectResponse) {
 
         if (handlers.size() == 0)
             return true;
         
-        this.mc = mc;
+        this.mepCtx = mepCtx;
         sortChain();
         initContext(direction);
 
@@ -265,13 +269,18 @@ public class HandlerChainProcessor {
                 // it's a response, so we can safely assume that 
                 // ALL the handlers were invoked on the request,
                 // so we need to close ALL of them
-                if (direction.equals(Direction.IN))
+                if (direction.equals(Direction.IN)) {
                     callCloseHandlers(handlers.size() - 1, 0, direction);
-                else
+                } else {
                     callCloseHandlers(0, handlers.size() - 1, direction);
+                }
+                if (savedException != null) {
+                    // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw any
+                    // other runtime exception --> No response" case.
+                    throw savedException;
+                }
             }
         }
-
     }
 
     /*
@@ -323,10 +332,9 @@ public class HandlerChainProcessor {
                 currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                                 (direction != Direction.OUT));
             if (ProtocolException.class.isAssignableFrom(re.getClass())) {
-				convertToFaultMessage(mc, re, proto);
+                convertToFaultMessage(mepCtx, re, proto);
                 // just re-initialize the current handler message context since
                 // that will pick up the now-changed message
-                reInitContext();
                 return PROTOCOL_EXCEPTION;
             }
             return OTHER_EXCEPTION;
@@ -378,13 +386,14 @@ public class HandlerChainProcessor {
       * opposite direction as this call to callHandleFault, and thus
       * should be closed.
       */
-    public void processFault(MessageContext mc, Direction direction) {
+    public void processFault(MEPContext mepCtx, Direction direction) {
 
         // direction.IN = client
         // direction.OUT = server
         if (handlers.size() == 0)
             return;
-        this.mc = mc;
+
+        this.mepCtx = mepCtx;
 		sortChain();
         initContext(direction);
 		currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
@@ -428,23 +437,23 @@ public class HandlerChainProcessor {
 
         if (direction == Direction.OUT) {
             for (; i <= end; i++) {
-				if (((Handler) handlers.get(i)).handleFault(currentMC) == false) {
+                boolean success = ((Handler) handlers.get(i)).handleFault(currentMC);
+                if (!success)
                     break;
-                }
-                switchContext(direction, i+1);
+                switchContext(direction, i + 1);
             }
         } else { // IN case
             for (; i >= end; i--) {
-				if (((Handler) handlers.get(i)).handleFault(currentMC) == false) {
+                boolean success = ((Handler) handlers.get(i)).handleFault(currentMC);
+                if (!success)
                     break;
-                }
-                switchContext(direction, i-1);
+                switchContext(direction, i - 1);
             }
         }
     }
 
 
-	public static void convertToFaultMessage(MessageContext mc, Exception e, Protocol protocol) {
+    public static void convertToFaultMessage(MEPContext mepCtx, Exception e, Protocol protocol) {
 
         // need to check if message is already a fault message or not,
         // probably by way of a flag (isFault) in the MessageContext or Message
@@ -470,7 +479,7 @@ public class HandlerChainProcessor {
                 // TODO something is wrong here.  The message should be a response message, not
                 // a request message.  I don't see how to change that.  (see the debugger...)
                 // TODO probably also need to turn on message.WRITE_XML_DECLARATION
-                mc.setMessage(((MessageFactory)(FactoryRegistry.getFactory(MessageFactory.class))).createFrom(message));
+                mepCtx.setMessage(((MessageFactory) (FactoryRegistry.getFactory(MessageFactory.class))).createFrom(message));
 
             } else {
                 throw ExceptionFactory.makeWebServiceException("We only support SOAP11 and SOAP12 for JAXWS handlers");
@@ -480,50 +489,39 @@ public class HandlerChainProcessor {
             throw ExceptionFactory.makeWebServiceException(ex);
         }
 
-	}
-    
-    /*
-     * utility method to re-initialize handlercontext so it picks up a changed 
-     * message under the org.apache.axis2.jaxws.core.MessageContext object
-     * 
-     * TODO: hopefully we can fix this so the message under the handler message context
-     * will grab it without us having to create new objects.
-     */
-    private void reInitContext() {
-        if (currentMC.getClass().isAssignableFrom(LogicalMessageContext.class))
-            currentMC = MessageContextFactory.createLogicalMessageContext(mc);
-        else
-            currentMC = MessageContextFactory.createSoapMessageContext(mc);
     }
 
+
     private void initContext(Direction direction) {
+        soapMC = MessageContextFactory.createSoapMessageContext(mepCtx.getMessageContext());
+        logicalMC = MessageContextFactory.createLogicalMessageContext(mepCtx.getMessageContext());
         if (direction == Direction.OUT) {
             // logical context, then SOAP
-            if ((logicalLength == 0) && (handlers.size() > 0))  // we only have soap handlers
-                currentMC = MessageContextFactory.createSoapMessageContext(mc);
+            if ((logicalLength == 0) && (handlers.size() > 0)) // we only have soap handlers
+                currentMC = soapMC; //MessageContextFactory.createSoapMessageContext(mepCtx.getMessageContext());
             else
-                currentMC = MessageContextFactory.createLogicalMessageContext(mc);
-        }
-        else {
+                currentMC = logicalMC; //MessageContextFactory.createLogicalMessageContext(mepCtx.getMessageContext());
+        } else {
             // SOAP context, then logical
-            if ((logicalLength == handlers.size()) && (handlers.size() > 0))  // we only have logical handlers
-                currentMC = MessageContextFactory.createLogicalMessageContext(mc);
+            if ((logicalLength == handlers.size()) && (handlers.size() > 0)) // we only have logical handlers
+                currentMC = logicalMC; //MessageContextFactory.createLogicalMessageContext(mepCtx.getMessageContext());
             else
-                currentMC = MessageContextFactory.createSoapMessageContext(mc);
+                currentMC = soapMC; //MessageContextFactory.createSoapMessageContext(mepCtx.getMessageContext());
         }
     }
-    
+
     private void switchContext(Direction direction, int index) {
 
         if ((logicalLength == handlers.size()) || (logicalLength == 0))
-            return;  // all handlers must be the same type, so no context switch
-        
+            return; // all handlers must be the same type, so no context switch
+
         if (((direction == Direction.OUT) && (index == logicalLength))
                 || ((direction == Direction.IN) && (index == (logicalLength - 1)))) {
-            if (currentMC.getClass().isAssignableFrom(LogicalMessageContext.class))
-                currentMC = MessageContextFactory.createSoapMessageContext(mc);
+            //if (currentMC.getClass().isAssignableFrom(LogicalMessageContext.class))
+            if (currentMC == logicalMC)  // object check, not .equals()
+                currentMC = soapMC; //MessageContextFactory.createSoapMessageContext(mepCtx.getMessageContext());
             else
-                currentMC = MessageContextFactory.createLogicalMessageContext(mc);
+                currentMC = logicalMC; //MessageContextFactory.createLogicalMessageContext(mepCtx.getMessageContext());
         }
     }
 

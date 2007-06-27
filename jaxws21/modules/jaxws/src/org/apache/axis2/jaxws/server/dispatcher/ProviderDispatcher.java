@@ -198,7 +198,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                 // If a fault was thrown, we need to create a slightly different
                 // MessageContext, than in the response path.
                 Message responseMsg = createMessageFromValue(fault);
-                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc, t);
+                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
                 responseMsgCtx.setMessage(responseMsg);
             } else {
                 Message responseMsg = createMessageFromValue(responseParamValue);

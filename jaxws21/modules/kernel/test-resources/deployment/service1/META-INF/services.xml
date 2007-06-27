@@ -3,7 +3,7 @@
     <description>
         This is a testing service , to test the system is working or not
     </description>
-    <parameter name="ServiceClass" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
+    <parameter name="ServiceClass">org.apache.axis2.sample.echo.EchoImpl</parameter>
     <operation name="echoString">
         <module ref="module1"/>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>

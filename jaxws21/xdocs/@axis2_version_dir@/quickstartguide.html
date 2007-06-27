@@ -214,10 +214,11 @@ for the different message exchange patterns.</p>
 intend to include for this application.</p>
 
 <p>You can deploy a service by simply taking this hierarchy of files and
-copying it to the webapps directory of your servlet engine. This is known as
-the "exploded" format. You can also compress your documents into an *.aar
+copying it to the webapps/axis2/WEB-INF/services directory of your servlet engine. 
+(Note the Axis2 WAR file must be installed first in the servlet engine.)
+This is known as the "exploded" format. You can also compress your documents into an *.aar
 file, similar to a *.jar file, and place the *.aar file directly in the
-servlet engine's webapps directory.</p>
+servlet engine's webapps/axis2/WEB-INF/services directory.</p>
 
 <p>Now that you understand what we're trying to accomplish, we're almost
 ready to start building.</p>
@@ -405,9 +406,9 @@ href="http://www.w3.org/DOM/">DOM</a> (Document Object Model)-like structure
 that is based on the StAX API (Streaming API for XML). Methods that act as
 services must take as their argument an OMElement, which represents an XML
 element that happens, in this case, to be the payload of the incoming SOAP
-message. Here, you're extracting the contents of the first child of the
-payload element, adding text to it, and using it as content for the return
-OMElement. Unless this is an "in only" service, these methods must return an
+message. Method getPrice(OMElement), for example, extracts the contents of the first child of the
+payload element, which corresponds to the stock symbol, and uses this to look up
+the current price of the stock. Unless this is an "in only" service, these methods must return an
 OMElement, because that becomes the payload of the return SOAP message.</p>
 
 <p>Now build the project by typing ant generate.service in the
@@ -550,10 +551,12 @@ public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInter
 
     static{ map = new HashMap(); }
 
-    public void update(UpdateDocument param0) {<b>        map.put(param0.getUpdate().getSymbol(), new Double(param0.getUpdate().getPrice()));</b>
+    public void update(UpdateDocument param0) {
+        <b>map.put(param0.getUpdate().getSymbol(), new Double(param0.getUpdate().getPrice()));</b>
     }
 
-    public GetPriceResponseDocument getPrice(GetPriceDocument param1) {<b>        Double price = (Double) map.get(param1.getGetPrice().getSymbol());
+    public GetPriceResponseDocument getPrice(GetPriceDocument param1) {
+        <b>Double price = (Double) map.get(param1.getGetPrice().getSymbol());
         double ret = 42;
         if(price != null){
             ret = price.doubleValue();
@@ -756,7 +759,7 @@ public class AXIOMClient {
             sender.setOptions(options);
 
             sender.fireAndForget(updatePayload);
-            System.err.println("done");
+            System.err.println("price updated");
             OMElement result = sender.sendReceive(getPricePayload);
 
             String response = result.getFirstElement().getText();
@@ -817,6 +820,7 @@ public class ADBClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -832,7 +836,7 @@ public class ADBClient{
             req.setPrice (42.35);
 
             stub.update(req);
-            System.err.println("done");
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -869,8 +873,11 @@ method creates an Update payload, setting the symbol to ABC and the price to
 Axis2_HOME/samples/quickstartadb directory.</p>
 
 <p>You should get the following as output:</p>
-<pre>42
-done</pre>
+<pre>
+42
+price updated
+42.35
+</pre>
 <a name="clientxmlbeans"></a>
 
 <h3>Generating a Client using XMLBeans</h3>
@@ -909,6 +916,7 @@ public class XMLBEANSClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -921,11 +929,11 @@ public class XMLBEANSClient{
         try{
             UpdateDocument reqDoc = UpdateDocument.Factory.newInstance();
             UpdateDocument.Update req = reqDoc.addNewUpdate();
-            req.setSymbol ("ABC");
+            req.setSymbol ("BCD");
             req.setPrice (42.32);
 
             stub.update(reqDoc);
-            System.err.println("done");
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -937,7 +945,7 @@ public class XMLBEANSClient{
         try{
             GetPriceDocument reqDoc = GetPriceDocument.Factory.newInstance();
             GetPriceDocument.GetPrice req = reqDoc.addNewGetPrice();
-            req.setSymbol("ABC");
+            req.setSymbol("BCD");
 
             GetPriceResponseDocument res =
                 stub.getPrice(reqDoc);
@@ -962,8 +970,11 @@ and price to 42.32, displaying 'done' when complete.</p>
 Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
 <p>You should get the following as output:</p>
-<pre>42
-done</pre>
+<pre>
+42
+price updated
+42.32
+</pre>
 <a name="clientjibx"></a>
 
 <h3>Generating a Client using JiBX</h3>
@@ -994,6 +1005,7 @@ public class JiBXClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -1004,8 +1016,8 @@ public class JiBXClient{
     /* fire and forget */
     public static void update(StockQuoteServiceStub stub){
         try{
-            stub.update("ABC", new Double(42.35));
-            System.err.println("done");
+            stub.update("CDE", new Double(42.35));
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -1015,7 +1027,7 @@ public class JiBXClient{
     /* two way call/receive */
     public static void getPrice(StockQuoteServiceStub stub){
         try{
-            System.err.println(stub.getPrice("ABC"));
+            System.err.println(stub.getPrice("CDE"));
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");
@@ -1033,8 +1045,11 @@ the price for stock "ABC" to 42.35.</p>
 the Axis2_HOME/samples/quickstartjibx directory.</p>
 
 <p>You should get the following as output:</p>
-<pre>42
-done</pre>
+<pre>
+42
+price updated
+42.35
+</pre>
 
 <p>For more information on using JiBX with Axis2, see the <a
 href="jibx/jibx-codegen-integration.html">JiBX code generation
@@ -1043,7 +1058,7 @@ integration</a> details.</p>
 
 <h2>Summary</h2>
 
-<p>Axis2 is a slick and robust way to get web services up and running in no
+<p>Axis2 provides a slick and robust way to get web services up and running in no
 time. This guide presented five methods of creating a service deployable on
 Axis2, and four methods of creating a client to communicate with the
 services. You now have the flexibility to create Web services using a variety

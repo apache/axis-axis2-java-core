@@ -1,0 +1,3 @@
+<module name="classpathModule">
+    <parameter name="color">blue</parameter>
+</module>

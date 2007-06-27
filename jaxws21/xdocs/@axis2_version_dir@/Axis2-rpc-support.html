@@ -35,7 +35,7 @@ generation can be easily explained by using an example.</p>
 
 <p>Take the following piece of WSDL</p>
 <pre> .....
-    &lt; message name="requestMessage"&gt;
+    &lt;message name="requestMessage"&gt;
                 &lt;part name="part1" type="xs:string"/&gt;
                 &lt;part name="part2" type="xs:int"/&gt;
         &lt;/message&gt;
@@ -62,8 +62,8 @@ generation can be easily explained by using an example.</p>
         &lt;/binding&gt;
 .....</pre>
 
-<p>The binding says its got to be rpc/lit and in this case the message parts
-need wrapping in the following order.</p>
+<p>The binding says rpc/lit is required and in this case the message parts
+will need wrapping in the following order:</p>
 <ol>
   <li>The first element needs to have the operation name as the local name
     and the operation namespace. (This happens to be the namespace of the
@@ -116,7 +116,7 @@ is a mapping table.</p>
   <li>When the schema is unwrapped, where will the unwrapping information
     remain?
     <p>There has to be a store to keep the information seperated. The Axis *
-    hierarchy ca be used for this. It has nicely separated information
+    hierarchy can be used for this. It has nicely separated information
     holders and a parameter store that can hold an information bean.</p>
   </li>
   <li>How do we maintain uniqueness among message part names?

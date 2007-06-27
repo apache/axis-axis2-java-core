@@ -37,6 +37,7 @@ import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;
@@ -149,7 +150,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
         ConfigurationContext confctx = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                createConfigurationContextFromFileSystem(TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
                                                          null);
         ServiceClient client = new ServiceClient(confctx, null);
         Options options = new Options();
@@ -167,7 +168,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
     }
 
     public File getTestResourceFile(String relativePath) {
-        return new File(testResourceDir, relativePath);
+        return new File(TestingUtils.prefixBaseDirectory(testResourceDir), relativePath);
     }
 
     protected void tearDown() throws Exception {
@@ -177,7 +178,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
         try {
             ConfigurationContext configContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                            "target/test-resources/integrationRepo", null);
+                            TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
             ServiceClient sender = new ServiceClient(configContext, null);
 
             OMElement payload = getOMElement(FaultHandler.ERR_HANDLING_WITH_AXIS_FAULT);

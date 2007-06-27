@@ -87,14 +87,14 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                 Element returnElement = null;
                 if (operationDesc.isResultHeader()) {
                     returnElement =
-                            MethodMarshallerUtils.getReturnElement(packages, message, null, true,
+                            MethodMarshallerUtils.getReturnElement(packages, message, null, false, true,
                                                                    operationDesc.getResultTargetNamespace(),
                                                                    operationDesc.getResultName(),
                                                                    MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
 
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, null, false, null, null,
+                            .getReturnElement(packages, message, null, false, false, null, null,
                                     MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
                     hasReturnInBody = true;
                 }
@@ -232,8 +232,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                         returnElement = new Element(returnObject, returnQName, returnType);
                     }
                 }
-                MethodMarshallerUtils.toMessage(returnElement, returnType,
-                                                marshalDesc, m,
+                MethodMarshallerUtils.toMessage(returnElement, 
+                								returnType,
+                								operationDesc.isListType(),
+                                                marshalDesc, 
+                                                m,
                                                 null, // always marshal using "by element" mode
                                                 operationDesc.isResultHeader());
             }

@@ -50,6 +50,7 @@ public class JAXBBlockContext {
     // Please don't use "by java type" processing to get around errors.
 
     private Class processType = null;
+    private boolean isxmlList =false;
 
     /**
      * Full Constructor JAXBBlockContext (most performant)
@@ -138,4 +139,13 @@ public class JAXBBlockContext {
     public JAXBUtils.CONSTRUCTION_TYPE getConstructionType() {
         return constructionType;
     }
+
+    public boolean isxmlList() {
+        return isxmlList;
+    }
+
+    public void setIsxmlList(boolean isxmlList) {
+        this.isxmlList = isxmlList;
+    }
+    
 }

@@ -36,6 +36,7 @@ import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
@@ -46,10 +47,11 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 public class LogicalMessageImpl implements LogicalMessage {
 
-    private Message message;
-    
-    public LogicalMessageImpl(Message m) {
-        message = m;
+
+    private MEPContext mepCtx;
+
+    protected LogicalMessageImpl(MEPContext m) {
+        mepCtx = m;
     }
     
     /*
@@ -76,7 +78,7 @@ public class LogicalMessageImpl implements LogicalMessage {
     private Object _getPayload(Object context, BlockFactory factory) {
         Object payload = null;
         try {
-            Block block = message.getBodyBlock(context, factory);
+            Block block = mepCtx.getMessageObject().getBodyBlock(context, factory);
             Object content = block.getBusinessObject(true);
             
             // For now, we have to create a new Block from the original content
@@ -85,7 +87,7 @@ public class LogicalMessageImpl implements LogicalMessage {
             Payloads payloads = createPayloads(content);
             
             Block cacheBlock = factory.createFrom(payloads.CACHE_PAYLOAD, context, block.getQName());
-            message.setBodyBlock(cacheBlock);
+            mepCtx.getMessageObject().setBodyBlock(cacheBlock);
             
             payload = payloads.HANDLER_PAYLOAD;
         } catch (XMLStreamException e) {
@@ -117,8 +119,8 @@ public class LogicalMessageImpl implements LogicalMessage {
     private void _setPayload(Object object, Object context, BlockFactory factory) {
         Block block = factory.createFrom(object, context, null);
         
-        if (message != null) {
-            message.setBodyBlock(block);
+        if (mepCtx.getMessageObject() != null) {
+            mepCtx.getMessageObject().setBodyBlock(block);
         }
     }
 

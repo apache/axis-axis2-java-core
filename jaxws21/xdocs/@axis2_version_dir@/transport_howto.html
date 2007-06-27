@@ -151,8 +151,8 @@ new transport receiver. We do this by adding an entry into the axis2.xml
 file. If you need to pass any properties for the transport to operate, it can
 also be done through the axis2.xml file.</p>
 <source><pre>   &lt;transportReceiver name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_LISTNER_CLASS"&gt;
-        &lt;parameter name="PROPERTY_NAME" locked="false"&gt;PROPERTY_VALUE&lt;/parameter&gt;
-        &lt;parameter name="PROPERTY_NAME_2" locked="false"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
+        &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
+        &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
 </source>
@@ -200,8 +200,8 @@ a sub-set of the methods from the abstract class.</p>
 your new transport sender by adding an entry to the axis2.xml file, like you
 did for the TransportReceiver.</p>
 <source><pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
-        &lt;parameter name="PROPERTY_NAME" locked="false"&gt;PROPERTY_VALUE&lt;/parameter&gt;
-        &lt;parameter name="PROPERTY_NAME_2" locked="false"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
+        &lt;parameter name="PROPERTY_NAME"&gt;PROPERTY_VALUE&lt;/parameter&gt;
+        &lt;parameter name="PROPERTY_NAME_2"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportSender&gt;
   </pre>
 </source>

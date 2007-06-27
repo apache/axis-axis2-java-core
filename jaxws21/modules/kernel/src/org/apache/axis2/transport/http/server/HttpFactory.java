@@ -138,7 +138,7 @@ public class HttpFactory {
         originServer = getStringParam(PARAMETER_ORIGIN_SERVER, "Simple-Server/1.1");
         requestSocketTimeout = getIntParam(PARAMETER_REQUEST_SOCKET_TIMEOUT, 20000);
         requestTcpNoDelay = getBooleanParam(PARAMETER_REQUEST_TCP_NO_DELAY, true);
-        requestCoreThreadPoolSize = getIntParam(PARAMETER_REQUEST_CORE_THREAD_POOL_SIZE, 25);
+        requestCoreThreadPoolSize = getIntParam(PARAMETER_REQUEST_CORE_THREAD_POOL_SIZE, 100);
         requestMaxThreadPoolSize = getIntParam(PARAMETER_REQUEST_MAX_THREAD_POOL_SIZE, 150);
         threadKeepAliveTime = getLongParam(PARAMETER_THREAD_KEEP_ALIVE_TIME, 180L);
         threadKeepAliveTimeUnit =
@@ -266,6 +266,7 @@ public class HttpFactory {
                 .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, requestTcpNoDelay)
                 .setIntParameter(HttpConnectionParams.MAX_LINE_LENGTH, 4000)
                 .setIntParameter(HttpConnectionParams.MAX_HEADER_COUNT, 500)
+                .setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE, 8 * 1024)
                 .setParameter(HttpProtocolParams.ORIGIN_SERVER, originServer);
         return params;
     }

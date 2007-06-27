@@ -306,6 +306,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 }
                 MethodMarshallerUtils.toMessage(returnElement,
                                                 returnType,
+                                                operationDesc.isListType(),
                                                 marshalDesc,
                                                 m,
                                                 returnType, // force marshal by type
@@ -388,7 +389,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils.getReturnElement(packages,
                                                                            message,
                                                                            returnType,
-                                                                           // Hmm we may want to refine this
+                                                                           operationDesc.isListType(),
                                                                            true,  // is a header
                                                                            operationDesc.getResultTargetNamespace(),
                                                                            // header ns
@@ -399,7 +400,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                     returnElement = MethodMarshallerUtils.getReturnElement(packages,
                                                                            message,
                                                                            returnType,
-                                                                           // Force Unmarshal by type
+                                                                           operationDesc.isListType(),
                                                                            false,
                                                                            null,
                                                                            null,

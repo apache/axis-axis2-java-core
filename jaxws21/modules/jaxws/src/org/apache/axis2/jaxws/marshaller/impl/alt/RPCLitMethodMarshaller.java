@@ -322,6 +322,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 }
                 MethodMarshallerUtils.toMessage(returnElement,
                                                 returnType,
+                                                operationDesc.isListType(),
                                                 marshalDesc,
                                                 m,
                                                 byJavaType,
@@ -410,14 +411,14 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 }
                 if (operationDesc.isResultHeader()) {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, byJavaType, true,
+                            .getReturnElement(packages, message, byJavaType,  operationDesc.isListType(), true,
                                               operationDesc.getResultTargetNamespace(),
                                               operationDesc.getResultPartName(),
                                               MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
 
                 } else {
                     returnElement = MethodMarshallerUtils
-                            .getReturnElement(packages, message, byJavaType, false, null, null,
+                            .getReturnElement(packages, message, byJavaType,  operationDesc.isListType(), false, null, null,
                                     MethodMarshallerUtils.numOutputBodyParams(pds) > 0);
                     hasReturnInBody = true;
                 }

@@ -57,7 +57,7 @@ public class AXIOMClient {
             sender.setOptions(options);
 
             sender.fireAndForget(updatePayload);
-            System.err.println("done");
+            System.err.println("price updated");
             Thread.sleep(3000);
             OMElement result = sender.sendReceive(getPricePayload);
 

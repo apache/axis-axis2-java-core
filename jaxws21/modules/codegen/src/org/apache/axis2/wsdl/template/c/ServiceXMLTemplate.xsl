@@ -12,7 +12,7 @@
         <service>
             <xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>
 
-            <parameter name="ServiceClass" locked="false">
+            <parameter name="ServiceClass">
                         <xsl:value-of select="@servicename"/>
             </parameter>
 			<xsl:for-each select="method">

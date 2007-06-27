@@ -52,7 +52,6 @@
             </xsd:choice>
         </xsd:complexType>
     </xsd:element>
-    
     <xsd:element name="TestInnerParticle5">
         <xsd:complexType>
             <xsd:sequence>
@@ -69,4 +68,24 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="TestInnterParticleExtension" type="test1:TestInnterParticleExtensionParentComplexType"/>
+
+    <xsd:complexType name="TestInnterParticleExtensionChildComplexType">
+        <xsd:complexContent>
+            <xsd:extension base="test1:TestInnterParticleExtensionParentComplexType">
+                <xsd:sequence>
+                    <xsd:choice>
+                        <xsd:element name="Param1" type="xsd:string"/>
+                        <xsd:element name="Param2" type="xsd:string"/>
+                    </xsd:choice>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="TestInnterParticleExtensionParentComplexType">
+        <xsd:sequence>
+        </xsd:sequence>
+    </xsd:complexType>
 </xsd:schema>

@@ -260,8 +260,7 @@ public class XMLFaultUtils {
         // TODO what if this fails
         String text = soapFault.getFaultString();
         Locale locale = soapFault.getFaultStringLocale();
-        String lang = (locale == null) ? Locale.getDefault().getLanguage() : locale.getLanguage();
-        XMLFaultReason reason = new XMLFaultReason(text, lang);
+        XMLFaultReason reason = new XMLFaultReason(text, localeToXmlLang(locale));
 
         // Construct the XMLFault from the required information (code, reason, detail blocks)
         XMLFault xmlFault = new XMLFault(code, reason, detailBlocks);
@@ -299,8 +298,7 @@ public class XMLFaultUtils {
                         first = false;
                     } else {
                         text = soapFault.getFaultReasonText(locale);
-                        lang = locale.getLanguage();
-                        list.add(new XMLFaultReason(text, lang));
+                        list.add(new XMLFaultReason(text, localeToXmlLang(locale)));
                     }
                 }
                 if (list.size() > 0) {
@@ -635,5 +633,24 @@ public class XMLFaultUtils {
 
         return soapFault;
 
+    }
+    
+    /**
+     * Converte a Locale object to an xmlLang String
+     * @param locale
+     * @return String of the form <locale.getLanguage()>-<locale.getCountry()>
+     */
+    private static String localeToXmlLang(Locale locale) {
+        if (locale == null) {
+            return Locale.getDefault().getLanguage() + "-" + Locale.getDefault().getCountry();
+        }
+        String lang = locale.getLanguage();
+        String countryCode = locale.getCountry();
+        if (countryCode == null || countryCode.length() == 0) {
+            return lang;
+        } else {
+            return new String(lang + "-" + countryCode);
+        }
+        
     }
 }

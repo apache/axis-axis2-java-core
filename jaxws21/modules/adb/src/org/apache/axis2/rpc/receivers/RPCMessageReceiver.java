@@ -29,7 +29,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +38,7 @@ import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
+public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
     private static Log log = LogFactory.getLog(RPCMessageReceiver.class);
 
     /**

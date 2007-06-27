@@ -205,7 +205,10 @@ public abstract class AsyncResponse implements Response {
         // TODO: IMPORTANT: this is the right call here, but beware that the messagecontext may be turned into
         // a fault context with a fault message.  We need to check for this and, if necessary, make an exception and throw it.
         // Invoke inbound handlers.
-        HandlerInvokerUtils.invokeInboundHandlers(response, response.getInvocationContext().getHandlers(), response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+        HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
+                                                  response.getInvocationContext().getHandlers(),
+                                                  HandlerChainProcessor.MEP.RESPONSE,
+                                                  false);
 
         // TODO: Check the type of the object to make sure it corresponds with
         // the parameterized generic type.
@@ -249,7 +252,11 @@ public abstract class AsyncResponse implements Response {
             // If it is the case that the message is null, there's no sense running through the handlers.
             if (faultMessageContext.getMessage() != null)
             // Invoke inbound handlers.
-            HandlerInvokerUtils.invokeInboundHandlers(faultMessageContext, faultMessageContext.getInvocationContext().getHandlers(), faultMessageContext.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+                HandlerInvokerUtils.invokeInboundHandlers(faultMessageContext.getMEPContext(),
+                                                          faultMessageContext.getInvocationContext()
+                                                                             .getHandlers(),
+                                                          HandlerChainProcessor.MEP.RESPONSE,
+                                                          false);
             Throwable t = getFaultResponse(faultMessageContext);
             if (t != null) {
                 return t;

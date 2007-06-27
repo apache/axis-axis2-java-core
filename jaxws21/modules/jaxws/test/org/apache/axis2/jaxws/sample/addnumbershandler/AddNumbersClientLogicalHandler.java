@@ -34,6 +34,33 @@ public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.Logi
     public boolean handleMessage(LogicalMessageContext messagecontext) {
         Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound response on the client
+
+            /*
+             * These props were set on the outbound flow.  Inbound flow handlers
+             * should have access to them.
+             */
+            String propKey = "AddNumbersClientProtocolHandlerOutboundAppScopedProperty";
+            String myClientVal = (String)messagecontext.get(propKey);
+            if (myClientVal == null)
+                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+            propKey = "AddNumbersClientProtocolHandlerOutboundHandlerScopedProperty";
+            myClientVal = (String)messagecontext.get(propKey);
+            if (myClientVal == null)
+                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+
+            /*
+             * These props were set on the inbound flow.  Inbound flow handlers
+             * should have access to them.
+             */
+            propKey = "AddNumbersClientProtocolHandlerInboundAppScopedProperty";
+            myClientVal = (String)messagecontext.get(propKey);
+            if (myClientVal == null)
+                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+            propKey = "AddNumbersClientProtocolHandlerInboundHandlerScopedProperty";
+            myClientVal = (String)messagecontext.get(propKey);
+            if (myClientVal == null)
+                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+            
             LogicalMessage msg = messagecontext.getMessage();
             String st = getStringFromSourcePayload(msg.getPayload());
             String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - 1);

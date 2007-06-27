@@ -32,6 +32,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -59,7 +60,7 @@ public class GroovyServiceTest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(GroovyServiceTest.class), "target/groovyRepo");
+        return getTestSetup2(new TestSuite(GroovyServiceTest.class), TestingUtils.prefixBaseDirectory("target/groovyRepo"));
     }
 
     public void testServiceExists() throws Exception {
@@ -84,7 +85,7 @@ public class GroovyServiceTest extends UtilServerBasedTestCase {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);

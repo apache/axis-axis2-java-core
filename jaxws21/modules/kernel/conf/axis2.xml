@@ -183,6 +183,38 @@
     </transportReceiver>-->
 
     <!-- ================================================= -->
+    <!-- Non-blocking http/s Transport Listener  -->
+
+    <!-- the non blocking http transport based on HttpCore + NIO extensions
+    <transportReceiver name="http" class="org.apache.axis2.transport.nhttp.HttpCoreNIOListener">
+    	<parameter name="port" locked="false">9000</parameter>
+    	<parameter name="non-blocking" locked="false">true</parameter>
+    </transportReceiver>-->
+
+    <!-- the non blocking https transport based on HttpCore + SSL-NIO extensions
+    <transportReceiver name="https" class="org.apache.axis2.transport.nhttp.HttpCoreNIOSSLListener">
+    	<parameter name="port" locked="false">9002</parameter>
+    	<parameter name="non-blocking" locked="false">true</parameter>
+        <parameter name="keystore" locked="false">
+            <KeyStore>
+                <Location>identity.jks</Location>
+                <Type>JKS</Type>
+                <Password>password</Password>
+                <KeyPassword>password</KeyPassword>
+            </KeyStore>
+        </parameter>
+        <parameter name="truststore" locked="false">
+            <TrustStore>
+                <Location>trust.jks</Location>
+                <Type>JKS</Type>
+                <Password>password</Password>
+            </TrustStore>
+        </parameter>-->
+        <!--<parameter name="SSLVerifyClient">require</parameter>
+            supports optional|require or defaults to none -->
+    <!--</transportReceiver>-->
+
+    <!-- ================================================= -->
     <!-- Mail Transport Listener  -->
     <!-- This is a sample configuration. It assumes a mail server running in localhost.
          Listener pops  messages that comes to the email address red@localhost. Users
@@ -235,6 +267,36 @@
                      <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
 
     <!-- ================================================= -->
+    <!-- Non-blocking http/s Transport Sender  -->
+
+    <!-- the non-blocking http transport sender based on HttpCore + NIO extensions
+    <transportSender name="http"  class="org.apache.axis2.transport.nhttp.HttpCoreNIOSender">
+        <parameter name="non-blocking" locked="false">true</parameter>
+    </transportSender>-->
+
+    <!-- the non-blocking https transport sender based on HttpCore + NIO SSL extensions
+    <transportSender name="https" class="org.apache.axis2.transport.nhttp.HttpCoreNIOSSLSender">
+        <parameter name="non-blocking" locked="false">true</parameter>
+        <parameter name="keystore" locked="false">
+            <KeyStore>
+                <Location>identity.jks</Location>
+                <Type>JKS</Type>
+                <Password>password</Password>
+                <KeyPassword>password</KeyPassword>
+            </KeyStore>
+        </parameter>
+        <parameter name="truststore" locked="false">
+            <TrustStore>
+                <Location>trust.jks</Location>
+                <Type>JKS</Type>
+                <Password>password</Password>
+            </TrustStore>
+        </parameter>-->
+        <!--<parameter name="HostnameVerifier">DefaultAndLocalhost</parameter>
+            supports Strict|AllowAll|DefaultAndLocalhost or the default if none specified -->
+    <!--</transportSender>-->
+
+    <!-- ================================================= -->
     <!-- Mail Transport Sender  -->
     <!--Only need to uncomment the sender. Configuration is achieved with every client.
         At any instant mail host should be given. Sample configuration has been given.
@@ -280,11 +342,11 @@
         <!--  System predefined phases       -->
         <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
                 <order phase="Transport"/>
             </handler>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
                 <order phase="Transport"/>
             </handler>
         </phase>
@@ -292,21 +354,21 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
 
             <handler name="HTTPLocationBasedDispatcher"
-                     class="org.apache.axis2.engine.HTTPLocationBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
         <phase name="RMPhase"/>
         <!--  System predefined phases       -->
@@ -329,21 +391,21 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
 
             <handler name="HTTPLocationBasedDispatcher"
-                     class="org.apache.axis2.engine.HTTPLocationBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
         <phase name="RMPhase"/>
         <!--      user can add his own phases to this area  -->

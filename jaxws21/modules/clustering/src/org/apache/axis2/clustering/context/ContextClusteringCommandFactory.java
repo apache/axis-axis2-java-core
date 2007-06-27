@@ -16,9 +16,19 @@
 package org.apache.axis2.clustering.context;
 
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.clustering.context.commands.*;
+import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
+import org.apache.axis2.clustering.context.commands.UpdateConfigurationContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateServiceContextCommand;
+import org.apache.axis2.clustering.context.commands.UpdateServiceGroupContextCommand;
+import org.apache.axis2.clustering.context.commands.DeleteServiceGroupContextCommand;
+import org.apache.axis2.clustering.context.commands.DeleteServiceContextCommand;
 import org.apache.axis2.clustering.tribes.AckManager;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.AbstractContext;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.PropertyDifference;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,7 +108,10 @@ public final class ContextClusteringCommandFactory {
                 AckManager.addInitialAcknowledgement(cmd);
             }
         }
-        context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
+
+        synchronized (context) {
+            context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
+        }
         return cmd;
     }
 
@@ -114,44 +127,41 @@ public final class ContextClusteringCommandFactory {
                                        Map excludedPropertyPatterns,
                                        boolean includeAllProperties) {
         if (!includeAllProperties) {
-
-            // Sometimes, there can be failures, so if an exception occurs, we retry
-            while (true) {
+            synchronized (context) {
                 Map diffs = context.getPropertyDifferences();
-                try {
-                    for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                        String key = (String) iter.next();
-                        Object prop = context.getPropertyNonReplicable(key);
+                for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    Object prop = context.getPropertyNonReplicable(key);
 
-                        // First check whether it is serializable
-                        if (prop instanceof Serializable) {
+                    // First check whether it is serializable
+                    if (prop instanceof Serializable) {
 
-                            // Next check whether it matches an excluded pattern
-                            if (!isExcluded(key,
-                                            context.getClass().getName(),
-                                            excludedPropertyPatterns)) {
-                                log.debug("sending property =" + key + "-" + prop);
-                                PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                                diff.setValue(prop);
-                                updateCmd.addProperty(diff);
-                            }
+                        // Next check whether it matches an excluded pattern
+                        if (!isExcluded(key,
+                                        context.getClass().getName(),
+                                        excludedPropertyPatterns)) {
+                            log.debug("sending property =" + key + "-" + prop);
+                            PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                            diff.setValue(prop);
+                            updateCmd.addProperty(diff);
                         }
                     }
-                    break;
-                } catch (Exception ignored) {
                 }
             }
         } else {
-            for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
-                String key = (String) iter.next();
-                Object prop = context.getPropertyNonReplicable(key);
-                if (prop instanceof Serializable) { // First check whether it is serializable
+            synchronized (context) {
+                for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    Object prop = context.getPropertyNonReplicable(key);
+                    if (prop instanceof Serializable) { // First check whether it is serializable
 
-                    // Next check whether it matches an excluded pattern
-                    if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                        log.debug("sending property =" + key + "-" + prop);
-                        PropertyDifference diff = new PropertyDifference(key, prop, false);
-                        updateCmd.addProperty(diff);
+                        // Next check whether it matches an excluded pattern
+                        if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns))
+                        {
+                            log.debug("sending property =" + key + "-" + prop);
+                            PropertyDifference diff = new PropertyDifference(key, prop, false);
+                            updateCmd.addProperty(diff);
+                        }
                     }
                 }
             }
@@ -196,5 +206,27 @@ public final class ContextClusteringCommandFactory {
             }
         }
         return false;
+    }
+
+    public static ContextClusteringCommand getRemoveCommand(AbstractContext abstractContext) {
+        if (abstractContext instanceof ServiceGroupContext) {
+            ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
+            DeleteServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            cmd.setServiceGroupName(sgCtx.getDescription().getServiceGroupName());
+            cmd.setServiceGroupContextId(sgCtx.getId());
+            
+            return cmd;
+        } else if (abstractContext instanceof ServiceContext) {
+            ServiceContext serviceCtx = (ServiceContext) abstractContext;
+            DeleteServiceContextCommand cmd = new DeleteServiceContextCommand();
+            cmd.setUniqueId(UUIDGenerator.getUUID());
+            cmd.setServiceGroupName(serviceCtx.getGroupName());
+            cmd.setServiceGroupContextId(serviceCtx.getServiceGroupContext().getId());
+            cmd.setServiceName(serviceCtx.getAxisService().getName());
+
+            return cmd;
+        }
+        return null;
     }
 }

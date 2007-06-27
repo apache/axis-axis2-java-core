@@ -16,8 +16,17 @@
 
 package org.apache.axis2.rpc;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -40,62 +49,23 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
+import org.apache.axis2.integration.RPCLocalTestCase;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.wsdl.WSDLConstants;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-public class MultirefTest extends UtilServerBasedTestCase {
-
-    protected EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis2/services/EchoXMLService/concat");
-    protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName(NAMESPACE, "concat");
-    protected QName transportName = new QName(NAMESPACE,
-                                              "NullTransport");
-
-    protected AxisConfiguration engineRegistry;
-    protected MessageContext mc;
-    protected ServiceContext serviceContext;
-    protected AxisService service;
+public class MultirefTest extends RPCLocalTestCase {
 
     protected boolean finish = false;
     public static final String NAMESPACE = "http://rpc.axis2.apache.org/xsd";
 
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MultirefTest.class));
-    }
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployClientService();
-    }
-
-    private void configureSystem(String opName) throws AxisFault {
-        targetEPR =
-                new EndpointReference("http://127.0.0.1:"
-                        + (UtilServer.TESTING_PORT)
-                        + "/axis2/services/EchoXMLService/" + opName);
-        String className = "org.apache.axis2.rpc.RPCServiceClass";
-        operationName = new QName("http://rpc.axis2.apache.org/xsd", opName, "req");
-        AxisService service = AxisService.createService(
-                className, UtilServer.getConfigurationContext().getAxisConfiguration());
-        service.setName("EchoXMLService");
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        UtilServer.deployService(service);
-    }
-
+    protected void setUp() throws Exception {
+		super.setUp();
+		deployClassAsService("EchoXMLService", RPCServiceClass.class);
+	}
+    
     public void testMulitref1() throws AxisFault {
-        configureSystem("echoString");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "echoString");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -112,18 +82,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         ref.setText("hello Axis2");
         envelope.getBody().addChild(ref);
 
-        Options options = new Options();
-
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+      
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -139,7 +100,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     }
 
     public void testadd() throws AxisFault {
-        configureSystem("add");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "add");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -166,17 +127,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         ref2.setText("10");
         envelope.getBody().addChild(ref2);
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -192,7 +145,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
     }
 
     public void testaddSameRef() throws AxisFault {
-        configureSystem("add");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "add");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -214,17 +167,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         ref.setText("10");
         envelope.getBody().addChild(ref);
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -239,7 +184,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
     public void testaddError() {
         try {
-            configureSystem("add");
+            RPCServiceClient sender = getRPCClient("EchoXMLService", "add");
             OMFactory fac = OMAbstractFactory.getOMFactory();
 
             OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -266,17 +211,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
             ref2.setText("10");
             envelope.getBody().addChild(ref2);
 
-            Options options = new Options();
-            options.setTo(targetEPR);
-            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-            ConfigurationContext configContext = ConfigurationContextFactory
-                    .createConfigurationContextFromFileSystem(null, null);
-            RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-            rpcClient.setOptions(options);
-            MessageContext reqMessageContext = configContext.createMessageContext();;
-            OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-            opClinet.setOptions(options);
+            MessageContext reqMessageContext = new MessageContext();;
+            OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+            
             reqMessageContext.setEnvelope(envelope);
 
             opClinet.addMessageContext(reqMessageContext);
@@ -296,7 +233,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
 
     public void testMulitrefBean() throws Exception {
-        configureSystem("editBean");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "editBean");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -328,17 +265,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -358,7 +287,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
 
     public void testbeanOM() throws Exception {
-        configureSystem("beanOM");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "beanOM");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -390,17 +319,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();;
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();;
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -420,7 +341,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
 
     public void testomrefs() throws Exception {
-        configureSystem("omrefs");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "omrefs");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -453,17 +374,10 @@ public class MultirefTest extends UtilServerBasedTestCase {
         String ref4 = "<reference id=\"4\">Colombo3</reference>";
         OMElement om4 = getOMElement(ref4, fac);
         envelope.getBody().addChild(om4);
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();;
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        
+        MessageContext reqMessageContext = new MessageContext();;
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -495,7 +409,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
 
     public void testechoEmployee() throws Exception {
-        configureSystem("echoEmployee");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "echoEmployee");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -523,16 +437,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
                 "</reference>";
         envelope.getBody().addChild(getOMElement(str, fac));
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);
@@ -550,7 +457,7 @@ public class MultirefTest extends UtilServerBasedTestCase {
 
 
     public void testMulitrefArray() throws AxisFault {
-        configureSystem("handleArrayList");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "handleArrayList");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(NAMESPACE, "my");
@@ -589,18 +496,9 @@ public class MultirefTest extends UtilServerBasedTestCase {
         }
         envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-
-        ConfigurationContext configContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient rpcClient = new RPCServiceClient(configContext, null);
-        rpcClient.setOptions(options);
-        MessageContext reqMessageContext = configContext.createMessageContext();
-        OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
-        opClinet.setOptions(options);
+        MessageContext reqMessageContext = new MessageContext();
+        OperationClient opClinet = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
         reqMessageContext.setEnvelope(envelope);
 
         opClinet.addMessageContext(reqMessageContext);

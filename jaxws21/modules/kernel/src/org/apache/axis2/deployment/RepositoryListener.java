@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,8 +30,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
@@ -77,11 +80,11 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() , WSInfo.TYPE_MODULE);
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer());
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() ,WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -102,11 +105,9 @@ public class RepositoryListener implements DeploymentConstants {
     protected void loadClassPathModules() {
         ModuleDeployer deployer = deploymentEngine.getModuleDeployer();
 
-        /* WORKING (Glen)
         // Find Modules on the class path (i.e. if classpath includes "addressing.mar" then
         // addressing will be available for engaging)
 
-        // TODO: Confirm correct class loader
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             Enumeration moduleURLs = loader.getResources("META-INF/module.xml");
@@ -114,17 +115,13 @@ public class RepositoryListener implements DeploymentConstants {
                 URL url = (URL)moduleURLs.nextElement();
                 String fileName = url.toString();
                 fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                System.out.println(fileName);
                 File f = new File(new URI(fileName));
-                System.out.println(f.getAbsolutePath());
-                addFileToDeploy(f, deployer);
+                addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
             }
         } catch (Exception e) {
             // Oh well, log the problem
-            log.error(e);
+            log.info(e);
         }
-
-        */
 
         String classPath = getLocation();
 
@@ -144,7 +141,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        addFileToDeploy(file, deployer);
+                        addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -169,7 +166,7 @@ public class RepositoryListener implements DeploymentConstants {
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
-                            addFileToDeploy(file, deployer);
+                            addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
                         }
                     }
                 }
@@ -251,7 +248,7 @@ public class RepositoryListener implements DeploymentConstants {
                         if (!file.isDirectory() && extension.equals(
                                 DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
-                                            deploymentEngine.getDeployerForExtension(extension));
+                                            deploymentEngine.getDeployerForExtension(extension),WSInfo.TYPE_CUSTOM);
                         }
                     }
                 }
@@ -274,19 +271,19 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_SERVICE);
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
                         // If we found a deployer for this type of file, use it.  Otherwise
                         // ignore the file.
                         if (deployer != null) {
-                            addFileToDeploy(file, deployer);
+                            addFileToDeploy(file, deployer,WSInfo.TYPE_SERVICE);
                         }
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer());
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_CUSTOM);
                     }
                 }
             }
@@ -296,7 +293,7 @@ public class RepositoryListener implements DeploymentConstants {
     /** Method invoked from the scheduler to start the listener. */
     public void startListener() {
         checkServices();
-        update();
+//        update();
     }
 
     /** Updates WSInfoList object. */
@@ -309,7 +306,7 @@ public class RepositoryListener implements DeploymentConstants {
         update();
     }
 
-    public void addFileToDeploy(File file, Deployer deployer) {
-        wsInfoList.addWSInfoItem(file, deployer);
+    public void addFileToDeploy(File file, Deployer deployer , int type) {
+        wsInfoList.addWSInfoItem(file, deployer ,type);
     }
 }

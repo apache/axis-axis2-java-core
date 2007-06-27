@@ -451,7 +451,27 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     } else if (attribPointer instanceof String) {
                         return (String)omAttribObj;
                     } else if (attribPointer instanceof QName) {
-                        return (String)omAttribObj;
+                        if (omAttribObj instanceof QName){
+                           QName attributeQName = (QName) omAttribObj;
+                           // first check it is already there if not add the namespace.
+                           String prefix = namespaceContext.getPrefix(attributeQName.getNamespaceURI());
+                           if (prefix == null){
+                               prefix = OMSerializerUtil.getNextNSPrefix();
+                               addToNsMap(prefix,attributeQName.getNamespaceURI());
+                           }
+
+                           String attributeValue = null;
+                           if (prefix.equals("")){
+                               // i.e. this is the default namespace
+                               attributeValue = attributeQName.getLocalPart();
+                           } else {
+                               attributeValue = prefix + ":" + attributeQName.getLocalPart();
+                           }
+                           return attributeValue;
+                        } else {
+                            return (String)omAttribObj;
+                        }
+
                     } else {
                         return null;
                     }

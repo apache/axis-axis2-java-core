@@ -18,8 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
-import org.apache.neethi.PolicyRegistry;
-import org.apache.neethi.PolicyRegistryImpl;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -450,7 +448,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         PortType portType = wsdl4jDefinition.getPortType(wsdl4jBinding.getPortType().getQName());
 
-
+        String targetNamespace = wsdl4jDefinition.getTargetNamespace();
 
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
 
@@ -461,7 +459,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setName(new QName("", wsdl4jBindingOperation.getName()));
             addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
-            axisOperation = axisService.getOperation(new QName("", wsdl4jOperation.getName()));
+            axisOperation = axisService.getOperation(new QName(targetNamespace, wsdl4jOperation.getName()));
             axisBindingOperation.setAxisOperation(axisOperation);
 
             // process ExtensibilityElements of the wsdl4jBinding
@@ -479,7 +477,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (wsdl4jBindingInput != null &&
                     WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
-
                 AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
                 addDocumentation(axisBindingInMessage, wsdl4jBindingInput.getDocumentationElement());
                 copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
@@ -992,7 +989,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private AxisOperation populateOperations(Operation wsdl4jOperation,
                                              PortType wsdl4jPortType, Definition dif)
             throws AxisFault {
-        QName opName = new QName(wsdl4jOperation.getName());
+        QName opName = new QName(dif.getTargetNamespace(),wsdl4jOperation.getName());
         // Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
         if (axisOperation == null) {
@@ -1024,7 +1021,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // Check if the action is already set as we don't want to
                 // override it
                 // with the Default Action Pattern
-                ArrayList inputActions = axisOperation.getWsamappingList();
+                ArrayList inputActions = axisOperation.getWSAMappingList();
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
                     action = WSDL11ActionHelper
@@ -1116,7 +1113,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // Check if the action is already set as we don't want to
                 // override it
                 // with the Default Action Pattern
-                ArrayList inputActions = axisOperation.getWsamappingList();
+                ArrayList inputActions = axisOperation.getWSAMappingList();
                 String action = null;
                 if (inputActions == null || inputActions.size() == 0) {
                     action = WSDL11ActionHelper.getActionFromOutputElement(dif,

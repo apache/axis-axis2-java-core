@@ -24,7 +24,6 @@ import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.binding.BindingUtils;
-import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -65,7 +64,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     //TODO: Is this the best place for this code?
     protected String addressingNamespace;
 
-    private Binding binding;  // force subclasses to use the lazy getter
+    private Binding binding = null;
     
     private EndpointReferenceFactory eprFactory =
         (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
@@ -100,6 +99,19 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         if (endpointAddress != null && !"".equals(endpointAddress)) {
             requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);                
         }
+        
+        // JAXWS 9.2.1.1 requires that we go ahead and create the binding object
+        // so we can also set the handlerchain
+        if (binding == null) {
+            binding = BindingUtils.createBinding(endpointDesc);
+            
+            // TODO should we allow the ServiceDelegate to figure out the default handlerresolver?  Probably yes, since a client app may look for one there.
+            HandlerResolver handlerResolver =
+                    serviceDelegate.getHandlerResolver() != null ? serviceDelegate.getHandlerResolver()
+                            : new HandlerResolverImpl(endpointDesc);
+            binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
+        }
+
     }
 
     public ServiceDelegate getServiceDelegate() {
@@ -111,20 +123,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
 
     public Binding getBinding() {
-
-        // TODO support HTTP binding when available
-
-        // The default Binding is the SOAPBinding
-        if (binding == null) {
-            binding = new SOAPBinding(endpointDesc);
-            // TODO should we allow the ServiceDelegate to figure out the
-            // default handlerresolver? Probably yes, since a client app may
-            // look for one there.
-            HandlerResolver handlerResolver = serviceDelegate.getHandlerResolver() != null ? serviceDelegate
-                            .getHandlerResolver()
-                            : new HandlerResolverImpl(endpointDesc);
-            binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
-        }
         return binding;
     }
     
@@ -302,6 +300,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         @Override
         public synchronized Object put(String key, Object value) {
+            // super.put rightly throws a NullPointerException if key or value is null, so don't continue if that's the case
+            if (value == null)
+                return null;
             if (PropertyValidator.validate(key, value)) {
                 return super.put(key, value);
             } else {

@@ -22,6 +22,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 
 public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest {
@@ -39,7 +40,7 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheTest.class),
-                             Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository"));
     }
 
     protected void setUp() throws Exception {

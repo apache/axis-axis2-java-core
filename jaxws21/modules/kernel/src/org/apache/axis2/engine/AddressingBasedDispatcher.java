@@ -14,95 +14,9 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.dispatchers.ActionBasedOperationDispatcher;
-import org.apache.axis2.dispatchers.RequestURIBasedServiceDispatcher;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.LoggingControl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Dispatcher based on the WS-Addressing properties.
+ * @deprecated use org.apache.axis2.dispatchers.AddressingBasedDispatcher
  */
-public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
-
-    /**
-     * Field NAME
-     */
-    public static final String NAME = "AddressingBasedDispatcher";
-    private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
-    private RequestURIBasedServiceDispatcher rubsd = new RequestURIBasedServiceDispatcher();
-    private ActionBasedOperationDispatcher abod = new ActionBasedOperationDispatcher();
-
-    public AxisOperation findOperation(AxisService service, MessageContext messageContext)
-            throws AxisFault {
-        return abod.findOperation(service, messageContext);
-    }
-
-    public AxisService findService(MessageContext messageContext) throws AxisFault {
-    	return rubsd.findService(messageContext);
-    }
-
-    public void initDispatcher() {
-        init(new HandlerDescription(NAME));
-    }
-
-    /**
-     * @param msgctx
-     * @throws org.apache.axis2.AxisFault
-     * @noinspection MethodReturnOfConcreteClass
-     */
-    public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
-        // first check we can dispatch using the relates to
-        if (msgctx.getRelatesTo() != null) {
-            String relatesTo = msgctx.getRelatesTo().getValue();
-
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(msgctx.getLogIDString() + " " + Messages.getMessage("checkingrelatesto",
-                                                                              relatesTo));
-            }
-            if (relatesTo != null && !"".equals(relatesTo) && (msgctx.getOperationContext()==null)) {
-                OperationContext operationContext =
-                        msgctx.getConfigurationContext()
-                                .getOperationContext(relatesTo);
-
-                if (operationContext != null) //noinspection TodoComment
-                {
-//                    if(operationContext.isComplete()){
-//                        // If the dispatch happens because of the RelatesTo and the mep is complete
-//                        // we should throw a more descriptive fault.
-//                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
-//                    }
-                    msgctx.setAxisOperation(operationContext.getAxisOperation());
-                    msgctx.setOperationContext(operationContext);
-                    msgctx.setServiceContext((ServiceContext) operationContext.getParent());
-                    msgctx.setAxisService(
-                            ((ServiceContext) operationContext.getParent()).getAxisService());
-
-                    // TODO : Is this necessary here?
-                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
-
-                    msgctx.setServiceGroupContextId(
-                            ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
-
-                    if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                        log.debug(msgctx.getLogIDString() +
-                                " Dispatched successfully on the RelatesTo. operation=" +
-                                operationContext.getAxisOperation());
-                    }
-                    return InvocationResponse.CONTINUE;
-                }
-            }
-        }
-        return super.invoke(msgctx);
-    }
+public class AddressingBasedDispatcher extends org.apache.axis2.dispatchers.AddressingBasedDispatcher {
 }

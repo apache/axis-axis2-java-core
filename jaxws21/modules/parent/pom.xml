@@ -100,6 +100,7 @@
 		<geronimo.spec.activation.version>1.0-M1</geronimo.spec.activation.version>
 		<geronimo.spec.javamail.version>1.0-M1</geronimo.spec.javamail.version>
 		<geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
+                <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
 		<groovy.all.version>1.0-jsr-06</groovy.all.version>
 		<intellij.version>5.0</intellij.version>
 		<jakarta.httpcore.version>4.0-alpha4</jakarta.httpcore.version>
@@ -597,6 +598,11 @@
 				<artifactId>geronimo-jms_1.1_spec</artifactId>
 				<version>${geronimo.spec.jms.version}</version>
 			</dependency>
+                        <dependency>
+                                <groupId>org.apache.geronimo.specs</groupId>
+                                <artifactId>geronimo-annotation_1.0_spec</artifactId>
+                                <version>${geronimo.spec.annotation.version}</version>
+                        </dependency>
 			<dependency>
 				<groupId>jaxen</groupId>
 				<artifactId>jaxen</artifactId>
@@ -628,6 +634,16 @@
 				<artifactId>jakarta-httpcore</artifactId>
 				<version>${jakarta.httpcore.version}</version>
 			</dependency>
+                        <dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>jakarta-httpcore-nio</artifactId>
+                                <version>${jakarta.httpcore.version}</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.httpcomponents</groupId>
+                                <artifactId>jakarta-httpcore-niossl</artifactId>
+                                <version>${jakarta.httpcore.version}</version>
+                        </dependency>
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>

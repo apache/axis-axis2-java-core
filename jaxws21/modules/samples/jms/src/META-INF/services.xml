@@ -2,7 +2,7 @@
     <description>
         This is a sample Web Service for JMS tests.
     </description>
-    <parameter name="ServiceClass" locked="false">sample.jms.service.Echo</parameter>
+    <parameter name="ServiceClass">sample.jms.service.Echo</parameter>
     <operation name="echoOMElementNoResponse">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
         <actionMapping>urn:echoOMElementNoResponse</actionMapping>

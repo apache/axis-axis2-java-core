@@ -407,13 +407,16 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         Element domEle = ((Element)node);
         int indexOfColon = domEle.getTagName().indexOf(":");
         NamespaceImpl ns;
-        String localname;
+        String localName;
         if (indexOfColon != -1) {
-            localname = domEle.getTagName().substring(indexOfColon + 1);
+            localName = domEle.getTagName().substring(indexOfColon + 1);
             ns = new NamespaceImpl(domEle.getNamespaceURI(),
                                    domEle.getTagName().substring(0, indexOfColon));
         } else {
-            localname = domEle.getLocalName();
+            localName = domEle.getLocalName();
+            if (localName == null) {  //it is possible that localname isn't set but name is set
+                localName = domEle.getTagName();
+            }     
             if (domEle.getNamespaceURI() != null) {
                 ns = new NamespaceImpl(domEle.getNamespaceURI(), domEle.getPrefix());
             } else {
@@ -427,7 +430,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         }
         ElementImpl eleImpl =
                 new ElementImpl((DocumentImpl)this.getOwnerDocument(),
-                                localname, ns, this.element.getOMFactory());
+                                localName, ns, this.element.getOMFactory());
 
         SOAPElementImpl saajEle = new SOAPElementImpl(eleImpl);
 
@@ -435,18 +438,18 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         NamedNodeMap domAttrs = domEle.getAttributes();
         for (int i = 0; i < domAttrs.getLength(); i++) {
             org.w3c.dom.Node attrNode = domAttrs.item(i);
-            if (attrNode.getLocalName() == null) {
-                //local part is required.  "" is allowed to preserve compatibility with QName 1.0
-                saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
-                                                       "",
-                                                       attrNode.getPrefix()),
-                                                       attrNode.getNodeValue());
-            } else {
-                saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
-                                                       attrNode.getLocalName(),
-                                                       attrNode.getPrefix()),
-                                                       attrNode.getNodeValue());                
+            String attrLocalName = attrNode.getLocalName();
+            if (attrLocalName == null) {
+                attrLocalName = attrNode.getNodeName();
             }
+            if (attrLocalName == null) {
+                //local part is required.  "" is allowed to preserve compatibility with QName 1.0
+                attrLocalName = "";
+            } 
+            saajEle.addAttribute(new PrefixedQName(attrNode.getNamespaceURI(),
+                                                   attrLocalName,
+                                                   attrNode.getPrefix()),
+                                                   attrNode.getNodeValue());                
         }
 
         NodeList childNodes = node.getChildNodes();

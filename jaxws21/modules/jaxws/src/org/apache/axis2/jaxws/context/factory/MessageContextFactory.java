@@ -20,8 +20,8 @@ package org.apache.axis2.jaxws.context.factory;
 
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
-import org.apache.axis2.jaxws.handler.ProtectedMessageContext;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 
 import javax.xml.ws.WebServiceContext;
@@ -38,9 +38,9 @@ public class MessageContextFactory {
     }
 
     /**
-     * Creates a SOAPMessageContext based on the input core MessageContext.  
-     *       
-     * @param jaxwsMessageContext
+     * Creates a SOAPMessageContext based on the input core MEPContext.  
+     * 
+     * @param mepCtx
      * @return
      */
     public static SoapMessageContext createSoapMessageContext(
@@ -49,21 +49,13 @@ public class MessageContextFactory {
     }
     
     /**
-     * Creates a LogicalMessageContext based on the input core MessageContext.
+     * Creates a LogicalMessageContext based on the input core MEPContext.
      * 
-     * @param mc
+     * @param mepCtx
      * @return
      */
     public static LogicalMessageContext createLogicalMessageContext(MessageContext mc) {
         return new LogicalMessageContext(mc);
     }
 
-    /*
-     * This method is deprecated as we will be removing the ProtectedMessageContext
-     */
-    @Deprecated
-    public static javax.xml.ws.handler.MessageContext createProtectedMessageContext(
-            org.apache.axis2.jaxws.core.MessageContext jaxwsMessageContext) {
-        return new ProtectedMessageContext(jaxwsMessageContext);
-    }
 }

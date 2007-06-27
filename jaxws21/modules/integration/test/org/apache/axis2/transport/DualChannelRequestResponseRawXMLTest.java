@@ -39,6 +39,7 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.mail.UtilsMailServer;
 import org.apache.axis2.transport.mail.Constants;
 import org.apache.axis2.transport.mail.server.MailServer;
@@ -100,8 +101,8 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
                 Utils.createSimpleService(serviceName,
                                           Echo.class.getName(),
                                           operationName);
-        UtilServer.start(org.apache.axis2.Constants.TESTING_PATH +
-                "mail-transport-server-enabledRepository");
+        UtilServer.start(TestingUtils.prefixBaseDirectory(org.apache.axis2.Constants.TESTING_PATH +
+                        "mail-transport-server-enabledRepository"));
         UtilServer.deployService(service);
         mailServer =
                 new MailServer(Constants.POP_SERVER_PORT,

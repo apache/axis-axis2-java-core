@@ -26,34 +26,20 @@ public class WSInfo {
 
     public static final int TYPE_SERVICE = 0;
     public static final int TYPE_MODULE = 1;
+    public static final int TYPE_CUSTOM = 2;
 
     /**
-     * To check whether the file is a module or a servise
+     * To check whether the file is a module or a service
      */
     private int type = TYPE_SERVICE;
 
     private Deployer deployer;
 
-    public WSInfo(String filename, long lastmodifieddate) {
-        this.fileName = filename;
-        this.lastModifiedDate = lastmodifieddate;
-    }
-
-
-    public WSInfo(String fileName, long lastModifiedDate, int type) {
-        this.fileName = fileName;
-        this.lastModifiedDate = lastModifiedDate;
-        this.type = type;
-    }
-
-    public WSInfo(String fileName, long lastModifiedDate, Deployer deployer) {
+    public WSInfo(String fileName, long lastModifiedDate, Deployer deployer ,int type) {
         this.fileName = fileName;
         this.lastModifiedDate = lastModifiedDate;
         this.deployer = deployer;
-        //TODO: This is a temporary fix for the hot update in custom deployers
-//        if (!(deployer instanceof ServiceDeployer)) {
-//           this.type=2;
-//        }
+        this.type = type;
     }
 
     public String getFileName() {

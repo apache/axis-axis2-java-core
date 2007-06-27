@@ -189,7 +189,13 @@ public class XMLUtils {
             throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilder db;
         synchronized (dbf) {
-            db = dbf.newDocumentBuilder();
+            try {
+                db = dbf.newDocumentBuilder();
+            } catch (Exception e){
+                // Under some peculiar conditions (classloader issues), just scrap the old dbf, create a new one and try again.
+                dbf = getDOMFactory();
+                db = dbf.newDocumentBuilder();
+            }
         }
         db.setEntityResolver(new DefaultEntityResolver());
         db.setErrorHandler(new ParserErrorHandler());

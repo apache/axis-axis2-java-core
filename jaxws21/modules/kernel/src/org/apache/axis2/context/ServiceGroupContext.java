@@ -142,6 +142,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
         if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
+            getRootContext().contextCreated(serviceContext);
             serviceContextMap.put(service.getName(), serviceContext);
         }
         return serviceContext;
@@ -160,7 +161,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
     public void setId(String id) {
         this.id = id;
     }
-
 
     /**
      * Adds the specified service context object to the
@@ -204,7 +204,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             return null;
         }
 
-        // a map allows a null key
         return (ServiceContext) serviceContextMap.get(name);
     }
 

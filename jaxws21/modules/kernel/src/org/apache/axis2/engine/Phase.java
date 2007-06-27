@@ -110,7 +110,7 @@ public class Phase implements Handler {
      * @param handlerDesc the HandlerDescription to add
      * @throws PhaseException if there is a problem
      */
-    public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
+    public synchronized void addHandler(HandlerDescription handlerDesc) throws PhaseException {
         Iterator handlers_itr = getHandlers().iterator();
 
         while (handlers_itr.hasNext()) {

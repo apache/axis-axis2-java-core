@@ -144,6 +144,9 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             }
             axisConfig = populateAxisConfiguration(axis2Stream);
 
+            if(axis2Stream != null){
+                axis2Stream.close();
+            }
             Parameter param = new Parameter();
             param.setName(Constants.Configuration.ARTIFACTS_TEMP_DIR);
             param.setValue(config.getServletContext().getAttribute("javax.servlet.context.tempdir"));
@@ -233,6 +236,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             log.error(ex + ": loading repository from classpath");
             loadFromClassPath();
         }
+        axisConfig.setConfigurator(this);
         return axisConfig;
     }
 

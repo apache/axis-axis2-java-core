@@ -49,7 +49,7 @@ and can be listed as follows:</p>
 
 <h3>Parameter</h3>
 
-<p>In Axis2, a parameter is nothing but a name value pair. Each and every top
+<p>In Axis2, a parameter is nothing but a name-value pair. Each and every top
 level parameter available in the axis2.xml (direct sub elements of the root
 element) will be transformed into properties in AxisConfiguration. Therefore,
 the top level parameters in the configuration document can be accessed via
@@ -69,19 +69,19 @@ system is as follows:</p>
         &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
  &lt;/transportReceiver&gt; 
  </pre>
-</source>The above elements show the way of defining transport receivers in
-axis2.xml. Here the name attribute of the 'transportReceiver' element is the
-name of the transport receiver. It can be HTTP, TCP, SMTP, CommonsHTTP etc,.
+</source>The above elements show how to define transport receivers in
+axis2.xml. Here the "name" attribute of the &lt;transportReceiver/&gt; element identifies the
+type of the transport receiver. It can be HTTP, TCP, SMTP, CommonsHTTP, etc.
 When the system starts up or when you set the transport at the client side,
-you can use these transport names to load the appropriate transport. Class
-attribute is to specify actual java classes that implement required
+you can use these transport names to load the appropriate transport. The "class"
+attribute is for specifying the actual java class that will implement the required
 interfaces for the transport. Any transport can have zero or more parameters,
-and if there are any, those parameters can be accessed via the corresponding
+and any parameters given can be accessed via the corresponding
 transport receiver. <a name="Sender"></a>
 
 <h3>Transport Sender</h3>
 
-<p>Just as the transport receivers, you can register transport senders in the
+<p>Just like the transport receivers, you can register transport senders in the
 system, and later at run time, the senders can be used to send the messages.
 For example, consider Axis2 running under Apache Tomcat. Then Axis2 can use
 TCP transport senders to send messages rather than HTTP. The method of
@@ -91,12 +91,14 @@ specifying transport senders is as follows:</p>
         &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.0&lt;/parameter&gt;
  &lt;/transportSender&gt; 
  </pre>
-<strong>name:</strong> Name of the transport (you can have HTTP and HHTP1 as
+<strong>name:</strong> Name of the transport (you can have HTTP and HTTP1 as
 the transport name)
 
 <p><strong>class:</strong> Implementation class of the corresponding
-transport. Just as the transport receivers, transport senders can have zero
-or more parameters, and if there are any, then it can be accessed via the
+transport.</p>
+
+<p>Just like the transport receivers, transport senders can have zero
+or more parameters, and if there are any, they can be accessed via the
 corresponding transport sender.</p>
 <a name="Phase_Order"></a>
 
@@ -120,12 +122,12 @@ complete configurations will look as follows: <source></p>
         &lt;!--   Global phases    --&gt;
          &lt;phase name="Transport"&gt;
             &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"&gt;
                 &lt;order phase="Transport"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"&gt;
                 &lt;order phase="Transport"/&gt;
             &lt;/handler&gt;
         &lt;/phase&gt;
@@ -133,12 +135,12 @@ complete configurations will look as follows: <source></p>
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
@@ -163,22 +165,22 @@ complete configurations will look as follows: <source></p>
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="InstanceDispatcher"
@@ -319,9 +321,9 @@ several types- "Application", "SOAPSession", "TransportSession", "Request".
 The default value (if you don't enter any value) will be "Request"</p>
 
 <p><strong>class</strong>: (Optional attribute) The full qualified name of
-the service lifecycle implementation class. ServiceLifeCycle class is usefull
+the service lifecycle implementation class. ServiceLifeCycle class is useful
 when you want to do some tasks when the system starts and when it
-shutdowns.</p>
+shuts down.</p>
 
 <p><strong>targetNamespace</strong>: (Optional Attribute) Target name space
 of the service. This value will be used when generating the WSDL. If you do

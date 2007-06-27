@@ -48,6 +48,7 @@ public class AsyncUtils {
 
         // Create the JAX-WS response MessageContext from the Axis2 response
         response = new MessageContext(mc);
+        // don't set the response.setMEPContext() here.
 
         // REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
         // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment

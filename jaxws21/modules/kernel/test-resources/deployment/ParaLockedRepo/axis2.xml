@@ -2,28 +2,28 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
-    <parameter name="ServicePara1" locked="false">true</parameter>
+    <parameter name="ServicePara1">true</parameter>
     <parameter name="ServicePara2" locked="true">true</parameter>
 
-    <parameter name="modulePara1" locked="false">true</parameter>
+    <parameter name="modulePara1">true</parameter>
     <parameter name="modulePara2" locked="true">true</parameter>
 
   <phaseOrder type="InFlow">
         <!--  System pre defined phases       -->
          <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
         </phase>
         <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
@@ -41,16 +41,16 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>

@@ -242,6 +242,7 @@ public class MethodMarshallerUtils {
                 // Trigger unmarshal by java type if necessary
                 if (unmarshalByJavaType != null && unmarshalByJavaType[i] != null) {
                     context.setProcessType(unmarshalByJavaType[i]);
+                    context.setIsxmlList(pd.isListType());
                 }
 
                 // Unmarshal the object into a JAXB object or JAXBElement
@@ -418,6 +419,9 @@ public class MethodMarshallerUtils {
             // Marshal by type only if necessary
             if (pde.getByJavaTypeClass() != null) {
                 context.setProcessType(pde.getByJavaTypeClass());
+                if(pde.getParam()!=null){
+                    context.setIsxmlList(pde.getParam().isListType());
+                }
             }
 
             // Create a JAXBBlock out of the value.
@@ -460,6 +464,7 @@ public class MethodMarshallerUtils {
      */
     static void toMessage(Element returnElement,
                           Class returnType,
+                          boolean isList,
                           MarshalServiceRuntimeDescription marshalDesc,
                           Message message,
                           Class marshalByJavaTypeClass,
@@ -471,6 +476,7 @@ public class MethodMarshallerUtils {
         JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
         if (marshalByJavaTypeClass != null) {
             context.setProcessType(marshalByJavaTypeClass);
+            context.setIsxmlList(isList);
         }
 
         //  Create a JAXBBlock out of the value.
@@ -504,6 +510,7 @@ public class MethodMarshallerUtils {
     static Element getReturnElement(TreeSet<String> packages,
                                     Message message,
                                     Class unmarshalByJavaTypeClass,  // normally null
+                                    boolean isList,
                                     boolean isHeader,
                                     String headerNS,
                                     String headerLocalPart,
@@ -515,6 +522,7 @@ public class MethodMarshallerUtils {
         JAXBBlockContext context = new JAXBBlockContext(packages);
         if (unmarshalByJavaTypeClass != null && !isHeader) {
             context.setProcessType(unmarshalByJavaTypeClass);
+            context.setIsxmlList(isList);
         }
         Block block = null;
         if (isHeader) {

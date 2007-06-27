@@ -61,9 +61,9 @@ been mapped to a Parameter object. Mapping has been done as follows,</p>
 <p>For a non-SSL connection, as an example, the mail transport sender can be
 activated by adding the following entry to the axis2.xml file.</p>
 <source><pre>   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="mail.smtp.host" locked="false"&gt;localhost&lt;/parameter&gt;
-        &lt;parameter name="mail.smtp.user" locked="false"&gt;mary&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="false"&gt;mary&lt;/parameter&gt;     
+        &lt;parameter name="mail.smtp.host"&gt;localhost&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user"&gt;mary&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password"&gt;mary&lt;/parameter&gt;
    &lt;/transportSender&gt;
   </pre>
 </source>
@@ -107,10 +107,10 @@ HttpTransportProperties.MailProperties props =
 <p>For a non-SSL connection, as an example, the mail Listener can be
 activated by adding the following entry to the axis2.xml file.</p>
 <source><pre>   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
-        &lt;parameter name="mail.pop3.host" locked="false"&gt;localhost&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.user" locked="false"&gt;bob&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="false"&gt;bob&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;bob@localhost&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.host"&gt;localhost&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user"&gt;bob&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password"&gt;bob&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress"&gt;bob@localhost&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
 </source>
@@ -120,14 +120,14 @@ parameter. It supplies the Endpoint reference to the listener.</p>
 <p>For an advanced user, this can be set to an SSL connection. For example,
 let's use this transport listener to pop from a specified gmail account.</p>
 <source><pre>&lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
-        &lt;parameter name="mail.pop3.host" locked="false"&gt;pop.gmail.com&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.user" locked="false"&gt;address@gmail.com&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.socketFactory.class" locked="false"&gt;javax.net.ssl.SSLSocketFactory&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.socketFactory.fallback" locked="false"&gt;false&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.port" locked="false"&gt;995&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.socketFactory.port" locked="false"&gt;995&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;address@gmail.com&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.host"&gt;pop.gmail.com&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user"&gt;address@gmail.com&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.socketFactory.class"&gt;javax.net.ssl.SSLSocketFactory&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.socketFactory.fallback"&gt;false&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.port"&gt;995&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.socketFactory.port"&gt;995&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress"&gt;address@gmail.com&lt;/parameter&gt;
 &lt;/transportReceiver&gt;</pre>
 </source><a name="server"></a>
 

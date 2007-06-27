@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -121,6 +122,7 @@ public class AxisInvocationController extends InvocationController {
             // Collect the response MessageContext and envelope
             axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             response = new MessageContext(axisResponseMsgCtx);
+            response.setMEPContext(request.getMEPContext());
 
             // If the Message object is still null, then it's possible that a
             // local AxisFault was thrown and we need to save it for later throwing
@@ -393,6 +395,13 @@ public class AxisInvocationController extends InvocationController {
             // Get the SOAP Action (if needed)
             String soapAction = ClientUtils.findSOAPAction(requestMsgCtx);
             options.setAction(soapAction);
+            // get the timeout from the request message context options as it may have been
+            // set by the user; if it was not set by the user we will just be setting the
+            // timeout on the operation client to the default so it will not have a negative
+            // effect; this logic is reliant on the fact the JAX-WS MessageContext is delegating
+            // to the Axis2 Options object and not storing its own property bag
+            long timeout = axisRequest.getOptions().getTimeOutInMilliSeconds();
+            options.setTimeOutInMilliSeconds(timeout);
 
             // Use the OperationClient to send the request and put the contents
             // of the response in the response MessageContext.

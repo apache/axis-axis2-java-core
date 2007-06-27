@@ -27,6 +27,7 @@ public interface Java2WSDLConstants {
     String SCHEMA_NAMESPACE_PRFIX = "ns";
     String FORM_DEFAULT_QUALIFIED = "qualified";
     String FORM_DEFAULT_UNQUALIFIED = "unqualified";
+    String DOC_LIT_BARE_PARAMETER ="doclitBare";
     
 
     String DEFAULT_TARGET_NAMESPACE = "http://ws.apache.org/axis2";
@@ -59,6 +60,7 @@ public interface Java2WSDLConstants {
     String MESSAGE_SUFFIX = "Request";
     String REQUEST = "Request";
     String RESPONSE = "Response";
+    String RESULT = "Result";
     String PORT_TYPE_LOCAL_NAME = "portType";
     String OPERATION_LOCAL_NAME = "operation";
     String IN_PUT_LOCAL_NAME = "input";
@@ -107,6 +109,7 @@ public interface Java2WSDLConstants {
     String SCHEMA_GENERATOR_OPTION = "sg";
     String JAVA_PKG_2_NSMAP_OPTION = "p2n";
     String WSDL_VERSION_OPTION = "wv";
+    String DOC_LIT_BARE = "dlb";
 
     //long option constants
     String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -129,10 +132,12 @@ public interface Java2WSDLConstants {
     String SCHEMA_GENERATOR_OPTION_LONG = "schemaGenerator";
     String JAVA_PKG_2_NSMAP_OPTION_LONG = "package2Namespace";
     String WSDL_VERSION_OPTION_LONG = "wsdl-version";
+    String DOC_LIT_BARE_LONG = "doclitbare";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 
     String WSDL_VERSION_2 = "2.0";
     String WSDL_VERSION_2_OPTIONAL = "2";
     String WSDL_VERSION_1 = "1.1";
+    String PARAMETERS = "parameters";
 }

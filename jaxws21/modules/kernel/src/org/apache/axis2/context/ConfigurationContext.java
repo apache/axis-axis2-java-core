@@ -37,21 +37,26 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
- * <p>Axis2 states are held in two information models, called description hierarchy 
- * and context hierarchy. Description hierarchy hold deployment configuration 
- * and it's values does not change unless deployment configuration change occurs 
- * where Context hierarchy hold run time information. Both hierarchies consists 
- * four levels, Global, Service Group, Operation and Message. Please look at 
+ * <p>Axis2 states are held in two information models, called description hierarchy
+ * and context hierarchy. Description hierarchy hold deployment configuration
+ * and it's values does not change unless deployment configuration change occurs
+ * where Context hierarchy hold run time information. Both hierarchies consists
+ * four levels, Global, Service Group, Operation and Message. Please look at
  * "Information Model" section  of "Axis2 Architecture Guide" for more information.</p>
- * 
+ * <p/>
  * <p>Configuration Context hold Global level run-time information. This allows
- * same configurations to be used by two Axis2 instances and most Axis2 wide 
- * configurations can changed by setting name value pairs of the configurationContext. 
- * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager.</p> 
-
+ * same configurations to be used by two Axis2 instances and most Axis2 wide
+ * configurations can changed by setting name value pairs of the configurationContext.
+ * This hold all OperationContexts, ServiceGroups, Sessions, and ListenerManager.
  */
 public class ConfigurationContext extends AbstractContext {
 
@@ -75,6 +80,7 @@ public class ConfigurationContext extends AbstractContext {
     private String servicePath;
 
     private String cachedServicePath = null;
+    protected List contextListeners;
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
@@ -114,6 +120,61 @@ public class ConfigurationContext extends AbstractContext {
     private static boolean shouldClusterBeInitiated(ClusterManager clusterManager) {
         Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
         return !(param != null && JavaUtils.isTrueExplicitly(param.getValue()));
+    }
+
+    /**
+     * Inform any listeners of a new context being created
+     *
+     * @param context the just-created subcontext
+     */
+    void contextCreated(AbstractContext context) {
+        if (contextListeners == null) {
+            return;
+        }
+        for (Iterator iter = contextListeners.iterator(); iter.hasNext();) {
+            ContextListener listener = (ContextListener) iter.next();
+            listener.contextCreated(context);
+        }
+    }
+
+    /**
+     * Inform any listeners of a context being removed
+     *
+     * @param context the just-created subcontext
+     */
+    void contextRemoved(AbstractContext context) {
+        if (contextListeners == null) {
+            return;
+        }
+        for (Iterator iter = contextListeners.iterator(); iter.hasNext();) {
+            ContextListener listener = (ContextListener) iter.next();
+            listener.contextRemoved(context);
+        }
+    }
+
+    /**
+     * Register a {@link ContextListener} to be notified of all sub-context events.
+     *
+     * @param contextListener A ContextListener
+     * @see #removeContextListener
+     */
+    public void addContextListener(ContextListener contextListener) {
+        if (contextListeners == null) {
+            contextListeners = new ArrayList();
+        }
+        contextListeners.add(contextListener);
+    }
+
+    /**
+     * Remove an already registered {@link ContextListener}
+     *
+     * @param contextListener A ContextListener
+     * @see #addContextListener
+     */
+    public void removeContextListener(ContextListener contextListener) {
+        if (contextListeners != null) {
+            contextListeners.remove(contextListener);
+        }
     }
 
     protected void finalize() throws Throwable {
@@ -211,7 +272,7 @@ public class ConfigurationContext extends AbstractContext {
      * If the given message id already has a registered operation context,
      * no change is made and the methid resturns false.
      *
-     * @param messageID the message-id to register
+     * @param messageID  the message-id to register
      * @param mepContext the OperationContext for the specified message-id
      * @return true if we added a new context, false if the messageID was already there and we did
      *         nothing
@@ -220,7 +281,7 @@ public class ConfigurationContext extends AbstractContext {
                                             OperationContext mepContext) {
         mepContext.setKey(messageID);  // TODO: Doing this here seems dangerous....
         synchronized (operationContextMap) {
-            if  (!operationContextMap.containsKey(messageID)) {
+            if (!operationContextMap.containsKey(messageID)) {
                 this.operationContextMap.put(messageID, mepContext);
                 return true;
             }
@@ -235,11 +296,14 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void unregisterOperationContext(String key) {
         synchronized (operationContextMap) {
+            OperationContext opCtx = (OperationContext)operationContextMap.get(key);
             operationContextMap.remove(key);
+            contextRemoved(opCtx);
         }
     }
 
-    public void addServiceGroupContextIntoSoapSessionTable(ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextIntoSoapSessionTable(
+            ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
         serviceGroupContextMap.put(id, serviceGroupContext);
         serviceGroupContext.touch();
@@ -248,12 +312,27 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    public void addServiceGroupContextIntoApplicationScopeTable(ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextIntoApplicationScopeTable
+            (ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContexts == null) {
             applicationSessionServiceGroupContexts = new Hashtable();
         }
         applicationSessionServiceGroupContexts.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
+    }
+
+    /**
+     * Deploy a service to the embedded AxisConfiguration, and initialize it.
+     *
+     * @param service service to deploy
+     * @throws AxisFault if there's a problem
+     */
+    public void deployService(AxisService service) throws AxisFault {
+        axisConfiguration.addService(service);
+        if (Constants.SCOPE_APPLICATION.equals(service.getScope())) {
+            ServiceGroupContext sgc = createServiceGroupContext(service.getAxisServiceGroup());
+            DependencyManager.initService(sgc);
+        }
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -337,7 +416,9 @@ public class ConfigurationContext extends AbstractContext {
      * @return a new MessageContext
      */
     public MessageContext createMessageContext() {
-        return new MessageContext(this);
+        MessageContext msgCtx = new MessageContext(this);
+        contextCreated(msgCtx);
+        return msgCtx;
     }
 
     /**
@@ -348,7 +429,9 @@ public class ConfigurationContext extends AbstractContext {
      * @return a new ServiceGroupContext
      */
     public ServiceGroupContext createServiceGroupContext(AxisServiceGroup serviceGroup) {
-        return new ServiceGroupContext(this, serviceGroup);
+        ServiceGroupContext sgCtx = new ServiceGroupContext(this, serviceGroup);
+        contextCreated(sgCtx);
+        return sgCtx;
     }
 
     /**
@@ -419,24 +502,24 @@ public class ConfigurationContext extends AbstractContext {
     public String[] getServiceGroupContextIDs() {
         String[] ids = new String[serviceGroupContextMap.size() +
                                   applicationSessionServiceGroupContexts.size()];
-        int index =0;
+        int index = 0;
         for (Iterator iter = serviceGroupContextMap.keySet().iterator(); iter.hasNext();) {
-            ids[index] = (String)iter.next();
+            ids[index] = (String) iter.next();
             index ++;
         }
         for (Iterator iter = applicationSessionServiceGroupContexts.keySet().iterator();
              iter.hasNext();) {
-            ids[index] = (String)iter.next();
+            ids[index] = (String) iter.next();
             index ++;
         }
         return ids;
     }
 
     /**
-     * @deprecated Use {@link #getServiceGroupContextIDs} & {@link #getServiceGroupContext(String)}
      * @return The ServiceGroupContexts
+     * @deprecated Use {@link #getServiceGroupContextIDs} & {@link #getServiceGroupContext(String)}
      */
-    public Hashtable getServiceGroupContexts(){
+    public Hashtable getServiceGroupContexts() {
         return serviceGroupContextMap;
     }
 
@@ -478,8 +561,8 @@ public class ConfigurationContext extends AbstractContext {
             return;
         }
         long currentTime = new Date().getTime();
-        Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
-        while (sgCtxtMapKeyIter.hasNext()) {
+        for (Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
+             sgCtxtMapKeyIter.hasNext();) {
             String sgCtxtId = (String) sgCtxtMapKeyIter.next();
             ServiceGroupContext serviceGroupContext =
                     (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
@@ -487,6 +570,7 @@ public class ConfigurationContext extends AbstractContext {
                 getServiceGroupContextTimoutInterval()) {
                 sgCtxtMapKeyIter.remove();
                 cleanupServiceContexts(serviceGroupContext);
+                contextRemoved(serviceGroupContext);
             }
         }
     }
@@ -503,12 +587,12 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContext == null) {
             return;
         }
-        Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
-        if (serviceContecxtes == null) {
+        Iterator serviceContextIter = serviceGroupContext.getServiceContexts();
+        if (serviceContextIter == null) {
             return;
         }
-        while (serviceContecxtes.hasNext()) {
-            ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
+        while (serviceContextIter.hasNext()) {
+            ServiceContext serviceContext = (ServiceContext) serviceContextIter.next();
             DependencyManager.destroyServiceObject(serviceContext);
         }
     }
@@ -516,9 +600,9 @@ public class ConfigurationContext extends AbstractContext {
     public void cleanupContexts() {
         if ((applicationSessionServiceGroupContexts != null) &&
             (applicationSessionServiceGroupContexts.size() > 0)) {
-            Iterator applicationScopeSgs =
+            for (Iterator applicationScopeSgs =
                     applicationSessionServiceGroupContexts.values().iterator();
-            while (applicationScopeSgs.hasNext()) {
+                 applicationScopeSgs.hasNext();) {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) applicationScopeSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
@@ -526,10 +610,10 @@ public class ConfigurationContext extends AbstractContext {
             applicationSessionServiceGroupContexts.clear();
         }
         if ((serviceGroupContextMap != null) && (serviceGroupContextMap.size() > 0)) {
-            Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
-            while (sopaSessionSgs.hasNext()) {
+            for (Iterator soapSessionSgs = serviceGroupContextMap.values().iterator();
+                 soapSessionSgs.hasNext();) {
                 ServiceGroupContext serviceGroupContext =
-                        (ServiceGroupContext) sopaSessionSgs.next();
+                        (ServiceGroupContext) soapSessionSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
             }
             serviceGroupContextMap.clear();
@@ -540,6 +624,7 @@ public class ConfigurationContext extends AbstractContext {
         if (listenerManager != null) {
             listenerManager.stop();
         }
+        axisConfiguration.cleanup();
         cleanupTemp();
     }
 
@@ -548,10 +633,10 @@ public class ConfigurationContext extends AbstractContext {
      * release to 1.3 release. This will include API changes , class
      * deprecating etc etc.
      */
-    private void cleanupTemp(){
-        File tempFile =  (File)axisConfiguration.getParameterValue(
+    private void cleanupTemp() {
+        File tempFile = (File) axisConfiguration.getParameterValue(
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
-        if(tempFile==null){
+        if (tempFile == null) {
             tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
         }
         deleteTempFiles(tempFile);
@@ -560,7 +645,7 @@ public class ConfigurationContext extends AbstractContext {
     private void deleteTempFiles(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
+            for (int i = 0; i < children.length; i++) {
                 deleteTempFiles(new File(dir, children[i]));
             }
         }

@@ -22,8 +22,10 @@
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/service"/>
+        <mkdir dir="${build.dir}/client"/>
     </target>
-
+	
     <target name="generate.service" depends="init">
         <taskdef name="wsdl2java"
                  classname="org.apache.axis2.tool.ant.AntCodegenTask"

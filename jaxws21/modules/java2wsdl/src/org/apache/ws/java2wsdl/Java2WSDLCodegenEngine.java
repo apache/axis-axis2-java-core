@@ -214,13 +214,15 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
                 java2WsdlBuilder.setWSDLVersion(Java2WSDLConstants.WSDL_VERSION_2);
             } //ignore the other cases - they'll be taken as 1.1
         }
+
+        option = loadOption(Java2WSDLConstants.DOC_LIT_BARE,
+                           Java2WSDLConstants.DOC_LIT_BARE_LONG,
+                           optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setGenerateDocLitBare(true);
+        }
     }
     
-     /**
-     * @param shortOption
-     * @param longOption
-     * @param options
-     */
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption, Map options) {
         //short option gets precedence
         Java2WSDLCommandLineOption option = null;
@@ -250,7 +252,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) 
         {
             ArrayList optionValues = option.getOptionValues();
-            String anOptionValue = "";
+            String anOptionValue ;
             for ( int count = 0 ; count < optionValues.size() ; ++count )
             {
                 anOptionValue = ((String)optionValues.get(count)).trim();

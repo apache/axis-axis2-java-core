@@ -3,6 +3,7 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 import java.util.Set;
 
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 /*
@@ -25,6 +26,24 @@ public class AddNumbersClientProtocolHandler implements javax.xml.ws.handler.soa
     }
 
     public boolean handleMessage(SOAPMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        if (outbound) {
+
+            String appProp1 = "AddNumbersClientProtocolHandlerOutboundAppScopedProperty";
+            messagecontext.put(appProp1, "myVal");
+            messagecontext.setScope(appProp1, Scope.APPLICATION);
+            
+            String appProp2 = "AddNumbersClientProtocolHandlerOutboundHandlerScopedProperty";
+            messagecontext.put(appProp2, "client apps can't see this");
+        }
+        else {  // client inbound response
+            String appProp1 = "AddNumbersClientProtocolHandlerInboundAppScopedProperty";
+            messagecontext.put(appProp1, "myVal");
+            messagecontext.setScope(appProp1, Scope.APPLICATION);
+            
+            String appProp2 = "AddNumbersClientProtocolHandlerInboundHandlerScopedProperty";
+            messagecontext.put(appProp2, "client apps can't see this");
+        }
         return true;
     }
 

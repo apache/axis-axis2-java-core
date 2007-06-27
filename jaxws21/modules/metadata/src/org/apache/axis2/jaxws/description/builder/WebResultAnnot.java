@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 
 public class WebResultAnnot implements javax.jws.WebResult {
 
-    private String name = "return";
+    private String name = "";
     private String targetNamespace = "";
     private boolean header = false;
     private String partName = "";

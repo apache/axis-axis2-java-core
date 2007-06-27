@@ -32,7 +32,7 @@
                 </xsl:for-each>
              </messageReceivers>
 
-            <parameter name="ServiceClass" locked="false">
+            <parameter name="ServiceClass">
                 <xsl:choose>
                     <xsl:when test="$package=''">
                         <xsl:value-of select="@name"/>
@@ -42,8 +42,8 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </parameter>
-            <parameter name="useOriginalwsdl" locked="false">true</parameter>
-            <parameter name="modifyUserWSDLPortAddress" locked="false">true</parameter>
+            <parameter name="useOriginalwsdl">true</parameter>
+            <parameter name="modifyUserWSDLPortAddress">true</parameter>
             <xsl:for-each select="method">
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>

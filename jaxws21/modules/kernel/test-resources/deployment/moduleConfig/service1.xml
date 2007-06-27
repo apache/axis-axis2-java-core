@@ -4,11 +4,11 @@
     </description>
 
     <moduleConfig name="Servie_module">
-        <parameter name="Servie_module_para" locked="false">N/A</parameter>
+        <parameter name="Servie_module_para">N/A</parameter>
     </moduleConfig>
     <operation name="echoString">
         <moduleConfig name="Op_Module">
-            <parameter name="Op_Module_para" locked="false">N/A</parameter>
+            <parameter name="Op_Module_para">N/A</parameter>
         </moduleConfig>
     </operation>
 </service>

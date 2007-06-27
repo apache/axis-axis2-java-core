@@ -67,7 +67,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
         //This is not smt we need to do but , my build is fail if I dont do that :)
         serviceClient.getOptions().setTo(new EndpointReference(epr));
         System.out.println(serviceClient.getOptions().getTo().getAddress());
-        OMElement response = serviceClient.sendReceive(new QName("", "echoOM"), payload);
+        OMElement response = serviceClient.sendReceive(new QName("http://engine.axis2.apache.org/xsd", "echoOM"), payload);
         assertNotNull(response);
         String textValue = response.getFirstElement().getFirstElement().getText();
         assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");

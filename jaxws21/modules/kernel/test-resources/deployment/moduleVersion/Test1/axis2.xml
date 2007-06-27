@@ -2,8 +2,8 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="hotdeployment" locked="false">true</parameter>
-    <parameter name="hotupdate" locked="false">false</parameter>
+    <parameter name="hotdeployment">true</parameter>
+    <parameter name="hotupdate">false</parameter>
 
     <defaultModuleVersions>
         <module name="abc" version="1.23"/>
@@ -11,8 +11,8 @@
     </defaultModuleVersions>
 
 
-    <parameter name="userName" locked="false">admin</parameter>
-    <parameter name="password" locked="false">axis2</parameter>
+    <parameter name="userName">admin</parameter>
+    <parameter name="password">axis2</parameter>
 
     <!--Note : You can ovride this for particular service by adding the same element with your requirement-->
     <messageReceivers>
@@ -29,18 +29,18 @@
         <!--  System pre defined phases       -->
          <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
         </phase>
         <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
@@ -58,16 +58,16 @@
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
 
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
 
             <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"/>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
         </phase>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>

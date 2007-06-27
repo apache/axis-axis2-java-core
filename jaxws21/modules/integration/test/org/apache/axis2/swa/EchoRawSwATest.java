@@ -37,6 +37,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -64,7 +65,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawSwATest.class),
-                             Constants.TESTING_PATH + "SwA-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "SwA-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -107,7 +108,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
 
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
@@ -115,7 +116,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
 
         MessageContext mc = new MessageContext();
         mc.setEnvelope(createEnvelope());
-        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
+        FileDataSource fileDataSource = new FileDataSource(TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg"));
         DataHandler dataHandler = new DataHandler(fileDataSource);
         mc.addAttachment("FirstAttachment", dataHandler);
 

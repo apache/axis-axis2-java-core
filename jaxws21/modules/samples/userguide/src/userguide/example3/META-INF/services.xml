@@ -3,7 +3,7 @@
         <description>
             Sample to via WSA Mapping
         </description>
-        <parameter name="ServiceClass" locked="false">userguide.example3.MyService</parameter>
+        <parameter name="ServiceClass">userguide.example3.MyService</parameter>
         <operation name="echo">
             <messageReceiver
                     class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>

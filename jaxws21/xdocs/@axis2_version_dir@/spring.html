@@ -108,8 +108,8 @@ be using SpringServletContextObjectSupplier such as:</p>
     &lt;description&gt;
         simple spring example
     &lt;/description&gt;
-    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier&lt;/parameter&gt;
-    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;parameter name="ServiceObjectSupplier"&gt;org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName"&gt;springAwareService&lt;/parameter&gt;
     &lt;operation name="getValue"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
@@ -158,8 +158,8 @@ SpringAppContextAwareObjectSupplier such as:</p>
     &lt;description&gt;
         simple spring example
     &lt;/description&gt;
-    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
-    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;parameter name="ServiceObjectSupplier"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName"&gt;springAwareService&lt;/parameter&gt;
     &lt;operation name="getValue"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
@@ -430,9 +430,9 @@ issues running Spring inside the AAR</a> area.</p>
          simple spring example - inside the AAR
     &lt;/description&gt;
     &lt;!-- need the TCCL param when using spring inside the AAR --&gt;
-    &lt;parameter name="ServiceTCCL" locked="false"&gt;composite&lt;/parameter&gt;
-    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
-    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;parameter name="ServiceTCCL"&gt;composite&lt;/parameter&gt;
+    &lt;parameter name="ServiceObjectSupplier"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName"&gt;springAwareService&lt;/parameter&gt;
     &lt;operation name="getValue"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;

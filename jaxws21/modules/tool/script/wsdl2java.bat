@@ -55,6 +55,6 @@ echo Using AXIS2_HOME:   %AXIS2_HOME%
 echo Using JAVA_HOME:    %JAVA_HOME%
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
-%_RUNJAVA% %JAVA_OPTS% -cp "%AXIS2_CLASS_PATH%" org.apache.axis2.wsdl.WSDL2Java %*
+%_RUNJAVA% %JAVA_OPTS% -cp "!AXIS2_CLASS_PATH!" org.apache.axis2.wsdl.WSDL2Java %*
 endlocal
 :end

@@ -52,7 +52,7 @@ public class StringProviderTests extends ProviderTestCase {
         
         // Force soap action because we are passing junk over the wire
         dispatch.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"echoString");
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"http://stringprovider.sample.test.org/echoString");
         
         return dispatch;
         

@@ -19,7 +19,8 @@
 package org.apache.axis2.jaxws.server.endpoint.lifecycle;
 
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
+import org.apache.axis2.jaxws.injection.ResourceInjectionException;
+import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 
 /*
  * EndpointLifecycleManager is responsible to invoke lifycycle methods on Endpoint. An Endpoint could be a 
@@ -37,15 +38,15 @@ public interface EndpointLifecycleManager {
      * @return
      */
     public Object createServiceInstance(MessageContext mc, Class serviceImplClass)
-            throws EndpointLifecycleException, ResourceInjectionException;
+            throws LifecycleException, ResourceInjectionException;
 
     /*
       * Invokes method on endpoint marked with @PostConstruct annotation.
       */
-    public void invokePostConstruct() throws EndpointLifecycleException;
+    public void invokePostConstruct() throws LifecycleException;
 
     /*
       * Invokes method on endpoint marked with @preDestroy annotation.
       */
-    public void invokePreDestroy() throws EndpointLifecycleException;
+    public void invokePreDestroy() throws LifecycleException;
 }

@@ -49,19 +49,19 @@ the 'user can add his own phases to this area' comment in the 'inflow',
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="InstanceDispatcher"

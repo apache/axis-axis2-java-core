@@ -3,7 +3,6 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
 import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.xml.transform.OutputKeys;
@@ -15,6 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
@@ -39,8 +39,8 @@ public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHan
      * this test handleMessage method is obviously not what a customer might write, but it does
      * the trick for kicking the tires in the handler framework.  The AddNumbers service takes two
      * ints as incoming params, adds them, and returns the sum.  This method subtracts 1 from the 
-     * first int on the inbound request, and subtracts 1 from the int on the outbound response.
-     * So the client app should expect a sum 2 less than a sum without this handler manipulating
+     * first int on the inbound request, and subtracts "deduction" from the int on the outbound
+     * response.  So the client app should expect a sum 3 less than a sum with this handler manipulating
      * the SOAP message.
      */
     public boolean handleMessage(LogicalMessageContext messagecontext) {
@@ -54,6 +54,10 @@ public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHan
             st = replaceFirstArg(st, txt);
             msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
             
+            messagecontext.put("AddNumbersLogicalHandlerInboundAppScopedProperty", "blargval");
+            messagecontext.setScope("AddNumbersLogicalHandlerInboundAppScopedProperty", Scope.APPLICATION);
+            messagecontext.put("AddNumbersLogicalHandlerInboundHandlerScopedProperty", "blargval");
+
         } else { // outbound response if we're on the server
             LogicalMessage msg = messagecontext.getMessage();
             String st = getStringFromSourcePayload(msg.getPayload());

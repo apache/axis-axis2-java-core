@@ -20,9 +20,9 @@ package org.apache.axis2.clustering;
  */
 public interface MessageSender {
 
-    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault;
+    public long sendToGroup(ClusteringCommand msg) throws ClusteringFault;
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault;
 
-    public void sendToGroup(Throwable throwable) throws ClusteringFault;
+    public long sendToGroup(Throwable throwable) throws ClusteringFault;
 }

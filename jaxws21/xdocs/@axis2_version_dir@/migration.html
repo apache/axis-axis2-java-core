@@ -256,7 +256,7 @@ chain that you want to use inside your services.xml:</b></p>
     &lt;description&gt;
        This service has the SOAP Monitor wired in 
     &lt;/description&gt;
-    &lt;parameter name="ServiceClass" locked="false"&gt;org.ExampleService&lt;/parameter&gt;
+    &lt;parameter name="ServiceClass"&gt;org.ExampleService&lt;/parameter&gt;
     &lt;operation name="myExecute"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
@@ -274,22 +274,22 @@ the module.xml :</b></p>
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
 
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
             &lt;handler name="InstanceDispatcher"
@@ -339,8 +339,8 @@ commons-httpclient.</p>
 transports in this manner:</p>
 <pre>...
 &lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt; 
-   &lt;parameter name="PROTOCOL" locked="false"&gt;HTTP/1.1&lt;/parameter&gt; 
-   &lt;parameter name="Transfer-Encoding" locked="false"&gt;chunked&lt;/parameter&gt;
+   &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
+   &lt;parameter name="Transfer-Encoding"&gt;chunked&lt;/parameter&gt;
 &lt;/transportSender&gt;
 ...</pre>
 <a name="data_binding"></a>

@@ -10,6 +10,7 @@ public class ADBClient{
 
             getPrice(stub);
             update(stub);
+            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -25,7 +26,7 @@ public class ADBClient{
             req.setPrice (42.35);
 
             stub.update(req);
-            System.err.println("done");
+            System.err.println("price updated");
         } catch(Exception e){
             e.printStackTrace();
             System.err.println("\n\n\n");

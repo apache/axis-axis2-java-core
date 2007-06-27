@@ -27,6 +27,10 @@
 	<name>Apache Axis 2.0 - JAXWS</name>
 	<description>Axis2 JAXWS Implementation</description>
 	<dependencies>
+                 <dependency>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-annotation_1.0_spec</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
@@ -41,6 +45,12 @@
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-saaj-api</artifactId>
 			<version>${version}</version>
+                        <exclusions>
+                                <exclusion>
+                                        <groupId>org.apache.geronimo.specs</groupId>
+                                        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                                </exclusion>
+                        </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -339,6 +349,12 @@
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+								</java>
+								<echo>Generating java from rpclitstringarray.wsdl</echo>
+								<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
 								</java>
 							</tasks>
 						</configuration>
@@ -753,6 +769,18 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+								<copy toDir="target/test-classes/services/RPCLitStringArrayService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/rpclit/stringarray/**"/>
+									   <include name="org/test/rpclit/stringarray/**"/>
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/rpclit/stringarray/">
+									   <include name="META-INF/**"/>
+									</fileset>
+									<fileset dir="target/classes">
+									   <include name="org/apache/axis2/jaxws/server/**"/>
+									</fileset>
+								</copy>	
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>

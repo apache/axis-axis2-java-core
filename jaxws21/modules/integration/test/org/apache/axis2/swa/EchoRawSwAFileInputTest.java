@@ -25,6 +25,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
@@ -53,7 +54,7 @@ public class EchoRawSwAFileInputTest extends UtilServerBasedTestCase {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawSwAFileInputTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -78,7 +79,7 @@ public class EchoRawSwAFileInputTest extends UtilServerBasedTestCase {
         Socket socket = new Socket("127.0.0.1", 5555);
         OutputStream outStream = socket.getOutputStream();
         socket.getInputStream();
-        InputStream requestMsgInStream = new FileInputStream("test-resources/swa/swainput.bin");
+        InputStream requestMsgInStream = new FileInputStream(TestingUtils.prefixBaseDirectory("test-resources/swa/swainput.bin"));
         int data;
         while ((data = requestMsgInStream.read()) != -1) {
             outStream.write(data);

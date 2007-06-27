@@ -58,10 +58,23 @@ public class JMSConstants {
      * the local (Axis2) name of the connection factory and not a JNDI name
      */
     public static final String CONFAC_PARAM = "transport.jms.ConnectionFactory";
+
     /**
      * The Parameter name indicating the JMS connection factory JNDI name
      */
     public static final String CONFAC_JNDI_NAME_PARAM = "transport.jms.ConnectionFactoryJNDIName";
+
+    /**
+     * The Parameter name indicating the JMS connection factory username (useful for WebsphereMQ CLIENT connections)
+     * n.b. This is not the actual username, it is the JNDI name of the variable that will hold the username
+     */
+    public static final String CONFAC_JNDI_NAME_USER = "transport.jms.ConnectionFactoryJNDIUser";
+
+    /**
+     * The Parameter name indicating the JMS connection factory password (useful for WebsphereMQ CLIENT connections)
+     * n.b. This is not the actual password, it is the JNDI name of the variable that will hold the password
+     */
+    public static final String CONFAC_JNDI_NAME_PASS = "transport.jms.ConnectionFactoryJNDIPass";
 
     /**
      * The Parameter name indicating the operation to dispatch non SOAP/XML messages

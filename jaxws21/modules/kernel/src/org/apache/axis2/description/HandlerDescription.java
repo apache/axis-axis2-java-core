@@ -34,25 +34,10 @@ public class HandlerDescription implements ParameterInclude {
      */
     private String className;
 
-    /**
-     * Field handler
-     */
     private Handler handler;
-
-    /**
-     * Field name
-     */
     private String name;
-
-    /**
-     * Field parameterInclude
-     */
     private final ParameterInclude parameterInclude;
     private ParameterInclude parent;
-
-    /**
-     * Field rules
-     */
     private PhaseRule rules;
 
     /**
@@ -66,7 +51,7 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * Constructor HandlerDescription.
      *
-     * @param name
+     * @param name name of handler
      */
     public HandlerDescription(String name) {
         this();
@@ -74,7 +59,9 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * @param param
+     * Add a Parameter
+     *
+     * @param param the Parameter to associate with this HandlerDescription
      */
     public void addParameter(Parameter param) throws AxisFault {
         if (isParameterLocked(param.getName())) {
@@ -120,8 +107,10 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * @param name
-     * @return Returns Parameter.
+     * Get a named Parameter
+     *
+     * @param name name of Parameter to search
+     * @return a Parameter, which may come from us or from some parent up the tree, or null.
      */
     public Parameter getParameter(String name) {
         Parameter parameter = parameterInclude.getParameter(name);
@@ -163,14 +152,16 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * Method setClassName.
      *
-     * @param className
+     * @param className the class name of the Handler class
      */
     public void setClassName(String className) {
         this.className = className;
     }
 
     /**
-     * @param handler
+     * Explicitly set the Handler object
+     *
+     * @param handler a Handler instance, which will be deployed wherever this HandlerDescription is
      */
     public void setHandler(Handler handler) {
         this.handler = handler;
@@ -178,7 +169,9 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * @param name
+     * Set the name
+     *
+     * @param name the desired name
      */
     public void setName(String name) {
         this.name = name;
@@ -189,9 +182,9 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
-     * Method setRules.
+     * Set the deployment rules for this HandlerDescription
      *
-     * @param rules
+     * @param rules a PhaseRule object
      */
     public void setRules(PhaseRule rules) {
         this.rules = rules;

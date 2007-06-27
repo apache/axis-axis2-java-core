@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.registry;
 
 import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;
@@ -38,6 +39,8 @@ import org.apache.axis2.jaxws.message.impl.XMLPartFactoryImpl;
 import org.apache.axis2.jaxws.message.util.impl.SAAJConverterFactoryImpl;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.utility.ExecutorFactory;
+import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -58,9 +61,11 @@ public class FactoryRegistry {
         table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
         table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
         table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+        table.put(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
         table.put(EndpointDispatcherFactory.class, new EndpointDispatcherFactory());
         table.put(EndpointReferenceFactory.class, new EndpointReferenceFactoryImpl());
+        table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
     }
 
     /** FactoryRegistry is currently a static singleton */

@@ -31,13 +31,12 @@ public class PropertyMigrator implements ApplicationContextMigrator {
 
     public void migratePropertiesFromMessageContext(Map<String, Object> userContext,
                                                     MessageContext messageContext) {
-
+        userContext.putAll(messageContext.getProperties());
     }
 
     public void migratePropertiesToMessageContext(Map<String, Object> userContext,
                                                   MessageContext messageContext) {
-        // Copy all of the properties from the request context into the MessageContext
-        messageContext.getProperties().putAll(userContext);
+        messageContext.setProperties(userContext);
     }
 
 }

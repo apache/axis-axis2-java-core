@@ -43,6 +43,7 @@ public class MessageContextUtils {
                     MessageContextBuilder.createOutMessageContext(sourceAxisMC);
 
             MessageContext newMC = new MessageContext(newAxisMC);
+            newMC.setMEPContext(mc.getMEPContext());
             newMC.setEndpointDescription(mc.getEndpointDescription());
             newMC.setOperationDescription(mc.getOperationDescription());
             return newMC;
@@ -60,6 +61,7 @@ public class MessageContextUtils {
     public static MessageContext createMinimalResponseMessageContext(MessageContext mc) {
         org.apache.axis2.context.MessageContext sourceAxisMC = mc.getAxisMessageContext();
         MessageContext newMC = new MessageContext(sourceAxisMC);
+        newMC.setMEPContext(mc.getMEPContext());
         newMC.setEndpointDescription(mc.getEndpointDescription());
         newMC.setOperationDescription(mc.getOperationDescription());
         return newMC;
@@ -71,12 +73,13 @@ public class MessageContextUtils {
      * @param mc
      * @return
      */
-    public static MessageContext createFaultMessageContext(MessageContext mc, Throwable t) {
+    public static MessageContext createFaultMessageContext(MessageContext mc) {
         try {
             org.apache.axis2.context.MessageContext faultMC =
-                    MessageContextBuilder.createFaultMessageContext(
-                            mc.getAxisMessageContext(), t);
+                    MessageContextBuilder.createFaultMessageContext(mc.getAxisMessageContext(),
+                                                                    null);
             MessageContext jaxwsFaultMC = new MessageContext(faultMC);
+            jaxwsFaultMC.setMEPContext(mc.getMEPContext());
             jaxwsFaultMC.setEndpointDescription(mc.getEndpointDescription());
             jaxwsFaultMC.setOperationDescription(mc.getOperationDescription());
             return jaxwsFaultMC;

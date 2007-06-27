@@ -41,6 +41,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,7 +125,7 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        "target/test-resources/integrationRepo", null);
+                        TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
 

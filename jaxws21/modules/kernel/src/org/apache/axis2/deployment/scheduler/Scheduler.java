@@ -63,6 +63,10 @@ public class Scheduler {
         }
     }
 
+    public void cleanup(){
+        timer.cancel();
+    }
+
     public class SchedulerTimerTask extends TimerTask {
         private DeploymentIterator iterator;
         private SchedulerTask schedulerTask;

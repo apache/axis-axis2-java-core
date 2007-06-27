@@ -25,6 +25,7 @@ import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.ClusteringContextListener;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
@@ -116,9 +117,10 @@ public class TribesClusterManager implements ClusterManager {
             mcastProps.setProperty("tcpListenPort", "4000");
             mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
-//            TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-//            tcpFailureDetector.setPrevious(nbc);
-//            channel.addInterceptor(tcpFailureDetector);
+            /*TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+            tcpFailureDetector.setPrevious(nbc);
+            channel.addInterceptor(tcpFailureDetector);
+            tcpFailureDetector.*/
 
             channel.addChannelListener(channelListener);
             TribesMembershipListener membershipListener = new TribesMembershipListener();
@@ -152,13 +154,16 @@ public class TribesClusterManager implements ClusterManager {
                         int memberIndex = random.nextInt(members.length);
                         Member member = members[memberIndex];
                         if (!sentMembersList.contains(TribesUtil.getHost(member))) {
-                            sender.sendToMember(new GetStateCommand(), member);
+                            long tts = sender.sendToMember(new GetStateCommand(), member);
+                            configurationContext.
+                                    setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                             new Long(tts));
                             sentMembersList.add(TribesUtil.getHost(member));
                             log.debug("WAITING FOR STATE UPDATE...");
-                            Thread.sleep(1000);
+                            Thread.sleep(tts + 5);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e);
                         break;
                     }
                     numberOfTries ++;
@@ -166,6 +171,9 @@ public class TribesClusterManager implements ClusterManager {
                 configurationContext.
                         setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
                                                  "true");
+                ClusteringContextListener contextListener = new ClusteringContextListener();
+                //TODO: May need to set the context listener somewhere to be useful
+                configurationContext.addContextListener(contextListener);
             }
         } catch (ChannelException e) {
             String message = "Error starting Tribes channel";
@@ -238,12 +246,5 @@ public class TribesClusterManager implements ClusterManager {
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
         }
-    }
-
-    public int getMemberCount() {
-        if (channel != null) {
-            return channel.getMembers().length;
-        }
-        return 0;
     }
 }

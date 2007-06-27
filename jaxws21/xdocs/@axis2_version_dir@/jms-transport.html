@@ -13,13 +13,7 @@
 <h1>JMS Transport</h1>
 
 <p>This document is all about the JMS (Java Messaging Service) Transport
-support in Apache Axis2,, and how it should be configured.</p>
-
-<p><i>Send your feedback or questions to: <a
-href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>.
-(Subscription details are available on the <a
-href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>.) Kindly
-prefix subject with [Axis2].</p>
+support in Apache Axis2, and how it should be configured.</p>
 
 <h2>Contents</h2>
 <ul>
@@ -45,10 +39,10 @@ Axis2 services being deployed</strong>.</p>
 follows, in order to configure the JMSListener and the JMS Sender</p>
 <pre><strong>axis2.xml</strong>
     &lt;transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener"&gt;
-      &lt;parameter name="default" locked="false"&gt;                
-        &lt;parameter name="java.naming.factory.initial" locked="false"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;
-        &lt;parameter name="java.naming.provider.url" locked="false"&gt;tcp://localhost:61616&lt;/parameter&gt;        
-        &lt;parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false"&gt;QueueConnectionFactory&lt;/parameter&gt;
+      &lt;parameter name="default"&gt;
+        &lt;parameter name="java.naming.factory.initial"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;
+        &lt;parameter name="java.naming.provider.url"&gt;tcp://localhost:61616&lt;/parameter&gt;
+        &lt;parameter name="transport.jms.ConnectionFactoryJNDIName"&gt;QueueConnectionFactory&lt;/parameter&gt;
       &lt;/parameter&gt;
     &lt;/transportReceiver&gt;
 
@@ -67,10 +61,10 @@ You can also specify the parameters "java.naming.security.principal" and
 connection factory. The example shown above uses an ActiveMQ JMS
 implementation.</p>
 <pre><strong>axis2.xml</strong>
-  &lt;parameter name="myTopicConnectionFactory" locked="false"&gt;</pre>
-<pre>    &lt;parameter name="java.naming.factory.initial" locked="false"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;</pre>
-<pre>    &lt;parameter name="java.naming.provider.url" locked="false"&gt;tcp://localhost:61616&lt;/parameter&gt;</pre>
-<pre>    &lt;parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false"&gt;TopicConnectionFactory&lt;/parameter&gt;</pre>
+  &lt;parameter name="myTopicConnectionFactory"&gt;</pre>
+<pre>    &lt;parameter name="java.naming.factory.initial"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;</pre>
+<pre>    &lt;parameter name="java.naming.provider.url"&gt;tcp://localhost:61616&lt;/parameter&gt;</pre>
+<pre>    &lt;parameter name="transport.jms.ConnectionFactoryJNDIName"&gt;TopicConnectionFactory&lt;/parameter&gt;</pre>
 <pre>  &lt;/parameter&gt;</pre>
 
 <p>If it is required or applicable, you are free to define additional (local)
@@ -117,8 +111,8 @@ provides the following optional parameters.</p>
 
 <p>This section assumes that you are already familiar with <a
 href="xmlbased-server.html">writing service implementations</a> for Axis2,
-and provides information on how to write your own service implementations,
-which are exposed over JMS.</p>
+and provides information on how to write your own service implementations
+to be exposed over JMS.</p>
 
 <p><strong>Echo - Service implementation and services.xml</strong></p>
 

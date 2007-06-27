@@ -53,7 +53,11 @@ public class BindingImpl implements Binding {
 
     public BindingImpl(EndpointDescription endpointDesc) {
         this.endpointDesc = endpointDesc;
-        this.bindingId = endpointDesc.getBindingType();
+        // client
+        this.bindingId = endpointDesc.getClientBindingID();
+        if (this.bindingId == null)
+            // server
+            this.bindingId = endpointDesc.getBindingType();
     }
 
     public List<Handler> getHandlerChain() {

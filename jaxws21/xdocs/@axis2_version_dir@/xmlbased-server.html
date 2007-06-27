@@ -64,7 +64,7 @@ configuration for MyService is as follows:</p>
     &lt;description&gt;
         This is a sample Web service with two operations, echo and ping.
     &lt;/description&gt;
-    &lt;parameter name="ServiceClass" locked="false"&gt;userguide.example1.MyService&lt;/parameter&gt;
+    &lt;parameter name="ServiceClass"&gt;userguide.example1.MyService&lt;/parameter&gt;
     &lt;operation name="echo"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
         &lt;actionMapping&gt;urn:echo&lt;/actionMapping&gt;
@@ -85,7 +85,7 @@ tag.</p>
     &lt;/description&gt;</pre>
 
 <p>2. The name of the service class is provided as a parameter.</p>
-<pre>&lt;parameter name="serviceClass" locked="false"&gt;userguide.example1.MyService&lt;/parameter&gt;</pre>
+<pre>&lt;parameter name="serviceClass"&gt;userguide.example1.MyService&lt;/parameter&gt;</pre>
 
 <p>3. The "operation" XML tag describes the operations that are available in
 this service with respective message receivers.</p>
@@ -124,7 +124,7 @@ file should have the following format.</p>
     &lt;!-- details for Service2 --&gt;
   &lt;/service&gt;
   &lt;module ref="ModuleName" /&gt;
-  &lt;parameter name="serviceGroupParam1" locked="false"&gt;value 1&lt;/parameter&gt;
+  &lt;parameter name="serviceGroupParam1"&gt;value 1&lt;/parameter&gt;
 &lt;/serviceGroup&gt;</pre>
 
 <p>Note : The name of the service is a compulsory attribute.</p>

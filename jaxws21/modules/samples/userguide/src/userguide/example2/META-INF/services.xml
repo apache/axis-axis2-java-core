@@ -3,7 +3,7 @@
         This is a sample Web Service with a logging module engaged.
     </description>
     <module ref="sample-logging"/>
-    <parameter name="ServiceClass" locked="false">userguide.example2.MyService</parameter>
+    <parameter name="ServiceClass">userguide.example2.MyService</parameter>
     <operation name="echo">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <actionMapping>urn:echo</actionMapping>

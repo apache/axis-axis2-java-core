@@ -18,7 +18,14 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.lifecycle.impl;
 
+import java.lang.reflect.Method;
+
+import javax.xml.ws.WebServiceContext;
+
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
@@ -27,51 +34,35 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
+import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
-import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleException;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.Constants;
+import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.xml.ws.WebServiceContext;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
+public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implements EndpointLifecycleManager {
     public static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
     private static final Log log = LogFactory.getLog(EndpointLifecycleManagerImpl.class);
-    private Object endpointInstance = null;
-    private Class endpointClazz = null;
 
-    public EndpointLifecycleManagerImpl(Object endpointInstance) {
-        super();
-        this.endpointInstance = endpointInstance;
-        if (endpointInstance != null) {
-            endpointClazz = endpointInstance.getClass();
-        }
+    public EndpointLifecycleManagerImpl(Object endpointInstance) {      
+        this.instance = endpointInstance;
     }
 
     public EndpointLifecycleManagerImpl() {
-        super();
     }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager#createServiceInstance(org.apache.axis2.jaxws.core.MessageContext, java.lang.Class)
       */
     public Object createServiceInstance(MessageContext mc, Class serviceImplClass)
-            throws EndpointLifecycleException, ResourceInjectionException {
+            throws LifecycleException, ResourceInjectionException {
         org.apache.axis2.context.MessageContext msgContext = mc.getAxisMessageContext();
 
         // Get the ServiceDescription and injectionDesc which contain
@@ -88,8 +79,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
         ServiceContext serviceContext = msgContext.getServiceContext();
         Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
         if (serviceimpl != null) {
-            this.endpointInstance = serviceimpl;
-            this.endpointClazz = serviceImplClass;
+            this.instance = serviceimpl;
 
             if (log.isDebugEnabled()) {
                 log.debug("Service Instance found in the service context, reusing the instance");
@@ -114,8 +104,8 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
         } else {
             // create a new service impl class for that service
             serviceimpl = createServiceInstance(msgContext.getAxisService(), serviceImplClass);
-            this.endpointInstance = serviceimpl;
-            this.endpointClazz = serviceImplClass;
+            this.instance = serviceimpl;
+
             if (log.isDebugEnabled()) {
                 log.debug("New Service Instance created");
             }
@@ -132,7 +122,6 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
                 // Inject WebServiceContext
                 injectWebServiceContext(mc, wsContext, serviceimpl);
                 serviceContext.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
-
             }
 
             //Invoke PostConstruct
@@ -142,115 +131,6 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
         }
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager#invokePostConstruct()
-      */
-    public void invokePostConstruct() throws EndpointLifecycleException {
-        if (endpointInstance == null) {
-            throw new EndpointLifecycleException(
-                    Messages.getMessage("EndpointLifecycleManagerImplErr1"));
-        }
-        Method method = getPostConstructMethod();
-        if (method != null) {
-            invokePostConstruct(method);
-        }
-    }
-
-    private void invokePostConstruct(Method method) throws EndpointLifecycleException {
-        if (log.isDebugEnabled()) {
-            log.debug("Invoking Method with @PostConstruct annotation");
-        }
-        invokeMethod(method, null);
-        if (log.isDebugEnabled()) {
-            log.debug("Completed invoke on Method with @PostConstruct annotation");
-        }
-    }
-
-    /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager#invokePreDestroy()
-      */
-    public void invokePreDestroy() throws EndpointLifecycleException {
-        if (endpointInstance == null) {
-            throw new EndpointLifecycleException(
-                    Messages.getMessage("EndpointLifecycleManagerImplErr1"));
-        }
-        Method method = getPreDestroyMethod();
-        if (method != null) {
-            invokePreDestroy(method);
-        }
-    }
-
-    private void invokePreDestroy(Method method) throws EndpointLifecycleException {
-        if (log.isDebugEnabled()) {
-            log.debug("Invoking Method with @PreDestroy annotation");
-        }
-        invokeMethod(method, null);
-        if (log.isDebugEnabled()) {
-            log.debug("Completed invoke on Method with @PreDestroy annotation");
-        }
-    }
-
-    private void invokeMethod(Method m, Object[] params) throws EndpointLifecycleException {
-        try {
-            m.invoke(endpointInstance, params);
-        } catch (InvocationTargetException e) {
-            throw new EndpointLifecycleException(e);
-        } catch (IllegalAccessException e) {
-            throw new EndpointLifecycleException(e);
-        }
-    }
-
-    private Method getPostConstructMethod() {
-        // REVIEW: This method should not be called in performant situations.
-        // Plus the super class methods are not being considered 
-
-        //return Method with @PostConstruct Annotation.
-        if (endpointInstance != null) {
-            Class endpointClazz = endpointInstance.getClass();
-            Method[] methods = endpointClazz.getMethods();
-
-            for (Method method : methods) {
-                if (isPostConstruct(method)) {
-                    return method;
-                }
-            }
-        }
-        return null;
-    }
-
-    private Method getPreDestroyMethod() {
-        // REVIEW: This method should not be called in performant situations.
-        // Plus the super class methods are not being considered 
-        //return Method with @PreDestroy Annotation
-        if (endpointInstance != null) {
-            Class endpointClazz = endpointInstance.getClass();
-            Method[] methods = endpointClazz.getMethods();
-
-            for (Method method : methods) {
-                if (isPreDestroy(method)) {
-                    return method;
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isPostConstruct(Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
-        for (Annotation annotation : annotations) {
-            return PostConstruct.class.isAssignableFrom(annotation.annotationType());
-        }
-        return false;
-    }
-
-    private boolean isPreDestroy(Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
-        for (Annotation annotation : annotations) {
-            return PreDestroy.class.isAssignableFrom(annotation.annotationType());
-        }
-        return false;
     }
 
     private Object createServiceInstance(AxisService service, Class serviceImplClass) {

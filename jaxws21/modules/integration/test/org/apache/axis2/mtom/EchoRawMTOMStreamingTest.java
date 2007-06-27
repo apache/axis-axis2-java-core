@@ -37,6 +37,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
@@ -66,7 +67,7 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMStreamingTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {

@@ -43,6 +43,7 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
 
@@ -81,7 +82,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(MessageSaveAndRestoreWithMTOMTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -135,7 +136,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
         options.setTimeOutInMilliSeconds(50000);
 
         ConfigurationContext configurationContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                .createConfigurationContextFromFileSystem(TestingUtils.prefixBaseDirectory("target/test-resources/integrationRepo"),
                                                           null);
 
         ServiceClient sender = new ServiceClient(configurationContext, null);
@@ -159,7 +160,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
         OMElement rpcWrapperElement = omFactory.createOMElement("echoOMElement", omNamespace);
         OMElement data = omFactory.createOMElement("data", omNamespace);
 
-        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
+        FileDataSource fileDataSource = new FileDataSource(TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg"));
         DataHandler expectedDataHandler = new DataHandler(fileDataSource);
         expectedTextData = new OMTextImpl(expectedDataHandler, true, omFactory);
         data.addChild(expectedTextData);

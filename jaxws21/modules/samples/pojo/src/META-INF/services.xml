@@ -8,6 +8,6 @@
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
                          class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </messageReceivers>
-    <parameter name="ServiceClass" locked="false">sample.addressbook.service.AddressBookService</parameter>
+    <parameter name="ServiceClass">sample.addressbook.service.AddressBookService</parameter>
 
 </service>

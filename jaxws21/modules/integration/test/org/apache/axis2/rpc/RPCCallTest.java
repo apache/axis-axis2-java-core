@@ -16,35 +16,6 @@
 */
 package org.apache.axis2.rpc;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DefaultObjectSupplier;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.rpc.client.RPCServiceClient;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
-import org.apache.axis2.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,65 +23,34 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class RPCCallTest extends UtilServerBasedTestCase {
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.engine.DefaultObjectSupplier;
+import org.apache.axis2.integration.RPCLocalTestCase;
+import org.apache.axis2.rpc.client.RPCServiceClient;
+
+public class RPCCallTest extends RPCLocalTestCase {
 
     private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     //  0123456789 0 123456789
 
-
-    protected EndpointReference targetEPR;
-    protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
-    protected QName transportName = new QName("http://org.apache.axis2/xsd",
-                                              "NullTransport");
-
-    protected AxisConfiguration engineRegistry;
-    protected MessageContext mc;
-    protected ServiceContext serviceContext;
-    protected AxisService service;
-
     protected boolean finish = false;
 
-    public RPCCallTest() {
-        super(RPCCallTest.class.getName());
-    }
-
-    public RPCCallTest(String testName) {
-        super(testName);
-    }
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCCallTest.class));
-    }
-
-
     protected void setUp() throws Exception {
-        String className = "org.apache.axis2.rpc.RPCServiceClass";
-        UtilServer.start();
-        service = AxisService.createService(
-                className, UtilServer.getConfigurationContext().getAxisConfiguration());
-        service.setName("EchoXMLService");
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-
-        UtilServer.deployService(service);
-    }
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployClientService();
-    }
+		super.setUp();
+		deployClassAsService("EchoXMLService", RPCServiceClass.class);
+	}
 
     public void testEditBean() throws AxisFault {
-        configureSystem("editBean");
-
-        Options options = new Options();
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
-        options.setTo(targetEPR);
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "editBean");
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -126,36 +66,15 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add(bean);
         args.add("159");
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "editBean", "req"), args.toArray());
         MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class, response.getFirstElement(),
                                                       new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
 
-    private void configureSystem(String opName) {
-        targetEPR =
-                new EndpointReference("http://127.0.0.1:"
-                        + (UtilServer.TESTING_PORT)
-                        + "/axis2/services/EchoXMLService/" + opName);
-        operationName = new QName("http://rpc.axis2.apache.org/xsd", opName, "req");
-        AxisOperation axisOp = new InOutAxisOperation(operationName);
-        axisOp.setMessageReceiver(new RPCMessageReceiver());
-        axisOp.setStyle(WSDLConstants.STYLE_RPC);
-        service.addOperation(axisOp);
-    }
-
     public void testEchoBean() throws AxisFault {
-        configureSystem("echoBean");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoBean");
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -170,7 +89,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add(bean);
 
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBean", "req"), args.toArray());
         MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class,
                                                       response.getFirstElement(),
                                                       new DefaultObjectSupplier(), null);
@@ -180,16 +99,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
     }
 
     public void testechoMail() throws AxisFault {
-        configureSystem("echoMail");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoMail");
 
         Mail mail = new Mail();
         mail.setBody("My Body");
@@ -203,7 +113,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add(mail);
 
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoMail", "req"), args.toArray());
         Mail resBean = (Mail)BeanUtil.deserialize(Mail.class, response.getFirstElement(),
                                                   new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
@@ -213,149 +123,79 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
     public void testEchoString() throws AxisFault {
-        configureSystem("echoString");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoString");
 
         ArrayList args = new ArrayList();
         args.add("foo");
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoString", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), "foo");
     }
 
     public void testEchoInt() throws AxisFault {
-        configureSystem("echoInt");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoInt");
 
         ArrayList args = new ArrayList();
         args.add("100");
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoInt", "req"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 100);
     }
 
     public void testAdd() throws AxisFault {
-        configureSystem("add");
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "add");
+    	
         ArrayList args = new ArrayList();
         args.add("100");
         args.add("200");
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "add", "req"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
     }
 
     public void testByteArray() throws AxisFault {
-        configureSystem("testByteArray");
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "testByteArray");
+    	
         ArrayList args = new ArrayList();
         String hello = "hello";
         args.add(hello.getBytes());
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "testByteArray", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), hello);
     }
 
     //
 
     public void testDivide() throws AxisFault {
-        configureSystem("divide");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
-
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "divide");
 
         ArrayList args = new ArrayList();
         args.add("10");
         args.add("0");
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "divide", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), "INF");
     }
 
     public void testEchoBool() throws AxisFault {
-        configureSystem("echoBool");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "echoBool");
 
         ArrayList args = new ArrayList();
         args.add("true");
 
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBool", "req"), args.toArray());
         assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(), true);
     }
 
     public void testEchoByte() throws AxisFault {
-        configureSystem("echoByte");
-
-        Options options = new Options();
-
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoByte");
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoByte", "req"), args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
     }
 
     public void testCompany() throws AxisFault {
-        configureSystem("echoCompany");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoCompany");
 
         Company com = new Company();
         com.setName("MyCompany");
@@ -380,21 +220,12 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         com.setPersons(ps);
         ArrayList args = new ArrayList();
         args.add(com);
-        sender.invokeBlocking(operationName, args.toArray());
+        sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoCompany", "req"), args.toArray());
     }
 
 
     public void testtestCompany() throws AxisFault {
-        configureSystem("testCompanyArray");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "testCompanyArray");
 
         Company com = new Company();
         com.setName("MyCompany");
@@ -425,21 +256,12 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
         ArrayList req = new ArrayList();
         req.add(args.toArray());
-        OMElement value = sender.invokeBlocking(operationName, req.toArray());
+        OMElement value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "testCompanyArray", "req"), req.toArray());
         assertEquals("4", value.getFirstElement().getText());
     }
 
     public void testCompanyArray() throws AxisFault {
-        configureSystem("CompanyArray");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "CompanyArray");
 
         Company com = new Company();
         com.setName("MyCompany");
@@ -475,7 +297,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         resobj.add(Company.class);
         resobj.add(Company.class);
         resobj.add(Company.class);
-        Object [] value = sender.invokeBlocking(operationName, req.toArray(),
+        Object [] value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "CompanyArray", "req"), req.toArray(),
                                                 (Class[])resobj.toArray(new Class[resobj.size()]));
         assertEquals(4, value.length);
         assertEquals(((Company)value[0]).getName(), "MyCompany");
@@ -483,56 +305,29 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
     public void testEchoOM() throws AxisFault {
-        configureSystem("echoOM");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoOM");
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoOM", "req"), args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getFirstElement().getText()), 1);
     }
 
     public void testCalender() throws AxisFault {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-        configureSystem("echoCalander");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "echoCalander");
 
         ArrayList args = new ArrayList();
         Date date = Calendar.getInstance().getTime();
         args.add(zulu.format(date));
-        OMElement response = sender.invokeBlocking(operationName, args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoCalander", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), zulu.format(date));
     }
 
 
     ////////////////////////////////////////////////// Invoking by Passing Return types //////////
     public void testechoBean2() throws AxisFault {
-        configureSystem("echoBean");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoBean");
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -549,7 +344,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         ArrayList ret = new ArrayList();
         ret.add(MyBean.class);
 
-        Object [] response = sender.invokeBlocking(operationName, args.toArray(),
+        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBean", "req"), args.toArray(),
                                                    (Class[])ret.toArray(new Class[ret.size()]));
         MyBean resBean = (MyBean)response[0];
         assertNotNull(resBean);
@@ -557,16 +352,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
     }
 
     public void testechoInt2() throws AxisFault {
-        configureSystem("echoInt");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "echoInt");
 
         ArrayList args = new ArrayList();
         args.add("100");
@@ -574,7 +360,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
 
-        Object [] response = sender.invokeBlocking(operationName, args.toArray(),
+        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoInt", "req"), args.toArray(),
                                                    (Class[])ret.toArray(new Class[ret.size()]));
         assertEquals(((Integer)response[0]).intValue(), 100);
     }
@@ -604,40 +390,22 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 //    }
 
     public void testStringArray() throws AxisFault {
-        configureSystem("handleStringArray");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "handleStringArray");
 
         ArrayList args = new ArrayList();
         String [] values = new String[] { "abc", "cde", "efg" };
         args.add(values);
         ArrayList ret = new ArrayList();
         ret.add(Boolean.class);
-        Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
+        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "handleStringArray", "req"), args.toArray(),
                                                (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(Boolean.TRUE, Boolean.valueOf(objs[0].toString()));
     }
 
     public void testmultiArrays() throws AxisFault {
-        configureSystem("multiArrays");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
-
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "multiArrays");
+    	
         ArrayList args = new ArrayList();
         String [] values = new String[] { "abc", "cde", "efg" };
         args.add(values);
@@ -650,52 +418,35 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
-        Object [] objs = sender.invokeBlocking(operationName, args.toArray(),
+        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "multiArrays", "req"), args.toArray(),
                                                (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(19, Integer.parseInt(objs[0].toString()));
     }
 
     public void testmulReturn() throws AxisFault {
-        configureSystem("mulReturn");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "mulReturn");
 
         ArrayList args = new ArrayList();
         args.add("foo");
 
 
-        OMElement element = sender.invokeBlocking(operationName, args.toArray());
+        OMElement element = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "mulReturn", "req"), args.toArray());
         System.out.println("element = " + element);
 //        assertEquals(response.getFirstElement().getText(), "foo");
     }
 
 
     public void testhandleArrayList() throws Exception {
-        configureSystem("handleArrayList");
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
+    	RPCServiceClient sender = getRPCClient("EchoXMLService", "handleArrayList");
 
         OMElement elem = sender.sendReceive(getPayload());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
     }
 
     public void testomElementArray() throws Exception {
-        configureSystem("omElementArray");
+        RPCServiceClient sender = getRPCClient("EchoXMLService", "omElementArray");
+        
         String str = "<req:omElementArray xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
                 "    <arg0><abc>vaue1</abc></arg0>\n" +
                 "    <arg0><abc>vaue2</abc></arg0>\n" +
@@ -708,14 +459,6 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        RPCServiceClient sender = new RPCServiceClient(configContext, null);
-        sender.setOptions(options);
 
         OMElement elem = sender.sendReceive(staxOMBuilder.getDocumentElement());
         assertEquals("4", elem.getFirstElement().getText());

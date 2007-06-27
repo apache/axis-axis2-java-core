@@ -33,7 +33,7 @@
 		<module>modules/addressing</module>
 		<module>modules/codegen</module>
 		<module>modules/fastinfoset</module>
-		<!--<module>modules/integration</module>-->
+		<module>modules/integration</module>
 		<module>modules/java2wsdl</module>
 		<module>modules/jibx</module>
 		<module>modules/json</module>
@@ -105,12 +105,12 @@
 	</ciManagement>
 	<scm>
 		<connection>
-         scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/
+         scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/
       </connection>
 		<developerConnection>
-         scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/
+         scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/
       </developerConnection>
-		<url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/</url>
+		<url>http://svn.apache.org/viewvc/webservices/webservices/axis2/trunk/java/</url>
 	</scm>
 	<distributionManagement>
 		<repository>

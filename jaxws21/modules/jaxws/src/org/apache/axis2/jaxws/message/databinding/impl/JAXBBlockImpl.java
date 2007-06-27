@@ -39,6 +39,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -48,8 +49,11 @@ import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.PrivilegedAction;
+import java.text.ParseException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -61,6 +65,8 @@ import java.util.List;
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
+    
+    private static final boolean DEBUG_ENABLED = log.isDebugEnabled();
     
     /**
      * Called by JAXBBlockFactory
@@ -117,7 +123,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 jaxb = unmarshalByElement(u,
                                           reader); // preferred and always used for style=document
             } else {
-                jaxb = unmarshalByType(u, reader, ctx.getProcessType());
+            	jaxb = unmarshalByType(u, reader, ctx.getProcessType(), ctx.isxmlList(), ctx.getConstructionType());
             }
 
             // Successfully unmarshalled the object
@@ -190,7 +196,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             if (ctx.getProcessType() == null) {
                 marshalByElement(busObject, m, writer);
             } else {
-                marshalByType(busObject, m, writer, ctx.getProcessType());
+            	marshalByType(busObject, m, writer, ctx.getProcessType(), ctx.isxmlList(), ctx.getConstructionType());
             }
 
             // Successfully marshalled the data
@@ -277,45 +283,96 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param writer XMLStreamWriter
      * @param type
      */
-    private static void marshalByType(Object b, Marshaller m, XMLStreamWriter writer, Class type)
+    private static void marshalByType(final Object b, final Marshaller m, 
+    		final XMLStreamWriter writer, final Class type, final boolean isList, final JAXBUtils.CONSTRUCTION_TYPE ctype)
             throws WebServiceException {
         // TODO Log and trace here would be helpful
-        try {
+    	AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+		try {
 
-            // NOTE
-            // Example:
-            // <xsd:simpleType name="LongList">
-            //   <xsd:list>
-            //     <xsd:simpleType>
-            //       <xsd:restriction base="xsd:unsignedInt"/>
-            //     </xsd:simpleType>
-            //   </xsd:list>
-            // </xsd:simpleType>
-            // <element name="myLong" nillable="true" type="impl:LongList"/>
-            //
-            // LongList will be represented as an int[]
-            // On the wire myLong will be represented as a list of integers
-            // with intervening whitespace
-            //   <myLong>1 2 3</myLong>
-            //
-            // Unfortunately, we are trying to marshal by type.  Therefore
-            // we want to marshal an element (foo) that is unknown to schema.
-            // If we use the normal marshal code, the wire will look like
-            // this (which is incorrect):
-            //  <foo><item>1</item><item>2</item><item>3</item></foo>
-            //
-            // The solution is to detect this situation and marshal the 
-            // String instead.  Then we get the correct wire format:
-            // <foo>1 2 3</foo>
-            if (isXSDList(type)) {
-                QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(b);
-                String text = XSDListUtils.toXSDListString(getTypeEnabledObject(b));
-                b = new JAXBElement(qName, String.class, text);
-            }
-            m.marshal(b, writer);
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+			// NOTE
+			// Example:
+			// <xsd:simpleType name="LongList">
+			// <xsd:list>
+			// <xsd:simpleType>
+			// <xsd:restriction base="xsd:unsignedInt"/>
+			// </xsd:simpleType>
+			// </xsd:list>
+			// </xsd:simpleType>
+			// <element name="myLong" nillable="true" type="impl:LongList"/>
+			//
+			// LongList will be represented as an int[]
+			// On the wire myLong will be represented as a list of integers
+			// with intervening whitespace
+			// <myLong>1 2 3</myLong>
+			//
+			// Unfortunately, we are trying to marshal by type. Therefore
+			// we want to marshal an element (foo) that is unknown to schema.
+			// If we use the normal marshal code, the wire will look like
+			// this (which is incorrect):
+			// <foo><item>1</item><item>2</item><item>3</item></foo>
+			//
+			// The solution is to detect this situation and marshal the
+			// String instead. Then we get the correct wire format:
+			// <foo>1 2 3</foo>
+			Object jbo = b;
+                        
+			if (isList || (type!=null && type.isArray())) {
+                            if(log.isDebugEnabled()){
+                                log.debug("marshalling type which is a List or Array");
+                            }
+                            //We conver to xsdListString only if the type is not known
+                            // to the context. In case a jaxbcontext is created from package
+                            // the array types or list are not know to the context.
+                            if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH){
+				QName qName = XMLRootElementUtil
+						.getXmlRootElementQNameFromObject(b);
+				String text = XSDListUtils
+						.toXSDListString(getTypeEnabledObject(b));
+				jbo = new JAXBElement(qName, String.class, text);
+                            }
+                            else if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY){
+                                //do nothing common array types should be know to the jaxbcontext.
+                                //so do not use xsdListString conversion.
+                            }
+			}
+			
+			// When JAXBContext is created using a context path, it will not include Enum classes
+			// These classes have @XmlEnum annotation but not @XmlType/@XmlElement, so the user
+			// will see MarshallingEx, class not known to ctxt.
+			// 
+			// This is a jax-b defect, for now this fix is in place to pass CTS. This only fixes the
+			// situation where the enum is the top-level object (e.g., message-part in rpc-lit scenario)
+			//
+			// Sample of what enum looks like:
+			// @XmlEnum public enum EnumString {
+			//    @XmlEnumValue("String1") STRING_1("String1"),
+			//    @XmlEnumValue("String2") STRING_2("String2");
+			//  ... }
+			if (type.isEnum()){
+				if (b != null){
+					if (DEBUG_ENABLED) {
+						log	.debug("marshalByType. Marshaling " + type.getName() + " as Enum");
+					}
+					JAXBElement jbe = (JAXBElement) b;
+					String value = XMLRootElementUtil.getEnumValue((Enum) jbe.getValue());
+					
+					jbo = new JAXBElement(jbe.getName(), String.class, value);
+				}
+			}
+			
+			if (DEBUG_ENABLED) {
+				log.debug("Invoking marshalByType.  Marshaling to an XMLStreamWriter. Object is "
+								+ getDebugName(b));
+			}
+			m.marshal(jbo, writer);
+
+		} catch (Exception e) {
+			throw ExceptionFactory.makeWebServiceException(e);
+		}
+		return null;
+		}});
     }
 
     /**
@@ -329,41 +386,141 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @return Object
      * @throws WebServiceException
      */
-    private static Object unmarshalByType(Unmarshaller u, XMLStreamReader reader, Class type)
-            throws WebServiceException {
-        // TODO Log and trace here would be helpful
-        try {
-            // Unfortunately RPC is type based.  Thus a
-            // declared type must be used to unmarshal the xml.
-            Object jaxb;
+    private static Object unmarshalByType(final Unmarshaller u,
+			final XMLStreamReader reader, final Class type, final boolean isList, final JAXBUtils.CONSTRUCTION_TYPE ctype) throws WebServiceException {
 
-            if (!isXSDList(type)) {
-                // Normal case: We are not unmarshalling an xsd:list
-                jaxb = u.unmarshal(reader, type);
-            } else {
-                // If this is an xsd:list, we need to return the appropriate list or array (see NOTE above)
-                // First unmarshal as a String
-                jaxb = u.unmarshal(reader, String.class);
-
-                // Second convert the String into a list or array
-                if (getTypeEnabledObject(jaxb) instanceof String) {
-                    QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
-                    Object obj = XSDListUtils
-                            .fromXSDListString((String)getTypeEnabledObject(jaxb), type);
-                    jaxb = new JAXBElement(qName, type, obj);
-                }
-            }
-            return jaxb;
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
+        if(DEBUG_ENABLED){
+            log.debug("Invoking unmarshalByType.");
         }
-    }
+        
+        return AccessController.doPrivileged(new PrivilegedAction() {
+        	public Object run() {
+        		try {
+        			// Unfortunately RPC is type based. Thus a
+        			// declared type must be used to unmarshal the xml.
+        			Object jaxb;
+
+        			if (!isList) {
+        				// case: We are not unmarshalling an xsd:list but an Array. 
+
+        				if(type.isArray()){
+        					//If the context is created using package
+        					//we will not have common arrays or type array in the context
+        					//so let use a differet way to unmarshal this type
+        					if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH){
+        						jaxb=unmarshalAsListOrArray(reader, u, type);
+        					}
+        					//list on client array on server, Can happen only in start from java case. 
+        					else if((ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY)){
+        						//The type could be any Object or primitive
+        						//I will first unmarshall the xmldata to a String[]
+        						//Then use the unmarshalled jaxbElement to create
+        						//proper type Object Array.
+        						jaxb = u.unmarshal(reader, String[].class);
+        						Object typeObj = getTypeEnabledObject(jaxb);
+        						//Now convert String Array in to the required Type Array.
+        						if (getTypeEnabledObject(typeObj) instanceof String[]) {
+        							String[] strArray = (String[])typeObj;
+        							String strTokens = new String();
+        							for(String str:strArray){
+        								strTokens = strTokens + " "+str;
+        							}
+        							QName qName = XMLRootElementUtil
+        							.getXmlRootElementQNameFromObject(jaxb);
+        							Object obj = XSDListUtils.fromXSDListString(
+        									strTokens, type);
+        							jaxb = new JAXBElement(qName, type, obj);
+        						}
+        					}
+        					else{
+        						jaxb = u.unmarshal(reader, type);
+        					}
+
+        				}
+        				else if (type.isEnum()){
+        					// When JAXBContext is created using a context path, it will not include Enum classes
+        					// These classes have @XmlEnum annotation but not @XmlType/@XmlElement, so the user
+        					// will see MarshallingEx, class not known to ctxt.
+        					// 
+        					// This is a jax-b defect, for now this fix is in place to pass CTS. This only fixes the
+        					// situation where the enum is the top-level object (e.g., message-part in rpc-lit scenario)
+        					//
+        					// Sample of what enum looks like:
+        					// @XmlEnum public enum EnumString {
+        					//    @XmlEnumValue("String1") STRING_1("String1"),
+        					//    @XmlEnumValue("String2") STRING_2("String2");
+        					//
+        					// public static getValue(String){} <-- resolves a "value" to an emum object
+        					//  ... }
+        					if (DEBUG_ENABLED) {
+        						log     .debug("unmarshalByType. Unmarshalling " + type.getName() + " as Enum");
+        					}
+
+        					JAXBElement<String> enumValue = u.unmarshal(reader, String.class);
+
+        					if (enumValue != null) {
+        						Method m = type.getMethod("fromValue", new Class[]{String.class});
+        						jaxb = m.invoke(null, new Object[] {enumValue.getValue()});
+        					} else {
+        						jaxb = null;
+        					}
+        				}
+        				//Normal case: We are not unmarshalling a xsd:list or Array
+        				else{
+        					jaxb = u.unmarshal(reader, type);
+        				}
+
+        			} else {
+        				// If this is an xsd:list, we need to return the appropriate
+        				// list or array (see NOTE above)
+        				// First unmarshal as a String
+        				//Second convert the String into a list or array
+        				jaxb = unmarshalAsListOrArray(reader, u, type);
+        			}
+        			return jaxb;
+        		} catch (Exception e) {
+        			throw ExceptionFactory.makeWebServiceException(e);
+        		}
+        	}});
+	}
+    
+    /**
+     * convert the String into a list or array
+     * @param <T>
+     * @param jaxb
+     * @param type
+     * @return
+     * @throws IllegalAccessException
+     * @throws ParseException
+     * @throws NoSuchMethodException
+     * @throws InstantiationException
+     * @throws DatatypeConfigurationException
+     * @throws InvocationTargetException
+     */
+    private static Object unmarshalAsListOrArray(XMLStreamReader reader, Unmarshaller u, Class type)
+    throws IllegalAccessException, ParseException, NoSuchMethodException,
+    InstantiationException, DatatypeConfigurationException, InvocationTargetException, JAXBException {
+        //If this is an xsd:list, we need to return the appropriate
+        // list or array (see NOTE above)
+        // First unmarshal as a String
+        Object  jaxb = u.unmarshal(reader, String.class);
+        //Second convert the String into a list or array
+        if (getTypeEnabledObject(jaxb) instanceof String) {
+            QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
+            Object obj = XSDListUtils.fromXSDListString((String) getTypeEnabledObject(jaxb), type);
+            return new JAXBElement(qName, type, obj);
+        }else{
+            return jaxb;
+        }
+        
+}
 
     /**
      * Detect if t represents an xsd:list
      *
      * @param t
      * @return
+     * @deprecated - Code to check if element is list has been moved to JABXBlockContext.
      */
     private static boolean isXSDList(Class t) {
         // TODO This code returns true if the 
@@ -403,5 +560,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         }
         return obj;
     }
+    
+	private static String getDebugName(Object o) {
+		return (o == null) ? "null" : o.getClass().getCanonicalName();
+	}
     
 }

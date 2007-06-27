@@ -87,16 +87,22 @@ public abstract class InvocationController {
         MessageContext request = ic.getRequestMessageContext();
         MessageContext response = null;
 
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
-                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
 
         if (success) {
             prepareRequest(request);
             response = doInvoke(request);
             prepareResponse(response);
+            
+            // make sure request and response contexts share a single parent
+            response.setMEPContext(request.getMEPContext());
 
             /*
              * TODO TODO TODO review
@@ -116,13 +122,16 @@ public abstract class InvocationController {
             response.setEndpointDescription(request.getEndpointDescription());
 
             // Invoke inbound handlers.
-            HandlerInvokerUtils.invokeInboundHandlers(response, ic.getHandlers(), request
-                            .getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+            HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
+                                                      ic.getHandlers(),
+                                                      HandlerChainProcessor.MEP.RESPONSE,
+                                                      false);
         } else { // the outbound handler chain must have had a problem, and
                     // we've reversed directions
             response = MessageContextUtils.createMinimalResponseMessageContext(request);
             // since we've reversed directions, the message has "become a
-            // response message" (section 9.3.2.1, footnote superscript 2)
+            // make sure request and response contexts share a single parent
+            response.setMEPContext(request.getMEPContext());
             response.setMessage(request.getMessage());
         }
         ic.setResponseMessageContext(response);
@@ -154,10 +163,14 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           true);
 
         if (success) {
             prepareRequest(request);
@@ -192,13 +205,17 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
 
         Response resp = null;
 
         // Invoke outbound handlers.
         // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(), request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
         if (success) {
             prepareRequest(request);
             resp = doInvokeAsync(request);
@@ -250,13 +267,16 @@ public abstract class InvocationController {
         }
 
         MessageContext request = ic.getRequestMessageContext();
-        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
+        request.setProperty(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
 
         Future<?> future = null;
 
         // Invoke outbound handlers.
-        boolean success = HandlerInvokerUtils.invokeOutboundHandlers(request, ic.getHandlers(),
-                        request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        boolean success =
+                HandlerInvokerUtils.invokeOutboundHandlers(request.getMEPContext(),
+                                                           ic.getHandlers(),
+                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                           false);
         if (success) {
             prepareRequest(request);
             future = doInvokeAsync(request, asyncHandler);

@@ -36,17 +36,17 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import java.net.URL;
 
 public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
         implements TestConstants {
 
     private OMElement data;
-    private String fileName = "test-resources/mtom/test.jpg";
+    private String fileName = TestingUtils.prefixBaseDirectory("test-resources/mtom/test.jpg");
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
@@ -58,7 +58,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMCommonsChunkingTest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "MTOM-enabledRepository"));
     }
 
     protected void setUp() throws Exception {
@@ -102,26 +102,22 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        Constants.TESTING_PATH + "commons-http-enabledRepository", null);
+                        TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "commons-http-enabledRepository"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
 
-        sender.sendReceive(payload);
-        this.campareWithCreatedOMElement(data);
+        OMElement ret = sender.sendReceive(payload);
+        ret.build();
+        this.compareWithCreatedOMElement(ret);
 
     }
 
-    private URL getResourceAsStream(String path) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return cl.getResource(path);
-    }
-
-    private void campareWithCreatedOMElement(OMElement element) {
+    private void compareWithCreatedOMElement(OMElement element) {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String originalTextValue = data.getFirstElement().getText();
-        String returnedTextValue = firstChild.getText();
+        String returnedTextValue = firstChild.getFirstElement().getText();
         TestCase.assertEquals(returnedTextValue, originalTextValue);
     }
 

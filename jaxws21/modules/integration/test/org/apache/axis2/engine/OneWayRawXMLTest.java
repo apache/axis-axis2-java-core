@@ -57,7 +57,7 @@ public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestCon
     public void testOneWay() throws Exception {
         ConfigurationContext configContext =
             ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                    Constants.TESTING_PATH + "integrationRepo/", null);
+                    TestingUtils.prefixBaseDirectory(Constants.TESTING_PATH + "integrationRepo/"), null);
         ServiceClient sender = new ServiceClient(configContext, null);
         Options op = new Options();
 //        op.setTo(new EndpointReference(

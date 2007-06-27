@@ -73,14 +73,13 @@ public class ServiceDeployer implements Deployer {
                     }
                 }
             }
-            AxisServiceGroup sericeGroup = new AxisServiceGroup(axisConfig);
-            sericeGroup.setServiceGroupClassLoader(
-                    deploymentFileData.getClassLoader());
+            AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
+            serviceGroup.setServiceGroupClassLoader(deploymentFileData.getClassLoader());
             ArrayList serviceList = archiveReader.processServiceGroup(
                     deploymentFileData.getAbsolutePath(), deploymentFileData,
-                    sericeGroup, isDirectory, wsdlservice,
+                    serviceGroup, isDirectory, wsdlservice,
                     configCtx);
-            DeploymentEngine.addServiceGroup(sericeGroup,
+            DeploymentEngine.addServiceGroup(serviceGroup,
                                              serviceList,
                                              deploymentFileData.getFile().toURL(),
                                              deploymentFileData,

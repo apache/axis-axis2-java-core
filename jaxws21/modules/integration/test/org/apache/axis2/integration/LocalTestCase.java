@@ -28,7 +28,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.engine.AddressingBasedDispatcher;
+import org.apache.axis2.dispatchers.AddressingBasedDispatcher;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Phase;
