@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /** This class is used to locate xml schemas that are imported by wsdl documents. */
@@ -69,7 +70,9 @@ public class URIResolverImpl implements URIResolver {
             try {
                 // if the location is an absolute path, build a URL directly
                 // from it
-
+            	if(log.isDebugEnabled()){
+            		log.debug("Base URI not null");
+            	}
                 if (isAbsolute(schemaLocation)) {
                     if(log.isDebugEnabled()) {
                         log.debug("Retrieving input stream for absolute schema location: "
@@ -79,7 +82,21 @@ public class URIResolverImpl implements URIResolver {
                 }
 
                 else {
-                    pathURI = new URI(baseUri);
+                    if(log.isDebugEnabled()){
+                        log.debug("schemaLocation not in absolute path");
+                    }
+                    try{
+                        pathURI = new URI(baseUri);
+                    }catch(URISyntaxException e){
+                        // Got URISyntaxException, Creation of URI requires 
+                        // that we use special escape characters in path.
+                        // The URI constructor below does this for us, so lets use that.
+                        if(log.isDebugEnabled()){
+                            log.debug("Got URISyntaxException. Exception Message = "+e.getMessage());
+                            log.debug("Implementing alternate way to create URI");
+                        }
+                       pathURI = new URI(null, null, baseUri, null);
+                     }
                     pathURIStr = schemaLocation;
                     // If this is absolute we need to resolve the path without the 
                     // scheme information
@@ -90,7 +107,19 @@ public class URIResolverImpl implements URIResolver {
                         }
                         URL url = new URL(baseUri);
                         if (url != null) {
-                            URI tempURI = new URI(url.getPath());
+                            URI tempURI;
+                            try{
+                                tempURI = new URI(url.getPath());
+                            }catch(URISyntaxException e){
+                                //Got URISyntaxException, Creation of URI requires 
+                                // that we use special escape characters in path.
+                                // The URI constructor below does this for us, so lets use that.
+                                if(log.isDebugEnabled()){
+                                    log.debug("Got URISyntaxException. Exception Message = "+e.getMessage());
+                                    log.debug("Implementing alternate way to create URI");
+                                }
+                                tempURI = new URI(null, null, url.getPath(), null);
+                            }
                             URI resolvedURI = tempURI.resolve(schemaLocation);
                             // Add back the scheme to the resolved path
                             pathURIStr = constructPath(url, resolvedURI);
@@ -128,6 +157,7 @@ public class URIResolverImpl implements URIResolver {
                 }
             } catch (Exception e) {
                 if(log.isDebugEnabled()) {
+                	log.debug("Exception occured in resolveEntity, ignoring exception continuing processing "+e.getMessage());
                     log.debug(e);
                 }
             }
@@ -221,24 +251,40 @@ public class URIResolverImpl implements URIResolver {
             // Allow for http or https
             if (baseURL.getProtocol() != null && (baseURL.getProtocol().equals(
                     HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
+            	if(log.isDebugEnabled()){
+            		log.debug("Constructing path with http/https protocol");
+            	}
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
                               resolvedURI.toString());
-                importLocation = url.toString();
+                if (log.isDebugEnabled()) {
+					log.debug("URL = " + url);
+				}
+               
             }
             // Check for file
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
+            	if(log.isDebugEnabled()){
+            		log.debug("Constructing path with file protocol");
+            	}
                 url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
-                importLocation = url.toString();
             }
-            // Check for jar
+            //Check for jar
             else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(JAR_PROTOCOL)) {
-                importLocation = resolvedURI.toString();  
-                if(importLocation.startsWith(":")){
-                  importLocation = "jar" + importLocation; 
-                } else {
-                  importLocation = "jar:" + importLocation; 
-                }
+            	if(log.isDebugEnabled()){
+            		log.debug("Constructing path with jar protocol");
+            	}
+            	url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
             }
+            else{
+            	if(log.isDebugEnabled()){
+            		if(baseURL !=null){
+            			log.debug("unknown protocol in url "+ baseURL.getProtocol());
+            		}else{
+            			log.debug("baseURL is NULL");
+            		}
+            	}
+            }
+                        
         }
         catch (MalformedURLException e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
@@ -246,11 +292,12 @@ public class URIResolverImpl implements URIResolver {
                                                                                baseURL.toString()),
                                                            e);
         }
-        if (importLocation == null) {
+        if (url == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
                                                                                resolvedURI.toString(),
                                                                                baseURL.toString()));
         }
+        importLocation = url.toString();
         return importLocation;
     }
 
