@@ -20,14 +20,12 @@ package org.apache.axis2.jaxws.spi;
 
 import javax.xml.ws.handler.HandlerResolver;
 
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.binding.BindingImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
@@ -70,8 +68,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * The ServiceDelegate serves as the backing implementation for all of the methods in the {@link
@@ -186,7 +182,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = (jaxwsEPR instanceof SubmissionEndpointReference) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
 
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
@@ -233,7 +229,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = (jaxwsEPR instanceof SubmissionEndpointReference) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
 
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
@@ -386,7 +382,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = (jaxwsEPR instanceof SubmissionEndpointReference) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
 
         return getPort(axis2EPR, addressingNamespace, sei, features);
     }
@@ -570,9 +566,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor() {
-    	ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
-    			ExecutorFactory.class);
-    	return executorFactory.getExecutorInstance();
+        ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
+                ExecutorFactory.class);
+        return executorFactory.getExecutorInstance();
+    }
+
+    private String getAddressingNamespace(Class clazz) {
+        EndpointReferenceFactory eprFactory =
+            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
+        return eprFactory.getAddressingNamespace(clazz);
     }
 
     private boolean isValidServiceName() {
