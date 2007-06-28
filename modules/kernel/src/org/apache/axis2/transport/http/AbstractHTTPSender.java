@@ -140,13 +140,17 @@ public abstract class AbstractHTTPSender {
         String sessionCookie = null;
         // Process old style headers first
         Header[] cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE);
+        String customCoookiId = (String) msgContext.getProperty(Constants.CUSTOM_COOKIE_ID);
         for (int i = 0; i < cookieHeaders.length; i++) {
             HeaderElement[] elements = cookieHeaders[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
                 if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName()) ||
                         Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = element.getValue();
+                    sessionCookie = processCookieHeader(element);
+                }
+                if (customCoookiId != null && customCoookiId.equalsIgnoreCase(element.getName())) {
+                    sessionCookie = processCookieHeader(element);
                 }
             }
         }
@@ -158,7 +162,10 @@ public abstract class AbstractHTTPSender {
                 HeaderElement element = elements[e];
                 if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName()) ||
                         Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
-                    sessionCookie = element.getValue();
+                    sessionCookie = processCookieHeader(element);
+                }
+                if(customCoookiId!=null&&customCoookiId.equalsIgnoreCase(element.getName())){
+                    sessionCookie = processCookieHeader(element);
                 }
             }
         }
@@ -166,6 +173,16 @@ public abstract class AbstractHTTPSender {
         if (sessionCookie != null) {
             msgContext.getServiceContext().setProperty(HTTPConstants.COOKIE_STRING, sessionCookie);
         }
+    }
+
+    private String processCookieHeader(HeaderElement element) {
+        String cookie = element.getName() + "=" + element.getValue();
+        NameValuePair[] parameters =  element.getParameters();
+        for (int j = 0; j < parameters.length; j++) {
+            NameValuePair parameter = parameters[j];
+            cookie = cookie + "; " + parameter.getName() + "=" + parameter.getValue();
+        }
+        return cookie;
     }
 
     protected void processResponse(HttpMethodBase httpMethod,
@@ -378,8 +395,6 @@ public abstract class AbstractHTTPSender {
 
         if (cookieString != null) {
             StringBuffer buffer = new StringBuffer();
-            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
-            buffer.append("=");
             buffer.append(cookieString);
             httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
         }
