@@ -172,6 +172,7 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
+            msgContext.setFailureReason(e);
             flowComplete(msgContext);
             throw e;
         }
@@ -422,6 +423,7 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
+            msgContext.setFailureReason(e);
             flowComplete(msgContext);
             throw e;
         }
@@ -470,6 +472,7 @@ public class AxisEngine {
                 }
             }
             catch (AxisFault e) {
+                msgContext.setFailureReason(e);
                 flowComplete(msgContext);
                 throw e;
             }

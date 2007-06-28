@@ -89,7 +89,6 @@ public class RegistryTest extends AbstractTestCase {
         handler.init(new HandlerDescription());
         assertNull(handler.getName());
         assertNull(handler.getParameter("hello"));
-        handler.cleanup();
     }
 
 

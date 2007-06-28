@@ -324,6 +324,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private int currentPhaseIndex;
 
     /**
+     * If we're processing this MC due to flowComplete() being called in the case
+     * of an Exception, this will hold the Exception which caused the problem.
+     */
+    private Exception failureReason;
+
+    /**
      * @serial SOAP envelope
      */
     private SOAPEnvelope envelope;
@@ -4272,5 +4278,23 @@ public class MessageContext extends AbstractContext implements Externalizable {
         } catch (Exception e) {
             return false;
         }
+    }
+
+
+    /**
+     * Obtain the Exception which caused the processing chain to halt.
+     * @return null, or an Exception.
+     */
+    public Exception getFailureReason() {
+        return failureReason;
+    }
+
+    /**
+     * Set the failure reason.  Only AxisEngine should ever do this.
+     *
+     * @param failureReason an Exception which caused processing to halt.
+     */
+    public void setFailureReason(Exception failureReason) {
+        this.failureReason = failureReason;
     }
 }
