@@ -44,9 +44,13 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class HandlerChainProcessor {
 
+    private static final Log log = LogFactory.getLog(HandlerChainProcessor.class);
+    
     public enum Direction {
         IN, OUT
     };
@@ -296,12 +300,22 @@ public class HandlerChainProcessor {
         if (direction == Direction.OUT) {
             for (; i <= end; i++) {
                 switchContext(direction, i);
-				((Handler) handlers.get(i)).handleMessage(currentMC);
+                Handler handler = (Handler) handlers.get(i);
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Invoking handleMessage on: " + handler.getClass().getName());
+                }
+                handler.handleMessage(currentMC);
             }
         } else { // IN case
             for (; i >= end; i--) {
                 switchContext(direction, i);
-				((Handler) handlers.get(i)).handleMessage(currentMC);
+                Handler handler = (Handler) handlers.get(i);
+               
+                if (log.isDebugEnabled()) {
+                    log.debug("Invoking handleMessage on: " + handler.getClass().getName());
+                }
+                handler.handleMessage(currentMC);
             }
         }
     }
@@ -316,16 +330,33 @@ public class HandlerChainProcessor {
     private int handleMessage(Handler handler, Direction direction,
                               boolean expectResponse) throws RuntimeException {
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("Invoking handleMessage on: " + handler.getClass().getName()); 
+            }
             boolean success = handler.handleMessage(currentMC);
-            if (success)
+            if (success) {
+                if (log.isDebugEnabled()) {
+                    log.debug("handleMessage() returned true");
+                }
                 return SUCCESSFUL;
+            }
             else {
+                if (log.isDebugEnabled()) {
+                    log.debug("handleMessage() returned false");
+                }
                 if (expectResponse)
                     currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                                     (direction != Direction.OUT));
                 return FAILED;
             }
-        } catch (RuntimeException re) {  // RuntimeException and ProtocolException
+        } 
+        catch (RuntimeException re) { 
+            // RuntimeException and ProtocolException
+            if(log.isDebugEnabled()) {
+               log.debug("An exception was thrown during the handleMessage() invocation");
+               log.debug("Exception: " + re.getClass().getName() + ":" +re.getMessage());
+            }
+            
             savedException = re;
             if (expectResponse)
                 // mark it as reverse direction
@@ -355,24 +386,40 @@ public class HandlerChainProcessor {
             for (; i <= end; i++) {
                 try {
                     switchContext(direction, i);
-					((Handler) handlers.get(i)).close(currentMC);
+                    Handler handler = (Handler) handlers.get(i);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Invoking close on: " + handler.getClass().getName());
+                    }
+                    handler.close(currentMC);
+                    
                     // TODO when we close, are we done with the handler instance, and thus
                     // may call the PreDestroy annotated method?  I don't think so, especially
                     // if we've cached the handler list somewhere.
                 } catch (Exception e) {
-                    // TODO: log it, but otherwise ignore
+                    if (log.isDebugEnabled()) {
+                        log.debug("An Exception occurred while calling handler.close()");
+                        log.debug("Exception: " + e.getClass().getName() + ":" + e.getMessage());
+                    }
                 }
             }
         } else { // IN case
             for (; i >= end; i--) {
                 try {
                     switchContext(direction, i);
-					((Handler) handlers.get(i)).close(currentMC);
-					// TODO when we close, are we done with the handler instance, and thus
+                    Handler handler = (Handler) handlers.get(i);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Invoking close on: " + handler.getClass().getName());
+                    }
+                    handler.close(currentMC);
+                    
+                    // TODO when we close, are we done with the handler instance, and thus
                     // may call the PreDestroy annotated method?  I don't think so, especially
                     // if we've cached the handler list somewhere.
                 } catch (Exception e) {
-                    // TODO: log it, but otherwise ignore
+                    if (log.isDebugEnabled()) {
+                        log.debug("An Exception occurred while calling handler.close()");
+                        log.debug("Exception: " + e.getClass().getName() + ":" + e.getMessage());
+                    }
                 }
             }
         }
@@ -411,7 +458,7 @@ public class HandlerChainProcessor {
             // we can close all the Handlers in reverse order
             if (direction == Direction.OUT) {
                 initContext(Direction.IN);
-                callCloseHandlers(handlers.size() - 1, 0, Direction.IN);
+                callCloseHandlers(0, handlers.size() - 1, Direction.OUT);
             } else { // IN case
                 initContext(Direction.IN);
                 callCloseHandlers(0, handlers.size() - 1, Direction.OUT);
@@ -437,14 +484,24 @@ public class HandlerChainProcessor {
 
         if (direction == Direction.OUT) {
             for (; i <= end; i++) {
-                boolean success = ((Handler) handlers.get(i)).handleFault(currentMC);
+                Handler handler = (Handler) handlers.get(i);
+                if (log.isDebugEnabled()) {
+                    log.debug("Invoking handleFault on: " + handler.getClass().getName());
+                }
+                boolean success = handler.handleFault(currentMC);
+
                 if (!success)
                     break;
                 switchContext(direction, i + 1);
             }
         } else { // IN case
             for (; i >= end; i--) {
-                boolean success = ((Handler) handlers.get(i)).handleFault(currentMC);
+                Handler handler = (Handler) handlers.get(i);
+                if (log.isDebugEnabled()) {
+                    log.debug("Invoking handleFault on: " + handler.getClass().getName());
+                }
+                boolean success = handler.handleFault(currentMC);
+
                 if (!success)
                     break;
                 switchContext(direction, i - 1);

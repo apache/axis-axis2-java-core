@@ -780,7 +780,7 @@ public class HandlerChainProcessorTests extends TestCase {
         mc1.setMEPContext(new MEPContext(mc1));
         processor.processFault(mc1.getMEPContext(), HandlerChainProcessor.Direction.OUT);
 
-        assertEquals("L2f:L1f:S1f:S2f:S2c:S1c:L1c:L2c:", result);
+        assertEquals("L2f:L1f:S1f:S2f:L2c:L1c:S1c:S2c:", result);
     }
 
     /*
@@ -809,7 +809,7 @@ public class HandlerChainProcessorTests extends TestCase {
         processor.processFault(mc1.getMEPContext(), HandlerChainProcessor.Direction.OUT);
 
         // notice all handlers are closed in this scenario
-        assertEquals("L2f:L1f:S2c:S1c:L1c:L2c:", result);
+        assertEquals("L2f:L1f:L2c:L1c:S1c:S2c:", result);
     }
 
     /*
