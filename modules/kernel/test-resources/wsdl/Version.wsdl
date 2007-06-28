@@ -1,0 +1,94 @@
+<wsdl:definitions xmlns:axis2="http://axisversion.sample" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:ns0="http://axisversion.sample/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://org.apache.axis2/xsd"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://axisversion.sample">
+    <wsdl:documentation>Version</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema xmlns:ns="http://axisversion.sample/xsd" attributeFormDefault="qualified"
+                   elementFormDefault="qualified" targetNamespace="http://axisversion.sample/xsd">
+            <xs:element name="ExceptionFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="Exception" nillable="true" type="xs:anyType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getVersionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getVersionRequest"/>
+    <wsdl:message name="getVersionResponse">
+        <wsdl:part name="parameters" element="ns0:getVersionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getVersionFault">
+        <wsdl:part name="parameters" element="ns0:ExceptionFault"/>
+    </wsdl:message>
+    <wsdl:portType name="VersionPortType">
+        <wsdl:operation name="getVersion">
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:getVersionRequest"
+                        wsaw:Action="urn:getVersion"/>
+            <wsdl:output message="axis2:getVersionResponse"/>
+            <wsdl:fault message="axis2:getVersionFault" name="getVersionFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="VersionSOAP11Binding" type="axis2:VersionPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getVersion">
+            <soap:operation soapAction="urn:getVersion" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="getVersionFault">
+                <soap:fault use="literal" name="getVersionFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="VersionSOAP12Binding" type="axis2:VersionPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getVersion">
+            <soap12:operation soapAction="urn:getVersion" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="getVersionFault">
+                <soap12:fault use="literal" name="getVersionFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="VersionHttpBinding" type="axis2:VersionPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getVersion">
+            <http:operation location="Version/getVersion"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="getVersion"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="getVersion"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Version">
+        <wsdl:port name="VersionSOAP11port_http" binding="axis2:VersionSOAP11Binding">
+            <soap:address location="http://192.168.2.105:8081/axis2/services/Version"/>
+        </wsdl:port>
+        <wsdl:port name="VersionSOAP12port_http" binding="axis2:VersionSOAP12Binding">
+            <soap12:address location="http://192.168.2.105:8081/axis2/services/Version"/>
+        </wsdl:port>
+        <wsdl:port name="VersionHttpport" binding="axis2:VersionHttpBinding">
+            <http:address location="http://192.168.2.105:8081/axis2/services/Version"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
