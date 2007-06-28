@@ -607,10 +607,18 @@ public class CodeGenerationUtility {
                     XmlSchema schema = schemas[i];
                     if (schema.getSourceURI() != null &&
                             schema.getSourceURI().endsWith(systemId.replaceAll("\\\\", "/"))) {
-                        try {
-                            return new InputSource(getSchemaAsReader(schemas[i]));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                        String path = schema.getSourceURI();
+                        File f = getFileFromURI(path);
+                        if(f.exists()){
+                            InputSource source = new InputSource();
+                            source.setSystemId(schema.getSourceURI());
+                            return source;
+                        } else {
+                            try {
+                                return new InputSource(getSchemaAsReader(schemas[i]));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
 
@@ -632,12 +640,25 @@ public class CodeGenerationUtility {
                     //constructor, the context URL scheme should be ignored
                     baseUri = (baseUri == null) ? "file:///" : baseUri;
                     URL url = new URL(baseUri + systemId);
-                    return new InputSource(url.openStream());
+                    InputSource source = new InputSource();
+                    source.setSystemId(url.toString());
+                    return source;
                 }
                 return XMLUtils.getEmptyInputSource();
             } catch (Exception e) {
                 throw new SAXException(e);
             }
+        }
+
+        private File getFileFromURI(String path) {
+            if(path.startsWith("file:///")){
+                            path = path.substring(8);
+            } else if(path.startsWith("file://")){
+                path = path.substring(7);
+            } else if(path.startsWith("file:/")){
+                path = path.substring(6);
+            }
+            return new File(path);
         }
 
         public XmlSchema[]  getSchemas() {
