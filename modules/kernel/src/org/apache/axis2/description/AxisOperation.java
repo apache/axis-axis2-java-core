@@ -164,14 +164,9 @@ public abstract class AxisOperation extends AxisDescription
                 service.addModuleOperations(axisModule);
             }
         }
-
         AxisConfiguration axisConfig = getAxisConfiguration();
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
         phaseResolver.engageModuleToOperation(this, axisModule);
-        Module module = axisModule.getModule();
-        if (module != null) {
-            module.engageNotify(this);
-        }
     }
 
     protected void onDisengage(AxisModule module) {

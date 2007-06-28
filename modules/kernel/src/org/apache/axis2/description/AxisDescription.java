@@ -431,16 +431,21 @@ public abstract class AxisDescription implements ParameterInclude,
             String existing = ((AxisModule)iterator.next()).getName();
             if (!Utils.checkVersion(moduleName, existing)) {
                 throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
-                                                        getClass().getName(),
-                                                        moduleName,
-                                                        existing));
+                        getClass().getName(),
+                        moduleName,
+                        existing));
             }
         }
-
+        //We need to call engageNotify before we engage the module , then only
+        // we can make sure everything is ok to engage the module to description (as an example policy)
+        Module module = axisModule.getModule();
+        if (module != null) {
+            module.engageNotify(this);
+        }
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
-            engagedModules.put(axisModule.getName(), axisModule);
+        engagedModules.put(axisModule.getName(), axisModule);
     }
 
     protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {

@@ -520,11 +520,6 @@ public class AxisService extends AxisDescription {
         while (modules.hasNext()) {
             AxisModule module = (AxisModule) modules.next();
             try {
-                Module moduleImpl = module.getModule();
-                if (moduleImpl != null) {
-                    // notifying module for service engagement
-                    moduleImpl.engageNotify(axisOperation);
-                }
                 axisOperation.engageModule(module);
             } catch (AxisFault axisFault) {
                 log.info(Messages.getMessage("modulealredyengagetoservice", module.getName()));
