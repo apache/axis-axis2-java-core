@@ -320,8 +320,7 @@ public class AddNumbersHandlerTests extends TestCase {
         TestLogger.logger.debug("----------------------------------");
     }
     
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientHandlerWithFault() {
+    public void testAddNumbersClientHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());

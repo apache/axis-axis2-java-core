@@ -844,7 +844,7 @@ public class HandlerChainProcessorTests extends TestCase {
         }
 
         assertNotNull(e);
-        assertEquals("S2f:S1f:L1f:L2c:L1c:S1c:S2c:", result);
+        assertEquals("S2f:S1f:L1f:S2c:S1c:L1c:L2c:", result);
     }
 
 

@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -461,7 +462,7 @@ public class HandlerChainProcessor {
                 callCloseHandlers(0, handlers.size() - 1, Direction.OUT);
             } else { // IN case
                 initContext(Direction.IN);
-                callCloseHandlers(0, handlers.size() - 1, Direction.OUT);
+                callCloseHandlers(handlers.size() - 1, 0, Direction.IN);
             }
         }
     }
@@ -536,7 +537,9 @@ public class HandlerChainProcessor {
                 // TODO something is wrong here.  The message should be a response message, not
                 // a request message.  I don't see how to change that.  (see the debugger...)
                 // TODO probably also need to turn on message.WRITE_XML_DECLARATION
-                mepCtx.setMessage(((MessageFactory) (FactoryRegistry.getFactory(MessageFactory.class))).createFrom(message));
+                MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+                Message msg = msgFactory.createFrom(message);
+                mepCtx.setMessage(msg);
 
             } else {
                 throw ExceptionFactory.makeWebServiceException("We only support SOAP11 and SOAP12 for JAXWS handlers");
