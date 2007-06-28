@@ -20,9 +20,13 @@ package org.apache.axis2.jaxws.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
@@ -32,6 +36,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
@@ -52,6 +57,8 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class LogicalMessageImpl implements LogicalMessage {
 
@@ -177,7 +184,23 @@ public class LogicalMessageImpl implements LogicalMessage {
                 // we need to create another one with the original content
                 // and assign it back.
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                payloads.HANDLER_PAYLOAD = new StreamSource(bais);
+                try {
+                    // The Source object returned to the handler should be a
+                    // DOMSource so that the handler programmer can read the data
+                    // multiple times and (as opposed to using a StreamSource) and
+                    // they can more easily access the data in DOM form.
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+
+                    Document dom = db.parse(bais);
+                    payloads.HANDLER_PAYLOAD = new DOMSource(dom);
+                } catch (ParserConfigurationException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                } catch (IOException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                } catch (SAXException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
                         
                 // We need a different byte[] for the cache so that we're not just
                 // building two Source objects that point to the same array.
