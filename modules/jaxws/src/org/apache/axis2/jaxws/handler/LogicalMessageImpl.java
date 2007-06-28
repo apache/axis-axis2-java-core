@@ -190,8 +190,9 @@ public class LogicalMessageImpl implements LogicalMessage {
                     // multiple times and (as opposed to using a StreamSource) and
                     // they can more easily access the data in DOM form.
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setNamespaceAware(true);
+                    
                     DocumentBuilder db = dbf.newDocumentBuilder();
-
                     Document dom = db.parse(bais);
                     payloads.HANDLER_PAYLOAD = new DOMSource(dom);
                 } catch (ParserConfigurationException e) {
