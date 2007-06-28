@@ -57,11 +57,14 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class LogicalMessageImpl implements LogicalMessage {
 
+    private static final Log log = LogFactory.getLog(LogicalMessageImpl.class);
 
     private MEPContext mepCtx;
 
@@ -84,6 +87,10 @@ public class LogicalMessageImpl implements LogicalMessage {
      * @see javax.xml.ws.LogicalMessage#getPayload(javax.xml.bind.JAXBContext)
      */
     public Object getPayload(JAXBContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retreiving the message payload as a Source object");
+        }
+        
         BlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
         JAXBBlockContext jbc = new JAXBBlockContext(context);
         Object payload = _getPayload(jbc, factory);
@@ -94,16 +101,30 @@ public class LogicalMessageImpl implements LogicalMessage {
         Object payload = null;
         try {
             Block block = mepCtx.getMessageObject().getBodyBlock(context, factory);
-            Object content = block.getBusinessObject(true);
-            
-            // For now, we have to create a new Block from the original content
-            // and set that back on the message.  The Block is not currently
-            // able to create a copy of itself just yet.
-            Payloads payloads = createPayloads(content);
-            
-            _setPayload(payloads.CACHE_PAYLOAD, context, factory);
-            
-            payload = payloads.HANDLER_PAYLOAD;
+            if (block != null) {
+               if (log.isDebugEnabled()) {
+                       log.debug("A message payload was found.");
+               }
+               Object content = block.getBusinessObject(true);
+               
+               // For now, we have to create a new Block from the original content
+               // and set that back on the message.  The Block is not currently
+               // able to create a copy of itself just yet.
+               Payloads payloads = createPayloads(content);
+               _setPayload(payloads.CACHE_PAYLOAD, context, factory);
+  
+               payload = payloads.HANDLER_PAYLOAD;             
+            }
+            else {
+                // If the block was null, then let's return an empty
+                // Source object rather than a null.
+                if (log.isDebugEnabled()) {
+                    log.debug("There was no payload to be found.  Returning an empty Source object");
+                }
+                byte[] bytes = new byte[0];
+                payload = new StreamSource(new ByteArrayInputStream(bytes));
+           }
+   
         } catch (XMLStreamException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -138,6 +159,10 @@ public class LogicalMessageImpl implements LogicalMessage {
                 mepCtx.getMessageObject().setBodyBlock(block);
             }
             else {
+                if (log.isDebugEnabled()) {
+                    log.debug("The payload contains a fault");
+                }
+                
                 mepCtx.getMessageObject().setBodyBlock(block);
                 
                 // If the payload is a fault, then we can't set it back on the message
@@ -151,6 +176,9 @@ public class LogicalMessageImpl implements LogicalMessage {
                     XMLStreamReader stream = StAXUtils.createXMLStreamReader(sr);
                     Message msg = mf.createFrom(stream, mepCtx.getMessageObject().getProtocol());
                    
+                    // This is required for proper serialization of the OM structure.
+                    msg.getAsOMElement().build();
+                    
                     mepCtx.setMessage(msg);
                 } catch (Exception e) {
                     throw ExceptionFactory.makeWebServiceException(e);

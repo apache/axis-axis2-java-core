@@ -118,7 +118,11 @@ public class SAAJConverterImpl implements SAAJConverter {
       */
     public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
             throws WebServiceException {
-        // Before we do the conversion, we have to fix the QNames for fault elements
+    	if (log.isDebugEnabled()) {
+    		log.debug("Converting SAAJ SOAPEnvelope to an OM SOAPEnvelope");
+    	}    	
+    	
+    	// Before we do the conversion, we have to fix the QNames for fault elements
         _fixFaultElements(saajEnvelope);        
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
@@ -175,6 +179,10 @@ public class SAAJConverterImpl implements SAAJConverter {
       * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPElement)
       */
     public OMElement toOM(SOAPElement soapElement) throws WebServiceException {
+    	if (log.isDebugEnabled()) {
+    		log.debug("Converting SAAJ SOAPElement to an OMElement");
+    	}
+    	
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(soapElement);
         // Get a OM Builder.
@@ -196,7 +204,11 @@ public class SAAJConverterImpl implements SAAJConverter {
       * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement)
       */
     public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws WebServiceException {
-        XMLStreamReader reader = null;
+    	if (log.isDebugEnabled()) {
+    		log.debug("Converting OMElement to an SAAJ SOAPElement");
+    	}
+    	
+    	XMLStreamReader reader = null;
 
         // If the OM element is not attached to a parser (builder), then the OM
         // is built and you cannot ask for XMLStreamReaderWithoutCaching.
@@ -225,7 +237,11 @@ public class SAAJConverterImpl implements SAAJConverter {
       */
     public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf)
             throws WebServiceException {
-        XMLStreamReader reader = null;
+    	if (log.isDebugEnabled()) {
+    		log.debug("Converting OMElement to an SAAJ SOAPElement");
+    	}
+    	
+    	XMLStreamReader reader = null;
 
         // If the OM element is not attached to a parser (builder), then the OM
         // is built and you cannot ask for XMLStreamReaderWithoutCaching.
@@ -510,14 +526,27 @@ public class SAAJConverterImpl implements SAAJConverter {
             }
             
             SOAPBody body = env.getBody();
-            if (body != null && body.hasFault()) {
-                SOAPFault fault = body.getFault();
+            if (body != null && !body.hasFault()) {
+            	if (log.isDebugEnabled()) {
+            		log.debug("No fault found.  No conversion necessary.");
+            	}
+            	return;
+            }
+            else if (body != null && body.hasFault()) {
+                if (log.isDebugEnabled()) {
+                	log.debug("A fault was found.  Converting the fault child elements to SOAP 1.1 format");
+                }
+            	
+            	SOAPFault fault = body.getFault();
                 
                 Iterator itr = fault.getChildElements();
                 while (itr.hasNext()) {
                     SOAPElement se = (SOAPElement) itr.next();
                     if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME)) { 
-                        // Axis2 SAAJ stores the acutal faultcode text under a SOAPFaultValue object, so we have to 
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Converting: faultcode");
+                    	}
+                    	// Axis2 SAAJ stores the acutal faultcode text under a SOAPFaultValue object, so we have to 
                         // get that and add it as a text node under the original element.
                         Node value = se.getFirstChild();
                         if (value != null && value instanceof org.apache.axis2.saaj.SOAPElementImpl) {
@@ -532,9 +561,15 @@ public class SAAJConverterImpl implements SAAJConverter {
                         }
                     }
                     else if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Converting: detail");
+                    	}
                         se.setElementQName(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
                     }
                     else if (se.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME)) {
+                    	if (log.isDebugEnabled()) {
+                    		log.debug("Converting: faultstring");
+                    	}
                         se.setElementQName(new QName(se.getNamespaceURI(), SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME));
                         // Axis2 SAAJ stores the acutal faultstring text under a SOAPFaultValue object, so we have to 
                         // get that and add it as a text node under the original element.
@@ -553,6 +588,9 @@ public class SAAJConverterImpl implements SAAJConverter {
                 }
             }
         } catch (SOAPException e) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("An error occured while converting fault elements: " + e.getMessage());
+        	}
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }

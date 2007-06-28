@@ -515,12 +515,14 @@ public class HandlerChainProcessor {
 
         // need to check if message is already a fault message or not,
         // probably by way of a flag (isFault) in the MessageContext or Message
+        if (log.isDebugEnabled()) {
+            log.debug("Creating a fault Message object for the exception: " + e.getClass().getName());
+        }
+           
         try {
-
             /* TODO TODO TODO
-                * There has GOT to be a better way to do this.
-                */
-
+             * There has GOT to be a better way to do this.
+             */
             if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
                 String protocolNS = (protocol == Protocol.soap11) ?
                         SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE :
