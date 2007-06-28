@@ -18,39 +18,72 @@
  */
 package org.apache.axis2.jaxws.context;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
 
 public class WebServiceContextImpl implements WebServiceContext {
 
+    private static final Log log = LogFactory.getLog(WebServiceContext.class);
+    
     private MessageContext soapMessageContext;
 
     public WebServiceContextImpl() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.ws.WebServiceContext#getMessageContext()
-      */
+     * @see javax.xml.ws.WebServiceContext#getMessageContext()
+     */
     public MessageContext getMessageContext() {
         return soapMessageContext;
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
-      */
+     * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
+     */
     public Principal getUserPrincipal() {
-        // TODO Auto-generated method stub
+        if (soapMessageContext != null) {
+            HttpServletRequest request = (HttpServletRequest) soapMessageContext.get(MessageContext.SERVLET_REQUEST);
+            if (request != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Access to the user Principal was requested.");
+                }
+                return request.getUserPrincipal();    
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("No HttpServletRequest object was found, so no Principal can be found.");
+                }
+            }
+        }
+        
         return null;
     }
 
     /* (non-Javadoc)
-      * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
-      */
-    public boolean isUserInRole(String s) {
-        // TODO Auto-generated method stub
+     * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
+     */
+    public boolean isUserInRole(String user) {
+        if (soapMessageContext != null) {
+            HttpServletRequest request = (HttpServletRequest) soapMessageContext.get(MessageContext.SERVLET_REQUEST);
+            if (request != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking to see if the user in the role.");
+                }
+                return request.isUserInRole(user);    
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("No HttpServletRequest object was found, so no role check can be performed.");
+                }
+            }
+        }
+        
         return false;
     }
 
