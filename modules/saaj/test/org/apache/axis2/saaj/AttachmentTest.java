@@ -216,8 +216,7 @@ public class AttachmentTest extends TestCase {
                         fail("Error: Received the same header1 header twice");
                         //System.out.println("received: name="+name+", value="+value);
                     }
-                } else if (name.equals("Content-Id") && value.equals("id@abc.com")) {
-                    //TODO Content-Id or Content-ID??
+                } else if (name.equalsIgnoreCase("Content-Id") && value.equals("id@abc.com")) {
                     if (!foundHeader2) {
                         foundHeader2 = true;
                         //MimeHeaders do match for header2
