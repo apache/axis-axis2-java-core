@@ -196,8 +196,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
                 OMElement oe = processStringInfo(messageID, WSA_MESSAGE_ID);
-                ArrayList attributes = (ArrayList)messageContextOptions
-                        .getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
+                ArrayList attributes = (ArrayList)messageContext.getProperty(
+                        AddressingConstants.MESSAGEID_ATTRIBUTES);
                 if (attributes != null && !attributes.isEmpty()) {
                     Iterator attrIterator = attributes.iterator();
                     while (attrIterator.hasNext()) {
@@ -260,8 +260,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                     // Otherwise just add the header
                     OMElement oe = processStringInfo(action, WSA_ACTION);
-                    ArrayList attributes = (ArrayList)messageContextOptions
-                            .getProperty(AddressingConstants.ACTION_ATTRIBUTES);
+                    ArrayList attributes = (ArrayList)messageContext.getProperty(
+                            AddressingConstants.ACTION_ATTRIBUTES);
                     if (attributes != null && !attributes.isEmpty()) {
                         Iterator attrIterator = attributes.iterator();
                         while (attrIterator.hasNext()) {

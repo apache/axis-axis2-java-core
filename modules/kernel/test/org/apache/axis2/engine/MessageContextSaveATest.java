@@ -859,7 +859,7 @@ public class MessageContextSaveATest extends TestCase {
                 Integer value3 = (Integer) restoredSimpleMsg.getProperty("key3");
                 Long value4 = (Long) restoredSimpleMsg.getProperty("key4");
 
-                assertEquals(value1, "value1");
+                assertEquals("value1", value1);
                 assertNull(value2);
 
                 boolean isOk = false;

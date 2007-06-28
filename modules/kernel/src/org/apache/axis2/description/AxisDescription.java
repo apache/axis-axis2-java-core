@@ -108,10 +108,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public boolean isParameterTrue(String name) {
         Parameter param = getParameter(name);
-        if (param == null) {
-            return false;
-        }
-        return JavaUtils.isTrue(param.getValue());
+        return param != null && JavaUtils.isTrue(param.getValue());
     }
 
     public ArrayList getParameters() {
@@ -436,12 +433,13 @@ public abstract class AxisDescription implements ParameterInclude,
                         existing));
             }
         }
-        //We need to call engageNotify before we engage the module , then only
-        // we can make sure everything is ok to engage the module to description (as an example policy)
+
+        // Let the Module know it's being engaged.  If it's not happy about it, it can throw.
         Module module = axisModule.getModule();
         if (module != null) {
             module.engageNotify(this);
         }
+
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
@@ -465,10 +463,7 @@ public abstract class AxisDescription implements ParameterInclude,
      * TODO: Handle versions?  isEngaged("addressing") should be true even for versioned modulename...
      */
     public boolean isEngaged(String moduleName) {
-        if (engagedModules != null) {
-            return engagedModules.keySet().contains(moduleName);
-        }
-        return false;
+        return engagedModules != null && engagedModules.keySet().contains(moduleName);
     }
 
     public void disengageModule(AxisModule module) throws AxisFault {
