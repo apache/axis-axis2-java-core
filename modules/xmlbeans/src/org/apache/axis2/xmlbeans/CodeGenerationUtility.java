@@ -93,7 +93,8 @@ public class CodeGenerationUtility {
      */
     public static TypeMapper processSchemas(List schemas,
                                             Element[] additionalSchemas,
-                                            CodeGenConfiguration cgconfig) throws RuntimeException {
+                                            CodeGenConfiguration cgconfig,
+                                            String typeSystemName) throws RuntimeException {
         try {
 
             //check for the imported types. Any imported types are supposed to be here also
@@ -172,9 +173,9 @@ public class CodeGenerationUtility {
 
 
             sts = XmlBeans.compileXmlBeans(
-                    //set the STS name to null. it makes the generated class
+                    // set the STS name; defaults to null, which makes the generated class
                     // include a unique (but random) STS name
-                    null,
+                    typeSystemName,
                     null,
                     convertToSchemaArray(topLevelSchemaList),
                     new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(),
