@@ -55,6 +55,11 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     }
 
     public Collection generateSchema() throws Exception {
+        generateScheamWithoutCallingParent();
+        return super.generateSchema();
+    }
+
+    public void generateScheamWithoutCallingParent() throws Exception {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.addAll(processMethods(serviceClass.getMethods()));
 
@@ -104,8 +109,6 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             }
             schemaMap.put(targetNamespace, xmlSchema);
         }
-
-        return super.generateSchema();
     }
 
     private QName getTypeName(JaxBeanInfo<?> beanInfo) {
