@@ -1,368 +1,312 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                  xmlns:axis2="http://tempuri.org"
-                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-                  xmlns:ns0="http://tempuri.org/xsd"
-                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
-                  xmlns:ns1="http://org.apache.axis2/xsd"
-                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  targetNamespace="http://tempuri.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:axis2="http://tempuri.org" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns0="http://tempuri.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org">
     <wsdl:types>
-        <xs:schema xmlns:ns="http://tempuri.org/xsd"
-                   attributeFormDefault="qualified"
-                   elementFormDefault="qualified"
-                   targetNamespace="http://tempuri.org/xsd">
+        <xs:schema xmlns:ns="http://tempuri.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/xsd">
             <xs:element name="retBool">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inBool" nillable="true"
-                                    type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="inBool" nillable="true" type="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retBoolResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:boolean"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retSByte">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inSByte" nillable="true"
-                                    type="xs:byte"/>
+                        <xs:element minOccurs="0" name="inSByte" nillable="true" type="xs:byte"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retSByteResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:byte"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:byte"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retByteArray">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inByteArray"
-                                    nillable="true" type="xs:base64Binary"/>
+                        <xs:element minOccurs="0" name="inByteArray" nillable="true" type="xs:base64Binary"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retByteArrayResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:base64Binary"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:base64Binary"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDouble">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inDouble"
-                                    nillable="true" type="xs:double"/>
+                        <xs:element minOccurs="0" name="inDouble" nillable="true" type="xs:double"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDoubleResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:double"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:double"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retFloat">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inFloat" nillable="true"
-                                    type="xs:float"/>
+                        <xs:element minOccurs="0" name="inFloat" nillable="true" type="xs:float"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retFloatResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:float"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:float"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retSingle">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inSingle"
-                                    nillable="true" type="xs:float"/>
+                        <xs:element minOccurs="0" name="inSingle" nillable="true" type="xs:float"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retSingleResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:float"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:float"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retChar">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inChar" nillable="true"
-                                    type="xs:int"/>
+                        <xs:element minOccurs="0" name="inChar" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retCharResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:int"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retInt">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inInt" nillable="true"
-                                    type="xs:int"/>
+                        <xs:element minOccurs="0" name="inInt" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retIntResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:int"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUShort">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inUShort"
-                                    nillable="true" type="xs:int"/>
+                        <xs:element minOccurs="0" name="inUShort" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUShortResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:int"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:int"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retObject">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inObject"
-                                    nillable="true" type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="inObject" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retObjectResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retGuid">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inGuid" nillable="true"
-                                    type="xs:string"/>
+                        <xs:element minOccurs="0" name="inGuid" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retGuidResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retString">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inString"
-                                    nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="inString" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retStringResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUri">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inUri" nillable="true"
-                                    type="xs:string"/>
+                        <xs:element minOccurs="0" name="inUri" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUriResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDecimal">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inDecimal"
-                                    nillable="true" type="xs:decimal"/>
+                        <xs:element minOccurs="0" name="inDecimal" nillable="true" type="xs:decimal"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDecimalResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:decimal"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:decimal"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retULong">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inULong" nillable="true"
-                                    type="xs:integer"/>
+                        <xs:element minOccurs="0" name="inULong" nillable="true" type="xs:integer"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retULongResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:integer"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:integer"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDateTime">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inDateTime"
-                                    nillable="true" type="xs:dateTime"/>
+                        <xs:element minOccurs="0" name="inDateTime" nillable="true" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retDateTimeResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:dateTime"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retTimeSpan">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inTimeSpan"
-                                    nillable="true" type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="inTimeSpan" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retTimeSpanResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retQName">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inQName" nillable="true"
-                                    type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="inQName" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retQNameResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retLong">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inLong" nillable="true"
-                                    type="xs:long"/>
+                        <xs:element minOccurs="0" name="inLong" nillable="true" type="xs:long"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retLongResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:long"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:long"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUInt">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inUInt" nillable="true"
-                                    type="xs:long"/>
+                        <xs:element minOccurs="0" name="inUInt" nillable="true" type="xs:long"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retUIntResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:long"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:long"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retByte">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inByte" nillable="true"
-                                    type="xs:short"/>
+                        <xs:element minOccurs="0" name="inByte" nillable="true" type="xs:short"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retByteResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:short"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:short"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retShort">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inShort" nillable="true"
-                                    type="xs:short"/>
+                        <xs:element minOccurs="0" name="inShort" nillable="true" type="xs:short"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retShortResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true"
-                                    type="xs:short"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:short"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -502,140 +446,96 @@
     </wsdl:message>
     <wsdl:portType name="BaseDataTypesPortType">
         <wsdl:operation name="retUInt">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retUIntRequest"
-                        wsaw:Action="urn:retUInt"/>
-            <wsdl:output message="axis2:retUIntResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUIntRequest" wsaw:Action="urn:retUInt"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUIntResponse" wsaw:Action="urn:retUIntResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retSingle">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retSingleRequest"
-                        wsaw:Action="urn:retSingle"/>
-            <wsdl:output message="axis2:retSingleResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSingleRequest" wsaw:Action="urn:retSingle"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSingleResponse" wsaw:Action="urn:retSingleResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retTimeSpan">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retTimeSpanRequest"
-                        wsaw:Action="urn:retTimeSpan"/>
-            <wsdl:output message="axis2:retTimeSpanResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retTimeSpanRequest" wsaw:Action="urn:retTimeSpan"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retTimeSpanResponse" wsaw:Action="urn:retTimeSpanResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDateTime">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retDateTimeRequest"
-                        wsaw:Action="urn:retDateTime"/>
-            <wsdl:output message="axis2:retDateTimeResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDateTimeRequest" wsaw:Action="urn:retDateTime"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDateTimeResponse" wsaw:Action="urn:retDateTimeResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retGuid">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retGuidRequest"
-                        wsaw:Action="urn:retGuid"/>
-            <wsdl:output message="axis2:retGuidResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retGuidRequest" wsaw:Action="urn:retGuid"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retGuidResponse" wsaw:Action="urn:retGuidResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retByteArray">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retByteArrayRequest"
-                        wsaw:Action="urn:retByteArray"/>
-            <wsdl:output message="axis2:retByteArrayResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteArrayRequest" wsaw:Action="urn:retByteArray"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteArrayResponse" wsaw:Action="urn:retByteArrayResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retByte">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retByteRequest"
-                        wsaw:Action="urn:retByte"/>
-            <wsdl:output message="axis2:retByteResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteRequest" wsaw:Action="urn:retByte"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteResponse" wsaw:Action="urn:retByteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retSByte">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retSByteRequest"
-                        wsaw:Action="urn:retSByte"/>
-            <wsdl:output message="axis2:retSByteResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSByteRequest" wsaw:Action="urn:retSByte"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSByteResponse" wsaw:Action="urn:retSByteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retShort">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retShortRequest"
-                        wsaw:Action="urn:retShort"/>
-            <wsdl:output message="axis2:retShortResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retShortRequest" wsaw:Action="urn:retShort"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retShortResponse" wsaw:Action="urn:retShortResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retUri">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retUriRequest" wsaw:Action="urn:retUri"/>
-            <wsdl:output message="axis2:retUriResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUriRequest" wsaw:Action="urn:retUri"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUriResponse" wsaw:Action="urn:retUriResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retQName">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retQNameRequest"
-                        wsaw:Action="urn:retQName"/>
-            <wsdl:output message="axis2:retQNameResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retQNameRequest" wsaw:Action="urn:retQName"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retQNameResponse" wsaw:Action="urn:retQNameResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retFloatRequest"
-                        wsaw:Action="urn:retFloat"/>
-            <wsdl:output message="axis2:retFloatResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retFloatRequest" wsaw:Action="urn:retFloat"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retFloatResponse" wsaw:Action="urn:retFloatResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retObject">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retObjectRequest"
-                        wsaw:Action="urn:retObject"/>
-            <wsdl:output message="axis2:retObjectResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retObjectRequest" wsaw:Action="urn:retObject"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retObjectResponse" wsaw:Action="urn:retObjectResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retBool">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retBoolRequest"
-                        wsaw:Action="urn:retBool"/>
-            <wsdl:output message="axis2:retBoolResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retBoolRequest" wsaw:Action="urn:retBool"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retBoolResponse" wsaw:Action="urn:retBoolResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDouble">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retDoubleRequest"
-                        wsaw:Action="urn:retDouble"/>
-            <wsdl:output message="axis2:retDoubleResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDoubleRequest" wsaw:Action="urn:retDouble"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDoubleResponse" wsaw:Action="urn:retDoubleResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDecimal">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retDecimalRequest"
-                        wsaw:Action="urn:retDecimal"/>
-            <wsdl:output message="axis2:retDecimalResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDecimalRequest" wsaw:Action="urn:retDecimal"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDecimalResponse" wsaw:Action="urn:retDecimalResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retLong">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retLongRequest"
-                        wsaw:Action="urn:retLong"/>
-            <wsdl:output message="axis2:retLongResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retLongRequest" wsaw:Action="urn:retLong"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retLongResponse" wsaw:Action="urn:retLongResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retInt">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retIntRequest" wsaw:Action="urn:retInt"/>
-            <wsdl:output message="axis2:retIntResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retIntRequest" wsaw:Action="urn:retInt"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retIntResponse" wsaw:Action="urn:retIntResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retChar">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retCharRequest"
-                        wsaw:Action="urn:retChar"/>
-            <wsdl:output message="axis2:retCharResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retCharRequest" wsaw:Action="urn:retChar"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retCharResponse" wsaw:Action="urn:retCharResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retString">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retStringRequest"
-                        wsaw:Action="urn:retString"/>
-            <wsdl:output message="axis2:retStringResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retStringRequest" wsaw:Action="urn:retString"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retStringResponse" wsaw:Action="urn:retStringResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retUShort">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retUShortRequest"
-                        wsaw:Action="urn:retUShort"/>
-            <wsdl:output message="axis2:retUShortResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUShortRequest" wsaw:Action="urn:retUShort"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUShortResponse" wsaw:Action="urn:retUShortResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retULong">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                        message="axis2:retULongRequest"
-                        wsaw:Action="urn:retULong"/>
-            <wsdl:output message="axis2:retULongResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retULongRequest" wsaw:Action="urn:retULong"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retULongResponse" wsaw:Action="urn:retULongResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="BaseDataTypesSOAP11Binding"
-                  type="axis2:BaseDataTypesPortType">
-        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"
-                      style="document"/>
+    <wsdl:binding name="BaseDataTypesSOAP11Binding" type="axis2:BaseDataTypesPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap:operation soapAction="urn:retUInt" style="document"/>
             <wsdl:input>
@@ -835,10 +735,8 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="BaseDataTypesSOAP12Binding"
-                  type="axis2:BaseDataTypesPortType">
-        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"
-                        style="document"/>
+    <wsdl:binding name="BaseDataTypesSOAP12Binding" type="axis2:BaseDataTypesPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap12:operation soapAction="urn:retUInt" style="document"/>
             <wsdl:input>
@@ -1038,7 +936,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-   <wsdl:binding name="BaseDataTypesHttpBinding" type="axis2:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesHttpBinding" type="axis2:BaseDataTypesPortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="retUInt">
             <http:operation location="BaseDataTypes/retUInt"/>
@@ -1240,20 +1138,14 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="BaseDataTypes">
-        <wsdl:port name="BaseDataTypesSOAP11port_http"
-                   binding="axis2:BaseDataTypesSOAP11Binding">
-            <soap:address
-                    location="http://localhost:8080/axis2/services/BaseDataTypes"/>
+        <wsdl:port name="BaseDataTypesSOAP11port_http" binding="axis2:BaseDataTypesSOAP11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesSOAP12port_http"
-                   binding="axis2:BaseDataTypesSOAP12Binding">
-            <soap12:address
-                    location="http://localhost:8080/axis2/services/BaseDataTypes"/>
+        <wsdl:port name="BaseDataTypesSOAP12port_http" binding="axis2:BaseDataTypesSOAP12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesHttpport"
-                   binding="axis2:BaseDataTypesHttpBinding">
-            <http:address
-                    location="http://localhost:8080/axis2/services/BaseDataTypes"/>
+        <wsdl:port name="BaseDataTypesHttpport" binding="axis2:BaseDataTypesHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

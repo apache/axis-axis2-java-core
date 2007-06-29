@@ -532,6 +532,11 @@ public class AxisService extends AxisDescription {
         if (axisOperation.getInputAction() == null) {
             axisOperation.setSoapAction("urn:" + axisOperation.getName().getLocalPart());
         }
+        
+        if (axisOperation.getOutputAction() == null) {
+            axisOperation.setOutputAction("urn:" + axisOperation.getName().getLocalPart() +
+                    Java2WSDLConstants.RESPONSE);
+        }
         addChild(axisOperation);
 
         String operationName = axisOperation.getName().getLocalPart();
