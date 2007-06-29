@@ -362,8 +362,6 @@ class OutInAxisOperationClient extends OperationClient {
      */
     protected MessageContext send(MessageContext msgctx) throws AxisFault {
 
-        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
-
         // create the responseMessageContext
 
         MessageContext responseMessageContext =
@@ -377,7 +375,7 @@ class OutInAxisOperationClient extends OperationClient {
                 axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
 
         //sending the message
-        engine.send(msgctx);
+        AxisEngine.send(msgctx);
 
         responseMessageContext.setDoingREST(msgctx.isDoingREST());
 

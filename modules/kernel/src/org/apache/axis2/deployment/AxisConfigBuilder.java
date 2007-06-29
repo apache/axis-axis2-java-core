@@ -258,6 +258,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 log.error("Deployer missing 'extension' attribute : " + element.toString());
                 return;
             }
+
+            // A leading dot is redundant, so strip it.  So we allow either ".foo" or "foo", either
+            // of which will result in extension="foo"
+            if (extension.charAt(0) == '.') extension = extension.substring(1);
+
             String deployerClassName = element.getAttributeValue(new QName(TAG_CLASS_NAME));
             Deployer deployer;
             try {

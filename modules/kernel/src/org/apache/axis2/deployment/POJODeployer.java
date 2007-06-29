@@ -67,7 +67,7 @@ public class POJODeployer implements Deployer {
         try {
             threadClassLoader = Thread.currentThread().getContextClassLoader();
             String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
-            if (".class".equals(extension)) {
+            if ("class".equals(extension)) {
                 File file = deploymentFileData.getFile();
                 File parentFile = file.getParentFile();
                 if (file != null) {
@@ -139,7 +139,7 @@ public class POJODeployer implements Deployer {
                     }
                 }
 
-            } else if (".jar".equals(extension)) {
+            } else if ("jar".equals(extension)) {
                 ArrayList classList;
                 FileInputStream fin = null;
                 ZipInputStream zin = null;

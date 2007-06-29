@@ -486,14 +486,14 @@ public class MessageContextBuilder {
             soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
                     ? getSenderFaultCode(context.getEnvelope().getNamespace())
                     : soapFaultCode;
-            if(context.isSOAP11()) {
+            if (context.isSOAP11()) {
                 fault.getCode().setText(soapFaultCode);
             } else {
                 fault.getCode().getValue().setText(soapFaultCode);
             }
         }
 
-        if(faultCode == null && !context.isSOAP11()){
+        if (faultCode == null && !context.isSOAP11()) {
             fault.getCode().getValue().setText(soapFaultCode);
         }
         SOAPFaultReason faultReason = (SOAPFaultReason)context.getProperty(

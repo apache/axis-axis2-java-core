@@ -248,7 +248,8 @@ public class RepositoryListener implements DeploymentConstants {
                         if (!file.isDirectory() && extension.equals(
                                 DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
-                                            deploymentEngine.getDeployerForExtension(extension),WSInfo.TYPE_CUSTOM);
+                                            deploymentEngine.getDeployerForExtension(extension),
+                                            WSInfo.TYPE_CUSTOM);
                         }
                     }
                 }
@@ -271,19 +272,21 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_SERVICE);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                        WSInfo.TYPE_SERVICE);
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
                         // If we found a deployer for this type of file, use it.  Otherwise
                         // ignore the file.
                         if (deployer != null) {
-                            addFileToDeploy(file, deployer,WSInfo.TYPE_SERVICE);
+                            addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
                         }
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_CUSTOM);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                        WSInfo.TYPE_CUSTOM);
                     }
                 }
             }

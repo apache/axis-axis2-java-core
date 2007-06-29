@@ -96,7 +96,7 @@ public class DeploymentFileData {
 
     public static String getFileExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
-        return fileName.substring(index);
+        return fileName.substring(index + 1);
     }
 
     public void setClassLoader(ClassLoader classLoader) {

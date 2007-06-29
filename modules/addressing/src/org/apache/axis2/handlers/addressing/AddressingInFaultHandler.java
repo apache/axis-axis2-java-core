@@ -32,6 +32,7 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 /**
