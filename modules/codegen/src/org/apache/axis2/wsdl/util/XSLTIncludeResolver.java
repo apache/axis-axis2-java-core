@@ -31,6 +31,8 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
 
     private CodeGenConfiguration configuration;
 
+    public static final String EMPTY_TEMPLATE = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>";
+
     public XSLTIncludeResolver() {
     }
 
@@ -77,7 +79,11 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
                 return new StreamSource(supporterTemplateStream);
             }
         } else if ((href != null) && (!href.equals("externalTemplate"))){
-            return getSourceFromTemplateName(href);
+            Source source = getSourceFromTemplateName(href);
+            if ((source != null) && ((StreamSource)source).getInputStream() != null){
+                return source;
+            }
+            return getEmptySource();
         }
         //if nothing could be found return an empty source
         return getEmptySource();
@@ -107,7 +113,6 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
      * @return stream source
      */
     private Source getEmptySource() {
-        return new StreamSource(new ByteArrayInputStream(
-                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));
+        return new StreamSource(new ByteArrayInputStream(EMPTY_TEMPLATE.getBytes()));
     }
 }

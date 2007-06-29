@@ -532,4 +532,23 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setWsdlDefinition(Definition wsdlDefinition) {
         this.wsdlDefinition = wsdlDefinition;
     }
+
+    private boolean isAllPorts;
+    private boolean isOverride;
+
+    public boolean isAllPorts() {
+        return isAllPorts;
+    }
+
+    public void setAllPorts(boolean allPorts) {
+        isAllPorts = allPorts;
+    }
+
+    public boolean isOverride() {
+        return isOverride;
+    }
+
+    public void setOverride(boolean override) {
+        isOverride = override;
+    }
 }

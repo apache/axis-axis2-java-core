@@ -60,6 +60,11 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
         axisServices = new ArrayList();   // create an empty ArrayList
     }
 
+     public WSDL11ToAllAxisServicesBuilder(Definition def, String portName) {
+        super(def, null, portName);
+        axisServices = new ArrayList();   // create an empty ArrayList
+    }
+
 
     /**
      * Public method to access the wsdl 1.1 file and create a List of AxisService objects.
@@ -88,8 +93,11 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
 
             if (wsdl4jDefinition.getServices().size() > 0) {
                 Iterator wsdlServIter = wsdl4jDefinition.getServices().values().iterator();
-                // let the wsdlToservice builder to decide the port to generate binding
-                portName = null;
+                if (wsdl4jDefinition.getServices().size() > 1){
+                     // let the wsdlToservice builder to decide the port to generate binding
+                     portName = null;
+                } 
+
                 while (wsdlServIter.hasNext()) {
                     Service service = (Service) wsdlServIter.next();
                     // set the serviceName on the parent to setup call to populateService

@@ -122,12 +122,14 @@ public class CodeGenerationEngine {
                     builder = new WSDL11ToAxisServiceBuilder(
                             wsdl4jDef,
                             serviceQname,
-                            configuration.getPortName());
+                            configuration.getPortName(),
+                            configuration.isAllPorts());
                     builder.setCodegen(true);
                     configuration.addAxisService(builder.populateService());
                 } else {
-                    builder = new WSDL11ToAllAxisServicesBuilder(wsdl4jDef);
+                    builder = new WSDL11ToAllAxisServicesBuilder(wsdl4jDef, configuration.getPortName());
                     builder.setCodegen(true);
+                    builder.setAllPorts(configuration.isAllPorts());
                     configuration.setAxisServices(
                             ((WSDL11ToAllAxisServicesBuilder)builder).populateAllServices());
                 }

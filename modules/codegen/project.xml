@@ -226,13 +226,47 @@
                 </includes>
             </resource>
             <resource>
-        <directory>../../</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>NOTICE.txt</include>
-        <include>LICENSE.txt</include>
-      </includes>
-   </resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
         </resources>
+        <unitTest>
+            <resources>
+                <resource>
+                    <directory>test</directory>
+                    <includes>
+                        <include>**/*.xsl</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>../adb-codegen/src</directory>
+                    <includes>
+                        <include>**/*.xsl</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>../xmlbeans/src</directory>
+                    <includes>
+                        <include>**/*.xsl</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>../jaxbri/src</directory>
+                    <includes>
+                        <include>**/*.xsl</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>../jibx/src</directory>
+                    <includes>
+                        <include>**/*.xsl</include>
+                    </includes>
+                </resource>
+            </resources>
+        </unitTest>
     </build>
 </project>

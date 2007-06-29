@@ -47,6 +47,8 @@ public interface CommandLineOptionConstants {
         String SOURCE_FOLDER_NAME_OPTION = "S";
         String RESOURCE_FOLDER_OPTION = "R";
         String XSDCONFIG_OPTION = "xc";
+        String All_PORTS_OPTION = "ap";
+        String OVERRIDE_OPTION = "or";
 
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -76,6 +78,8 @@ public interface CommandLineOptionConstants {
         String SOURCE_FOLDER_NAME_OPTION_LONG = "source-folder";
         String RESOURCE_FOLDER_OPTION_LONG = "resource-folder";
         String XSDCONFIG_OPTION_LONG = "xsdconfig";
+        String All_PORTS_OPTION_LONG = "all-ports";
+        String OVERRIDE_OPTION_LONG = "over-ride";
 
         String WSDL_VERSION_2 = "2.0";
         String WSDL_VERSION_2_OPTIONAL = "2";

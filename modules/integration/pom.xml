@@ -443,7 +443,7 @@
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
+									<arg line="-ap -o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
 								</java>
 								<javac fork="true" destdir="target/classes" debug="on">
 									<classpath refid="maven.runtime.classpath"/>
@@ -457,7 +457,7 @@
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-o target/wsdl/documentunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl"/>
+                                    <arg line="-ap -o target/wsdl/documentunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl"/>
                                 </java>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="target/wsdl/documentunwrapping"/>
@@ -468,7 +468,7 @@
 
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
+                                    <arg line="-ap -o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
                                 </java>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="target/wsdl/rpcunwrapping"/>
@@ -478,7 +478,7 @@
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
+									<arg line="-ap -o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
 								</java>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="target/wsdl/complexdatatypebare"/>

@@ -4,7 +4,7 @@
 		<echo>Running codegen RPC WSDLs - take 1</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test1 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+			<arg line="-ap -o target/rpc-test1 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test1"
 							 target="jar.client"/>
@@ -12,7 +12,7 @@
 		<echo>Running codegen RPC WSDLs - take 2</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test2 -uri test-resources/rpc/test-rpc-3.wsdl -uw"/>
+			<arg line="-ap -o target/rpc-test2 -uri test-resources/rpc/test-rpc-3.wsdl -uw"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test2"
 							 target="jar.client"/>
@@ -21,7 +21,7 @@
 		<echo>Running codegen RPC WSDLs - take 3</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+			<arg line="-ap -o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3"
 							 target="jar.client"/>
@@ -29,7 +29,7 @@
 		<echo>Running codegen RPC WSDLs - take 4</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd"/>
+			<arg line="-ap -o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
 							 target="jar.server"/>
@@ -37,7 +37,7 @@
 		<echo>Running codegen RPC WSDLs with helper mode -  take 1</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/helper-test1 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+			<arg line="-ap -o target/helper-test1 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test1"
 					 target="jar.client"/>
@@ -45,7 +45,7 @@
 		<echo>Running codegen RPC WSDLs with helper mode -  take 2</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/helper-test2 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+			<arg line="-ap -o target/helper-test2 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test2"
 					 target="jar.client"/>
@@ -56,7 +56,7 @@
 		<echo>Running codegen for Enterprise WSDL - take 1</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-d xmlbeans -o target/enterprise-test1 -s -uri test-resources/enterprise.wsdl"/>
+			<arg line="-ap -d xmlbeans -o target/enterprise-test1 -s -uri test-resources/enterprise.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test1"
 									 target="jar.client"/>
@@ -64,7 +64,7 @@
 		<echo>Running codegen for Enterprise WSDL - take 2</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/enterprise-test2 -s -uri test-resources/enterprise.wsdl"/>
+			<arg line="-ap -o target/enterprise-test2 -s -uri test-resources/enterprise.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test2"
 									 target="jar.client"/>
@@ -72,7 +72,7 @@
 		<echo>Running codegen for Enterprise WSDL - take 3</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-d xmlbeans -ss -sd -g -o target/enterprise-test3 -s -uri test-resources/enterprise.wsdl"/>
+			<arg line="-ap -d xmlbeans -ss -sd -g -o target/enterprise-test3 -s -uri test-resources/enterprise.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test3"
 									 target="jar.server"/>
@@ -80,7 +80,7 @@
 		<echo>Running codegen for Enterprise WSDL - take 4</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ns2p urn:sobject.enterprise.soap.sforce.com=com.salesforce -d xmlbeans -ss -sd -g -o target/enterprise-test4 -s -uri test-resources/enterprise.wsdl"/>
+			<arg line="-ap -ns2p urn:sobject.enterprise.soap.sforce.com=com.salesforce -d xmlbeans -ss -sd -g -o target/enterprise-test4 -s -uri test-resources/enterprise.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 									 target="jar.server"/>
@@ -88,7 +88,7 @@
 		<echo>Running codegen for eBaySvc WSDL</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ss -sd -g -u -ssi -t -o target/eBaySvc -uri test-resources/eBaySvc.wsdl"/>
+			<arg line="-ap -ss -sd -g -u -ssi -t -o target/eBaySvc -uri test-resources/eBaySvc.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvc"
 									 target="jar.server"/>
@@ -96,7 +96,7 @@
 		<echo>Running codegen for eBaySvc WSDL Back word compatibiliy</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ss -sd -g -t -u -ssi -b -s -o target/eBaySvcB -uri test-resources/eBaySvc.wsdl"/>
+			<arg line="-ap -ss -sd -g -t -u -ssi -b -s -o target/eBaySvcB -uri test-resources/eBaySvc.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcB"
 									 target="jar.server"/>
@@ -104,7 +104,7 @@
 		<echo>Running codegen for eBaySvc WSDL with un wrapping </echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ss -sd -ssi -u -g -t -uw  -o target/eBaySvcUW -uri test-resources/eBaySvc.wsdl"/>
+			<arg line="-ap -ss -sd -ssi -u -g -t -uw  -o target/eBaySvcUW -uri test-resources/eBaySvc.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
 									 target="jar.server"/>
