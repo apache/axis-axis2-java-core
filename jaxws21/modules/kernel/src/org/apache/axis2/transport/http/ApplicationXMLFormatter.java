@@ -119,7 +119,7 @@ public class ApplicationXMLFormatter implements MessageFormatter {
         if ((soapAction != null)
                 && !"".equals(soapAction.trim())
                 && !"\"\"".equals(soapAction.trim())) {
-            contentType = contentType + ";action=\"" + soapAction + "\";";
+            contentType = contentType;
         }
 
         return contentType;

@@ -223,6 +223,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String COOKIE_STRING = "Cookie";
     public static final String SESSION_COOKIE = "axis_session";
     public static final String SESSION_COOKIE_JSESSIONID = "JSESSIONID";
+    public static final String CUSTOM_COOKIE_ID = "customCookieID";
 
     /**
      * Addressing Constants
@@ -330,6 +331,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * This will be used as a key for storing transport information.
          */
         public static final String TRANSPORT_INFO_MAP = "TransportInfoMap";
+        
+        /**
+         * If this is set to a Boolean 'true' value, then RequestResponseTransport instances will
+         * not be signalled by the Dispatch phase. This is useful for modules that add wish to
+         * send extra messages in the backchannel.
+         */
+        public static final String DISABLE_RESPONSE_ACK = "DisableResponseAck";
         
     }
 }

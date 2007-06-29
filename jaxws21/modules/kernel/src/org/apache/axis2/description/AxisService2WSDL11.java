@@ -90,7 +90,18 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         // EPRs now to be used later, especially when we generate the WSDL.
         serviceEndpointURLs = service.getEPRs();
         if (serviceEndpointURLs == null) {
-            serviceEndpointURLs = new String[]{service.getEndpointName()};
+            Map endpointMap = service.getEndpoints();
+             if (endpointMap.size() > 0) {
+                Iterator endpointItr = endpointMap.values().iterator();
+                while (endpointItr.hasNext()) {
+                    AxisEndpoint endpoint = (AxisEndpoint) endpointItr.next();
+                    serviceEndpointURLs =  new String[]{endpoint.getEndpointURL()};
+                    break;
+                }
+
+            } else {
+                 serviceEndpointURLs = new String[]{service.getEndpointName()};
+             }
         }
 
         this.targetNamespace = service.getTargetNamespace();

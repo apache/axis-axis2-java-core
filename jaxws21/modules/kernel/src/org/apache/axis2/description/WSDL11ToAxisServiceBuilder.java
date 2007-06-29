@@ -165,6 +165,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     // As bindings are processed add it to this array so that we dont process the same binding twice
     private Map processedBindings;
 
+    private boolean isAllPorts;
+
     /**
      * constructor taking in the service name and the port name
      *
@@ -188,7 +190,23 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         super(null, serviceName);
         this.wsdl4jDefinition = def;
         this.portName = portName;
+        this.isAllPorts = false;
     }
+
+    /**
+     * @param def
+     * @param serviceName
+     * @param portName
+     */
+    public WSDL11ToAxisServiceBuilder(Definition def,
+                                      QName serviceName,
+                                      String portName,
+                                      boolean isAllPorts) {
+        this(def,serviceName,portName);
+        this.isAllPorts = isAllPorts;
+    }
+
+
 
     /**
      * @param in
@@ -243,6 +261,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             
             Service wsdl4jService = findService(wsdl4jDefinition);
             Binding binding = findBinding(wsdl4jDefinition, wsdl4jService);
+
+
 
             if (binding.getPortType() == null) {
                 throw new AxisFault("There is no port type associated with the binding");
@@ -456,7 +476,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdl4jBindingOperation = (BindingOperation) iterator.next();
             wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
 
-            axisBindingOperation.setName(new QName("", wsdl4jBindingOperation.getName()));
+            axisBindingOperation.setName(new QName(targetNamespace, wsdl4jBindingOperation.getName()));
             addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
             axisOperation = axisService.getOperation(new QName(targetNamespace, wsdl4jOperation.getName()));
@@ -485,6 +505,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 AxisMessage axisInMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                //  from binding message to AxisMessage
+                List soapHeaders =
+                            (List) axisBindingInMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                    if (soapHeaders != null) {
+                        for (int i = 0; i < soapHeaders.size(); i++) {
+                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                            axisInMessage.addSoapHeader(headerMessage);
+                        }
+                    }
 
                 if (isSetMessageQNames) {
                     addQNameReference(axisInMessage, wsdl4jOperation,
@@ -511,6 +541,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 copyExtensibleElements(wsdl4jBindingOutput.getExtensibilityElements(),
                                        wsdl4jDefinition,
                                        axisBindingOutMessage, BINDING_OPERATION_OUTPUT);
+
+                //This is a hack to get AXIS2-2771 working , I had to copy soap headers
+                //  from binding message to AxisMessage
+                List soapHeaders =
+                        (List) axisBindingOutMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
+                if (soapHeaders != null) {
+                    for (int i = 0; i < soapHeaders.size(); i++) {
+                        SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                        axisOutMessage.addSoapHeader(headerMessage);
+                    }
+                }
 
                 if (isSetMessageQNames) {
                     addQNameReference(axisOutMessage, wsdl4jOperation,
@@ -682,20 +723,28 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // i.e if user has specified a service
             port = service.getPort(portName);
             if (port == null) {
-                throw new AxisFault("No port found for the given name :"
-                        + portName);
+                throw new AxisFault("No port found for the given name :" + portName);
             }
         } else {
             Map ports = service.getPorts();
             if (ports != null && ports.size() > 0) {
                 // pick the port with the SOAP address as the default port
-                port = findSOAPPort(ports);
+                port = findPort(ports);
                 if (port == null) {
                     // a SOAP port was not found - log a warning
                     // and use the first port in the list
                     log.info("A SOAP port was not found - "
                             + "picking a random port!");
                     port = (Port) ports.values().toArray()[0];
+                }
+
+                if (port != null){
+                    // i.e we have find a correct port
+                    if (!this.isAllPorts){
+                        // if user has not set all option
+                        // we have to generate code only for that option.
+                        this.portName = port.getName();
+                    }
                 }
             }
         }
@@ -717,10 +766,22 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * Finds a SOAP port given the port map
      *
-     * @param ports
+     * @param pHttpAddressHttpAddressorts
      */
-    private Port findSOAPPort(Map ports) {
+    private Port findPort(Map ports) {
         Port port;
+        for (Iterator portsIterator = ports.values().iterator(); portsIterator.hasNext();) {
+            port = (Port) portsIterator.next();
+            List extensibilityElements = port.getExtensibilityElements();
+            for (int i = 0; i < extensibilityElements.size(); i++) {
+                Object extElement = extensibilityElements.get(i);
+                if (extElement instanceof SOAP12Address) {
+                    // SOAP 1.2 address found - return that port and we are done
+                    return port;
+                }
+            }
+        }
+
         for (Iterator portsIterator = ports.values().iterator(); portsIterator
                 .hasNext();) {
             port = (Port) portsIterator.next();
@@ -731,9 +792,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // SOAP 1.1 address found - return that port and we are done
                     return port;
                 }
+            }
+        }
 
-                if (extElement instanceof SOAP12Address) {
-                    // SOAP 1.2 address found - return that port and we are done
+        for (Iterator portsIterator = ports.values().iterator(); portsIterator
+                .hasNext();) {
+            port = (Port) portsIterator.next();
+            List extensibilityElements = port.getExtensibilityElements();
+            for (int i = 0; i < extensibilityElements.size(); i++) {
+                Object extElement = extensibilityElements.get(i);
+                if (extElement instanceof HTTPAddress) {
+                    // SOAP 1.1 address found - return that port and we are done
                     return port;
                 }
             }
@@ -2408,7 +2477,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
     }
-    
+
+    public boolean isAllPorts() {
+        return isAllPorts;
+    }
+
+    public void setAllPorts(boolean allPorts) {
+        isAllPorts = allPorts;
+    }
+
 //    private void processPoliciesInDefinition() {
 //        
 //        Object obj;

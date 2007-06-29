@@ -29,12 +29,13 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -68,14 +69,14 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             Class ImplClass = obj.getClass();
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
+            method = (Method)(op.getParameterValue("myMethod"));
             AxisService service = inMessage.getAxisService();
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
-            QName elementQName;
 
-            method = (Method)(op.getParameterValue("myMethod"));
+
             if (method == null) {
                 String methodName = op.getName().getLocalPart();
                 Method[] methods = ImplClass.getMethods();
@@ -94,36 +95,11 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             }
             Object resObject = null;
             if (inAxisMessage != null) {
-                if (inAxisMessage.getElementQName() == null) {
-                    // method accept empty SOAPbody
-                    resObject = method.invoke(obj, new Object[0]);
-                } else {
-                    elementQName = inAxisMessage.getElementQName();
-                    messageNameSpace = elementQName.getNamespaceURI();
-                    OMNamespace namespace = methodElement.getNamespace();
-                    if (messageNameSpace != null) {
-                        if (namespace == null) {
-                            throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found none");
-                        }
-                        if (!messageNameSpace.equals(namespace.getNamespaceURI())) {
-                            throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found " + methodElement.getNamespace().getNamespaceURI());
-                        }
-                    } else if (namespace != null) {
-                        throw new AxisFault(
-                                "namespace mismatch. Axis Oepration expects non-namespace " +
-                                        "qualified element. But received a namespace qualified element");
-                    }
-
-                    Object[] objectArray = RPCUtil.processRequest(methodElement, method,
-                                                                  inMessage
-                                                                          .getAxisService().getObjectSupplier());
-                    resObject = method.invoke(obj, objectArray);
-                }
-
+                resObject = RPCUtil.invokeServiceClass(inAxisMessage,
+                        method,
+                        obj,
+                        messageNameSpace,
+                        methodElement,inMessage);
             }
 
 
@@ -139,9 +115,17 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                                                    service.getSchemaTargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
-            RPCUtil.processResponse(resObject, service,
-                                    method, envelope, fac, ns,
-                                    bodyContent, outMessage);
+
+             Parameter generateBare = service.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
+            if (generateBare!=null && "true".equals(generateBare.getValue())) {
+                RPCUtil.processResonseAsDocLitBare(resObject, service,
+                        envelope, fac, ns,
+                        bodyContent, outMessage);
+            } else {
+                RPCUtil.processResponseAsDocLitWrapped(resObject, service,
+                        method, envelope, fac, ns,
+                        bodyContent, outMessage);
+            }
             outMessage.setEnvelope(envelope);
         } catch (InvocationTargetException e) {
             String msg = null;

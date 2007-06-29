@@ -115,10 +115,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         // Register our WebServiceFeature configurators.
-        for (WebServiceFeatureConfigurator configurator : CONFIGURATORS) {
-            WebServiceFeatureConfigUtil.addWebServiceFeatureConfigurator(context,
-                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID, configurator);            
-        }
+//        for (WebServiceFeatureConfigurator configurator : CONFIGURATORS) {
+//            WebServiceFeatureConfigUtil.addWebServiceFeatureConfigurator(context,
+//                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID, configurator);            
+//        }
     }
 
     //================================================

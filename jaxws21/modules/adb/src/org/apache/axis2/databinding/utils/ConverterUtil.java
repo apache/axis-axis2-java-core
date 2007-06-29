@@ -761,9 +761,8 @@ public class ConverterUtil {
                 for (int i = 0; i < objectList.size(); i++) {
                     Object o = objectList.get(i);
                     if (o == null) {
-                        Array.set(returnArray, i, getObjectForClass(
-                                baseArrayClass,
-                                null));
+                        // if the string is null the object value must be null
+                        Array.set(returnArray, i, null);
                     } else {
                         Array.set(returnArray, i, getObjectForClass(
                                 baseArrayClass,

@@ -201,6 +201,12 @@
             <artifactId>jakarta-httpcore-niossl</artifactId>
             <version>4.0-alpha4</version>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <sourceModifications>

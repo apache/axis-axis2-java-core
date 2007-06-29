@@ -13,4 +13,8 @@ public class ArrayOfPerson {
         return this.person;
     }
 
+    public void setPerson(Person[] person){
+        this.person =person;
+    }
+
 }

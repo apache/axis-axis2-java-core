@@ -171,7 +171,7 @@ public class AddNumbersHandlerTests extends TestCase {
     }
 
     // TODO: disabled until handler support is more complete
-    public void _testAddNumbersHandlerWithFault() {
+    public void testAddNumbersHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -287,7 +287,7 @@ public class AddNumbersHandlerTests extends TestCase {
     
     
     // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientProtoAndLogicalHandler() {
+    public void testAddNumbersClientProtoAndLogicalHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -315,13 +315,16 @@ public class AddNumbersHandlerTests extends TestCase {
         } catch(Exception e) {
             e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
-            assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
+            //AXIS2-2417 - assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
+            assertEquals(((SOAPFaultException)e).getMessage(), "Got value 101.  " +
+            		"AddNumbersHandlerPortTypeImpl.addNumbersHandler method is " +
+            		"correctly throwing this exception as part of testing");
+            
         }
         TestLogger.logger.debug("----------------------------------");
     }
     
-    // TODO: disabled until handler support is more complete
-    public void _testAddNumbersClientHandlerWithFault() {
+    public void testAddNumbersClientHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());

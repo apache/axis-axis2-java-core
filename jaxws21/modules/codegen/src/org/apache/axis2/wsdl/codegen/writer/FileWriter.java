@@ -47,6 +47,7 @@ public abstract class FileWriter {
     protected static final String SEPARATOR_STRING = ",";
 
     protected boolean fileExists = false;//a flag saying the file is existing
+    protected boolean isOverride = false;
 
     /**
      * Sets the language.
@@ -122,12 +123,17 @@ public abstract class FileWriter {
                                                 fileName,
                                                 getFileExtensionForLanguage(language));
         //set the existing flag
-        fileExists = outputFile.exists();
-        if (!fileExists) {
+        if (this.isOverride) {
             this.stream = new FileOutputStream(outputFile);
         } else {
-            log.info(Messages.getMessage("fileExistsNoOverwrite", outputFile.toString()));
+            fileExists = outputFile.exists();
+            if (!fileExists) {
+                this.stream = new FileOutputStream(outputFile);
+            } else {
+                log.info(Messages.getMessage("fileExistsNoOverwrite", outputFile.toString()));
+            }
         }
+
     }
 
     /**
@@ -170,5 +176,13 @@ public abstract class FileWriter {
             this.stream.flush();
             this.stream.close();
         }
+    }
+
+    public boolean isOverride() {
+        return isOverride;
+    }
+
+    public void setOverride(boolean override) {
+        isOverride = override;
     }
 }

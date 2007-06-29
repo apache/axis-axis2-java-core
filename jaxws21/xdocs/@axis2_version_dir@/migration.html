@@ -77,7 +77,7 @@ public class TestClient {
       Service  service = new Service();
       Call     call    = (Call) service.createCall();
       call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-      call.setOperationName(new QName("http://soapinterop.org/", echoString"));
+      call.setOperationName(new QName("http://soapinterop.org/", "echoString"));
       String ret = (String) call.invoke( new Object[] { "Hello!" } );
       System.out.println("Sent 'Hello!', got '" + ret + "'");
     } catch (Exception e) {
@@ -111,8 +111,10 @@ public class EchoBlockingClient {
 			Options options = new Options();
 			ServiceClient client = new ServiceClient();
 			options.setTo(targetEPR);
+			client.setOptions(options); 
 			//Blocking invocation
 			OMElement result = client.sendReceive(payload);
+      			System.out.println("Sent Hello, got : " + result.toString());
 
 		} catch (AxisFault axisFault) {
 			axisFault.printStackTrace();

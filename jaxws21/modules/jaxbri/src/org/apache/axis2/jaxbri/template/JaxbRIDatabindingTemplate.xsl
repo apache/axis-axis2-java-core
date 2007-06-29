@@ -46,11 +46,14 @@
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
-                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
+                private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
+                throws org.apache.axis2.AxisFault {
                     try {
                         javax.xml.bind.JAXBContext context = <xsl:value-of select="translate(@type,'.','_')"/>;
                         javax.xml.bind.Marshaller marshaller = context.createMarshaller();
-                        marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);            
+                        marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+
+                        org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
 
                         JaxbRIDataSource source = new JaxbRIDataSource( <xsl:value-of select="@type"/>.class,
                                                                         param,
@@ -61,14 +64,15 @@
                                                                            null);
                         return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
                     } catch (javax.xml.bind.JAXBException bex){
-                        throw new RuntimeException(bex);
+                        throw org.apache.axis2.AxisFault.makeFault(bex);
                     }
                 }
 
-                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent) {
+                private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent)
+                throws org.apache.axis2.AxisFault {
                     org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                     if (param != null){
-                        envelope.getBody().addChild(toOM(param, factory, optimizeContent));
+                        envelope.getBody().addChild(toOM(param, optimizeContent));
                     }
                     return envelope;
                 }
@@ -86,14 +90,14 @@
         private java.lang.Object fromOM (
             org.apache.axiom.om.OMElement param,
             java.lang.Class type,
-            java.util.Map extraNamespaces) {
+            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
             try {
                 javax.xml.bind.JAXBContext context = classContextMap.get(type);
                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                 return unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), type).getValue();
             } catch (javax.xml.bind.JAXBException bex){
-                throw new RuntimeException(bex);
+                throw org.apache.axis2.AxisFault.makeFault(bex);
             }
         }
 

@@ -199,7 +199,7 @@
 
         </xsl:for-each>
         }catch(java.lang.Exception e){
-        throw new RuntimeException("Data binding error",e);
+        throw org.apache.axis2.AxisFault.makeFault(e);
         }
         return null;
         }

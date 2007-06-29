@@ -16,16 +16,23 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.Locale;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
@@ -275,6 +282,55 @@ public class FaultTests extends TestCase {
             fail(e.toString());
         }
     }
+    
+    
+    public void testGetSOAP11XMLFaultAsOM() throws Exception {
+        MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+        Message msg = factory.create(Protocol.soap11);
+
+        XMLFaultReason reason = new XMLFaultReason("sample fault reason");
+        XMLFault fault = new XMLFault(XMLFaultCode.SENDER, reason);
+        msg.setXMLFault(fault);
+        
+        OMElement om = msg.getAsOMElement();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        om.serializeAndConsume(baos);
+        
+        String env = new String(baos.toByteArray());
+        assertTrue(env.indexOf("faultcode") > 0);
+        assertTrue(env.indexOf("faultstring") > 0);
+    }
+    
+    public void testGetSOAP11XMLFaultAsBlock() throws Exception {
+        MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+        Message msg = factory.create(Protocol.soap11);
+
+        XMLFaultReason reason = new XMLFaultReason("sample fault reason");
+        XMLFault fault = new XMLFault(XMLFaultCode.SENDER, reason);
+        msg.setXMLFault(fault);
+        
+        BlockFactory bf = (BlockFactory) FactoryRegistry.getFactory(SourceBlockFactory.class);
+        Block b = msg.getBodyBlock(null, bf);
+        
+        Source content = (Source) b.getBusinessObject(true);
+        byte[] bytes = _getBytes(content);
+        String faultContent = new String(bytes);
+        
+        System.out.println(">> fault content: " + faultContent); 
+        assertTrue(faultContent.indexOf("faultcode") > 0);
+        assertTrue(faultContent.indexOf("faultstring") > 0);
+    }
+    
+    private byte[] _getBytes(Source input) throws Exception {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer t = tf.newTransformer();
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        StreamResult output = new StreamResult(baos);
+        
+        t.transform(input, output);
+        
+        return baos.toByteArray(); 
+    }
 
 }
-

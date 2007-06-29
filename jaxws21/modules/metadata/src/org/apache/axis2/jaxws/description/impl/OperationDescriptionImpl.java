@@ -162,7 +162,9 @@ class OperationDescriptionImpl
     private Boolean webResultHeader;
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
-    private OperationDescription syncOperationDescription;
+    // For JAX-WS client async methods, this is the corresponding Sync method; for everything else,
+    // this is "this".
+    private OperationDescription syncOperationDescription = null;
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
@@ -176,6 +178,11 @@ class OperationDescriptionImpl
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
         this.operationQName = new QName("", getOperationName());
+        if (getEndpointInterfaceDescription().getEndpointDescription() != null) {
+            if (!getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription().isServerSide()) {
+                axisOperation = createClientAxisOperation();
+            }
+        }
     }
 
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
@@ -213,8 +220,44 @@ class OperationDescriptionImpl
 }
 
     /**
-     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must be
-     * created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the
+     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
+     * be created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the 
+     * ParamaterDescription is used to setup the AxisMessage correctly for use in SOAP Body-based
+     * dispatching on incoming DOC/LIT/BARE messages.
+     */
+    private AxisOperation createClientAxisOperation() {
+        AxisOperation newAxisOperation = null;
+        try {
+            if (isOneWay()) {
+                newAxisOperation =
+                        AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_OUT_ONLY);
+            } else {
+                newAxisOperation =
+                        AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_OUT_IN);
+            }
+            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+            //                                              ROBUST_IN_ONLY
+            //      Determine how these MEP's should be handled, if at all
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to build AxisOperation for OperationDescrition; caught exception.",
+                          e);
+            }
+            // TODO: NLS & RAS
+            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation",
+                                                           e);
+        }
+
+        newAxisOperation.setName(determineOperationQName(seiMethod));
+        
+        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().addOperation(newAxisOperation);
+        
+        return newAxisOperation;
+    }
+    
+    /**
+     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
+     * be created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the 
      * ParamaterDescription is used to setup the AxisMessage correctly for use in SOAP Body-based
      * dispatching on incoming DOC/LIT/BARE messages.
      */
@@ -390,21 +433,27 @@ class OperationDescriptionImpl
     void addToAxisService(AxisService axisService) {
         AxisOperation newAxisOperation = getAxisOperation();
         QName axisOpQName = newAxisOperation.getName();
-        if (axisService.getOperation(axisOpQName) == null) {
+        AxisOperation axisOperation = axisService.getOperation(axisOpQName);
+        if (axisOperation == null) {
             axisService.addOperation(newAxisOperation);
             // For a Doc/Lit/Bare operation, we also need to add the element mapping
-            if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
-                    && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
-                    && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle
-                    .BARE) {
-                AxisMessage axisMessage =
-                        newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                if (axisMessage != null) {
-                    QName elementQName = axisMessage.getElementQName();
-                    if (!DescriptionUtils.isEmpty(elementQName)) {
-                        axisService.addMessageElementQNameToOperationMapping(elementQName,
-                                                                             newAxisOperation);
-                    }
+        }
+        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
+                && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
+                && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle
+                .BARE) {
+            AxisMessage axisMessage =
+                    null;
+            if (axisOperation!=null) {
+                axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            } else {
+                axisMessage = newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            }
+            if (axisMessage != null) {
+                QName elementQName = axisMessage.getElementQName();
+                if (!DescriptionUtils.isEmpty(elementQName)) {
+                    axisService.addMessageElementQNameToOperationMapping(elementQName,
+                            newAxisOperation);
                 }
             }
         }
@@ -686,37 +735,46 @@ class OperationDescriptionImpl
         return webMethodOperationName;
     }
 
-    //Review:
-    //Adding method to get Sync operation's Operation Description
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.OperationDescription#getSyncOperation()
+     */
     public OperationDescription getSyncOperation() {
-        OperationDescription opDesc = this;
-        if (!isJAXWSAsyncClientMethod()) {
-            return this;
-        }
-        if (this.syncOperationDescription != null) {
-            return syncOperationDescription;
-        }
-        String webMethodAnnoName = getOperationName();
-        String javaMethodName = getJavaMethodName();
-        if (webMethodAnnoName != null && webMethodAnnoName.length() > 0 &&
-                webMethodAnnoName != javaMethodName) {
-            EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
-            if (eid != null) {
-                //searching for opDesc of sync operation.
-                OperationDescription[] ods = null;
-                ods = eid.getOperationForJavaMethod(webMethodAnnoName);
-                if (ods != null) {
-                    for (OperationDescription od : ods) {
-                        if (od.getJavaMethodName().equals(webMethodAnnoName)) {
-                            opDesc = od;
-                            break;
+
+        if (syncOperationDescription != null) {
+            // No need to do anything; the sync operation has already been set and will be
+            // returned below
+        } else if (!isJAXWSAsyncClientMethod()) {
+            // The current OpDesc is not an async operation.  Cache it, then return it below.
+            syncOperationDescription = this;
+        } else {
+            // We haven't found a sync opdesc for this operation yet, so try again.  See the 
+            // comments in the interface declaration for this method on why this might occur.
+            OperationDescription opDesc = null;
+            
+            String webMethodAnnoName = getOperationName();
+            String javaMethodName = getJavaMethodName();
+            if (webMethodAnnoName != null && webMethodAnnoName.length() > 0 &&
+                    webMethodAnnoName != javaMethodName) {
+                EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
+                if (eid != null) {
+                    //searching for opDesc of sync operation.
+                    OperationDescription[] ods = null;
+                    ods = eid.getOperationForJavaMethod(webMethodAnnoName);
+                    if (ods != null) {
+                        for (OperationDescription od : ods) {
+                            if (od.getJavaMethodName().equals(webMethodAnnoName)
+                                    && !od.isJAXWSAsyncClientMethod()) {
+                                opDesc = od;
+                                break;
+                            }
                         }
                     }
                 }
             }
+            // Note that opDesc might still be null
+            syncOperationDescription = opDesc;
         }
-        syncOperationDescription = opDesc;
-        return opDesc;
+        return syncOperationDescription;
     }
 
     public String getAction() {

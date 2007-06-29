@@ -164,14 +164,9 @@ public abstract class AxisOperation extends AxisDescription
                 service.addModuleOperations(axisModule);
             }
         }
-
         AxisConfiguration axisConfig = getAxisConfiguration();
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
         phaseResolver.engageModuleToOperation(this, axisModule);
-        Module module = axisModule.getModule();
-        if (module != null) {
-            module.engageNotify(this);
-        }
     }
 
     protected void onDisengage(AxisModule module) {
@@ -514,6 +509,7 @@ public abstract class AxisOperation extends AxisDescription
 
     public void setFaultMessages(AxisMessage faultMessage) {
         faultMessages.add(faultMessage);
+        addFaultAction(faultMessage.getName(),"urn:" + faultMessage.getName());
     }
 
     public void setSoapAction(String soapAction) {

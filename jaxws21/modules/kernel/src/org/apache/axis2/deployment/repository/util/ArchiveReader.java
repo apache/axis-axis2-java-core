@@ -315,13 +315,13 @@ public class ArchiveReader implements DeploymentConstants {
                             if (WSDL2Constants.WSDL_NAMESPACE
                                     .equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
-                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(
-                                        new ByteArrayInputStream(out.toByteArray()), null, null);
+                                wsdlToAxisServiceBuilder = new WSDL20ToAllAxisServicesBuilder(
+                                        new ByteArrayInputStream(out.toByteArray()));
                                 wsdlToAxisServiceBuilder.setBaseUri(entryName);
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getNamespaceURI())) {
-                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(
-                                        new ByteArrayInputStream(out.toByteArray()), null, null);
+                                wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(
+                                        new ByteArrayInputStream(out.toByteArray()));
                             } else {
                                 throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }

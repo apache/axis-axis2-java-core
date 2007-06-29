@@ -2,7 +2,7 @@ package org.tempuri.complex.data.arrays;
 
 public class ArrayOfanyType {
 
-    protected Object[] anyType;
+    private Object[] anyType;
 
     public Object[] getAnyType() {
         if (anyType == null) {
@@ -10,5 +10,6 @@ public class ArrayOfanyType {
         }
         return this.anyType;
     }
+
 
 }

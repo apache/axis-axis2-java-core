@@ -336,8 +336,8 @@ class EndpointDescriptionImpl
 
         } else if (composite.getWsdlDefinition() == null) {
             //This is a SOAP12 binding that does not contain a WSDL definition, log a WARNING
-            log.warn("This implementation does not contain a WSDL definition and uses a SOAP 1.2 based binding. " +
-                    "Per JAXWS spec. - a WSDL definition cannot be generated for this implementation. Name: "
+            log.warn("This implementation does not contain a WSDL definition and is not a SOAP 1.1 based binding. "
+                    + "Per JAXWS spec. - a WSDL definition cannot be generated for this implementation. Name: "
                     + composite.getClassName());
         }
 
@@ -547,7 +547,15 @@ class EndpointDescriptionImpl
                 }
             }
         } else {
-            //TODO: process a WebServiceProvider
+            if (log.isDebugEnabled()) {
+                log.debug("WebServiceProvider without WSDL encountered");
+            }
+            // REVIEW: Currently this is only supported for HTTP Bindings; SOAPBindings
+            //     for providers currently require that there be WSDL.
+            String bindingType = getBindingType();
+            if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+                endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(composite, this);
+            }
         }
     }
 

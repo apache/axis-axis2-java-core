@@ -47,6 +47,9 @@ import java.util.ArrayList;
 
 public class EnginePausingTest extends TestCase {
 
+    public static final String FAULT_IDX = "FaultIndex";
+    public static final String FAULT_REASON = "I faulted because I was told to!";
+
     private QName serviceName = new QName("NullService");
     private QName operationName = new QName("DummyOp");
     private ConfigurationContext configContext;
@@ -182,21 +185,36 @@ public class EnginePausingTest extends TestCase {
     public void testReceive() throws Exception {
         mc.setTo(new EndpointReference("/axis2/services/NullService"));
         mc.setWSAAction("DummyOp");
-        AxisEngine engine = new AxisEngine(configContext);
-        engine.receive(mc);
+        AxisEngine.receive(mc);
         assertEquals(14, executedHandlers.size());
         for (int i = 0; i < 14; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
                          i + 1);
         }
-        engine.resume(mc);
+        AxisEngine.resume(mc);
 
         assertEquals(27, executedHandlers.size());
         for (int i = 15; i < 27; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
                          i + 1);
         }
+    }
 
+    public void testFlowComplete() throws Exception {
+        mc.setTo(new EndpointReference("/axis2/services/NullService"));
+        mc.setWSAAction("DummyOp");
+
+        // Fault on Handler #5
+        mc.setProperty(FAULT_IDX, new Integer(5));
+
+        try {
+            AxisEngine.receive(mc);
+        } catch (AxisFault axisFault) {
+            // Expected this fault.
+            assertEquals(4, executedHandlers.size());
+            return;
+        }
+        fail("Expected fault did not occur");
     }
 
     public class TempHandler extends AbstractHandler {
@@ -219,11 +237,27 @@ public class EnginePausingTest extends TestCase {
                 msgContext.pause();
                 pause = false;
                 return InvocationResponse.SUSPEND;
-            } else {
-                executedHandlers.add(index);
-                return InvocationResponse.CONTINUE;
             }
+
+            Integer faultIndex = (Integer)msgContext.getProperty(FAULT_IDX);
+            if (faultIndex != null && faultIndex.equals(index)) {
+                throw new AxisFault(FAULT_REASON);
+            }
+
+            executedHandlers.add(index);
+            return InvocationResponse.CONTINUE;
         }
 
+
+        public void flowComplete(MessageContext msgContext) {
+            if (msgContext.getProperty(FAULT_IDX) != null) {
+                // If we're here on an invocation where someone was supposed to fault...
+                AxisFault fault = (AxisFault)msgContext.getFailureReason();
+                assertNotNull("No fault!", fault);
+
+                // Make sure it's the right fault.
+                assertEquals(FAULT_REASON, fault.getReason());
+            }
+        }
     }
 }

@@ -324,6 +324,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private int currentPhaseIndex;
 
     /**
+     * If we're processing this MC due to flowComplete() being called in the case
+     * of an Exception, this will hold the Exception which caused the problem.
+     */
+    private Exception failureReason;
+
+    /**
      * @serial SOAP envelope
      */
     private SOAPEnvelope envelope;
@@ -849,18 +855,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     /**
-     * Set a property for this message context.
-     *
-     * @param name  name of the property
-     * @param value the value to set
-     */
-    public void setProperty(String name, Object value) {
-        // we override this method here to make sure the properties are set on
-        // options rather than in the inherited property bag.
-        options.setProperty(name, value);
-    }
-
-    /**
      * Retrieves a property value. The order of search is as follows: search in
      * my own options and then look in my context hierarchy. Since its possible
      * that the entire hierarchy is not present, I will start at whatever level
@@ -875,7 +869,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
         // search in my own options
-        Object obj = options.getProperty(name);
+        Object obj = super.getProperty(name);
+        if (obj != null) {
+            return obj;
+        }
+
+        obj = options.getProperty(name);
         if (obj != null) {
             return obj;
         }
@@ -2740,7 +2739,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        Map tmpMap = getProperties();
+        Map tmpMap = properties;
 
         HashMap tmpHashMap = null;
 
@@ -4279,5 +4278,23 @@ public class MessageContext extends AbstractContext implements Externalizable {
         } catch (Exception e) {
             return false;
         }
+    }
+
+
+    /**
+     * Obtain the Exception which caused the processing chain to halt.
+     * @return null, or an Exception.
+     */
+    public Exception getFailureReason() {
+        return failureReason;
+    }
+
+    /**
+     * Set the failure reason.  Only AxisEngine should ever do this.
+     *
+     * @param failureReason an Exception which caused processing to halt.
+     */
+    public void setFailureReason(Exception failureReason) {
+        this.failureReason = failureReason;
     }
 }

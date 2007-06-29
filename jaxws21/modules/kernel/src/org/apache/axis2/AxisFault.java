@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -387,8 +388,12 @@ public class AxisFault extends RemoteException {
     public static AxisFault makeFault(Throwable e) {
         if (e instanceof InvocationTargetException) {
             return makeFault(((InvocationTargetException) e).getTargetException());
+        } else if (e instanceof UndeclaredThrowableException) {
+            Throwable t = ((UndeclaredThrowableException) e).getCause();
+            if (t instanceof Exception) {
+                e = (Exception) t;
+            }
         }
-
         if (e instanceof AxisFault) {
             return (AxisFault) e;
         }

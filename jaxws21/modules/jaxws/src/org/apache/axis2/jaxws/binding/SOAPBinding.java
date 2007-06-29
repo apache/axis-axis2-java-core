@@ -18,12 +18,15 @@
  */
 package org.apache.axis2.jaxws.binding;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
@@ -98,7 +101,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     public Set<String> getRoles() {
         // do not allow null roles, per the JAX-WS CTS
         if (roles == null)
-            roles = new HashSet<String>();
+            roles = addDefaultRoles(null);
         return roles;
     }
 
@@ -168,7 +171,52 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
      * @see javax.xml.ws.soap.SOAPBinding#setRoles(java.util.Set)
      */
     public void setRoles(Set<String> set) {
-        roles = set;
+        // Validate the values in the set
+        if (set != null && !set.isEmpty()) {
+            // Throw an exception for setting a role of "none"
+            // Per JAXWS 2.0 Sec 10.1.1.1 SOAP Roles, page 116:
+            if (set.contains(SOAPConstants.URI_SOAP_1_2_ROLE_NONE)) {
+                // TODO: RAS/NLS
+                throw ExceptionFactory.makeWebServiceException("The role of 'none' is not allowed.");
+            }
+        }
+        
+        roles = addDefaultRoles(set);
+    }
+    private Set<String> addDefaultRoles(Set<String> set) {
+        
+        Set<String> returnSet = set;
+        if (returnSet == null) {
+            returnSet = new HashSet<String>();
+        }
+        
+        // Make sure the defaults for the binding type are in the set
+        // and add them if not.  Note that for both SOAP11 and SOAP12, the role of ultimate
+        // reciever can be indicated by the omission of the role attribute.
+        // REVIEW: This is WRONG because the bindingID from the WSDL is not the same value as
+        //   SOAPBinding annotation constants.  There are other places in the code that have
+        //   this same issue I am sure.
+        if (SOAPBinding.SOAP12HTTP_BINDING.equals(bindingId)
+                || SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(bindingId)) {
+            if (returnSet.isEmpty() || !returnSet.contains(SOAPConstants.URI_SOAP_1_2_ROLE_NEXT)) {
+                returnSet.add(SOAPConstants.URI_SOAP_1_2_ROLE_NEXT);
+            }
+            
+//        } else if (SOAPBinding.SOAP11HTTP_BINDING.equals(bindingId)
+//                || SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(bindingId)) {
+        } else {
+            if (returnSet.isEmpty() || !returnSet.contains(SOAPConstants.URI_SOAP_ACTOR_NEXT)) {
+                returnSet.add(SOAPConstants.URI_SOAP_ACTOR_NEXT);
+            }
+        }
+//        else {
+//            // Invalid binding
+//            // TODO: RAS / NLS
+//            if (log.isDebugEnabled()) {
+//                log.debug("Invalid binding type set on the binding: " + bindingId);
+//            }
+//        }
+        return returnSet;
     }
 
 }

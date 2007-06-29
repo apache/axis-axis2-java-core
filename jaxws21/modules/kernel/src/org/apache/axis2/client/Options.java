@@ -949,7 +949,7 @@ public class Options implements Externalizable {
 
             if ((!isTransportsEqual || !isATwoWaytransport)) {
                 throw new AxisFault(Messages
-                        .getMessage("useSeparateListenerLimited"));
+                        .getMessage("useSeparateListenerLimited", senderTransport, listenerTransport));
             }
         } else {
             setUseSeparateListener(useSeparateListener);

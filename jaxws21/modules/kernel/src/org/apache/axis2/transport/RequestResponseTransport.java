@@ -79,6 +79,18 @@ public interface RequestResponseTransport {
      * @return
      */
     public RequestResponseTransportStatus getStatus();
+    
+    /**
+     * This will indicate whether or not the response has already been written
+     */
+    public boolean isResponseWritten();
+    
+    /**
+     * This is used to set the response written flag on the RequestResponseTransport 
+     * instance
+     */
+    public void setResponseWritten(boolean responseWritten);
+    
 
     /**
      * Used to give the current status of the RequestResponseTransport object.

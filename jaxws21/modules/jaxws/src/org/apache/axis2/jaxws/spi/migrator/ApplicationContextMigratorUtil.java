@@ -63,19 +63,22 @@ public class ApplicationContextMigratorUtil {
             configurationContext.setProperty(contextMigratorListID, migratorList);
         }
 
-        // Check to make sure we haven't already added this migrator to the list.
-        ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
-        while (itr.hasNext()) {
-            ApplicationContextMigrator m = itr.next();
-            if (m.getClass().equals(migrator.getClass())) {
-                return;
+        synchronized (migratorList) {
+            // Check to make sure we haven't already added this migrator to the
+            // list.
+            ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+            while (itr.hasNext()) {
+                ApplicationContextMigrator m = itr.next();
+                if (m.getClass().equals(migrator.getClass())) {
+                    return;
+                }
             }
+
+            if (log.isDebugEnabled()) {
+                log.debug("Adding ApplicationContextMigrator: " + migrator.getClass().getName());
+            }
+            migratorList.add(migrator);
         }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Adding ApplicationContextMigrator: " + migrator.getClass().getName());
-        }
-        migratorList.add(migrator);
     }
 
     /**
@@ -93,18 +96,17 @@ public class ApplicationContextMigratorUtil {
         ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
         if (sd != null) {
             ConfigurationContext configCtx = sd.getAxisConfigContext();
-            List<ApplicationContextMigrator> migratorList =
-                    (List<ApplicationContextMigrator>)configCtx.getProperty(contextMigratorListID);
-
-            if (migratorList != null) {
-                ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
-                while (itr.hasNext()) {
-                    ApplicationContextMigrator cpm = itr.next();
-                    if (log.isDebugEnabled()) {
-                        log.debug("migrator: " + cpm.getClass().getName() +
-                                ".migratePropertiesToMessageContext");
+            List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>)configCtx.getProperty(contextMigratorListID);
+            synchronized(migratorList){
+                if (migratorList != null) {
+                    ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+                    while (itr.hasNext()) {
+                        ApplicationContextMigrator cpm = itr.next();
+                        if (log.isDebugEnabled()) {
+                            log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesToMessageContext");
+                        }
+                        cpm.migratePropertiesToMessageContext(new ApplicationPropertyMapReader(requestContext, messageContext.getMEPContext()), messageContext);
                     }
-                    cpm.migratePropertiesToMessageContext(requestContext, messageContext);
                 }
             }
         }
@@ -128,15 +130,16 @@ public class ApplicationContextMigratorUtil {
             List<ApplicationContextMigrator> migratorList =
                     (List<ApplicationContextMigrator>)configCtx.getProperty(contextMigratorListID);
 
-            if (migratorList != null) {
-                ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
-                while (itr.hasNext()) {
-                    ApplicationContextMigrator cpm = itr.next();
-                    if (log.isDebugEnabled()) {
-                        log.debug("migrator: " + cpm.getClass().getName() +
-                                ".migratePropertiesFromMessageContext");
+            synchronized(migratorList){
+                if (migratorList != null) {
+                    ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+                    while (itr.hasNext()) {
+                        ApplicationContextMigrator cpm = itr.next();
+                        if (log.isDebugEnabled()) {
+                            log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesFromMessageContext");
+                        }
+                        cpm.migratePropertiesFromMessageContext(new ApplicationPropertyMapWriter(responseContext, messageContext.getMEPContext()), messageContext);
                     }
-                    cpm.migratePropertiesFromMessageContext(new ApplicationPropertyMapWriter(responseContext, messageContext.getMEPContext()), messageContext);
                 }
             }
         }

@@ -18,7 +18,9 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -30,6 +32,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -124,10 +127,52 @@ class EndpointInterfaceDescriptionImpl
             }
         }
     }
+    /**
+     * Construct as Provider-based endpoint which does not have specific WSDL operations.  Since there
+     * are no specific WSDL operations in this case, there will be a single generic operation that
+     * will accept any incoming operation.
+     * 
+     * @param dbc
+     * @param parent
+     */
+    EndpointInterfaceDescriptionImpl(DescriptionBuilderComposite dbc, 
+                                     EndpointDescriptionImpl parent) {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating a EndpointInterfaceDescription for a generic WSDL-less provider");
+        }
+        parentEndpointDescription = parent;
+        this.dbc = dbc;
+        
+        // Construct the generic provider AxisOperation to use then construct
+        // an OperactionDescription for it.
+        AxisOperation genericProviderAxisOp = null;
+        try {
+            genericProviderAxisOp = 
+                AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
+        } catch (AxisFault e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to build AxisOperation for generic Provider; caught exception.", e);
+            }
+            // TODO: NLS & RAS
+            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation",
+                                                           e);
+        }
+        
+        genericProviderAxisOp.setName(new QName(JAXWS_NOWSDL_PROVIDER_OPERATION_NAME));
+        OperationDescription opDesc = new OperationDescriptionImpl(genericProviderAxisOp, this);
+        
+        addOperation(opDesc);
+        AxisService axisService = getEndpointDescription().getAxisService();
+        axisService.addOperation(genericProviderAxisOp);
+    }
 
     /**
-     * Build an EndpointInterfaceDescription from a DescriptionBuilderComposite
-     *
+     * Build an EndpointInterfaceDescription from a DescriptionBuilderComposite.  This EID has
+     * WSDL operations associated with it.  It could represent an SEI-based endpoint built from
+     * WSDL or annotations, OR it could represent a Provider-based enpoint built from WSDL.  It will
+     * not represent a Provider-based endpoint built without WSDL (which does not know about
+     * specific WSDL operations). For that type of EID, see:
+     * @see  #EndpointInterfaceDescriptionImpl(DescriptionBuilderComposite dbc, EndpointDescriptionImpl parent)
      * @param dbc
      * @param isClass
      * @param parent

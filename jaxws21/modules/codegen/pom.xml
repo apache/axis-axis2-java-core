@@ -65,5 +65,37 @@
 				</excludes>
 			</resource>
 		</resources>
-	</build>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>../adb-codegen/src</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>../xmlbeans/src</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>../jaxbri/src</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>../jibx/src</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
 </project>

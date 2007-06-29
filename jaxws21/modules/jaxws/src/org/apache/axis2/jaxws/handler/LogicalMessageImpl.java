@@ -20,9 +20,15 @@ package org.apache.axis2.jaxws.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -30,11 +36,17 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.message.Block;
@@ -42,11 +54,17 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class LogicalMessageImpl implements LogicalMessage {
 
+    private static final Log log = LogFactory.getLog(LogicalMessageImpl.class);
 
     private MEPContext mepCtx;
 
@@ -69,6 +87,10 @@ public class LogicalMessageImpl implements LogicalMessage {
      * @see javax.xml.ws.LogicalMessage#getPayload(javax.xml.bind.JAXBContext)
      */
     public Object getPayload(JAXBContext context) {
+        if (log.isDebugEnabled()) {
+            log.debug("Retreiving the message payload as a Source object");
+        }
+        
         BlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
         JAXBBlockContext jbc = new JAXBBlockContext(context);
         Object payload = _getPayload(jbc, factory);
@@ -79,17 +101,30 @@ public class LogicalMessageImpl implements LogicalMessage {
         Object payload = null;
         try {
             Block block = mepCtx.getMessageObject().getBodyBlock(context, factory);
-            Object content = block.getBusinessObject(true);
-            
-            // For now, we have to create a new Block from the original content
-            // and set that back on the message.  The Block is not currently
-            // able to create a copy of itself just yet.
-            Payloads payloads = createPayloads(content);
-            
-            Block cacheBlock = factory.createFrom(payloads.CACHE_PAYLOAD, context, block.getQName());
-            mepCtx.getMessageObject().setBodyBlock(cacheBlock);
-            
-            payload = payloads.HANDLER_PAYLOAD;
+            if (block != null) {
+               if (log.isDebugEnabled()) {
+                       log.debug("A message payload was found.");
+               }
+               Object content = block.getBusinessObject(true);
+               
+               // For now, we have to create a new Block from the original content
+               // and set that back on the message.  The Block is not currently
+               // able to create a copy of itself just yet.
+               Payloads payloads = createPayloads(content);
+               _setPayload(payloads.CACHE_PAYLOAD, context, factory);
+  
+               payload = payloads.HANDLER_PAYLOAD;             
+            }
+            else {
+                // If the block was null, then let's return an empty
+                // Source object rather than a null.
+                if (log.isDebugEnabled()) {
+                    log.debug("There was no payload to be found.  Returning an empty Source object");
+                }
+                byte[] bytes = new byte[0];
+                payload = new StreamSource(new ByteArrayInputStream(bytes));
+           }
+   
         } catch (XMLStreamException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -120,7 +155,35 @@ public class LogicalMessageImpl implements LogicalMessage {
         Block block = factory.createFrom(object, context, null);
         
         if (mepCtx.getMessageObject() != null) {
-            mepCtx.getMessageObject().setBodyBlock(block);
+            if (!mepCtx.getMessageObject().isFault()) {
+                mepCtx.getMessageObject().setBodyBlock(block);
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("The payload contains a fault");
+                }
+                
+                mepCtx.getMessageObject().setBodyBlock(block);
+                
+                // If the payload is a fault, then we can't set it back on the message
+                // as a block.  Blocks are OMSourcedElements, and faults cannot be OMSourcedElements.  
+                try {
+                    SOAPEnvelope env = (SOAPEnvelope) mepCtx.getMessageObject().getAsOMElement();
+                    String content = env.toStringWithConsume();
+                   
+                    MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+                    StringReader sr = new StringReader(content);
+                    XMLStreamReader stream = StAXUtils.createXMLStreamReader(sr);
+                    Message msg = mf.createFrom(stream, mepCtx.getMessageObject().getProtocol());
+                   
+                    // This is required for proper serialization of the OM structure.
+                    msg.getAsOMElement().build();
+                    
+                    mepCtx.setMessage(msg);
+                } catch (Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
         }
     }
 
@@ -149,7 +212,24 @@ public class LogicalMessageImpl implements LogicalMessage {
                 // we need to create another one with the original content
                 // and assign it back.
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                payloads.HANDLER_PAYLOAD = new StreamSource(bais);
+                try {
+                    // The Source object returned to the handler should be a
+                    // DOMSource so that the handler programmer can read the data
+                    // multiple times and (as opposed to using a StreamSource) and
+                    // they can more easily access the data in DOM form.
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setNamespaceAware(true);
+                    
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document dom = db.parse(bais);
+                    payloads.HANDLER_PAYLOAD = new DOMSource(dom);
+                } catch (ParserConfigurationException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                } catch (IOException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                } catch (SAXException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
                         
                 // We need a different byte[] for the cache so that we're not just
                 // building two Source objects that point to the same array.

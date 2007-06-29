@@ -32,9 +32,7 @@ import org.apache.axis2.description.Parameter;
 public interface Handler {
 
     /**
-     * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion
-     * (http://marc.theaimsgroup.com/?l=axis-dev&m=114504084929285&w=2) implementation of this method is deferred.
-     * Note : This method will not be automatically called, from Axis2 engine, until this is fully implemented.
+     * @deprecated This method will be going away after the 1.3 release, it was never used.
      */
     public void cleanup();
 
@@ -72,7 +70,9 @@ public interface Handler {
      * invoke(...) method called during the processing of the message, once
      * the message processing has completed.  During execution of the
      * flowComplete's, handlers are invoked in the opposite order that they
-     * were invoked originally.
+     * were invoked originally.  Note that implementations SHOULD check
+     * msgContext.getFailureReason() to see if this is an error or a normal
+     * completion.
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.

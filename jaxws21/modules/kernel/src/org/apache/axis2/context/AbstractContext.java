@@ -129,9 +129,12 @@ public abstract class AbstractContext {
     }
 
     private synchronized void addPropertyDifference(String key) {
+        ConfigurationContext cc = getRootContext();
+        if (cc == null) return;
+
         // Add the property differences only if Context replication is enabled,
         // and there are members in the cluster
-        ClusterManager clusterManager = getRootContext().getAxisConfiguration().getClusterManager();
+        ClusterManager clusterManager = cc.getAxisConfiguration().getClusterManager();
         if (clusterManager != null &&
             clusterManager.getContextManager() != null) {
             propertyDifferences.put(key, new PropertyDifference(key, false));

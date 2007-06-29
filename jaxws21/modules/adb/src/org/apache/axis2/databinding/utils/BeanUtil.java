@@ -64,12 +64,12 @@ public class BeanUtil {
      * To Serilize Bean object this method is used, this will create an object array using given
      * bean object
      *
-     * @param beanObject
-     * @param beanName
      */
     public static XMLStreamReader getPullParser(Object beanObject,
                                                 QName beanName,
-                                                TypeTable typeTable, boolean qualified) {
+                                                TypeTable typeTable,
+                                                boolean qualified,
+                                                boolean processingDocLitBare) {
         try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
@@ -156,13 +156,7 @@ public class BeanUtil {
                         throw new AxisFault("can not find read method for : "  + propDesc.getName());
                     }
 
-                    if (elemntNameSpace != null) {
-                        object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                             propDesc.getName(), elemntNameSpace.getPrefix()));
-                    } else {
-                        object.add(new QName(beanName.getNamespaceURI(),
-                                             propDesc.getName(), beanName.getPrefix()));
-                    }
+                    addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
@@ -179,25 +173,11 @@ public class BeanUtil {
                             int i1 = Array.getLength(value);
                             for (int j = 0; j < i1; j++) {
                                 Object o = Array.get(value, j);
-                                if (elemntNameSpace != null) {
-                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                         propDesc.getName(),
-                                                         elemntNameSpace.getPrefix()));
-                                } else {
-                                    object.add(new QName(beanName.getNamespaceURI(),
-                                                         propDesc.getName(), beanName.getPrefix()));
-                                }
+                                addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                                 object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                             }
                         } else {
-                            if (elemntNameSpace != null) {
-                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                     propDesc.getName(),
-                                                     elemntNameSpace.getPrefix()));
-                            } else {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                                     propDesc.getName(), beanName.getPrefix()));
-                            }
+                            addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                             object.add(value);
                         }
 
@@ -207,25 +187,11 @@ public class BeanUtil {
                         if (value != null) {
                             for (int j = 0; j < value.length; j++) {
                                 Object o = value[j];
-                                if (elemntNameSpace != null) {
-                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                         propDesc.getName(),
-                                                         elemntNameSpace.getPrefix()));
-                                } else {
-                                    object.add(new QName(beanName.getNamespaceURI(),
-                                                         propDesc.getName(), beanName.getPrefix()));
-                                }
+                                addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                                 object.add(o);
                             }
                         } else {
-                            if (elemntNameSpace != null) {
-                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                     propDesc.getName(),
-                                                     elemntNameSpace.getPrefix()));
-                            } else {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                                     propDesc.getName(), beanName.getPrefix()));
-                            }
+                            addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                             object.add(value);
                         }
                     }
@@ -240,46 +206,20 @@ public class BeanUtil {
                         for (Iterator j = objList.iterator(); j.hasNext();) {
                             Object o = j.next();
                             if (SimpleTypeMapper.isSimpleType(o)) {
-                                if (elemntNameSpace != null) {
-                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                         propDesc.getName(),
-                                                         elemntNameSpace.getPrefix()));
-                                } else {
-                                    object.add(new QName(beanName.getNamespaceURI(),
-                                                         propDesc.getName(), beanName.getPrefix()));
-                                }
+                                addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                                 object.add(o);
                             } else {
-                                if (elemntNameSpace != null) {
-                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                         propDesc.getName(),
-                                                         elemntNameSpace.getPrefix()));
-                                } else {
-                                    object.add(new QName(beanName.getNamespaceURI(),
-                                                         propDesc.getName(), beanName.getPrefix()));
-                                }
+                                addTypeQname(elemntNameSpace, object, propDesc, beanName ,processingDocLitBare);
                                 object.add(o);
                             }
                         }
 
                     } else {
-                        if (elemntNameSpace != null) {
-                            object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                                 propDesc.getName(), elemntNameSpace.getPrefix()));
-                        } else {
-                            object.add(new QName(beanName.getNamespaceURI(),
-                                                 propDesc.getName(), beanName.getPrefix()));
-                        }
+                        addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                         object.add(value);
                     }
                 } else {
-                    if (elemntNameSpace != null) {
-                        object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                             propDesc.getName(), elemntNameSpace.getPrefix()));
-                    } else {
-                        object.add(new QName(beanName.getNamespaceURI(),
-                                             propDesc.getName(), beanName.getPrefix()));
-                    }
+                    addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                                                                    null);
                     object.add(value);
@@ -306,6 +246,25 @@ public class BeanUtil {
         }
     }
 
+    private static void addTypeQname(QName elemntNameSpace,
+                                     ArrayList object,
+                                     PropertyDescriptor propDesc,
+                                     QName beanName,
+                                     boolean processingDocLitBare) {
+        if (elemntNameSpace != null) {
+            object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                    propDesc.getName(), elemntNameSpace.getPrefix()));
+        } else {
+            if(processingDocLitBare){
+                object.add(new QName(propDesc.getName()));
+            } else {
+                object.add(new QName(beanName.getNamespaceURI(),
+                        propDesc.getName(), beanName.getPrefix()));
+            }
+
+        }
+    }
+
     /**
      * to get the pull parser for a given bean object , generate the wrpper element using class
      * name
@@ -318,7 +277,7 @@ public class BeanUtil {
             className = className.substring(className.lastIndexOf('.') + 1,
                                             className.length());
         }
-        return getPullParser(beanObject, new QName(className), null, false);
+        return getPullParser(beanObject, new QName(className), null, false, false);
     }
 
     public static Object deserialize(Class beanClass,
@@ -685,6 +644,11 @@ public class BeanUtil {
         }
     }
 
+
+
+
+
+
     public static OMElement getOMElement(QName opName,
                                          Object [] args,
                                          QName partName,
@@ -783,8 +747,8 @@ public class BeanUtil {
     }
 
     /** @deprecated Please use getUniquePrefix */
-    public static String getUniquePrifix() {
-        return "s" + nsCount++;
+    public static synchronized String  getUniquePrifix() {
+        return getUniquePrefix();
     }
 
     /**
@@ -792,7 +756,10 @@ public class BeanUtil {
      *
      * @return unique prefix
      */
-    public static String getUniquePrefix() {
+    public static synchronized String getUniquePrefix() {
+        if (nsCount > 1000){
+            nsCount = 1;
+        }
         return "s" + nsCount++;
     }
 

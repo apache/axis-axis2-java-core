@@ -98,15 +98,10 @@ public class AxisServiceGroup extends AxisDescription {
                 } else {
                     throw new AxisFault(Messages.getMessage("modulenotavailble"));
                 }
-                Module moduleImpl = axisModule.getModule();
-                if (moduleImpl != null) {
-                    // notyfying module for service engagement
-                    moduleImpl.engageNotify(service);
-                }
                 service.engageModule(axisModule);
             }
-        }
 
+        }
         service.setLastupdate();
         addChild(service);
         if (axisConfig != null) {

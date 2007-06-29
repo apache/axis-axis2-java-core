@@ -319,23 +319,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			Object jbo = b;
                         
 			if (isList || (type!=null && type.isArray())) {
-                            if(log.isDebugEnabled()){
-                                log.debug("marshalling type which is a List or Array");
-                            }
-                            //We conver to xsdListString only if the type is not known
-                            // to the context. In case a jaxbcontext is created from package
-                            // the array types or list are not know to the context.
-                            if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH){
-				QName qName = XMLRootElementUtil
-						.getXmlRootElementQNameFromObject(b);
-				String text = XSDListUtils
-						.toXSDListString(getTypeEnabledObject(b));
-				jbo = new JAXBElement(qName, String.class, text);
-                            }
-                            else if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY){
-                                //do nothing common array types should be know to the jaxbcontext.
-                                //so do not use xsdListString conversion.
-                            }
+				if(log.isDebugEnabled()){
+					log.debug("marshalling type which is a List or Array");
+				}
+				//We conver to xsdListString only if the type is not known
+				// to the context. In case a jaxbcontext is created from package
+				// the array types or list are not know to the context.
+				if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH){
+					QName qName = XMLRootElementUtil
+					.getXmlRootElementQNameFromObject(b);
+					String text = XSDListUtils
+					.toXSDListString(getTypeEnabledObject(b));
+					jbo = new JAXBElement(qName, String.class, text);
+				}
+				else if(ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY){
+					//do nothing common array types should be know to the jaxbcontext.
+					//so do not use xsdListString conversion.
+				}
 			}
 			
 			// When JAXBContext is created using a context path, it will not include Enum classes

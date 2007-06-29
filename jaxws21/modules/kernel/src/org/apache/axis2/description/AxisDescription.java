@@ -108,10 +108,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public boolean isParameterTrue(String name) {
         Parameter param = getParameter(name);
-        if (param == null) {
-            return false;
-        }
-        return JavaUtils.isTrue(param.getValue());
+        return param != null && JavaUtils.isTrue(param.getValue());
     }
 
     public ArrayList getParameters() {
@@ -431,16 +428,22 @@ public abstract class AxisDescription implements ParameterInclude,
             String existing = ((AxisModule)iterator.next()).getName();
             if (!Utils.checkVersion(moduleName, existing)) {
                 throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
-                                                        getClass().getName(),
-                                                        moduleName,
-                                                        existing));
+                        getClass().getName(),
+                        moduleName,
+                        existing));
             }
+        }
+
+        // Let the Module know it's being engaged.  If it's not happy about it, it can throw.
+        Module module = axisModule.getModule();
+        if (module != null) {
+            module.engageNotify(this);
         }
 
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
-            engagedModules.put(axisModule.getName(), axisModule);
+        engagedModules.put(axisModule.getName(), axisModule);
     }
 
     protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
@@ -460,10 +463,7 @@ public abstract class AxisDescription implements ParameterInclude,
      * TODO: Handle versions?  isEngaged("addressing") should be true even for versioned modulename...
      */
     public boolean isEngaged(String moduleName) {
-        if (engagedModules != null) {
-            return engagedModules.keySet().contains(moduleName);
-        }
-        return false;
+        return engagedModules != null && engagedModules.keySet().contains(moduleName);
     }
 
     public void disengageModule(AxisModule module) throws AxisFault {

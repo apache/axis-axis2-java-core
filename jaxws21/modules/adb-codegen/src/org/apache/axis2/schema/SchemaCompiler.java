@@ -91,8 +91,6 @@ public class SchemaCompiler {
     public static final String USE_REQUIRED = "required";
     public static final String USE_NONE = "none";
 
-    private static int typeCounter = 0;
-
     /**
      * @return the processes element map
      *         includes the Qname of the element as the key and a
@@ -724,6 +722,11 @@ public class SchemaCompiler {
     private XmlSchema resolveParentSchema(QName schemaTypeName, XmlSchema currentSchema)
             throws SchemaCompilationException {
         String targetNamespace = schemaTypeName.getNamespaceURI();
+
+        // if the current schema has the same namespace we use it
+        if (currentSchema.getTargetNamespace().equals(targetNamespace)){
+            return currentSchema;
+        }
         Object loadedSchema = loadedSchemaMap.get(targetNamespace);
         if (loadedSchema != null) {
             return (XmlSchema) loadedSchema;
@@ -745,34 +748,12 @@ public class SchemaCompiler {
      */
     private QName generateTypeQName(QName referenceEltQName, XmlSchema parentSchema) {
         QName generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
-                referenceEltQName.getLocalPart() + getNextTypeSuffix());
+                referenceEltQName.getLocalPart() + getNextTypeSuffix(referenceEltQName.getLocalPart()));
         while (parentSchema.getTypeByName(generatedTypeName) != null) {
             generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
-                    referenceEltQName.getLocalPart() + getNextTypeSuffix());
+                    referenceEltQName.getLocalPart() + getNextTypeSuffix(referenceEltQName.getLocalPart()));
         }
         return generatedTypeName;
-    }
-
-    /**
-     * Generate a unique attribute Qname using the ref name
-     *
-     * @param attrRefName
-     * @param parentSchema
-     * @return Returns the generated attribute name
-     */
-    private QName generateAttributeQName(QName attrRefName, XmlSchema parentSchema) {
-
-        if (typeCounter == Integer.MAX_VALUE) {
-            typeCounter = 0;
-        }
-        QName generatedAttrName = new QName(attrRefName.getNamespaceURI(),
-                attrRefName.getLocalPart() + typeCounter++);
-
-        while (parentSchema.getTypeByName(generatedAttrName) != null) {
-            generatedAttrName = new QName(attrRefName.getNamespaceURI(),
-                    attrRefName.getLocalPart() + typeCounter++);
-        }
-        return generatedAttrName;
     }
 
     /**
@@ -1036,7 +1017,7 @@ public class SchemaCompiler {
            if (xmlSchemaAttributeGroup != null){
                processAttributes(xmlSchemaAttributeGroup.getAttributes(),metaInfHolder,parentSchema);
            } else {
-               throw new SchemaCompilationException("Can not find an attribute group for group reference"
+               throw new SchemaCompilationException("Can not find an attribute group for group reference "
                        + attributeGroupRefName.getLocalPart());
            }
         } else {
@@ -1690,7 +1671,7 @@ public class SchemaCompiler {
                             schemaTypeQName = attributeSimpleType.getQName();
                         } else {
                             schemaTypeQName = new QName(parentSchema.getTargetNamespace(),
-                                    attributeQName.getLocalPart() + getNextTypeSuffix());
+                                    attributeQName.getLocalPart() + getNextTypeSuffix(attributeQName.getLocalPart()));
 
                         }
                     }
@@ -1838,6 +1819,38 @@ public class SchemaCompiler {
             }
 
 
+        } else if (particle instanceof XmlSchemaGroupRef){
+
+            XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) particle;
+            QName groupQName = xmlSchemaGroupRef.getRefName();
+            if (groupQName != null) {
+                if (!processedTypemap.containsKey(groupQName)) {
+                    // processe the schema here
+                    XmlSchema resolvedParentSchema = resolveParentSchema(groupQName, parentSchema);
+                    XmlSchemaGroup xmlSchemaGroup = getGroup(groupQName, resolvedParentSchema);
+                    if (xmlSchemaGroup != null) {
+                        processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                    } else {
+                        throw new SchemaCompilationException("Refered Group " + groupQName.getLocalPart() + " can not be found ");
+                    }
+                }
+            } else {
+                throw new SchemaCompilationException("Referenced name is null");
+            }
+            boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1;
+
+            // add this as an array to the original class
+            metainfHolder.registerMapping(groupQName, groupQName, findClassName(groupQName, isArray));
+            if (isArray) {
+                metainfHolder.addtStatus(groupQName, SchemaConstants.ARRAY_TYPE);
+            }
+            metainfHolder.addtStatus(groupQName, SchemaConstants.PARTICLE_TYPE_ELEMENT);
+            metainfHolder.addMaxOccurs(groupQName, xmlSchemaGroupRef.getMaxOccurs());
+            metainfHolder.addMinOccurs(groupQName, xmlSchemaGroupRef.getMinOccurs());
+            metainfHolder.setHasParticleType(true);
+            metainfHolder.setOrdered(true);
+            metainfHolder.registerQNameIndex(groupQName,metainfHolder.getOrderStartPoint() + 1);
+
         }
     }
 
@@ -1903,8 +1916,9 @@ public class SchemaCompiler {
                     BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
                     process(parentElementQName, xmlSchemaSequence.getItems(), beanWriterMetaInfoHolder, true, parentSchema);
                     beanWriterMetaInfoHolder.setParticleClass(true);
+                    String localName = parentElementQName.getLocalPart() + "Sequence";
                     QName sequenceQName = new QName(parentElementQName.getNamespaceURI(),
-                            parentElementQName.getLocalPart() + "Sequence" + getNextTypeSuffix());
+                            localName + getNextTypeSuffix(localName));
                     String javaClassName = writeComplexParticle(sequenceQName, beanWriterMetaInfoHolder);
                     processedTypemap.put(sequenceQName, javaClassName);
 
@@ -1927,8 +1941,9 @@ public class SchemaCompiler {
                     beanWriterMetaInfoHolder.setChoice(true);
                     process(parentElementQName, xmlSchemaChoice.getItems(), beanWriterMetaInfoHolder, false, parentSchema);
                     beanWriterMetaInfoHolder.setParticleClass(true);
+                    String localName = parentElementQName.getLocalPart() + "Choice";
                     QName choiceQName = new QName(parentElementQName.getNamespaceURI(),
-                            parentElementQName.getLocalPart() + "Choice" + getNextTypeSuffix());
+                            localName + getNextTypeSuffix(localName));
                     String javaClassName = writeComplexParticle(choiceQName, beanWriterMetaInfoHolder);
                     processedTypemap.put(choiceQName, javaClassName);
 
@@ -2422,7 +2437,7 @@ public class SchemaCompiler {
 
             QName fakeQname;
             if (xsElt != null) {
-                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart() + getNextTypeSuffix());
+                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart() + getNextTypeSuffix(xsElt.getQName().getLocalPart()));
                 // we have to set this otherwise the ours attribute would not set properly if refered to this simple
                 // type from any other element
                 xsElt.setSchemaTypeName(fakeQname);
@@ -2543,7 +2558,7 @@ public class SchemaCompiler {
                             childQname = unionSimpleType.getQName();
                             if (childQname == null) {
                                 // we create a fake Qname for all these simple types since most propably they don't have one
-                                childQname = new QName(parentSimpleTypeQname.getNamespaceURI(), parentSimpleTypeQname.getLocalPart() + "_type" + i);
+                                childQname = new QName(parentSimpleTypeQname.getNamespaceURI(), parentSimpleTypeQname.getLocalPart() + getNextTypeSuffix(parentSimpleTypeQname.getLocalPart()));
                             }
                             // this is an inner simple type of the union so it shold not have
                             // processed
@@ -2611,11 +2626,18 @@ public class SchemaCompiler {
 
     }
 
-    private String getNextTypeSuffix() {
-        if (typeCounter == Integer.MAX_VALUE) {
-            typeCounter = 0;
+    HashMap mapTypeCount = new HashMap();
+    private String getNextTypeSuffix(String localName) {
+        Integer typeCounter = (Integer) mapTypeCount.get(localName);
+        int count = 0;
+        if (typeCounter != null) {
+            if(typeCounter.intValue() == Integer.MAX_VALUE) {
+                count = 0;
+            } else {
+                count = typeCounter.intValue();
+            }
         }
-        return ("_type" + typeCounter++);
+        mapTypeCount.put(localName, new Integer(count+1));
+        return ("_type" + count);
     }
-
 }

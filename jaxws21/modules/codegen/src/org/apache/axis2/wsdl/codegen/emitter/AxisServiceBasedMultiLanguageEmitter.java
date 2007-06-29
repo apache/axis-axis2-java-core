@@ -549,6 +549,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 codeGenConfiguration.getOutputLanguage());
 
         antBuildWriter.setDatabindingFramework(codeGenConfiguration.getDatabindingType());
+        antBuildWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(skeletonModel, antBuildWriter);
     }
 
@@ -603,7 +604,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                             TEST_SRC_DIR_NAME),
                             codeGenConfiguration.getOutputLanguage());
-
+            callbackWriter.setOverride(codeGenConfiguration.isOverride());
             writeFile(classModel, callbackWriter);
         }
     }
@@ -698,7 +699,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                         codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
-
+        writer.setOverride(codeGenConfiguration.isOverride());
         writeFile(interfaceImplModel, writer);
 
 
@@ -1057,7 +1058,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //////////////////////////////////////////////////////////
 //            System.out.println(DOM2Writer.nodeToString(doc));
             ////////////////////////////////////////////////////////////
-
+            exceptionWriter.setOverride(codeGenConfiguration.isOverride());
             writeFile(doc, exceptionWriter);
         }
     }
@@ -1097,7 +1098,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                             codeGenConfiguration.getSourceLocation()),
                             codeGenConfiguration.getOutputLanguage());
-
+            callbackWriter.setOverride(codeGenConfiguration.isOverride());
             writeFile(interfaceModel, callbackWriter);
         }
     }
@@ -1142,7 +1143,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                         codeGenConfiguration.getSourceLocation()),
                         this.codeGenConfiguration.getOutputLanguage());
-
+        interfaceWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(interfaceModel, interfaceWriter);
     }
 
@@ -1464,8 +1465,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                 codeGenConfiguration.getOutputLocation(),
                                                 codeGenConfiguration.getSourceLocation()),
                                 codeGenConfiguration.getOutputLanguage());
-
+                writer.setOverride(codeGenConfiguration.isOverride());
                 writeFile(classModel, writer);
+
             }
         }
     }
@@ -1822,8 +1824,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Object key = keys.next();
             String className = (String) classNameMap.get(key);
 
+            String realClassName = className;
+            if (className.endsWith("[]")){
+               realClassName = realClassName.substring(0,realClassName.indexOf("[]"));
+            }
             //this is a generated class name - update the name
-            if (!TypeTesterUtil.hasPackage(className) && !TypeTesterUtil.isPrimitive(className)) {
+            if (!TypeTesterUtil.hasPackage(realClassName) && !TypeTesterUtil.isPrimitive(realClassName)) {
                 classNameMap.put(key, fullyQulifiedIncludingClassNamePrefix + "." + className);
                 instantiatableMessageClassNames.put(key,
                         fullyQulifiedIncludingClassNamePrefix + "$" +
@@ -1854,7 +1860,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                         codeGenConfiguration.getResourceLocation()),
                         this.codeGenConfiguration.getOutputLanguage());
-
+        serviceXmlWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(serviceXMLModel, serviceXmlWriter);
 
     }
@@ -1935,7 +1941,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                 codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
-
+        skeletonWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(skeletonModel, skeletonWriter);
     }
 
@@ -1953,7 +1959,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                 codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
-
+        skeletonInterfaceWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(skeletonModel, skeletonInterfaceWriter);
     }
 

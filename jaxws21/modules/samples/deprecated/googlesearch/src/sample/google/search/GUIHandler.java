@@ -126,6 +126,7 @@ public class GUIHandler {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         nextButton = new JButton("More Results");
+	nextButton.setEnabled(false);
         pane.add(nextButton);
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -154,6 +155,9 @@ public class GUIHandler {
         textBox = new JTextField();
         textBox.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
+		 if (e.getKeyCode() == 10) {
+                     setButtons();
+                 }
             }
 
             public void keyReleased(KeyEvent e) {
@@ -246,6 +250,12 @@ public class GUIHandler {
             doSearch();
         }
     }
+
+    private void setButtons() {
+        nextButton.setEnabled(true);
+        backButton.setVisible(false);
+    }
+
 
     /**
      * method keyTyped

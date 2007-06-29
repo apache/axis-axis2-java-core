@@ -11,6 +11,8 @@ import org.apache.axis2.wsdl.databinding.*;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.schema.typemap.TypeMap;
+import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
@@ -198,7 +200,29 @@ public class ExtensionUtility {
     private static void setComplexTypeName(AxisMessage axisMessage) throws AxisFault {
 
         if (axisMessage.getSchemaElement() != null){
-            XmlSchemaType schemaType = axisMessage.getSchemaElement().getSchemaType();
+
+            XmlSchemaElement schemaElement = axisMessage.getSchemaElement();
+            XmlSchemaType schemaType = schemaElement.getSchemaType();
+            QName schemaTypeQname = schemaElement.getSchemaTypeName();
+
+            if (schemaType == null) {
+                if (schemaTypeQname != null) {
+                    // find the schema type from all the schemas
+                    // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
+                    // the parent schema
+                    AxisService axisService = (AxisService) axisMessage.getParent().getParent();
+                    ArrayList schemasList = axisService.getSchema();
+                    XmlSchema schema = null;
+                    for (Iterator iter = schemasList.iterator(); iter.hasNext();) {
+                        schema = (XmlSchema) iter.next();
+                        schemaType = getSchemaType(schema, schemaTypeQname);
+                        if (schemaType != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (schemaType instanceof XmlSchemaComplexType){
                 XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
                 if ((complexType.getName() != null) && (complexType.getQName() != null)) {
@@ -241,10 +265,39 @@ public class ExtensionUtility {
                                    String qnameSuffix) {
 
         if (message.getParameter(Constants.UNWRAPPED_KEY) != null) {
-            XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
+
+            XmlSchemaElement schemaElement = message.getSchemaElement();
+            XmlSchemaType schemaType = schemaElement.getSchemaType();
+            QName schemaTypeQname = schemaElement.getSchemaTypeName();
+
+            if (schemaType == null) {
+                if (schemaTypeQname != null) {
+                    // find the schema type from all the schemas
+                    // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
+                    // the parent schema
+                    AxisService axisService = (AxisService) message.getParent().getParent();
+                    ArrayList schemasList = axisService.getSchema();
+
+                    XmlSchema schema = null;
+                    for (Iterator iter = schemasList.iterator(); iter.hasNext();) {
+                        schema = (XmlSchema) iter.next();
+                        schemaType = getSchemaType(schema, schemaTypeQname);
+                        if (schemaType != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             //create a type mapper
+            TypeMap basicTypeMap = new JavaTypeMap();
             if (schemaType instanceof XmlSchemaComplexType) {
                 processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap, qnameSuffix);
+            } else if ((schemaTypeQname != null) && basicTypeMap.getTypeMap().containsKey(schemaTypeQname)){
+                QName partQName = WSDLUtil.getPartQName(opName,
+                        qnameSuffix,
+                        message.getElementQName().getLocalPart());
+                mapper.addTypeMappingName(partQName, (String)basicTypeMap.getTypeMap().get(schemaTypeQname));
             } else if (schemaType instanceof XmlSchemaSimpleType) {
                 XmlSchemaSimpleType xmlSchemaSimpleType = (XmlSchemaSimpleType) schemaType;
                 populateClassName(xmlSchemaSimpleType.getMetaInfoMap(),
@@ -253,6 +306,7 @@ public class ExtensionUtility {
                         false,
                         message.getElementQName().getLocalPart(),
                         qnameSuffix);
+                // handle xsd:anyType
             }
 
         }

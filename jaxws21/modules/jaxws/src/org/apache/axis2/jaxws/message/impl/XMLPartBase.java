@@ -150,6 +150,8 @@ public abstract class XMLPartBase implements XMLPart {
                 content = _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
                 contentType = SPINE;
             }
+        } else {
+            this.protocol = protocol;
         }
     }
 

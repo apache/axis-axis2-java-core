@@ -30,13 +30,29 @@
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
-            <arg line="-o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
+            <arg line="-o target/wsdl/complexdatatype -ap -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl"/>
         </java>
         <javac destdir="target/classes" debug="on">
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <src path="target/wsdl/complexdatatype"/>
+        </javac>
+
+          
+        <ant:echo>Compiling ComplexDataTypesDocLitBare.wsdl</ant:echo>
+        <mkdir dir="${wsdl.output.base.dir}/complexdatatypebare"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <arg line="-o target/wsdl/complexdatatypebare -ap -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
+        </java>
+        <javac destdir="target/classes" debug="on">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <src path="target/wsdl/complexdatatypebare"/>
         </javac>
 
 
@@ -47,7 +63,7 @@
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
-            <arg line="-o target/wsdl/documentunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl"/>
+            <arg line="-o target/wsdl/documentunwrapping -ap -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl"/>
         </java>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/documentunwrapping"/>
 
@@ -58,7 +74,7 @@
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
-            <arg line="-o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
+            <arg line="-o target/wsdl/rpcunwrapping -ap -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
         </java>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/rpcunwrapping"/>
 

@@ -59,6 +59,11 @@ public class LogicalMessageContextTests extends TestCase {
     private final String INPUT = "sample input";
     private final String FAULT_INPUT = "sample fault input";
     
+    private final String sampleSOAP11FaultPayload =
+        "<soapenv:Fault xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        + "<faultcode>soapenv:Server</faultcode>" + "<faultstring>" + FAULT_INPUT
+        + "</faultstring>" + "</soapenv:Fault>";
+   
     public LogicalMessageContextTests(String name) {
         super(name);
     }
@@ -206,6 +211,31 @@ public class LogicalMessageContextTests extends TestCase {
         EchoString echo = (EchoString) obj;
         assertTrue("The EchoString object had null input", echo.getInput() != null);
         assertTrue("The EchoString object had bad input: " + echo.getInput(), echo.getInput().equals(INPUT));
+    }
+    
+    
+    public void testConvertMessageToFault() throws Exception {
+        LogicalMessageContext lmc = createSampleContext();
+ 
+        LogicalMessage msg = lmc.getMessage();
+        assertTrue("The returned LogicalMessage was null", msg != null);
+
+        Source payload = msg.getPayload();
+        assertTrue("The returned payload (Source) was null", payload != null);
+
+        String resultContent = _getStringFromSource(payload);
+        assertTrue("The content returned was null", resultContent != null);
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(sampleSOAP11FaultPayload.getBytes());
+        StreamSource faultSource = new StreamSource(bais);
+        
+        msg.setPayload(faultSource);
+        
+        Source newFaultSource = msg.getPayload();
+        assertTrue("The new fault content returned was null", faultSource != null);
+        
+        String newFaultContent = _getStringFromSource(newFaultSource);
+        assertTrue("The new fault content returned was invalid", newFaultContent.equals(sampleSOAP11FaultPayload));
     }
     
     private LogicalMessageContext createSampleContext() throws Exception {

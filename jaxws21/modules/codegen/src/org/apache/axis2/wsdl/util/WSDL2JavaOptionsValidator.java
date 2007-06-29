@@ -131,6 +131,14 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
                             (WSDL2JavaConstants.NO_WSDLS_OPTION_LONG)
                                     .equalsIgnoreCase(optionType) ||
                             (WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG)
+                                    .equalsIgnoreCase(optionType) ||
+                            (WSDL2JavaConstants.All_PORTS_OPTION)
+                                    .equalsIgnoreCase(optionType) ||
+                            (WSDL2JavaConstants.All_PORTS_OPTION_LONG)
+                                    .equalsIgnoreCase(optionType) ||
+                            (WSDL2JavaConstants.OVERRIDE_OPTION)
+                                    .equalsIgnoreCase(optionType) ||
+                            (WSDL2JavaConstants.OVERRIDE_OPTION_LONG)
                                     .equalsIgnoreCase(optionType)
                     );
 

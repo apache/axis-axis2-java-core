@@ -194,7 +194,7 @@ public class ConfigurationContext extends AbstractContext {
      * </pre>
      *
      * @param messageContext : MessageContext
-     * @throws org.apache.axis2.AxisFault : If something goes wrong
+     * @throws AxisFault : If something goes wrong
      */
     public void fillServiceContextAndServiceGroupContext(MessageContext messageContext)
             throws AxisFault {
@@ -296,7 +296,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void unregisterOperationContext(String key) {
         synchronized (operationContextMap) {
-            OperationContext opCtx = (OperationContext)operationContextMap.get(key);
+            OperationContext opCtx = (OperationContext) operationContextMap.get(key);
             operationContextMap.remove(key);
             contextRemoved(opCtx);
         }
@@ -343,6 +343,7 @@ public class ConfigurationContext extends AbstractContext {
      * Gets a OperationContext given a Message ID.
      *
      * @return Returns OperationContext <code>OperationContext<code>
+     * @param id
      */
     public OperationContext getOperationContext(String id) {
         OperationContext opCtx;
@@ -385,8 +386,7 @@ public class ConfigurationContext extends AbstractContext {
                     valueServiceName = value.getServiceName();
                     valueServiceGroupName = value.getServiceGroupName();
 
-                    if ((valueOperationName != null) && (valueOperationName.equals(operationName)))
-                    {
+                    if ((valueOperationName != null) && (valueOperationName.equals(operationName))) {
                         if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
                             if ((valueServiceGroupName != null) && (serviceGroupName != null)
                                 && (valueServiceGroupName.equals(serviceGroupName))) {
@@ -438,6 +438,7 @@ public class ConfigurationContext extends AbstractContext {
      * Allows users to resolve the path relative to the root diretory.
      *
      * @param path
+     * @return
      */
     public File getRealPath(String path) {
         URL repository = axisConfiguration.getRepository();
@@ -505,12 +506,12 @@ public class ConfigurationContext extends AbstractContext {
         int index = 0;
         for (Iterator iter = serviceGroupContextMap.keySet().iterator(); iter.hasNext();) {
             ids[index] = (String) iter.next();
-            index ++;
+            index++;
         }
         for (Iterator iter = applicationSessionServiceGroupContexts.keySet().iterator();
              iter.hasNext();) {
             ids[index] = (String) iter.next();
-            index ++;
+            index++;
         }
         return ids;
     }
@@ -546,7 +547,8 @@ public class ConfigurationContext extends AbstractContext {
     /**
      * Sets the thread factory.
      *
-     * @param pool
+     * @param pool The thread pool
+     * @throws AxisFault If a thread pool has already been set
      */
     public void setThreadPool(ThreadFactory pool) throws AxisFault {
         if (threadPool == null) {
@@ -554,6 +556,21 @@ public class ConfigurationContext extends AbstractContext {
         } else {
             throw new AxisFault(Messages.getMessage("threadpoolset"));
         }
+    }
+
+    /**
+     * Remove a ServiceGroupContext
+     *
+     * @param serviceGroupContextId The ID of the ServiceGroupContext
+     */
+    public void removeServiceGroupContext(String serviceGroupContextId) {
+        if (serviceGroupContextMap == null) {
+            return;
+        }
+        ServiceGroupContext serviceGroupContext =
+                (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+        serviceGroupContextMap.remove(serviceGroupContextId);
+        cleanupServiceContexts(serviceGroupContext);
     }
 
     private void cleanupServiceGroupContexts() {

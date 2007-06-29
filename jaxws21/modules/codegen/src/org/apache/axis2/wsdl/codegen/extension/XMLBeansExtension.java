@@ -34,6 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
+    /** Name of "extra" option used to supply package name for xsb files. */
+    public static final String TYPESYSTEMNAME_OPTION = "typesystemname";
     public static final String SCHEMA_FOLDER = "schemas";
 
     public static String MAPPINGS = "mappings";
@@ -60,6 +62,9 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             return;
         }
 
+        // check the JiBX binding definition file specified
+        String typeSystemName = (String)configuration.getProperties().get(TYPESYSTEMNAME_OPTION);
+
         try {
             // try dummy load of framework class first to check missing jars
             try {
@@ -79,7 +84,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(XMLBEANS_PROCESS_METHOD,
                                             new Class[] { List.class, Element[].class,
-                                                    CodeGenConfiguration.class });
+                                                    CodeGenConfiguration.class, String.class });
             List schemas = new ArrayList();
             List axisServices = configuration.getAxisServices();
             AxisService axisService = null;
@@ -91,7 +96,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             Element[] additionalSchemas = loadAdditionalSchemas();
             TypeMapper mapper = (TypeMapper)method.invoke(null,
                                                           new Object[] { schemas, additionalSchemas,
-                                                                  configuration });
+                                                                  configuration, typeSystemName });
 
             // set the type mapper to the config
             configuration.setTypeMapper(mapper);

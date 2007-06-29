@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.util.JavaUtils;
@@ -67,16 +68,10 @@ public class SOAPUtil {
                                                       soapAction,
                                                       request.getRequestURL().toString());
 
-            Object contextWritten = null;
-            if (msgContext.getOperationContext() != null) {
-                contextWritten =
-                        msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-            }
-
             response.setContentType("text/xml; charset="
                     + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
-            if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+            if (!TransportUtils.isResponseWritten(msgContext)) {
                 Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
                 if (statusCode != null) {
                     response.setStatus(statusCode.intValue());

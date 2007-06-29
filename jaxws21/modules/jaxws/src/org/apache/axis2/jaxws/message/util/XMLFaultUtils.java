@@ -80,7 +80,7 @@ public class XMLFaultUtils {
     public static boolean isFault(SOAPEnvelope envelope) {
         SOAPBody body = envelope.getBody();
         if (body != null) {
-            return (body.getFault() != null);
+            return (body.hasFault() || body.getFault() != null);
         }
         return false;
     }

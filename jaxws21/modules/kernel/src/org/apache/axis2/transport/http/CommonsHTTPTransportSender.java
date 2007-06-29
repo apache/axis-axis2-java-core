@@ -209,15 +209,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 }
             }
 
-            /**
-             * We should only set the property Constants.RESPONSE_WRITTEN=true only if we are in the
-             * server side. If it is in the client side we may not know whether we have received the response
-             * in an async request/response case.
-             **/
-             if (msgContext.isServerSide()&& msgContext.getOperationContext() != null) {
-                msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
-                                                             Constants.VALUE_TRUE);
-            }
+            TransportUtils.setResponseWritten(msgContext, true);
+            
         } catch (XMLStreamException e) {
             log.debug(e);
             throw AxisFault.makeFault(e);

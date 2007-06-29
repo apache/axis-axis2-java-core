@@ -253,6 +253,15 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setXsdConfigFile(commandLineOption.getOptionValue());
         }
 
+        // setting the overrid and all ports options
+        config.setAllPorts(loadOption(WSDL2JavaConstants.All_PORTS_OPTION,
+                                      WSDL2JavaConstants.All_PORTS_OPTION_LONG,
+                                      optionMap) != null);
+
+        config.setOverride(loadOption(WSDL2JavaConstants.OVERRIDE_OPTION,
+                                      WSDL2JavaConstants.OVERRIDE_OPTION_LONG,
+                                      optionMap) != null);
+
         // loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();

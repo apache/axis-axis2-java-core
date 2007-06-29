@@ -21,6 +21,7 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.math.BigDecimal;
 
 
 /** this class is the super class of all the union simple types */
@@ -72,8 +73,7 @@ public abstract class Union {
             } else {
                 setObject(new QName(value));
             }
-
-        } else if ("datetime".equals(type)) {
+        } else if ("dateTime".equals(type)) {
             setObject(ConverterUtil.convertToDateTime(value));
         } else if ("time".equals(type)) {
             setObject(ConverterUtil.convertToTime(value));
@@ -81,8 +81,26 @@ public abstract class Union {
             setObject(new Float(value));
         } else if ("long".equals(type)) {
             setObject(new Long(value));
-        } else if ("dobule".equals(type)) {
+        } else if ("double".equals(type)) {
             setObject(new Double(value));
+        } else if ("decimal".equals(type)) {
+            setObject(new BigDecimal(value));
+        } else if ("unsignedLong".equals(type)) {
+            setObject(new UnsignedLong(value));
+        } else if ("unsignedInt".equals(type)) {
+            setObject(new UnsignedInt(value));
+        } else if ("unsignedShort".equals(type)) {
+            setObject(new UnsignedShort(value));
+        } else if ("unsignedByte".equals(type)) {
+            setObject(new UnsignedByte(value));
+        } else if ("positiveInteger".equals(type)) {
+            setObject(new PositiveInteger(value));
+        } else if ("negativeInteger".equals(type)) {
+            setObject(new NegativeInteger(value));
+        } else if ("nonNegativeInteger".equals(type)) {
+            setObject(new NonNegativeInteger(value));
+        } else if ("nonPositiveInteger".equals(type)) {
+            setObject(new NonPositiveInteger(value));
         } else {
             throw new RuntimeException("Object not found");
         }

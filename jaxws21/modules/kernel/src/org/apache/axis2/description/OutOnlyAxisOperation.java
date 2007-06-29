@@ -17,6 +17,8 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
@@ -241,11 +243,17 @@ class OutOnlyAxisOperationClient extends OperationClient {
         }
         ConfigurationContext cc = sc.getConfigurationContext();
         prepareMessageContext(cc, mc);
-        // setting message ID if it null
 
+        //As this is an out-only MEP we add a sensible default for
+        //the replyTo.
+        EndpointReference epr = mc.getReplyTo();
+        if (epr == null)
+            mc.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
+        
         // create the operation context for myself
         OperationContext oc = sc.createOperationContext(axisOp);
         oc.addMessageContext(mc);
+        
         // ship it out
         AxisEngine engine = new AxisEngine(cc);
         if (!block) {

@@ -44,6 +44,7 @@ import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -128,19 +129,16 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                             .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
                             .awaitResponse();
                 }
-
-                Object contextWritten = null;
-                OperationContext operationContext = msgContext.getOperationContext();
-
-                if (operationContext != null) {
-                    contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
-                }
-
                 response.setContentType("text/xml; charset="
                         + msgContext
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
-
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                // if data has not been sent back and this is not a signal response
+                if (!TransportUtils.isResponseWritten(msgContext)  
+                		&& (((RequestResponseTransport) 
+                				msgContext.getProperty(
+                						RequestResponseTransport.TRANSPORT_CONTROL)).
+                						getStatus() != RequestResponseTransport.
+                						RequestResponseTransportStatus.SIGNALLED)) {
                     response.setStatus(HttpServletResponse.SC_ACCEPTED);
                 }
 
@@ -365,7 +363,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         MessageContext faultContext =
                 MessageContextBuilder.createFaultMessageContext(msgContext, e);
-        msgContext.setEnvelope(faultContext.getEnvelope());
         // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
         // fault code Sender
         HttpServletResponse response =
@@ -671,6 +668,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     protected class ServletRequestResponseTransport implements RequestResponseTransport {
         private HttpServletResponse response;
+        private boolean responseWritten = false;
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
         AxisFault faultToBeThrownOut = null;
@@ -721,6 +719,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             faultToBeThrownOut = fault;
             signalResponseReady();
         }
+        
+        public boolean isResponseWritten() {
+        	return responseWritten;
+        }
+        
+        public void setResponseWritten(boolean responseWritten) {
+        	this.responseWritten = responseWritten;
+        }
+        
     }
 
     private void setResponseState(MessageContext messageContext, HttpServletResponse response) {
@@ -779,13 +786,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
         private void checkResponseWritten() {
-            OperationContext operationContext = messageContext.getOperationContext();
-            if (operationContext != null) {
-                Object contextWritten =
-                        operationContext.getProperty(Constants.RESPONSE_WRITTEN);
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
+        	if (!TransportUtils.isResponseWritten(messageContext)) {
+        		response.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
         }
 

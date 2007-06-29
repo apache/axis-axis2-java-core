@@ -64,10 +64,10 @@ public class InnerParticlesTest extends TestCase {
 
         TestInnerParticle2 testInnerParticle2 = new TestInnerParticle2();
         testInnerParticle2.setParam1("Param1");
-        TestInnerParticle2Choice_type5 testInnerParticle2Choice_type1 = new TestInnerParticle2Choice_type5();
+        TestInnerParticle2Choice_type0 testInnerParticle2Choice_type1 = new TestInnerParticle2Choice_type0();
         testInnerParticle2Choice_type1.setParam2("Param2");
         testInnerParticle2Choice_type1.setParam3("Param3");
-        testInnerParticle2.setTestInnerParticle2Choice_type5(testInnerParticle2Choice_type1);
+        testInnerParticle2.setTestInnerParticle2Choice_type0(testInnerParticle2Choice_type1);
         testInnerParticle2.setParam4("Param4");
 
        try {
@@ -78,7 +78,7 @@ public class InnerParticlesTest extends TestCase {
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerParticle2 result = TestInnerParticle2.Factory.parse(xmlReader);
             assertEquals(result.getParam1(), "Param1");
-            assertEquals(result.getTestInnerParticle2Choice_type5().getParam3(), "Param3");
+            assertEquals(result.getTestInnerParticle2Choice_type0().getParam3(), "Param3");
             assertEquals(result.getParam4(), "Param4");
         } catch (XMLStreamException e) {
             fail();
@@ -112,10 +112,10 @@ public class InnerParticlesTest extends TestCase {
     public void testInnerParticle32() {
 
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
-        TestInnerParticle3Choice_type1 testInnerParticle3Choice_type1 = new TestInnerParticle3Choice_type1();
+        TestInnerParticle3Choice_type0 testInnerParticle3Choice_type1 = new TestInnerParticle3Choice_type0();
         testInnerParticle3Choice_type1.setParam2("Param2");
         testInnerParticle3Choice_type1.setParam3("Param3");
-        testInnerParticle3.setTestInnerParticle3Choice_type1(testInnerParticle3Choice_type1);
+        testInnerParticle3.setTestInnerParticle3Choice_type0(testInnerParticle3Choice_type1);
 
         try {
             OMElement omElement =
@@ -124,7 +124,7 @@ public class InnerParticlesTest extends TestCase {
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerParticle3 result = TestInnerParticle3.Factory.parse(xmlReader);
-            assertEquals(result.getTestInnerParticle3Choice_type1().getParam3(), "Param3");
+            assertEquals(result.getTestInnerParticle3Choice_type0().getParam3(), "Param3");
         } catch (XMLStreamException e) {
             e.printStackTrace();
             fail();
@@ -139,10 +139,10 @@ public class InnerParticlesTest extends TestCase {
 
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         testInnerParticle3.setParam1("Param1");
-        TestInnerParticle3Choice_type1 testInnerParticle3Choice_type1 = new TestInnerParticle3Choice_type1();
+        TestInnerParticle3Choice_type0 testInnerParticle3Choice_type1 = new TestInnerParticle3Choice_type0();
         testInnerParticle3Choice_type1.setParam2("Param2");
         testInnerParticle3Choice_type1.setParam3("Param3");
-        testInnerParticle3.setTestInnerParticle3Choice_type1(testInnerParticle3Choice_type1);
+        testInnerParticle3.setTestInnerParticle3Choice_type0(testInnerParticle3Choice_type1);
         testInnerParticle3.setParam4("Param4");
 
          try {
@@ -187,10 +187,10 @@ public class InnerParticlesTest extends TestCase {
     public void testInnerParticle42() {
 
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
-        TestInnerParticle4Sequence_type2 testInnerParticle4Sequence_type2 = new TestInnerParticle4Sequence_type2();
-        testInnerParticle4Sequence_type2.setParam2("Param2");
-        testInnerParticle4Sequence_type2.setParam3("Param3");
-        testInnerParticle4.setTestInnerParticle4Sequence_type2(testInnerParticle4Sequence_type2);
+        TestInnerParticle4Sequence_type0 TestInnerParticle4Sequence_type0 = new TestInnerParticle4Sequence_type0();
+        TestInnerParticle4Sequence_type0.setParam2("Param2");
+        TestInnerParticle4Sequence_type0.setParam3("Param3");
+        testInnerParticle4.setTestInnerParticle4Sequence_type0(TestInnerParticle4Sequence_type0);
 
         try {
             OMElement omElement =
@@ -199,8 +199,8 @@ public class InnerParticlesTest extends TestCase {
             System.out.println("OM String ==> " + omElementString);
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerParticle4 result = TestInnerParticle4.Factory.parse(xmlReader);
-            assertEquals(result.getTestInnerParticle4Sequence_type2().getParam2(), "Param2");
-            assertEquals(result.getTestInnerParticle4Sequence_type2().getParam3(), "Param3");
+            assertEquals(result.getTestInnerParticle4Sequence_type0().getParam2(), "Param2");
+            assertEquals(result.getTestInnerParticle4Sequence_type0().getParam3(), "Param3");
         } catch (XMLStreamException e) {
             e.printStackTrace();
             fail();
@@ -238,16 +238,16 @@ public class InnerParticlesTest extends TestCase {
 
         TestInnerParticle5 testInnerParticle5 = new TestInnerParticle5();
         testInnerParticle5.setParam1("Param1");
-        TestInnerParticle5Sequence_type4 testInnerParticle2Choice_type1 = new TestInnerParticle5Sequence_type4();
+        TestInnerParticle5Sequence_type1 testInnerParticle2Choice_type1 = new TestInnerParticle5Sequence_type1();
         testInnerParticle2Choice_type1.setParam2("Param2");
         testInnerParticle2Choice_type1.setParam3("Param3");
 
-        TestInnerParticle5Sequence_type3 testInnerParticle5Sequence_type3 = new TestInnerParticle5Sequence_type3();
-        testInnerParticle5Sequence_type3.setParam4("Param4");
-        testInnerParticle5Sequence_type3.setParam5("Param5");
+        TestInnerParticle5Sequence_type0 innerParticle5Sequence_type0 = new TestInnerParticle5Sequence_type0();
+        innerParticle5Sequence_type0.setParam4("Param4");
+        innerParticle5Sequence_type0.setParam5("Param5");
 
-        testInnerParticle2Choice_type1.setTestInnerParticle5Sequence_type3(testInnerParticle5Sequence_type3);
-        testInnerParticle5.setTestInnerParticle5Sequence_type4(testInnerParticle2Choice_type1);
+        testInnerParticle2Choice_type1.setTestInnerParticle5Sequence_type0(innerParticle5Sequence_type0);
+        testInnerParticle5.setTestInnerParticle5Sequence_type1(testInnerParticle2Choice_type1);
         testInnerParticle5.setParam6("Param6");
 
         try {
@@ -258,10 +258,10 @@ public class InnerParticlesTest extends TestCase {
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestInnerParticle5 result = TestInnerParticle5.Factory.parse(xmlReader);
             assertEquals(result.getParam1(), "Param1");
-            assertEquals(result.getTestInnerParticle5Sequence_type4().getParam2(), "Param2");
-            assertEquals(result.getTestInnerParticle5Sequence_type4().getParam3(), "Param3");
-            assertEquals(result.getTestInnerParticle5Sequence_type4().getTestInnerParticle5Sequence_type3().getParam4(), "Param4");
-            assertEquals(result.getTestInnerParticle5Sequence_type4().getTestInnerParticle5Sequence_type3().getParam5(), "Param5");
+            assertEquals(result.getTestInnerParticle5Sequence_type1().getParam2(), "Param2");
+            assertEquals(result.getTestInnerParticle5Sequence_type1().getParam3(), "Param3");
+            assertEquals(result.getTestInnerParticle5Sequence_type1().getTestInnerParticle5Sequence_type0().getParam4(), "Param4");
+            assertEquals(result.getTestInnerParticle5Sequence_type1().getTestInnerParticle5Sequence_type0().getParam5(), "Param5");
             assertEquals(result.getParam6(), "Param6");
         } catch (XMLStreamException e) {
             fail();
@@ -278,9 +278,9 @@ public class InnerParticlesTest extends TestCase {
                 new TestInnterParticleExtensionChildComplexType();
         testInnterParticleExtension.setTestInnterParticleExtension(testInnterParticleExtensionChildComplexType);
 
-        TestInnterParticleExtensionParentComplexTypeChoice_type6 testInnterParticleExtensionParentComplexTypeChoice_type0 =
-                new TestInnterParticleExtensionParentComplexTypeChoice_type6();
-        testInnterParticleExtensionChildComplexType.setTestInnterParticleExtensionParentComplexTypeChoice_type6(testInnterParticleExtensionParentComplexTypeChoice_type0);
+        TestInnterParticleExtensionParentComplexTypeChoice_type0 testInnterParticleExtensionParentComplexTypeChoice_type0 =
+                new TestInnterParticleExtensionParentComplexTypeChoice_type0();
+        testInnterParticleExtensionChildComplexType.setTestInnterParticleExtensionParentComplexTypeChoice_type0(testInnterParticleExtensionParentComplexTypeChoice_type0);
 
         testInnterParticleExtensionParentComplexTypeChoice_type0.setParam1("param1");
         testInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
@@ -295,7 +295,7 @@ public class InnerParticlesTest extends TestCase {
             assertTrue(result.getTestInnterParticleExtension() instanceof TestInnterParticleExtensionChildComplexType);
             TestInnterParticleExtensionChildComplexType resultComplexType =
                     (TestInnterParticleExtensionChildComplexType) result.getTestInnterParticleExtension();
-            assertEquals(resultComplexType.getTestInnterParticleExtensionParentComplexTypeChoice_type6().getParam2(),"param2");
+            assertEquals(resultComplexType.getTestInnterParticleExtensionParentComplexTypeChoice_type0().getParam2(),"param2");
         } catch (ADBException e) {
             fail();
         } catch (XMLStreamException e) {

@@ -73,7 +73,10 @@ public class ConfigurationContextFactory {
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
         addModuleService(configContext);
-//        initApplicationScopeServices(configContext);
+
+        // TODO: THIS NEEDS A TEST CASE!
+        initApplicationScopeServices(configContext);
+
         axisConfig.setStart(true);
         return configContext;
     }
