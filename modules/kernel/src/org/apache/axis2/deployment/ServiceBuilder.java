@@ -656,6 +656,9 @@ public class ServiceBuilder extends DescriptionBuilder {
             String opname = op_name_att.getAttributeValue();
             AxisOperation op_descrip;
             op_descrip = service.getOperation(new QName(opname));
+            if(op_descrip==null){
+                op_descrip = service.getOperation(new QName(service.getTargetNamespace(),opname));
+            }
             if (op_descrip == null) {
                 if (mepurl == null) {
                     // assumed MEP is in-out
