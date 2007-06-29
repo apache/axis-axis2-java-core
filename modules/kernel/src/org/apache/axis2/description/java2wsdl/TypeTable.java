@@ -25,7 +25,7 @@ import java.util.*;
 public class TypeTable {
     
     private static HashMap  simpleTypetoxsd;
-    private static final QName ANY_TYPE = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs");
+    public static final QName ANY_TYPE = new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs");
 
     private HashMap complexTypeMap;
 
@@ -134,7 +134,8 @@ public class TypeTable {
     public QName getSimpleSchemaTypeName(String typeName) {
         QName qName = (QName) simpleTypetoxsd.get(typeName);
         if(qName == null){
-            if(typeName.startsWith("java.lang")||typeName.startsWith("javax.")){
+            if((typeName.startsWith("java.lang")||typeName.startsWith("javax.")) &&
+                    !Exception.class.getName().equals(typeName)){
                 return ANY_TYPE;
             }
         }

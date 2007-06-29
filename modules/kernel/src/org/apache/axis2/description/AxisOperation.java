@@ -509,7 +509,10 @@ public abstract class AxisOperation extends AxisDescription
 
     public void setFaultMessages(AxisMessage faultMessage) {
         faultMessages.add(faultMessage);
-        addFaultAction(faultMessage.getName(),"urn:" + faultMessage.getName());
+        if(getFaultAction(faultMessage.getName())==null){
+            addFaultAction(faultMessage.getName(),"urn:" + name.getLocalPart()
+                    + faultMessage.getName());
+        }
     }
 
     public void setSoapAction(String soapAction) {
