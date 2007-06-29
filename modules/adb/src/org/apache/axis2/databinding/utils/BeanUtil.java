@@ -747,7 +747,7 @@ public class BeanUtil {
     }
 
     /** @deprecated Please use getUniquePrefix */
-    public static String getUniquePrifix() {
+    public static synchronized String  getUniquePrifix() {
         return getUniquePrefix();
     }
 
@@ -756,7 +756,7 @@ public class BeanUtil {
      *
      * @return unique prefix
      */
-    public static String getUniquePrefix() {
+    public static synchronized String getUniquePrefix() {
         if (nsCount > 1000){
             nsCount = 1;
         }
