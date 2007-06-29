@@ -99,20 +99,37 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                     if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
                         continue;
                     }
-                    String partQname = extype.getSimpleName() + "Fault";
+                     if (!generateBaseException) {
+                        methodSchemaType = createSchemaTypeForMethodPart("Exception");
+                        sequence = new XmlSchemaSequence();
+                        QName schemaTypeName = typeTable.getSimpleSchemaTypeName(Exception.class.getName());
+                        addContentToMethodSchemaType(sequence,
+                                schemaTypeName,
+                                "Exception",
+                                false);
+                        methodSchemaType.setParticle(sequence);
+                        generateBaseException = true;
+                    }
+                    String partQname = extype.getSimpleName();
                     methodSchemaType = createSchemaTypeForMethodPart(partQname);
                     sequence = new XmlSchemaSequence();
-                    generateSchemaForType(sequence, extype, extype.getSimpleName());
-                    methodSchemaType.setParticle(sequence);
+                    if (Exception.class.getName().equals(extype.getQualifiedName())) {
+                        addContentToMethodSchemaType(sequence,
+                                typeTable.getComplexSchemaType("Exception"),
+                                partQname,
+                                false);
+                        methodSchemaType.setParticle(sequence);
+                        typeTable.addComplexSchema(Exception.class.getPackage().getName(),
+                                methodSchemaType.getQName());
+                    } else {
+                        generateSchemaForType(sequence, extype, extype.getSimpleName());
+                        methodSchemaType.setParticle(sequence);
+                    }
                     if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
                         continue;
                     }
                     AxisMessage faultMessage = new AxisMessage();
-                    if (extypes.length > 1) {
-                        faultMessage.setName(methodName + "Fault" + j);
-                    } else {
-                        faultMessage.setName(methodName + "Fault");
-                    }
+                    faultMessage.setName(extype.getSimpleName());
                     faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
                     axisOperation.setFaultMessages(faultMessage);
                 }
@@ -397,7 +414,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
             complexType.setName(simpleName);
 
-            xmlSchema.getItems().add(eltOuter);
+//            xmlSchema.getItems().add(eltOuter);
             xmlSchema.getElements().add(schemaTypeName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
 

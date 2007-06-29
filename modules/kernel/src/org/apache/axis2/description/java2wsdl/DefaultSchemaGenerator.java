@@ -86,6 +86,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected Class serviceClass = null;
     protected AxisService service;
 
+    //To check whether we need to generate Schema element for Exception
+    protected boolean generateBaseException ;
+
     public NamespaceGenerator getNsGen() throws Exception {
         if (nsGen == null) {
             nsGen = new DefaultNamespaceGenerator();
@@ -235,20 +238,37 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
                         continue;
                     }
-                    String partQname = extype.getSimpleName() + "Fault";
+                    if (!generateBaseException) {
+                        methodSchemaType = createSchemaTypeForMethodPart("Exception");
+                        sequence = new XmlSchemaSequence();
+                        QName schemaTypeName = typeTable.getSimpleSchemaTypeName(Exception.class.getName());
+                        addContentToMethodSchemaType(sequence,
+                                schemaTypeName,
+                                "Exception",
+                                false);
+                        methodSchemaType.setParticle(sequence);
+                        generateBaseException = true;
+                    }
+                    String partQname = extype.getSimpleName();
                     methodSchemaType = createSchemaTypeForMethodPart(partQname);
                     sequence = new XmlSchemaSequence();
-                    generateSchemaForType(sequence, extype, extype.getSimpleName());
-                    methodSchemaType.setParticle(sequence);
+                    if (Exception.class.getName().equals(extype.getQualifiedName())) {
+                        addContentToMethodSchemaType(sequence,
+                                typeTable.getComplexSchemaType("Exception"),
+                                partQname,
+                                false);
+                        methodSchemaType.setParticle(sequence);
+                        typeTable.addComplexSchema(Exception.class.getPackage().getName(),
+                                methodSchemaType.getQName());
+                    } else {
+                        generateSchemaForType(sequence, extype, extype.getSimpleName());
+                        methodSchemaType.setParticle(sequence);
+                    }
                     if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
                         continue;
                     }
                     AxisMessage faultMessage = new AxisMessage();
-                    if (extypes.length > 1) {
-                        faultMessage.setName(methodName + "Fault" + j);
-                    } else {
-                        faultMessage.setName(methodName + "Fault");
-                    }
+                    faultMessage.setName(extype.getSimpleName());
                     faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
                     axisOperation.setFaultMessages(faultMessage);
                 }
@@ -419,7 +439,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             complexType.setName(simpleName);
 
-            xmlSchema.getItems().add(eltOuter);
+//            xmlSchema.getItems().add(eltOuter);
             xmlSchema.getElements().add(schemaTypeName, eltOuter);
             eltOuter.setSchemaTypeName(complexType.getQName());
 
@@ -494,7 +514,6 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             for (int i = 0; i < froperties.length; i++) {
                 JField field = froperties[i];
-                String propertyName = field.getType().getQualifiedName();
                 boolean isArryType = field.getType().isArrayType();
 
                 this.generateSchemaforFieldsandProperties(xmlSchema, sequence, field.getType(),

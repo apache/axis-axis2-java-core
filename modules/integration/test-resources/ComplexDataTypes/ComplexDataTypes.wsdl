@@ -16,56 +16,48 @@
                    elementFormDefault="qualified"
                    targetNamespace="http://arrays.data.complex.tempuri.org/xsd">
             <xs:import namespace="http://data.complex.tempuri.org/xsd"/>
-            <xs:element name="ArrayOfshort" type="ax22:ArrayOfshort"/>
             <xs:complexType name="ArrayOfshort">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="_short" nillable="true"
                                 type="xs:short"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfPerson" type="ax22:ArrayOfPerson"/>
             <xs:complexType name="ArrayOfPerson">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="person" nillable="true"
                                 type="ax24:Person"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfArrayOfstring" type="ax22:ArrayOfArrayOfstring"/>
             <xs:complexType name="ArrayOfArrayOfstring">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="arrayOfstring"
                                 nillable="true" type="ax22:ArrayOfstring"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfstring" type="ax22:ArrayOfstring"/>
             <xs:complexType name="ArrayOfstring">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="string" nillable="true"
                                 type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfNullableOfdateTime" type="ax22:ArrayOfNullableOfdateTime"/>
             <xs:complexType name="ArrayOfNullableOfdateTime">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="dateTime" nillable="true"
                                 type="xs:dateTime"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfNullableOfdecimal" type="ax22:ArrayOfNullableOfdecimal"/>
             <xs:complexType name="ArrayOfNullableOfdecimal">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="decimal" nillable="true"
                                 type="xs:decimal"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfanyType" type="ax22:ArrayOfanyType"/>
             <xs:complexType name="ArrayOfanyType">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="anyType" nillable="true"
                                 type="xs:anyType"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="ArrayOfint" type="ax22:ArrayOfint"/>
             <xs:complexType name="ArrayOfint">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="_int" nillable="true"
@@ -78,7 +70,6 @@
                    elementFormDefault="qualified"
                    targetNamespace="http://data.complex.tempuri.org/xsd">
             <xs:import namespace="http://arrays.data.complex.tempuri.org/xsd"/>
-            <xs:element name="BitMask" type="ax21:BitMask"/>
             <xs:complexType name="BitMask">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="BIT_FIVE" nillable="true" type="ax21:BitMask"/>
@@ -88,7 +79,6 @@
                     <xs:element minOccurs="0" name="BIT_TWO" nillable="true" type="ax21:BitMask"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Employee" type="ax21:Employee"/>
             <xs:complexType name="Employee">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="baseDetails" nillable="true"
@@ -99,7 +89,6 @@
                                 type="ax23:ArrayOfshort"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Person" type="ax21:Person"/>
             <xs:complexType name="Person">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="age" nillable="true" type="xs:double"/>
@@ -108,14 +97,12 @@
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Furniture" type="ax21:Furniture"/>
             <xs:complexType name="Furniture">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="color" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="price" nillable="true" type="xs:float"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Group" type="ax21:Group"/>
             <xs:complexType name="Group">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="members" nillable="true"
@@ -123,13 +110,11 @@
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Name" type="ax21:Name"/>
             <xs:complexType name="Name">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
-            <xs:element name="Table" type="ax21:Table"/>
             <xs:complexType name="Table">
                 <xs:complexContent>
                     <xs:extension base="ax21:Furniture">
