@@ -35,6 +35,11 @@ public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.Logi
         Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound response on the client
 
+            // previously caused a NPE due to internal Properties.putAll(map);
+            // where 'map' had a key/value pair with null value.  So, internally
+            // we now use HashMap instead of Properties.
+            int size = messagecontext.size();
+            
             /*
              * These props were set on the outbound flow.  Inbound flow handlers
              * should have access to them.

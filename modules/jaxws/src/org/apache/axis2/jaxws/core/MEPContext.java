@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -138,7 +137,9 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
             }
             return;
         }
-        // yes, clear both
+        // TODO: REVIEW
+        // I don't think this will work if the message contexts have a copy
+        // of the map
         if (responseMC != null) {
             responseMC.getProperties().clear();
         }
@@ -177,7 +178,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlySet(getApplicationScopedProperties().entrySet());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -185,16 +186,17 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         return new ReadOnlySet(tempProps.entrySet());
     }
 
-    public Object get(Object key) {
+    public Object get(Object keyObject) {
+        String key = (String) keyObject;
         if (responseMC != null) {
-            if (responseMC.getProperties().get(key) != null) {
+            if (responseMC.getProperty(key) != null) {
                 if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
-                    return responseMC.getProperties().get(key);
+                    return responseMC.getProperty(key);
                 }
             }
         }
         if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
-            return requestMC.getProperties().get(key);
+            return requestMC.getProperty(key);
         }
         return null;
     }
@@ -213,7 +215,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlySet(getApplicationScopedProperties().keySet());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -279,7 +281,10 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return getApplicationScopedProperties().size();
         }
-        Properties tempProps = new Properties();
+        
+        // The properties must be combined together because some
+        // keys may be the same on the request and the response.
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -291,7 +296,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlyCollection(getApplicationScopedProperties().values());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
