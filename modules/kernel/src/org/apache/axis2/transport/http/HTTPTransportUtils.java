@@ -54,6 +54,9 @@ import java.util.zip.GZIPInputStream;
 public class HTTPTransportUtils {
 
 
+    /**
+     * @deprecated This was used only by the now deprecated processHTTPGetRequest() method. 
+     */
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
                                                             Map map, ConfigurationContext configCtx)
             throws AxisFault {
