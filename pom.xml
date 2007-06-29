@@ -175,6 +175,33 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 
+				Distribution Packaging for maven2 is still in preliminarily stage.
+				Please uncomment following section, if you are interested to see
+				the current status. 
+			-->
+			<!--
+		        <plugin>
+			            <groupId>org.apache.maven.plugins</groupId>
+				    <artifactId>maven-assembly-plugin</artifactId>
+			            <version>2.1</version>
+			            <executions>
+			                <execution>
+        	        		    <id>distribution-package</id>
+			                    <phase>install</phase>
+			                    <goals>
+			                        <goal>single</goal>
+        	        		    </goals>
+			                    <configuration>
+        	        		        <descriptors>
+        	        		            <descriptor>etc/maven2-src-assembly.xml</descriptor>
+        	        		        </descriptors>
+        	        		        <finalName>axis2-${version}</finalName>
+        	        		    </configuration>
+        	        		</execution>
+			            </executions>
+		        </plugin>
+			-->
 		</plugins>
 	</build>
 </project>
