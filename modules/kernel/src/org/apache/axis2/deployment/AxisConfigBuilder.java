@@ -466,7 +466,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                 (TransportListener) receiverClass.newInstance();
                         transportIN.setReceiver(receiver);
                     } catch (NoClassDefFoundError e) {
-                        throw new DeploymentException(e);
+                        if(deploymentEngine != null){
+                            throw new DeploymentException(e);
+                        } else {
+                            // Called from createDefaultConfigurationContext in ConfigurationContextFactory
+                            // Please don't throw an exception.
+                            log.debug(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
+                        }
                     } catch (ClassNotFoundException e) {
                         throw new DeploymentException(e);
                     } catch (IllegalAccessException e) {
@@ -527,8 +533,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // adding to axis2 config
                     axisConfig.addTransportOut(transportout);
                 } catch (NoClassDefFoundError e) {
-                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
-                    throw new DeploymentException(e);
+                    if(deploymentEngine != null){
+                        log.debug(Messages.getMessage("errorinloadingts", clasName), e);
+                        throw new DeploymentException(e);
+                    } else {
+                        // Called from createDefaultConfigurationContext in ConfigurationContextFactory
+                        // Please don't throw an exception.
+                        log.debug(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
+                    }
                 } catch (ClassNotFoundException e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
