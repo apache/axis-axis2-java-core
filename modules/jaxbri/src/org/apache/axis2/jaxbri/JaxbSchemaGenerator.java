@@ -3,8 +3,6 @@ package org.apache.axis2.jaxbri;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.util.Loader;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,11 +53,17 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     }
 
     public Collection generateSchema() throws Exception {
-        generateScheamWithoutCallingParent();
+        generateSchemaForParameters();
         return super.generateSchema();
     }
 
-    public void generateScheamWithoutCallingParent() throws Exception {
+    /**
+     * collects all the method parameters and the extra classes from the command line
+     * creates a JAXBContext and generates schemas from the JAXBContext
+     * 
+     * @throws Exception
+     */
+    public void generateSchemaForParameters() throws Exception {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.addAll(processMethods(serviceClass.getMethods()));
 

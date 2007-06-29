@@ -35,7 +35,7 @@ public class DocLitBareJaxbSchemaGenerator extends DocLitBareSchemaGenerator {
 
 
     public Collection generateSchema() throws Exception {
-       jaxbSchemaGenerator.generateScheamWithoutCallingParent();
+       jaxbSchemaGenerator.generateSchemaForParameters();
         return super.generateSchema();
     }
 }
