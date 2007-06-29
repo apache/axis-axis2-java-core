@@ -1068,7 +1068,10 @@ public class AxisService extends AxisDescription {
      */
     public AxisOperation getOperation(QName operationName) {
         AxisOperation axisOperation = (AxisOperation) getChild(operationName);
-
+        if(axisOperation==null){
+            axisOperation = (AxisOperation) getChild(
+                    new QName(getTargetNamespace(),operationName.getLocalPart()));
+        }
         if (axisOperation == null) {
             axisOperation = (AxisOperation) operationsAliasesMap.get(
                     operationName.getLocalPart());
