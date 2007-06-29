@@ -158,23 +158,27 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             TransportOutDescription transportOut = msgContext.getConfigurationContext().
                     getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
 
-            //if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
+            //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2 
             if (transportOut != null) {
-                Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
-                Object value = null;
-                if (param != null) {
-                    value = param.getValue();
-                }
+                if (!msgContext.isSOAP11()) {
+                    Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+                    Object parameterValue = null;
+                    if (param != null) {
+                        parameterValue = param.getValue();
+                    }
 
-                if (value != null && JavaUtils.isTrueExplicitly(value)) {
-                    if (!msgContext.isSOAP11()) {
-                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
-                                               Boolean.TRUE);
+                    if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
+                        //Check whether user has already overridden this.
+                        Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+                        if (propertyValue == null | !JavaUtils.isFalseExplicitly(propertyValue)) {
+                            msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
+                                    Boolean.TRUE);
+                        }
                     }
                 }
             }
 
-            // Trasnport URL can be different from the WSA-To. So processing
+            // Transport URL can be different from the WSA-To. So processing
             // that now.
             EndpointReference epr = null;
             String transportURL = (String) msgContext
@@ -187,7 +191,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 epr = msgContext.getTo();
             }
 
-            // Check for the REST behaviour, if you desire rest beahaviour
+            // Check for the REST behavior, if you desire rest behavior
             // put a <parameter name="doREST" value="true"/> at the
             // server.xml/client.xml file
             // ######################################################
@@ -243,7 +247,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         OutputStream out = (OutputStream) msgContext
                 .getProperty(MessageContext.TRANSPORT_OUT);
 
-        // I Don't thinik we need this check.. Content type needs to be set in
+        // I Don't think we need this check.. Content type needs to be set in
         // any case. (thilina)
         // if (msgContext.isServerSide()) {
         OutTransportInfo transportInfo = (OutTransportInfo) msgContext
