@@ -48,7 +48,7 @@
                 <xsl:for-each select="input/param[@type!='']">
                     <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text>=
                                                         </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
-                    // todo Fill in the <xsl:value-of select="@name"/> here
+                    // TODO : Fill in the <xsl:value-of select="@name"/> here
                 </xsl:for-each>
                 <xsl:choose>
                     <xsl:when test="$outputtype=''">
@@ -134,7 +134,7 @@
                   <xsl:for-each select="input/param[@type!='']">
                     <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text>=
                                                         </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
-                    // todo Fill in the <xsl:value-of select="@name"/> here
+                    // TODO : Fill in the <xsl:value-of select="@name"/> here
                 </xsl:for-each>
 
                 stub.start<xsl:value-of select="@name"/>(
@@ -207,7 +207,7 @@
                   <xsl:for-each select="input/param[@type!='']">
                       <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/><xsl:text>=
                   </xsl:text>(<xsl:value-of select="@type"/>)getTestObject(<xsl:value-of select="@type"/>.class);
-                      // todo Fill in the <xsl:value-of select="@name"/> here
+                      // TODO : Fill in the <xsl:value-of select="@name"/> here
                   </xsl:for-each>
 
                   //There is no output to be tested!
