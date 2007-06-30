@@ -73,6 +73,10 @@
 				<inherited>true</inherited>
 				<configuration>
 					<skip>false</skip>
+                    <excludes>
+                        <exclude>**/*Util.java</exclude>
+                        <exclude>**/*Constants.java</exclude>
+                    </excludes>
 				</configuration>
 			</plugin>
 			<plugin>
