@@ -1,6 +1,7 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.transform.OutputKeys;
@@ -49,6 +50,7 @@ public class SchemaWriter {
                 schema.write(fos,getDefaultOptionMap());
                 fos.flush();
                 fos.close();
+                XMLPrettyPrinter.prettify(outputFile);
             }
         } catch (Exception e) {
             throw new RuntimeException("Schema writing failed!", e);
