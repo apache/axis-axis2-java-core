@@ -167,9 +167,16 @@ public class JMSMessageReceiver implements MessageListener {
                     axisConf.getAxisConfiguration().getTransportOut(Constants.TRANSPORT_JMS));
             // the reply is assumed to be on the JMSReplyTo destination, using
             // the same incoming connection factory
-            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                                   new JMSOutTransportInfo(jmsConFac.getConFactory(),
-                                                           message.getJMSReplyTo()));
+            
+            
+            JMSOutTransportInfo jmsOutTransportInfo;
+            
+            if ((jmsConFac.getJndiUser() == null) || (jmsConFac.getJndiPass() == null))
+            	jmsOutTransportInfo= new JMSOutTransportInfo(jmsConFac.getConFactory(), message.getJMSReplyTo());
+            else
+            	jmsOutTransportInfo= new JMSOutTransportInfo(jmsConFac.getConFactory(), jmsConFac.getUser(), jmsConFac.getPass(), message.getJMSReplyTo());
+            
+            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, jmsOutTransportInfo);
 
             msgContext.setServerSide(true);
             msgContext.setMessageID(message.getJMSMessageID());

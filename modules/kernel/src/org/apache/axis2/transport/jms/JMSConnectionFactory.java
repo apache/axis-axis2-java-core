@@ -122,7 +122,17 @@ public class JMSConnectionFactory {
      * The JMS Message receiver for this connection factory
      */
     private JMSMessageReceiver msgRcvr = null;
-
+    /**
+     * The actual password for the connection factory after retrieval from JNDI.
+     * If this is not supplied, the OS username will be used by default
+     */
+    private String user = null;
+    /**
+     * The actual password for the connection factory after retrieval from JNDI.
+     * If this is not supplied, the OS credentials will be used by default
+     */
+    private String pass = null;
+    
     /**
      * Create a JMSConnectionFactory for the given Axis2 name and JNDI name
      *
@@ -157,6 +167,13 @@ public class JMSConnectionFactory {
             createInitialContext();
         }
         conFactory = (ConnectionFactory) context.lookup(jndiName);
+
+        if (jndiUser != null)
+        	user = (String ) context.lookup(jndiUser);
+        
+        if (jndiPass != null)
+        	pass = (String ) context.lookup(jndiPass);
+        
         log.debug("Connected to the actual connection factory : " + jndiName);
     }
 
@@ -185,8 +202,8 @@ public class JMSConnectionFactory {
      */
 	public void setJndiUser(String jndiUser) {
 		this.jndiUser = jndiUser;
-	}
-
+	}   
+    
     /**
      * Get the JNDI name of the actual factory password
      *
@@ -213,11 +230,11 @@ public class JMSConnectionFactory {
             Connection con = null;
             try {
             	if ((jndiUser == null) || (jndiPass == null)){
-            		// User the OS username and credentials
-                    con = conFactory.createConnection();
+            		// Use the OS username and credentials
+                    con = conFactory.createConnection();            		
             	} else{
             		// use an explicit username and password
-                    con = conFactory.createConnection(jndiUser, jndiPass);
+                    con = conFactory.createConnection(user, pass);            		            		
             	}
                 Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 Queue queue = session.createQueue(destinationJndi);
@@ -240,7 +257,7 @@ public class JMSConnectionFactory {
                 }
             }
         }
-
+        
         serviceDestinationMapping.put(destinationName, serviceName);
         log.info("Mapping JNDI name : " + destinationJndi + " and JMS Destination name : " +
             destinationName + " against service : " + serviceName);
@@ -289,7 +306,7 @@ public class JMSConnectionFactory {
     public String getJndiName() {
         return jndiName;
     }
-
+    
     /**
      * Get the JNDI name of the actual factory username
      *
@@ -298,7 +315,7 @@ public class JMSConnectionFactory {
 	public String getJndiUser() {
 		return jndiUser;
 	}
-
+    
     /**
      * Get the JNDI name of the actual factory password
      *
@@ -306,6 +323,25 @@ public class JMSConnectionFactory {
      */
     public String getJndiPass() {
 		return jndiPass;
+	}
+  
+    
+    /**
+     * This is the real password for the connection factory after the JNDI lookup
+     *
+     * @return the real password for the connection factory after the JNDI lookup
+     */
+	public String getPass() {
+		return pass;
+	}
+
+    /**
+     * This is the real username for the connection factory after the JNDI lookup
+     *
+     * @return the eal username for the connection factory after the JNDI lookup
+     */
+	public String getUser() {
+		return user;
 	}
 
 	/**
@@ -357,10 +393,10 @@ public class JMSConnectionFactory {
             try {
             	if ((jndiUser == null) || (jndiPass == null)){
             		// User the OS username and credentials
-                    connection = conFactory.createConnection();
+                    connection = conFactory.createConnection();            		
             	} else{
             		// use an explicit username and password
-            		connection = conFactory.createConnection(jndiUser, jndiPass);
+            		connection = conFactory.createConnection(user, pass);            		            		
             	}
             } catch (JMSException e) {
                 handleException("Error creating a JMS connection using the " +
@@ -389,7 +425,6 @@ public class JMSConnectionFactory {
     public void listenOnDestination(String destinationJndi) throws JMSException {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Destination destination = null;
-
         try {
             Object o = context.lookup(destinationJndi);
             destination = (Destination) o;

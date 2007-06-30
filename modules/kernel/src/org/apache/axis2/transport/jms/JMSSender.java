@@ -86,7 +86,17 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         Connection con = null;
         try {
-            con = connectionFac.createConnection();
+            String user = transportInfo.getConnectionFactoryUser();
+            String password = transportInfo.getConnectionFactoryPassword();
+            
+        	if ((user == null) || (password == null)){
+        		// Use the OS username and credentials
+                con = connectionFac.createConnection();            		
+        	} else{
+        		// use an explicit username and password
+                con = connectionFac.createConnection(user, password);            		            		
+        	}
+            
             Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Message message = createJMSMessage(msgContext, session);
 

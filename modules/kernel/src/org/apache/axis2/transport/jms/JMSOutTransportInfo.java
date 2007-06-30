@@ -35,6 +35,8 @@ public class JMSOutTransportInfo implements OutTransportInfo {
     private static final Log log = LogFactory.getLog(JMSOutTransportInfo.class);
 
     private ConnectionFactory connectionFactory = null;
+    private String connectionFactoryUser = null;
+    private String connectionFactoryPassword = null;
     private Destination destination = null;
 
     private String contentType = null;
@@ -47,6 +49,19 @@ public class JMSOutTransportInfo implements OutTransportInfo {
      */
     JMSOutTransportInfo(ConnectionFactory connectionFactory, Destination dest) {
         this.connectionFactory = connectionFactory;
+        this.destination = dest;
+    }
+
+    /**
+     * Creates an instance using the given connection factory and destination
+     *
+     * @param connectionFactory the connection factory
+     * @param dest              the destination
+     */
+    JMSOutTransportInfo(ConnectionFactory connectionFactory, String connectionFactoryUser, String connectionFactoryPassword, Destination dest) {
+        this.connectionFactory = connectionFactory;
+        this.connectionFactoryUser = connectionFactoryUser;
+        this.connectionFactoryPassword = connectionFactoryPassword;
         this.destination = dest;
     }
 
@@ -69,6 +84,8 @@ public class JMSOutTransportInfo implements OutTransportInfo {
             }
 
             connectionFactory = getConnectionFactory(context, props);
+            connectionFactoryUser = getConnectionFactoryUser(context, props);
+            connectionFactoryPassword = getConnectionFactoryPass(context, props);
             destination = getDestination(context, url);
         }
     }
@@ -92,6 +109,50 @@ public class JMSOutTransportInfo implements OutTransportInfo {
             }
         } catch (NamingException e) {
             handleException("Cannot get JMS Connection factory with props : " + props, e);
+        }
+        return null;
+    }
+
+    /**
+     * Get the referenced ConnectionFactory Username (if supplied) using the properties from the context
+     *
+     * @param context the context to use for lookup
+     * @param props   the properties which contains the JNDI name of the factory username
+     * @return the connection factory username (or null if one is not in the JNDI tree)
+     */
+    private String getConnectionFactoryUser(Context context, Hashtable props) {
+        try {
+
+            String conFacJndiUser = (String) props.get(JMSConstants.CONFAC_JNDI_NAME_USER);
+            if (conFacJndiUser != null) {
+                return (String) context.lookup(conFacJndiUser);
+            } else {
+            	return null;
+            }
+        } catch (NamingException e) {
+            handleException("Cannot get JMS Connection factory username with props : " + props, e);
+        }
+        return null;
+    }
+
+    /**
+     * Get the referenced ConnectionFactory Password (if supplied) using the properties from the context
+     *
+     * @param context the context to use for lookup
+     * @param props   the properties which contains the JNDI name of the factory password
+     * @return the connection factory password (or null if one is not in the JNDI tree)
+     */
+    private String getConnectionFactoryPass(Context context, Hashtable props) {
+        try {
+
+            String conFacJndiPass = (String) props.get(JMSConstants.CONFAC_JNDI_NAME_PASS);
+            if (conFacJndiPass != null) {
+                return (String) context.lookup(conFacJndiPass);
+            } else {
+            	return null;
+            }
+        } catch (NamingException e) {
+            handleException("Cannot get JMS Connection factory password with props : " + props, e);
         }
         return null;
     }
@@ -138,7 +199,15 @@ public class JMSOutTransportInfo implements OutTransportInfo {
         return connectionFactory;
     }
 
-    public void setContentType(String contentType) {
+    public String getConnectionFactoryPassword() {
+		return connectionFactoryPassword;
+	}
+
+	public String getConnectionFactoryUser() {
+		return connectionFactoryUser;
+	}
+
+	public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 }
