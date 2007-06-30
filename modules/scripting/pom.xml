@@ -83,7 +83,6 @@
 					<skip>false</skip>
 					<includes>
 						<include>**/*Test.java</include>
-						<include>**/TestUtils.java</include>
 					</includes>
 					<excludes>
 						<exclude>**/ScriptModuleTest.java</exclude>
