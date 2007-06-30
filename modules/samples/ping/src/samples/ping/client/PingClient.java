@@ -16,6 +16,7 @@
 
 package samples.ping.client;
 
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -25,6 +26,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 
 public class PingClient {
     private static EndpointReference targetEPR =
@@ -76,8 +79,8 @@ public class PingClient {
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(PING_SOAPACTION);
-
-            ServiceClient sender = new ServiceClient();
+         
+	    ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
 
             OMElement pingRequestPayload;

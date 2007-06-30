@@ -41,6 +41,7 @@
         <jar destfile="${build.dir}/SamplePingService.aar">
             <fileset excludes="**/Test.class" dir="${build.dir}/classes"/>
         </jar>
+		<copy file="${build.dir}/SamplePingService.aar" destfile="../../repository/services" />
     </target>
 
     <target name="run.client" depends="compile">

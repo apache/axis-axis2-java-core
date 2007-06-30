@@ -6,8 +6,8 @@ Introduction
 
 In this sample, we are deploying an AXIOM based service after writing
 a services.xml and creating an aar. We also test successful
-deployment using an AXIOM based client which send serveral ping requests.
-The client sends serveral ping requests, including service level requests.
+deployment using an AXIOM based client which send several ping requests.
+The client sends several ping requests, including service level requests.
 
 
 Pre-Requisites
@@ -18,15 +18,22 @@ Apache Ant 1.6.2 or later
 Building the Service
 ====================
 
-Type "ant generate.service" from Axis2_HOME/samples/pingingservices directory.
-Then deploy the
-Axis2_HOME/samples/pingingservices/build/PingService.aar
+Type "ant generate.service" from AXIS2_HOME/samples/ping directory,
+to generate the service and deploy it into 
+AXIS2_HOME/repository/services
 
 
 Running the Client
 ==================
 
-Type ant run.client in the Axis2_HOME/samples/pingingservices directory
+Type ant run.client in the Axis2_HOME/samples/ping directory
+
+Note
+====
+Sometimes, if you're having trouble running the client successfully, 
+It may be necessary to clean the services repository before you generate the service, deploy it
+and run the client. (i.e. delete services created from previous samples.)
+
 
 Help
 ====
