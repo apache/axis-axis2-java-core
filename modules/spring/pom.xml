@@ -51,8 +51,8 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>servletapi</groupId>
-			<artifactId>servletapi</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
