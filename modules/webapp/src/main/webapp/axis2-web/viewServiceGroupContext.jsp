@@ -26,41 +26,28 @@
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Runing Context hierachy</h1>
 <%
-    ConfigurationContext configContext = (ConfigurationContext)request.getSession().getAttribute(Constants.CONFIG_CONTEXT);
-    Hashtable serviceGroupContextsMap = configContext.getServiceGroupContexts();
-    String type = request.getParameter("TYPE");
-    String sgID = request.getParameter("ID");
-    ServiceGroupContext sgContext = (ServiceGroupContext)serviceGroupContextsMap.get(sgID);
-    if(sgID !=null && sgContext !=null){
-        if(type != null){
-            if("VIEW".equals(type)){
-             Map perMap = sgContext.getProperties();
-             if(perMap.size()>0){
-             %>
+    String type = (String) request.getSession().getAttribute("TYPE");
+    ConfigurationContext configCtx = (ConfigurationContext) request.getSession().getAttribute("ConfigurationContext");
+    ServiceGroupContext sgContext = (ServiceGroupContext) request.getSession().getAttribute("ServiceGroupContext");
+    if (sgContext != null) {
+        if (type != null) {
+            if ("VIEW".equals(type)) {
+              Iterator propertyNames = sgContext.getPropertyNames();
+%>
              <h4>Persistance properties</h4><ul>
              <%
-                 Iterator itr = perMap.keySet().iterator();
-                 while (itr.hasNext()) {
-                     String key = (String) itr.next();
-                     Object property =  perMap.get(key);
+                 while (propertyNames.hasNext()) {
+                     String key = (String) propertyNames.next();
+                     Object property =  sgContext.getProperty(key);
               %>
                    <li><%=key%> : <%=property.toString()%></li>
               <%
                  }
                  %></ul>
                  <%
-             } else {
-            %>
-             <h4>No persistance properties found in the context</h4>
-            <%
-             }
             }   else if("DELETE".equals(type)){
-                Object obj = serviceGroupContextsMap.remove(sgID);
-                if(obj != null){
+                 configCtx.removeServiceGroupContext(sgContext.getId());
                  %>Removed the context<%
-            }else {
-                %>Unable to remove the context <%
-            }
             }
         }
     } else {

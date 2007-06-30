@@ -46,6 +46,9 @@
                  ArrayList service_para = axisService.getParameters();
                  for (int i = 0; i < service_para.size(); i++) {
                      Parameter parameter = (Parameter) service_para.get(i);
+                     if (parameter.getParameterType()==Parameter.OM_PARAMETER) {
+                         continue;
+                     }
                      %>
                      <tr>
                      <td><%=parameter.getName()%></td>
@@ -84,7 +87,10 @@
                     <%
                      op_paras = axisOperation.getParameters();
                      for (int i = 0; i < op_paras.size(); i++) {
-                     Parameter parameter = (Parameter) op_paras.get(i);
+                         Parameter parameter = (Parameter) op_paras.get(i);
+                         if (parameter.getParameterType()==Parameter.OM_PARAMETER) {
+                             continue;
+                         }
                      %>
                      <tr>
                      <td><%=parameter.getName()%></td>
