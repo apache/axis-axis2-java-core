@@ -32,15 +32,14 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
 import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
@@ -111,8 +110,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
                 }            
             }
             
+            String addressingNamespace = getAddressingNamespace(W3CEndpointReference.class);
             w3cEPR =
-                (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, Final.WSA_NAMESPACE);
+                (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -143,7 +143,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = (jaxwsEPR instanceof SubmissionEndpointReference) ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
         org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
         
         try {
@@ -183,5 +183,11 @@ public class Provider extends javax.xml.ws.spi.Provider {
         }
         
         return jaxwsEPR;
+    }
+
+    private String getAddressingNamespace(Class clazz) {
+        EndpointReferenceFactory eprFactory =
+            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
+        return eprFactory.getAddressingNamespace(clazz);
     }
 }
