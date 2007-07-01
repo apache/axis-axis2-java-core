@@ -179,6 +179,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     log.info(e2);
                     throw new ServletException(e2);
                 }
+            } finally {
                 closeStaxBuilder(msgContext);
             }
         } else {
