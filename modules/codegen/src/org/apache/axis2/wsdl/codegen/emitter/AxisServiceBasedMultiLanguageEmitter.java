@@ -185,7 +185,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final Log log = LogFactory.getLog(AxisServiceBasedMultiLanguageEmitter.class);
     protected URIResolver resolver;
 
+    // this is used to keep the current service infoHolder
     protected Map infoHolder;
+    // this is used to keep infoHolders for all services
+    protected Map allServiceInfoHolder;
 
     protected CodeGenConfiguration codeGenConfiguration;
 
@@ -210,6 +213,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     public AxisServiceBasedMultiLanguageEmitter() {
         infoHolder = new HashMap();
+        allServiceInfoHolder = new HashMap();
     }
 
     /**
@@ -1266,10 +1270,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         try {
 
+            allServiceInfoHolder = new HashMap();
             Map originalMap = getNewCopy(this.mapper.getAllMappedNames());
             // we are going to generate following files seperately per service
             for (Iterator axisServicesIter = this.axisServices.iterator();
                  axisServicesIter.hasNext();) {
+                // create a new hash map for each service
+                this.infoHolder = new HashMap();
                 this.axisService = (AxisService) axisServicesIter.next();
                 this.axisBinding =
                         axisService.getEndpoint(axisService.getEndpointName()).getBinding();
@@ -1316,6 +1323,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     //we need to serialize the WSDL's
                     writeWSDLFiles();
                 }
+                // save the info holder with the service
+                allServiceInfoHolder.put(this.axisService.getName(),this.infoHolder);
             }
 
             // save back type map
@@ -1903,6 +1912,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return DOM Element
      */
     protected Element getServiceElement(String serviceName, String className, Document doc) {
+
+        if (allServiceInfoHolder.get(serviceName) != null){
+            this.infoHolder = (Map) allServiceInfoHolder.get(serviceName);
+        }
         Element rootElement = doc.createElement("interface");
 
         addAttribute(doc, "package", "", rootElement);

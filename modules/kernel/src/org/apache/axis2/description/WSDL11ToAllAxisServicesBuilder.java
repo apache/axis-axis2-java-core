@@ -110,6 +110,8 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                     if (retAxisService != null) {
                         axisServices.add(retAxisService);
                     }
+                    // reset the port name if it had set when moving to next service
+                    portName = null;
                 }
             } else {
                 throw new AxisFault("No service was not found in the WSDL at " +
