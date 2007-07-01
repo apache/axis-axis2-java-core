@@ -395,12 +395,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         containsKey(faultMessage.getName())) {
                     //make a name
                     String className = makeJavaClassName(faultMessage.getName());
-//  FIXME: TODO: the following lines were for fixing Axis2-2881 (svn revision 552106), but causes build break.
-//                    QName faultQName = new QName(codeGenConfiguration.getTargetNamespace(), faultMessage.getName());
-//                    if (this.mapper.getTypeMappingName(faultQName) != null) {
-//                        // i.e we already have an entry
-//                        className = makeJavaClassName(className + (uniqueFaultNameCounter++));
-//                    }
+                    QName faultQName = new QName(codeGenConfiguration.getTargetNamespace(), faultMessage.getName());
+                    if (this.mapper.getTypeMappingObject(faultQName) != null) {
+                        // i.e we already have an entry
+                        className = makeJavaClassName(className + (uniqueFaultNameCounter++));
+                    }
                     while (fullyQualifiedFaultClassNameMap.containsValue(className)) {
                         className = makeJavaClassName(className + (uniqueFaultNameCounter++));
                     }

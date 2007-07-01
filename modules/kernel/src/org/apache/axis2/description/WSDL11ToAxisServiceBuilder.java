@@ -1745,7 +1745,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         part = (Part) partsMap.values().iterator().next();
                         // change the name of this part
                         // this is the return type and its name should be result
-                        part.setName("result");
+//                        part.setName("result");
                         addPartToElement(part,
                             document,
                             xsdPrefix,
