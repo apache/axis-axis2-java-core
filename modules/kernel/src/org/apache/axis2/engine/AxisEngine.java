@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -541,10 +542,14 @@ public class AxisEngine {
                     if (axisOperation != null) {
                         MessageReceiver msgReceiver = axisOperation.getMessageReceiver();
                         if ((msgReceiver != null) && (msgReceiver instanceof CallbackReceiver)) {
-                            Callback callback = ((CallbackReceiver) msgReceiver)
+                            Object callback = ((CallbackReceiver) msgReceiver)
                                     .lookupCallback(msgctx.getMessageID());
-                            if (callback != null) {
-                                callback.onError(e);
+                            if (callback == null) return; // TODO: should we log this??
+
+                            if (callback instanceof Callback) {
+                                ((Callback)callback).onError(e);
+                            } else {
+                                ((AxisCallback)callback).onError(e);
                             }
                         }
                     }

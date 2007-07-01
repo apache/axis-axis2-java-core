@@ -20,12 +20,11 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFault;
-import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.MessageReceiver;
@@ -49,33 +48,58 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore.put(MsgID, callback);
     }
 
-    public Callback lookupCallback(String msgID) {
-        return (Callback) callbackStore.remove(msgID);
+    public void addCallback(String msgID, AxisCallback callback) {
+        callbackStore.put(msgID, callback);
     }
 
-    public void receive(MessageContext messageCtx) throws AxisFault {
-        RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
+    public Object lookupCallback(String msgID) {
+        return callbackStore.remove(msgID);
+    }
+
+    public void receive(MessageContext msgContext) throws AxisFault {
+        RelatesTo relatesTO = msgContext.getOptions().getRelatesTo();
         if (relatesTO == null) {
             throw new AxisFault("Cannot identify correct Callback object. RelatesTo is null");
         }
         String messageID = relatesTO.getValue();
-        Callback callback = (Callback) callbackStore.remove(messageID);
-        AsyncResult result = new AsyncResult(messageCtx);
 
-        if (callback == null) {
-            throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
+        Object callbackObj = callbackStore.remove(messageID);
+
+
+        if (callbackObj == null) {
+            throw new AxisFault("The Callback for MessageID " + messageID + " was not found");
         }
-        
-            // check weather the result is a fault.
+
+        if (callbackObj instanceof AxisCallback) {
+            AxisCallback axisCallback = (AxisCallback)callbackObj;
+            if (msgContext.isFault()) {
+                axisCallback.onFault(msgContext);
+            } else {
+                axisCallback.onMessage(msgContext);
+            }
+            // Either way we're done.
+            axisCallback.onComplete();
+            return;
+        }
+
+        // THIS NEXT PART WILL EVENTUALLY GO AWAY WHEN Callback DOES
+
+        // OK, this must be an old-style Callback
+        Callback callback = (Callback)callbackObj;
+        AsyncResult result = new AsyncResult(msgContext);
+
+        // check whether the result is a fault.
         try {
             SOAPEnvelope envelope = result.getResponseEnvelope();
-            OperationContext opContext = messageCtx.getOperationContext();
+
+            OperationContext opContext = msgContext.getOperationContext();
             if (opContext != null && !opContext.isComplete()) {
-                opContext.addMessageContext(messageCtx);
+                opContext.addMessageContext(msgContext);
             }
+
             if (envelope.getBody().hasFault()) {
                 AxisFault axisFault =
-                        Utils.getInboundFaultFromMessageContext(messageCtx);
+                        Utils.getInboundFaultFromMessageContext(msgContext);
                 callback.onError(axisFault);
             } else {
                 callback.onComplete(result);

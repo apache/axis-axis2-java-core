@@ -24,6 +24,7 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -59,6 +60,8 @@ public abstract class OperationClient {
     protected OperationContext oc;
 
     protected Callback callback;
+
+    protected AxisCallback axisCallback;
 
     /*
     * indicates whether the MEP execution has completed (and hence ready for
@@ -126,8 +129,23 @@ public abstract class OperationClient {
      *
      * @param callback the callback to be used when the client decides its time to
      *                 use it
+     * @deprecated Please use the AxisCallback interface rather than Callback, which has been deprecated
      */
     public abstract void setCallback(Callback callback);
+
+    /**
+     * Set the callback to be executed when a message comes into the MEP and the
+     * operation client is executed. This is the way the operation client
+     * provides notification that a message has been received by it. Exactly
+     * when its executed and under what conditions is a function of the specific
+     * operation client.
+     *
+     * @param callback the callback to be used when the client decides its time to
+     *                 use it
+     */
+    public final void setCallback(AxisCallback callback) {
+        axisCallback = callback;
+    }
 
     /**
      * Execute the MEP.  This method is final and only serves to set (if appropriate)

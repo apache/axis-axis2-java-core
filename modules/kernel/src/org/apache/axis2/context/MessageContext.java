@@ -4279,6 +4279,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         try {
             return getEnvelope().getBody().hasFault();
         } catch (Exception e) {
+            // TODO: What should we be doing here?  No envelope certainly seems bad....
             return false;
         }
     }

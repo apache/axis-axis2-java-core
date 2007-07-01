@@ -244,15 +244,15 @@
             <xsl:if test="$mep='12'">  <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <xsl:if test="$isSync='1'">
                     /**
-                    * Auto generated method signature
-                    * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@name"/>
+                     * Auto generated method signature
+                     * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@name"/>
                     <xsl:for-each select="input/param[@type!='']">
-                        * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
+                     * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
                     </xsl:text></xsl:for-each>
-                    */
+                     */
 
                     <xsl:choose>
-                        <!-- if -b flag is on then we have to unwarp the request and response messages. -->
+                        <!-- if -b flag is on then we have to unwrap the request and response messages. -->
                         <xsl:when test="$isbackcompatible = 'true'">
                             public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when>
                             <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of select="$outputcomplextype"/></xsl:when>
@@ -684,33 +684,29 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-        //adding SOAP soap_headers
+        // adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
         // create message context with that soap envelope
         _messageContext.setEnvelope(env);
 
-        // add the message contxt to the operation client
+        // add the message context to the operation client
         _operationClient.addMessageContext(_messageContext);
 
 
                     <xsl:choose>
                         <xsl:when test="$outputtype=''">
-                            //Nothing to pass as the callback!!!
+                            // Nothing to pass as the callback!!!
                         </xsl:when>
                         <xsl:otherwise>
-                           _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
-                    public void onComplete(
-                            org.apache.axis2.client.async.AsyncResult result) {
-                        try{
-                        java.lang.Object object = fromOM(result.getResponseEnvelope().getBody().getFirstElement(),
-                               <xsl:value-of select="$outputtype"/>.class,
-                               getEnvelopeNamespaces(result.getResponseEnvelope())
-                            );
-                        callback.receiveResult<xsl:value-of select="@name"/>(
-                            <xsl:choose>
-                                <xsl:when test="$outputtype=''">
-                                    );
-                                </xsl:when>
+                        _operationClient.setCallback(new org.apache.axis2.client.async.AxisCallback() {
+                            public void onMessage(org.apache.axis2.context.MessageContext resultContext) {
+                            try {
+                                org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
+                                java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
+                                                                 <xsl:value-of select="$outputtype"/>.class,
+                                                                 getEnvelopeNamespaces(resultEnv));
+                                callback.receiveResult<xsl:value-of select="@name"/>(<xsl:choose>
+                                <xsl:when test="$outputtype=''">);</xsl:when>
                                 <xsl:when test="$outputparamcount=1">
                                     get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
                                       select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object));
@@ -719,18 +715,26 @@
                                     (<xsl:value-of select="$outputcomplextype"/>)object);
                                 </xsl:when>
                                 <xsl:otherwise>
-                                   (<xsl:value-of select="$outputtype"/>)object);
+                                (<xsl:value-of select="$outputtype"/>)object);
                                 </xsl:otherwise>
                             </xsl:choose>
-                        } catch(org.apache.axis2.AxisFault e){
-                           callback.receiveError<xsl:value-of select="@name"/>(e); 
-                        }
+                            } catch (org.apache.axis2.AxisFault e) {
+                                callback.receiveError<xsl:value-of select="@name"/>(e);
+                            }
+                            }
 
-                    }
+                            public void onError(java.lang.Exception e) {
+                                callback.receiveError<xsl:value-of select="@name"/>(e);
+                            }
 
-                    public void onError(java.lang.Exception e) {
-                        callback.receiveError<xsl:value-of select="@name"/>(e);
-                    }
+                            public void onFault(org.apache.axis2.context.MessageContext faultContext) {
+                                org.apache.axis2.AxisFault fault = org.apache.axis2.util.Utils.getInboundFaultFromMessageContext(faultContext);
+                                onError(fault);
+                            }
+
+                            public void onComplete() {
+                                // Do nothing by default
+                            }
                 });
                         </xsl:otherwise>
                     </xsl:choose>
