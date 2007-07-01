@@ -3956,6 +3956,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
      <xsl:variable name="fullyQualifiedName"><xsl:value-of select="$package"/>.<xsl:value-of select="$name"/></xsl:variable>
      <xsl:variable name="fullyQualifiedHelperName"><xsl:value-of select="$package"/>.<xsl:value-of select="$helpername"/></xsl:variable>
 
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals(<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getNamespaceURI())){
+                return <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getPrefix();
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+        }
+
         /**
             * isReaderMTOMAware
             * @return true if the reader supports MTOM
