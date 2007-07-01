@@ -771,7 +771,11 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    array[i] = ConverterUtil.convertToDateTime(o.toString());
+                    if (o instanceof String){
+                        array[i] = ConverterUtil.convertToDateTime(o.toString());
+                    } else if (o instanceof Calendar) {
+                        array[i] = (Calendar) o;
+                    }
                 }
             }
             returnArray = array;
