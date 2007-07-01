@@ -26,6 +26,7 @@ import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.api.impl.s2j.SchemaCompilerImpl;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.EntityResolver;
@@ -125,22 +127,23 @@ public class CodeGenerationUtility {
 
                 sc.setErrorListener(new ErrorListener(){
                     public void error(SAXParseException saxParseException) {
-                        log.error(saxParseException.getMessage(), saxParseException);
+                        log.debug(saxParseException.getMessage(), saxParseException);
                     }
 
                     public void fatalError(SAXParseException saxParseException) {
-                        log.error(saxParseException.getMessage(), saxParseException);
+                        log.debug(saxParseException.getMessage(), saxParseException);
                     }
 
                     public void warning(SAXParseException saxParseException) {
-                        log.warn(saxParseException.getMessage(), saxParseException);
+                        log.debug(saxParseException.getMessage(), saxParseException);
                     }
 
                     public void info(SAXParseException saxParseException) {
-                        log.info(saxParseException.getMessage(), saxParseException);
+                        log.debug(saxParseException.getMessage(), saxParseException);
                     }
                 });
-                sc.parseSchema((InputSource)xmlObjectsVector.get(i));
+                Document document = schema.getAllSchemas()[0];
+                sc.parseSchema(schema.getTargetNamespace(), document.getDocumentElement());
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
