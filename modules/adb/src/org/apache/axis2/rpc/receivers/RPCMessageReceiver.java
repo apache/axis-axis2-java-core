@@ -140,10 +140,11 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 msg = "Exception occurred while trying to invoke service method " +
                         method.getName();
             }
-            log.error(msg, e);
             if (cause instanceof AxisFault) {
+                log.debug(msg, cause);
                 throw (AxisFault)cause;
             }
+            log.error(msg, e);
             throw new AxisFault(msg, e);
         } catch(RuntimeException e) {
             throw AxisFault.makeFault(e);
