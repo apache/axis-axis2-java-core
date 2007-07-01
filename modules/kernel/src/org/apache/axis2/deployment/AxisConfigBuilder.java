@@ -593,6 +593,20 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
+    protected HashMap processMessageBuilders(OMElement messageBuildersElement)
+            throws DeploymentException {
+        try {
+            return super.processMessageBuilders(messageBuildersElement);
+        } catch (NoClassDefFoundError e) {
+            if (deploymentEngine != null) {
+                throw new DeploymentException(e);
+            } else {
+                // Called from createDefaultConfigurationContext in ConfigurationContextFactory
+                // Please don't throw an exception.
+                return new HashMap();
+            }
+        }
+    }
 
     private Phase getPhase(String className)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException {
