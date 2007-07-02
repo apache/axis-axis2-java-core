@@ -514,6 +514,10 @@ public class ConverterUtil {
         return new IDRefs(s);
     }
 
+    public static URI convertToURI(String s){
+        return convertToAnyURI(s);
+    }
+
     public static URI convertToAnyURI(String s) {
         try {
             return new URI(s);
