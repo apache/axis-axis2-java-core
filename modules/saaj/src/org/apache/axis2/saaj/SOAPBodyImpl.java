@@ -24,8 +24,6 @@ import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NamespaceImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultImpl;
@@ -181,19 +179,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             SOAP11FaultImpl fault =
                     new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
-            //set a default fault code here.
-            saajSOAPFault.setFaultCode(SOAP11Constants.QNAME_SENDER_FAULTCODE);
-            //set a default fault string here
-            saajSOAPFault.setFaultString("Fault string, and possibly fault code, not set");
         } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
             SOAP12FaultImpl fault =
                     new SOAP12FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
-            //set a default fault code here.
-            saajSOAPFault.setFaultCode(SOAP12Constants.QNAME_SENDER_FAULTCODE);
-            //set a default fault string here
-            saajSOAPFault.addFaultReasonText("Fault string, and possibly fault code, not set", Locale.getDefault());
         }
+        // set default fault code and string
+        saajSOAPFault.setDefaults();
+        
         ((NodeImpl)omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
         return saajSOAPFault;
     }

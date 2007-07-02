@@ -445,9 +445,11 @@ public class SOAPFaultTest extends TestCase {
 
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault", Locale.ENGLISH);
+            SOAPFault sf = body.addFault();
+            
             String expected = "Its my fault again";
             boolean found = false;
+            sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
             sf.addFaultReasonText(expected, Locale.ENGLISH);
             Iterator i = sf.getFaultReasonTexts();
             int j = 0;
@@ -484,14 +486,14 @@ public class SOAPFaultTest extends TestCase {
         SOAPPart soapPart = soapMessage.getSOAPPart();
         SOAPEnvelope envelope = soapPart.getEnvelope();
         SOAPBody body = envelope.getBody();
-
+        SOAPFault sf = body.addFault();
+        
         String expected1 = "Its my fault";
         String expected2 = "Its my fault again";
 
-        SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, expected1, Locale.UK);
-
         boolean found1 = false;
         boolean found2 = false;
+        sf.addFaultReasonText(expected1, Locale.UK);
         sf.addFaultReasonText(expected2, Locale.ENGLISH);
         Iterator i = sf.getFaultReasonTexts();
         int j = 0;
@@ -648,7 +650,8 @@ public class SOAPFaultTest extends TestCase {
             SOAPPart soapPart = soapMessage.getSOAPPart();
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-
+            SOAPFault sf = body.addFault();
+            
             Locale expected1 = Locale.ENGLISH;
             Locale expected2 = Locale.UK;
             Locale expected3 = Locale.GERMAN;
@@ -656,9 +659,8 @@ public class SOAPFaultTest extends TestCase {
             boolean found2 = false;
             boolean found3 = false;
 
-            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault1", expected1);
-
             System.out.println("Adding FaultReasonText to SOAPFault");
+            sf.addFaultReasonText("Its my fault1", expected1);
             sf.addFaultReasonText("Its my fault2", expected2);
             sf.addFaultReasonText("Its my fault3", expected3);
             System.out.println("Getting FaultReasonLocales from SOAPFault");
