@@ -470,7 +470,7 @@ class OutInAxisOperationClient extends OperationClient {
          * This is called at the end of the MEP no matter what happens, quite like a
          * finally block.
          */
-        public void onComplete() {
+        public synchronized void onComplete() {
             complete = true;
             notify();
         }
