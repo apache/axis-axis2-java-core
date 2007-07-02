@@ -85,7 +85,7 @@ public class ServiceCreateTest extends UtilServerBasedTestCase {
         args.add("200");
 
         OMElement response = client.invokeBlocking(
-                new QName("http://engine.axis2.apache.org/xsd", "add", "ns1"), args.toArray());
+                new QName("http://engine.axis2.apache.org", "add", "ns1"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
     }
 }

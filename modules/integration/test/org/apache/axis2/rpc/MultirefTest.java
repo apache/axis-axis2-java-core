@@ -60,7 +60,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 public class MultirefTest extends RPCLocalTestCase {
 
     protected boolean finish = false;
-    public static final String NAMESPACE = "http://rpc.axis2.apache.org/xsd";
+    public static final String NAMESPACE = "http://rpc.axis2.apache.org";
 
     protected void setUp() throws Exception {
 		super.setUp();

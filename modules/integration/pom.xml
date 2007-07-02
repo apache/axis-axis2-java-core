@@ -480,7 +480,7 @@
 								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-ap -o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
+									<arg line="-o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
 								</java>
                                 <ant antfile="build.xml" inheritall="true" inheritrefs="true"
                                      dir="target/wsdl/complexdatatypebare"/>

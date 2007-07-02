@@ -33,7 +33,7 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.tempuri.complex.xsd.ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub;
+import org.tempuri.complex.ComplexDataTypesDocLitBareStub;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -52,7 +52,7 @@ public class ComplexDataTypesDocLitBareTest extends
     protected QName serviceName = new QName("ComplexDataTypesDocLitBare");
     protected AxisConfiguration axisConfiguration;
     protected EndpointReference targetEPR;
-    org.tempuri.complex.xsd.ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub stub;
+    ComplexDataTypesDocLitBareStub stub;
 
     public ComplexDataTypesDocLitBareTest() {
         super(ComplexDataTypesDocLitBareTest.class.getName());
@@ -72,7 +72,7 @@ public class ComplexDataTypesDocLitBareTest extends
                         + (UtilServer.TESTING_PORT)
 //                        + 8000
                         + "/axis2/services/ComplexDataTypesDocLitBare");
-        stub = new org.tempuri.complex.xsd.ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub(null, targetEPR.getAddress());
+        stub = new org.tempuri.complex.ComplexDataTypesDocLitBareStub(null, targetEPR.getAddress());
         String className = "org.tempuri.complex.ComplexDataTypesDocLitBare";
         UtilServer.start();
         Parameter generateBare = new Parameter();
@@ -95,14 +95,14 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretArrayInt1D() throws java.lang.Exception {
 //        assertNull(stub.retArrayInt1D(null));
         stub._getServiceClient().cleanupTransport();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayInt1D req = new
-                ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayInt1D();
+        ComplexDataTypesDocLitBareStub.InArrayInt1D req = new
+                ComplexDataTypesDocLitBareStub.InArrayInt1D();
         assertNotNull(stub.retArrayInt1D(req));
         stub._getServiceClient().cleanupTransport();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfint input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfint();
+        ComplexDataTypesDocLitBareStub.ArrayOfint input = new ComplexDataTypesDocLitBareStub.ArrayOfint();
         input.set_int(new int[]{0, 1, 2});
         req.setInArrayInt1D(input);
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetArrayInt1DResult ret = stub.retArrayInt1D(req);
+        ComplexDataTypesDocLitBareStub.RetArrayInt1DResult ret = stub.retArrayInt1D(req);
         stub._getServiceClient().cleanupTransport();
         assertNotNull(ret);
         assertNotNull(ret.getRetArrayInt1DResult().get_int());
@@ -115,14 +115,14 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretStructSNSAS() throws java.lang.Exception {
         //TODO Codegen issue
 //        assertNull(stub.retStructSNSAS(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSNSAS req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSNSAS();
+        ComplexDataTypesDocLitBareStub.InStructSNSAS req =
+                new ComplexDataTypesDocLitBareStub.InStructSNSAS();
         assertNotNull(stub.retStructSNSAS(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Group input =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Group();
+        ComplexDataTypesDocLitBareStub.Group input =
+                new ComplexDataTypesDocLitBareStub.Group();
         input.setName("xyz");
-        input.setMembers(new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfPerson());
+        input.setMembers(new ComplexDataTypesDocLitBareStub.ArrayOfPerson());
         req.setInStructSNSAS(input);
         assertNotNull(stub.retStructSNSAS(req));
     }
@@ -133,9 +133,9 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretArrayDateTime1D() throws java.lang.Exception {
         //TODO , this is a codegen bug
 //        assertNull(stub.retArrayDateTime1D(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayDateTime1D req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayDateTime1D();
+        ComplexDataTypesDocLitBareStub.InArrayDateTime1D req = new ComplexDataTypesDocLitBareStub.InArrayDateTime1D();
         assertNotNull(stub.retArrayDateTime1D(req));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfNullableOfdateTime input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfNullableOfdateTime();
+        ComplexDataTypesDocLitBareStub.ArrayOfNullableOfdateTime input = new ComplexDataTypesDocLitBareStub.ArrayOfNullableOfdateTime();
         input.setDateTime(new Calendar[]{Calendar.getInstance(), Calendar.getInstance()});
         req.setInArrayDateTime1D(input);
         assertNotNull(stub.retArrayDateTime1D(req));
@@ -147,15 +147,15 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretArrayString2D() throws java.lang.Exception {
         //TODO codegen issue
 //        assertNull(stub.retArrayString2D(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayString2D req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayString2D();
+        ComplexDataTypesDocLitBareStub.InArrayString2D req =
+                new ComplexDataTypesDocLitBareStub.InArrayString2D();
         assertNotNull(stub.retArrayString2D(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfArrayOfstring input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfArrayOfstring();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring a2 = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring a1 = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring();
+        ComplexDataTypesDocLitBareStub.ArrayOfArrayOfstring input = new ComplexDataTypesDocLitBareStub.ArrayOfArrayOfstring();
+        ComplexDataTypesDocLitBareStub.ArrayOfstring a2 = new ComplexDataTypesDocLitBareStub.ArrayOfstring();
+        ComplexDataTypesDocLitBareStub.ArrayOfstring a1 = new ComplexDataTypesDocLitBareStub.ArrayOfstring();
         a1.setString(new String[]{"foo", "bar"});
-        input.setArrayOfstring(new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring[]{a1, a2});
+        input.setArrayOfstring(new ComplexDataTypesDocLitBareStub.ArrayOfstring[]{a1, a2});
         req.setInArrayString2D(input);
         assertNotNull(stub.retArrayString2D(req));
     }
@@ -166,11 +166,11 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretArrayDecimal1D() throws java.lang.Exception {
 
 //        assertNull(stub.retArrayDecimal1D(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayDecimal1D req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayDecimal1D();
+        ComplexDataTypesDocLitBareStub.InArrayDecimal1D req =
+                new ComplexDataTypesDocLitBareStub.InArrayDecimal1D();
         assertNotNull(stub.retArrayDecimal1D(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfNullableOfdecimal input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfNullableOfdecimal();
+        ComplexDataTypesDocLitBareStub.ArrayOfNullableOfdecimal input = new ComplexDataTypesDocLitBareStub.ArrayOfNullableOfdecimal();
         input.setDecimal(new BigDecimal[]{new BigDecimal(1), new BigDecimal(2)});
         req.setInArrayDecimal1D(input);
         assertNotNull(stub.retArrayDecimal1D(req));
@@ -182,12 +182,12 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretStructSNSA() throws java.lang.Exception {
 
 //        assertNull(stub.retStructSNSA(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSNSA req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSNSA();
+        ComplexDataTypesDocLitBareStub.InStructSNSA req = new ComplexDataTypesDocLitBareStub.InStructSNSA();
         assertNotNull(stub.retStructSNSA(req));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Employee input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Employee();
+        ComplexDataTypesDocLitBareStub.Employee input = new ComplexDataTypesDocLitBareStub.Employee();
         input.setJobID(34);
-        input.setBaseDetails(new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person());
-        input.setNumbers(new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfshort());
+        input.setBaseDetails(new ComplexDataTypesDocLitBareStub.Person());
+        input.setNumbers(new ComplexDataTypesDocLitBareStub.ArrayOfshort());
         input.setHireDate(Calendar.getInstance());
         req.setInStructSNSA(input);
         assertNotNull(stub.retStructSNSA(req));
@@ -199,9 +199,9 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretArrayAnyType1D() throws java.lang.Exception {
 
 //        assertNull(stub.retArrayAnyType1D(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayAnyType1D req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayAnyType1D();
+        ComplexDataTypesDocLitBareStub.InArrayAnyType1D req = new ComplexDataTypesDocLitBareStub.InArrayAnyType1D();
         assertNotNull(stub.retArrayAnyType1D(req));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfanyType input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfanyType();
+        ComplexDataTypesDocLitBareStub.ArrayOfanyType input = new ComplexDataTypesDocLitBareStub.ArrayOfanyType();
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
         // lets create the namespace object of the Article element
@@ -222,10 +222,10 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretStructSN() throws java.lang.Exception {
 
 //        assertNull(stub.retStructSN(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSN req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructSN();
+        ComplexDataTypesDocLitBareStub.InStructSN req = new ComplexDataTypesDocLitBareStub.InStructSN();
         assertNotNull(stub.retStructSN(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person();
+        ComplexDataTypesDocLitBareStub.Person input = new ComplexDataTypesDocLitBareStub.Person();
         input.setAge(23);
         input.setID(345);
         input.setMale(false);
@@ -241,16 +241,16 @@ public class ComplexDataTypesDocLitBareTest extends
 //TODO Codegen issue
 //        assertNull(stub.retArray1DSN(null));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArray1DSN req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArray1DSN();
+        ComplexDataTypesDocLitBareStub.InArray1DSN req = new ComplexDataTypesDocLitBareStub.InArray1DSN();
         assertNotNull(stub.retArray1DSN(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfPerson input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfPerson();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person p1 = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person();
+        ComplexDataTypesDocLitBareStub.ArrayOfPerson input = new ComplexDataTypesDocLitBareStub.ArrayOfPerson();
+        ComplexDataTypesDocLitBareStub.Person p1 = new ComplexDataTypesDocLitBareStub.Person();
         p1.setAge(34);
         p1.setID(2345);
         p1.setMale(true);
         p1.setName("HJHJH");
-        input.setPerson(new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Person[]{p1});
+        input.setPerson(new ComplexDataTypesDocLitBareStub.Person[]{p1});
         req.setInArray1DSN(input);
         assertNotNull(stub.retArray1DSN(req));
         //TODO : Need to fix this , we are not gettin corrcet reponse
@@ -261,11 +261,11 @@ public class ComplexDataTypesDocLitBareTest extends
      */
     public void testretDerivedClass() throws java.lang.Exception {
 //        assertNull(stub.retDerivedClass(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDerivedClass req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDerivedClass();
+        ComplexDataTypesDocLitBareStub.InDerivedClass req =
+                new ComplexDataTypesDocLitBareStub.InDerivedClass();
         assertNotNull(stub.retDerivedClass(req));
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Furniture input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Furniture();
+        ComplexDataTypesDocLitBareStub.Furniture input = new ComplexDataTypesDocLitBareStub.Furniture();
         input.setColor("white");
         input.setPrice(67);
         req.setInDerivedClass(input);
@@ -307,9 +307,9 @@ public class ComplexDataTypesDocLitBareTest extends
      */
     public void testretStructS1() throws java.lang.Exception {
 //        assertNull(stub.retStructS1(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructS1 req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InStructS1();
+        ComplexDataTypesDocLitBareStub.InStructS1 req = new ComplexDataTypesDocLitBareStub.InStructS1();
         assertNotNull(stub.retStructS1(req));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Name input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.Name();
+        ComplexDataTypesDocLitBareStub.Name input = new ComplexDataTypesDocLitBareStub.Name();
         input.setName("ewrterty");
         req.setInStructS1(input);
         assertNotNull(stub.retStructS1(req));
@@ -320,12 +320,12 @@ public class ComplexDataTypesDocLitBareTest extends
      */
     public void testretArrayString1D() throws java.lang.Exception {
 //        assertNull(stub.retArrayString1D(null));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayString1D req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InArrayString1D();
+        ComplexDataTypesDocLitBareStub.InArrayString1D req = new ComplexDataTypesDocLitBareStub.InArrayString1D();
         assertNotNull(stub.retArrayString1D(req));
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring input = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.ArrayOfstring();
+        ComplexDataTypesDocLitBareStub.ArrayOfstring input = new ComplexDataTypesDocLitBareStub.ArrayOfstring();
         input.setString(new String[]{"foo", "bar"});
         req.setInArrayString1D(input);
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetArrayString1DResult ret = stub.retArrayString1D(req);
+        ComplexDataTypesDocLitBareStub.RetArrayString1DResult ret = stub.retArrayString1D(req);
         assertNotNull(ret);
         assertNotNull(ret.getRetArrayString1DResult().getString());
         assertEquals(ret.getRetArrayString1DResult().getString().length, 2);
@@ -336,7 +336,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretSingle() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InSingle req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InSingle();
+        ComplexDataTypesDocLitBareStub.InSingle req = new ComplexDataTypesDocLitBareStub.InSingle();
         req.setInSingle(43.0f);
         float ret = stub.retSingle(req).getRetSingleResult();
         assertTrue(ret == 43.0f);
@@ -348,7 +348,7 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretDateTime() throws java.lang.Exception {
 
         Calendar input = Calendar.getInstance();
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDateTime req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDateTime();
+        ComplexDataTypesDocLitBareStub.InDateTime req = new ComplexDataTypesDocLitBareStub.InDateTime();
         req.setInDateTime(input);
         Calendar ret = stub.retDateTime(req).getRetDateTimeResult();
         assertNotNull(ret);
@@ -361,7 +361,7 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretGuid() throws java.lang.Exception {
 
         String input = "12345";
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InGuid req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InGuid();
+        ComplexDataTypesDocLitBareStub.InGuid req = new ComplexDataTypesDocLitBareStub.InGuid();
         req.setInGuid(input);
         String ret = stub.retGuid(req).getRetGuidResult();
         assertEquals(ret, input);
@@ -374,7 +374,7 @@ public class ComplexDataTypesDocLitBareTest extends
 
 
         byte[] input = new byte[]{(byte) 0xDE, (byte) 0xAD, (byte) 0xBE, (byte) 0xEF};
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetByteArray req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetByteArray();
+        ComplexDataTypesDocLitBareStub.RetByteArray req = new ComplexDataTypesDocLitBareStub.RetByteArray();
         req.setInByteArray(new DataHandler(new ByteArrayDataSource(input)));
         DataHandler ret = stub.retByteArray(req).get_return();
         byte[] bytes = IOUtils.getStreamAsByteArray(ret.getInputStream());
@@ -385,8 +385,8 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretUri() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUri req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUri();
+        ComplexDataTypesDocLitBareStub.InUri req =
+                new ComplexDataTypesDocLitBareStub.InUri();
         req.setInUri("124");
         assertNotNull(stub.retUri(req));
     }
@@ -420,7 +420,7 @@ public class ComplexDataTypesDocLitBareTest extends
 ////    }
 //
     public void testretLong() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InLong req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InLong();
+        ComplexDataTypesDocLitBareStub.InLong req = new ComplexDataTypesDocLitBareStub.InLong();
         req.setInLong(34);
         long ret = stub.retLong(req).getRetLongResult();
         assertEquals(34, ret);
@@ -431,7 +431,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretUShort() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUShort req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUShort();
+        ComplexDataTypesDocLitBareStub.InUShort req = new ComplexDataTypesDocLitBareStub.InUShort();
         req.setInUShort(34);
         int ret = stub.retUShort(req).getRetUShortResult();
         assertEquals(34, ret);
@@ -441,7 +441,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretUInt() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUInt req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InUInt();
+        ComplexDataTypesDocLitBareStub.InUInt req = new ComplexDataTypesDocLitBareStub.InUInt();
         req.setInUInt(34);
         long ret = stub.retUInt(req).getRetUIntResult();
         assertEquals(34, ret);
@@ -451,7 +451,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretByte() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InByte req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InByte();
+        ComplexDataTypesDocLitBareStub.InByte req = new ComplexDataTypesDocLitBareStub.InByte();
         req.setInByte((short) 34);
         short ret = stub.retByte(req).getRetByteResult();
         assertEquals((short) 34, ret);
@@ -461,7 +461,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretSByte() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InSByte req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InSByte();
+        ComplexDataTypesDocLitBareStub.InSByte req = new ComplexDataTypesDocLitBareStub.InSByte();
         req.setInSByte((byte) 34);
         byte ret = stub.retSByte(req).getRetSByteResult();
         assertEquals((byte) 34, ret);
@@ -471,7 +471,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretShort() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InShort req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InShort();
+        ComplexDataTypesDocLitBareStub.InShort req = new ComplexDataTypesDocLitBareStub.InShort();
         req.setInShort((short) 34);
         short ret = stub.retShort(req).getRetShortResult();
 
@@ -490,7 +490,7 @@ public class ComplexDataTypesDocLitBareTest extends
         // now create the Article element with the above namespace
         OMElement articleElement = factory.createOMElement("Article", ns);
 
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InObject req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InObject();
+        ComplexDataTypesDocLitBareStub.InObject req = new ComplexDataTypesDocLitBareStub.InObject();
         req.setInObject(articleElement);
         OMElement ret = stub.retObject(req).getRetObjectResult();
         assertNotNull(ret);
@@ -501,7 +501,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretFloat() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InFloat req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InFloat();
+        ComplexDataTypesDocLitBareStub.InFloat req = new ComplexDataTypesDocLitBareStub.InFloat();
         req.setInFloat((float) 34);
         float ret = stub.retFloat(req).getRetFloatResult();
         assertTrue(ret == 34);
@@ -511,7 +511,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretDouble() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDouble req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDouble();
+        ComplexDataTypesDocLitBareStub.InDouble req = new ComplexDataTypesDocLitBareStub.InDouble();
         req.setInDouble(34);
         double ret = stub.retDouble(req).getRetDoubleResult();
         assertTrue(ret == 34);
@@ -521,8 +521,8 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretBool() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InBool req =
-                new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InBool();
+        ComplexDataTypesDocLitBareStub.InBool req =
+                new ComplexDataTypesDocLitBareStub.InBool();
         req.setInBool(true);
         boolean ret = stub.retBool(req).getRetBoolResult();
         assertTrue(ret);
@@ -534,7 +534,7 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretDecimal() throws java.lang.Exception {
 
         BigDecimal input = new BigDecimal(12334);
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDecimal req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InDecimal();
+        ComplexDataTypesDocLitBareStub.InDecimal req = new ComplexDataTypesDocLitBareStub.InDecimal();
         req.setInDecimal(input);
         BigDecimal ret = stub.retDecimal(req).getRetDecimalResult();
         assertNotNull(ret);
@@ -566,7 +566,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretInt() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InInt req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InInt();
+        ComplexDataTypesDocLitBareStub.InInt req = new ComplexDataTypesDocLitBareStub.InInt();
         req.setInInt(34);
         int ret = stub.retInt(req).getRetIntResult();
         assertEquals((int) 34, ret);
@@ -578,7 +578,7 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretInts() throws java.lang.Exception {
 
         int[] input = new int[]{34, 45};
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetInts req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetInts();
+        ComplexDataTypesDocLitBareStub.RetInts req = new ComplexDataTypesDocLitBareStub.RetInts();
         req.setInInt(input);
         int ret[] = stub.retInts(req).get_return();
         assertTrue(Arrays.equals(input, ret));
@@ -588,7 +588,7 @@ public class ComplexDataTypesDocLitBareTest extends
      * Auto generated test method
      */
     public void testretChar() throws java.lang.Exception {
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InChar req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InChar();
+        ComplexDataTypesDocLitBareStub.InChar req = new ComplexDataTypesDocLitBareStub.InChar();
         req.setInChar(34);
         int ret = stub.retChar(req).getRetCharResult();
         assertEquals(34, ret);
@@ -599,7 +599,7 @@ public class ComplexDataTypesDocLitBareTest extends
      */
     public void testretString() throws java.lang.Exception {
         String input = "Abracadabra";
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InString req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InString();
+        ComplexDataTypesDocLitBareStub.InString req = new ComplexDataTypesDocLitBareStub.InString();
         req.setInString(input);
         String ret = stub.retString(req).getRetStringResult();
         assertNotNull(ret);
@@ -613,7 +613,7 @@ public class ComplexDataTypesDocLitBareTest extends
 
         String[] ret;
         String[] input = new String[]{"Abracadabra"};
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetStrings req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.RetStrings();
+        ComplexDataTypesDocLitBareStub.RetStrings req = new ComplexDataTypesDocLitBareStub.RetStrings();
         req.setInString(input);
         ret = stub.retStrings(req).get_return();
         assertNotNull(ret);
@@ -638,7 +638,7 @@ public class ComplexDataTypesDocLitBareTest extends
     public void testretULong() throws java.lang.Exception {
 
         BigInteger input = new BigInteger("34");
-        ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InULong req = new ComplexDataTypesDocLitBareComplexDataTypesDocLitBareSOAP11Port_httpStub.InULong();
+        ComplexDataTypesDocLitBareStub.InULong req = new ComplexDataTypesDocLitBareStub.InULong();
         req.setInULong(input);
         BigInteger ret = stub.retULong(req).getRetULongResult();
         assertEquals(input, ret);
@@ -646,4 +646,3 @@ public class ComplexDataTypesDocLitBareTest extends
 
 
 }
-

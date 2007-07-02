@@ -64,7 +64,7 @@
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
-            <arg line="-o target/wsdl/complexdatatypebare -ap -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
+            <arg line="-o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl"/>
         </java>
         <javac destdir="target/classes" debug="on">
             <jvmarg line="${maven.junit.jvmargs}"/>

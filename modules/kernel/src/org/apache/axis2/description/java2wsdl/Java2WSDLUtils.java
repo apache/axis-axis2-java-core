@@ -101,7 +101,7 @@ public class Java2WSDLUtils {
         if (stringBuffer.length() == 0) {
             stringBuffer.append(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
         }
-        stringBuffer.append(SCHEMA_NAMESPACE_EXTN);
+//        stringBuffer.append(SCHEMA_NAMESPACE_EXTN);
         return stringBuffer;
     }
 

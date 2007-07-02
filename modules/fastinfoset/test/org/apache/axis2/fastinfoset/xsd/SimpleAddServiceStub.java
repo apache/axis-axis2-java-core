@@ -785,7 +785,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addInts",
                 "ns1");
 
@@ -1288,7 +1288,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addStringsResponse",
                 "ns1");
 
@@ -1699,7 +1699,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addStrings",
                 "ns1");
 
@@ -2208,7 +2208,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addIntsResponse",
                 "ns1");
 
@@ -2616,7 +2616,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addFloats",
                 "ns1");
 
@@ -3119,7 +3119,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
-                "http://fastinfoset.axis2.apache.org/xsd",
+                "http://fastinfoset.axis2.apache.org",
                 "addFloatsResponse",
                 "ns1");
 

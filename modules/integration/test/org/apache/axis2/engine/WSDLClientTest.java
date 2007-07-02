@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.axis2.engine;
 
 import junit.framework.Test;
@@ -33,6 +15,21 @@ import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 public class WSDLClientTest extends UtilServerBasedTestCase implements TestConstants {
 
@@ -60,17 +57,17 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
                 "/axis2/services/EchoXMLService?wsdl");
         ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
                                                         new QName(
-                                                                "http://engine.axis2.apache.org/xsd",
+                                                                "http://engine.axis2.apache.org",
                                                                 "EchoXMLService"),
                                                         "EchoXMLServiceSOAP11port_http");
         OMElement payload =
-                TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
+                TestingUtils.createDummyOMElement("http://engine.axis2.apache.org");
         String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT +
                 "/axis2/services/EchoXMLService";
         //This is not smt we need to do but , my build is fail if I dont do that :)
         serviceClient.getOptions().setTo(new EndpointReference(epr));
         System.out.println(serviceClient.getOptions().getTo().getAddress());
-        OMElement response = serviceClient.sendReceive(new QName("http://engine.axis2.apache.org/xsd", "echoOM"), payload);
+        OMElement response = serviceClient.sendReceive(new QName("http://engine.axis2.apache.org", "echoOM"), payload);
         assertNotNull(response);
         String textValue = response.getFirstElement().getFirstElement().getText();
         assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
