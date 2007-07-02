@@ -116,13 +116,23 @@
                                 <mkdir dir="${schema.generated.src.dir}"/>
                                 <mkdir dir="${schema.generated.classes.dir}"/>
                                 <!-- Run JAXB schema compiler with designated schemas -->
-                                <echo>Generating JAX-B classes from XSDs</echo>
-                                <echo>Generating java from soap 11</echo>
+                                <echo>Generating JAX-B classes for DocLitBareService test</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/DocLitBareService.wsdl"/>
                                 </java>
+                                <echo>Generating Service Client for Test01 test</echo>
+								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<arg line="-d jaxbri -o target/wsdl/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl"/>
+								</java>
+								<javac fork="true" destdir="${schema.generated.src.dir}" debug="on">
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<src path="target/wsdl/Test01"/>
+								</javac>
                             </tasks>
                         </configuration>
                         <goals>

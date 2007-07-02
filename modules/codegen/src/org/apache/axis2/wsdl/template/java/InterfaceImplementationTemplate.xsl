@@ -464,25 +464,56 @@
                 <!-- todo need to change this to cater for unwrapped messages (multiple parts) -->
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
-                           java.lang.Object object = fromOM(
-                                        _returnEnv.getBody().getFirstElement() ,
-                                        <xsl:value-of select="$outputtype"/>.class,
-                                         getEnvelopeNamespaces(_returnEnv));
-                           _messageContext.getTransportOut().getSender().cleanup(_messageContext);
-                          <xsl:choose>
-                              <xsl:when test="$outputparamcount=1">
-                                   return get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
-                                      select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object);
-                              </xsl:when>
-                              <!-- this covers both back compatibility and normal unwrapping -->
-                              <xsl:when test="(string-length(normalize-space($outputcomplextype)) > 0)">
-                                   return get<xsl:value-of select="$outputopname"/>((<xsl:value-of select="$outputtype"/>)object);
-                              </xsl:when>
-                              <xsl:otherwise>
-                                   return (<xsl:value-of select="$outputtype"/>)object;
-                              </xsl:otherwise>
-                          </xsl:choose>
-
+                        <xsl:choose>
+                            <xsl:when test="$outputtype='byte'">
+                                return toByte(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='char'">
+                                return toChar(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='double'">
+                                return toDouble(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='float'">
+                                return toFloat(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='int'">
+                                return toInt(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='long'">
+                                return toLong(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:when test="$outputtype='short'">
+                                return toShort(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>
+                            <xsl:otherwise>
+                                java.lang.Object object = fromOM(
+                                             _returnEnv.getBody().getFirstElement() ,
+                                             <xsl:value-of select="$outputtype"/>.class,
+                                              getEnvelopeNamespaces(_returnEnv));
+                                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                               <xsl:choose>
+                                   <xsl:when test="$outputparamcount=1">
+                                        return get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
+                                           select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object);
+                                   </xsl:when>
+                                   <!-- this covers both back compatibility and normal unwrapping -->
+                                   <xsl:when test="(string-length(normalize-space($outputcomplextype)) > 0)">
+                                        return get<xsl:value-of select="$outputopname"/>((<xsl:value-of select="$outputtype"/>)object);
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                        return (<xsl:value-of select="$outputtype"/>)object;
+                                   </xsl:otherwise>
+                               </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
                          //Unknown style detected !! No code is generated
@@ -702,21 +733,53 @@
                             public void onMessage(org.apache.axis2.context.MessageContext resultContext) {
                             try {
                                 org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
-                                java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
-                                                                 <xsl:value-of select="$outputtype"/>.class,
-                                                                 getEnvelopeNamespaces(resultEnv));
-                                callback.receiveResult<xsl:value-of select="@name"/>(<xsl:choose>
-                                <xsl:when test="$outputtype=''">);</xsl:when>
-                                <xsl:when test="$outputparamcount=1">
-                                    get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
-                                      select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object));
-                                </xsl:when>
-                                <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0">
-                                    (<xsl:value-of select="$outputcomplextype"/>)object);
-                                </xsl:when>
-                                <xsl:otherwise>
-                                (<xsl:value-of select="$outputtype"/>)object);
-                                </xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="$outputtype='byte'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toByte(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='char'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toChar(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='double'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toDouble(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='float'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toFloat(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='int'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toInt(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='long'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toLong(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:when test="$outputtype='short'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
+                                                                         <xsl:value-of select="$outputtype"/>.class,
+                                                                         getEnvelopeNamespaces(resultEnv));
+                                        callback.receiveResult<xsl:value-of select="@name"/>(<xsl:choose>
+                                        <xsl:when test="$outputtype=''">);</xsl:when>
+                                        <xsl:when test="$outputparamcount=1">
+                                            get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
+                                              select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object));
+                                        </xsl:when>
+                                        <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0">
+                                            (<xsl:value-of select="$outputcomplextype"/>)object);
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                        (<xsl:value-of select="$outputtype"/>)object);
+                                        </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
                             </xsl:choose>
                             } catch (org.apache.axis2.AxisFault e) {
                                 callback.receiveError<xsl:value-of select="@name"/>(e);
