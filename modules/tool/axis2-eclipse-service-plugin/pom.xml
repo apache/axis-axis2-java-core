@@ -226,8 +226,8 @@
 								<property name="plugin.classpath.file.name" value=".classpath"/>
 								<property name="plugin.help.file.name" value="help_toc.xml"/>
 								<property name="service.resource.dir" value="../conf/service"/>
-								<property name="service.help.resource.file" value="../../../xdocs/tools/1_1/eclipse/servicearchiver-plugin.html"/>
-								<property name="service.help.images.dir" value="../../../xdocs/tools/1_1/eclipse/images"/>
+								<property name="service.help.resource.file" value="../../../xdocs/tools/1_3/eclipse/servicearchiver-plugin.html"/>
+								<property name="service.help.images.dir" value="../../../xdocs/tools/1_3/eclipse/images"/>
 								<property name="axis2.lib.dir" value="../../../target/lib"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
 								<filter token="version_number" value="SNAPSHOT"/>
