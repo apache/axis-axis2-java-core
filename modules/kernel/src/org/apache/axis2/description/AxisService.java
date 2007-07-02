@@ -51,6 +51,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -972,7 +973,7 @@ public class AxisService extends AxisDescription {
         if (result != null && result.length > 0) {
             wsdlElement = (OMElement) (result[0].getData());
             try {
-                wsdlElement.serialize(out);
+                XMLPrettyPrinter.prettify(wsdlElement, out);
                 out.flush();
                 out.close();
             } catch (Exception e) {
