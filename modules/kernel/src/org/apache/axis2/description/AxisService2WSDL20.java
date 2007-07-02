@@ -295,6 +295,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         int i = 0;
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
             interfaceOperations.add(i, generateInterfaceOperationElement(axisOperation, wsdl, tns, wsdlx));
             i++;
             Iterator faultsIterator = axisOperation.getFaultMessages().iterator();
