@@ -180,7 +180,9 @@ public class Utils {
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
-        log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        if(log.isDebugEnabled()) {
+            log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        }
         if (path == null) {
             return null;
         }
