@@ -1175,7 +1175,7 @@ public class SchemaCompiler {
             copyMetaInfoHierarchy(metaInfHolder, restriction.getBaseTypeName(), parentSchema);
 
             //process the particle of this node
-            processParticle(null,restriction.getParticle(), metaInfHolder, parentSchema);
+            processParticle(restriction.getBaseTypeName(),restriction.getParticle(), metaInfHolder, parentSchema);
 
             //process attributes - first look for the explicit attributes
             XmlSchemaObjectCollection attribs = restriction.getAttributes();
