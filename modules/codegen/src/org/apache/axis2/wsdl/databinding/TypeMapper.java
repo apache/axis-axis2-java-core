@@ -51,6 +51,8 @@ public interface TypeMapper {
      */
     public Object getTypeMappingObject(QName qname);
 
+    public Object getQNameToMappingObject(QName qname);
+
     /**
      * Gets the parameter name.
      *

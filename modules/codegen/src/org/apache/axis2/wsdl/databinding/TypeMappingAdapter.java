@@ -125,6 +125,16 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
+     * return the class name for this QName
+     * @param qname
+     * @return return class names
+     */
+
+    public Object getQNameToMappingObject(QName qname){
+        return qName2NameMap.get(qname);
+    }
+
+    /**
      * @param qname
      * @param value
      * @see TypeMapper#addTypeMappingObject(javax.xml.namespace.QName, Object)

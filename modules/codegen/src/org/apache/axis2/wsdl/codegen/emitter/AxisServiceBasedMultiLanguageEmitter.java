@@ -396,7 +396,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     //make a name
                     String className = makeJavaClassName(faultMessage.getName());
                     QName faultQName = new QName(codeGenConfiguration.getTargetNamespace(), faultMessage.getName());
-                    if (this.mapper.getTypeMappingObject(faultQName) != null) {
+                    if (this.mapper.getQNameToMappingObject(faultQName) != null) {
                         // i.e we already have an entry
                         className = makeJavaClassName(className + (uniqueFaultNameCounter++));
                     }
