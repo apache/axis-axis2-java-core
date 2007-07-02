@@ -337,12 +337,10 @@ public class Options implements Externalizable {
      * @return the value related to this key. <code>null</code>, if not found.
      */
     public Object getProperty(String key) {
-        // make sure that the Options properties exists
-        if (this.properties == null) {
-            this.properties = new HashMap();
+        Object myPropValue = null;
+        if (this.properties != null) {
+            myPropValue = properties.get(key);
         }
-
-        Object myPropValue = properties.get(key);
         if (myPropValue == null && parent != null) {
             return parent.getProperty(key);
         }
@@ -1177,7 +1175,7 @@ public class Options implements Externalizable {
         //---------------------------------------------------------
 
         // HashMap properties
-        HashMap tmpHM = new HashMap(properties);
+        HashMap tmpHM = new HashMap(getProperties());
 
         ObjectStateUtils.writeHashMap(out, tmpHM, logCorrelationIDString + ".properties");
 
