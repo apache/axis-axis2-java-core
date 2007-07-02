@@ -228,7 +228,7 @@
 
                             <xsl:otherwise>
                                 //Unknown style!! No code is generated
-                                throw new UnsupportedOperationException("Unknown Style");
+                                throw new java.lang.UnsupportedOperationException("Unknown Style");
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -242,7 +242,7 @@
         </xsl:for-each>
         <xsl:if test="method">
             } else {
-              throw new RuntimeException("method not found");
+              throw new java.lang.RuntimeException("method not found");
             }
         </xsl:if>
 
@@ -261,7 +261,7 @@
         </xsl:for-each>
         <!-- put the extra bracket-->
         <xsl:if test="count(fault-list/fault)=0">}</xsl:if>
-        catch (Exception e) {
+        catch (java.lang.Exception e) {
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
         }
@@ -382,7 +382,7 @@
 
                         <xsl:otherwise>
                             //Unknown style!! No code is generated
-                            throw new UnsupportedOperationException("Unknown Style");
+                            throw new java.lang.UnsupportedOperationException("Unknown Style");
                         </xsl:otherwise>
                     </xsl:choose>
 
@@ -396,12 +396,12 @@
         </xsl:for-each>
             <xsl:if test="method">
                 } else {
-                  throw new RuntimeException("method not found");
+                  throw new java.lang.RuntimeException("method not found");
                 }
             </xsl:if>
 
         }
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
         }
@@ -557,7 +557,7 @@
 
                         <xsl:otherwise>
                             //Unknown style!! No code is generated
-                            throw new UnsupportedOperationException("Unknown Style");
+                            throw new java.lang.UnsupportedOperationException("Unknown Style");
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
@@ -570,7 +570,7 @@
         </xsl:for-each>
              <xsl:if test="method">
                 } else {
-                  throw new RuntimeException("method not found");
+                  throw new java.lang.RuntimeException("method not found");
                 }
             </xsl:if>
 
@@ -587,7 +587,7 @@
         </xsl:for-each>
         <!-- put the extra bracket-->
         <xsl:if test="count(fault-list/fault)=0">}</xsl:if>
-        catch (Exception e) {
+        catch (java.lang.Exception e) {
         throw org.apache.axis2.AxisFault.makeFault(e);
         }
         }
