@@ -66,7 +66,13 @@ public class ClusterBuilder extends DescriptionBuilder {
         String className = classNameAttr.getAttributeValue();
         ClusterManager clusterManager;
         try {
-            Class clazz = Class.forName(className);
+            Class clazz;
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
+                                                                  className));
+            }
             clusterManager = (ClusterManager) clazz.newInstance();
 
             clusterManager.setConfigurationContext(configCtx);
@@ -83,8 +89,6 @@ public class ClusterBuilder extends DescriptionBuilder {
             loadContextManager(clusterElement, clusterManager);
 
             axisConfig.setClusterManager(clusterManager);
-        } catch (ClassNotFoundException e) {
-            throw new DeploymentException(Messages.getMessage("clusterImplNotFound"));
         } catch (InstantiationException e) {
             throw new DeploymentException(Messages.getMessage("cannotLoadClusterImpl"));
         } catch (IllegalAccessException e) {
@@ -94,7 +98,6 @@ public class ClusterBuilder extends DescriptionBuilder {
 
     private void loadContextManager(OMElement clusterElement,
                                     ClusterManager clusterManager) throws DeploymentException,
-                                                                          ClassNotFoundException,
                                                                           InstantiationException,
                                                                           IllegalAccessException {
         OMElement contextManagerEle =
@@ -111,7 +114,13 @@ public class ClusterBuilder extends DescriptionBuilder {
 
             String className = classNameAttr.getAttributeValue();
 
-            Class clazz = Class.forName(className);
+            Class clazz;
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
+                                                                  className));
+            }
             ContextManager contextManager = (ContextManager) clazz.newInstance();
             clusterManager.setContextManager(contextManager);
 
@@ -125,7 +134,12 @@ public class ClusterBuilder extends DescriptionBuilder {
                                                                       TAG_LISTENER));
                 }
                 className = classNameAttr.getAttributeValue();
-                clazz = Class.forName(className);
+                try {
+                    clazz = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
+                                                                      className));
+                }
                 ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
                 contextManager.setContextManagerListener(listener);
             } else {
@@ -190,7 +204,6 @@ public class ClusterBuilder extends DescriptionBuilder {
 
     private void loadConfigManager(OMElement clusterElement,
                                    ClusterManager clusterManager) throws DeploymentException,
-                                                                         ClassNotFoundException,
                                                                          InstantiationException,
                                                                          IllegalAccessException {
         OMElement configManagerEle =
@@ -203,7 +216,13 @@ public class ClusterBuilder extends DescriptionBuilder {
             }
 
             String className = classNameAttr.getAttributeValue();
-            Class clazz = Class.forName(className);
+            Class clazz;
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
+                                                                  className));
+            }
 
             ConfigurationManager configurationManager =
                     (ConfigurationManager) clazz.newInstance();
@@ -214,19 +233,22 @@ public class ClusterBuilder extends DescriptionBuilder {
             if (listenerEle != null) {
                 classNameAttr = listenerEle.getAttribute(new QName(TAG_CLASS_NAME));
                 if (classNameAttr == null) {
-                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
+                    throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
                                                                       TAG_LISTENER));
                 }
 
                 className = classNameAttr.getAttributeValue();
-                clazz = Class.forName(className);
+                try {
+                    clazz = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new DeploymentException(Messages.getMessage("configurationManagerListenerIsNull"));
+                }
                 ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
                         .newInstance();
                 listener.setConfigurationContext(configCtx);
                 configurationManager.setConfigurationManagerListener(listener);
             } else {
-                throw new DeploymentException(Messages.
-                        getMessage("configurationManagerListenerIsNull"));
+                throw new DeploymentException(Messages.getMessage("configurationManagerListenerIsNull"));
             }
 
             //updating the ConfigurationManager with the new ConfigurationContext
