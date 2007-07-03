@@ -36,16 +36,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.xml.WSDLLocator;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +142,7 @@ public class CodeGenerationEngine {
                             ((WSDL11ToAllAxisServicesBuilder)builder).populateAllServices());
                 }
             }
-
+            configuration.setBaseURI(getBaseURI(wsdlUri));
         } catch (AxisFault axisFault) {
             throw new CodeGenerationException(
                     CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
@@ -145,11 +150,10 @@ public class CodeGenerationEngine {
             throw new CodeGenerationException(
                     CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         } catch (Exception e) {
-            throw new CodeGenerationException(
+            throw new CodeGenerationException(                            
                     CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 
-        configuration.setBaseURI(getBaseURI(wsdlUri));
         loadExtensions();
     }
 
@@ -271,32 +275,15 @@ public class CodeGenerationEngine {
      * @param uri
      * @throws WSDLException
      */
-    public Definition readInTheWSDLFile(String uri) throws WSDLException {
+    public Definition readInTheWSDLFile(final String uri) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);
 
-        File file = new File(uri);
-        String baseURI;
-
-        if (uri.startsWith("http://")) {
-            baseURI = uri;
-        } else {
-            if (file.getParentFile() == null) {
-                try {
-                    baseURI = new File(".").getCanonicalFile().toURI().toString();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                baseURI = file.getParentFile().toURI().toString();
-            }
-        }
-
-
         Document doc;
         try {
             doc = XMLUtils.newDocument(uri);
+            return reader.readWSDL(getBaseURI(uri), doc);
         } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
                                     "Parser Configuration Error",
@@ -308,9 +295,9 @@ public class CodeGenerationEngine {
 
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
+        } catch (URISyntaxException e) {
+            throw new WSDLException(WSDLException.OTHER_ERROR, "URI Syntax Error", e);
         }
-
-        return reader.readWSDL(baseURI, doc);
     }
 
 
@@ -346,18 +333,12 @@ public class CodeGenerationEngine {
      *
      * @param currentURI
      */
-    private String getBaseURI(String currentURI) {
-        String baseURI;
-        if (!currentURI.startsWith("http://")) {
-            // the uri should be a file
-            try {
-                currentURI = new File(currentURI).toURL().toString();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("Cannot find baseuri for :" + currentURI);
-            }
+    private String getBaseURI(String currentURI) throws URISyntaxException {
+        File file = new File(currentURI);
+        if (file.exists() && file.getParentFile() != null) {
+            return file.getParentFile().toURI().toString();
         }
         String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
-        baseURI = uriFragment + (uriFragment.endsWith("/") ? "" : "/");
-        return baseURI;
+        return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
     }
 }
