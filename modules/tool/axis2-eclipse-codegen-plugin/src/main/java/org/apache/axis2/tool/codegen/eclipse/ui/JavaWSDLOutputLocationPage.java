@@ -136,8 +136,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		outputFolderTextBox = new Text(container, SWT.BORDER);
 		outputFolderTextBox.setLayoutData(gd);
-		outputFolderTextBox.setText(settings
-				.get(PREF_JAVA_OUTPUT_WSDL_LOCATION));
+		outputFolderTextBox.setText("");
 		outputFolderTextBox.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				handleFolderTextChange();
