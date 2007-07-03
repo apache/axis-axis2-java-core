@@ -27,6 +27,8 @@ package org.apache.axis2.client.async;
  * operation. The Axis2 code then calls the appropriate methods of this class
  * {@link #setComplete(boolean)}, and either {@link #onComplete(AsyncResult)}
  * or {@link #onError(Exception)} when the operation is completed.
+ *
+ * @deprecated Please use AxisCallback instead, this class is deprecated as of 1.3
  */
 public abstract class Callback {
 

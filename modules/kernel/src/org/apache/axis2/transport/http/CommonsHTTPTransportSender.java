@@ -40,7 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
@@ -206,21 +205,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 if (!epr.hasNoneAddress()) {
                     writeMessageWithCommons(msgContext, epr, format);
                 }
-            }
-            else {
+            } else {
                 if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
                     sendUsingOutputStream(msgContext, format);
                 } else {
-                    throw new AxisFault(
-                    "Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
+                    throw new AxisFault("Both the TO and MessageContext.TRANSPORT_OUT property " +
+                            "are null, so nowhere to send");
                 }
             }
 
             TransportUtils.setResponseWritten(msgContext, true);
             
-        } catch (XMLStreamException e) {
-            log.debug(e);
-            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -240,15 +235,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
      * @param msgContext the active MessageContext
      * @param format output formatter for our message
      * @throws AxisFault if a general problem arises
-     * @throws XMLStreamException if there's a problem writing
      */
     private void sendUsingOutputStream(MessageContext msgContext,
-                                       OMOutputFormat format) throws AxisFault, XMLStreamException {
-
-        
-
-        OutputStream out = (OutputStream) msgContext
-                .getProperty(MessageContext.TRANSPORT_OUT);
+                                       OMOutputFormat format) throws AxisFault {
+        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
 
         // I Don't think we need this check.. Content type needs to be set in
         // any case. (thilina)
@@ -280,24 +270,32 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
         if (messageFormatter == null) throw new AxisFault("No MessageFormatter in MessageContext");
 
-        transportInfo.setContentType(
+        // Once we get to this point, exceptions should NOT be turned into faults and sent,
+        // because we're already sending!  So catch everything and log it, but don't pass
+        // upwards.
+
+        try {
+            transportInfo.setContentType(
                 messageFormatter.getContentType(msgContext, format, findSOAPAction(msgContext)));
 
-        Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
-        if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
-            if (servletBasedOutTransportInfo != null)
-                servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                                       HTTPConstants.COMPRESSION_GZIP);
-            try {
-                out = new GZIPOutputStream(out);
-                out.write(messageFormatter.getBytes(msgContext, format));
-                ((GZIPOutputStream) out).finish();
-                out.flush();
-            } catch (IOException e) {
-                throw new AxisFault("Could not compress response");
+            Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+            if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                if (servletBasedOutTransportInfo != null)
+                    servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                                                           HTTPConstants.COMPRESSION_GZIP);
+                try {
+                    out = new GZIPOutputStream(out);
+                    out.write(messageFormatter.getBytes(msgContext, format));
+                    ((GZIPOutputStream) out).finish();
+                    out.flush();
+                } catch (IOException e) {
+                    throw new AxisFault("Could not compress response");
+                }
+            } else {
+                messageFormatter.writeTo(msgContext, format, out, false);
             }
-        } else {
-            messageFormatter.writeTo(msgContext, format, out, false);
+        } catch (AxisFault axisFault) {
+            log.error(axisFault);
         }
     }
 

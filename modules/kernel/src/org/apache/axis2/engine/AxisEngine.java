@@ -425,8 +425,7 @@ public class AxisEngine {
                 log.error(msgContext.getLogIDString() + " " + errorMsg);
                 throw new AxisFault(errorMsg);
             }
-        }
-        catch (AxisFault e) {
+        } catch (AxisFault e) {
             msgContext.setFailureReason(e);
             flowComplete(msgContext);
             throw e;

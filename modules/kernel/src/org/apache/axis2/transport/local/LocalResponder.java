@@ -78,26 +78,32 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
             epr = msgContext.getTo();
         }
 
-        if (log.isDebugEnabled()) {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            TransportUtils.writeMessage(msgContext, os);
-            log.debug("Response - " + new String(os.toByteArray()));
-        }
-        
-        if (epr != null) {
-            if (!epr.hasNoneAddress()) {
-                out = sender.getResponse();
-                TransportUtils.writeMessage(msgContext, out);
+        try {
+            if (log.isDebugEnabled()) {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                TransportUtils.writeMessage(msgContext, os);
+                log.debug("Response - " + new String(os.toByteArray()));
             }
-        } else {
-            out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
 
-            if (out != null) {
-                TransportUtils.writeMessage(msgContext, out);
+            if (epr != null) {
+                if (!epr.hasNoneAddress()) {
+                    out = sender.getResponse();
+                    TransportUtils.writeMessage(msgContext, out);
+                }
             } else {
-                throw new AxisFault(
-                        "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+
+                if (out != null) {
+                    TransportUtils.writeMessage(msgContext, out);
+                } else {
+                    throw new AxisFault(
+                            "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                }
             }
+        } catch (AxisFault axisFault) {
+            // At this point all we can do is log this error, since it happened while
+            // we were sending the response!
+            log.error("Error sending response", axisFault);
         }
 
         TransportUtils.setResponseWritten(msgContext, true);
