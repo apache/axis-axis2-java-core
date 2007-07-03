@@ -192,7 +192,7 @@ public class UtilServer {
 
 
         ServiceGroupContext serviceGroupContext =
-                configContext.createServiceGroupContext((AxisServiceGroup)service.getParent());
+                configContext.createServiceGroupContext(service.getAxisServiceGroup());
         return serviceGroupContext.getServiceContext(service);
     }
 
@@ -247,7 +247,7 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
         ServiceGroupContext serviceGroupContext =
-                configContext.createServiceGroupContext((AxisServiceGroup)service.getParent());
+                configContext.createServiceGroupContext(service.getAxisServiceGroup());
         return serviceGroupContext.getServiceContext(service);
     }
 

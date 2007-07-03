@@ -379,7 +379,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         String axisServMarker = logCorrelationIDString + ".metaAxisService";
         ObjectStateUtils.writeString(out, axisServMarker, axisServMarker);
 
-        AxisService axisService = (AxisService) axisOperation.getParent();
+        AxisService axisService = axisOperation.getAxisService();
 
         if (axisService == null) {
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);

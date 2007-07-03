@@ -378,7 +378,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             axisOperationElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_SAFE, wsdlx, (param.getValue()).toString()));
         }
-        AxisService axisService = (AxisService) axisOperation.getParent();
+        AxisService axisService = axisOperation.getAxisService();
         Map nameSpaceMap = axisService.getNameSpacesMap();
 
         // Add the input element

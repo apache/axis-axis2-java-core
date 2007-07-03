@@ -162,7 +162,7 @@ public abstract class AxisOperation extends AxisDescription
         // If I'm not, the operations will already have been added by someone above, so don't
         // do it again.
         if (selfEngaged) {
-            AxisService service = (AxisService)getParent();
+            AxisService service = getAxisService();
             if (service != null) {
                 service.addModuleOperations(axisModule);
             }
@@ -173,24 +173,24 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     protected void onDisengage(AxisModule module) {
-        if (getParent() != null) {
-            AxisService service = (AxisService) getParent();
-            AxisConfiguration axisConfiguration = service.getAxisConfiguration();
-            PhaseResolver phaseResolver = new PhaseResolver(axisConfiguration);
-            if (!service.isEngaged(module.getName()) &&
-                    (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
-                phaseResolver.disengageModuleFromGlobalChains(module);
-            }
-            phaseResolver.disengageModuleFromOperationChain(module, this);
+        AxisService service = getAxisService();
+        if (service == null) return;
 
-            //removing operations added at the time of module engagemnt
-            HashMap moduleOperations = module.getOperations();
-            if (moduleOperations != null) {
-                Iterator moduleOperations_itr = moduleOperations.values().iterator();
-                while (moduleOperations_itr.hasNext()) {
-                    AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
-                    service.removeOperation(operation.getName());
-                }
+        AxisConfiguration axisConfiguration = service.getAxisConfiguration();
+        PhaseResolver phaseResolver = new PhaseResolver(axisConfiguration);
+        if (!service.isEngaged(module.getName()) &&
+                (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
+            phaseResolver.disengageModuleFromGlobalChains(module);
+        }
+        phaseResolver.disengageModuleFromOperationChain(module, this);
+
+        //removing operations added at the time of module engagemnt
+        HashMap moduleOperations = module.getOperations();
+        if (moduleOperations != null) {
+            Iterator moduleOperations_itr = moduleOperations.values().iterator();
+            while (moduleOperations_itr.hasNext()) {
+                AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
+                service.removeOperation(operation.getName());
             }
         }
     }
@@ -569,6 +569,15 @@ public abstract class AxisOperation extends AxisDescription
     
     public Iterator getMessages(){
         return getChildren();
+    }
+
+    /**
+     * Typesafe access to parent service
+     *
+     * @return the AxisService which contains this AxisOperation
+     */
+    public AxisService getAxisService() {
+        return (AxisService)getParent();
     }
     
     /**

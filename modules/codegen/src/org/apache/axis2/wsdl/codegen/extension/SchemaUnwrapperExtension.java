@@ -125,7 +125,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 // find the schema type from all the schemas
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
-                AxisService axisService = (AxisService) message.getParent().getParent();
+                AxisService axisService = message.getAxisOperation().getAxisService();
                 ArrayList schemasList = axisService.getSchema();
 
                 XmlSchema schema = null;
@@ -146,7 +146,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     qnameSuffix);
         } else if ((schemaType instanceof XmlSchemaSimpleType) ||
                ((schemaTypeQname != null) && (schemaTypeQname.equals(new QName("http://www.w3.org/2001/XMLSchema", "anyType")))) ) {
-            QName opName = ((AxisOperation) message.getParent()).getName();
+            QName opName = message.getAxisOperation().getName();
             partNameList.add(WSDLUtil.getPartQName(opName.getLocalPart(),
                     qnameSuffix,
                     schemaElement.getQName().getLocalPart()));
@@ -170,7 +170,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             // attach the opName and the parts name list into the
             // axis message by using the holder
             MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
-            infoHolder.setOperationName(((AxisOperation) message.getParent()).getName());
+            infoHolder.setOperationName(message.getAxisOperation().getName());
             infoHolder.setPartsList(partNameList);
 
             //attach it to the parameters
@@ -212,7 +212,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                                    AxisMessage message,
                                    List partNameList,
                                    String qnameSuffix) {
-        QName opName = ((AxisOperation) message.getParent()).getName();
+        QName opName = message.getAxisOperation().getName();
         XmlSchemaObjectCollection xmlObjectCollection = complexType.getAttributes();
         XmlSchemaObject item;
         XmlSchemaAttribute xmlSchemaAttribute;
@@ -249,7 +249,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
-                AxisService axisService = (AxisService) message.getParent().getParent();
+                AxisService axisService = message.getAxisOperation().getAxisService();
                 ArrayList schemasList = axisService.getSchema();
 
                 XmlSchema parentSchema = null;
@@ -310,7 +310,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             // get the name of the operation name and namespace,
             // part name and hang them somewhere ? The ideal place
             // would be the property bag in the codegen config!
-            QName opName = ((AxisOperation) message.getParent()).getName();
+            QName opName = message.getAxisOperation().getName();
 
             XmlSchemaSequence sequence = (XmlSchemaSequence) schemaParticle;
             XmlSchemaObjectCollection items = sequence.getItems();

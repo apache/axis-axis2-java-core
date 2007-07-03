@@ -77,7 +77,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         mc.setTransportOut(transport);
 
         ServiceGroupContext sgc = configContext.createServiceGroupContext(
-                (AxisServiceGroup)service.getParent());
+                service.getAxisServiceGroup());
         ServiceContext sc = sgc.getServiceContext(service);
 
         OperationContext opContext = sc.createOperationContext(axisOp);

@@ -138,4 +138,12 @@ public class AxisEndpoint extends AxisDescription {
         WSDLSerializationUtil.addWSDLDocumentationElement(this, endpointElement, omFactory, wsdl);
         return endpointElement;
     }
+
+    public AxisService getAxisService() {
+        return (AxisService)parent;
+    }
+
+    public void setParent(AxisService service) {
+        parent = service;
+    }
 }

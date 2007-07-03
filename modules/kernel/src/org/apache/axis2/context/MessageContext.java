@@ -1163,7 +1163,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
         if (this.axisService != null) {
-            this.axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
+            this.axisServiceGroup = axisService.getAxisServiceGroup();
         } else {
             this.axisServiceGroup = null;
         }

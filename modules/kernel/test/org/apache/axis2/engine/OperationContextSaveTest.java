@@ -159,8 +159,7 @@ public class OperationContextSaveTest extends TestCase {
         //-----------------------------------------------------------------
 
         serviceGroupContext =
-                configurationContext.createServiceGroupContext((AxisServiceGroup)axisService
-                        .getParent());
+                configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
         serviceContext = serviceGroupContext.getServiceContext(axisService);

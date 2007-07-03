@@ -210,15 +210,14 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceContext == null) {
             String scope = axisService.getScope();
             if (Constants.SCOPE_APPLICATION.equals(scope)) {
-                String serviceGroupName =
-                        ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+                String serviceGroupName = axisService.getAxisServiceGroup().getServiceGroupName();
                 serviceGroupContext =
                         (ServiceGroupContext) applicationSessionServiceGroupContexts.get(
                                 serviceGroupName);
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
                     if (axisServiceGroup == null) {
-                        axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+                        axisServiceGroup = axisService.getAxisServiceGroup();
                         messageContext.setAxisServiceGroup(axisServiceGroup);
                     }
                     ConfigurationContext cfgCtx = messageContext.getConfigurationContext();
@@ -238,15 +237,16 @@ public class ConfigurationContext extends AbstractContext {
 
                         // TODO: Adding this code so that requests to services deployed in soapsession scope will work
                         // TODO: However, soapsession functionality is still broken
-                        serviceGroupContext = new ServiceGroupContext(this,
-                                                                      (AxisServiceGroup) axisService.getParent());
+                        serviceGroupContext =
+                                new ServiceGroupContext(this,
+                                                        axisService.getAxisServiceGroup());
                         serviceGroupContext.setId(serviceGroupContextId);
                         addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
 //                        throw new AxisFault("Unable to find corresponding context" +
 //                                            " for the serviceGroupId: " + serviceGroupContextId);
                     }
                 } else {
-                    AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+                    AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
                     serviceGroupContext = createServiceGroupContext(axisServiceGroup);
                     serviceContext = serviceGroupContext.getServiceContext(axisService);
                     // set the serviceGroupContextID
@@ -258,7 +258,7 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
             } else if (Constants.SCOPE_REQUEST.equals(scope)) {
-                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+                AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
                 serviceGroupContext = createServiceGroupContext(axisServiceGroup);
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 serviceContext = serviceGroupContext.getServiceContext(axisService);

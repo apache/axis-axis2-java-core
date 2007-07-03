@@ -38,7 +38,7 @@ import java.util.Map;
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
 
-    private AxisDescription parent = null;
+    protected AxisDescription parent = null;
 
     private ParameterInclude parameterInclude;
 
@@ -163,6 +163,7 @@ public abstract class AxisDescription implements ParameterInclude,
         return policyInclude;
     }
 
+    // NOTE - These are NOT typesafe!
     public void addChild(AxisDescription child) {
         children.put(child.getKey(), child);
     }
@@ -490,7 +491,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
         if (axisDescription instanceof AxisOperation) {
             AxisOperation operation = (AxisOperation) axisDescription;
-            AxisService service = (AxisService) operation.getParent();
+            AxisService service = operation.getAxisService();
 
             if (service != null) {
 

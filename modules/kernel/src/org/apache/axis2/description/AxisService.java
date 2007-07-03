@@ -593,8 +593,8 @@ public class AxisService extends AxisDescription {
                 return messageReceiver;
             }
         }
-        if (getParent() != null && getParent().getParent() != null) {
-            return ((AxisConfiguration) getParent().getParent()).getMessageReceiver(mepURL);
+        if (getAxisConfiguration() != null) {
+            return getAxisConfiguration().getMessageReceiver(mepURL);
         }
         return null;
     }
@@ -2349,6 +2349,10 @@ public class AxisService extends AxisDescription {
     }
 
     public AxisServiceGroup getAxisServiceGroup() {
-        return (AxisServiceGroup) getParent();
+        return (AxisServiceGroup)parent;
+    }
+
+    public void setParent(AxisServiceGroup parent) {
+        this.parent = parent;
     }
 }

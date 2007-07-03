@@ -147,7 +147,7 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
 
-        return new ServiceGroupContext(configContext, (AxisServiceGroup)service.getParent())
+        return new ServiceGroupContext(configContext, service.getAxisServiceGroup())
                 .getServiceContext(service);
     }
 

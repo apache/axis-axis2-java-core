@@ -213,7 +213,7 @@ public class ExtensionUtility {
                     // find the schema type from all the schemas
                     // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                     // the parent schema
-                    AxisService axisService = (AxisService) axisMessage.getParent().getParent();
+                    AxisService axisService = axisMessage.getAxisOperation().getAxisService();
                     ArrayList schemasList = axisService.getSchema();
                     XmlSchema schema = null;
                     for (Iterator iter = schemasList.iterator(); iter.hasNext();) {
@@ -278,7 +278,7 @@ public class ExtensionUtility {
                     // find the schema type from all the schemas
                     // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                     // the parent schema
-                    AxisService axisService = (AxisService) message.getParent().getParent();
+                    AxisService axisService = message.getAxisOperation().getAxisService();
                     ArrayList schemasList = axisService.getSchema();
 
                     XmlSchema schema = null;

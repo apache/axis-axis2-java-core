@@ -47,8 +47,7 @@ public class UtilsTCPServer {
             throws AxisFault {
 
         receiver.getConfigurationContext().getAxisConfiguration().addService(service);
-        receiver.getConfigurationContext().
-                createServiceGroupContext((AxisServiceGroup)service.getParent());
+        receiver.getConfigurationContext().createServiceGroupContext(service.getAxisServiceGroup());
     }
 
     public static synchronized void unDeployService(QName service)

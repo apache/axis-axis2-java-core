@@ -83,7 +83,7 @@ public class AxisBindingOperation extends AxisDescription {
         Object property = this.options.get(name);
 
         AxisBinding parent;
-        if (property == null && (parent = (AxisBinding) this.getParent()) != null) {
+        if (property == null && (parent = getAxisBinding()) != null) {
             property = parent.getProperty(name);
         }
 
@@ -228,7 +228,7 @@ public class AxisBindingOperation extends AxisDescription {
         policyList.addAll(policyInclude.getAttachedPolicies());
 
         // AxisBinding
-        AxisBinding axisBinding = (AxisBinding) getParent();
+        AxisBinding axisBinding = getAxisBinding();
         if (axisBinding != null) {    
             policyList.addAll(axisBinding.getPolicyInclude()
                     .getAttachedPolicies());
@@ -237,7 +237,7 @@ public class AxisBindingOperation extends AxisDescription {
         // AxisEndpoint
         AxisEndpoint axisEndpoint = null;
         if (axisBinding != null) {
-            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+            axisEndpoint = axisBinding.getAxisEndpoint();
         }
 
         if (axisEndpoint != null) {
@@ -254,5 +254,9 @@ public class AxisBindingOperation extends AxisDescription {
         }
         
         return PolicyUtil.getMergedPolicy(policyList,  this);
+    }
+
+    public AxisBinding getAxisBinding() {
+        return (AxisBinding)parent;
     }
 }

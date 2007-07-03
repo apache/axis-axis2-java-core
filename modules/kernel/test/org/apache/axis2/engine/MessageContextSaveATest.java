@@ -166,7 +166,7 @@ public class MessageContextSaveATest extends TestCase {
         //-----------------------------------------------------------------
 
         serviceGroupContext = configurationContext.
-                createServiceGroupContext((AxisServiceGroup)axisService.getParent());
+                createServiceGroupContext(axisService.getAxisServiceGroup());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
         ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);

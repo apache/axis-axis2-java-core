@@ -81,13 +81,13 @@ public class AxisMessage extends AxisDescription {
     public boolean isParameterLocked(String parameterName) {
 
         // checking the locked value of parent
-        boolean loscked = false;
+        boolean locked = false;
 
         if (getParent() != null) {
-            loscked = getParent().isParameterLocked(parameterName);
+            locked = getParent().isParameterLocked(parameterName);
         }
 
-        if (loscked) {
+        if (locked) {
             return true;
         } else {
             Parameter parameter = getParameter(parameterName);
@@ -122,7 +122,7 @@ public class AxisMessage extends AxisDescription {
 
     public XmlSchemaElement getSchemaElement() {
         XmlSchemaElement xmlSchemaElement = null;
-        AxisService service = (AxisService) getParent().getParent();
+        AxisService service = getAxisOperation().getAxisService();
         ArrayList schemas = service.getSchema();
         for (Iterator schemaIter = schemas.iterator(); schemaIter.hasNext();){
             xmlSchemaElement = getSchemaElement((XmlSchema) schemaIter.next());
@@ -211,7 +211,7 @@ public class AxisMessage extends AxisDescription {
     }
 
     public AxisOperation getAxisOperation(){
-        return (AxisOperation) getParent();
+        return (AxisOperation)parent;
     }
 
 

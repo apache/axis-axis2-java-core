@@ -144,7 +144,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
+                        addFileToDeploy(file, deployer, WSInfo.TYPE_MODULE);
                     }
                 }
             }

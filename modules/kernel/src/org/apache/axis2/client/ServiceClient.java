@@ -173,7 +173,7 @@ public class ServiceClient {
                     "twoservicecannothavesamename",
                     axisService.getName()));
         }
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup)axisService.getParent();
+        AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext sgc = configContext.createServiceGroupContext(axisServiceGroup);
         serviceContext = sgc.getServiceContext(axisService);
     }
@@ -775,8 +775,7 @@ public class ServiceClient {
         // if a configuration context was created for this client there'll also
         //  be a service group, so discard that
         if (!createConfigCtx) {
-            String serviceGroupName =
-                    ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+            String serviceGroupName = axisService.getAxisServiceGroup().getServiceGroupName();
             AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
             AxisServiceGroup asg = axisConfiguration.getServiceGroup(serviceGroupName);
             if (asg != null) {
@@ -817,7 +816,7 @@ public class ServiceClient {
         axisService.setClientSide(true);
         axisConfig.addService(axisService);
 
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+        AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext serviceGroupContext =
                 configContext.createServiceGroupContext(axisServiceGroup);
         this.serviceContext = serviceGroupContext.getServiceContext(axisService);

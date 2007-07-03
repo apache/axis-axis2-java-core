@@ -735,7 +735,7 @@ public class CodeGenerationUtility {
                 XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
 
                 // add child param element matching each child of wrapper element
-                QName opName = ((AxisOperation)msg.getParent()).getName();
+                QName opName = msg.getAxisOperation().getName();
                 XmlSchemaObjectCollection items = sequence.getItems();
                 boolean first = true;
                 for (Iterator iter = items.getIterator(); iter.hasNext();) {
@@ -953,7 +953,7 @@ public class CodeGenerationUtility {
         // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
         //  it's used here to fit into the ADB-based code generation model
         MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
-        infoHolder.setOperationName(((AxisOperation)msg.getParent()).getName());
+        infoHolder.setOperationName(msg.getAxisOperation().getName());
         infoHolder.setPartsList(partNameList);
         try {
             msg.addParameter(new Parameter(Constants.UNWRAPPED_DETAILS, infoHolder));

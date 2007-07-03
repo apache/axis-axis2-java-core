@@ -515,14 +515,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 //This is a hack to get AXIS2-2771 working , I had to copy soap headers
                 //  from binding message to AxisMessage
-                List soapHeaders =
-                            (List) axisBindingInMessage.getProperty(WSDL2Constants.ATTR_WSOAP_HEADER);
-                    if (soapHeaders != null) {
-                        for (int i = 0; i < soapHeaders.size(); i++) {
-                            SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
-                            axisInMessage.addSoapHeader(headerMessage);
-                        }
+                List soapHeaders = (List)axisBindingInMessage.getProperty(
+                        WSDL2Constants.ATTR_WSOAP_HEADER);
+                if (soapHeaders != null) {
+                    for (int i = 0; i < soapHeaders.size(); i++) {
+                        SOAPHeaderMessage headerMessage = (SOAPHeaderMessage) soapHeaders.get(i);
+                        axisInMessage.addSoapHeader(headerMessage);
                     }
+                }
 
                 if (isSetMessageQNames) {
                     addQNameReference(axisInMessage, wsdl4jOperation,
@@ -886,8 +886,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Finds a SOAP port given the port map
-     *
-     * @param pHttpAddressHttpAddressorts
      */
     private Port findPort(Map ports) {
         Port port;
@@ -1036,9 +1034,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // the list and add it - the name for this is just the
             message.setElementQName((QName) resolvedRpcWrappedElementMap
                     .get(rpcOperationName));
-            ((AxisService)message.getParent().getParent()).addMessageElementQNameToOperationMapping(
+            message.getAxisOperation().getAxisService().addMessageElementQNameToOperationMapping(
                     (QName)resolvedRpcWrappedElementMap.get(rpcOperationName),
-                            (AxisOperation)message.getParent());
+                            message.getAxisOperation());
         } else {
             // now we are sure this is an document literal type element
             List bindingPartsList = getPartsListFromSoapBody(extensibilityElements);
@@ -1052,10 +1050,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         if (elementName != null) {
                             message.setElementQName(elementName);
                             message.setMessagePartName(part.getName());
-                            ((AxisService) message.getParent().getParent())
-                                    .addMessageElementQNameToOperationMapping(elementName,
-                                                                              (AxisOperation) message
-                                                                                      .getParent());
+                            AxisOperation operation = message.getAxisOperation();
+                            AxisService service = operation.getAxisService();
+                            service.addMessageElementQNameToOperationMapping(elementName,
+                                                                             operation);
                         } else {
                             throw new WSDLProcessingException(
                                     "No element type is defined for message " +
@@ -1083,10 +1081,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         if (elementName != null) {
                             message.setElementQName(elementName);
                             message.setMessagePartName(part.getName());
-                            ((AxisService) message.getParent().getParent())
-                                    .addMessageElementQNameToOperationMapping(elementName,
-                                                                              (AxisOperation) message
-                                                                                      .getParent());
+                            AxisOperation operation = message.getAxisOperation();
+                            AxisService service = operation.getAxisService();
+                            service.addMessageElementQNameToOperationMapping(elementName,
+                                                                             operation);
                         } else {
                             throw new WSDLProcessingException(
                                     "No element type is defined for message" +

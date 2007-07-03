@@ -225,7 +225,7 @@ public class MessageContextSelfManagedDataTest extends TestCase {
         //-----------------------------------------------------------------
 
         serviceGroupContext =
-                cfgContext.createServiceGroupContext((AxisServiceGroup)axisService.getParent());
+                cfgContext.createServiceGroupContext(axisService.getAxisServiceGroup());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
         serviceContext = serviceGroupContext.getServiceContext(axisService);

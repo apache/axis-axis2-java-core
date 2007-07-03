@@ -251,7 +251,7 @@ public class DispatchPhase extends Phase {
                                        MessageContext msgContext,
                                        SessionContext sessionContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext;
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
+        AxisServiceGroup axisServiceGroup = service.getAxisServiceGroup();
         ConfigurationContext configCtx = msgContext.getConfigurationContext();
         serviceGroupContext = configCtx.createServiceGroupContext(axisServiceGroup);
 

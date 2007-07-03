@@ -164,8 +164,7 @@ public class Utils {
                                                                            ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext =
-                configurationContext.createServiceGroupContext((AxisServiceGroup)axisService
-                        .getParent());
+                configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
 
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);

@@ -84,7 +84,7 @@ public class AxisServiceGroup extends AxisDescription {
 
         service.setParent(this);
 
-        AxisConfiguration axisConfig = (AxisConfiguration) getParent();
+        AxisConfiguration axisConfig = getAxisConfiguration();
 
         if (axisConfig != null) {
             for (Iterator iterator = getEngagedModules().iterator(); iterator.hasNext();) {
@@ -147,7 +147,7 @@ public class AxisServiceGroup extends AxisDescription {
         AxisService service = getService(name);
 
         if (service != null) {
-            ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_REMOVE, service);
+            getAxisConfiguration().notifyObservers(AxisEvent.SERVICE_REMOVE, service);
         }
 
         removeChild(name);

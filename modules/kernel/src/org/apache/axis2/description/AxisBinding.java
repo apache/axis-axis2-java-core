@@ -208,7 +208,7 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         policyList.addAll(getPolicyInclude().getAttachedPolicies());
      
         // AxisEndpoint
-        AxisEndpoint axisEndpoint = (AxisEndpoint) getParent();
+        AxisEndpoint axisEndpoint = getAxisEndpoint();
         
         if (axisEndpoint != null) {
             policyList.addAll(axisEndpoint.getPolicyInclude()
@@ -218,7 +218,7 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         AxisService service = null;
         
         if (axisEndpoint != null) {
-            service = (AxisService) axisEndpoint.getParent();
+            service = axisEndpoint.getAxisService();
         }
         
         if (service != null) {
@@ -229,5 +229,9 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         }
         
         return PolicyUtil.getMergedPolicy(policyList,  this);
+    }
+
+    public AxisEndpoint getAxisEndpoint() {
+        return (AxisEndpoint)parent;
     }
 }

@@ -49,7 +49,7 @@ public class RelatesToBasedOperationDispatcherTest extends TestCase {
         as1.addOperation(operation2);
 
         ConfigurationContext cc = new ConfigurationContext(ac);
-        ServiceGroupContext sgc = cc.createServiceGroupContext((AxisServiceGroup)as1.getParent());
+        ServiceGroupContext sgc = cc.createServiceGroupContext(as1.getAxisServiceGroup());
         ServiceContext serviceContext = sgc.getServiceContext(as1);
         OperationContext oc1 = serviceContext.createOperationContext(operation1);
         OperationContext oc2 = serviceContext.createOperationContext(operation2);

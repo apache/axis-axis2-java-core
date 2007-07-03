@@ -133,7 +133,6 @@ public class AxisBindingMessage extends AxisDescription {
 
         // If this is a fault, create a fault element and add fault specific properties
         if (this.isFault()) {
-
             if (this.getParent() instanceof AxisBinding) {
                bindingMessageElement = omFactory.createOMElement(
                         WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
@@ -215,7 +214,7 @@ public class AxisBindingMessage extends AxisDescription {
         policyList.addAll(policyInclude.getAttachedPolicies());
 
         // AxisBindingOperation policies
-        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) getParent();
+        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
         if (axisBindingOperation != null) {
             policyList.add(axisBindingOperation.getPolicyInclude()
                     .getAttachedPolicies());
@@ -224,18 +223,17 @@ public class AxisBindingMessage extends AxisDescription {
         // AxisBinding policies
         AxisBinding axisBinding = null;
         if (axisBindingOperation != null) {
-            axisBinding = (AxisBinding) axisBindingOperation.getParent();
+            axisBinding = axisBindingOperation.getAxisBinding();
         }
 
         if (axisBinding != null) {
-                policyList.addAll(axisBinding.getPolicyInclude()
-                        .getAttachedPolicies());
+                policyList.addAll(axisBinding.getPolicyInclude().getAttachedPolicies());
         }
 
         // AxisEndpoint
         AxisEndpoint axisEndpoint = null;
         if (axisBinding != null) {
-            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+            axisEndpoint = axisBinding.getAxisEndpoint();
         }
 
         if (axisEndpoint != null) {
@@ -254,6 +252,9 @@ public class AxisBindingMessage extends AxisDescription {
         return PolicyUtil.getMergedPolicy(policyList, this);
     }
 
+    public AxisBindingOperation getAxisBindingOperation() {
+        return (AxisBindingOperation)parent;
+    }
 
 }
 

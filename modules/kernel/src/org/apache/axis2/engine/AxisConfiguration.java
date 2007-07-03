@@ -519,7 +519,7 @@ public class AxisConfiguration extends AxisDescription {
     public synchronized void removeService(String name) throws AxisFault {
         AxisService service = (AxisService) allServices.remove(name);
         if (service != null) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) service.getParent();
+            AxisServiceGroup serviceGroup = service.getAxisServiceGroup();
             serviceGroup.removeService(name);
             log.debug(Messages.getMessage("serviceremoved", name));
         }
