@@ -300,20 +300,24 @@
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								<filter token="version_number" value="SNAPSHOT"/>
-								<filter token="activation.version" value="1.0-SNAPSHOT"/>
-								<filter token="annogen.version" value="0.1.0"/>
-								<filter token="ant.version" value="1.6.5"/>
-								<filter token="axiom.version" value="SNAPSHOT"/>
-								<filter token="commons.logging.version" value="1.1"/>
-								<filter token="neethi.version" value="SNAPSHOT"/>
-								<filter token="stax.api.version" value="1.0.1"/>
-								<filter token="stax.impl.version" value="asl-3.2.0"/>
-								<filter token="xbean.version" value="2.2.0"/>
-								<filter token="xmlschema.version" value="1.2"/>
-								<filter token="log4j.version" value="1.2.13"/>
-								<filter token="wsdl4j.version" value="1.6.2"/>
-								<filter token="woden.version" value="1.0-incubating-SNAPSHOT"/>
+								     <filter token="version_number" value="${version_number}" />
+								     <filter token="activation.version" value="${activation.version}" />
+								     <filter token="annogen.version" value="${annogen.version}" />
+								     <filter token="ant.version" value="${ant.version}" />
+								     <filter token="axiom.version" value="${axiom.version}" />
+								     <filter token="commons.logging.version" value="${commons.logging.version}" />
+								     <filter token="neethi.version" value="${neethi.version}" />
+								     <filter token="stax.api.version" value="${stax.api.version}" />
+								     <filter token="stax.impl.version" value="${stax.impl.version}" />
+								     <filter token="xbean.version" value="${xbean.version}" />
+								     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+								     <filter token="log4j.version" value="${log4j.version}" />
+								     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
+								     <filter token="woden.version" value="${woden.version}" />
+								     <filter token="commons.httpclient.version" value="${commons.httpclient.version}" />
+								     <filter token="commons.codec.version" value="${commons.codec.version}" />
+								     <filter token="jibx.version" value="${jibx.version}" />
+
 								<unzip src="./target/axis2.eclipse.codegen.plugin-${pom.version}.jar" dest="./target/plugin/${codegen.plugin.version}"/>
 								<!-- Copy to the same position with the filtering on-->
 								<!-- Copy to the same position with the filtering on-->
