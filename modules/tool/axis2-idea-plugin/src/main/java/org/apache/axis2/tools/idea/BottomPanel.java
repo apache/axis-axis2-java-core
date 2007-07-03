@@ -99,14 +99,14 @@ public class BottomPanel extends JPanel implements ActionListener {
 
             final String selected = java2CodeFrame.secondPanel.cmbCodeGenOption.getSelectedItem().toString() ;
             java2CodeFrame.outputpane.progressBar.setVisible(true);
-            final BarThread stepper = new BarThread(java2CodeFrame.outputpane.progressBar);
-            stepper.start();
-            new java.util.Timer(true).schedule(new TimerTask() {
-                public void run() {
-                    stepper.requestStop();
-
-                }
-            }, 1000);
+//            final BarThread stepper = new BarThread(java2CodeFrame.outputpane.progressBar);
+//            stepper.start();
+//            new java.util.Timer(true).schedule(new TimerTask() {
+//                public void run() {
+//                    stepper.requestStop();
+//
+//                }
+//            }, 1000);
 
             new Thread(){public void run(){
                 if (selected.equalsIgnoreCase("default")) {

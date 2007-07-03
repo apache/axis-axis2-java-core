@@ -69,7 +69,7 @@ public class CodegenBean {
 
     private boolean defaultClient = true;
 
-    Project project;
+    private Project project;
 
     private boolean isServerSideInterface = true;
 

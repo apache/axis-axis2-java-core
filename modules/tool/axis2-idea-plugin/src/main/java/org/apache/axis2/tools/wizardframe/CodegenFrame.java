@@ -24,25 +24,29 @@ import org.apache.axis2.tools.idea.FirstPanel;
 import org.apache.axis2.tools.idea.ChooserPanel;
 import org.apache.axis2.tools.component.Utilities;
 import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.java2wsdl.MiddlePanel;
+import org.apache.axis2.tools.java2wsdl.OptionPanel;
+import org.apache.axis2.tools.java2wsdl.OutputPanel;
+import com.intellij.openapi.project.Project;
 
 /**
  * codeaFrame class
  */
 
 public class CodegenFrame extends WizardFrame{
+    /**
+     * variable
+     */
     public static final int PANEL_CHOOSER = 0;
     public static final int PANEL_FIRST_A = 1;    //
-    public static final int PANEL_FIRST_B = 2;
+    public static final int PANEL_FIRST_B = 1;
     public static final int PANEL_OPTION_A =2;
-    public static final int PANEL_OPTION_B = 3;
+    public static final int PANEL_OPTION_B = 2;
     public static final int PANEL_LAST_A = 3;
-    public static final int PANEL_LAST_B = 6;
+    public static final int PANEL_LAST_B = 3;
 
-    private WsdlgenBean wsdlgenBean;
-    private CodegenBean codegenBean;
-
-    public CodegenFrame() {
-        super();
+    public CodegenFrame(Project project) {
+        super(project);
         init();
     }
 
@@ -59,23 +63,23 @@ public class CodegenFrame extends WizardFrame{
       /*
         panel = new FirstPanel(getWizardComponents(),codegenBean);
         getWizardComponents().addWizardPanel(PANEL_FIRST_A , panel);
-
-        panel = new J2WFristWizardPanel(getWizardComponents(),wsdlgenBean );
+       */
+        panel = new MiddlePanel(getWizardComponents(),wsdlgenBean );
         getWizardComponents().addWizardPanel(PANEL_FIRST_B, panel);
 
-        panel = new SecondPanel(getWizardComponents(),codegenBean);
+       /* panel = new SecondPanel(getWizardComponents(),codegenBean);
         getWizardComponents().addWizardPanel(PANEL_OPTION_A , panel);
-
-        panel = new J2WOptionWizardPanel(getWizardComponents(),wsdlgenBean);
+       */
+        panel = new OptionPanel(getWizardComponents(),wsdlgenBean);
         getWizardComponents().addWizardPanel(PANEL_OPTION_B , panel);
-
+       /*
         panel = new OutPutPanel(getWizardComponents(),codegenBean);
         getWizardComponents().addWizardPanel(PANEL_LAST_A , panel);
+       */
+        panel = new OutputPanel(getWizardComponents(),wsdlgenBean,project);
+        getWizardComponents().addWizardPanel(PANEL_LAST_B , panel);
 
-        panel = new J2WLocationWizardPanel(getWizardComponents(),wsdlgenBean);
-        getWizardComponents().addWizardPanel(PANEL_LAST_B , panel);*/
-
-        setSize(650, 600);
+        setSize(550,700);
         Utilities.centerComponentOnScreen(this);
 
     }

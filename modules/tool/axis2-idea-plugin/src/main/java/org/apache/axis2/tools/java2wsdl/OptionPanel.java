@@ -18,246 +18,150 @@
  */
 package org.apache.axis2.tools.java2wsdl;
 
+
+import org.apache.axis2.tools.bean.WsdlgenBean;
+import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener ;
-import java.awt.event.MouseEvent ;
-import org.apache.axis2.tools.bean.NamespaceFinder ;
-import org.apache.axis2.tools.bean.WsdlgenBean;
 
+/**
+ * this is the first panel of java2wsdl wizard
+ */
+public class
+        OptionPanel extends WizardPanel{
+    /**
+     * variable
+     */
+    private JTextField txtNsp;
+    private JTextField txtNspPrefix;
+    private JTextField txtSchemaTargetNsp;
+    private JTextField txtSchemaTargetNspPrefix;
+    private JTextField txtService;
+    private WsdlgenBean wsdlgenBean;
 
-public class OptionPanel extends JPanel implements ActionListener,MouseListener {
-
-    private   JLabel lblNsp;
-    private   JLabel lblNspPrefix;
-    private   JLabel lblSchemaTargetNsp;
-    private   JLabel lblSchemaTargetNspPrefix;
-    private   JLabel lblService;
-
-    JTextField txtNsp;
-    JTextField txtNspPrefix;
-    JTextField txtSchemaTargetNsp;
-    JTextField txtSchemaTargetNspPrefix;
-    JTextField txtService;
-
-    Java2WSDLFrame java2WSDLFrame;
-    WsdlgenBean wsdlgenBean;
-
-    public OptionPanel(Java2WSDLFrame java2WSDLFrame,WsdlgenBean wsdlgenBean){
-
-        this.java2WSDLFrame =java2WSDLFrame ;
+    /**
+     * Construct method
+     * @param wizardComponents
+     * @param wsdlgenBean
+     */
+    public OptionPanel(WizardComponents wizardComponents,WsdlgenBean wsdlgenBean){
+        super(wizardComponents, "Option  was choosed");
+        setPanelTopTitle("Java to WSDL Options");
+        setPanelBottomTitle("Set the Option for the generation");
         this.wsdlgenBean=wsdlgenBean;
+        init();
+    }
+    /** initaite method*/
+    public void init(){
 
-        OptionLayout customLayout=new OptionLayout();
-        setLayout(customLayout);
-
-        setFont(new Font("Helvetica", Font.PLAIN, 12));
-
-        //add lable and textfield
-
-        lblNsp =new JLabel("Target Namespace");
-        add(lblNsp);
-
-        txtNsp=new JTextField();
-        add(txtNsp);
-
-        lblNspPrefix =new JLabel("Target Namespace Prefix");
-        add(lblNspPrefix );
+        txtNsp =new JTextField();
 
         txtNspPrefix =new JTextField();
-        add(txtNspPrefix);
-
-        lblSchemaTargetNsp=new JLabel("Schema Target Namespace");
-        add(lblSchemaTargetNsp);
 
         txtSchemaTargetNsp =new JTextField();
-        add(txtSchemaTargetNsp);
-
-        lblSchemaTargetNspPrefix =new JLabel("Schema Target Namespace Prefix");
-        add(lblSchemaTargetNspPrefix);
 
         txtSchemaTargetNspPrefix =new JTextField();
-        add(txtSchemaTargetNspPrefix);
-
-        lblService =new JLabel("Service Name");
-        add(lblService );
 
         txtService =new JTextField();
-        add(txtService );
-        txtService .addActionListener(this);
-        txtService.addMouseListener(this);
 
-        setSize(getPreferredSize());
+        setBackButtonEnabled(true);
+        setNextButtonEnabled(true);
+        setFinishButtonEnabled(false);
+        this.setLayout(new GridBagLayout());
+
+        this.add(new JLabel("Target Namespace")
+                , new GridBagConstraints(0, 0, 1, 1,  0.1, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.NONE
+                , new Insets(5, 20, 0,0), 0, 0));
+
+        this.add(txtNsp
+                , new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 5, 0,20), 0, 0));
+
+        this.add(new JLabel("Target Namespace Prefix")
+                , new GridBagConstraints(0, 1, 1, 1, 0.1, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.NONE
+                , new Insets(5, 20, 0, 0), 0, 0));
+
+        this.add(txtNspPrefix
+                , new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0
+                , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 5, 0,20), 0, 0));
+
+        this.add(new JLabel("Schema Target Namespace")
+                , new GridBagConstraints(0, 2, 1, 1, 0.1, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.NONE
+                , new Insets(5, 20, 0,0), 0, 0));
+
+        this.add(txtSchemaTargetNsp
+                , new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0
+                , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 5, 0,20), 0, 0));
+
+        this.add(new JLabel("Schema Target Namespace Prefix")
+                , new GridBagConstraints(0, 3, 1, 1, 0.1, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.NONE
+                , new Insets(5, 20, 0, 0), 0, 0));
+
+        this.add(txtSchemaTargetNspPrefix
+                , new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 5, 0,20), 0, 0));
+
+        this.add(new JLabel("Service Name")
+                , new GridBagConstraints(0, 4, 1, 1, 0.1, 1.0
+                , GridBagConstraints.NORTHWEST  , GridBagConstraints.NONE
+                , new Insets(5, 20, 0, 0), 0, 0));
+
+        this.add(txtService
+                , new GridBagConstraints(1, 4, 2, 1, 1.0, 1.0
+                , GridBagConstraints.NORTHWEST  , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 5, 0,20), 0, 0));
 
     }
-
-    public String getTargetNamespace() {
-        return txtNsp.getText() ;
+    //next
+    public void next() {
+        switchPanel(CodegenFrame.PANEL_LAST_B );
+    }
+    //back
+    public void back() {
+        switchPanel(CodegenFrame.PANEL_FIRST_B );
+    }
+    //update
+    public void update() {
+        if(wsdlgenBean.getTargetNamespace()!=null )
+            txtNsp.setText(wsdlgenBean.getTargetNamespace());
+        if(wsdlgenBean.getTargetNamespacePrefix()!=null )
+            txtNspPrefix .setText(wsdlgenBean.getTargetNamespacePrefix());
+        if(wsdlgenBean.getSchemaTargetNamespace()!=null )
+            txtSchemaTargetNsp .setText(wsdlgenBean.getSchemaTargetNamespace());
+        if(wsdlgenBean.getSchemaTargetNamespacePrefix()!=null )
+            txtSchemaTargetNspPrefix.setText(wsdlgenBean.getSchemaTargetNamespacePrefix());
+        if(wsdlgenBean.getServiceName()!=null )
+            txtService.setText(wsdlgenBean.getServiceName());
+        setBackButtonEnabled(true);
+        setNextButtonEnabled(true);
+        setFinishButtonEnabled(false);
+        setPageComplete(isComplete());
+    }
+    // get page type
+    public  int getPageType() {
+        return  WizardPanel.JAVA_2_WSDL_TYPE;
     }
 
-    public String getTargetNamespacePrefix() {
-        return txtNspPrefix .getText() ;
-    }
-
-
-    public String getSchemaTargetNamespace() {
-        return txtSchemaTargetNsp.getText() ;
-    }
-
-    public String getSchemaTargetNamespacePrefix () {
-        return txtSchemaTargetNspPrefix .getText() ;
-    }
-    public String getServiceName(){
-        return txtService .getText() ;
-    }
-
-
-    public void actionPerformed(ActionEvent e) {
-        Object obj=e.getSource();
-        if(obj ==txtService ){
-            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,true, true, true);
-                wsdlgenBean.setServiceName(txtService.getText().trim());
-            }
+    private boolean isComplete(){
+        if(txtNsp.getText()!=null
+                && txtNspPrefix.getText()!=null
+                && txtSchemaTargetNsp.getText()!=null
+                && txtSchemaTargetNspPrefix.getText()!=null
+                && txtService.getText()!=null){
+            return true;
+        }else{
+            return  false;
         }
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtService ){
-            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,true, true, true);
-                wsdlgenBean.setServiceName(txtService.getText().trim());
-            }
-        }
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtService ){
-            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,true, true, true);
-                wsdlgenBean.setServiceName(txtService.getText().trim());
-            }
-        }
-    }
-
-    public void mousePressed(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtService ){
-            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,true, true, true);
-                wsdlgenBean.setServiceName(txtService.getText().trim());
-            }
-        }
-    }
-
-    public void mouseReleased(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtService ){
-            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,true, true, true);
-                wsdlgenBean.setServiceName(txtService.getText().trim());
-            }
-        }
-    }
-    public void setDefaultNamespaces(String fullyQualifiedClassName){
-        this.txtNsp.setText(NamespaceFinder.getTargetNamespaceFromClass(fullyQualifiedClassName));
-        this.txtSchemaTargetNsp .setText(NamespaceFinder.getSchemaTargetNamespaceFromClass(fullyQualifiedClassName) );
-        this.txtNspPrefix .setText(NamespaceFinder.getDefaultNamespacePrefix() );
-        this.txtSchemaTargetNspPrefix .setText(NamespaceFinder.getDefaultSchemaNamespacePrefix() );
-        this.txtService .setText(NamespaceFinder.getServiceNameText(fullyQualifiedClassName) );
-        setNamespaceDefaults();
-    }
-
-    public void setNamespaceDefaults(){
-        wsdlgenBean.setTargetNamespace(txtNsp.getText() );
-        wsdlgenBean.setTargetNamespacePrefix(txtNspPrefix .getText() );
-        wsdlgenBean.setSchemaTargetNamespace(txtSchemaTargetNsp .getText() );
-        wsdlgenBean.setSchemaTargetNamespacePrefix(txtSchemaTargetNspPrefix .getText() );
-        wsdlgenBean.setServiceName(txtService .getText() );
-    }
-}
-
-
-class OptionLayout  implements LayoutManager {
-
-    public OptionLayout (){
-
-    }
-    public void addLayoutComponent(String name, Component comp){
-
-    }
-
-    public void removeLayoutComponent(Component comp){
-
-    }
-    public Dimension preferredLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-
-        Insets insets = parent.getInsets();
-        dim.width = 500 + insets.left + insets.right;
-        dim.height =500 + insets.top + insets.bottom;
-
-        return dim;
-    }
-    public Dimension minimumLayoutSize(Container parent) {
-        return new Dimension(0, 0);
-    }
-
-    public void layoutContainer(Container parent) {
-
-        Insets insets = parent.getInsets();
-
-        Component c;
-
-        c = parent.getComponent(0);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top +20,200, 24);
-        }
-        c = parent.getComponent(1);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 225, insets.top + 20, 275, 24);
-        }
-        c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 60, 200, 24);
-        }
-        c = parent.getComponent(3);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 225, insets.top + 60, 275, 24);
-        }
-        c = parent.getComponent(4);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 100, 200, 24);
-        }
-        c = parent.getComponent(5);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 225, insets.top + 100, 275, 24);
-        }
-        c = parent.getComponent(6);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 140, 200, 24);
-        }
-        c = parent.getComponent(7);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 225, insets.top + 140, 275, 24);
-        }
-        c = parent.getComponent(8);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 180, 200, 24);
-        }
-        c = parent.getComponent(9);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 225, insets.top + 180, 275, 24);
-        }
-
-
-
     }
 }

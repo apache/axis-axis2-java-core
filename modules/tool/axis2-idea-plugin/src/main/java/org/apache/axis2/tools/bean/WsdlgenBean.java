@@ -24,6 +24,12 @@ import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
+
 public class WsdlgenBean {
 
     private String ClassName;
@@ -35,6 +41,7 @@ public class WsdlgenBean {
     private String SchemaTargetNamespacePrefix;
     private String OutputLocation ;
     private String OutputWSDLName ;
+    private Project project;
 
 
     public String getClassName() {
@@ -174,5 +181,36 @@ public class WsdlgenBean {
             throw new Exception("Code generation failed due to " + e.getLocalizedMessage());
         }
 
+    }
+    public Project getActiveProject() {
+        return project;
+
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+    public Module[] getModules() {
+
+        Project project = getActiveProject();
+        if (project != null) {
+            return ModuleManager.getInstance(project).getModules();
+        }
+        return null;
+    }
+
+    public String[] getModuleSrc(String name) {
+        Project project = getActiveProject();
+        if (project != null) {
+            Module module = ModuleManager.getInstance(project).findModuleByName(name);
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+            VirtualFile virtualFiles[] = moduleRootManager.getSourceRoots();
+            String src[] = new String[virtualFiles.length];
+            for (int count = 0; count < src.length; count++) {
+                src[count] = virtualFiles[count].getPresentableUrl();
+            }
+            return src;
+        }
+        return null;
     }
 }

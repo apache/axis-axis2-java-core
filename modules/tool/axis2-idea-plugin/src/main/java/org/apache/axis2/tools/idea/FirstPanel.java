@@ -133,7 +133,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
     }
 }
 
-class WSDLFileFilter extends FileFilter {
+/*class WSDLFileFilter extends FileFilter {
 
     public boolean accept(File f) {
         if (f.isDirectory()) {
@@ -163,7 +163,7 @@ class WSDLFileFilter extends FileFilter {
         return ext;
     }
 
-}
+}*/
 
 class FirstPanelLayout implements LayoutManager {
 

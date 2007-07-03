@@ -19,8 +19,7 @@
 package org.apache.ideaplugin.frames;
 
 import com.intellij.openapi.project.Project;
-import org.apache.axis2.tools.idea.Java2CodeFrame;
-import org.apache.axis2.tools.java2wsdl.Java2WSDLFrame;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 
@@ -131,9 +130,9 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             this.hide();
             setVisible(false);
             if (codeGen.isSelected()) {
-                codegenFrame = new CodegenFrame();
+                codegenFrame = new CodegenFrame(project);
                 codegenFrame.setVisible(true);
-                codegenFrame .setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                
+                codegenFrame .setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             }else{
                 ServiceArciveFrame window = new ServiceArciveFrame();
                 window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
