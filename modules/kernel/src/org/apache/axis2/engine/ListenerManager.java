@@ -94,11 +94,7 @@ public class ListenerManager {
                         startedTransports.get(exposeTransport.get(0));
 
                 EndpointReference[] eprsForService;
-                if (opName == null) {
-                    eprsForService = listener.getEPRsForService(serviceName, null);
-                } else {
-                    eprsForService = listener.getEPRsForService(serviceName + "/" + opName, null);
-                }
+                eprsForService = listener.getEPRsForService(serviceName, null);
                 return eprsForService != null ? eprsForService[0] : null;
             }
 
@@ -107,11 +103,7 @@ public class ListenerManager {
                     .getTransportIn(transportName);
             TransportListener listener = trsIN.getReceiver();
             EndpointReference[] eprsForService;
-            if (opName == null) {
-                eprsForService = listener.getEPRsForService(serviceName, null);
-            } else {
-                eprsForService = listener.getEPRsForService(serviceName + "/" + opName, null);
-            }
+            eprsForService = listener.getEPRsForService(serviceName, null);
             return eprsForService != null ? eprsForService[0] : null;
         }
     }
