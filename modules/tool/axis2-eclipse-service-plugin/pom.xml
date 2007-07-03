@@ -230,9 +230,9 @@
 								<property name="service.help.images.dir" value="../../../xdocs/tools/1_3/eclipse/images"/>
 								<property name="axis2.lib.dir" value="../../../target/lib"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								<filter token="version_number" value="SNAPSHOT"/>
-								<filter token="ant.version" value="1.6.5"/>
-								<filter token="commons.logging.version" value="1.1"/>
+								<filter token="version_number" value="${version_number}"/>
+								<filter token="ant.version" value="${ant.version}"/>
+								<filter token="commons.logging.version" value="${commons.logging.version}"/>
 								<filter token="log4j.version" value="1.2.13"/>
 								<delete dir="./target/plugin/${service.plugin.version}"/>
 								<mkdir dir="./target/plugin/${service.plugin.version}"/>
