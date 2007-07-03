@@ -206,4 +206,15 @@ public interface OperationDescription {
      * @return OperationDescription corresponding to the sync operation, or null (see note above).
      */
     public OperationDescription getSyncOperation();
+    
+    /**
+    * Returns the namespace of binding input message for the operation
+    */
+    public String getBindingInputNamespace();
+    
+    /**
+    * Returns the namespace of binding output message for the operation
+    */
+    public String getBindingOutputNamespace();
+    
 }

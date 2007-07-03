@@ -20,13 +20,11 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
@@ -42,7 +40,6 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,9 +47,14 @@ import org.apache.commons.logging.LogFactory;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.extensions.AttributeExtensible;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
@@ -60,6 +62,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -68,7 +71,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -1658,6 +1660,102 @@ class OperationDescriptionImpl
     
     public boolean isListType() {
     	return isListType;
+    }
+    
+    /**
+     * This method will return the namespace for the BindingInput that this operation
+     * specifies. It will first look for a namespace on the WSDL Binding object and then 
+     * default to the web service's target namespace.
+     */
+    public String getBindingInputNamespace() {
+        String tns = null;
+        Binding binding =
+                this.getEndpointInterfaceDescriptionImpl()
+                    .getEndpointDescriptionImpl()
+                    .getWSDLBinding();
+        if (binding != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found WSDL binding");
+            }
+            // this call does not support overloaded WSDL operations as it
+            // does not specify the name of the input and output messages
+            BindingOperation bindingOp =
+                    binding.getBindingOperation(getOperationName(), null, null);
+            if (bindingOp != null && bindingOp.getBindingInput() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found WSDL binding operation and input");
+                }
+                tns = getBindingNamespace(bindingOp.getBindingInput());
+                if (tns != null && log.isDebugEnabled()) {
+                    log.debug("For operation: " + bindingOp.getName()
+                            + " returning the following namespace for input message"
+                            + " from WSDL: " + tns);
+                }
+            }
+        }
+        if (tns == null) {
+            tns = getEndpointInterfaceDescription().getTargetNamespace();
+            if (log.isDebugEnabled()) {
+                log.debug("For binding input returning @WebService.targetNamespace: " + tns);
+            }
+        }
+        return tns;
+    }
+
+    /**
+     * This method will return the namespace for the BindingOutput that this operation
+     * specifies. It will first look for a namespace on the WSDL Binding object and then 
+     * default to the web service's target namespace.
+     */
+    public String getBindingOutputNamespace() {
+        String tns = null;
+        Binding binding =
+                this.getEndpointInterfaceDescriptionImpl()
+                    .getEndpointDescriptionImpl()
+                    .getWSDLBinding();
+        if (binding != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found WSDL binding");
+            }
+            // this call does not support overloaded WSDL operations as it
+            // does not specify the name of the input and output messages
+            BindingOperation bindingOp =
+                    binding.getBindingOperation(getOperationName(), null, null);
+            if (bindingOp != null && bindingOp.getBindingOutput() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found WSDL binding operation and output");
+                }
+                tns = getBindingNamespace(bindingOp.getBindingOutput());
+                if (tns != null && log.isDebugEnabled()) {
+                    log.debug("For operation: " + bindingOp.getName()
+                            + " returning the following namespace for output message"
+                            + " from WSDL: " + tns);
+                }
+            }
+        }
+        if (tns == null) {
+            tns = getEndpointInterfaceDescription().getTargetNamespace();
+            if (log.isDebugEnabled()) {
+                log.debug("For binding output returning @WebService.targetNamespace: " + tns);
+            }
+        }
+        return tns;
+    }
+
+    
+    /**
+     * This method will retrieve the namespace that is specified by the BindingInput or
+     * BindingOutput object.
+     */
+    private String getBindingNamespace(AttributeExtensible opInfo) {
+        if (opInfo instanceof BindingInput) {
+            BindingInput input = (BindingInput) opInfo;
+            return DescriptionUtils.getNamespaceFromSOAPElement(input.getExtensibilityElements());
+        } else if (opInfo instanceof BindingOutput) {
+            BindingOutput output = (BindingOutput) opInfo;
+            return DescriptionUtils.getNamespaceFromSOAPElement(output.getExtensibilityElements());
+        }
+        return null;
     }
     
     public String toString() {

@@ -112,7 +112,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Indicate the style and operation element name.  This triggers the message to
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
-            m.setOperationElement(getRPCOperationQName(operationDesc));
+            m.setOperationElement(getRPCOperationQName(operationDesc, true));
 
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
@@ -276,7 +276,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             m.setStyle(Style.RPC);
 
 
-            QName rpcOpQName = getRPCOperationQName(operationDesc);
+            QName rpcOpQName = getRPCOperationQName(operationDesc, false);
             String localPart = rpcOpQName.getLocalPart() + "Response";
             QName responseOp =
                     new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
@@ -520,13 +520,18 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
      * @param opDesc
      * @return qualified qname to use in the rpc message to represent the operation (per WSI BP)
      */
-    private static QName getRPCOperationQName(OperationDescription opDesc) {
+    private static QName getRPCOperationQName(OperationDescription opDesc, boolean isRequest) {
         QName qName = opDesc.getName();
 
         String localPart = qName.getLocalPart();
-        String uri = (qName.getNamespaceURI().length() == 0) ?
-                opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
-                qName.getNamespaceURI();
+        String uri = null;
+        
+        if (isRequest) {
+            uri = opDesc.getBindingInputNamespace();
+        } else {
+            uri = opDesc.getBindingOutputNamespace();
+        }
+        
         String prefix = "rpcOp";  // Prefer using an actual prefix
 
 
