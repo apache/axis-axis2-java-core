@@ -81,25 +81,12 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
                 Service service = services[i];
                 // set the serviceName on the parent to setup call to populateService
                 serviceName = service.getName();
-                Endpoint[] endpoints = service.getEndpoints();
-                for (int j = 0; j < endpoints.length; j++) {
-                    interfaceName = endpoints[j].getName().toString();
-                    // start with a fresh axisService
-                    this.axisService = new AxisService();
-                    // now that serviceName and interfaceName are set, call up to the
-                    // parent class to populate this service.                   
+                this.axisService = new AxisService();
                     AxisService retAxisService = populateService();
                     if (retAxisService != null) {
-                        // since this AxisService really represents the wsdl
-                        // port, change the name
-                        // from wsdl service name to port name.
-                        // TODO: mangle name?
-                        retAxisService.setName(retAxisService.getName() + "$" +
-                                interfaceName); // TODO: mangle name????
                         axisServices.add(retAxisService);
                     } // end if axisService was returned
                 } // end for all ports of a service
-            } // end for all services in the wsdl
             if (log.isDebugEnabled()) {
                 log.debug("Exit: populateAllServices.");
             }
