@@ -19,10 +19,7 @@
 package org.apache.axis2.databinding.utils;
 
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
@@ -367,9 +364,11 @@ public class BeanUtil {
                         } else if (SimpleTypeMapper.isCollection(parameters)) {
                             partObj = SimpleTypeMapper.getArrayList((OMElement)
                                     parts.getParent(), prty.getName());
+                        } else if (SimpleTypeMapper.isDataHandler(parameters)){
+                            partObj = SimpleTypeMapper.getDataHandler(parts);
                         } else if (parameters.isArray()) {
                             partObj = deserialize(parameters, (OMElement)parts.getParent(),
-                                                  objectSupplier, prty.getName());
+                                    objectSupplier, prty.getName());
                         } else {
                             partObj = deserialize(parameters, parts, objectSupplier, null);
                         }
@@ -730,6 +729,19 @@ public class BeanUtil {
                         objects.add(wrappingElement);
                     } else if (arg instanceof byte[]) {
                         objects.add(Base64.encode((byte[])arg));
+                    } else if(SimpleTypeMapper.isDataHandler(arg.getClass())){
+                        OMElement resElemt;
+                        OMFactory fac = OMAbstractFactory.getOMFactory();
+                        OMElement wrappingElement;
+                        if (partName == null) {
+                            wrappingElement = fac.createOMElement("arg" + argCount, null);
+                            wrappingElement.addChild((OMElement)arg);
+                        } else {
+                            wrappingElement = fac.createOMElement(partName, null);
+                            wrappingElement.addChild((OMElement)arg);
+                        }
+                        OMText text = fac.createOMText(arg, true);
+                        objects.add(text);
                     } else {
                         objects.add(arg);
                     }
