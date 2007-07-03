@@ -64,7 +64,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     protected org.apache.axiom.soap.SOAPFault fault;
     private boolean isDetailAdded;
-    private Name faultCodeName;
     private Locale faultReasonLocale;
     private boolean defaultsSet;
 
@@ -264,11 +263,13 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @throws SOAPException - if there was an error in adding the faultcode element to the
      *                       underlying XML tree.
      */
-    public void setFaultCode(Name faultCodeQName) throws SOAPException {
-        if (faultCodeQName.getURI() == null || faultCodeQName.getURI().trim().length() == 0) {
+    public void setFaultCode(Name faultCodeName) throws SOAPException {
+        if (faultCodeName.getURI() == null || faultCodeName.getURI().trim().length() == 0) {
             throw new SOAPException("faultCodeQName must be namespace qualified.");
         }
-        this.faultCodeName = faultCodeQName;
+        QName faultCodeQName = 
+            new QName(faultCodeName.getURI(), faultCodeName.getLocalName(), faultCodeName.getPrefix());
+        setFaultCode(faultCodeQName);
     }
 
     /* (non-Javadoc)
@@ -300,7 +301,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       * @see javax.xml.soap.SOAPFault#getFaultCodeAsName()
       */
     public Name getFaultCodeAsName() {
-        return this.faultCodeName;
+        return new PrefixedQName(getFaultCodeAsQName());
     }
 
 
@@ -727,7 +728,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
                                                           qname.getPrefix());
             soapFaultValue.declareNamespace(omNamespace);
+            soapFaultCode.setValue(soapFaultValue);
         }
+        
+        this.fault.setCode(soapFaultCode);
     }
 
     /**
