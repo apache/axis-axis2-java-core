@@ -333,10 +333,10 @@ public class CodeGenerationEngine {
      *
      * @param currentURI
      */
-    private String getBaseURI(String currentURI) throws URISyntaxException {
+    private String getBaseURI(String currentURI) throws URISyntaxException, IOException {
         File file = new File(currentURI);
-        if (file.exists() && file.getParentFile() != null) {
-            return file.getParentFile().toURI().toString();
+        if (file.exists()) {
+            return file.getCanonicalFile().getParentFile().toURI().toString();
         }
         String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
         return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
