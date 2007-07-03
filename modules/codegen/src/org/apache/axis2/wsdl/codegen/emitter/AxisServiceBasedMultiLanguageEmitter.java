@@ -265,19 +265,23 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return property;
     }
+    
+    private Policy getBindingPolicyFromMessage(QName qName, String key) {
 
-
-    private Policy getBindingPolicyFromOperation(QName qName) {
         AxisBindingOperation axisBindingOperation = null;
-
         if (axisBinding != null) {
             axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
         }
 
+        AxisBindingMessage axisBindingMessage = null;
+        
         if (axisBindingOperation != null) {
-            return axisBindingOperation.getEffectivePolicy();
+        
+            axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
+            if (axisBindingMessage != null) {
+                return axisBindingMessage.getEffectivePolicy();
+            }
         }
-
         return null;
     }
 
@@ -2173,24 +2177,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-
-        /*
-         * Setting the policy of the operation
-         */
-        Policy policy = getBindingPolicyFromOperation(axisOperation.getName());
-
-        if (policy != null) {
-            try {
-                addAttribute(doc, "policy",
-                        PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
-                        methodElement);
-            } catch (Exception ex) {
-                throw new RuntimeException("can't serialize the policy ..");
-            }
-        }
-
-//        System.out.println(DOM2Writer.nodeToString(methodElement));
-
+        
 
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getInputElement(doc,
@@ -2647,6 +2634,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             for (int i = 0; i < parameterElementList.size(); i++) {
                 inputElt.appendChild((Element) parameterElementList.get(i));
             }
+            
+            /*
+             * Setting the effective policy of input message
+             */
+            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            inputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
+            }
+            
         }
         return inputElt;
     }
@@ -2700,6 +2703,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (int i = 0; i < outputElementList.size(); i++) {
                 outputElt.appendChild((Element) outputElementList.get(i));
+            }
+            
+            /*
+             * Setting the effective policy for the output message.
+             */
+            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            outputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
             }
         }
         return outputElt;

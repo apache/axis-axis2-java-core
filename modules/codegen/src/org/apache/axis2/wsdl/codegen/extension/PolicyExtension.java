@@ -17,11 +17,20 @@
  * under the License.
  */
 
-package org.apache.axis2.modules;
+package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-public interface ModulePolicyExtension {
+import javax.xml.namespace.QName;
+import java.util.List;
 
-    public PolicyExtension getPolicyExtension();
+public interface PolicyExtension {
+    
+    public void init(CodeGenConfiguration codeGenConfiguration);
+    
+    public void addMethodsToStub(Document document, Element element, QName methodName,
+                                 List assertions);
 
 }

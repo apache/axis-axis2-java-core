@@ -67,19 +67,9 @@
 
      //creating the Service with a unique name
      _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + this.hashCode());
-     
-    <xsl:if test="@policy">     
-     java.lang.String _endpoint_policy_string = "<xsl:value-of select="@policy"/>";
-     org.apache.neethi.Policy _endpoint_policy = getPolicy(_endpoint_policy_string);
-     ((org.apache.axis2.description.PolicyInclude) _service.getPolicyInclude()).setPolicy(_endpoint_policy);
-    </xsl:if>
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
-    <xsl:if test="//method[@policy]">
-    java.lang.String __operation_policy_string;
-    </xsl:if>
-
 
         _operations = new org.apache.axis2.description.AxisOperation[<xsl:value-of select="count(method)"/>];
         <xsl:for-each select="method">
@@ -94,22 +84,18 @@
                    __operation = new org.apache.axis2.description.OutInAxisOperation();
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="@policy">
-			    (__operation).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="@policy"/>"));
-	    	</xsl:if>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
 	    _service.addOperation(__operation);
 	    
-	    <!-- 
+
 	    <xsl:if test="input/@policy">
-	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
 	    </xsl:if>
 	    
 	    <xsl:if test="output/@policy">
-	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
 	    </xsl:if>
-	    -->
 	    
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
             
@@ -162,7 +148,7 @@
          populateFaults();
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
-        <xsl:if test="//method[@policy]">
+        <xsl:if test="//@policy">
         _service.applyPolicy();
         </xsl:if>
 	

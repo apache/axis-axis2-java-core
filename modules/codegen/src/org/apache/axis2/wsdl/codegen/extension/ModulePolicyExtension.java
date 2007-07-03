@@ -17,16 +17,11 @@
  * under the License.
  */
 
-package org.apache.axis2.modules;
+package org.apache.axis2.wsdl.codegen.extension;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.namespace.QName;
-import java.util.List;
+public interface ModulePolicyExtension {
 
-public interface PolicyExtension {
-    public void addMethodsToStub(Document document, Element element, QName methodName,
-                                 List assertions);
+    public PolicyExtension getPolicyExtension();
 
 }

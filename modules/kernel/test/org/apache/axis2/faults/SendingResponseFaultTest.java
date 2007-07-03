@@ -49,7 +49,7 @@ public class SendingResponseFaultTest extends LocalTestCase {
             // Make sure this is NOT the "real" fault (which should have been swallowed while
             // writing the response)
             assertFalse("Got unexpected fault",
-                        axisFault.getMessage().contains("Invalid white space character"));
+                        axisFault.getMessage().contentEquals(new StringBuffer("Invalid white space character")));
         }
     }
 }

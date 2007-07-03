@@ -27,8 +27,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.modules.ModulePolicyExtension;
-import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
@@ -46,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PolicyEvaluator implements CodeGenExtension {
+    
+    private CodeGenConfiguration configuration;
 
     /**
      * Init method to initialization
@@ -54,6 +54,7 @@ public class PolicyEvaluator implements CodeGenExtension {
      * @param namespace2ExtsMap
      */
     private void init(CodeGenConfiguration configuration, Map namespace2ExtsMap) {
+        this.configuration = configuration;
 
         // adding default PolicyExtensions
         namespace2ExtsMap
@@ -61,12 +62,7 @@ public class PolicyEvaluator implements CodeGenExtension {
                      new MTOMPolicyExtension(configuration));
         namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding",
                               new EncodePolicyExtension());
-
-        //set the policy handling template
-        configuration.putProperty("policyExtensionTemplate",
-                                  "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
-
-
+        
         String repository = configuration.getRepositoryPath();
 
         if (repository == null) {
@@ -190,6 +186,7 @@ public class PolicyEvaluator implements CodeGenExtension {
                 continue;
             }
 
+            policyExtension.init(configuration);
             policyExtension.addMethodsToStub(document, rootElement, opName,
                                              (List)map.get(targetNamespace));
         }
@@ -211,6 +208,9 @@ public class PolicyEvaluator implements CodeGenExtension {
         private boolean setOnce = false;
         private CodeGenConfiguration configuration;
 
+        public void init(CodeGenConfiguration configuration) {
+        }
+        
         public MTOMPolicyExtension(CodeGenConfiguration configuration) {
             this.configuration = configuration;
         }
@@ -240,6 +240,10 @@ public class PolicyEvaluator implements CodeGenExtension {
     }
 
     class EncodePolicyExtension implements PolicyExtension {
+        
+        public void init(CodeGenConfiguration configuration) {
+        }
+        
         public void addMethodsToStub(Document document, Element element, QName operationName,
                                      List assertions) {
             // TODO implement encoding
