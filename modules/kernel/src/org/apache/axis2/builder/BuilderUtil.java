@@ -53,6 +53,8 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -114,9 +116,9 @@ public class BuilderUtil {
             if (schemaType instanceof XmlSchemaComplexType) {
                 XmlSchemaComplexType complexType = ((XmlSchemaComplexType) schemaType);
                 XmlSchemaParticle particle = complexType.getParticle();
-                if (particle instanceof XmlSchemaSequence) {
-                    XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
-                    Iterator iterator = xmlSchemaSequence.getItems().getIterator();
+                if (particle instanceof XmlSchemaSequence || particle instanceof XmlSchemaAll) {
+                    XmlSchemaGroupBase xmlSchemaGroupBase = (XmlSchemaGroupBase) particle;
+                    Iterator iterator = xmlSchemaGroupBase.getItems().getIterator();
 
                     // now we need to know some information from the binding operation.
 
