@@ -95,7 +95,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>jakarta-httpcore</artifactId>
+			<artifactId>httpcore</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>backport-util-concurrent</groupId>

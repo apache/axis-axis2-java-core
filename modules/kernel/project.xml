@@ -99,16 +99,16 @@
         </dependency>
         <dependency>
             <groupId>httpcomponents-httpcore</groupId>
-            <artifactId>jakarta-httpcore</artifactId>
-            <version>${jakarta.httpcore.version}</version>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
             <properties>
                 <module>true</module>
             </properties>
         </dependency>
         <dependency>
             <groupId>httpcomponents-httpcore</groupId>
-            <artifactId>jakarta-httpcore-nio</artifactId>
-            <version>${jakarta.httpcore.nio.version}</version>
+            <artifactId>httpcore-nio</artifactId>
+            <version>${httpcore.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -199,8 +199,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>jakarta-httpcore-niossl</artifactId>
-            <version>4.0-alpha4</version>
+            <artifactId>httpcore-niossl</artifactId>
+            <version>${httpcore.version}</version>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>

@@ -258,9 +258,4 @@ public class HttpCoreNIOListener implements TransportListener {
         throw new AxisFault(msg, e);
     }
 
-    private void handleException(String msg) throws AxisFault {
-        log.error(msg);
-        throw new AxisFault(msg);
-    }
-
 }

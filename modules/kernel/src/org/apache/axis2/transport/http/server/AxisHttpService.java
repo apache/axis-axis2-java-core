@@ -25,7 +25,6 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
@@ -36,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.*;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 
@@ -122,7 +122,8 @@ public class AxisHttpService {
 
         HttpResponse response;
         try {
-            HttpRequest request = conn.receiveRequest(this.params);
+            HttpRequest request = conn.receiveRequest();
+            HttpParamsLinker.link(request, this.params);
             HttpVersion ver = request.getRequestLine().getHttpVersion();
             if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
                 // Downgrade protocol version if greater than HTTP/1.1 
@@ -131,13 +132,13 @@ public class AxisHttpService {
 
             response = this.responseFactory.newHttpResponse
                     (ver, HttpStatus.SC_OK, context);
-            response.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(response, this.params);
 
             if (request instanceof HttpEntityEnclosingRequest) {
                 if (((HttpEntityEnclosingRequest) request).expectContinue()) {
                     HttpResponse ack = this.responseFactory.newHttpResponse
                             (ver, HttpStatus.SC_CONTINUE, context);
-                    ack.getParams().setDefaults(this.params);
+                    HttpParamsLinker.link(ack, this.params);
                     conn.sendResponse(ack);
                     conn.flush();
                 }
@@ -182,7 +183,7 @@ public class AxisHttpService {
             response = this.responseFactory.newHttpResponse
                     (HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR,
                      context);
-            response.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(response, this.params);
             handleException(ex, response);
             this.httpProcessor.process(response, context);
             conn.sendResponse(response);

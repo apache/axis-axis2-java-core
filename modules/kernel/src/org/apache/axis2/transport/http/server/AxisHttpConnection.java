@@ -28,11 +28,10 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.params.HttpParams;
 
 public interface AxisHttpConnection extends HttpConnection, HttpInetConnection {
 
-    HttpRequest receiveRequest(HttpParams params)
+    HttpRequest receiveRequest()
         throws HttpException, IOException;
     
     InputStream getInputStream();

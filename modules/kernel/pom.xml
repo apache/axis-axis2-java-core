@@ -43,12 +43,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>jakarta-httpcore</artifactId>
+			<artifactId>httpcore</artifactId>
 		</dependency>
-               <dependency>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>jakarta-httpcore-nio</artifactId>
-                </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore-nio</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
@@ -148,7 +148,7 @@
 			<dependencies>
                 <dependency>
                         <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>jakarta-httpcore-niossl</artifactId>
+                        <artifactId>httpcore-niossl</artifactId>
                 </dependency>
 			</dependencies>
 		</profile>
@@ -160,7 +160,7 @@
 			<dependencies>
                 <dependency>
                         <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>jakarta-httpcore-niossl</artifactId>
+                        <artifactId>httpcore-niossl</artifactId>
                 </dependency>
 			</dependencies>
 		</profile>
