@@ -35,6 +35,27 @@ public class ClassLoaderUtils {
     }
     
     /** @return ClassLoader */
+    public static ClassLoader getClassLoader(final Class cls) {
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return cls.getClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
+    }
+    
+    /** @return ClassLoader */
     public static ClassLoader getContextClassLoader() {
         ClassLoader cl = null;
         try {
@@ -105,4 +126,5 @@ public class ClassLoaderUtils {
 
         return cl;
     }
+
 }
