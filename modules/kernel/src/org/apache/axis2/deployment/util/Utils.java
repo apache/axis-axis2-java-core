@@ -103,7 +103,6 @@ public class Utils {
     public static URL[] getURLsForAllJars(URL url, File tmpDir) {
         try {
             ArrayList array = new ArrayList();
-            String urlString = url.toString();
             InputStream in = url.openStream();
             String fileName = url.getFile();
             int index = fileName.lastIndexOf('/');

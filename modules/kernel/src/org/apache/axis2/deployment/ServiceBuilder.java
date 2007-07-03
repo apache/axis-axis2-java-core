@@ -394,8 +394,17 @@ public class ServiceBuilder extends DescriptionBuilder {
         while (operations.hasNext()) {
             AxisOperation operation = (AxisOperation) operations.next();
             if (operation.getMessageReceiver() == null) {
-                operation.setMessageReceiver(loadDefaultMessageReceiver(
-                        operation.getMessageExchangePattern(), service));
+                MessageReceiver messageReceiver = loadDefaultMessageReceiver(
+                        operation.getMessageExchangePattern(), service);
+                if (messageReceiver == null  &&
+                        //we assume that if the MEP is ROBUST_IN_ONLY then the in-out MR can handle that
+                        WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                                operation.getMessageExchangePattern())) {
+                    messageReceiver = loadDefaultMessageReceiver(
+                            WSDL2Constants.MEP_URI_IN_OUT, service);
+
+                }
+                operation.setMessageReceiver(messageReceiver);
             }
         }
     }

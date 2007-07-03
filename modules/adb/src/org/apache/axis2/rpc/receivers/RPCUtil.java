@@ -34,6 +34,7 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;

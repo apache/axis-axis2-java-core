@@ -23,6 +23,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -227,6 +228,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             AxisOperation axisOperation = service.getOperation(new QName(methodName));
             if (axisOperation == null) {
                 axisOperation = Utils.getAxisOperationForJmethod(jMethod);
+                if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                        axisOperation.getMessageExchangePattern())){
+                    AxisMessage outMessage = axisOperation.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if (outMessage !=null ){
+                        outMessage.setName(methodName + RESPONSE);
+                    }
+                }
                 addToService = true;
             }
             // Maintain a list of methods we actually work with

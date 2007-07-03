@@ -29,10 +29,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -110,8 +107,10 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
 
             // Handling the response
             AxisMessage outaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (outaxisMessage != null) {
+            if (outaxisMessage != null && outaxisMessage.getElementQName() !=null) {
                 messageNameSpace = outaxisMessage.getElementQName().getNamespaceURI();
+            } else {
+                messageNameSpace = service.getTargetNamespace();
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
@@ -119,7 +118,14 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
 
-             Parameter generateBare = service.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
+            if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                    op.getMessageExchangePattern())){
+                OMElement bodyChild = fac.createOMElement(outMessage.getAxisMessage().getName(), ns);
+                envelope.getBody().addChild(bodyChild);
+                outMessage.setEnvelope(envelope);
+                return;
+            }
+            Parameter generateBare = service.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
             if (generateBare!=null && "true".equals(generateBare.getValue())) {
                 RPCUtil.processResonseAsDocLitBare(resObject, service,
                         envelope, fac, ns,

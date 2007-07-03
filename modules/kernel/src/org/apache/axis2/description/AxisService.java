@@ -1484,7 +1484,6 @@ public class AxisService extends AxisDescription {
             messageReciverMap.put(
                     WSDL2Constants.MEP_URI_IN_ONLY,
                     messageReceiver);
-            messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY, messageReceiver);
             Class inoutMessageReceiver = Loader.loadClass(
                     "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
             MessageReceiver inOutmessageReceiver =
@@ -1492,6 +1491,7 @@ public class AxisService extends AxisDescription {
             messageReciverMap.put(
                     WSDL2Constants.MEP_URI_IN_OUT,
                     inOutmessageReceiver);
+            messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY, inOutmessageReceiver);
 
             return createService(implClass,
                                  axisConfig,
