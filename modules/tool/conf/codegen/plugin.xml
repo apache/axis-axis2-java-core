@@ -21,7 +21,7 @@
 <plugin
    id="Axis2_Codegen_Wizard"
    name="Axis2 Codegen Wizard Plug-in"
-   version="1.2.0"
+   version="@version_number@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin">
 
@@ -83,7 +83,7 @@
       <library name="lib/commons-codec-@commons.codec.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-jibx@version_number@.jar">
+      <library name="lib/axis2-jibx-@version_number@.jar">
          <export name="*"/>
       </library>
       <library name="lib/jibx-bind-@jibx.version@.jar">

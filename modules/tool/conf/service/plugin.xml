@@ -19,9 +19,9 @@
   ~ under the License.
   -->
 <plugin
-   id="Axis_Service_Archiver"
-   name="Axis Service Maker"
-   version="1.0.0"
+   id="Axis2_Service_Archiver"
+   name="Axis2 Service Maker"
+   version="@version_number@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver">
 
