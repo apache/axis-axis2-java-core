@@ -204,6 +204,16 @@ public class HTTPWorker implements Worker {
                     }
                 }
             }
+            if (uri.indexOf("?wsdl2=") > 0) {
+                String serviceName =
+                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl2="));
+                if (processInternalWSDL(uri, configurationContext, serviceName, response)) return;
+            }
+            if (uri.indexOf("?wsdl=") > 0) {
+                String serviceName =
+                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl="));
+                if (processInternalWSDL(uri, configurationContext, serviceName, response)) return;
+            }
 
             String contentType = null;
             Header[] headers = request.getHeaders(HTTPConstants.HEADER_CONTENT_TYPE);
@@ -296,6 +306,41 @@ public class HTTPWorker implements Worker {
         } else {
             response.setStatus(HttpStatus.SC_ACCEPTED);
         }
+    }
+
+    private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, String serviceName, AxisHttpResponse response) throws IOException {
+        String wsdlName = uri.substring(uri.lastIndexOf("=") + 1);
+
+        HashMap services = configurationContext.getAxisConfiguration().getServices();
+        AxisService service = (AxisService) services.get(serviceName);
+        //TODO : Amila pls fix this correctly
+        if (service != null) {
+
+            InputStream instream = service.getClassLoader()
+                    .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
+
+            if (instream != null) {
+                response.setStatus(HttpStatus.SC_OK);
+                response.setContentType("text/xml");
+                OutputStream outstream = response.getOutputStream();
+                boolean checkLength = true;
+                int length = Integer.MAX_VALUE;
+                int nextValue = instream.read();
+                if (checkLength) length--;
+                while (-1 != nextValue && length >= 0) {
+                    outstream.write(nextValue);
+                    nextValue = instream.read();
+                    if (checkLength) length--;
+                }
+                outstream.flush();
+                return true;
+            } else {
+                // no schema available by that name  - send 404
+                response.sendError(HttpStatus.SC_NOT_FOUND, "Schema Not Found!");
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getHostAddress(AxisHttpRequest request) throws java.net.SocketException {
