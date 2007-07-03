@@ -18,6 +18,11 @@
  */
 package org.apache.axis2.jaxws;
 
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.xml.ws.Binding;
+import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
@@ -29,11 +34,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 
-import javax.xml.ws.Binding;
-import javax.xml.ws.handler.HandlerResolver;
-
-import java.util.Hashtable;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
 
@@ -46,7 +48,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     protected ServiceDelegate serviceDelegate;
 
     private Binding binding = null;
-
+    private static final Log log = LogFactory.getLog(BindingProvider.class);
     public BindingProvider(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
         endpointDesc = epDesc;
         serviceDelegate = svcDelegate;
@@ -75,11 +77,23 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         // so we can also set the handlerchain
         if (binding == null) {
             binding = BindingUtils.createBinding(endpointDesc);
-            
+            if(log.isDebugEnabled()){
+                log.debug("Lookign for Handler Resolver");
+            }
             // TODO should we allow the ServiceDelegate to figure out the default handlerresolver?  Probably yes, since a client app may look for one there.
-            HandlerResolver handlerResolver =
-                    serviceDelegate.getHandlerResolver() != null ? serviceDelegate.getHandlerResolver()
-                            : new HandlerResolverImpl(endpointDesc);
+            HandlerResolver handlerResolver = null;
+            if(serviceDelegate.getHandlerResolver() != null){
+                if(log.isDebugEnabled()){
+                    log.debug("Reading default Handler Resolver ");
+                }
+                handlerResolver= serviceDelegate.getHandlerResolver();
+            }
+            else{
+                handlerResolver = new HandlerResolverImpl(endpointDesc.getServiceDescription());
+                if(log.isDebugEnabled()){
+                    log.debug("Creating new Handler Resolver using HandlerResolverImpl");
+                }
+            }
             binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         }
 

@@ -282,6 +282,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getHandlerResolver()
     */
     public HandlerResolver getHandlerResolver() {
+        if (handlerResolver == null) {
+            handlerResolver = new HandlerResolverImpl(serviceDescription);
+        }
         return handlerResolver;
     }
 

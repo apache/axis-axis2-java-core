@@ -18,6 +18,39 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.jws.HandlerChain;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.ws.soap.SOAPBinding;
+
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -32,36 +65,15 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.xml.namespace.QName;
-import javax.xml.ws.soap.SOAPBinding;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /** @see ../ServiceDescription */
 class ServiceDescriptionImpl
@@ -79,6 +91,10 @@ class ServiceDescriptionImpl
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper;
     private WSDLWrapper generatedWsdlWrapper;
+    
+    //ANNOTATION: @HandlerChain
+    private HandlerChain handlerChainAnnotation;
+    private HandlerChainsType handlerChainsType;
 
     private Map<QName, EndpointDescription> endpointDescriptions =
             new HashMap<QName, EndpointDescription>();
@@ -1322,8 +1338,87 @@ class ServiceDescriptionImpl
         return wsdlSpecified;
     }
 
+    
+    // ===========================================
+    // ANNOTATION: HandlerChain
+    // ===========================================
+
     /**
-     * Returns the WSDL definiton as specified in the metadata.  Note that this WSDL may not be
+     * Returns a schema derived java class containing the the handler configuration filel
+     *  
+     * @return HandlerChainsType This is the top-level element for the Handler configuration file
+     * 
+     */
+    public HandlerChainsType getHandlerChain() {
+
+        if (handlerChainsType == null) {
+
+            getAnnoHandlerChainAnnotation();
+            if (handlerChainAnnotation != null) {
+
+                String handlerFileName = handlerChainAnnotation.file();
+
+                // TODO RAS & NLS
+                if (log.isDebugEnabled()) {
+                    if (composite != null) {
+                        log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
+                                + handlerFileName + " className: " + composite.getClassName());
+                    }
+                    else {
+                        log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
+                                + handlerFileName + " className: " + serviceClass.getName());
+                    }
+                }
+
+                String className =
+                        (composite != null) ? composite.getClassName() : serviceClass.getName();
+
+                ClassLoader classLoader =
+                        (composite != null) ? composite.getClassLoader() : this.getClass()
+                                                                               .getClassLoader();
+
+                InputStream is =
+                        DescriptionUtils.openHandlerConfigStream(handlerFileName,
+                                                                 className,
+                                                                 classLoader);
+
+                try {
+
+                    // All the classes we need should be part of this package
+                    JAXBContext jc =
+                            JAXBContext.newInstance("org.apache.axis2.jaxws.description.xml.handler",
+                                                    this.getClass().getClassLoader());
+
+                    Unmarshaller u = jc.createUnmarshaller();
+
+                    JAXBElement<?> o = (JAXBElement<?>) u.unmarshal(is);
+                    handlerChainsType = (HandlerChainsType) o.getValue();
+
+                } catch (Exception e) {
+                    throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: getHandlerChain: thrown when attempting to unmarshall JAXB content");
+                }
+            }
+        }
+        return handlerChainsType;
+    }
+
+    
+    /*
+     * This is a client side only method. The generated service class may contain 
+     * handler chain annotations
+     */
+    public HandlerChain getAnnoHandlerChainAnnotation() {
+        if (this.handlerChainAnnotation == null) {
+                if (serviceClass != null) {
+                    handlerChainAnnotation =
+                            (HandlerChain) serviceClass.getAnnotation(HandlerChain.class);
+            }
+        }
+
+        return handlerChainAnnotation;
+    }
+    
+    /* Returns the WSDL definiton as specified in the metadata.  Note that this WSDL may not be
      * complete.
      */
     public Definition getWSDLDefinition() {

@@ -492,4 +492,19 @@ public class AddNumbersHandlerTests extends TestCase {
 
         return new StreamSource(new StringReader(reqString));
     }
+    
+    public void testAddNumbersHandlerHandlerResolver() {
+        try {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
+        List<Handler> handlers = service.getHandlerResolver().getHandlerChain(null);
+        assertNotNull("Default handlers list should not be null but empty.", handlers);
+        System.out.println("----------------------------------");
+        } catch (Exception e) {
+        e.printStackTrace();
+        fail(e.getMessage());
+        }
+        } 
+
 }

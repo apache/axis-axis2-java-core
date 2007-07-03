@@ -20,7 +20,7 @@ package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.List;
@@ -84,6 +84,7 @@ public interface ServiceDescription {
 
     public abstract QName getServiceQName();
 
+    public abstract HandlerChainsType getHandlerChain();
     /**
      * Returns a list of the ports for this serivce.  The ports returned are the - Ports declared
      * ports for this Service.  They can be delcared in the WSDL or via annotations. - Dynamic ports

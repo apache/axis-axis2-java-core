@@ -19,16 +19,15 @@
 
 package org.apache.axis2.jaxws.binding;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 
 /**
  * @author rott classes that would normally "implement javax.xml.ws.Binding"
@@ -63,11 +62,10 @@ public class BindingImpl implements Binding {
     }
 
     public List<Handler> getHandlerChain() {
-        if (handlers == null && endpointDesc != null) {
-            handlers = new HandlerResolverImpl(endpointDesc).getHandlerChain(endpointDesc
-                            .getPortInfo());
-        }
         if (handlers == null) {
+            handlers =
+                    new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo());
+            if (handlers == null)
             handlers = new ArrayList<Handler>(); // non-null so client
                                                  // apps can manipulate
         }
