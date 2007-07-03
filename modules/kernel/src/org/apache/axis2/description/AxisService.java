@@ -62,14 +62,14 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.JMethod;
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.schema.SchemaReference;
+import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -81,22 +81,16 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class AxisService
  */
 public class AxisService extends AxisDescription {
+
+    public static final String IMPORT_TAG = "import";
+    public static final String INCLUDE_TAG = "include";
+    public static final String SCHEMA_LOCATION = "schemaLocation";
 
     private Map endpointMap = new HashMap();
 
@@ -177,6 +171,8 @@ public class AxisService extends AxisDescription {
      * Keeps track whether the schema locations are adjusted
      */
     private boolean schemaLocationsAdjusted = false;
+
+    private boolean wsdlImportLocationAdjusted = false;
 
     /**
      * A table that keeps a mapping of unique xsd names (Strings)
@@ -899,16 +895,139 @@ public class AxisService extends AxisDescription {
         if (wsld4jdefinition != null) {
             try {
                 Definition definition = (Definition) wsld4jdefinition.getValue();
-                if (isModifyUserWSDLPortAddress()) {
-                    setPortAddress(definition);
-                }
-                WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-                writer.writeWSDL(definition, out);
+                printDefinitionObject(definition, out);
             } catch (WSDLException e) {
                 throw AxisFault.makeFault(e);
             }
         } else {
             printWSDLError(out);
+        }
+    }
+
+    private void printDefinitionObject(Definition definition, OutputStream out)
+            throws AxisFault, WSDLException {
+        if (isModifyUserWSDLPortAddress()) {
+            setPortAddress(definition);
+        }
+        if (!wsdlImportLocationAdjusted){
+           changeImportAndIncludeLocations(definition);
+           wsdlImportLocationAdjusted = true;
+        }
+        WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+        writer.writeWSDL(definition, out);
+    }
+
+    public void printUserWSDL(OutputStream out,
+                              String wsdlName) throws AxisFault {
+        // first find the correct wsdl definition
+        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+        if (wsld4jdefinition != null) {
+            try {
+                Definition definition = (Definition) wsld4jdefinition.getValue();
+                printDefinitionObject(getWSDLDefinition(definition,wsdlName), out);
+            } catch (WSDLException e) {
+                throw AxisFault.makeFault(e);
+            }
+        } else {
+            printWSDLError(out);
+        }
+
+    }
+
+    /**
+     * find the defintion object for given name
+     * @param parentDefinition
+     * @param name
+     * @return wsdl definition
+     */
+    private Definition getWSDLDefinition(Definition parentDefinition, String name) {
+
+        Definition importedDefinition = null;
+        Iterator iter = parentDefinition.getImports().values().iterator();
+        Vector values = null;
+        Import wsdlImport = null;
+        for (; iter.hasNext();) {
+            values = (Vector) iter.next();
+            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
+                wsdlImport = (Import) valuesIter.next();
+                if (wsdlImport.getLocationURI().endsWith(name)) {
+                    importedDefinition = wsdlImport.getDefinition();
+                    break;
+                } else {
+                    importedDefinition = getWSDLDefinition(wsdlImport.getDefinition(), name);
+                }
+                if (importedDefinition != null) {
+                    break;
+                }
+            }
+            if (importedDefinition != null) {
+                break;
+            }
+        }
+        return importedDefinition;
+    }
+
+    /**
+     * this procesdue recursively adjust the wsdl imports locations
+     * and the schmea import and include locations.
+     * @param definition
+     */
+    private void changeImportAndIncludeLocations(Definition definition){
+
+        //adjust the schema locations in types section
+        Types types = definition.getTypes();
+        List extensibilityElements = types.getExtensibilityElements();
+        Object extensibilityElement = null;
+        Schema schema = null;
+        for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
+            extensibilityElement = iter.next();
+            if (extensibilityElement instanceof Schema) {
+                schema = (Schema) extensibilityElement;
+                changeLocations(schema.getElement());
+            }
+        }
+
+        Iterator iter = definition.getImports().values().iterator();
+        Vector values = null;
+        Import wsdlImport = null;
+        String originalImprotString = null;
+        for (; iter.hasNext();) {
+            values = (Vector) iter.next();
+            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
+                wsdlImport = (Import) valuesIter.next();
+                originalImprotString = wsdlImport.getLocationURI();
+                wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+                changeImportAndIncludeLocations(wsdlImport.getDefinition());
+            }
+        }
+    }
+
+    /**
+     * change the schema Location in the elemment
+     * @param element
+     */
+
+    private void changeLocations(Element element) {
+        NodeList nodeList = element.getChildNodes();
+        String tagName;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            tagName = nodeList.item(i).getLocalName();
+            if (IMPORT_TAG.equals(tagName) || INCLUDE_TAG.equals(tagName)) {
+                processImport(nodeList.item(i));
+            }
+        }
+    }
+
+    private void processImport(Node importNode) {
+        NamedNodeMap nodeMap = importNode.getAttributes();
+        Node attribute;
+        String attributeValue;
+        for (int i = 0; i < nodeMap.getLength(); i++) {
+            attribute = nodeMap.item(i);
+            if (attribute.getNodeName().equals("schemaLocation")) {
+                attributeValue = attribute.getNodeValue();
+                attribute.setNodeValue(this.name + "?xsd=" + attributeValue);
+            }
         }
     }
 
@@ -962,6 +1081,7 @@ public class AxisService extends AxisDescription {
                         } else {
                             ((SOAPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
                         }
+                        //TODO : change the Endpoint refrence addess as well.
                     }
                 }
             }

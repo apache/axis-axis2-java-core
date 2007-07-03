@@ -313,34 +313,20 @@ public class HTTPWorker implements Worker {
 
         HashMap services = configurationContext.getAxisConfiguration().getServices();
         AxisService service = (AxisService) services.get(serviceName);
-        //TODO : Amila pls fix this correctly
+
         if (service != null) {
+            response.setStatus(HttpStatus.SC_OK);
+            response.setContentType("text/xml");
+            service.printUserWSDL(response.getOutputStream(), wsdlName);
+            response.getOutputStream().flush();
+            return true;
 
-            InputStream instream = service.getClassLoader()
-                    .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
-
-            if (instream != null) {
-                response.setStatus(HttpStatus.SC_OK);
-                response.setContentType("text/xml");
-                OutputStream outstream = response.getOutputStream();
-                boolean checkLength = true;
-                int length = Integer.MAX_VALUE;
-                int nextValue = instream.read();
-                if (checkLength) length--;
-                while (-1 != nextValue && length >= 0) {
-                    outstream.write(nextValue);
-                    nextValue = instream.read();
-                    if (checkLength) length--;
-                }
-                outstream.flush();
-                return true;
-            } else {
-                // no schema available by that name  - send 404
-                response.sendError(HttpStatus.SC_NOT_FOUND, "Schema Not Found!");
-                return true;
-            }
+        } else {
+            // no schema available by that name  - send 404
+            response.sendError(HttpStatus.SC_NOT_FOUND, "Schema Not Found!");
+            return true;
         }
-        return false;
+
     }
 
     public String getHostAddress(AxisHttpRequest request) throws java.net.SocketException {

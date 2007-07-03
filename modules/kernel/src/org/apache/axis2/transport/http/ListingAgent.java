@@ -234,17 +234,12 @@ public class ListingAgent extends AbstractAgent {
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl");
-                    //TODO , Amila pls fix this in right way
+
                     if (!"".equals(wsdlName)) {
-                        InputStream in = ((AxisService) serviceObj).getClassLoader()
-                                .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
-                        if (in != null) {
-                            out.write(IOUtils.getStreamAsByteArray(in));
-                            out.flush();
-                            out.close();
-                        } else {
-                            res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                        }
+                        AxisService axisServce = (AxisService) serviceObj;
+                        axisServce.printUserWSDL(out, wsdlName);
+                        out.flush();
+                        out.close();
                     } else {
                         ((AxisService) serviceObj).printWSDL(out, ip);
                         out.flush();
