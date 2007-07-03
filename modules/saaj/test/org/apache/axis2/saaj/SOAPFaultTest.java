@@ -825,11 +825,19 @@ public class SOAPFaultTest extends TestCase {
 
             Name name = fac.createName("myfault", "flt", "http://example.com");
             sf.setFaultCode(name);
-            Name name2 = sf.getFaultCodeAsName();
+            
+            Name name2 = sf.getFaultCodeAsName();            
             assertNotNull(name2);
-            assertEquals(name2.getLocalName(), name.getLocalName());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getURI(), name.getURI());
+            assertEquals(name.getLocalName(), name2.getLocalName());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getURI(), name2.getURI());
+            
+            QName name3 = sf.getFaultCodeAsQName();            
+            assertNotNull(name3);
+            assertEquals(name.getLocalName(), name3.getLocalPart());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getURI(), name3.getNamespaceURI());
+            
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -844,11 +852,19 @@ public class SOAPFaultTest extends TestCase {
                                        qname.getPrefix(), qname.getNamespaceURI());
             SOAPFault sf = fac.createFault();
             sf.setFaultCode(name);
-            Name name2 = sf.getFaultCodeAsName();
+            
+            Name name2 = sf.getFaultCodeAsName();            
             assertNotNull(name2);
-            assertEquals(name2.getLocalName(), name.getLocalName());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getURI(), name.getURI());
+            assertEquals(name.getLocalName(), name2.getLocalName());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getURI(), name2.getURI());
+            
+            QName name3 = sf.getFaultCodeAsQName();            
+            assertNotNull(name3);
+            assertEquals(name.getLocalName(), name3.getLocalPart());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getURI(), name3.getNamespaceURI());
+                      
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -862,12 +878,18 @@ public class SOAPFaultTest extends TestCase {
 
         QName name = new QName("http://example.com", "myfault", "flt");
         sf.setFaultCode(name);
+        
         QName name2 = sf.getFaultCodeAsQName();
-
         assertNotNull(name2);
-        assertEquals(name2.getLocalPart(), name.getLocalPart());
-        assertEquals(name2.getPrefix(), name.getPrefix());
-        assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
+        assertEquals(name.getLocalPart(), name2.getLocalPart());
+        assertEquals(name.getPrefix(), name2.getPrefix());
+        assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
+        
+        Name name3 = sf.getFaultCodeAsName();
+        assertNotNull(name3);
+        assertEquals(name.getLocalPart(), name3.getLocalName());
+        assertEquals(name.getPrefix(), name3.getPrefix());
+        assertEquals(name.getNamespaceURI(), name3.getURI());
     }
 
 
@@ -877,12 +899,18 @@ public class SOAPFaultTest extends TestCase {
             SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
             SOAPFault sf = fac.createFault();
             sf.setFaultCode(name);
+            
             QName name2 = sf.getFaultCodeAsQName();
-
             assertNotNull(name2);
-            assertEquals(name2.getLocalPart(), name.getLocalPart());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
+            assertEquals(name.getLocalPart(), name2.getLocalPart());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
+            
+            Name name3 = sf.getFaultCodeAsName();
+            assertNotNull(name3);
+            assertEquals(name.getLocalPart(), name3.getLocalName());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getNamespaceURI(), name3.getURI());
         } catch (Exception e) {
             fail(e.getMessage());
         }
