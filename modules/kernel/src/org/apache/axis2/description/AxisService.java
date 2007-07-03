@@ -45,7 +45,6 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
@@ -232,7 +231,9 @@ public class AxisService extends AxisDescription {
     private AxisDataLocatorImpl defaultDataLocator;
     // Define search sequence for datalocator based on Data Locator types.
     LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT,
-                                                                LocatorType.SERVICE_LEVEL, LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL,
+                                                                LocatorType.SERVICE_LEVEL,
+                                                                LocatorType.GLOBAL_DIALECT,
+                                                                LocatorType.GLOBAL_LEVEL,
                                                                 LocatorType.DEFAULT_AXIS};
 
     // name of the  binding used : use in codegeneration
@@ -241,7 +242,8 @@ public class AxisService extends AxisDescription {
     // names list keep to preserve the parameter order
     private List operationsNameList;
 
-    private String[] eprs = null;
+    private String[] eprs;
+    private boolean customWsdl = false;
 
     public AxisEndpoint getEndpoint(String key) {
         return (AxisEndpoint) endpointMap.get(key);
@@ -250,8 +252,6 @@ public class AxisService extends AxisDescription {
     public void addEndpoint(String key, AxisEndpoint axisEndpoint) {
         this.endpointMap.put(key, axisEndpoint);
     }
-
-    private boolean customWsdl = false;
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
@@ -738,11 +738,13 @@ public class AxisService extends AxisDescription {
                 invalidOperationsAliases.add(action);
                 if (log.isDebugEnabled()) {
                     log.debug(
-                            "mapActionToOperation: The action is already mapped to a different operation.  The mapping of the action to any operations will be removed.  Action: "
-                            + action + "; original operation: " + currentlyMappedOperation
-                            + " named " + currentlyMappedOperation.getName()
-                            + "; new operation: " + axisOperation
-                            + " named " + axisOperation.getName());
+                            "mapActionToOperation: The action is already mapped to a different " +
+                            "operation.  The mapping of the action to any operations will be " +
+                            "removed.  Action: " + action + "; original operation: " +
+                            currentlyMappedOperation + " named " +
+                            currentlyMappedOperation.getName() +
+                            "; new operation: " + axisOperation + " named " +
+                            axisOperation.getName());
                 }
             }
         } else {
@@ -812,28 +814,32 @@ public class AxisService extends AxisDescription {
     }
 
     public String[] getEPRs() throws AxisFault {
-        if (eprs != null) {
+        if (eprs != null && eprs.length != 0) {
             return eprs;
         }
-        String requestIP;
-        try {
-            requestIP = HttpUtils.getIpAddress(getAxisConfiguration());
-        } catch (SocketException e) {
-            throw new AxisFault("Cannot get local IP address", e);
-        }
-        eprs = getEPRs(requestIP);
+        eprs = calculateEPRs();
         return eprs;
     }
 
-    private String[] getEPRs(String requestIP) {
+    private String[] calculateEPRs(){
+        try {
+            String requestIP = HttpUtils.getIpAddress(getAxisConfiguration());
+            return calculateEPRs(requestIP);
+        } catch (SocketException e) {
+            log.error("Cannot get local IP address", e);
+        }
+        return new String[0];
+    }
+
+    private String[] calculateEPRs(String requestIP) {
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (axisConfig == null) {
             return null;
         }
         ArrayList eprList = new ArrayList();
         if (enableAllTransports) {
-            Iterator transports = axisConfig.getTransportsIn().values().iterator();
-            while (transports.hasNext()) {
+            for (Iterator transports = axisConfig.getTransportsIn().values().iterator();
+                 transports.hasNext();) {
                 TransportInDescription transportIn = (TransportInDescription) transports.next();
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
@@ -843,9 +849,11 @@ public class AxisService extends AxisDescription {
                         if (eprsForService != null) {
                             for (int i = 0; i < eprsForService.length; i++) {
                                 EndpointReference endpointReference = eprsForService[i];
-                                String address = endpointReference.getAddress();
-                                if (address != null) {
-                                    eprList.add(address);
+                                if (endpointReference != null) {
+                                    String address = endpointReference.getAddress();
+                                    if (address != null) {
+                                        eprList.add(address);
+                                    }
                                 }
                             }
                         }
@@ -868,9 +876,11 @@ public class AxisService extends AxisDescription {
                             if (eprsForService != null) {
                                 for (int j = 0; j < eprsForService.length; j++) {
                                     EndpointReference endpointReference = eprsForService[j];
-                                    String address = endpointReference.getAddress();
-                                    if (address != null) {
-                                        eprList.add(address);
+                                    if (endpointReference != null) {
+                                        String address = endpointReference.getAddress();
+                                        if (address != null) {
+                                            eprList.add(address);
+                                        }
                                     }
                                 }
                             }
@@ -911,7 +921,7 @@ public class AxisService extends AxisDescription {
         if (isUseUserWSDL()) {
             printUserWSDL(out);
         } else {
-            String[] eprArray = getEPRs(requestIP);
+            String[] eprArray = calculateEPRs(requestIP);
             getWSDL(out, eprArray);
         }
     }
@@ -950,7 +960,7 @@ public class AxisService extends AxisDescription {
                         if (requestIP == null) {
                             ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
                         } else {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs(requestIP)[0]);
+                            ((SOAPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
                         }
                     }
                 }
@@ -1320,6 +1330,7 @@ public class AxisService extends AxisDescription {
      */
     public void setEnableAllTransports(boolean enableAllTransports) {
         this.enableAllTransports = enableAllTransports;
+        eprs = calculateEPRs();
     }
 
     public List getExposedTransports() {
@@ -1335,12 +1346,22 @@ public class AxisService extends AxisDescription {
         enableAllTransports = false;
         if (!this.exposedTransports.contains(transport)) {
             this.exposedTransports.add(transport);
+            try {
+                eprs = calculateEPRs();
+            } catch (Exception e) {
+                eprs = null;
+            }
         }
     }
 
     public void removeExposedTransport(String transport) {
         enableAllTransports = false;
         this.exposedTransports.remove(transport);
+        try {
+            eprs = calculateEPRs();
+        } catch (Exception e) {
+            eprs = null;
+        }
     }
 
     public boolean isExposedTransport(String transport) {
