@@ -110,6 +110,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Field TRANSPORT_HTTP
      */
     public static final String TRANSPORT_HTTP = "http";
+    public static final String TRANSPORT_HTTPS = "https";
 
     //Parameter name of Service impl class
     public static final String SERVICE_CLASS = "ServiceClass";
