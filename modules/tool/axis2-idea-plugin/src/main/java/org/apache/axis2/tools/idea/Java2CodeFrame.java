@@ -41,7 +41,7 @@ import java.io.*;
  * Time: 2:26:15 PM
  */
 public class Java2CodeFrame extends JFrame {
-    ImagePanel panel_3;
+   // ImagePanel panel_3;
     FirstPanel plMiddle;
     BottomPanel lblBottom;
     //    SecondPanel secondPanel;
@@ -64,11 +64,11 @@ public class Java2CodeFrame extends JFrame {
 
         codegenBean = new CodegenBean();
 
-        panel_3 = new ImagePanel();
+      /*  panel_3 = new ImagePanel();
         panel_3.setCaptions("  WSDL selection page"
-                , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");
+                , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");*/
 
-        getContentPane().add(panel_3);
+       // getContentPane().add(panel_3);
 
         plMiddle = new FirstPanel(codegenBean);
         getContentPane().add(plMiddle);
@@ -259,8 +259,8 @@ public class Java2CodeFrame extends JFrame {
                     panleID--;
                     break;
                 }
-                panel_3.setCaptions("  Custom Options"
-                        , "  Set the options for the code generation");
+              /*  panel_3.setCaptions("  Custom Options"
+                        , "  Set the options for the code generation");*/
 
                 this.secondPanel.setVisible(true);
                 if(this.secondPanel.codegenBean == null)
@@ -273,8 +273,8 @@ public class Java2CodeFrame extends JFrame {
             }
             case 2: {
 
-                panel_3.setCaptions("  Set the output location for the generated code"
-                        , "  set the output project for the generated code");
+               /* panel_3.setCaptions("  Set the output location for the generated code"
+                        , "  set the output project for the generated code");*/
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
                 this.secondPanel.fillBean();
@@ -310,8 +310,8 @@ public class Java2CodeFrame extends JFrame {
         panleID--;
         switch (panleID) {
             case 0: {
-                panel_3.setCaptions("  WSDL selection page"
-                        , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");
+               /* panel_3.setCaptions("  WSDL selection page"
+                        , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");*/
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(true);
                 this.outputpane.setVisible(false);
@@ -319,8 +319,8 @@ public class Java2CodeFrame extends JFrame {
                 break;
             }
             case 1: {
-                panel_3.setCaptions("  Custom  Options"
-                        , "  Set the options for the code generation");
+              /*  panel_3.setCaptions("  Custom  Options"
+                        , "  Set the options for the code generation");*/
 
                 this.secondPanel.setVisible(true);
                 this.plMiddle.setVisible(false);
@@ -377,11 +377,15 @@ class windowLayout implements LayoutManager {
         Insets insets = parent.getInsets();
 
         Component c;
-        c = parent.getComponent(0);
+       /* c = parent.getComponent(0);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top, 600, 80);
+        }*/
+        c = parent.getComponent(0);
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
-        c = parent.getComponent(1);
+        c = parent.getComponent(2);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
@@ -389,11 +393,7 @@ class windowLayout implements LayoutManager {
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
-        c = parent.getComponent(4);
-        if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 600, 480);
-        }
-        c = parent.getComponent(2);
+        c = parent.getComponent(1);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 550, 600, 50);
         }

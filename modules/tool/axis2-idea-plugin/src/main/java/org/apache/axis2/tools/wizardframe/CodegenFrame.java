@@ -21,6 +21,7 @@ package org.apache.axis2.tools.wizardframe;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.tools.idea.FirstPanel;
+import org.apache.axis2.tools.idea.ChooserPanel;
 import org.apache.axis2.tools.component.Utilities;
 import org.apache.axis2.tools.component.WizardPanel;
 
@@ -52,10 +53,10 @@ public class CodegenFrame extends WizardFrame{
 
         wsdlgenBean= new WsdlgenBean();
         codegenBean = new CodegenBean();
-       /*
+
         panel = new ChooserPanel(getWizardComponents());
         getWizardComponents().addWizardPanel(PANEL_CHOOSER , panel);
-
+      /*
         panel = new FirstPanel(getWizardComponents(),codegenBean);
         getWizardComponents().addWizardPanel(PANEL_FIRST_A , panel);
 
@@ -74,7 +75,7 @@ public class CodegenFrame extends WizardFrame{
         panel = new J2WLocationWizardPanel(getWizardComponents(),wsdlgenBean);
         getWizardComponents().addWizardPanel(PANEL_LAST_B , panel);*/
 
-        setSize(550, 200);
+        setSize(650, 600);
         Utilities.centerComponentOnScreen(this);
 
     }

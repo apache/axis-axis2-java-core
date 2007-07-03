@@ -21,6 +21,7 @@ package org.apache.ideaplugin.frames;
 import com.intellij.openapi.project.Project;
 import org.apache.axis2.tools.idea.Java2CodeFrame;
 import org.apache.axis2.tools.java2wsdl.Java2WSDLFrame;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 
 import javax.swing.*;
@@ -36,14 +37,12 @@ import java.awt.event.ActionListener;
 public class Axi2PluginPage extends JFrame implements ActionListener {
     ButtonGroup cbg;
     JRadioButton service;
-    JRadioButton wsdlGen;
-    JRadioButton sourceGen;
+    JRadioButton codeGen;
     JButton butOK;
     JButton butCancle;
     JPanel imglbl;
     Project project;
-    Java2CodeFrame winj2c;
-    Java2WSDLFrame winj2w;
+    CodegenFrame codegenFrame;
 
     private int defaultCloseOperation;
 
@@ -62,22 +61,18 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
 
         /*Create a service archive Radio Button  */
 
-        service = new JRadioButton("Create a service archive", true);
+        service = new JRadioButton("Axis2 Aervice Archive", true);
         service.setToolTipText("Hepls package classes, libs and WSDLs to create a archive that can be deployed in Axis2");
         cbg.add(service);
         getContentPane().add(service);
 
         /*Create a Code code generation Radio Button */
 
-        wsdlGen = new JRadioButton("Generate a WSDL from a java source file", false);
-        wsdlGen.setToolTipText("you can generate a WSDL from a java source file ");
-        cbg.add(wsdlGen);
-        getContentPane().add(wsdlGen);
+        codeGen = new JRadioButton("Axis2 Code Generator", false);
+        codeGen.setToolTipText("you can generate a WSDL from a java source file or java code from a WSDL ");
+        cbg.add(codeGen);
+        getContentPane().add(codeGen);
 
-        sourceGen =new JRadioButton("Generate java source code from a WSDL file",true);
-        sourceGen.setToolTipText("you can generate java code from a WSDL");
-        cbg.add(sourceGen);
-        getContentPane().add(sourceGen);
 
 
         butOK = new JButton("OK");
@@ -135,24 +130,10 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         } else if (obj == butOK) {
             this.hide();
             setVisible(false);
-            if (wsdlGen.isSelected()) {                
-
-                winj2c = new Java2CodeFrame();
-                winj2c.setResizable(false);
-                winj2c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                winj2c.setProject(project);
-                winj2c.pack();
-                winj2c.show();
-                
-            } else if (sourceGen.isSelected() ) {
-
-                winj2w = new Java2WSDLFrame();
-                winj2w.setResizable(false);
-                winj2w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                winj2w.setProject(project);
-                winj2w.pack();
-                winj2w.show();
-
+            if (codeGen.isSelected()) {
+                codegenFrame = new CodegenFrame();
+                codegenFrame.setVisible(true);
+                codegenFrame .setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                
             }else{
                 ServiceArciveFrame window = new ServiceArciveFrame();
                 window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -205,19 +186,15 @@ class Axi2PluginPageLayout implements LayoutManager {
         if (c.isVisible()) {
             c.setBounds(insets.left + 24, insets.top + 136, 296, 24);
         }
-         c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 168, 296, 24);
-        }
-        c = parent.getComponent(3);
+        c = parent.getComponent(2);
         if (c.isVisible()) {
             c.setBounds(insets.left + 130, insets.top + 210, 80, 24);
         }
-        c = parent.getComponent(4);
+        c = parent.getComponent(3);
         if (c.isVisible()) {
             c.setBounds(insets.left + 215, insets.top + 210, 80, 24);
         }
-        c = parent.getComponent(5);
+        c = parent.getComponent(4);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top, 320, 80);
         }

@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.tools.java2wsdl;
 
-import org.apache.axis2.tools.idea.*;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 import com.intellij.openapi.project.Project;
 import javax.swing.*;
@@ -28,7 +27,7 @@ import java.awt.*;
 public class Java2WSDLFrame extends JFrame {
 
     // first panel
-    ImagePanel imgPanel;
+  //  ImagePanel imgPanel;
     MiddlePanel plMiddle;
     BottomPanel plBottom;
     OptionPanel opPanel;
@@ -53,10 +52,10 @@ public class Java2WSDLFrame extends JFrame {
         wsdlgenBean=new WsdlgenBean();
         //add image panel
 
-        imgPanel = new ImagePanel();
+       /* imgPanel = new ImagePanel();
         imgPanel.setCaptions("  Java source/classpath selection"
                 , "  Welcome to the Axis2 Java source code generation wizard.");
-        getContentPane().add(imgPanel);
+        getContentPane().add(imgPanel);*/
 
         //add bottom panel
 
@@ -140,9 +139,9 @@ public class Java2WSDLFrame extends JFrame {
 
         switch (panleID) {
             case 1:{
-                this.imgPanel .setCaptions(" Java source/classpath selection" ,
+                /*this.imgPanel .setCaptions(" Java source/classpath selection" ,
                         "  Select the classes and the libraries.");
-
+*/
                 this.plMiddle .setVisible(true);
 
                 this.opPanel.setVisible(false);
@@ -154,10 +153,10 @@ public class Java2WSDLFrame extends JFrame {
                 break;
             }
             case 2: {
-                this.imgPanel .setCaptions(" Java to WSDL Options " ,
+              /*  this.imgPanel .setCaptions(" Java to WSDL Options " ,
                         "  Set the Options for the generator.");
                 this.plMiddle .setVisible(false);
-
+*/
                 this.opPanel.setVisible(true);
 
                 this.outPanel .setVisible(false);
@@ -167,10 +166,10 @@ public class Java2WSDLFrame extends JFrame {
                 break;
             }
             case 3: {
-                this.imgPanel .setCaptions(" WSDL file Output location " ,
+               /* this.imgPanel .setCaptions(" WSDL file Output location " ,
                         "  Select the location for the generated WSDL.");
                 this.plMiddle .setVisible(false);
-
+*/
                 this.opPanel.setVisible(false);
 
                 this.outPanel .setVisible(true);
@@ -187,9 +186,9 @@ public class Java2WSDLFrame extends JFrame {
         switch (panleID) {
             case 1: {
 
-                this.imgPanel .setCaptions(" Java source/classpath selection" ,
+               /* this.imgPanel .setCaptions(" Java source/classpath selection" ,
                         "  Select the classes and the libraries.");
-
+*/
                 this.opPanel.setVisible(false);
 
                 this.plMiddle.setVisible(true);
@@ -203,9 +202,9 @@ public class Java2WSDLFrame extends JFrame {
 
             case 2: {
 
-                this.imgPanel .setCaptions(" Java to WSDL Options " ,
+              /*  this.imgPanel .setCaptions(" Java to WSDL Options " ,
                         "  Set the Options for the generator.");
-
+*/
                 this.plMiddle .setVisible(false);
 
                 this.outPanel.setVisible(false);
@@ -219,9 +218,9 @@ public class Java2WSDLFrame extends JFrame {
 
             case 3: {
 
-                this.imgPanel .setCaptions(" WSDL file Output location " ,
+               /* this.imgPanel .setCaptions(" WSDL file Output location " ,
                         "  Select the location for the generated WSDL.");
-
+*/
                 this.plMiddle .setVisible(false);
 
                 this.outPanel.setVisible(true);
@@ -267,9 +266,13 @@ class windowLayout implements LayoutManager{
         Insets insets = parent.getInsets();
 
         Component c;
-        c = parent.getComponent(0);
+       /* c = parent.getComponent(0);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top, 550, 80);
+        }*/
+        c = parent.getComponent(1);
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top + 80, 500, 450);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
@@ -279,11 +282,7 @@ class windowLayout implements LayoutManager{
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 80, 500, 450);
         }
-        c = parent.getComponent(4);
-        if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 500, 450);
-        }
-        c = parent.getComponent(1);
+        c = parent.getComponent(0);
         if (c.isVisible()) {
             c.setBounds(insets.left, insets.top + 525, 500, 50);
         }
