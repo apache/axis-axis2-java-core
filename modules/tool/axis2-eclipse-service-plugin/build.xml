@@ -24,7 +24,7 @@
 	
     <!-- properties file to load the versions of dependencies -->
     <property file="../../../etc/project.properties"/>
-    <property name="service.plugin.version" value="Axis2_Service_Archiver_1.0.0"></property>
+    <property name="service.plugin.version" value="Axis2_Service_Archiver_${version_number}"></property>
     <property name="service.plugin.zip.name" value="axis2-eclipse-service-archiver-wizard.zip"></property>
 	
     <property name="src" value="./src"></property>
@@ -44,10 +44,11 @@
     <property name="plugin.project.file.name" value=".project"></property>
     <property name="plugin.classpath.file.name" value=".classpath"></property>
     <property name="plugin.help.file.name" value="help_toc.xml"></property>
+    <property name="tool_docs_version" value="1_3"></property>
 
     <property name="service.resource.dir" value="../conf/service"></property>
-    <property name="service.help.resource.file" value="../../../xdocs/tools/1_1/eclipse/servicearchiver-plugin.html"></property>
-    <property name="service.help.images.dir" value="../../../xdocs/tools/1_1/eclipse/images"></property>
+    <property name="service.help.resource.file" value="../../../xdocs/tools/${tool_docs_version}/eclipse/servicearchiver-plugin.html"></property>
+    <property name="service.help.images.dir" value="../../../xdocs/tools/${tool_docs_version}/eclipse/images"></property>
     <property name="axis2.lib.dir" value="../../../target/lib"></property>
 
     <!--Filter tockens for the copy command to filter the versions of external dependencies -->
@@ -145,10 +146,7 @@
 	        <copy todir="${service.output.dir}/${lib.dir.name}">
 	            <fileset refid="service.libs" />
 	        </copy>
-		 	<available property="images.dir" 
-		                    file="${service.help.images.dir}" 
-		                    type="dir" 
-		                    value="${service.help.images.dir}"/>
+		<available property="images.dir" file="${service.help.images.dir}" type="dir" value="${service.help.images.dir}"/>
 	         <copy todir="${service.output.dir}/${help.dir.name}/images">
 	          <fileset dir="${images.dir}"/>
 	         </copy> 
