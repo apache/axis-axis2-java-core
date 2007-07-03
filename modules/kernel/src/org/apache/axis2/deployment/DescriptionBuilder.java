@@ -40,7 +40,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -127,7 +126,6 @@ public class DescriptionBuilder implements DeploymentConstants {
      * Processes default message receivers specified either in axis2.xml or
      * services.xml.
      *
-     * @param messageReceivers
      */
     protected HashMap processMessageReceivers(OMElement messageReceivers)
             throws DeploymentException {
@@ -161,7 +159,6 @@ public class DescriptionBuilder implements DeploymentConstants {
      * Processes default message receivers specified either in axis2.xml or
      * services.xml.
      *
-     * @param element
      */
     protected HashMap processMessageReceivers(ClassLoader loader,
                                               OMElement element) throws DeploymentException {
@@ -464,7 +461,11 @@ public class DescriptionBuilder implements DeploymentConstants {
             Iterator parameters = handler_element
                     .getChildrenWithName(new QName(TAG_PARAMETER));
 
-            processParameters(parameters, handler, parent);
+            try {
+                processParameters(parameters, handler, parent);
+            } catch (AxisFault axisFault) {
+                throw new DeploymentException(axisFault);
+            }
         }
 
         handler.setParent(parent);
