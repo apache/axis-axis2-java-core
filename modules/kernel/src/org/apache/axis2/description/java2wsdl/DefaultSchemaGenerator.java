@@ -580,6 +580,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArryType && "byte".equals(propertyName)) {
             propertyName = "base64Binary";
         }
+        if ("javax.activation.DataHandler".equals(propertyName)) {
+            propertyName = "base64Binary";
+        }
 
         if (typeTable.isSimpleType(propertyName)) {
             XmlSchemaElement elt1 = new XmlSchemaElement();
