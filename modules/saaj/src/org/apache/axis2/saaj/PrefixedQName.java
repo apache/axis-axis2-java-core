@@ -56,7 +56,9 @@ public class PrefixedQName implements Name {
      */
     public PrefixedQName(QName qname) {
         this.qName = qname;
-        prefix = EMPTY_STRING;
+        this.prefix = (qname.getPrefix() == null)
+                ? EMPTY_STRING
+                : qname.getPrefix().intern();
     }
 
     /**
