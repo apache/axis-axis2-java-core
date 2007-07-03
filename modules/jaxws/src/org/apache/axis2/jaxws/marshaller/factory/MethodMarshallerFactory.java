@@ -169,9 +169,6 @@ public class MethodMarshallerFactory {
      */
     protected static boolean isDocLitWrappedPlus(OperationDescription op) {
         if (isDocLitWrapped(op)) {
-            if (isContextPathConstruction(op)) {
-                return true;
-            }
             if (op.isResultHeader()) {
                 return true;
             }
