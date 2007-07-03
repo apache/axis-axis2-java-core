@@ -18,5 +18,10 @@
 	<classpathentry kind="lib" path="lib/wstx-@stax.impl.version@.jar"/>
 	<classpathentry kind="lib" path="lib/xbean-@xbean.version@.jar"/>
 	<classpathentry kind="lib" path="lib/XmlSchema-@XmlSchema.version@.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-@commons.httpclient.version@.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-@commons.codec.version@.jar"/>
+	<classpathentry kind="lib" path="lib/axis2-jibx@version_number@.jar"/>
+	<classpathentry kind="lib" path="lib/jibx-bind-@jibx.version@.jar"/>
+	<classpathentry kind="lib" path="lib/jibx-run-@jibx.version@.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -77,6 +77,21 @@
       <library name="lib/woden-@woden.version@.jar">
          <export name="*"/>
       </library>
+      <library name="lib/commons-httpclient-@commons.httpclient.version@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/commons-codec-@commons.codec.version@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/axis2-jibx@version_number@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jibx-bind-@jibx.version@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jibx-run-@jibx.version@.jar">
+         <export name="*"/>
+      </library>
    </runtime>
 
    <requires>
