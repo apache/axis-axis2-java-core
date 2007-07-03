@@ -365,6 +365,7 @@
 	    <fileset dir="modules/ping/target/">
                 <include name="modules/ping-${ping_version}.mar"/>
             </fileset>
+            <fileset dir="modules/jibx/target/classes"/>
 	    <!-- Copy items that depend on JDK1.5  -->
             <j:if test="${javaVersion == '1.5'}">
             	<fileset dir="modules/saaj/target/classes"/>
