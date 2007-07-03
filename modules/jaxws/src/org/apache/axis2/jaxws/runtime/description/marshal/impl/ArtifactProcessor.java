@@ -343,11 +343,21 @@ class ArtifactProcessor {
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
                             // Class.forName does not support primitives
-                            Class cls = ClassUtils.getPrimitiveClass(className);
-                            if (cls == null) {
-                                cls = Class.forName(className, initialize, classloader);
-                            }
-                            return cls;
+                        	Class cls = ClassUtils.getPrimitiveClass(className);
+                        	try{
+                        		if (cls == null) {
+                        			cls = Class.forName(className, initialize, classloader);
+                        		}
+                        		return cls;
+                        		//Lets catch NoClassDefFoundError as its part of Throwable
+                        		//Any Exception that extends Exception will be handled by doPriv method.    
+                        	} catch (NoClassDefFoundError e) {
+                        		// TODO Should the exception be swallowed ?
+                        		if (log.isDebugEnabled()) {
+                        			log.debug("ArtifactProcessor cannot load the following class NoClassDefFoundError:" + className);
+                        		}
+                        	}
+                        	return cls;
                         }
                     }
             );
