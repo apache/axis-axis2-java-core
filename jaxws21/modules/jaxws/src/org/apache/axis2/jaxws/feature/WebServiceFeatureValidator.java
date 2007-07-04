@@ -19,77 +19,64 @@
 package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.spi.BindingProvider;
 
-import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.MTOMFeature;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class WebServiceFeatureValidator {
-    private static final WebServiceFeature DEFAULT_ADDRESSING_FEATURE = new AddressingFeature();
-    private static final WebServiceFeature DEFAULT_SUBMISSION_ADDRESSING_FEATURE = new SubmissionAddressingFeature();
-    private static final WebServiceFeature DEFAULT_MTOM_FEATURE = new MTOMFeature();
-    private static final WebServiceFeature DEFAULT_RESPECT_BINDING_FEATURE = new RespectBindingFeature();
-
-    private static final WebServiceFeature DEFAULT_CLIENT_SIDE_ADDRESSING_FEATURE = new AddressingFeature(false);
-    private static final WebServiceFeature DEFAULT_CLIENT_SIDE_SUBMISSION_ADDRESSING_FEATURE = new SubmissionAddressingFeature(false);
-    private static final WebServiceFeature DEFAULT_CLIENT_SIDE_MTOM_FEATURE = new MTOMFeature(false);
-
     private static final WebServiceFeature[] ZERO_LENGTH_ARRAY = new WebServiceFeature[0];
     
+    private Map<String, WebServiceFeatureConfigurator> configuratorMap;
     private Map<String, WebServiceFeature> featureMap;
     
-    public WebServiceFeatureValidator(boolean isServerSide) {
-        //Set up default WebServiceFeatures.
+    public WebServiceFeatureValidator() {
+        configuratorMap = new IdentityHashMap<String, WebServiceFeatureConfigurator>();
         featureMap = new IdentityHashMap<String, WebServiceFeature>();
-        
-        if (isServerSide) {
-            featureMap.put(AddressingFeature.ID, DEFAULT_ADDRESSING_FEATURE);
-            featureMap.put(SubmissionAddressingFeature.ID, DEFAULT_SUBMISSION_ADDRESSING_FEATURE);
-            featureMap.put(MTOMFeature.ID, DEFAULT_MTOM_FEATURE);
-        }
-        else {
-            featureMap.put(AddressingFeature.ID, DEFAULT_CLIENT_SIDE_ADDRESSING_FEATURE);
-            featureMap.put(SubmissionAddressingFeature.ID, DEFAULT_CLIENT_SIDE_SUBMISSION_ADDRESSING_FEATURE);
-            featureMap.put(MTOMFeature.ID, DEFAULT_CLIENT_SIDE_MTOM_FEATURE);            
-        }
-        
-        featureMap.put(RespectBindingFeature.ID, DEFAULT_RESPECT_BINDING_FEATURE);        
     }
-
-    public WebServiceFeatureValidator(boolean isServerSide, WebServiceFeature... features) {
-        this(isServerSide);
-        
-        if (features != null) {
-            for (WebServiceFeature feature : features) {
-                put(feature);
-            }
-        }
+    
+    public void addConfigurator(String id, WebServiceFeatureConfigurator configurator) {
+        configuratorMap.put(id, configurator);
     }
     
     public boolean isValid(WebServiceFeature feature) {
-        return featureMap.containsKey(feature.getID());
+        if (feature == null)
+            return false;
+        
+        return configuratorMap.containsKey(feature.getID());
     }
-
-    public void put(WebServiceFeature feature) {
-        if (feature != null) {
-            //TODO NLS enable.
-            if (!isValid(feature))
-                throw ExceptionFactory.makeWebServiceException("Unrecognized WebServiceFeature " + feature.getID());
-            
-            featureMap.put(feature.getID(), feature);            
+    
+    public void addFeature(WebServiceFeature feature) {
+        //TODO NLS enable.
+        if (!isValid(feature))
+            throw ExceptionFactory.makeWebServiceException("Unrecognized WebServiceFeature " + feature.getID());
+        
+        featureMap.put(feature.getID(), feature);
+    }
+    
+    public WebServiceFeature getFeature(String id) {
+        return featureMap.get(id);
+    }
+    
+    public WebServiceFeature[] getAllFeatures() {
+        return featureMap.values().toArray(ZERO_LENGTH_ARRAY);
+    }
+    
+    public void configure(MessageContext messageContext, BindingProvider provider) {
+        for (WebServiceFeature feature : getAllFeatures()) {
+            WebServiceFeatureConfigurator configurator = configuratorMap.get(feature.getID());
+            configurator.configure(messageContext, provider);
         }
     }
     
-    public WebServiceFeature get(String featureID) {
-        return featureMap.get(featureID);
-    }
-    
-    public WebServiceFeature[] getAll() {
-        return featureMap.values().toArray(ZERO_LENGTH_ARRAY);
+    public void configure(EndpointDescription endpointDescription) {
+        for (WebServiceFeature feature : getAllFeatures()) {
+            WebServiceFeatureConfigurator configurator = configuratorMap.get(feature.getID());
+            configurator.configure(endpointDescription);
+        }
     }
 }

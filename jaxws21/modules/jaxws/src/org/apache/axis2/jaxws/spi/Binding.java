@@ -18,19 +18,17 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.jaxws.description.EndpointDescription;
+import javax.xml.ws.WebServiceFeature;
+
+import org.apache.axis2.jaxws.core.MessageContext;
 
 /**
  * 
  */
-public interface BindingProvider extends javax.xml.ws.BindingProvider {
-    public EndpointDescription getEndpointDescription();
-
-    public ServiceDelegate getServiceDelegate();
+public interface Binding extends javax.xml.ws.Binding {
+    public void setWebServiceFeatures(WebServiceFeature... features);
     
-    public EndpointReference getAxis2EndpointReference(String addressingNamespace) throws AxisFault;
+    public WebServiceFeature getWebServiceFeature(String id);
     
-    public String getAddressingNamespace();
+    public void configure(MessageContext messageContext, BindingProvider provider);
 }

@@ -23,7 +23,6 @@ import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.binding.BindingImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
@@ -35,13 +34,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.feature.config.MTOMConfigurator;
-import org.apache.axis2.jaxws.feature.config.RespectBindingConfigurator;
-import org.apache.axis2.jaxws.feature.config.W3CAndSubmissionAddressingConfigurator;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigUtil;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -60,8 +53,6 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.PrivilegedActionException;
@@ -74,10 +65,6 @@ import java.util.concurrent.Executor;
  * javax.xml.ws.Service} API.  This is the plug point for the client implementation.
  */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
-    private static final WebServiceFeatureConfigurator[] CONFIGURATORS = {
-        new W3CAndSubmissionAddressingConfigurator(), new MTOMConfigurator(), new RespectBindingConfigurator()};
-    private static final ApplicationContextMigrator[] MIGRATORS = {new PropertyMigrator()};
-    
     private static final Log log = LogFactory.getLog(ServiceDelegate.class);
     private Executor executor;
 
@@ -109,16 +96,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         ConfigurationContext context = serviceDescription.getAxisConfigContext();
 
         // Register the necessary ApplicationContextMigrators
-        for (ApplicationContextMigrator migrator : MIGRATORS) {
-            ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
-                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, migrator);
-        }
-        
-        // Register our WebServiceFeature configurators.
-//        for (WebServiceFeatureConfigurator configurator : CONFIGURATORS) {
-//            WebServiceFeatureConfigUtil.addWebServiceFeatureConfigurator(context,
-//                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID, configurator);            
-//        }
+        ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
+                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, new PropertyMigrator());
     }
 
     //================================================
@@ -195,9 +174,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, axis2EPR, addressingNamespace, features);
 
-        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here.
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
-
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
@@ -241,7 +217,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, axis2EPR, addressingNamespace, features);
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
 
         if (mode != null) {
             dispatch.setMode(mode);
@@ -279,8 +254,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, features);
 
-        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
@@ -311,7 +284,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, features);
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
 
         if (mode != null) {
             dispatch.setMode(mode);
@@ -593,28 +565,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private boolean isServiceDefined(QName serviceName) {
         return getWSDLWrapper().getService(serviceName) != null;
-    }
-
-    private BindingImpl addBinding(EndpointDescription endpointDesc, String bindingId) {
-        // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
-        if (bindingId != null) {
-            //TODO: create all the bindings here
-            if (bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)) {
-                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            }
-
-            if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
-                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            }
-
-            if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
-                //instantiate http binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);
-            }
-        } 
-        return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
     }
 
     private boolean isValidDispatchType(Class clazz) {

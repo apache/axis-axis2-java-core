@@ -16,21 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.spi;
+package org.apache.axis2.jaxws.feature;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
  * 
  */
-public interface BindingProvider extends javax.xml.ws.BindingProvider {
-    public EndpointDescription getEndpointDescription();
+public interface WebServiceFeatureConfigurator {
 
-    public ServiceDelegate getServiceDelegate();
-    
-    public EndpointReference getAxis2EndpointReference(String addressingNamespace) throws AxisFault;
-    
-    public String getAddressingNamespace();
+    /**
+     * Perform client-side configuration for a <code>WebServiceFeature</code>.
+     * 
+     * @param messageContext
+     * @param provider
+     */
+    public void configure(MessageContext messageContext, BindingProvider provider);
+
+    /**
+     * Perform server-side configuration for a <code>WebServiceFeature</code>.
+     * 
+     * @param endpointDescription
+     */
+    public void configure(EndpointDescription endpointDescription);
 }

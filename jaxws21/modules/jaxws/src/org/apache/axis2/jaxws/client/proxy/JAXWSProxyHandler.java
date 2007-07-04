@@ -30,10 +30,10 @@ import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigUtil;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
@@ -43,6 +43,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.soap.SOAPBinding;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -172,6 +174,15 @@ public class JAXWSProxyHandler extends BindingProvider implements
         request.setEndpointDescription(getEndpointDescription());
         request.setOperationDescription(operationDesc);
 
+        // Enable MTOM on the Message if the property was set on the SOAPBinding.
+        Binding bnd = (Binding) getBinding();
+        if (bnd != null && bnd instanceof SOAPBinding) {
+            if (((SOAPBinding)bnd).isMTOMEnabled()) {
+                Message requestMsg = request.getMessage();
+                requestMsg.setMTOMEnabled(true);
+            }
+        }
+        
         /*
          * TODO: review: make sure the handlers are set on the InvocationContext
          * This implementation of the JAXWS runtime does not use Endpoint, which
@@ -184,7 +195,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
          */
         
         // be sure to use whatever handlerresolver is registered on the Service
-        requestIC.setHandlers(getBinding().getHandlerChain());
+        requestIC.setHandlers(bnd.getHandlerChain());
 
         requestIC.setRequestMessageContext(request);
         requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
@@ -195,10 +206,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
                 getRequestContext(), request);
 
-        // Perform the client-side configuration, as specified during the invocation.
-        WebServiceFeatureConfigUtil.performConfiguration(
-                Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
-                request, this);
+        // Perform the WebServiceFeature configuration requested by the user.
+        bnd.configure(request, this);
 
         // TODO: Change this to some form of factory so that we can change the IC to
         // a more simple one for marshaller/unmarshaller testing.

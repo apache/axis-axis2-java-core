@@ -19,8 +19,11 @@
 package org.apache.axis2.jaxws.binding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.feature.config.MTOMConfigurator;
+import org.apache.axis2.jaxws.feature.config.AddressingConfigurator;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,8 +33,9 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
 
-import java.util.AbstractSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +46,10 @@ import java.util.Set;
  * explicitly specificied.
  */
 public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBinding {
+    private static final WebServiceFeatureConfigurator ADDRESSING_CONFIGURATOR =
+        new AddressingConfigurator();
+    private static final WebServiceFeatureConfigurator MTOM_CONFIGURATOR =
+        new MTOMConfigurator();
 
     private boolean mtomEnabled = false;
 
@@ -49,6 +57,15 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
 
     public SOAPBinding(EndpointDescription endpointDesc) {
         super(endpointDesc);
+        
+        validator.addConfigurator(AddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+        validator.addConfigurator(SubmissionAddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+        validator.addConfigurator(MTOMFeature.ID, MTOM_CONFIGURATOR);
+        
+        if (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(bindingId) ||
+                SOAPBinding.SOAP12HTTP_MTOM_BINDING.equalsIgnoreCase(bindingId)) {
+            setMTOMEnabled(true);
+        }
     }
 
     /*

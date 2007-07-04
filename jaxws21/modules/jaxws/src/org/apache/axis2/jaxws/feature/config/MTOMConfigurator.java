@@ -18,15 +18,14 @@
  */
 package org.apache.axis2.jaxws.feature.config;
 
-import javax.xml.ws.Binding;
 import javax.xml.ws.soap.MTOMFeature;
 
-import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
@@ -38,43 +37,31 @@ public class MTOMConfigurator implements WebServiceFeatureConfigurator {
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
      */
-    public void performConfiguration(MessageContext messageContext, BindingProvider provider) {
-        Binding bnd = provider.getBinding();
-        if (bnd instanceof SOAPBinding) {
-            WebServiceFeatureValidator validator = provider.getWebServiceFeatureValidator();
-            MTOMFeature mtomFeature = (MTOMFeature) validator.get(MTOMFeature.ID);
-            Message requestMsg = messageContext.getMessage();
+    public void configure(MessageContext messageContext, BindingProvider provider) {
+        Binding bnd = (Binding) provider.getBinding();
+        MTOMFeature mtomFeature = (MTOMFeature) bnd.getWebServiceFeature(MTOMFeature.ID);
+        Message requestMsg = messageContext.getMessage();
+        
+        if (mtomFeature == null)
+            throw ExceptionFactory.makeWebServiceException("The MTOM features was unspecified.");
+        
+        if (mtomFeature.isEnabled()) {
+            requestMsg.setMTOMEnabled(true);
             
-            if (mtomFeature.isEnabled()) {
-                requestMsg.setMTOMEnabled(true);
-                
-                //TODO: Make use of the threshold somehow.
-                int threshold = mtomFeature.getThreshold();
-            }
-            
-            // If the user has enabled MTOM on the SOAPBinding, we need
-            // to make sure that gets pushed to the Message object.
-            if (((SOAPBinding)bnd).isMTOMEnabled()) {
-                requestMsg.setMTOMEnabled(true);
-            }
-
-            // Check if the user enabled MTOM using the SOAP binding 
-            // properties for MTOM
-            String bindingID = messageContext.getEndpointDescription().getClientBindingID();
-            if ((bindingID.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                    bindingID.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) &&
-                    !requestMsg.isMTOMEnabled()) {
-                requestMsg.setMTOMEnabled(true);
-            }
-        } 
+            //TODO: Make use of the threshold somehow.
+            int threshold = mtomFeature.getThreshold();
+        }
+        else {
+            requestMsg.setMTOMEnabled(false);
+        }
     }
 
     /*
      *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.description.ServiceDescription)
+     * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
-    public void performConfiguration(ServiceDescription serviceDescription) {
+    public void configure(EndpointDescription endpointDescription) {
         // TODO Auto-generated method stub
         
-    }
+    }    
 }

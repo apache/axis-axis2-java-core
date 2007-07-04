@@ -488,7 +488,6 @@ public class AxisInvocationController extends InvocationController {
             ops.setProperty(key, value);
         }
 
-        //TODO Do I have to leave this here or can I move it to the MTOMConfigurator.
         // Enable MTOM
         Message msg = mc.getMessage();
         if (msg.isMTOMEnabled()) {

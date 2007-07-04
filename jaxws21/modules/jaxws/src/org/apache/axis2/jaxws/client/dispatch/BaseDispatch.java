@@ -47,10 +47,10 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigUtil;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
@@ -133,7 +133,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
              */
 
             // be sure to use whatever handlerresolver is registered on the Service
-            invocationContext.setHandlers(getBinding().getHandlerChain());
+            Binding binding = (Binding) getBinding();
+            invocationContext.setHandlers(binding.getHandlerChain());
 
             Message requestMsg = null;
             try {
@@ -146,6 +147,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw getProtocolException(e);
             }
 
+            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -154,10 +156,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
 
-            // Perform the client-side configuration, as specified during the invocation.
-            WebServiceFeatureConfigUtil.performConfiguration(
-                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
-                    requestMsgCtx, this);
+            // Perform the WebServiceFeature configuration requested by the user.
+            binding.configure(requestMsgCtx, this);
 
             // Send the request using the InvocationController
             ic.invoke(invocationContext);
@@ -213,6 +213,21 @@ public abstract class BaseDispatch<T> extends BindingProvider
             MessageContext requestMsgCtx = new MessageContext();
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            /*
+             * TODO: review: make sure the handlers are set on the InvocationContext
+             * This implementation of the JAXWS runtime does not use Endpoint, which
+             * would normally be the place to initialize and store the handler list.
+             * In lieu of that, we will have to intialize and store them on the 
+             * InvocationContext.  also see the InvocationContextFactory.  On the client
+             * side, the binding is not yet set when we call into that factory, so the
+             * handler list doesn't get set on the InvocationContext object there.  Thus
+             * we gotta do it here.
+             */
+
+            // be sure to use whatever handlerresolver is registered on the Service
+            Binding binding = (Binding) getBinding();
+            invocationContext.setHandlers(binding.getHandlerChain());
 
             Message requestMsg = null;
             try {
@@ -225,6 +240,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw getProtocolException(e);
             }
 
+            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -233,10 +249,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
 
-            // Perform the client-side configuration, as specified during the invocation.
-            WebServiceFeatureConfigUtil.performConfiguration(
-                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
-                    requestMsgCtx, this);
+            // Perform the WebServiceFeature configuration requested by the user.
+            binding.configure(requestMsgCtx, this);
 
             // Send the request using the InvocationController
             ic.invokeOneWay(invocationContext);
@@ -275,6 +289,21 @@ public abstract class BaseDispatch<T> extends BindingProvider
             MessageContext requestMsgCtx = new MessageContext();
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            /*
+             * TODO: review: make sure the handlers are set on the InvocationContext
+             * This implementation of the JAXWS runtime does not use Endpoint, which
+             * would normally be the place to initialize and store the handler list.
+             * In lieu of that, we will have to intialize and store them on the 
+             * InvocationContext.  also see the InvocationContextFactory.  On the client
+             * side, the binding is not yet set when we call into that factory, so the
+             * handler list doesn't get set on the InvocationContext object there.  Thus
+             * we gotta do it here.
+             */
+
+            // be sure to use whatever handlerresolver is registered on the Service
+            Binding binding = (Binding) getBinding();
+            invocationContext.setHandlers(binding.getHandlerChain());
 
             Message requestMsg = null;
             if (isValidInvocationParam(obj)) {
@@ -283,6 +312,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
+            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -291,10 +321,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
 
-            // Perform the client-side configuration, as specified during the invocation.
-            WebServiceFeatureConfigUtil.performConfiguration(
-                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
-                    requestMsgCtx, this);
+            // Perform the WebServiceFeature configuration requested by the user.
+            binding.configure(requestMsgCtx, this);
 
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
@@ -344,6 +372,21 @@ public abstract class BaseDispatch<T> extends BindingProvider
             MessageContext requestMsgCtx = new MessageContext();
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            /*
+             * TODO: review: make sure the handlers are set on the InvocationContext
+             * This implementation of the JAXWS runtime does not use Endpoint, which
+             * would normally be the place to initialize and store the handler list.
+             * In lieu of that, we will have to intialize and store them on the 
+             * InvocationContext.  also see the InvocationContextFactory.  On the client
+             * side, the binding is not yet set when we call into that factory, so the
+             * handler list doesn't get set on the InvocationContext object there.  Thus
+             * we gotta do it here.
+             */
+
+            // be sure to use whatever handlerresolver is registered on the Service
+            Binding binding = (Binding) getBinding();
+            invocationContext.setHandlers(binding.getHandlerChain());
 
             Message requestMsg = null;
             if (isValidInvocationParam(obj)) {
@@ -352,6 +395,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
             }
 
+            setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
             // Migrate the properties from the client request context bag to
@@ -360,10 +404,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getRequestContext(), requestMsgCtx);
 
-            // Perform the client-side configuration, as specified during the invocation.
-            WebServiceFeatureConfigUtil.performConfiguration(
-                    Constants.WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID,
-                    requestMsgCtx, this);
+            // Perform the WebServiceFeature configuration requested by the user.
+            binding.configure(requestMsgCtx, this);
 
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
@@ -474,6 +516,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
             return true;
         else
             return false;
+    }
+
+    /*
+     * Configure any properties that will be needed on the Message
+     */
+    private void setupMessageProperties(Message msg) {
+        // If the user has enabled MTOM on the SOAPBinding, we need
+        // to make sure that gets pushed to the Message object.
+        Binding binding = (Binding) getBinding();
+        if (binding != null && binding instanceof SOAPBinding) {
+            SOAPBinding soapBinding = (SOAPBinding)binding;
+            if (soapBinding.isMTOMEnabled())
+                msg.setMTOMEnabled(true);
+        }
     }
 
     /*

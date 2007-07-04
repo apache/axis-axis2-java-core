@@ -18,10 +18,13 @@
  */
 package org.apache.axis2.jaxws.feature.config;
 
+import javax.xml.ws.RespectBindingFeature;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
-import org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
@@ -33,17 +36,25 @@ public class RespectBindingConfigurator implements WebServiceFeatureConfigurator
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
      */
-    public void performConfiguration(MessageContext messageContext, BindingProvider provider) {
-        // TODO Auto-generated method stub
+    public void configure(MessageContext messageContext, BindingProvider provider) {
+        Binding bnd = (Binding) provider.getBinding();
+        RespectBindingFeature respectBindingFeature =
+            (RespectBindingFeature) bnd.getWebServiceFeature(RespectBindingFeature.ID);
         
+        if (respectBindingFeature == null)
+            throw ExceptionFactory.makeWebServiceException("The respect binding features was unspecified.");
+        
+        if (respectBindingFeature.isEnabled()) {
+            //TODO Implementation required.
+        }
     }
 
     /*
      *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.description.ServiceDescription)
+     * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
-    public void performConfiguration(ServiceDescription serviceDescription) {
+    public void configure(EndpointDescription endpointDescription) {
         // TODO Auto-generated method stub
         
-    }  
+    }
 }
