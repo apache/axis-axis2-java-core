@@ -33,11 +33,11 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.util.Iterator;
 
 /**
@@ -390,11 +390,11 @@ public class AttachmentPartImpl extends AttachmentPart {
     }
 
     public InputStream getBase64Content() throws SOAPException {
+        byte[] rawData = getRawContentBytes();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            if (dataHandler == null) {
-                throw new SOAPException();
-            }
-            return dataHandler.getInputStream();
+            Base64.encode(rawData, 0, rawData.length, out);
+            return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
             throw new SOAPException(e);
         }
@@ -465,47 +465,21 @@ public class AttachmentPartImpl extends AttachmentPart {
         if (content == null) {
             throw new SOAPException("Content is null");
         }
+        OutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int read;
         try {
-            int size = content.available();
-            PushbackInputStream pushbackInputStream;
-            if (size > 0) {
-                pushbackInputStream = new PushbackInputStream(content, size);
-            } else {
-                pushbackInputStream = new PushbackInputStream(content);
+            while ((read = content.read(buffer, 0, buffer.length)) > 0) {
+                outputStream.write(buffer, 0, read);
             }
-
-            if (isValidBase64Encoding(pushbackInputStream)) {
-                setContent(pushbackInputStream, contentType);
+            String contentString = outputStream.toString();
+            if (Base64.isValidBase64Encoding(contentString)) {
+                setContent(Base64.decode(contentString), contentType);
             } else {
                 throw new SOAPException("Not a valid Base64 encoding");
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             throw new SOAPException(ex);
-        }
-    }
-
-    /*
-     * check if the given InputStream contains valid Base64 Encoding
-     */
-    private boolean isValidBase64Encoding(PushbackInputStream pushbackInputStream) {
-        int size;
-        try {
-            size = pushbackInputStream.available();
-            if (size == 0) {
-                return true;
-            }
-            byte[] buffer = new byte[size];
-            int read = pushbackInputStream.read(buffer, 0, size);
-
-            OutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(buffer);
-            String contentString = outputStream.toString();
-            outputStream.close();
-            pushbackInputStream.unread(buffer, 0, read);
-
-            return Base64.isValidBase64Encoding(contentString);
-        } catch (Exception e) {
-            return false;
         }
     }
 
