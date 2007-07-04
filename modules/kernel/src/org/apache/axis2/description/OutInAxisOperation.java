@@ -193,7 +193,9 @@ class OutInAxisOperationClient extends OperationClient {
             }
         }
         EndpointReference replyTo = mc.getReplyTo();
-        if(replyTo!=null&&!replyTo.hasAnonymousAddress()){
+        if (replyTo!=null &&!
+                replyTo.hasAnonymousAddress() &&
+                !replyTo.hasNoneAddress()){
             useAsync = true;
         }
 
