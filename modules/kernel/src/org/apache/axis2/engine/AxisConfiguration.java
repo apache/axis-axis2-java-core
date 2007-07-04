@@ -197,10 +197,11 @@ public class AxisConfiguration extends AxisDescription {
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
 
         String moduleName = module.getName();
-        if (moduleName.endsWith("SNAPSHOT")) {
-            moduleName = moduleName.substring(0, moduleName.indexOf("SNAPSHOT") - 1);
-            module.setName(moduleName);
+        if (moduleName.endsWith(AxisModule.VERSION_SNAPSHOT)) {
             allModules.put(moduleName, module);
+            moduleName = moduleName.substring(0, moduleName.indexOf(AxisModule.VERSION_SNAPSHOT) - 1);
+            module.setName(moduleName);
+            module.setVersion(AxisModule.VERSION_SNAPSHOT);
         } else {
             allModules.put(module.getName(), module);
         }

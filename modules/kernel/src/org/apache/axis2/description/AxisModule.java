@@ -1,21 +1,18 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 
 package org.apache.axis2.description;
@@ -61,6 +58,10 @@ public class AxisModule implements ParameterInclude {
      */
     private String name;
 
+    //This is to keep the version number of the module, if the module name is a-b-c-1.3.mar ,
+    // then the module version would be 1.3
+    private String version;
+
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
     private HashMap operations = new HashMap();
     private AxisConfiguration parent;
@@ -76,6 +77,7 @@ public class AxisModule implements ParameterInclude {
     private String[] supportedPolicyNames;
 
     private QName[] localPolicyAssertions;
+    public static final String VERSION_SNAPSHOT = "SNAPSHOT";
 
     /**
      * Constructor ModuleDescription.
@@ -86,7 +88,7 @@ public class AxisModule implements ParameterInclude {
     /**
      * Constructor ModuleDescription.
      *
-     * @param name
+     * @param name : Name of the module
      */
     public AxisModule(String name) {
         this.name = name;
@@ -97,7 +99,7 @@ public class AxisModule implements ParameterInclude {
     }
 
     /**
-     * @param param
+     * @param param : Parameter to be added
      */
     public void addParameter(Parameter param) throws AxisFault {
         if (isParameterLocked(param.getName())) {
@@ -168,7 +170,6 @@ public class AxisModule implements ParameterInclude {
     }
 
     /**
-     * @param name
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
@@ -203,28 +204,25 @@ public class AxisModule implements ParameterInclude {
     }
 
     /**
-     * @param faultFlow
+     * @param faultFlow : Arryalist of handlerDescriptions
      */
     public void setFaultInFlow(Flow faultFlow) {
         flowInclude.setFaultInFlow(faultFlow);
     }
 
     /**
-     * @param faultFlow
+     * @param faultFlow : Arryalist of HandlerDescriptions
      */
     public void setFaultOutFlow(Flow faultFlow) {
         flowInclude.setFaultOutFlow(faultFlow);
     }
 
-    /**
-     * @param inFlow
-     */
     public void setInFlow(Flow inFlow) {
         flowInclude.setInFlow(inFlow);
     }
 
     /**
-     * @param module
+     * @param module : AxisModule
      */
     public void setModule(Module module) {
         this.module = module;
@@ -235,15 +233,12 @@ public class AxisModule implements ParameterInclude {
     }
 
     /**
-     * @param name
+     * @param name  : Setting name of the module
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @param outFlow
-     */
     public void setOutFlow(Flow outFlow) {
         flowInclude.setOutFlow(outFlow);
     }
@@ -293,5 +288,14 @@ public class AxisModule implements ParameterInclude {
 
     public void setFileName(URL fileName) {
         this.fileName = fileName;
+    }
+
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

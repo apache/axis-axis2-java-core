@@ -98,4 +98,40 @@ public class ModuleversionTest extends TestCase {
             fail("Didn't find testModule-1.93");
         }
     }
+
+     public void testModuleWithSNAPSHOT() throws AxisFault {
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        AxisModule module1 = new AxisModule();
+        module1.setName("Module1");
+        axisConfiguration.addModule(module1);
+
+        AxisModule module2 = new AxisModule();
+        module2.setName("Module1-SNAPSHOT");
+        axisConfiguration.addModule(module2);
+
+        AxisModule module3 = new AxisModule();
+        module3.setName("Module1-0.95");
+        axisConfiguration.addModule(module3);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        assertEquals(module2, axisConfiguration.getDefaultModule("Module1"));
+    }
+
+
+     public void testModuleWithSNAPSHOT2() throws AxisFault {
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        AxisModule module1 = new AxisModule();
+        module1.setName("Module1-a");
+        axisConfiguration.addModule(module1);
+
+        AxisModule module2 = new AxisModule();
+        module2.setName("Module1-a-SNAPSHOT");
+        axisConfiguration.addModule(module2);
+
+        AxisModule module3 = new AxisModule();
+        module3.setName("Module1-a-0.95");
+        axisConfiguration.addModule(module3);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        assertEquals(module2, axisConfiguration.getDefaultModule("Module1-a"));
+    }
 }

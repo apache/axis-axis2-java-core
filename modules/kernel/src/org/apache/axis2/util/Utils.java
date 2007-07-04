@@ -174,7 +174,6 @@ public class Utils {
     /**
      * Break a full path into pieces
      *
-     * @param path
      * @return an array where element [0] always contains the service, and element 1, if not null, contains
      *         the path after the first element. all ? parameters are discarded.
      */
@@ -325,14 +324,37 @@ public class Utils {
         while (allModules.hasNext()) {
             AxisModule axisModule = (AxisModule) allModules.next();
             String moduleName = axisModule.getName();
-            String moduleNameString = getModuleName(moduleName);
-            String moduleVersionString = getModuleVersion(moduleName);
+            String moduleNameString;
+            String moduleVersionString;
+            if (AxisModule.VERSION_SNAPSHOT.equals(axisModule.getVersion())) {
+                moduleNameString = axisModule.getName();
+                moduleVersionString = axisModule.getVersion();
+            } else {
+                if (axisModule.getVersion() == null ) {
+                    moduleNameString = getModuleName(moduleName);
+                    moduleVersionString = getModuleVersion(moduleName);
+                    if (moduleVersionString!=null) {
+                        try {
+                            Float.valueOf(moduleVersionString);
+                            axisModule.setVersion(moduleVersionString);
+                            axisModule.setName(moduleName);
+                        } catch (NumberFormatException e) {
+                            moduleVersionString = null;
+                        }
+                    }
+                } else {
+                    moduleNameString = axisModule.getName();
+                    moduleVersionString = axisModule.getVersion();
+                }
+            }
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
                 // if the module version is null then , that will be ignore in this case
-                if (moduleVersionString != null &&
-                        isLatest(moduleVersionString, currentDefaultVerison)) {
-                    defaultModules.put(moduleNameString, moduleVersionString);
+                if (!AxisModule.VERSION_SNAPSHOT.equals(currentDefaultVerison)) {
+                    if (moduleVersionString != null &&
+                            isLatest(moduleVersionString, currentDefaultVerison)) {
+                        defaultModules.put(moduleNameString, moduleVersionString);
+                    }
                 }
             } else {
                 defaultModules.put(moduleNameString, moduleVersionString);
@@ -347,7 +369,7 @@ public class Utils {
     }
 
     public static boolean isLatest(String moduleVersion, String currentDefaultVersion) {
-        if ("SNAPSHOT".equals(moduleVersion)) {
+        if (AxisModule.VERSION_SNAPSHOT.equals(moduleVersion)) {
             return true;
         } else {
             float m_version = Float.parseFloat(moduleVersion);
