@@ -159,9 +159,13 @@ public class ServiceDeployer implements Deployer {
         try {
             fileName = DeploymentEngine.getAxisServiceName(fileName);
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
-            configCtx.removeServiceGroupContext(serviceGroup);
-            log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                         fileName));
+            if (serviceGroup != null) {
+                configCtx.removeServiceGroupContext(serviceGroup);
+                log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                        fileName));
+            } else {
+                axisConfig.removeFaultyService(fileName);
+            }
         } catch (AxisFault axisFault) {
             //May be a faulty service
             axisConfig.removeFaultyService(fileName);

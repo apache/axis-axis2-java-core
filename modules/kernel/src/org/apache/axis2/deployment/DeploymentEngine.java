@@ -613,11 +613,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == WSInfo.TYPE_SERVICE) {
-                        if (isHotUpdate()) {
-                            serviceDeployer.unDeploy(wsInfo.getFileName());
-                        } else {
-                            axisConfig.removeFaultyService(wsInfo.getFileName());
-                        }
+                        //No matter what we need to undeploy the service
+                        // if user has deleted the file from the repository
+                        serviceDeployer.unDeploy(wsInfo.getFileName());
                     } else {
                         if (isHotUpdate()) {
                             Deployer deployer = wsInfo.getDeployer();
