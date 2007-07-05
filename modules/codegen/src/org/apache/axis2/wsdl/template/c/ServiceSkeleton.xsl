@@ -1,21 +1,3 @@
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements. See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership. The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License. You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied. See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
@@ -160,14 +142,14 @@
             <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
             <xsl:variable name="outputtype">
               <xsl:choose>
-                <xsl:when test="output/param/@ours">axis2_<xsl:value-of select="output/param/@type"></xsl:value-of>_t*</xsl:when>
+                <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
                 <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
             <xsl:value-of select="$outputtype"/> ret_val<xsl:value-of select="$position"/><xsl:if test="output/param/@ours"> = NULL</xsl:if>;
             <xsl:for-each select="input/param[@type!='']">
               <xsl:variable name="inputtype">
-                <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
+                <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
               </xsl:variable>
               <xsl:value-of select="$inputtype"/> input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/><xsl:if test="input/param/@ours"> = NULL</xsl:if>;
             </xsl:for-each>
@@ -193,8 +175,8 @@
                     <xsl:for-each select="input/param[@type!='']">
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
                         <xsl:when test="@ours">
-                        axis2_<xsl:value-of select="@type"/>_create( env);
-                        axis2_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
+                        adb_<xsl:value-of select="@type"/>_create( env);
+                        adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
                         </xsl:choose>
@@ -209,9 +191,9 @@
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
-                               axis2_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
-                               axis2_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
-                               axis2_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
+                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
+                               adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
+                               adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                                    </xsl:when>
                                    <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
                                 </xsl:choose>
