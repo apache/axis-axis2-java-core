@@ -415,7 +415,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../../legal/std</directory>
+                            <directory>${basedir}/../../legal</directory>
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
                                 <include>*.txt</include>
