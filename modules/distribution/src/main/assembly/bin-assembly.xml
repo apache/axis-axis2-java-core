@@ -266,6 +266,27 @@
             </includes>
         </fileSet>
 
+		<!-- TODO: Need to rename this file to INSTALL.txt -->
+		<fileSet>
+            <directory>../../release-docs/readme-files/</directory>
+            <outputDirectory>axis2-bin/</outputDirectory>
+            <includes>
+                <include>installation-std-bin.txt</include>
+            </includes>
+		</fileSet>
+
+		<!-- TODO: Need to add filters to update the version strings within the files -->
+		<fileSet>
+            <directory>../../</directory>
+            <outputDirectory>axis2-bin/</outputDirectory>
+            <includes>
+                <include>LICENSE.txt</include>
+                <include>NOTICE.txt</include>
+                <include>README.txt</include>
+                <include>release-notes.html</include>
+            </includes>
+		</fileSet>
+
         <!-- copy samples -->
         <fileSet>
             <directory>../../modules/samples</directory>
