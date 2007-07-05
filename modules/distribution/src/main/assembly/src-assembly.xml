@@ -2,7 +2,7 @@
     <id>src</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
-	<format>tar.gz</format>
+	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
     </formats>
 
@@ -31,6 +31,7 @@
                 <include>modules/mex/**</include>
                 <include>modules/mex-mar/**</include>
                 <include>modules/mtompolicy/**</include>
+                <include>modules/parent/**</include>
                 <include>modules/ping/**</include>
                 <include>modules/saaj/**</include>
                 <include>modules/saaj-api/**</include>
@@ -41,6 +42,7 @@
                 <include>modules/tool/**</include>
                 <include>modules/webapp/**</include>
                 <include>modules/xmlbeans/**</include>
+                <include>modules/distribution/**</include>
             </includes>
 
 	    <excludes>
@@ -71,8 +73,11 @@
             <directory>../../etc</directory>
             <outputDirectory>axis2-${version}-src/etc</outputDirectory>
             <includes>
-                <include>project.properties</include>
+                <include>*.*</include>
             </includes>
+	    <excludes>
+		<exclude>.svn/**</exclude>
+	    </excludes>
         </fileSet>
         <fileSet>
             <directory>../..</directory>

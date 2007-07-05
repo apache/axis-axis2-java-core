@@ -2,6 +2,7 @@
     <id>bin</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
+	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
     </formats>
 
