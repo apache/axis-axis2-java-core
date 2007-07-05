@@ -1,0 +1,430 @@
+<!--
+  ~ Copyright (c) 2006, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+	<groupId>org.apache.axis2</groupId>
+	<artifactId>axis2-parent</artifactId>
+	<version>SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.axis2</groupId>
+    <artifactId>distribution</artifactId>
+    <name>Apache Axis 2.0 - Distribution</name>
+    <description>Apache Axis2 Distribution</description>
+    <packaging>pom</packaging>
+
+
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2-beta-1</version>
+            <executions>
+                <execution>
+                    <id>distribution-package</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
+                            <descriptor>src/main/assembly/src-assembly.xml</descriptor>
+                            <descriptor>src/main/assembly/war-assembly.xml</descriptor>
+                        </descriptors>
+                        <finalName>axis2-bin-${version}</finalName>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.0-alpha-1-SNAPSHOT</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>package-copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+
+                                <artifactItem>
+                                    <groupId>backport-util-concurrent</groupId>
+                                    <artifactId>backport-util-concurrent</artifactId>
+				    <version>${backport.util.concurrent.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-codec</groupId>
+                                    <artifactId>commons-codec</artifactId>
+                                    <version>${commons.codec.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-fileupload</groupId>
+                                    <artifactId>commons-fileupload</artifactId>
+					<version>${commons.fileupload.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-httpclient</groupId>
+                                    <artifactId>commons-httpclient</artifactId>
+				<version>${commons.httpclient.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-io</groupId>
+                                    <artifactId>commons-io</artifactId>
+					<version>${commons.io.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-logging</groupId>
+                                    <artifactId>commons-logging</artifactId>
+	  			    <version>${commons.logging.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+					<version>${geronimo.spec.jms.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+<!--
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>jakarta-httpcore</artifactId>
+       					<version>${jakarta.httpcore.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+-->
+                                <artifactItem>
+                                    <groupId>javax.xml.bind</groupId>
+                                    <artifactId>jaxb-api</artifactId>
+					<version>${jaxb.api.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-impl</artifactId>
+ 	     				<version>${jaxbri.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-xjc</artifactId>
+				<version>${jaxbri.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+					<version>${jettison.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jaxen</groupId>
+                                    <artifactId>jaxen</artifactId>
+       				<version>${jaxen.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jibx</groupId>
+                                    <artifactId>jibx-bind</artifactId>
+       				<version>${jibx.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jibx</groupId>
+                                    <artifactId>jibx-run</artifactId>
+      				    <version>${jibx.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+				<version>${geronimo.spec.javamail.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.neethi</groupId>
+                                    <artifactId>neethi</artifactId>
+				<version>${neethi.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>javax.servlet</groupId>
+                                    <artifactId>servlet-api</artifactId>
+				<version>${servlet.api.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>stax</groupId>
+                                    <artifactId>stax-api</artifactId>
+				<version>${stax.api.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.woden</groupId>
+                                    <artifactId>woden</artifactId>
+					<version>${woden.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>wsdl4j</groupId>
+                                    <artifactId>wsdl4j</artifactId>
+					<version>${wsdl4j.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xalan</groupId>
+                                    <artifactId>xalan</artifactId>
+					<version>${xalan.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xmlbeans</groupId>
+                                    <artifactId>xbean</artifactId>
+					<version>${xbean.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.ws.commons.schema</groupId>
+                                    <artifactId>XmlSchema</artifactId>
+					<version>${xmlschema.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xml-apis</groupId>
+                                    <artifactId>xml-apis</artifactId>
+                                    <version>${xml_apis.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+  				    <artifactId>spring-core</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-beans</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-context</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-web</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>annogen</groupId>
+   				    <artifactId>annogen</artifactId>
+ 				    <version>${annogen.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+		                    <groupId>xerces</groupId>
+		                    <artifactId>xercesImpl</artifactId>
+ 				    <version>${xerces.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-api</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-impl</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-dom</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+				    <groupId>org.apache.httpcomponents</groupId>
+  				    <artifactId>httpcore</artifactId>
+				    <version>${httpcore.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+		<dependency>
+		</dependency>
+
+
+
+
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+    </build>
+
+
+    <profiles>
+		<profile>
+			<id>java15</id>
+
+			    <build>
+			    <plugins>
+
+			        <plugin>
+			            <groupId>org.apache.maven.plugins</groupId>
+			            <artifactId>maven-antrun-plugin</artifactId>
+			            <version>1.1</version>
+			            <executions>
+			                <execution>
+			                    <id>package</id>
+			                    <phase>generate-resources</phase>
+			                    <configuration>
+			                        <tasks>
+					            <copy toDir="target/bin/jdk1.5-modules">
+					                <fileset file="../../modules/jaxbri/target/axis2-jaxbri-${version}.jar"/>
+					            </copy>
+					            <copy toDir="target/bin/jdk1.5-modules">
+					                <fileset file="../../modules/metadata/target/axis2-metadata-${version}.jar"/>
+            					    </copy>
+					            <copy toDir="target/bin/jdk1.5-modules">
+					                <fileset file="../../modules/jaxws/target/axis2-jaxws-${version}.jar"/>
+					            </copy>
+					            <copy toDir="target/bin/jdk1.5-modules">
+		                			<fileset file="../../modules/jaxws-api/target/axis2-jaxws-api-${version}.jar"/>
+					            </copy>
+					            <copy toDir="target/bin/jdk1.5-modules">
+					                <fileset file="../../modules/saaj-api/target/axis2-saaj-api-${version}.jar"/>
+					            </copy>
+					            <copy toDir="target/bin/jdk1.5-modules">
+		                			<fileset file="../../modules/saaj/target/axis2-saaj-${version}.jar"/>
+					            </copy>
+			                        </tasks>
+                    			    </configuration>
+			                    <goals>
+        			                <goal>run</goal>
+        			            </goals>
+        			        </execution>
+        			    </executions>
+			        </plugin>
+			    </plugins>
+			    </build>
+			    <activation>
+				<jdk>1.5</jdk>
+   			    </activation>
+		</profile>
+	</profiles>
+</project>

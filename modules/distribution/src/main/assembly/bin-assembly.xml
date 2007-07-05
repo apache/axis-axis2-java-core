@@ -1,0 +1,343 @@
+<assembly>
+    <id>bin</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+
+
+
+
+
+
+
+    <fileSets>
+<!--
+        <echo file="${std.bin.temp.dir}/repository/modules/modules.list" append="false">
+            addressing-${addressing_version}.mar
+            soapmonitor-${soapmonitor_version}.mar
+        </echo>
+        copy the sample services
+        <echo file="${std.bin.temp.dir}/repository/services/services.list" append="false">
+            version.aar
+        </echo>
+-->
+        <!--********************** creating the repository ********************** -->
+        <!-- copy the soapmonitor mar -->
+        <fileSet>
+            <directory>../../modules/soapmonitor/target</directory>
+            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <includes>
+                <include>soapmonitor-${version}.mar</include>
+            </includes>
+        </fileSet>
+        <!-- copy the addressing mar -->
+        <fileSet>
+            <directory>../../modules/addressing/target</directory>
+            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <includes>
+                <include>addressing-${version}.mar</include>
+            </includes>
+        </fileSet>
+
+        <!-- copy the sample services -->
+        <fileSet>
+            <directory>../../modules/samples/target/toWar/services</directory>
+            <outputDirectory>axis2-bin/repository/services</outputDirectory>
+            <includes>
+                <include>version.aar</include>
+            </includes>
+        </fileSet>
+
+        <!--********************** creating the bin ********************** -->
+        <!-- Copy bin scripts -->
+        <fileSet>
+            <directory>../../modules/tool/script</directory>
+            <outputDirectory>axis2-bin/bin</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
+
+        <!--********************** creating the conf ********************** -->
+        <!-- copy the axis2.xml into conf directoy -->
+        <fileSet>
+            <directory>../../modules/kernel/conf</directory>
+            <outputDirectory>axis2-bin/conf</outputDirectory>
+            <includes>
+                <include>axis2.xml</include>
+            </includes>
+        </fileSet>
+
+        <!--********************** creating the webappp ********************** -->
+        <!-- copy the web.xml into webapp/WEB-INF directory -->
+
+        <fileSet>
+            <directory>../../modules/webapp/conf</directory>
+            <outputDirectory>axis2-bin/webapp/WEB-INF</outputDirectory>
+            <includes>
+                <include>web.xml</include>
+            </includes>
+        </fileSet>
+
+
+
+        <!-- copy the build.xml into webapp directory -->
+       	<fileSet>
+            <directory>../../modules/webapp/scripts</directory>
+            <outputDirectory>axis2-bin/webapp</outputDirectory>
+            <includes>
+                <include>build.xml</include>
+            </includes>
+        </fileSet>
+
+
+        <!-- copy *.properties to webapp/WEB-INF/classes directory -->
+       	<fileSet>
+            <directory>../../modules/kernel/conf</directory>
+            <outputDirectory>axis2-bin/webapp/WEB-INF/classes</outputDirectory>
+            <includes>
+                <include>*.properties</include>
+            </includes>
+        </fileSet>
+
+
+        <!-- copy contents of the webapp module -->
+       	<fileSet>
+            <directory>../../modules/webapp/src/main/webapp</directory>
+            <outputDirectory>axis2-bin/webapp</outputDirectory>
+	    <excludes>
+		<exclude>project.xml</exclude>
+		<exclude>**/*.iml</exclude>
+		<exclude>**/.*</exclude>
+		<exclude>**/conf/**</exclude>
+		<exclude>**/scripts/**</exclude>
+	    </excludes>
+        </fileSet>
+
+       	<fileSet>
+            <directory>../../modules/webapp/src/main/webapp</directory>
+            <outputDirectory>axis2-bin/webapp</outputDirectory>
+	    <excludes>
+		<exclude>project.xml</exclude>
+		<exclude>**/*.iml</exclude>
+		<exclude>**/.*</exclude>
+		<exclude>**/conf/**</exclude>
+		<exclude>**/scripts/**</exclude>
+	    </excludes>
+        </fileSet>
+
+
+       	<fileSet>
+            <directory>../../modules/java2wsdl/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-java2wsdl-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/kernel/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-kernel-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/adb/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-adb-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/codegen/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-codegen-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/adb-codegen/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-adb-codegen-${version}.jar</include>
+            </includes>
+        </fileSet>
+
+       	<fileSet>
+            <directory>../../modules/xmlbeans/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-xmlbeans-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/jibx/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-jibx-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/json/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-json-${version}.jar</include>
+            </includes>
+        </fileSet>
+	<!-- TODO jar is not being generated -->
+       	<fileSet>
+            <directory>../../modules/tools/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-tools-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/spring/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-spring-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/soapmonitor/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-soapmonitor-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/fastinfoset/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-fastinfoset-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/jaxbri/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-jaxbri-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/jaxws/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-jaxws-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/jaxws-api/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-jaxws-api-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/metadata/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-metadata-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/saaj/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-saaj-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/saaj-api/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-saaj-api-${version}.jar</include>
+            </includes>
+        </fileSet>
+       	<fileSet>
+            <directory>../../modules/xmlbeans/target</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>axis2-xmlbeans-${version}.jar</include>
+            </includes>
+        </fileSet>
+
+	<!-- copy externel dependency libraries -->
+       	<fileSet>
+            <directory>../../modules/distribution/target/bin/external-dependencies</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+	<!-- copy samples -->
+       	<fileSet>
+            <directory>../../modules/samples</directory>
+            <outputDirectory>axis2-bin/samples</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+<!--
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>org.apache.axis2:axis2-json</include>
+      </includes>
+      <binaries>
+        <outputDirectory>axis2-bin/lib</outputDirectory>
+        <includes>
+          <include>org.codehaus.jettison:jettison:jar</include>
+        </includes>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+-->
+<!--
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>axis2-bin/lib</outputDirectory>
+      <scope>compile</scope>
+      <includes>
+          <include>backport-util-concurrent:backport-util-concurrent:jar</include>
+          <include>commons-codec:commons-codec:jar</include>
+          <include>commons-fileupload:commons-fileupload:jar</include>
+          <include>commons-httpclient:commons-httpclient:jar</include>
+          <include>commons-io:commons-io:jar</include>
+          <include>commons-logging:commons-logging:jar</include>
+          <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar</include>
+          <include>org.apache.httpcomponents:jakarta-httpcore:jar</include>
+          <include>javax.xml.bind:jaxb-api:jar</include>
+          <include>com.sun.xml.bind:jaxb-impl:jar</include>
+          <include>com.sun.xml.bind:jaxb-xjc:jar</include>
+
+          <include>org.codehaus.jettison:jettison:jar</include>
+
+          <include>jaxen:jaxen:jar</include>
+          <include>jibx:jibx-bind:jar</include>
+          <include>jibx:jibx-run:jar</include>
+          <include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</include>
+          <include>org.apache.neethi:neethi:jar</include>
+          <include>javax.servlet:servlet-api:jar</include>	
+          <include>stax:stax-api:jar</include>
+          <include>stax-utils:stax-utils:jar</include>
+          <include>org.apache.woden:woden:jar</include>
+          <include>wsdl4j:wsdl4j:jar</include>
+          <include>xalan:xalan:jar</include>
+          <include>xmlbeans:xbean:jar</include>
+		TODO missing wstx-asl,xercesimpl
+          <include>org.apache.ws.commons.schema:XmlSchema:jar</include>
+          <include>xml-apis:xml-apis:jar</include>
+
+       </includes>
+    </dependencySet>
+  </dependencySets>
+-->
+</assembly>
