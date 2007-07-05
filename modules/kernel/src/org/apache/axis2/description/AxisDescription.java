@@ -451,7 +451,8 @@ public abstract class AxisDescription implements ParameterInclude,
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
-        engagedModules.put(axisModule.getName(), axisModule);
+        engagedModules.put(Utils.getModuleName(axisModule.getName(), axisModule.getVersion()),
+                           axisModule);
     }
 
     protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
@@ -459,6 +460,7 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     static Collection NULL_MODULES = new ArrayList(0);
+    
     public Collection getEngagedModules() {
         return engagedModules == null ? NULL_MODULES : engagedModules.values();
     }
@@ -474,12 +476,17 @@ public abstract class AxisDescription implements ParameterInclude,
         return engagedModules != null && engagedModules.keySet().contains(moduleName);
     }
 
+    public boolean isEngaged(AxisModule axisModule) {
+        String id = Utils.getModuleName(axisModule.getName(), axisModule.getVersion());
+        return engagedModules != null && engagedModules.keySet().contains(id);
+    }
+
     public void disengageModule(AxisModule module) throws AxisFault {
-        if ((module == null) || (engagedModules == null)) return;
-        String moduleName = module.getName();
-        if (isEngaged(moduleName)) {
+        if (module == null || engagedModules == null) return;
+//        String id = Utils.getModuleName(module.getName(), module.getVersion());
+        if (isEngaged(module)) {
             onDisengage(module);
-            engagedModules.remove(module.getName());
+            engagedModules.remove(Utils.getModuleName(module.getName(), module.getVersion()));
         }
     }
 

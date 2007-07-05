@@ -222,15 +222,18 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
-                    String moduleName = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                    module.setName(moduleName);
+                    String moduleFile = fileUrl.substring(0, fileUrl.indexOf(".mar"));
+                    if (module.getName() == null) {
+                        module.setName(org.apache.axis2.util.Utils.getModuleName(moduleFile));
+                        module.setVersion(org.apache.axis2.util.Utils.getModuleVersion(moduleFile));
+                    }
                     populateModule(module, moduleurl);
                     module.setFileName(moduleurl);
                     addNewModule(module, axisConfig);
                 }
             }
-            org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
-                    axisConfig.getModules(), axisConfig);
+            org.apache.axis2.util.Utils.
+                    calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             axisConfig.validateSystemPredefinedPhases();
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);

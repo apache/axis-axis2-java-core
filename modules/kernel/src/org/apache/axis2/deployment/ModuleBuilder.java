@@ -100,11 +100,13 @@ public class ModuleBuilder extends DescriptionBuilder {
             // Get our name and version.  If this is NOT present, we'll try to figure it out
             // from the file name (e.g. "addressing-1.0.mar").  If the attribute is there, we
             // always respect it.
+            //TODO: Need to check whether ths name is getting overridden by the file name of the MAR
             OMAttribute nameAtt = moduleElement.getAttribute(new QName("name"));
             if (nameAtt != null) {
                 String moduleName = nameAtt.getAttributeValue();
-                if (moduleName != null && !"".equals(moduleName))
+                if (moduleName != null && !"".equals(moduleName)){
                     module.setName(moduleName);
+                }
             }
 
             // Process service description

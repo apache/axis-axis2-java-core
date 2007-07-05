@@ -1510,24 +1510,24 @@ public class MessageContext extends AbstractContext implements Externalizable {
             if (module == null) {
                 return false;
             }
-            enegage = axisConfig.isEngaged(moduleName);
+            enegage = axisConfig.isEngaged(module);
             if (enegage) {
                 return true;
             }
             if (axisServiceGroup != null) {
-                enegage = axisServiceGroup.isEngaged(moduleName);
+                enegage = axisServiceGroup.isEngaged(module);
                 if (enegage) {
                     return true;
                 }
             }
             if (axisService != null) {
-                enegage = axisService.isEngaged(moduleName);
+                enegage = axisService.isEngaged(module);
                 if (enegage) {
                     return true;
                 }
             }
             if (axisOperation != null) {
-                enegage = axisOperation.isEngaged(module.getName());
+                enegage = axisOperation.isEngaged(module);
                 if (enegage) {
                     return true;
                 }

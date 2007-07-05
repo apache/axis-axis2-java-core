@@ -65,8 +65,7 @@ public class ModuleDeployer implements Deployer {
             AxisModule metaData = new AxisModule();
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
-            archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory,
-                                            axisConfig);
+            archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory, axisConfig);
             metaData.setFileName(deploymentFileData.getFile().toURL());
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
