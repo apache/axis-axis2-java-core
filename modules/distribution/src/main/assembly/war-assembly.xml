@@ -1,5 +1,5 @@
 <assembly>
-    <id>bin</id>
+    <id>war</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>war</format>
@@ -37,7 +37,7 @@
             <directory>../../modules/adb-codegen/target</directory>
             <outputDirectory>WEB-INF/lib</outputDirectory>
             <includes>
-                <include>axis2-adb-codegenkernel-${version}.jar</include>
+                <include>axis2-adb-codegen-${version}.jar</include>
             </includes>
         </fileSet>
 

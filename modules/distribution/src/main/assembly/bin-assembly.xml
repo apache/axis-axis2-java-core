@@ -285,6 +285,7 @@
         </fileSet>
     </fileSets>
 <!--
+ Following is not working for dependencies in modules
   <moduleSets>
     <moduleSet>
       <includes>

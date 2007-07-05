@@ -78,15 +78,17 @@
               as the maven-release-plugin will not update this value.
         -->
 		<version>SNAPSHOT</version>
+		<javaxmail.version>1.4</javaxmail.version>
+		<activation.version>1.1</activation.version>
 		<annogen.version>0.1.0</annogen.version>
 		<ant.version>1.7.0</ant.version>
 		<antlr.version>2.7.4</antlr.version>
-        <activemq.version>4.1.1</activemq.version>
-        <axiom.version>SNAPSHOT</axiom.version>
+	        <activemq.version>4.1.1</activemq.version>
+	        <axiom.version>SNAPSHOT</axiom.version>
 		<backport.util.concurrent.version>2.2</backport.util.concurrent.version>
 		<bcel.version>5.2</bcel.version>
-        <bsf.version>2.4.0</bsf.version>
-        <commons.codec.version>1.3</commons.codec.version>
+	        <bsf.version>2.4.0</bsf.version>
+	        <commons.codec.version>1.3</commons.codec.version>
 		<commons.fileupload.version>1.1.1</commons.fileupload.version>
 		<commons.httpclient.version>3.0.1</commons.httpclient.version>
 		<commons.io.version>1.2</commons.io.version>
@@ -96,7 +98,7 @@
 		<geronimo.spec.activation.version>1.0-M1</geronimo.spec.activation.version>
 		<geronimo.spec.javamail.version>1.0-M1</geronimo.spec.javamail.version>
 		<geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
-        <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
+        	<geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
 		<groovy.all.version>1.0-jsr-06</groovy.all.version>
 		<intellij.version>5.0</intellij.version>
 		<httpcore.version>4.0-alpha5</httpcore.version>
@@ -115,7 +117,7 @@
 		<maven.version>2.0.6</maven.version>
 		<neethi.version>SNAPSHOT</neethi.version>
 		<plexus.utils.version>1.1</plexus.utils.version>
-        <rhino.version>1.6R5</rhino.version>
+        	<rhino.version>1.6R5</rhino.version>
 		<servlet.api.version>2.3</servlet.api.version>
 		<spring.version>2.0.4</spring.version>
 		<stax.api.version>1.0.1</stax.api.version>
@@ -800,6 +802,11 @@
               <artifactId>apache-activemq</artifactId>
               <version>${activemq.version}</version>
             </dependency>
+	            <dependency>
+		            <groupId>javax.mail</groupId>
+        		    <artifactId>mail</artifactId>
+			    <version>${javaxmail.version}</version>
+	            </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>

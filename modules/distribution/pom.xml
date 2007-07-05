@@ -51,7 +51,7 @@
                             <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                             <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                         </descriptors>
-                        <finalName>axis2-bin-${version}</finalName>
+                        <finalName>axis2-${version}</finalName>
                     </configuration>
                 </execution>
             </executions>
@@ -70,7 +70,6 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-
                                 <artifactItem>
                                     <groupId>backport-util-concurrent</groupId>
                                     <artifactId>backport-util-concurrent</artifactId>
@@ -127,16 +126,6 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/bin/external-dependencies</outputDirectory>
                                 </artifactItem>
-<!--
-                                <artifactItem>
-                                    <groupId>org.apache.httpcomponents</groupId>
-                                    <artifactId>jakarta-httpcore</artifactId>
-       					<version>${jakarta.httpcore.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
-                                </artifactItem>
--->
                                 <artifactItem>
                                     <groupId>javax.xml.bind</groupId>
                                     <artifactId>jaxb-api</artifactId>
@@ -265,6 +254,7 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/bin/external-dependencies</outputDirectory>
                                 </artifactItem>
+
                                 <artifactItem>
                                     <groupId>xml-apis</groupId>
                                     <artifactId>xml-apis</artifactId>
@@ -353,17 +343,122 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/bin/external-dependencies</outputDirectory>
                                 </artifactItem>
+
                                 <artifactItem>
 				    <groupId>org.apache.httpcomponents</groupId>
-  				    <artifactId>httpcore</artifactId>
-				    <version>${httpcore.version}</version>
+				    <artifactId>httpcore</artifactId>
+				    <version>4.0-alpha5</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target/bin/external-dependencies</outputDirectory>
                                 </artifactItem>
 
-		<dependency>
-		</dependency>
+                                <artifactItem>
+			            <groupId>javax.mail</groupId>
+            			    <artifactId>mail</artifactId>
+			            <version>1.4</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+			            <groupId>javax.activation</groupId>
+			            <artifactId>activation</artifactId>
+			            <version>1.1</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+  				    <artifactId>spring-core</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-beans</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-context</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.springframework</groupId>
+				    <artifactId>spring-web</artifactId>
+				    <version>${spring.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>annogen</groupId>
+   				    <artifactId>annogen</artifactId>
+ 				    <version>${annogen.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+		                    <groupId>xerces</groupId>
+		                    <artifactId>xercesImpl</artifactId>
+ 				    <version>${xerces.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-api</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-impl</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+				    <groupId>org.apache.ws.commons.axiom</groupId>
+				    <artifactId>axiom-dom</artifactId>
+				    <version>${axiom.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+			             <groupId>woodstox</groupId>
+                                     <artifactId>wstx-asl</artifactId>
+                                     <version>${stax.impl.version}</version>
+                                     <type>jar</type>
+                                     <overWrite>true</overWrite>
+                                     <outputDirectory>target/bin/external-dependencies</outputDirectory>
+                                </artifactItem>
 
 
 
