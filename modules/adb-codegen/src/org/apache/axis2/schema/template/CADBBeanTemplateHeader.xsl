@@ -1,29 +1,11 @@
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements. See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership. The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License. You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied. See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
      <!-- cater for the multiple classes - wrappped mode -->
     <xsl:template match="/classs">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="axis2_name">axi2_<xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="caps_axis2_name">AXIS2_<xsl:value-of select="@caps-name"/></xsl:variable>
+        <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="caps_axis2_name">ADB_<xsl:value-of select="@caps-name"/></xsl:variable>
         #ifndef <xsl:value-of select="$caps_axis2_name"/>_H
         #define <xsl:value-of select="$caps_axis2_name"/>_H
 
@@ -35,7 +17,7 @@
         */
         <xsl:for-each select="property">
           <xsl:if test="@ours">
-          <xsl:variable name="propertyType"><xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
+          <xsl:variable name="propertyType"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
           #include "<xsl:value-of select="$propertyType"/>.h"
           </xsl:if>
         </xsl:for-each>
@@ -75,8 +57,8 @@
 
     <xsl:template match="class">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="axis2_name">axis2_<xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="caps_axis2_name">AXIS2_<xsl:value-of select="@caps-name"/></xsl:variable>
+        <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="caps_axis2_name">ADB_<xsl:value-of select="@caps-name"/></xsl:variable>
 
         #ifndef <xsl:value-of select="$caps_axis2_name"/>_H
         #define <xsl:value-of select="$caps_axis2_name"/>_H
@@ -90,7 +72,7 @@
 
         <xsl:for-each select="property">
           <xsl:if test="@ours">
-          <xsl:variable name="propertyType"><xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
+          <xsl:variable name="propertyType"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
           #include "<xsl:value-of select="$propertyType"/>.h"
           </xsl:if>
         </xsl:for-each>
@@ -125,25 +107,25 @@
 
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_free (
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
 
         <xsl:if test="not(@type)">
         axutil_qname_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_get_qname (
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
         </xsl:if>
 
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_serialize(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
             axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent);
 
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_deserialize(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env, axiom_node_t* parent);
 
         <xsl:for-each select="property">
@@ -151,7 +133,14 @@
             <xsl:choose>
                 <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
+                <xsl:when test="@ours"><xsl:choose>
+                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
+                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
+                    <xsl:otherwise>
+                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
+                </xsl:choose>
+                </xsl:when>
                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
             </xsl:choose>
             </xsl:variable>
@@ -163,7 +152,7 @@
          */
         <xsl:value-of select="$propertyType"/> AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
 
         /**
@@ -171,7 +160,7 @@
          */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
             <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>);
 
@@ -181,7 +170,7 @@
         */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
         </xsl:if>
         </xsl:for-each>
