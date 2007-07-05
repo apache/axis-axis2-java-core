@@ -729,7 +729,8 @@ public class SchemaCompiler {
         String targetNamespace = schemaTypeName.getNamespaceURI();
 
         // if the current schema has the same namespace we use it
-        if (currentSchema.getTargetNamespace().equals(targetNamespace)){
+        if ((currentSchema.getTargetNamespace() != null) &&
+                currentSchema.getTargetNamespace().equals(targetNamespace)){
             return currentSchema;
         }
         Object loadedSchema = loadedSchemaMap.get(targetNamespace);
