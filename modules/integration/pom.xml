@@ -43,6 +43,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-scripting</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>${version}</version>
             <exclusions>
