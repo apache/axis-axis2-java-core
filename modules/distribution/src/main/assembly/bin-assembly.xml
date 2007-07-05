@@ -1,6 +1,7 @@
 <assembly>
     <id>bin</id>
-    <includeBaseDirectory>false</includeBaseDirectory>
+    <includeBaseDirectory>true</includeBaseDirectory> 
+    <baseDirectory>axis2-${version}</baseDirectory>
     <formats>
 	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
@@ -12,7 +13,7 @@
         <!-- copy the soapmonitor mar -->
         <fileSet>
             <directory>../../modules/soapmonitor/target</directory>
-            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <outputDirectory>repository/modules</outputDirectory>
             <includes>
                 <include>soapmonitor-${version}.mar</include>
             </includes>
@@ -20,7 +21,7 @@
         <!-- copy the addressing mar -->
         <fileSet>
             <directory>../../modules/addressing/target</directory>
-            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <outputDirectory>repository/modules</outputDirectory>
             <includes>
                 <include>addressing-${version}.mar</include>
             </includes>
@@ -28,7 +29,7 @@
         <!-- copy the ping mar -->
         <fileSet>
             <directory>../../modules/ping/target</directory>
-            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <outputDirectory>repository/modules</outputDirectory>
             <includes>
                 <include>ping-${version}.mar</include>
             </includes>
@@ -36,7 +37,7 @@
         <!-- copy the mex mar -->
         <fileSet>
             <directory>../../modules/mex-mar/target</directory>
-            <outputDirectory>axis2-bin/repository/modules</outputDirectory>
+            <outputDirectory>repository/modules</outputDirectory>
             <includes>
                 <include>mex-${version}.mar</include>
             </includes>
@@ -45,7 +46,7 @@
         <!-- copy the sample services -->
         <fileSet>
             <directory>../../modules/samples/target/toWar/services</directory>
-            <outputDirectory>axis2-bin/repository/services</outputDirectory>
+            <outputDirectory>repository/services</outputDirectory>
             <includes>
                 <include>version.aar</include>
             </includes>
@@ -55,7 +56,7 @@
         <!-- Copy bin scripts -->
         <fileSet>
             <directory>../../modules/tool/script</directory>
-            <outputDirectory>axis2-bin/bin</outputDirectory>
+            <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*</include>
             </includes>
@@ -66,7 +67,7 @@
         <!-- copy the axis2.xml into conf directoy -->
         <fileSet>
             <directory>../../modules/kernel/conf</directory>
-            <outputDirectory>axis2-bin/conf</outputDirectory>
+            <outputDirectory>conf</outputDirectory>
             <includes>
                 <include>axis2.xml</include>
             </includes>
@@ -77,7 +78,7 @@
 
         <fileSet>
             <directory>../../modules/webapp/conf</directory>
-            <outputDirectory>axis2-bin/webapp/WEB-INF</outputDirectory>
+            <outputDirectory>webapp/WEB-INF</outputDirectory>
             <includes>
                 <include>web.xml</include>
             </includes>
@@ -87,7 +88,7 @@
         <!-- copy the build.xml into webapp directory -->
         <fileSet>
             <directory>../../modules/webapp/scripts</directory>
-            <outputDirectory>axis2-bin/webapp</outputDirectory>
+            <outputDirectory>webapp</outputDirectory>
             <includes>
                 <include>build.xml</include>
             </includes>
@@ -97,7 +98,7 @@
         <!-- copy *.properties to webapp/WEB-INF/classes directory -->
         <fileSet>
             <directory>../../modules/kernel/conf</directory>
-            <outputDirectory>axis2-bin/webapp/WEB-INF/classes</outputDirectory>
+            <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
             <includes>
                 <include>*.properties</include>
             </includes>
@@ -107,7 +108,7 @@
         <!-- copy contents of the webapp module -->
         <fileSet>
             <directory>../../modules/webapp/src/main/webapp</directory>
-            <outputDirectory>axis2-bin/webapp</outputDirectory>
+            <outputDirectory>webapp</outputDirectory>
             <excludes>
                 <exclude>project.xml</exclude>
                 <exclude>**/*.iml</exclude>
@@ -119,7 +120,7 @@
 
         <fileSet>
             <directory>../../modules/webapp/src/main/webapp</directory>
-            <outputDirectory>axis2-bin/webapp</outputDirectory>
+            <outputDirectory>webapp</outputDirectory>
             <excludes>
                 <exclude>project.xml</exclude>
                 <exclude>**/*.iml</exclude>
@@ -132,35 +133,35 @@
 
         <fileSet>
             <directory>../../modules/java2wsdl/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-java2wsdl-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/kernel/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-kernel-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/adb/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-adb-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/codegen/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-codegen-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/adb-codegen/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-adb-codegen-${version}.jar</include>
             </includes>
@@ -168,21 +169,21 @@
 
         <fileSet>
             <directory>../../modules/xmlbeans/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-xmlbeans-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/jibx/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-jibx-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/json/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-json-${version}.jar</include>
             </includes>
@@ -190,77 +191,77 @@
         <!-- TODO jar is not being generated -->
         <fileSet>
             <directory>../../modules/tools/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-tools-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/spring/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-spring-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/soapmonitor/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-soapmonitor-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/fastinfoset/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-fastinfoset-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/jaxbri/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-jaxbri-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/jaxws/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-jaxws-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/jaxws-api/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-jaxws-api-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/metadata/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-metadata-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/saaj/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-saaj-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/saaj-api/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-saaj-api-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>../../modules/xmlbeans/target</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-xmlbeans-${version}.jar</include>
             </includes>
@@ -269,7 +270,7 @@
         <!-- copy externel dependency libraries -->
         <fileSet>
             <directory>../../modules/distribution/target/bin/external-dependencies</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -277,7 +278,7 @@
 
         <fileSet>
             <directory>../../legal</directory>
-            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>**/*.txt</include>
             </includes>
@@ -286,7 +287,7 @@
 		<!-- TODO: Need to rename this file to INSTALL.txt -->
 		<fileSet>
             <directory>../../release-docs/readme-files/</directory>
-            <outputDirectory>axis2-bin/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
             </includes>
@@ -295,7 +296,7 @@
 		<!-- TODO: Need to add filters to update the version strings within the files -->
 		<fileSet>
             <directory>../../</directory>
-            <outputDirectory>axis2-bin/</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>
@@ -307,7 +308,7 @@
         <!-- copy samples -->
         <fileSet>
             <directory>../../modules/samples</directory>
-            <outputDirectory>axis2-bin/samples</outputDirectory>
+            <outputDirectory>samples</outputDirectory>
             <includes>
 				<include>databinding/**/*</include>
 				<include>eventing/**/*</include>
@@ -336,13 +337,13 @@
 				<include>yahoorestsearch/**/*</include>            
             </includes>
         </fileSet>
-        <!-- TODO: generate modules.list in axis2-bin/repository/modules -->
-        <!-- TODO: generate services.list in axis2-bin/repository/services -->
+        <!-- TODO: generate modules.list in repository/modules -->
+        <!-- TODO: generate services.list in repository/services -->
     </fileSets>
     
       <dependencySets>
         <dependencySet>
-          <outputDirectory>axis2-bin/lib</outputDirectory>
+          <outputDirectory>lib</outputDirectory>
 
             <excludes>
                  <exclude>mx4j:mx4j-jmx:jar</exclude>
