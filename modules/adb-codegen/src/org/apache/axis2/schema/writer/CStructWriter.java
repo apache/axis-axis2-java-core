@@ -54,7 +54,7 @@ import com.ibm.wsdl.util.xml.DOM2Writer;
 public class CStructWriter implements BeanWriter {
 
     public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
-    public static final String AXIS2_PREFIX = "axis2_";
+    public static final String AXIS2_PREFIX = "adb_";
     private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
     private Templates sourceTemplateCache;
