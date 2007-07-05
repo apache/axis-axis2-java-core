@@ -54,30 +54,10 @@ public class MIMEBuilder implements Builder {
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
 
-//      if (isSOAP) {
         Builder builder =
                 BuilderUtil.getBuilderFromSelector(attachments.getAttachmentSpecType(), msgContext);
         OMElement element = builder.processDocument(attachments.getSOAPPartInputStream(),
                                                     contentType, msgContext);
-
-//      }
-//      // To handle REST XOP case
-//      else {
-//      if (attachments.getAttachmentSpecType().equals(
-//      MTOMConstants.MTOM_TYPE)) {
-//      XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(
-//      streamReader, attachments);
-//      builder = stAXOMBuilder;
-//      
-//      } else if (attachments.getAttachmentSpecType().equals(
-//      MTOMConstants.SWA_TYPE)) {
-//      builder = new StAXOMBuilder(streamReader);
-//      } else if (attachments.getAttachmentSpecType().equals(
-//      MTOMConstants.SWA_TYPE_12) ) {
-//      builder = new StAXOMBuilder(streamReader);
-//      }
-//      }
-
         return element;
     }
 
