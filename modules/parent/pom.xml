@@ -801,7 +801,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-             <!--TODO -->
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
     <dependencies>
         <dependency>
