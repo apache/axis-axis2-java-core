@@ -420,13 +420,6 @@
                             <includes>
                                 <include>*.txt</include>
                             </includes>
-                        </resource>
-                        <resource>
-                            <directory>${basedir}/../../legal/war</directory>
-                            <targetPath>WEB-INF/lib</targetPath>
-                            <includes>
-                                <include>*.txt</include>
-                            </includes>
                             <excludes>
                                 <exclude>servlet*.txt</exclude>
                             </excludes>
