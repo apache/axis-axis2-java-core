@@ -992,7 +992,7 @@
 
         <!--copy the license files also-->
         <ant:copy toDir="${std_dep_cache}">
-            <ant:fileset dir="legal/std">
+            <ant:fileset dir="legal">
                 <ant:include name="*.txt"/>
             </ant:fileset>
         </ant:copy>
@@ -1016,10 +1016,10 @@
 
         <!--copy the license files also-->
         <ant:copy toDir="${war_dep_cache}">
-            <ant:fileset dir="legal/war">
+            <ant:fileset dir="legal">
                 <ant:include name="*.txt"/>
             </ant:fileset>
-            <ant:fileset dir="legal/std">
+            <ant:fileset dir="legal">
                 <ant:include name="*.txt"/>
             </ant:fileset>
         </ant:copy>

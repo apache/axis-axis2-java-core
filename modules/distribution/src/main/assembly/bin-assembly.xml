@@ -258,12 +258,44 @@
             </includes>
         </fileSet>
 
+        <fileSet>
+            <directory>../../legal</directory>
+            <outputDirectory>axis2-bin/lib</outputDirectory>
+            <includes>
+                <include>**/*.txt</include>
+            </includes>
+        </fileSet>
+
         <!-- copy samples -->
         <fileSet>
             <directory>../../modules/samples</directory>
             <outputDirectory>axis2-bin/samples</outputDirectory>
             <includes>
-                <include>**/*</include>
+				<include>databinding/**/*</include>
+				<include>eventing/**/*</include>
+				<include>faulthandling/**/*</include>
+				<include>googlespellcheck/**/*</include>
+				<include>jaxws-calculator/**/*</include>
+				<include>jms/**/*</include>
+				<include>mex/**/*</include>
+				<include>mtom/**/*</include>
+				<include>ping/**/*</include>
+				<include>pojo/**/*</include>
+				<include>pojoguide/**/*</include>
+				<include>pojoguidespring/**/*</include>
+				<include>quickstart/**/*</include>
+				<include>quickstartadb/**/*</include>
+				<include>quickstartaxiom/**/*</include>
+				<include>quickstartjibx/**/*</include>
+				<include>quickstartxmlbeans/**/*</include>
+				<include>security/**/*</include>
+				<include>servicelifecycle/**/*</include>
+				<include>soapwithattachments/**/*</include>
+				<include>userguide/**/*</include>
+				<include>version/**/*</include>
+				<include>wsdl/**/*</include>
+				<include>yahoojsonsearch/**/*</include>
+				<include>yahoorestsearch/**/*</include>            
             </includes>
         </fileSet>
     </fileSets>
