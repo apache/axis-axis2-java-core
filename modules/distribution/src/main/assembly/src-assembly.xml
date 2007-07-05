@@ -1,6 +1,7 @@
 <assembly>
     <id>src</id>
-    <includeBaseDirectory>false</includeBaseDirectory>
+    <includeBaseDirectory>true</includeBaseDirectory> 
+    <baseDirectory>axis2-${version}</baseDirectory>
     <formats>
 	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
         <format>zip</format>
@@ -9,7 +10,7 @@
     <fileSets>
         <fileSet>
             <directory>../..</directory>
-            <outputDirectory>axis2-${version}-src</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>../../etc/**</include>
                 <include>modules/adb/**</include>
@@ -71,7 +72,7 @@
 	<!-- TODO : (start) copy following files with filtering on -->
         <fileSet>
             <directory>../../etc</directory>
-            <outputDirectory>axis2-${version}-src/etc</outputDirectory>
+            <outputDirectory>etc</outputDirectory>
             <includes>
                 <include>*.*</include>
             </includes>
@@ -81,7 +82,7 @@
         </fileSet>
         <fileSet>
             <directory>../..</directory>
-            <outputDirectory>axis2-${version}-src</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>NOTICE.txt</include>
             </includes>
@@ -92,7 +93,7 @@
 
         <fileSet>
             <directory>../..</directory>
-            <outputDirectory>axis2-${version}-src</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
             </includes>
@@ -100,7 +101,7 @@
 
         <fileSet>
             <directory>../..</directory>
-            <outputDirectory>axis2-${version}-src</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>project.xml</include>
                 <include>maven.xml</include>
