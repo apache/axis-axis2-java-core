@@ -52,13 +52,25 @@
     		</ant:classpath>
     		<ant:arg line="-o target/test-classes -of SimpleAddService.wsdl -efd unqualified -cn org.apache.axis2.fastinfoset.SimpleAddService"/>
     	</ant:java>
-    	<!-- Let's Generate the client stub -->
-    	<ant:java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-    		<ant:classpath>
-    			<ant:path refid="maven.dependency.classpath"/>
-    			<ant:pathelement location="target/test-classes"/>
-    		</ant:classpath>
-   		    <ant:arg line="-uri target/test-classes/SimpleAddService.wsdl -o test -S . -or"/>
-    	</ant:java>
+        <!-- compiling some custom wsdl files -->
+        <j:set var="wsdl.source.dir" value="test-resources/wsdl"/>
+        <j:set var="wsdl.output.base.dir" value="target/wsdl"/>
+        <!-- make the dirs -->
+        <mkdir dir="${wsdl.output.base.dir}"/>
+
+       <ant:echo>Compiling SimpleAddService.wsdl</ant:echo>
+        <mkdir dir="${wsdl.output.base.dir}/simpleAddService"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <ant:arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or"/>
+        </java>
+        <javac destdir="target/classes" debug="on">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <src path="target/wsdl/simpleAddService"/>
+        </javac>
     </preGoal>
 </project>
