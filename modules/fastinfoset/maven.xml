@@ -37,5 +37,28 @@
         <!-- copy the required mars so that they are available on the test path -->
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
 			tofile="target/test-classes/modules/addressing-${addressing_version}.mar"/>
+    	<!-- Generate the WSDL so that it is available to generate the client stub -->
+      <ant:javac destdir="target/test-classes" debug="on">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <include name="**/*SimpleAddService.java"/>
+            <src path="test/"/>
+       </ant:javac>
+    	<ant:java classname="org.apache.ws.java2wsdl.Java2WSDL" fork="true">
+    		<ant:classpath>
+    			<ant:path refid="maven.dependency.classpath"/>
+    			<ant:pathelement location="target/test-classes"/>
+    		</ant:classpath>
+    		<ant:arg line="-o target/test-classes -of SimpleAddService.wsdl -efd unqualified -cn org.apache.axis2.fastinfoset.SimpleAddService"/>
+    	</ant:java>
+    	<!-- Let's Generate the client stub -->
+    	<ant:java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+    		<ant:classpath>
+    			<ant:path refid="maven.dependency.classpath"/>
+    			<ant:pathelement location="target/test-classes"/>
+    		</ant:classpath>
+   		    <ant:arg line="-uri target/test-classes/SimpleAddService.wsdl -o test -S . -or"/>
+    	</ant:java>
     </preGoal>
 </project>

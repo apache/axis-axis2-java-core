@@ -64,7 +64,7 @@
             </properties>
             <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
@@ -176,6 +176,41 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+            <version>${neethi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${pom.currentVersion}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${pom.currentVersion}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>        
     </dependencies>
 
     <reports/>

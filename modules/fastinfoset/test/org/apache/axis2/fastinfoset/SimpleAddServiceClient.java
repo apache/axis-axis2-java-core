@@ -28,13 +28,13 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddFloats;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddFloatsResponse;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddInts;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddIntsResponse;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStrings;
-import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStringsResponse;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddFloats;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddFloatsResponse;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddInts;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddIntsResponse;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddStrings;
+import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddStringsResponse;
 
 /**
  * @author Sanjaya Karunasena (sanjayak@yahoo.com)
@@ -86,6 +86,26 @@ public class SimpleAddServiceClient {
 		options.setProperty(Constants.Configuration.MESSAGE_TYPE, "application/soap+fastinfoset");
 	}
 
+	/**
+	 * Constructor used by the default JUnit test case.
+	 * 
+	 * @param target
+	 * @throws AxisFault
+	 */
+	public SimpleAddServiceClient(EndpointReference target, boolean pox) throws AxisFault {
+		ConfigurationContext context = 
+			ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-classes", "test-resources/axis2.xml");
+		serviceStub = new SimpleAddServiceStub(context, target.getAddress());
+		//serviceStub = new SimpleAddServiceStub();
+		ServiceClient client=  serviceStub._getServiceClient();
+		Options options = client.getOptions();
+		if (pox) {
+			options.setProperty(Constants.Configuration.MESSAGE_TYPE, "application/fastinfoset");
+		} else {
+			options.setProperty(Constants.Configuration.MESSAGE_TYPE, "application/soap+fastinfoset");
+		}
+	}
+	
 	public String addStrings(String param0, String param1) throws RemoteException {
 		AddStrings addStrings = new SimpleAddServiceStub.AddStrings();
 		addStrings.setVal1(param0);
