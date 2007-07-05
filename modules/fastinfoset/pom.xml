@@ -39,10 +39,6 @@
 			<artifactId>FastInfoset</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>stax</groupId>
-			<artifactId>stax-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>
 		</dependency>

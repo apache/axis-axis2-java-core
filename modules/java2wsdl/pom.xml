@@ -55,10 +55,7 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>stax</groupId>
-			<artifactId>stax-api</artifactId>
-		</dependency>
+
 		<!--added this to support to keep WSDL information in AxisService-->
 		<dependency>
 			<groupId>org.apache.ws.commons.schema</groupId>
