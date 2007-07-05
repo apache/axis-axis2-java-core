@@ -20,20 +20,16 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
-import org.apache.woden.wsdl20.extensions.http.HTTPLocationTemplate;
+import org.apache.axis2.util.WSDL20Util;
 
-import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 
 
@@ -43,63 +39,6 @@ import java.util.Iterator;
  * append parameters to URL's when needed.
  */
 public class URLTemplatingUtil {
-
-    /**
-     * This method is used to resolve httplocation property. It changes the URL as stipulated by
-     * the httplocation property.
-     *
-     * @param messageContext - The MessageContext of the request
-     * @param rawURLString   - The raw URL containing httplocation templates
-     * @param detach         - Boolean value specifying whether the element should be detached from the
-     *                       envelop. When serializing data as application/x-form-urlencoded what goes in the body is the
-     *                       remainder and therefore we should detach the element from the envelop.
-     * @return - String with templated values replaced
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    private static String applyURITemplating(MessageContext messageContext, String rawURLString,
-                                             boolean detach) throws AxisFault {
-
-        OMElement firstElement;
-        if (detach) {
-            firstElement = messageContext.getEnvelope().getBody().getFirstElement();
-        } else {
-            firstElement =
-                    messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
-        }
-        String queryParameterSeparator = (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
-        if (queryParameterSeparator == null) {
-            queryParameterSeparator = WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT;
-        }
-        HTTPLocation httpLocation = new HTTPLocation(rawURLString);
-        HTTPLocationTemplate[] templates = httpLocation.getTemplates();
-
-        for (int i = 0; i < templates.length; i++) {
-            HTTPLocationTemplate template = templates[i];
-            String localName = template.getName();
-            String elementValue = getOMElementValue(localName, firstElement);
-            if (template.isEncoded()) {
-                try {
-
-                    if (template.isQuery()) {
-                        template.setValue(URIEncoderDecoder.quoteIllegal(
-                                elementValue,
-                                WSDL2Constants.LEGAL_CHARACTERS_IN_QUERY.replaceAll(queryParameterSeparator, "")));
-                    } else {
-                        template.setValue(URIEncoderDecoder.quoteIllegal(
-                                elementValue,
-                                WSDL2Constants.LEGAL_CHARACTERS_IN_PATH));
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    throw new AxisFault("Unable to encode Query String");
-                }
-
-            } else {
-                template.setValue(elementValue);
-            }
-        }
-
-        return httpLocation.getFormattedLocation();
-    }
 
     /**
      * Appends Query parameters to the URL
@@ -161,39 +100,6 @@ public class URLTemplatingUtil {
     }
 
     /**
-     * This method is used to retrive elements from the soap envelop
-     *
-     * @param elementName   - The name of the required element
-     * @param parentElement - The parent element that the required element should be retrived from
-     * @return - The value of the element as a string
-     */
-    private static String getOMElementValue(String elementName, OMElement parentElement) {
-
-        OMElement httpURLParam = null;
-        Iterator children = parentElement.getChildElements();
-
-        while (children.hasNext()) {
-            OMElement child = (OMElement) children.next();
-            QName qName = child.getQName();
-            if (elementName.equals(qName.getLocalPart())) {
-                httpURLParam = child;
-                break;
-            }
-        }
-
-        if (httpURLParam != null) {
-            httpURLParam.detach();
-
-            if (parentElement.getFirstOMChild() == null) {
-                parentElement.detach();
-            }
-            return httpURLParam.getText();
-        }
-        return "";
-
-    }
-
-    /**
      * Returns the templated URL given the original URL
      *
      * @param targetURL      - The original URL
@@ -217,7 +123,7 @@ public class URLTemplatingUtil {
 
         if (separator > -1) {
             replacedQuery = URIEncoderDecoder.quoteIllegal(
-                    URLTemplatingUtil.applyURITemplating(messageContext, httpLocation, detach),
+                    WSDL20Util.applyURITemplating(messageContext, httpLocation, detach),
                     WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
 
         }

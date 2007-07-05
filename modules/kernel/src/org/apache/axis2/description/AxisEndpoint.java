@@ -18,13 +18,12 @@
  */
 package org.apache.axis2.description;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.woden.wsdl20.extensions.http.HTTPAuthenticationScheme;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,7 +126,7 @@ public class AxisEndpoint extends AxisDescription {
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, name));
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":" + getBinding().getName().getLocalPart()));
         endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
-        HTTPAuthenticationScheme authenticationScheme = (HTTPAuthenticationScheme) this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
+        Object authenticationScheme = this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
         if (authenticationScheme != null) {
            endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp, authenticationScheme.toString()));
         }

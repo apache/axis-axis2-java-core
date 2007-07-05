@@ -18,22 +18,20 @@
  */
 package org.apache.axis2.description;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.woden.wsdl20.extensions.soap.SOAPFaultCode;
-import org.apache.woden.wsdl20.extensions.soap.SOAPFaultSubcodes;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.WSDL20Util;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
 
-import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -148,22 +146,8 @@ public class AxisBindingMessage extends AxisDescription {
                     WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
                             + this.name));
 
-            // Fault specific properties
-            SOAPFaultCode faultCode = (SOAPFaultCode) this.options
-                    .get(WSDL2Constants.ATTR_WSOAP_CODE);
-            if (faultCode != null && faultCode.getQName() != null) {
-                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_CODE, wsoap, faultCode.getQName().getLocalPart()));
-            }
-            SOAPFaultSubcodes soapFaultSubcodes = (SOAPFaultSubcodes) this.options
-                    .get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
-            QName faultCodes [];
-            if (soapFaultSubcodes != null && (faultCodes = soapFaultSubcodes.getQNames()) != null) {
-                for (int i=0 ; i < faultCodes.length; i++) {
-                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, faultCodes[0].getLocalPart()));
-                }
-            }
+            WSDL20Util.extractWSDL20SoapFaultInfo(options, bindingMessageElement, omFactory, wsoap);
+
             Integer code = (Integer) this.options.get(WSDL2Constants.ATTR_WHTTP_CODE);
             if (code != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(

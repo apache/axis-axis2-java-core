@@ -19,16 +19,6 @@
 
 package org.apache.axis2.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
@@ -40,9 +30,20 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
-import org.apache.neethi.PolicyRegistry;
-import org.apache.woden.internal.util.dom.DOM2Writer;
-import org.w3c.dom.Element;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 public class PolicyUtil {
 
@@ -131,29 +132,31 @@ public class PolicyUtil {
         }
     }
 
-    public static PolicyComponent getPolicyComponent(Element element) {
-
-        String xmlString;
-        ByteArrayInputStream bais;
-
+    public static PolicyComponent getPolicyComponent(org.w3c.dom.Element element) {
         if (Constants.URI_POLICY_NS.equals(element.getNamespaceURI())) {
 
             if (Constants.ELEM_POLICY.equals(element.getLocalName())) {
-                xmlString = DOM2Writer.nodeToString(element);
-                bais = new ByteArrayInputStream(xmlString.getBytes());
-
-                return PolicyEngine.getPolicy(bais);
+                return PolicyEngine.getPolicy(nodeToStream(element));
 
             } else if (Constants.ELEM_POLICY_REF.equals(element.getLocalName())) {
-                xmlString = DOM2Writer.nodeToString(element);
-                bais = new ByteArrayInputStream(xmlString.getBytes());
-
-                return PolicyEngine.getPolicyReferene(bais);
+                return PolicyEngine.getPolicyReferene(nodeToStream(element));
             }
         }
 
         throw new IllegalArgumentException(
                 "Agrument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
+    }
+
+    private static InputStream nodeToStream(org.w3c.dom.Element element) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Transformer tf;
+        try {
+            tf = TransformerFactory.newInstance().newTransformer();
+            tf.transform(new DOMSource(element), new StreamResult(baos));
+            return new ByteArrayInputStream(baos.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to process policy");
+        }
     }
 
     public static String policyComponentToString(PolicyComponent policyComponent)
