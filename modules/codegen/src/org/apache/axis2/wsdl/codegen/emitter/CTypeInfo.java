@@ -168,7 +168,7 @@ public class CTypeInfo extends Constants {
         CTypeInfo.addTypemapping(XSD_IDREFS, "axiom_node_t*");
 
         // a xsd:Duration
-        CTypeInfo.addTypemapping(XSD_DURATION, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_DURATION, "axutil_duration_t*");
 
         // a xsd:anyURI
         CTypeInfo.addTypemapping(XSD_ANYURI,
