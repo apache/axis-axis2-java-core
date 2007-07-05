@@ -1471,7 +1471,7 @@
                         </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
-                                <xsl:if test="not($simple)">
+                             <xsl:if test="not($simple)">
                                     namespace = "<xsl:value-of select="$namespace"/>";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -1494,14 +1494,12 @@
                              <xsl:choose>
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
-
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
                                         org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                                         <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
                                     }
-
                                  </xsl:when>
                                  <xsl:otherwise>
                                     <xsl:if test="not(@primitive)">
@@ -1687,6 +1685,14 @@
                                             <xsl:when test="$propertyType='java.lang.String'">
                                                        xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>);
                                             </xsl:when>
+                                            <xsl:when test="property/@binary">
+                                                    <!-- Handling the null byte array -->
+                                                if (<xsl:value-of select="$varName"/>!=null)
+                                                {
+                                                    org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                                    <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                                }
+                                             </xsl:when>
                                             <xsl:otherwise>
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                             </xsl:otherwise>

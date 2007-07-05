@@ -43,5 +43,6 @@
         </xs:complexType>
         <xs:element name="TestBase64Binary" type="xmime:base64Binary"></xs:element>
         <xs:element name="TestHexBinary" type="xmime:hexBinary"></xs:element>
+        <xs:element name="ByteArray" nillable="true" type="xs:base64Binary"/>
 
 </xs:schema>

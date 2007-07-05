@@ -404,7 +404,6 @@ public class SchemaCompiler {
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
 
-
         BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
         if (schemaType != null && schemaType.getName() != null) {
             //this is a named type
@@ -422,7 +421,10 @@ public class SchemaCompiler {
                         qName,
                         className);
             }
-
+            if (isBinary(xsElt)) {
+                metainf.addtStatus(xsElt.getQName(),
+                            SchemaConstants.BINARY_TYPE);
+            }
 
         } else if (xsElt.getRefName() != null) {
             // Since top level elements would not have references
@@ -599,6 +601,7 @@ public class SchemaCompiler {
                     }
                 }
             } else {
+                // set the binary status of this element
                 this.processedElementList.add(xsElt.getQName());
             }
             //referenced name
