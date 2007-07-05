@@ -19,23 +19,30 @@
 package org.apache.ws.java2wsdl;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.description.java2wsdl.*;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2WSDL11;
 import org.apache.axis2.description.AxisService2WSDL20;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
+import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLPrettyPrinter;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.util.Utils;
 
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Java2WSDLBuilder implements Java2WSDLConstants {
 
@@ -66,6 +73,20 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String wsdlVersion = WSDL_VERSION_1;
     private String schemaGenClassName = null;
     private boolean generateDocLitBare =false;
+    private AxisConfiguration axisConfig;
+
+    public Java2WSDLBuilder() {
+        try {
+            ConfigurationContext configCtx = ConfigurationContextFactory.createDefaultConfigurationContext();
+            axisConfig = configCtx.getAxisConfiguration();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Java2WSDLBuilder(AxisConfiguration axisConfig) {
+        this.axisConfig = axisConfig;
+    }
 
     public String getSchemaTargetNamespace() throws Exception {
         if ( schemaTargetNamespace == null ) {
@@ -198,12 +219,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         messageReciverMap.put(
                 WSDL2Constants.MEP_URI_IN_OUT,
                 inOutmessageReceiver);
-        ConfigurationContext configCtx = ConfigurationContextFactory.createDefaultConfigurationContext();
         AxisService service  = new AxisService ();
         schemaGenerator.setAxisService(service);
         AxisService axisService = AxisService.createService(className,
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                configCtx.getAxisConfiguration(),
+                axisConfig,
                 messageReciverMap,
                 targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className, classLoader, resolveNSGen()).toString() : targetNamespace,
                 classLoader,
@@ -217,7 +237,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
             uri = DEFAULT_LOCATION_URL + (serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName);
         }
         axisService.setEPRs(new String[]{uri});
-        configCtx.getAxisConfiguration().addService(axisService);
+        axisConfig.addService(axisService);
 
         if (WSDL_VERSION_1.equals(wsdlVersion)) {
             AxisService2WSDL11 g = new AxisService2WSDL11(axisService);
