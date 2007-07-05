@@ -110,14 +110,21 @@ public class HTTPTransportUtils {
 //        }
 
         boolean enableMTOM = false;
+        Object enableMTOMObject=null;
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_MTOM);
         if (parameter != null) {
-            enableMTOM = JavaUtils.isTrueExplicitly(
-                    parameter.getValue());
+            enableMTOMObject = parameter.getValue();
         }
         Object property = msgContext.getProperty(Constants.Configuration.ENABLE_MTOM);
         if (property != null) {
-            enableMTOM = JavaUtils.isTrueExplicitly(property);
+            enableMTOMObject = property;
+        }
+        enableMTOM = JavaUtils.isTrueExplicitly(enableMTOMObject);
+        //Handle the optional value for enableMTOM
+        if(!enableMTOM && msgContext.isDoingMTOM() && (enableMTOMObject instanceof String)){
+            if (((String)enableMTOMObject).equalsIgnoreCase(Constants.VALUE_OPTIONAL)){
+                enableMTOM=true;
+            }
         }
         return enableMTOM;
     }

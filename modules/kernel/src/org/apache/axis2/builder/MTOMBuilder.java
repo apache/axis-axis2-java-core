@@ -59,6 +59,7 @@ public class MTOMBuilder implements Builder {
                     .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
             BuilderUtil.validateCharSetEncoding(charSetEncoding, builder.getDocument()
                     .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
+            messageContext.setDoingMTOM(true);
             return envelope;
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
