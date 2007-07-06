@@ -130,7 +130,7 @@
         <stax.impl.version>3.2.1</stax.impl.version>
         <stax_utils.version>20060915</stax_utils.version>
         <tomcat.version>6.0.10</tomcat.version>
-        <woden.version>1.0-incubating-M7a</woden.version>
+        <woden.version>1.0-incubating-SNAPSHOT</woden.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
         <xbean.version>2.2.0</xbean.version>
