@@ -258,7 +258,12 @@ public class Utils {
         char delimiter = '-';
         int version_index = moduleName.lastIndexOf(delimiter);
         if (version_index > 0) {
-            return moduleName.substring(0, version_index);
+            String versionString  = getModuleVersion(moduleName);
+            if (versionString ==  null) {
+                return moduleName;
+            } else {
+              return  moduleName.substring(0, version_index);
+            }
         } else {
             return moduleName;
         }
@@ -268,7 +273,13 @@ public class Utils {
         char version_seperator = '-';
         int version_index = moduleName.lastIndexOf(version_seperator);
         if (version_index > 0) {
-            return moduleName.substring(version_index + 1, moduleName.length());
+            String versionString = moduleName.substring(version_index + 1, moduleName.length());
+            try {
+                Float.parseFloat(versionString);
+                return versionString;
+            } catch (NumberFormatException e) {
+                return null;
+            }
         } else {
             return null;
         }
@@ -333,7 +344,7 @@ public class Utils {
                 if (axisModule.getVersion() == null ) {
                     moduleNameString = getModuleName(moduleName);
                     moduleVersionString = getModuleVersion(moduleName);
-                    if (moduleVersionString!=null) {
+                    if (moduleVersionString != null) {
                         try {
                             Float.valueOf(moduleVersionString);
                             axisModule.setVersion(moduleVersionString);
