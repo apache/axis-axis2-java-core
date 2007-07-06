@@ -41,7 +41,7 @@ public class WeatherRPCClient {
         options.setTo(targetEPR);
 
         // Setting the weather
-        QName opSetWeather = new QName("http://service.pojo.sample/xsd", "setWeather");
+        QName opSetWeather = new QName("http://service.pojo.sample", "setWeather");
 
         Weather w = new Weather();
 
@@ -56,7 +56,7 @@ public class WeatherRPCClient {
 
 
         // Getting the weather
-        QName opGetWeather = new QName("http://service.pojo.sample/xsd", "getWeather");
+        QName opGetWeather = new QName("http://service.pojo.sample", "getWeather");
 
         Object[] opGetWeatherArgs = new Object[] { };
         Class[] returnTypes = new Class[] { Weather.class };
