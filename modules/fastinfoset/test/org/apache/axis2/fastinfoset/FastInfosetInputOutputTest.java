@@ -53,7 +53,7 @@ public class FastInfosetInputOutputTest extends XMLTestCase {
      * Then the initial XML file and the last XML will be compared to see whether they are the same.
      */
     public void testInputOutput() throws Exception {
-        String inputFile = "maven.xml";
+        String inputFile = "pom.xml";
         File outputFile = new File("output.xml");
         File tempFile = new File("test.bin");
 
