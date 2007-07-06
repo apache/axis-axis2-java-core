@@ -88,6 +88,7 @@
             <arg line="-uri ${wsdl.uri}"/>
             <arg line="-ss"/>
             <arg line="-sd"/>
+            <arg line="-ap"/>
             <arg line="-p samples.databinding"/>
             <arg line="-d none"/>
             <arg line="-o ${service.target}"/>
@@ -139,6 +140,7 @@
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true" classpathref="axis2.classpath">
             <arg line="-uri ${wsdl.uri}"/>
             <arg line="-u"/>
+            <arg line="-ap"/>
             <arg line="-p samples.databinding"/>
             <arg line="-d none"/>
             <arg line="-t"/>
