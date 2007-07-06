@@ -833,6 +833,11 @@
             <artifactId>xmlunit</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+
     </dependencies>
     <distributionManagement>
         <repository>
