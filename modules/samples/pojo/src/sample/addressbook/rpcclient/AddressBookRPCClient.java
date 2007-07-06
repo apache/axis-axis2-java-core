@@ -48,7 +48,7 @@ public class AddressBookRPCClient {
          */
 
         // QName of the target method 
-        QName opAddEntry = new QName("http://service.addressbook.sample/xsd", "addEntry");
+        QName opAddEntry = new QName("http://service.addressbook.sample", "addEntry");
 
         /*
          * Constructing a new Entry
@@ -77,7 +77,7 @@ public class AddressBookRPCClient {
          */
         
         // QName of the method to invoke 
-        QName opFindEntry = new QName("http://service.addressbook.sample/xsd", "findEntry");
+        QName opFindEntry = new QName("http://service.addressbook.sample", "findEntry");
 
         //
         String name = "Abby Cadabby";
