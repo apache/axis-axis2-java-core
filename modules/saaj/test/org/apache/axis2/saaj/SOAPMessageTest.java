@@ -18,8 +18,18 @@
  */
 package org.apache.axis2.saaj;
 
+import junit.extensions.TestSetup;
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.saaj.integration.EchoService;
+import org.apache.axis2.saaj.integration.IntegrationTest;
+import org.apache.axis2.saaj.integration.UtilServer;
 import org.apache.axis2.saaj.util.SAAJDataSource;
+import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -55,9 +65,50 @@ import java.util.Iterator;
 public class SOAPMessageTest extends TestCase {
     private SOAPMessage msg;
 
+//    static int port;
+//    public static final QName SERVICE_NAME = new QName("Echo");
+//    public static final QName OPERATION_NAME = new QName("echo");
+//
+//    public static final String SAAJ_REPO =
+//            System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
+//
+//    public SOAPMessageTest(String name) {
+//        super(name);
+//    }
+//
+//    protected static String getAddress() {
+//        return "http://127.0.0.1:" +
+//                port +
+//                "/axis2/services/Echo";
+//    }
+//    
+//    public static Test suite() {
+//        return new TestSetup(new TestSuite(IntegrationTest.class)) {
+//            public void setUp() throws Exception {
+//                port = UtilServer.start(SAAJ_REPO);
+//                Parameter eneblemtom = new Parameter("enableMTOM", "true");
+//                UtilServer.getConfigurationContext().getAxisConfiguration()
+//                        .addParameter(eneblemtom);
+//            }
+//
+//            public void tearDown() throws Exception {
+//                UtilServer.stop();
+//            }
+//        };
+//    }
+
     protected void setUp() throws Exception {
+//        final AxisService service = Utils.createSimpleService(SERVICE_NAME,
+//                                                              EchoService.class.getName(),
+//                                                              OPERATION_NAME);
+//        UtilServer.deployService(service);
         msg = MessageFactory.newInstance().createMessage();
     }
+
+//    protected void tearDown() throws Exception {
+//        UtilServer.unDeployService(SERVICE_NAME);
+//        UtilServer.unDeployClientService();
+//    }
 
     public void testSaveRequired() {
         try {

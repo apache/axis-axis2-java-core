@@ -578,18 +578,15 @@ public class SOAPFaultTest extends TestCase {
             SOAPBody body = envelope.getBody();
             SOAPFault soapFault = body.addFault();
             soapFault.addFaultReasonText("myReason", new Locale("en"));
-            System.out.println("Adding second text");
             soapFault.addFaultReasonText("de-myReason", new Locale("de"));
             soapFault.addFaultReasonText("si-myReason", new Locale("si"));
             soapMessage.saveChanges();
 
             String faultReasonText = soapFault.getFaultReasonText(new Locale("si"));
-            System.out.println(faultReasonText);
-
+            assertNotNull(faultReasonText);
             faultReasonText = soapFault.getFaultReasonText(new Locale("ja"));
-            System.out.println(faultReasonText);
-
-
+            assertNull(faultReasonText);
+            
         } catch (Exception e) {
             fail("Unexpected Exception : " + e);
         }
@@ -634,10 +631,7 @@ public class SOAPFaultTest extends TestCase {
             SOAPFault soapFault = body.addFault();
             Detail detail = soapFault.addDetail();
             detail.setAttribute("test", "myvalue");
-            System.out.println(soapFault.hasDetail());
             soapMessage.saveChanges();
-
-
         } catch (Exception e) {
             fail("Unexpected Exception : " + e);
         }
@@ -650,7 +644,7 @@ public class SOAPFaultTest extends TestCase {
             SOAPPart soapPart = soapMessage.getSOAPPart();
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault();
+            //SOAPFault sf = body.addFault();
             
             Locale expected1 = Locale.ENGLISH;
             Locale expected2 = Locale.UK;
@@ -659,11 +653,10 @@ public class SOAPFaultTest extends TestCase {
             boolean found2 = false;
             boolean found3 = false;
 
-            System.out.println("Adding FaultReasonText to SOAPFault");
+            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault1", expected1);
             sf.addFaultReasonText("Its my fault1", expected1);
             sf.addFaultReasonText("Its my fault2", expected2);
             sf.addFaultReasonText("Its my fault3", expected3);
-            System.out.println("Getting FaultReasonLocales from SOAPFault");
             Iterator i = sf.getFaultReasonLocales();
 
             int localeCount = 0;
@@ -671,7 +664,6 @@ public class SOAPFaultTest extends TestCase {
                 localeCount++;
                 i.next();
             }
-            System.out.println("Locale iterator count=" + localeCount);
 
             i = sf.getFaultReasonLocales();
             int j = 0;
@@ -922,7 +914,6 @@ public class SOAPFaultTest extends TestCase {
             SOAPMessage message = messageFactory.createMessage();
             SOAPBody body = message.getSOAPBody();
             SOAPFault fault = body.addFault();
-
             assertNotNull(fault.getFaultCodeAsQName());
             assertNotNull(fault.getFaultString());
         } catch (Exception e) {
