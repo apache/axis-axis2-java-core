@@ -188,7 +188,6 @@
                 <include>axis2-json-${version}.jar</include>
             </includes>
         </fileSet>
-        <!-- TODO jar is not being generated -->
         <fileSet>
             <directory>../../modules/tools/target</directory>
             <outputDirectory>lib</outputDirectory>
@@ -264,15 +263,6 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-xmlbeans-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- copy externel dependency libraries -->
-        <fileSet>
-            <directory>../../modules/distribution/target/bin/external-dependencies</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
             </includes>
         </fileSet>
 
@@ -393,7 +383,6 @@
                  <exclude>com.ibm.icu:icu4j:jar</exclude>
                  <exclude>org.apache.bcel:bcel:jar</exclude>	
                  <exclude>org.apache.activemq:activeio-core:jar</exclude>
-                 <exclude>org.apache.activemq:activemq-core:jar</exclude>
                  <exclude>org.apache.ant:ant:jar</exclude>
                  <exclude>org.apache.ant:ant-launcher:jar</exclude>
                  <exclude>aopalliance:aopalliance:jar</exclude>
@@ -402,14 +391,11 @@
                  <exclude>axis:axis:jar</exclude>
                  <exclude>bsf:bsf:jar</exclude>
                  <exclude>commons-beanutils:commons-beanutils:jar</exclude>
-                 <exclude>commons-codec:commons-codec:jar</exclude>
                  <exclude>commons-collections:commons-collections:jar</exclude>
                  <exclude>commons-pool:commons-pool:jar</exclude>
                  <exclude>dom4j:dom4j:jar</exclude>
                  <exclude>com.sun.xml.fastinfoset:FastInfoset:jar</exclude>
                  <exclude>activesoap:jaxp-api:jar</exclude>
-                 <exclude>org.apache.httpcomponents:httpcore-nio:jar</exclude>
-                 <exclude>org.apache.httpcomponents:httpcore-niossl:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
                  <exclude>junit:junit:jar</exclude>
                  <exclude>log4j:log4j:jar</exclude>
