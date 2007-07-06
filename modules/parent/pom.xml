@@ -821,6 +821,18 @@
             <artifactId>mail</artifactId>
             <version>1.4</version>
         </dependency>
+
+        <!-- Junit testing environment-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+        </dependency>
+
     </dependencies>
     <distributionManagement>
         <repository>

@@ -40,11 +40,6 @@
 			<version>${version}</version>
 		</dependency>
 		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.ws.jaxme</groupId>
 			<artifactId>jaxme2</artifactId>
 		</dependency>
