@@ -1,22 +1,33 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- *      
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.axis2.jaxws;
+
+import java.net.URL;
+import java.util.Hashtable;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Binding;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
@@ -35,17 +46,8 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Binding;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
     protected Map<String, Object> requestContext;
@@ -61,7 +63,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     protected String addressingNamespace;
 
     private org.apache.axis2.jaxws.spi.Binding binding = null;
-
+    private static final Log log = LogFactory.getLog(BindingProvider.class);
     public BindingProvider(ServiceDelegate svcDelegate,
                            EndpointDescription epDesc,
                            org.apache.axis2.addressing.EndpointReference epr,
@@ -95,11 +97,23 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         // JAXWS 9.2.1.1 requires that we go ahead and create the binding object
         // so we can also set the handlerchain
         binding = (org.apache.axis2.jaxws.spi.Binding) BindingUtils.createBinding(endpointDesc);
-        
+        if(log.isDebugEnabled()){
+            log.debug("Lookign for Handler Resolver");
+        }
         // TODO should we allow the ServiceDelegate to figure out the default handlerresolver?  Probably yes, since a client app may look for one there.
-        HandlerResolver handlerResolver =
-            serviceDelegate.getHandlerResolver() != null ? serviceDelegate.getHandlerResolver()
-                    : new HandlerResolverImpl(endpointDesc);
+        HandlerResolver handlerResolver = null;
+        if(serviceDelegate.getHandlerResolver() != null){
+            if(log.isDebugEnabled()){
+                log.debug("Reading default Handler Resolver ");
+            }
+            handlerResolver= serviceDelegate.getHandlerResolver();
+        }
+        else{
+            handlerResolver = new HandlerResolverImpl(endpointDesc.getServiceDescription());
+            if(log.isDebugEnabled()){
+                log.debug("Creating new Handler Resolver using HandlerResolverImpl");
+            }
+        }
         binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         
         binding.setWebServiceFeatures(features);

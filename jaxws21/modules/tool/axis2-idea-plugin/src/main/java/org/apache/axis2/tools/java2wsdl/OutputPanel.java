@@ -1,264 +1,264 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.tools.java2wsdl;
 
 import org.apache.axis2.tools.bean.WsdlgenBean;
+import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
+
 import javax.swing.*;
-import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener ;
-import java.awt.event.MouseEvent ;
 import java.awt.*;
 import java.io.File;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.module.Module;
 
-public class OutputPanel extends JPanel implements ActionListener,MouseListener  {
+/** this class java 2 wsdl output wizard panel   */
+public class OutputPanel extends WizardPanel {
 
-    JLabel lblTitle;
-    JLabel lblLocation;
-    JLabel lblFileName;
-
-    JRadioButton rbtnAdd;
-    JRadioButton rbtnSave;
-
-    JTextField txtLocation;
-    JTextField txtFileName;
-
-    JButton btnBrowes;
-
+    private JRadioButton rbtnAdd;
+    private JRadioButton rbtnSave;
+    private JComboBox cmbCurrentProject;
+    private JComboBox cmbModuleSrc;
+    private JTextField txtLocation;
+    private JTextField txtFileName;
+    private JButton btnBrowes;
     final JFileChooser DirChooser=new JFileChooser();
+    private Project project;
     private WsdlgenBean wsdlgenBean;
-    private Java2WSDLFrame java2WSDLFrame;
 
-    public OutputPanel(Java2WSDLFrame java2WSDLFrame,WsdlgenBean wsdlgenBean){
-
+    /**
+     * Constructor
+     * @param wizardComponents
+     * @param wsdlgenBean
+     * @param project
+     */
+    public OutputPanel(WizardComponents wizardComponents,WsdlgenBean wsdlgenBean, Project project){
+        super(wizardComponents, "Option  was choosed");
+        setPanelTopTitle("WSDl file output location");
+        setPanelBottomTitle("Select the location for the generated WSDL");
         this.wsdlgenBean=wsdlgenBean;
-        this.java2WSDLFrame=java2WSDLFrame;
-        OutputLayout customLayout=new OutputLayout();
-        setLayout(customLayout);
+        this.project=project;
+        init();
+    }
+    private void init(){
 
-        setFont(new Font("Helvetica", Font.PLAIN, 12));
+        rbtnAdd =new JRadioButton("Browes and Add the WSDL to a project on current Idea workspace",false);
 
-        // Add label and textfield
-        lblTitle =new JLabel("Select the location where to put the output");
-        add(lblTitle );
+        rbtnSave =new JRadioButton("Browes and Save the WSDL file on local file system",true);
 
-        rbtnAdd =new JRadioButton("Browes and Add the WSDL to a project on current workspace");
-        add(rbtnAdd );
-        rbtnAdd .setSelected(false);
-        rbtnAdd .addActionListener(this);
-
-
-        rbtnSave =new JRadioButton("Browes and Save the WSDL file on local filesystem ");
-        add(rbtnSave );
-        rbtnSave .addActionListener(this);
-        rbtnSave .setSelected(true);
-
-
-
-        lblLocation =new JLabel("OutPut Location");
-        add(lblLocation );
-
-        txtLocation =new JTextField();
-        add(txtLocation );
-        txtLocation .setEnabled(true);
-        txtLocation .addActionListener(this);
-        txtLocation.addMouseListener(this);
-
-
-        btnBrowes=new JButton("Browse...");
-        add(btnBrowes);
-        btnBrowes.setEnabled(true);
-        btnBrowes.addActionListener(this);
-
-
-        lblFileName =new JLabel("OutPut File Name");
-        add(lblFileName );
+        cmbCurrentProject =new JComboBox();
+        cmbCurrentProject.setEnabled(false);
+        cmbModuleSrc=new JComboBox();
+        cmbModuleSrc.setEnabled(false);
+        ButtonGroup  buttonGroup= new  ButtonGroup();
+        buttonGroup.add(rbtnAdd );
+        buttonGroup.add(rbtnSave );
 
         txtFileName =new JTextField();
-        add(txtFileName );
-        txtFileName .setEnabled(true);
-        txtFileName .addActionListener(this);
-        txtFileName .addMouseListener(this);
 
+        txtLocation=new JTextField();
 
-        setSize(getPreferredSize());
+        btnBrowes=new JButton("Browse..");
 
+        setBackButtonEnabled(true);
+        setNextButtonEnabled(false);
+        setFinishButtonEnabled(false);
+        this.setLayout(new GridBagLayout());
 
-    }
-    protected void initializeDefaultSettings() {
+        this.add(new JLabel("Select the location where to put the output")
+        , new GridBagConstraints(0, 0, GridBagConstraints.REMAINDER, 1,  0.0, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0, 10), 0, 0));
 
-        txtLocation.setText(wsdlgenBean.getOutputLocation() );
-        txtFileName.setText(wsdlgenBean.getOutputWSDLName());
-
-    }
-    public void setOutput(){
-
-        wsdlgenBean.setOutputLocation(txtLocation .getText() );
-        wsdlgenBean.setOutputWSDLName(txtFileName .getText() );
-
-    }
-
-    public void actionPerformed(ActionEvent e){
-        Object obj=e.getSource();
-        if(obj==btnBrowes) {
-            DirChooser .setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            int returnVal = DirChooser.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                DirChooser.setFileSelectionMode(JFileChooser .FILES_ONLY );
-                File newfile = DirChooser.getSelectedFile();
-                BottomPanel.setEnable(true,false, true, true);
-                txtLocation.setText(newfile.getAbsolutePath());
+        this.add(rbtnAdd
+        , new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 0.0, 0.0
+        , GridBagConstraints.WEST , GridBagConstraints.NONE
+        , new Insets(5, 10, 0,10), 0, 0));
+        rbtnAdd.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                loadCmbCurrentProject();
+                cmbCurrentProject.setEnabled(true);
+                cmbModuleSrc.setEnabled(true);
+                txtLocation.setEnabled(false);
+                btnBrowes.setEnabled(false);
+               setFinishButtonEnabled(true);
+                update();
             }
-        } else if(obj == rbtnAdd ) {
-            rbtnSave .setSelected(false);
-            txtLocation .setEnabled(false);
-            btnBrowes.setEnabled(false);
-            txtFileName .setEnabled(false);
-            BottomPanel.setEnable(true,false, true, true);
-            wsdlgenBean.setOutputLocation(java2WSDLFrame .getActiveProject().getProjectFilePath() );
-            wsdlgenBean.setOutputWSDLName("Services.wsdl" );            
-        }else if(obj == rbtnSave ) {
-            rbtnAdd .setSelected(false);
-            txtLocation .setEnabled(true);
-            btnBrowes.setEnabled(true);
-            txtFileName .setEnabled(true);
+        });
 
-        } else if(obj ==txtFileName ){
-            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtFileName.getText().trim());
+         this.add(new JLabel("Select the Module")
+        , new GridBagConstraints(0, 2, 1, 1,  0.1, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0, 0), 0, 0));
+
+        this.add(cmbCurrentProject
+        , new GridBagConstraints(1, 2, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
+        , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
+        , new Insets(5, 10, 0,0), 0, 0));
+        cmbCurrentProject.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                loadcmbModuleSrcProject();
+                update();
             }
-        } else if(obj ==txtLocation ){
-            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtLocation.getText().trim());
+        });
+         this.add(new JLabel("Select the Directory")
+        , new GridBagConstraints(0, 3, 1, 1,  0.1, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0, 0), 0, 0));
+
+        this.add(cmbModuleSrc
+        , new GridBagConstraints(1, 3, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
+        , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
+        , new Insets(5, 10, 0,0), 0, 0));
+        cmbModuleSrc.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                update();
             }
+        });
+
+        this.add(rbtnSave
+        , new GridBagConstraints(0, 4, GridBagConstraints.REMAINDER, 1, 0.0, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0,0), 0, 0));
+        rbtnSave.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                cmbCurrentProject.setEnabled(false);
+                cmbModuleSrc.setEnabled(false);
+                txtLocation.setEnabled(true);
+                btnBrowes.setEnabled(true);
+                update();
+            }
+        });
+        this.add(new JLabel("OutPut Location")
+        , new GridBagConstraints(0, 5, 1, 1, 0.1, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0,0), 0, 0));
+
+         this.add(txtLocation
+        , new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0
+        , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+        , new Insets(5, 10, 0, 0), 0, 0));
+
+         this.add(btnBrowes
+        , new GridBagConstraints(2, 5, 1, 1, 0.1, 0.0
+        , GridBagConstraints.CENTER  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0, 10), 0, 0));
+
+        btnBrowes.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                DirChooser .setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnVal = DirChooser.showOpenDialog(btnBrowes );
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    DirChooser.setFileSelectionMode(JFileChooser .FILES_ONLY );
+                    File newfile = DirChooser.getSelectedFile();
+                    txtLocation.setText(newfile.getAbsolutePath() );
+                }
+                update();
+            }
+        });
+
+         this.add(new JLabel("OutPut File Name")
+        , new GridBagConstraints(0, 6, 1, 1, 0.1, 1.0
+        , GridBagConstraints.NORTHWEST  , GridBagConstraints.NONE
+        , new Insets(5, 10, 0, 0), 0, 0));
+
+         this.add(txtFileName
+        , new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0
+        , GridBagConstraints.NORTHWEST  , GridBagConstraints.HORIZONTAL
+        , new Insets(5, 10, 0, 0), 0, 0));
+
+        wsdlgenBean.setProject(project);
+    }
+
+    public void loadCmbCurrentProject() {
+        Module modules[] = wsdlgenBean.getModules();
+
+        if (modules != null) {
+            for (int count = 0; count < modules.length; count++) {
+                cmbCurrentProject.addItem(modules[count].getName());
+            }
+        }else{
+            rbtnAdd.setEnabled(false);
+      }
+    }
+     public void loadcmbModuleSrcProject() {
+        String module = null;
+        module = (String) cmbCurrentProject.getSelectedItem();
+        cmbModuleSrc.removeAllItems();
+        int count = 0;
+        if (module != null) {
+            String src[] = wsdlgenBean.getModuleSrc(module);
+            for ( count = 0; count < src.length; count++) {
+                cmbModuleSrc.addItem(src[count]);
+            }
+            count = src.length;
+        }else{
+            rbtnAdd.setEnabled(false);
+            cmbCurrentProject.setEnabled(false);
+            cmbModuleSrc.setEnabled(false);
         }
+
+
     }
-    public void mouseClicked(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtFileName ){
-            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtFileName.getText().trim());
-            }
-        }  else if(obj ==txtLocation ){
-            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtLocation.getText().trim());
-            }
-        }
+     public void back() {
+          switchPanel(CodegenFrame.PANEL_OPTION_B );
     }
 
-    public void mouseEntered(MouseEvent e) {
+    public void next() {
+
     }
 
-    public void mouseExited(MouseEvent e) {
-        Object obj = e.getSource();
-         if(obj ==txtFileName ){
-            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtFileName.getText().trim());
-            }
-        }  else if(obj ==txtLocation ){
-            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtLocation.getText().trim());
-            }
+    public void update(){
+        if(rbtnSave.isSelected()){
+            if(txtFileName.getText() !=null && txtLocation.getText() !=null) {
+                wsdlgenBean.setOutputWSDLName(txtFileName.getText());
+                wsdlgenBean.setOutputLocation(txtLocation.getText());
+                setFinishButtonEnabled(true);
+            }else if(txtLocation.getText() !=null){
+                wsdlgenBean.setOutputLocation(txtLocation.getText());
+                setFinishButtonEnabled(false);
+            }else if(txtFileName.getText() !=null){
+                wsdlgenBean.setOutputWSDLName(txtFileName .getText());
+                setFinishButtonEnabled(false);
+            } else
+                setFinishButtonEnabled(false);
+        }else if(rbtnAdd.isSelected()){
+            if(txtFileName.getText() !=null && cmbModuleSrc.getSelectedItem() !=null){
+                wsdlgenBean.setOutputWSDLName(txtFileName.getText());
+                wsdlgenBean.setOutputLocation(cmbModuleSrc.getSelectedItem().toString());
+                setFinishButtonEnabled(true);
+            }else if(txtFileName .getText() !=null){
+                wsdlgenBean.setOutputWSDLName(txtFileName .getText());
+                setFinishButtonEnabled(false);
+            }else
+                setFinishButtonEnabled(false);
         }
-    }
+        setBackButtonEnabled(true);
+        setNextButtonEnabled(false);
 
-    public void mousePressed(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtFileName ){
-            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtFileName.getText().trim());
-            }
-        }  else if(obj ==txtLocation ){
-            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtLocation.getText().trim());
-            }
-        }
     }
-
-    public void mouseReleased(MouseEvent e) {
-        Object obj = e.getSource();
-        if(obj ==txtFileName ){
-            if (txtFileName .getText() != null && !txtFileName.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtFileName.getText().trim());
-            }
-        } else if(obj ==txtLocation ){
-            if (txtLocation .getText() != null && !txtLocation.getText().trim().equals("")) {
-                BottomPanel.setEnable(true,false, true, true);
-                wsdlgenBean.setServiceName(txtLocation.getText().trim());
-            }
-        }
+     public  int getPageType() {
+        return  WizardPanel.JAVA_2_WSDL_TYPE;
     }
 }
-
-
-class OutputLayout implements LayoutManager{
-
-    public OutputLayout (){
-
-    }
-
-    public void addLayoutComponent(String name, Component comp) {
-    }
-    public void removeLayoutComponent(Component comp) {
-    }
-    public Dimension preferredLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-
-        Insets insets = parent.getInsets();
-        dim.width = 400 + insets.left + insets.right;
-        dim.height = 400 + insets.top + insets.bottom;
-
-        return dim;
-    }
-    public Dimension minimumLayoutSize(Container parent) {
-        return new Dimension(0, 0);
-    }
-
-    public void layoutContainer(Container parent){
-        Insets insets = parent.getInsets();
-
-        Component c;
-
-        c = parent.getComponent(0);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 10, 400, 24);
-        }
-        c = parent.getComponent(1);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 40, 400, 24);
-        }
-        c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 70, 400, 24);
-        }
-        c = parent.getComponent(3);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 110, 100, 24);
-        }
-        c = parent.getComponent(4);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 130, insets.top + 110, 290, 24);
-        }
-        c = parent.getComponent(5);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 420, insets.top + 110, 80, 24);
-        }
-        c = parent.getComponent(6);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 150, 100, 24);
-        }
-        c = parent.getComponent(7);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 130, insets.top + 150, 290, 24);
-        }
-    }
-}
+ 

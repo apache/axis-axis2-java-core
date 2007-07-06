@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 
 package org.apache.axis2;
@@ -107,6 +110,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Field TRANSPORT_HTTP
      */
     public static final String TRANSPORT_HTTP = "http";
+    public static final String TRANSPORT_HTTPS = "https";
 
     //Parameter name of Service impl class
     public static final String SERVICE_CLASS = "ServiceClass";
@@ -190,6 +194,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String FAULT_ACTION_NAME = "faultName";
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
+    public static final String VALUE_OPTIONAL = "optional";
     public static final String TESTING_PATH = "target/test-resources/";
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';

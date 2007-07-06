@@ -1,3 +1,21 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
@@ -86,6 +104,13 @@
 
             </xsl:otherwise>
         </xsl:choose>
+
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
+                return "<xsl:value-of select="$nsprefix"/>";
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+        }
 
         <xsl:if test="$choice or (count(property[@innerchoice='yes']) > 0)">
             /** Whenever a new property is set ensure all others are unset
@@ -723,7 +748,7 @@
                     java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                     if (prefix == null) {
-                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                        prefix = generatePrefix(namespace);
 
                         xmlWriter.writeStartElement(prefix, localName, namespace);
                         xmlWriter.writeNamespace(prefix, namespace);
@@ -779,7 +804,7 @@
                     java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                     if (prefix == null) {
-                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                        prefix = generatePrefix(namespace);
 
                         xmlWriter.writeStartElement(prefix, localName, namespace);
                         xmlWriter.writeNamespace(prefix, namespace);
@@ -824,7 +849,7 @@
                             xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
                         } else {
                             if (prefix == null) {
-                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                prefix = generatePrefix(namespace);
                             }
 
                             xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
@@ -971,7 +996,7 @@
                                             java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                             if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix2 = generatePrefix(namespace2);
 
                                                 xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                 xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1052,7 +1077,7 @@
                                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                                 if (prefix2 == null) {
-                                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                                    prefix2 = generatePrefix(namespace2);
 
                                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1089,7 +1114,7 @@
                                                     java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                     if (prefix2 == null) {
-                                                        prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                        prefix2 = generatePrefix(namespace2);
 
                                                         xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                         xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1128,7 +1153,7 @@
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1152,7 +1177,7 @@
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1188,7 +1213,7 @@
                                             java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                             if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix2 = generatePrefix(namespace2);
 
                                                 xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                 xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1223,7 +1248,7 @@
                                     java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                     if (prefix2 == null) {
-                                        prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                        prefix2 = generatePrefix(namespace2);
 
                                         xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                         xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1247,7 +1272,7 @@
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1310,7 +1335,7 @@
                                         </xsl:if>
                                                 if (!emptyNamespace) {
                                                     if (prefix == null) {
-                                                        java.lang.String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                        java.lang.String prefix2 = generatePrefix(namespace);
 
                                                         xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
                                                         xmlWriter.writeNamespace(prefix2, namespace);
@@ -1349,7 +1374,7 @@
                                                                 prefix = xmlWriter.getPrefix(namespace);
 
                                                                 if (prefix == null) {
-                                                                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                                    prefix = generatePrefix(namespace);
 
                                                                     xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
                                                                     xmlWriter.writeNamespace(prefix, namespace);
@@ -1386,7 +1411,7 @@
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -1446,13 +1471,13 @@
                         </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
-                                <xsl:if test="not($simple)">
+                             <xsl:if test="not($simple)">
                                     namespace = "<xsl:value-of select="$namespace"/>";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
 
                                         if (prefix == null) {
-                                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                            prefix = generatePrefix(namespace);
 
                                             xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
@@ -1469,14 +1494,12 @@
                              <xsl:choose>
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
-
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
                                         org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                                         <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
                                     }
-
                                  </xsl:when>
                                  <xsl:otherwise>
                                     <xsl:if test="not(@primitive)">
@@ -1584,7 +1607,7 @@
                                             java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                                             if (prefix == null) {
-                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix = generatePrefix(namespace);
 
                                                 xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
                                                 xmlWriter.writeNamespace(prefix, namespace);
@@ -1627,7 +1650,7 @@
                                 java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                                 if (prefix == null) {
-                                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                    prefix = generatePrefix(namespace);
 
                                     xmlWriter.writeStartElement(prefix, localName, namespace);
                                     xmlWriter.writeNamespace(prefix, namespace);
@@ -1662,6 +1685,14 @@
                                             <xsl:when test="$propertyType='java.lang.String'">
                                                        xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>);
                                             </xsl:when>
+                                            <xsl:when test="property/@binary">
+                                                    <!-- Handling the null byte array -->
+                                                if (<xsl:value-of select="$varName"/>!=null)
+                                                {
+                                                    org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                                                    <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                                }
+                                             </xsl:when>
                                             <xsl:otherwise>
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                             </xsl:otherwise>
@@ -1782,7 +1813,7 @@
             if (namespaceURI != null) {
                 java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
                 if (prefix == null) {
-                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                    prefix = generatePrefix(namespaceURI);
                     xmlWriter.writeNamespace(prefix, namespaceURI);
                     xmlWriter.setPrefix(prefix,namespaceURI);
                 }
@@ -1817,7 +1848,7 @@
                     if (namespaceURI != null) {
                         prefix = xmlWriter.getPrefix(namespaceURI);
                         if ((prefix == null) || (prefix.length() == 0)) {
-                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                            prefix = generatePrefix(namespaceURI);
                             xmlWriter.writeNamespace(prefix, namespaceURI);
                             xmlWriter.setPrefix(prefix,namespaceURI);
                         }
@@ -1844,7 +1875,7 @@
                 java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                 if (prefix == null) {
-                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                    prefix = generatePrefix(namespace);
 
                     while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
                         prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -3470,6 +3501,13 @@
             </xsl:otherwise>
         </xsl:choose>
 
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
+                return "<xsl:value-of select="$nsprefix"/>";
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+        }
+
         <xsl:if test="$choice">
             /** Whenever a new property is set ensure all others are unset
              *  There can be only one choice and the last one wins
@@ -3924,6 +3962,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
      <xsl:variable name="fullyQualifiedName"><xsl:value-of select="$package"/>.<xsl:value-of select="$name"/></xsl:variable>
      <xsl:variable name="fullyQualifiedHelperName"><xsl:value-of select="$package"/>.<xsl:value-of select="$helpername"/></xsl:variable>
 
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals(<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getNamespaceURI())){
+                return <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getPrefix();
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+        }
+
         /**
             * isReaderMTOMAware
             * @return true if the reader supports MTOM
@@ -3999,7 +4044,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                         xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
                     } else {
                         if (prefix == null) {
-                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                            prefix = generatePrefix(namespace);
                         }
 
                         xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
@@ -4083,7 +4128,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                             if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix2 = generatePrefix(namespace2);
 
                                                 xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                 xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4133,7 +4178,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                         java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                         if (prefix2 == null) {
-                                                            prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                            prefix2 = generatePrefix(namespace2);
 
                                                             xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                             xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4170,7 +4215,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                             if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix2 = generatePrefix(namespace2);
 
                                                 xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                 xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4206,7 +4251,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4230,7 +4275,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4266,7 +4311,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                             if (prefix2 == null) {
-                                                prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix2 = generatePrefix(namespace2);
 
                                                 xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                 xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4301,7 +4346,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                     if (prefix2 == null) {
-                                        prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                        prefix2 = generatePrefix(namespace2);
 
                                         xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                         xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4325,7 +4370,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4361,7 +4406,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         <xsl:if test="@primitive">
                                             if (!emptyNamespace) {
                                                 if (prefix == null) {
-                                                    java.lang.String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    java.lang.String prefix2 = generatePrefix(namespace);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
                                                     xmlWriter.writeNamespace(prefix2, namespace);
@@ -4382,7 +4427,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             if (<xsl:value-of select="$varName"/>[i] != null){
                                                 if (!emptyNamespace) {
                                                     if (prefix == null) {
-                                                        java.lang.String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                        java.lang.String prefix2 = generatePrefix(namespace);
 
                                                         xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
                                                         xmlWriter.writeNamespace(prefix2, namespace);
@@ -4414,7 +4459,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                             prefix = xmlWriter.getPrefix(namespace);
 
                                                             if (prefix == null) {
-                                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                                prefix = generatePrefix(namespace);
 
                                                                 xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
                                                                 xmlWriter.writeNamespace(prefix, namespace);
@@ -4451,7 +4496,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
                                                 if (prefix2 == null) {
-                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    prefix2 = generatePrefix(namespace2);
 
                                                     xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
                                                     xmlWriter.writeNamespace(prefix2, namespace2);
@@ -4517,7 +4562,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         prefix = xmlWriter.getPrefix(namespace);
 
                                         if (prefix == null) {
-                                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                            prefix = generatePrefix(namespace);
 
                                             xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
                                             xmlWriter.writeNamespace(prefix, namespace);
@@ -4564,7 +4609,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                         if(namespaceURI !=null){
                                                            prefix = <xsl:value-of select="$varName"/>.getPrefix();
                                                            if (prefix == null) {
-                                                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                            prefix = generatePrefix(namespaceURI);
                                                           }
                                                          xmlWriter.writeNamespace(prefix,namespaceURI );
                                                          xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
@@ -4623,7 +4668,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                                             if (prefix == null) {
-                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                prefix = generatePrefix(namespace);
 
                                                 xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
                                                 xmlWriter.writeNamespace(prefix, namespace);
@@ -4670,7 +4715,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                                 if (prefix == null) {
-                                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                    prefix = generatePrefix(namespace);
 
                                     xmlWriter.writeStartElement(prefix, localName, namespace);
                                     xmlWriter.writeNamespace(prefix, namespace);

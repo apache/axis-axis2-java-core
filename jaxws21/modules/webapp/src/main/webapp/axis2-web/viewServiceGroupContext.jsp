@@ -5,63 +5,49 @@
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
- /*
-  * Copyright 2004,2005 The Apache Software Foundation.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  *
-  */
-%>
+<%--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Runing Context hierachy</h1>
 <%
-    ConfigurationContext configContext = (ConfigurationContext)request.getSession().getAttribute(Constants.CONFIG_CONTEXT);
-    Hashtable serviceGroupContextsMap = configContext.getServiceGroupContexts();
-    String type = request.getParameter("TYPE");
-    String sgID = request.getParameter("ID");
-    ServiceGroupContext sgContext = (ServiceGroupContext)serviceGroupContextsMap.get(sgID);
-    if(sgID !=null && sgContext !=null){
-        if(type != null){
-            if("VIEW".equals(type)){
-             Map perMap = sgContext.getProperties();
-             if(perMap.size()>0){
-             %>
+    String type = (String) request.getSession().getAttribute("TYPE");
+    ConfigurationContext configCtx = (ConfigurationContext) request.getSession().getAttribute("ConfigurationContext");
+    ServiceGroupContext sgContext = (ServiceGroupContext) request.getSession().getAttribute("ServiceGroupContext");
+    if (sgContext != null) {
+        if (type != null) {
+            if ("VIEW".equals(type)) {
+              Iterator propertyNames = sgContext.getPropertyNames();
+%>
              <h4>Persistance properties</h4><ul>
              <%
-                 Iterator itr = perMap.keySet().iterator();
-                 while (itr.hasNext()) {
-                     String key = (String) itr.next();
-                     Object property =  perMap.get(key);
+                 while (propertyNames.hasNext()) {
+                     String key = (String) propertyNames.next();
+                     Object property =  sgContext.getProperty(key);
               %>
                    <li><%=key%> : <%=property.toString()%></li>
               <%
                  }
                  %></ul>
                  <%
-             } else {
-            %>
-             <h4>No persistance properties found in the context</h4>
-            <%
-             }
             }   else if("DELETE".equals(type)){
-                Object obj = serviceGroupContextsMap.remove(sgID);
-                if(obj != null){
+                 configCtx.removeServiceGroupContext(sgContext.getId());
                  %>Removed the context<%
-            }else {
-                %>Unable to remove the context <%
-            }
             }
         }
     } else {

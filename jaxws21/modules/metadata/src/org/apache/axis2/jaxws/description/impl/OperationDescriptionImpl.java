@@ -1,30 +1,30 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 
 package org.apache.axis2.jaxws.description.impl;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
@@ -40,7 +40,6 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,9 +47,14 @@ import org.apache.commons.logging.LogFactory;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.extensions.AttributeExtensible;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
@@ -58,6 +62,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -66,7 +71,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -215,9 +219,7 @@ class OperationDescriptionImpl
         } else {
             this.axisOperation = createAxisOperation();
         }
-        // Register understood headers on axisOperation
-        registerMustUnderstandHeaders();
-}
+    }
 
     /**
      * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
@@ -470,8 +472,6 @@ class OperationDescriptionImpl
             parameterDescriptions = createParameterDescriptions();
             faultDescriptions = createFaultDescriptions();
         }
-        // Register understood headers on axisOperation
-        registerMustUnderstandHeaders();
     }
 
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
@@ -1658,6 +1658,102 @@ class OperationDescriptionImpl
     	return isListType;
     }
     
+    /**
+     * This method will return the namespace for the BindingInput that this operation
+     * specifies. It will first look for a namespace on the WSDL Binding object and then 
+     * default to the web service's target namespace.
+     */
+    public String getBindingInputNamespace() {
+        String tns = null;
+        Binding binding =
+                this.getEndpointInterfaceDescriptionImpl()
+                    .getEndpointDescriptionImpl()
+                    .getWSDLBinding();
+        if (binding != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found WSDL binding");
+            }
+            // this call does not support overloaded WSDL operations as it
+            // does not specify the name of the input and output messages
+            BindingOperation bindingOp =
+                    binding.getBindingOperation(getOperationName(), null, null);
+            if (bindingOp != null && bindingOp.getBindingInput() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found WSDL binding operation and input");
+                }
+                tns = getBindingNamespace(bindingOp.getBindingInput());
+                if (tns != null && log.isDebugEnabled()) {
+                    log.debug("For operation: " + bindingOp.getName()
+                            + " returning the following namespace for input message"
+                            + " from WSDL: " + tns);
+                }
+            }
+        }
+        if (tns == null) {
+            tns = getEndpointInterfaceDescription().getTargetNamespace();
+            if (log.isDebugEnabled()) {
+                log.debug("For binding input returning @WebService.targetNamespace: " + tns);
+            }
+        }
+        return tns;
+    }
+
+    /**
+     * This method will return the namespace for the BindingOutput that this operation
+     * specifies. It will first look for a namespace on the WSDL Binding object and then 
+     * default to the web service's target namespace.
+     */
+    public String getBindingOutputNamespace() {
+        String tns = null;
+        Binding binding =
+                this.getEndpointInterfaceDescriptionImpl()
+                    .getEndpointDescriptionImpl()
+                    .getWSDLBinding();
+        if (binding != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found WSDL binding");
+            }
+            // this call does not support overloaded WSDL operations as it
+            // does not specify the name of the input and output messages
+            BindingOperation bindingOp =
+                    binding.getBindingOperation(getOperationName(), null, null);
+            if (bindingOp != null && bindingOp.getBindingOutput() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found WSDL binding operation and output");
+                }
+                tns = getBindingNamespace(bindingOp.getBindingOutput());
+                if (tns != null && log.isDebugEnabled()) {
+                    log.debug("For operation: " + bindingOp.getName()
+                            + " returning the following namespace for output message"
+                            + " from WSDL: " + tns);
+                }
+            }
+        }
+        if (tns == null) {
+            tns = getEndpointInterfaceDescription().getTargetNamespace();
+            if (log.isDebugEnabled()) {
+                log.debug("For binding output returning @WebService.targetNamespace: " + tns);
+            }
+        }
+        return tns;
+    }
+
+    
+    /**
+     * This method will retrieve the namespace that is specified by the BindingInput or
+     * BindingOutput object.
+     */
+    private String getBindingNamespace(AttributeExtensible opInfo) {
+        if (opInfo instanceof BindingInput) {
+            BindingInput input = (BindingInput) opInfo;
+            return DescriptionUtils.getNamespaceFromSOAPElement(input.getExtensibilityElements());
+        } else if (opInfo instanceof BindingOutput) {
+            BindingOutput output = (BindingOutput) opInfo;
+            return DescriptionUtils.getNamespaceFromSOAPElement(output.getExtensibilityElements());
+        }
+        return null;
+    }
+    
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";
@@ -1752,48 +1848,5 @@ class OperationDescriptionImpl
             return string.toString();
         }
         return string.toString();
-    }
-    
-    /** 
-     * Adds a list of SOAP header QNames that are understood by JAXWS for this operation to the
-     * AxisOperation.  This will be used by Axis2 to verify that all headers marked as
-     * mustUnderstand have been or will be processed.
-     * 
-     * Server side headers considered understood [JAXWS 2.0 Sec 10.2.1 page 117]
-     * - SEI method params that are in headers 
-     * - Headers processed by application handlers (TBD)
-     * 
-     * Client side headers considered understood: None
-     *
-     */
-    private void registerMustUnderstandHeaders() {
-        
-        // REVIEW: If client side (return value, OUT or INOUT params) needs to be supported then
-        // this needs to process client and server differently.
-
-        AxisOperation theAxisOperation = getAxisOperation(); 
-        if (theAxisOperation == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The axis operation is null, so header QNames could not be registered.  OpDesc = " + this);
-            }
-            return;
-        }
-
-        // If any IN or INOUT parameters are in the header, then add their QNames to the list
-        ParameterDescription paramDescs[] = getParameterDescriptions();
-        if (paramDescs != null && paramDescs.length > 0) {
-            for (ParameterDescription paramDesc : paramDescs) {
-                if (paramDesc.isHeader() 
-                        && (paramDesc.getMode() == WebParam.Mode.IN 
-                                || paramDesc.getMode() == WebParam.Mode.INOUT)) {
-                    QName headerQN = new QName(paramDesc.getTargetNamespace(), 
-                                               paramDesc.getParameterName());
-                    theAxisOperation.registerUnderstoodHeaderQName(headerQN);
-                    if (log.isDebugEnabled()) {
-                        log.debug("OpDesc: understoodQName added to AxisOperation (if not null) " + headerQN);
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,17 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.saaj;
 
@@ -21,8 +24,6 @@ import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NamespaceImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultImpl;
@@ -178,19 +179,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
             SOAP11FaultImpl fault =
                     new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
-            //set a default fault code here.
-            saajSOAPFault.setFaultCode(SOAP11Constants.QNAME_SENDER_FAULTCODE);
-            //set a default fault string here
-            saajSOAPFault.setFaultString("Fault string, and possibly fault code, not set");
         } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
             SOAP12FaultImpl fault =
                     new SOAP12FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
             saajSOAPFault = new SOAPFaultImpl(fault);
-            //set a default fault code here.
-            saajSOAPFault.setFaultCode(SOAP12Constants.QNAME_SENDER_FAULTCODE);
-            //set a default fault string here
-            saajSOAPFault.addFaultReasonText("Fault string, and possibly fault code, not set", Locale.getDefault());
         }
+        // set default fault code and string
+        saajSOAPFault.setDefaults();
+        
         ((NodeImpl)omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
         return saajSOAPFault;
     }

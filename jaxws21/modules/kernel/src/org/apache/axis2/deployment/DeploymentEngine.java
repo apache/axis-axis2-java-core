@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 
 package org.apache.axis2.deployment;
@@ -219,15 +222,18 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
-                    String moduleName = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                    module.setName(moduleName);
+                    String moduleFile = fileUrl.substring(0, fileUrl.indexOf(".mar"));
+                    if (module.getName() == null) {
+                        module.setName(org.apache.axis2.util.Utils.getModuleName(moduleFile));
+                        module.setVersion(org.apache.axis2.util.Utils.getModuleVersion(moduleFile));
+                    }
                     populateModule(module, moduleurl);
                     module.setFileName(moduleurl);
                     addNewModule(module, axisConfig);
                 }
             }
-            org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
-                    axisConfig.getModules(), axisConfig);
+            org.apache.axis2.util.Utils.
+                    calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
             axisConfig.validateSystemPredefinedPhases();
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
@@ -610,11 +616,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == WSInfo.TYPE_SERVICE) {
-                        if (isHotUpdate()) {
-                            serviceDeployer.unDeploy(wsInfo.getFileName());
-                        } else {
-                            axisConfig.removeFaultyService(wsInfo.getFileName());
-                        }
+                        //No matter what we need to undeploy the service
+                        // if user has deleted the file from the repository
+                        serviceDeployer.unDeploy(wsInfo.getFileName());
                     } else {
                         if (isHotUpdate()) {
                             Deployer deployer = wsInfo.getDeployer();
@@ -650,7 +654,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public static String getAxisServiceName(String fileName) {
         char seperator = '.';
         String value;
-        int index = fileName.indexOf(seperator);
+        int index = fileName.lastIndexOf(seperator);
 
         if (index > 0) {
             value = fileName.substring(0, index);

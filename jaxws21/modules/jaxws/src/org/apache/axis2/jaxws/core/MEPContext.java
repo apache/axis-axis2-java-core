@@ -1,18 +1,20 @@
 /*
- * Copyright 2006 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.core;
 
@@ -23,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -138,7 +139,9 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
             }
             return;
         }
-        // yes, clear both
+        // TODO: REVIEW
+        // I don't think this will work if the message contexts have a copy
+        // of the map
         if (responseMC != null) {
             responseMC.getProperties().clear();
         }
@@ -177,7 +180,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlySet(getApplicationScopedProperties().entrySet());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -185,16 +188,17 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         return new ReadOnlySet(tempProps.entrySet());
     }
 
-    public Object get(Object key) {
+    public Object get(Object keyObject) {
+        String key = (String) keyObject;
         if (responseMC != null) {
-            if (responseMC.getProperties().get(key) != null) {
+            if (responseMC.getProperty(key) != null) {
                 if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
-                    return responseMC.getProperties().get(key);
+                    return responseMC.getProperty(key);
                 }
             }
         }
         if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
-            return requestMC.getProperties().get(key);
+            return requestMC.getProperty(key);
         }
         return null;
     }
@@ -213,7 +217,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlySet(getApplicationScopedProperties().keySet());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -279,7 +283,10 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return getApplicationScopedProperties().size();
         }
-        Properties tempProps = new Properties();
+        
+        // The properties must be combined together because some
+        // keys may be the same on the request and the response.
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
@@ -291,7 +298,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (isApplicationAccessLocked()) {
             return new ReadOnlyCollection(getApplicationScopedProperties().values());
         }
-        Properties tempProps = new Properties();
+        HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());

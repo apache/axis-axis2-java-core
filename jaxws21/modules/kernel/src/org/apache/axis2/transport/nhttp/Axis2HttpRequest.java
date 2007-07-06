@@ -1,46 +1,47 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.transport.nhttp;
 
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.nhttp.util.PipeImpl;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.http.*;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.message.HttpPost;
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.Pipe;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.nhttp.util.PipeImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.protocol.HTTP;
 
 /**
  * Represents an outgoing Axis2 HTTP/s request. It holds the EPR of the destination, the
@@ -98,7 +99,9 @@ public class Axis2HttpRequest {
      * @return the HttpRequest to be sent out
      */
     public HttpRequest getRequest() throws IOException {
-        HttpPost httpRequest = new HttpPost(epr.getAddress());
+        HttpEntityEnclosingRequest httpRequest = new BasicHttpEntityEnclosingRequest(
+                "POST",
+                epr.getAddress());        
         httpRequest.setEntity(new BasicHttpEntity());
 
         // set any transport headers

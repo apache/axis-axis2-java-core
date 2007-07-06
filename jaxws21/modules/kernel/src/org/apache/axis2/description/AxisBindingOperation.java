@@ -1,20 +1,20 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
-
-             http://www.apache.org/licenses/LICENSE-2.0
-
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
- * under the License.     
+ * under the License.
  */
 package org.apache.axis2.description;
 
@@ -83,7 +83,7 @@ public class AxisBindingOperation extends AxisDescription {
         Object property = this.options.get(name);
 
         AxisBinding parent;
-        if (property == null && (parent = (AxisBinding) this.getParent()) != null) {
+        if (property == null && (parent = getAxisBinding()) != null) {
             property = parent.getProperty(name);
         }
 
@@ -228,7 +228,7 @@ public class AxisBindingOperation extends AxisDescription {
         policyList.addAll(policyInclude.getAttachedPolicies());
 
         // AxisBinding
-        AxisBinding axisBinding = (AxisBinding) getParent();
+        AxisBinding axisBinding = getAxisBinding();
         if (axisBinding != null) {    
             policyList.addAll(axisBinding.getPolicyInclude()
                     .getAttachedPolicies());
@@ -237,7 +237,7 @@ public class AxisBindingOperation extends AxisDescription {
         // AxisEndpoint
         AxisEndpoint axisEndpoint = null;
         if (axisBinding != null) {
-            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+            axisEndpoint = axisBinding.getAxisEndpoint();
         }
 
         if (axisEndpoint != null) {
@@ -254,5 +254,9 @@ public class AxisBindingOperation extends AxisDescription {
         }
         
         return PolicyUtil.getMergedPolicy(policyList,  this);
+    }
+
+    public AxisBinding getAxisBinding() {
+        return (AxisBinding)parent;
     }
 }

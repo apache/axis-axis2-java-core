@@ -19,6 +19,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -107,6 +108,10 @@ public class Parameter implements Externalizable {
      * Field value
      */
     private Object value;
+
+    //To check whether the parameter is editable or not ,
+    // if the value is false then no one can call setvalue
+    private boolean editable = true;
 
     /**
      * Constructor.
@@ -197,6 +202,10 @@ public class Parameter implements Externalizable {
      * @param value
      */
     public void setValue(Object value) {
+        if(!editable) {
+            log.debug("Parameter "  + getName() + "  can not be edit");
+            return;
+        }
         if (value instanceof String){
             setParameterType(TEXT_PARAMETER);
         } else if (value instanceof OMElement) {
@@ -377,5 +386,10 @@ public class Parameter implements Externalizable {
         // done
         //---------------------------------------------------------
 
+    }
+
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

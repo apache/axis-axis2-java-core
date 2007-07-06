@@ -1,26 +1,27 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- *      
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
+
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
@@ -28,11 +29,15 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPHeader;
+import javax.wsdl.extensions.soap12.SOAP12Body;
+import javax.wsdl.extensions.soap12.SOAP12Header;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Response;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -42,8 +47,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.concurrent.Future;
 
 /** Utilities used throughout the Description package. */
 public class DescriptionUtils {
@@ -361,4 +366,44 @@ public class DescriptionUtils {
                             "EndpointDescriptionImpl: loadHandlerList: thrown when attempting to unmarshall JAXB content");
         }       
     }
+    
+	
+    /**
+     * This method will loop through a list of extensibility elements looking for one
+     * of four objects: SOAPBody, SOAP12Body, SOAPHeader, SOAP12Header. If any of these
+     * objects are found the namespace URI from this object will be returned.
+     */
+    public static String getNamespaceFromSOAPElement(List extElements) {
+        Iterator extIter = extElements.iterator();
+        while (extIter.hasNext()) {
+            Object extObj = extIter.next();
+            if (extObj instanceof SOAPBody) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Returning SOAPBody namespace: "
+                            + ((SOAPBody) extObj).getNamespaceURI());
+                }
+                return ((SOAPBody) extObj).getNamespaceURI();
+            } else if (extObj instanceof SOAP12Body) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Returning SOAP12Body namespace: "
+                            + ((SOAP12Body) extObj).getNamespaceURI());
+                }
+                return ((SOAP12Body) extObj).getNamespaceURI();
+            } else if (extObj instanceof SOAPHeader) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Returning SOAPHeader namespace: "
+                            + ((SOAPHeader) extObj).getNamespaceURI());
+                }
+                return ((SOAPHeader) extObj).getNamespaceURI();
+            } else if (extObj instanceof SOAP12Header) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Returning SOAP12Header namespace: "
+                            + ((SOAP12Header) extObj).getNamespaceURI());
+                }
+                return ((SOAP12Header) extObj).getNamespaceURI();
+            }
+        }
+        return null;
+    }
+    
 }

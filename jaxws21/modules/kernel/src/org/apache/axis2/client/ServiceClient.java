@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package org.apache.axis2.client;
 
@@ -27,6 +30,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.Counter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -169,7 +173,7 @@ public class ServiceClient {
                     "twoservicecannothavesamename",
                     axisService.getName()));
         }
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup)axisService.getParent();
+        AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext sgc = configContext.createServiceGroupContext(axisServiceGroup);
         serviceContext = sgc.getServiceContext(axisService);
     }
@@ -537,8 +541,26 @@ public class ServiceClient {
      * @param callback a Callback which will be notified upon completion
      * @throws AxisFault in case of error
      * @see #createClient(QName)
+     * @deprecated Please use the AxisCallback interface rather than Callback, which has been deprecated
      */
     public void sendReceiveNonBlocking(OMElement elem, Callback callback)
+            throws AxisFault {
+        sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
+    }
+
+    /**
+     * Directly invoke an anonymous operation with an In-Out MEP without waiting
+     * for a response. This method sends your supplied XML with response
+     * notification to your callback handler. For more control, you can instead
+     * create a client for the operation and use that client to execute the
+     * exchange.
+     *
+     * @param elem the data to send (becomes the content of SOAP body)
+     * @param callback a Callback which will be notified upon completion
+     * @throws AxisFault in case of error
+     * @see #createClient(QName)
+     */
+    public void sendReceiveNonBlocking(OMElement elem, AxisCallback callback)
             throws AxisFault {
         sendReceiveNonBlocking(ANON_OUT_IN_OP, elem, callback);
     }
@@ -555,9 +577,35 @@ public class ServiceClient {
      * @param callback a Callback which will be notified upon completion
      * @throws AxisFault in case of error
      * @see #createClient(QName)
+     * @deprecated Please use the AxisCallback interface rather than Callback, which has been deprecated
      */
-    public void sendReceiveNonBlocking(QName operation, OMElement elem,
-                                       Callback callback) throws AxisFault {
+    public void sendReceiveNonBlocking(QName operation, OMElement elem, Callback callback)
+            throws AxisFault {
+        MessageContext mc = new MessageContext();
+        fillSOAPEnvelope(mc, elem);
+        OperationClient mepClient = createClient(operation);
+        // here a blocking invocation happens in a new thread, so the
+        // progamming model is non blocking
+        mepClient.setCallback(callback);
+        mepClient.addMessageContext(mc);
+        mepClient.execute(false);
+    }
+
+    /**
+     * Directly invoke a named operation with an In-Out MEP without waiting for
+     * a response. This method sends your supplied XML with response
+     * notification to your callback handler. For more control, you can instead
+     * create a client for the operation and use that client to execute the
+     * exchange.
+     *
+     * @param operation name of operation to be invoked (non-<code>null</code>)
+     * @param elem the data to send (becomes the content of SOAP body)
+     * @param callback a Callback which will be notified upon completion
+     * @throws AxisFault in case of error
+     * @see #createClient(QName)
+     */
+    public void sendReceiveNonBlocking(QName operation, OMElement elem, AxisCallback callback)
+            throws AxisFault {
         MessageContext mc = new MessageContext();
         fillSOAPEnvelope(mc, elem);
         OperationClient mepClient = createClient(operation);
@@ -727,8 +775,7 @@ public class ServiceClient {
         // if a configuration context was created for this client there'll also
         //  be a service group, so discard that
         if (!createConfigCtx) {
-            String serviceGroupName =
-                    ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+            String serviceGroupName = axisService.getAxisServiceGroup().getServiceGroupName();
             AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
             AxisServiceGroup asg = axisConfiguration.getServiceGroup(serviceGroupName);
             if (asg != null) {
@@ -769,7 +816,7 @@ public class ServiceClient {
         axisService.setClientSide(true);
         axisConfig.addService(axisService);
 
-        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+        AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext serviceGroupContext =
                 configContext.createServiceGroupContext(axisServiceGroup);
         this.serviceContext = serviceGroupContext.getServiceContext(axisService);

@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.tools.component;
 
 import javax.swing.*;
@@ -13,8 +31,6 @@ import java.awt.event.ActionEvent;
  * this is used for default wizard components
  */
 public class DefaultWizardComponents implements WizardComponents {
-    private java.util.ResourceBundle resourceBundle =
-            java.util.ResourceBundle.getBundle("icons/i18n");
 
     private JButton backButton;
     private JButton nextButton;
@@ -137,32 +153,32 @@ public class DefaultWizardComponents implements WizardComponents {
         currentIndex = 0;
         wizardPanelsContainer = new JPanel();
 
-        backButton.setText(resourceBundle.getString("L_BackButton"));
-        backButton.setMnemonic(resourceBundle.getString("L_BackButtonMnem").charAt(0));
+        backButton.setText("< Back");
+        backButton.setMnemonic("B".charAt(0));
         backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 backButton_actionPerformed(e);
             }
         });
 
-        nextButton.setText(resourceBundle.getString("L_NextButton"));
-        nextButton.setMnemonic(resourceBundle.getString("L_NextButtonMnem").charAt(0));
+        nextButton.setText("Next >");
+        nextButton.setMnemonic("N".charAt(0));
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 nextButton_actionPerformed(e);
             }
         });
 
-        cancelButton.setText(resourceBundle.getString("L_CancelButton"));
-        cancelButton.setMnemonic(resourceBundle.getString("L_CancelButtonMnem").charAt(0));
+        cancelButton.setText("Cancel");
+        cancelButton.setMnemonic("C".charAt(0));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cancelButton_actionPerformed(e);
             }
         });
 
-        finishButton.setText(resourceBundle.getString("L_FinishButton"));
-        finishButton.setMnemonic(resourceBundle.getString("L_FinishButtonMnem").charAt(0));
+        finishButton.setText("Finish");
+        finishButton.setMnemonic("F".charAt(0));
         finishButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 finishButton_actionPerformed(e);
@@ -182,7 +198,10 @@ public class DefaultWizardComponents implements WizardComponents {
 
     void nextButton_actionPerformed(ActionEvent e) {
         try {
-            getCurrentPanel().next();
+            if(getCurrentPanel().isPageComplete()){
+                getCurrentPanel().next();
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -320,19 +339,5 @@ public class DefaultWizardComponents implements WizardComponents {
         propertyChangeListeners.removePropertyChangeListener(listener);
     }
 
-    /**
-     * @return Returns the resourceBundle.
-     */
-    public java.util.ResourceBundle getResourceBundle() {
-        return resourceBundle;
-    }
-
-    /**
-     * @param resourceBundle The resourceBundle to set.
-     */
-    public void setResourceBundle(
-            java.util.ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
-    }
-
+  
 }

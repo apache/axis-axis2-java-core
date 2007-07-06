@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-/*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");dis
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- -->
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 <!--
      | The main goals for multi project build are:
@@ -361,6 +362,10 @@
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing-${addressing_version}.mar"/>
             </fileset>
+	    <fileset dir="modules/ping/target/">
+                <include name="modules/ping-${ping_version}.mar"/>
+            </fileset>
+            <fileset dir="modules/jibx/target/classes"/>
 	    <!-- Copy items that depend on JDK1.5  -->
             <j:if test="${javaVersion == '1.5'}">
             	<fileset dir="modules/saaj/target/classes"/>
@@ -511,10 +516,16 @@
         <ant:copy toDir="target/temp/war/toWEB-INF/modules">
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
+		
+		 <!-- copy the ping mar -->
+        <ant:copy toDir="target/temp/war/toWEB-INF/modules">
+            <ant:fileset file="modules/ping/target/ping-${ping_version}.mar"/>
+        </ant:copy>
 
         <echo file="target/temp/war/toWEB-INF/modules/modules.list" append="false">
             addressing-${addressing_version}.mar
             soapmonitor-${soapmonitor_version}.mar
+	    ping-${ping_version}.mar
         </echo>
 
         <!-- copy the sample services -->
@@ -587,6 +598,9 @@
         <ant:copy toFile="target/dist/soapmonitor-${soapmonitor_version}.mar"
                   file="modules/soapmonitor/target/soapmonitor-${soapmonitor_version}.mar"/>
 
+		<ant:copy toFile="target/dist/ping-${ping_version}.mar"
+				  file="modules/ping/target/ping-${ping_version}.mar"/>
+
         <ant:delete dir="target/temp"/>
         <ant:delete dir="target/apidocs"/>
     </goal>
@@ -630,10 +644,16 @@
         <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
+		
+		<!-- copy the ping mar -->
+        <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
+            <ant:fileset file="modules/ping/target/ping-${ping_version}.mar"/>
+        </ant:copy>
 
         <echo file="${std.bin.temp.dir}/repository/modules/modules.list" append="false">
             addressing-${addressing_version}.mar
             soapmonitor-${soapmonitor_version}.mar
+			ping-${ping_version}.mar
         </echo>
 
         <!-- copy the sample services -->
@@ -766,9 +786,9 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
-		<include name="yahoojsonsearch/**/*.*"/>
+				<include name="yahoojsonsearch/**/*.*"/>
                 <include name="databinding/**/*.*"/>
-                <include name="googlespellcheck/**/*.*"/>
+                <!--include name="googlespellcheck/**/*.*"/-->
                 <include name="faulthandling/**/*.*"/>
                 <include name="mtom/**/*.*"/>
                 <include name="soapwithattachments/**/*.*"/>
@@ -776,7 +796,7 @@
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="wsdl/*.*"/>
                 <include name="pojo/**/*.*"/>
-		<include name="ping/**/*.*"/>
+				<include name="ping/**/*.*"/>
                 <!-- Docs related samples -->
                 <include name="userguide/**/*.*"/>
                 <include name="pojoguide/**/*.*"/>

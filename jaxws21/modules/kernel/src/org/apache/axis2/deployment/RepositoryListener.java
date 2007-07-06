@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 
 package org.apache.axis2.deployment;
@@ -141,7 +144,7 @@ public class RepositoryListener implements DeploymentConstants {
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
-                        addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
+                        addFileToDeploy(file, deployer, WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -248,7 +251,8 @@ public class RepositoryListener implements DeploymentConstants {
                         if (!file.isDirectory() && extension.equals(
                                 DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
-                                            deploymentEngine.getDeployerForExtension(extension),WSInfo.TYPE_CUSTOM);
+                                            deploymentEngine.getDeployerForExtension(extension),
+                                            WSInfo.TYPE_CUSTOM);
                         }
                     }
                 }
@@ -271,19 +275,21 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_SERVICE);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                        WSInfo.TYPE_SERVICE);
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
                         // If we found a deployer for this type of file, use it.  Otherwise
                         // ignore the file.
                         if (deployer != null) {
-                            addFileToDeploy(file, deployer,WSInfo.TYPE_SERVICE);
+                            addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
                         }
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),WSInfo.TYPE_CUSTOM);
+                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                        WSInfo.TYPE_CUSTOM);
                     }
                 }
             }

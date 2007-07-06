@@ -1,30 +1,40 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- *      
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.injection.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
@@ -34,20 +44,15 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
 
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
-import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
-import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /* 
  * This class should be created by the ServiceDelegate.
  * HandlerResolverImpl.getHandlerChain(PortInfo) will be called by the
@@ -78,10 +83,12 @@ public class HandlerResolverImpl implements HandlerResolver {
       */
 
     // we'll need to refer to this object to get the port, and thus handlers
-    private EndpointDescription endpointDesc;
+    //private EndpointDescription endpointDesc;
+    private ServiceDescription serviceDesc;
 
-    public HandlerResolverImpl(EndpointDescription ed) {
-        this.endpointDesc = ed;
+    public HandlerResolverImpl(ServiceDescription sd) { //EndpointDescription ed) {
+        //this.endpointDesc = ed;
+        this.serviceDesc = sd;
     }
 
     public ArrayList<Handler> getHandlerChain(PortInfo portinfo) {
@@ -142,12 +149,25 @@ public class HandlerResolverImpl implements HandlerResolver {
 
         ArrayList<Handler> handlers = new ArrayList<Handler>();
 
-		/*
-		 * TODO: do a better job checking that the return value matches up
+        /*
+         * TODO: do a better job checking that the return value matches up
          * with the PortInfo object before we add it to the chain.
-		 */
-		
-        HandlerChainsType handlerCT = endpointDesc.getHandlerChain();
+         */
+        
+        HandlerChainsType handlerCT = serviceDesc.getHandlerChain();  
+        // if there's a handlerChain on the serviceDesc, it means the WSDL defined an import for a HandlerChain.
+        // the spec indicates that if a handlerchain also appears on the SEI on the client.
+        EndpointDescription ed = null;
+        if(portinfo !=null){
+             ed = serviceDesc.getEndpointDescription(portinfo.getPortName());
+        }
+        
+        if (ed != null) {
+            HandlerChainsType handlerCT_fromEndpointDesc = ed.getHandlerChain();
+            if (handlerCT == null) {
+                handlerCT = handlerCT_fromEndpointDesc;
+            } 
+        }
 
         Iterator it = handlerCT == null ? null : handlerCT.getHandlerChain().iterator();
 
@@ -171,10 +191,9 @@ public class HandlerResolverImpl implements HandlerResolver {
                 // or will schema not allow it?
                 String portHandler = handlerType.getHandlerClass().getValue();
                 Handler handler;
-                              
                 // Create temporary MessageContext to pass information to HandlerLifecycleManager
                 MessageContext ctx = new MessageContext();
-                ctx.setEndpointDescription(endpointDesc);
+                ctx.setEndpointDescription(ed);
                 
                 HandlerLifecycleManager hlm = createHandlerlifecycleManager();
                     
@@ -186,7 +205,6 @@ public class HandlerResolverImpl implements HandlerResolver {
                     // TODO: NLS log and throw
                     throw ExceptionFactory.makeWebServiceException(e);
                 }
-
                 // 9.2.1.2 sort them by Logical, then SOAP
                 if (LogicalHandler.class.isAssignableFrom(handler.getClass()))
                     handlers.add((LogicalHandler) handler);
@@ -237,7 +255,18 @@ public class HandlerResolverImpl implements HandlerResolver {
             cl = (Class)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classLoader);
+                        	try{
+                        		if (log.isDebugEnabled()) {
+        	                        log.debug("HandlerResolverImpl attempting to load Class: "+className);
+        	                    }
+                        		return Class.forName(className, initialize, classLoader);
+                        	} catch (Throwable e) {
+        	                    // TODO Should the exception be swallowed ?
+        	                    if (log.isDebugEnabled()) {
+        	                        log.debug("HandlerResolverImpl cannot load the following class Throwable Exception Occured: " + className);
+        	                    }
+        	                    throw new ClassNotFoundException("HandlerResolverImpl cannot load the following class Throwable Exception Occured:" + className);
+        	                }
                         }
                     }
             );
@@ -274,6 +303,7 @@ public class HandlerResolverImpl implements HandlerResolver {
         return cl;
     }
 
+   
     private static boolean chainResolvesToPort(HandlerChainType handlerChainType, PortInfo portinfo) {
         
         List<String> protocolBindings = handlerChainType.getProtocolBindings();

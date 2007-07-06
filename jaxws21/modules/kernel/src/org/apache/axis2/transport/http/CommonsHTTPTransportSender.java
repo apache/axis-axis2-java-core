@@ -1,17 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.apache.axis2.transport.http;
@@ -37,7 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
@@ -158,23 +160,27 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             TransportOutDescription transportOut = msgContext.getConfigurationContext().
                     getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
 
-            //if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
+            //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2 
             if (transportOut != null) {
-                Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
-                Object value = null;
-                if (param != null) {
-                    value = param.getValue();
-                }
+                if (!msgContext.isSOAP11()) {
+                    Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+                    Object parameterValue = null;
+                    if (param != null) {
+                        parameterValue = param.getValue();
+                    }
 
-                if (value != null && JavaUtils.isTrueExplicitly(value)) {
-                    if (!msgContext.isSOAP11()) {
-                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
-                                               Boolean.TRUE);
+                    if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
+                        //Check whether user has already overridden this.
+                        Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+                        if (propertyValue == null | !JavaUtils.isFalseExplicitly(propertyValue)) {
+                            msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
+                                    Boolean.TRUE);
+                        }
                     }
                 }
             }
 
-            // Trasnport URL can be different from the WSA-To. So processing
+            // Transport URL can be different from the WSA-To. So processing
             // that now.
             EndpointReference epr = null;
             String transportURL = (String) msgContext
@@ -187,7 +193,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 epr = msgContext.getTo();
             }
 
-            // Check for the REST behaviour, if you desire rest beahaviour
+            // Check for the REST behavior, if you desire rest behavior
             // put a <parameter name="doREST" value="true"/> at the
             // server.xml/client.xml file
             // ######################################################
@@ -198,22 +204,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             if (epr != null) {
                 if (!epr.hasNoneAddress()) {
                     writeMessageWithCommons(msgContext, epr, format);
+                    TransportUtils.setResponseWritten(msgContext, true);
                 }
-            }
-            else {
+            } else {
                 if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
                     sendUsingOutputStream(msgContext, format);
+                    TransportUtils.setResponseWritten(msgContext, true);
                 } else {
-                    throw new AxisFault(
-                    "Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
+                    throw new AxisFault("Both the TO and MessageContext.TRANSPORT_OUT property " +
+                            "are null, so nowhere to send");
                 }
             }
-
-            TransportUtils.setResponseWritten(msgContext, true);
-            
-        } catch (XMLStreamException e) {
-            log.debug(e);
-            throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -233,17 +234,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
      * @param msgContext the active MessageContext
      * @param format output formatter for our message
      * @throws AxisFault if a general problem arises
-     * @throws XMLStreamException if there's a problem writing
      */
     private void sendUsingOutputStream(MessageContext msgContext,
-                                       OMOutputFormat format) throws AxisFault, XMLStreamException {
+                                       OMOutputFormat format) throws AxisFault {
+        OutputStream out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
 
-        
-
-        OutputStream out = (OutputStream) msgContext
-                .getProperty(MessageContext.TRANSPORT_OUT);
-
-        // I Don't thinik we need this check.. Content type needs to be set in
+        // I Don't think we need this check.. Content type needs to be set in
         // any case. (thilina)
         // if (msgContext.isServerSide()) {
         OutTransportInfo transportInfo = (OutTransportInfo) msgContext
@@ -273,24 +269,32 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(msgContext);
         if (messageFormatter == null) throw new AxisFault("No MessageFormatter in MessageContext");
 
-        transportInfo.setContentType(
+        // Once we get to this point, exceptions should NOT be turned into faults and sent,
+        // because we're already sending!  So catch everything and log it, but don't pass
+        // upwards.
+
+        try {
+            transportInfo.setContentType(
                 messageFormatter.getContentType(msgContext, format, findSOAPAction(msgContext)));
 
-        Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
-        if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
-            if (servletBasedOutTransportInfo != null)
-                servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                                       HTTPConstants.COMPRESSION_GZIP);
-            try {
-                out = new GZIPOutputStream(out);
-                out.write(messageFormatter.getBytes(msgContext, format));
-                ((GZIPOutputStream) out).finish();
-                out.flush();
-            } catch (IOException e) {
-                throw new AxisFault("Could not compress response");
+            Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+            if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                if (servletBasedOutTransportInfo != null)
+                    servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                                                           HTTPConstants.COMPRESSION_GZIP);
+                try {
+                    out = new GZIPOutputStream(out);
+                    out.write(messageFormatter.getBytes(msgContext, format));
+                    ((GZIPOutputStream) out).finish();
+                    out.flush();
+                } catch (IOException e) {
+                    throw new AxisFault("Could not compress response");
+                }
+            } else {
+                messageFormatter.writeTo(msgContext, format, out, false);
             }
-        } else {
-            messageFormatter.writeTo(msgContext, format, out, false);
+        } catch (AxisFault axisFault) {
+            log.error(axisFault);
         }
     }
 

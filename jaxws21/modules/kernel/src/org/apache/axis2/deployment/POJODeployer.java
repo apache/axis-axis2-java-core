@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.context.ConfigurationContext;
@@ -33,24 +51,6 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
-
 public class POJODeployer implements Deployer {
 
     private static Log log = LogFactory.getLog(POJODeployer.class);
@@ -67,7 +67,7 @@ public class POJODeployer implements Deployer {
         try {
             threadClassLoader = Thread.currentThread().getContextClassLoader();
             String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
-            if (".class".equals(extension)) {
+            if ("class".equals(extension)) {
                 File file = deploymentFileData.getFile();
                 File parentFile = file.getParentFile();
                 if (file != null) {
@@ -120,7 +120,6 @@ public class POJODeployer implements Deployer {
                                 messageReciverMap.put(
                                         WSDL2Constants.MEP_URI_IN_ONLY,
                                         messageReceiver);
-                                messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,messageReceiver);
                                 Class inoutMessageReceiver = Loader.loadClass(
                                         "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
                                 MessageReceiver inOutmessageReceiver =
@@ -128,6 +127,7 @@ public class POJODeployer implements Deployer {
                                 messageReciverMap.put(
                                         WSDL2Constants.MEP_URI_IN_OUT,
                                         inOutmessageReceiver);
+                                 messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,inOutmessageReceiver);
                                 AxisService axisService = AxisService.createService(className,
                                                                                     configCtx.getAxisConfiguration(),
                                                                                     messageReciverMap,
@@ -139,7 +139,7 @@ public class POJODeployer implements Deployer {
                     }
                 }
 
-            } else if (".jar".equals(extension)) {
+            } else if ("jar".equals(extension)) {
                 ArrayList classList;
                 FileInputStream fin = null;
                 ZipInputStream zin = null;

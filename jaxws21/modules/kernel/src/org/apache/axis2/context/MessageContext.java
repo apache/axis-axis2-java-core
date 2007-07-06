@@ -1,17 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.apache.axis2.context;
@@ -1160,7 +1163,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
         if (this.axisService != null) {
-            this.axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
+            this.axisServiceGroup = axisService.getAxisServiceGroup();
         } else {
             this.axisServiceGroup = null;
         }
@@ -1507,24 +1510,24 @@ public class MessageContext extends AbstractContext implements Externalizable {
             if (module == null) {
                 return false;
             }
-            enegage = axisConfig.isEngaged(moduleName);
+            enegage = axisConfig.isEngaged(module);
             if (enegage) {
                 return true;
             }
             if (axisServiceGroup != null) {
-                enegage = axisServiceGroup.isEngaged(moduleName);
+                enegage = axisServiceGroup.isEngaged(module);
                 if (enegage) {
                     return true;
                 }
             }
             if (axisService != null) {
-                enegage = axisService.isEngaged(moduleName);
+                enegage = axisService.isEngaged(module);
                 if (enegage) {
                     return true;
                 }
             }
             if (axisOperation != null) {
-                enegage = axisOperation.isEngaged(module.getName());
+                enegage = axisOperation.isEngaged(module);
                 if (enegage) {
                     return true;
                 }
@@ -4276,6 +4279,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         try {
             return getEnvelope().getBody().hasFault();
         } catch (Exception e) {
+            // TODO: What should we be doing here?  No envelope certainly seems bad....
             return false;
         }
     }

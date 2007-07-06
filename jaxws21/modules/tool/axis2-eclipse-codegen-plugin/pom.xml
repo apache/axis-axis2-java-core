@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- !
- ! Copyright 2006 The Apache Software Foundation.
- !
- ! Licensed under the Apache License, Version 2.0 (the "License");
- ! you may not use this file except in compliance with the License.
- ! You may obtain a copy of the License at
- !
- !      http://www.apache.org/licenses/LICENSE-2.0
- !
- ! Unless required by applicable law or agreed to in writing, software
- ! distributed under the License is distributed on an "AS IS" BASIS,
- ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- ! See the License for the specific language governing permissions and
- ! limitations under the License.
- !-->
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -145,18 +147,6 @@
 			<artifactId>annogen</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-dom</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-impl</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 		</dependency>
@@ -193,10 +183,7 @@
 			<groupId>org.apache.neethi</groupId>
 			<artifactId>neethi</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>stax</groupId>
-			<artifactId>stax-api</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
@@ -289,8 +276,8 @@
 								<property name="plugin.classpath.file.name" value=".classpath"/>
 								<property name="plugin.help.file.name" value="help_toc.xml"/>
 								<property name="codegen.resource.dir" value="../conf/codegen"/>
-								<property name="codegen.help.resource.file" value="../../../xdocs/tools/1_1/eclipse/wsdl2java-plugin.html"/>
-								<property name="codegen.help.images.dir" value="../../../xdocs/tools/1_1/eclipse/images"/>
+								<property name="codegen.help.resource.file" value="../../../xdocs/tools/1_3/eclipse/wsdl2java-plugin.html"/>
+								<property name="codegen.help.images.dir" value="../../../xdocs/tools/1_3/eclipse/images"/>
 								<property name="axis2.lib.dir" value="../../../target/lib"/>
 								<property name="codegen.resource.dir" value="../conf/codegen"/>
 								<delete dir="./target/plugin/${codegen.plugin.version}"/>
@@ -298,20 +285,24 @@
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								<filter token="version_number" value="SNAPSHOT"/>
-								<filter token="activation.version" value="1.0-SNAPSHOT"/>
-								<filter token="annogen.version" value="0.1.0"/>
-								<filter token="ant.version" value="1.6.5"/>
-								<filter token="axiom.version" value="SNAPSHOT"/>
-								<filter token="commons.logging.version" value="1.1"/>
-								<filter token="neethi.version" value="SNAPSHOT"/>
-								<filter token="stax.api.version" value="1.0.1"/>
-								<filter token="stax.impl.version" value="asl-3.2.0"/>
-								<filter token="xbean.version" value="2.2.0"/>
-								<filter token="xmlschema.version" value="1.2"/>
-								<filter token="log4j.version" value="1.2.13"/>
-								<filter token="wsdl4j.version" value="1.6.2"/>
-								<filter token="woden.version" value="1.0-incubating-SNAPSHOT"/>
+								     <filter token="version_number" value="${version_number}" />
+								     <filter token="activation.version" value="${activation.version}" />
+								     <filter token="annogen.version" value="${annogen.version}" />
+								     <filter token="ant.version" value="${ant.version}" />
+								     <filter token="axiom.version" value="${axiom.version}" />
+								     <filter token="commons.logging.version" value="${commons.logging.version}" />
+								     <filter token="neethi.version" value="${neethi.version}" />
+								     <filter token="stax.api.version" value="${stax.api.version}" />
+								     <filter token="stax.impl.version" value="${stax.impl.version}" />
+								     <filter token="xbean.version" value="${xbean.version}" />
+								     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+								     <filter token="log4j.version" value="${log4j.version}" />
+								     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
+								     <filter token="woden.version" value="${woden.version}" />
+								     <filter token="commons.httpclient.version" value="${commons.httpclient.version}" />
+								     <filter token="commons.codec.version" value="${commons.codec.version}" />
+								     <filter token="jibx.version" value="${jibx.version}" />
+
 								<unzip src="./target/axis2.eclipse.codegen.plugin-${pom.version}.jar" dest="./target/plugin/${codegen.plugin.version}"/>
 								<!-- Copy to the same position with the filtering on-->
 								<!-- Copy to the same position with the filtering on-->

@@ -1,20 +1,20 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.transport.nhttp;
 
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
+import java.nio.channels.SelectionKey;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,10 +69,29 @@ public class LoggingIOSession implements IOSession {
         return this.session.getEventMask();
     }
 
+    private static String formatOps(int ops) {
+        StringBuffer buffer = new StringBuffer(6);
+        buffer.append('[');
+        if ((ops & SelectionKey.OP_READ) > 0) {
+            buffer.append('r');
+        }
+        if ((ops & SelectionKey.OP_WRITE) > 0) {
+            buffer.append('w');
+        }
+        if ((ops & SelectionKey.OP_ACCEPT) > 0) {
+            buffer.append('a');
+        }
+        if ((ops & SelectionKey.OP_CONNECT) > 0) {
+            buffer.append('c');
+        }
+        buffer.append(']');
+        return buffer.toString();
+    }
+    
     public void setEventMask(int ops) {
         if (this.log.isDebugEnabled()) {
             this.log.debug("I/O session " + this.id + " " + this.session + ": Set event mask " 
-                    + ops);
+                    + formatOps(ops));
         }
         this.session.setEventMask(ops);
     }
@@ -79,7 +99,7 @@ public class LoggingIOSession implements IOSession {
     public void setEvent(int op) {
         if (this.log.isDebugEnabled()) {
             this.log.debug("I/O session " + this.id + " " + this.session + ": Set event " 
-                    + op);
+                    + formatOps(op));
         }
         this.session.setEvent(op);
     }
@@ -87,7 +107,7 @@ public class LoggingIOSession implements IOSession {
     public void clearEvent(int op) {
         if (this.log.isDebugEnabled()) {
             this.log.debug("I/O session " + this.id + " " + this.session + ": Clear event " 
-                    + op);
+                    + formatOps(op));
         }
         this.session.clearEvent(op);
     }
@@ -101,6 +121,13 @@ public class LoggingIOSession implements IOSession {
 
     public boolean isClosed() {
         return this.session.isClosed();
+    }
+
+    public void shutdown() {
+        if (this.log.isDebugEnabled()) {
+            this.log.debug("I/O session " + this.id + " " + this.session + ": Shutdown");
+        }
+        this.session.shutdown();
     }
 
     public int getSocketTimeout() {

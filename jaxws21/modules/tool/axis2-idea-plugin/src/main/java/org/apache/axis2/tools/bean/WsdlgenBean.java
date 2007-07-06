@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.tools.bean;
 
 import org.apache.axis2.util.CommandLineOptionConstants;
@@ -5,6 +23,12 @@ import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class WsdlgenBean {
 
@@ -17,6 +41,7 @@ public class WsdlgenBean {
     private String SchemaTargetNamespacePrefix;
     private String OutputLocation ;
     private String OutputWSDLName ;
+    private Project project;
 
 
     public String getClassName() {
@@ -156,5 +181,36 @@ public class WsdlgenBean {
             throw new Exception("Code generation failed due to " + e.getLocalizedMessage());
         }
 
+    }
+    public Project getActiveProject() {
+        return project;
+
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+    public Module[] getModules() {
+
+        Project project = getActiveProject();
+        if (project != null) {
+            return ModuleManager.getInstance(project).getModules();
+        }
+        return null;
+    }
+
+    public String[] getModuleSrc(String name) {
+        Project project = getActiveProject();
+        if (project != null) {
+            Module module = ModuleManager.getInstance(project).findModuleByName(name);
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+            VirtualFile virtualFiles[] = moduleRootManager.getSourceRoots();
+            String src[] = new String[virtualFiles.length];
+            for (int count = 0; count < src.length; count++) {
+                src[count] = virtualFiles[count].getPresentableUrl();
+            }
+            return src;
+        }
+        return null;
     }
 }

@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.tools.component;
 
 import javax.swing.*;
@@ -16,7 +34,10 @@ public class WizardPanel extends JPanel {
     private String error;
     private boolean flag;
     private boolean progressFlag;
-   // private ProgressBarPanel progressBar;
+    public static final int WSDL_2_JAVA_TYPE = 1;
+    public static final int JAVA_2_WSDL_TYPE = 2;
+    public static final int UNSPECIFIED_TYPE = 3;
+    private boolean isPageComplete = false;
 
     public WizardPanel(WizardComponents wizardComponents) {
         this(wizardComponents, null);
@@ -89,12 +110,6 @@ public class WizardPanel extends JPanel {
     public boolean getProgressPanelVisible() {
         return progressFlag;
     }
-   /* public void setProgressPanel(ProgressBarPanel panel) {
-        this.progressBar = panel;
-    }
-    public ProgressBarPanel getProgressPanel() {
-        return (ProgressBarPanel)progressBar;
-    }*/
 
     // next
     protected boolean goNext() {
@@ -116,12 +131,12 @@ public class WizardPanel extends JPanel {
             return false;
         }
     }
-
+    
     protected void switchPanel(int panelIndex) {
         getWizardComponents().setCurrentIndex(panelIndex);
         getWizardComponents().updateComponents();
     }
-
+    /** this method used for set Button Enabled */
     protected void setBackButtonEnabled(boolean set) {
         wizardComponents.getBackButton().setEnabled(set);
     }
@@ -132,6 +147,19 @@ public class WizardPanel extends JPanel {
 
     protected void setFinishButtonEnabled(boolean set) {
         wizardComponents.getFinishButton().setEnabled(set);
+    }
+
+    /** this method used for to get type  of wizard panel*/
+    public  int getPageType() {
+        return  WizardPanel.UNSPECIFIED_TYPE;
+    }
+    /** this method used for check is page complete */
+    public  boolean isPageComplete() {
+        return  isPageComplete;
+    }
+    /** this method used for set page complete*/
+    public void setPageComplete(boolean complete) {
+        isPageComplete = complete;
     }
 
 }

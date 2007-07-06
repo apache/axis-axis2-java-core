@@ -1,39 +1,37 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
-
-             http://www.apache.org/licenses/LICENSE-2.0
-
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
- * under the License.     
+ * under the License.
  */
 package org.apache.axis2.description;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.woden.wsdl20.extensions.soap.SOAPFaultCode;
-import org.apache.woden.wsdl20.extensions.soap.SOAPFaultSubcodes;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.WSDL20Util;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
 
-import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -133,7 +131,6 @@ public class AxisBindingMessage extends AxisDescription {
 
         // If this is a fault, create a fault element and add fault specific properties
         if (this.isFault()) {
-
             if (this.getParent() instanceof AxisBinding) {
                bindingMessageElement = omFactory.createOMElement(
                         WSDL2Constants.FAULT_LOCAL_NAME, wsdl);
@@ -149,22 +146,8 @@ public class AxisBindingMessage extends AxisDescription {
                     WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":"
                             + this.name));
 
-            // Fault specific properties
-            SOAPFaultCode faultCode = (SOAPFaultCode) this.options
-                    .get(WSDL2Constants.ATTR_WSOAP_CODE);
-            if (faultCode != null && faultCode.getQName() != null) {
-                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_CODE, wsoap, faultCode.getQName().getLocalPart()));
-            }
-            SOAPFaultSubcodes soapFaultSubcodes = (SOAPFaultSubcodes) this.options
-                    .get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
-            QName faultCodes [];
-            if (soapFaultSubcodes != null && (faultCodes = soapFaultSubcodes.getQNames()) != null) {
-                for (int i=0 ; i < faultCodes.length; i++) {
-                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
-                        WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, faultCodes[0].getLocalPart()));
-                }
-            }
+            WSDL20Util.extractWSDL20SoapFaultInfo(options, bindingMessageElement, omFactory, wsoap);
+
             Integer code = (Integer) this.options.get(WSDL2Constants.ATTR_WHTTP_CODE);
             if (code != null) {
                 bindingMessageElement.addAttribute(omFactory.createOMAttribute(
@@ -215,7 +198,7 @@ public class AxisBindingMessage extends AxisDescription {
         policyList.addAll(policyInclude.getAttachedPolicies());
 
         // AxisBindingOperation policies
-        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) getParent();
+        AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
         if (axisBindingOperation != null) {
             policyList.add(axisBindingOperation.getPolicyInclude()
                     .getAttachedPolicies());
@@ -224,18 +207,17 @@ public class AxisBindingMessage extends AxisDescription {
         // AxisBinding policies
         AxisBinding axisBinding = null;
         if (axisBindingOperation != null) {
-            axisBinding = (AxisBinding) axisBindingOperation.getParent();
+            axisBinding = axisBindingOperation.getAxisBinding();
         }
 
         if (axisBinding != null) {
-                policyList.addAll(axisBinding.getPolicyInclude()
-                        .getAttachedPolicies());
+                policyList.addAll(axisBinding.getPolicyInclude().getAttachedPolicies());
         }
 
         // AxisEndpoint
         AxisEndpoint axisEndpoint = null;
         if (axisBinding != null) {
-            axisEndpoint = (AxisEndpoint) axisBinding.getParent();
+            axisEndpoint = axisBinding.getAxisEndpoint();
         }
 
         if (axisEndpoint != null) {
@@ -254,6 +236,9 @@ public class AxisBindingMessage extends AxisDescription {
         return PolicyUtil.getMergedPolicy(policyList, this);
     }
 
+    public AxisBindingOperation getAxisBindingOperation() {
+        return (AxisBindingOperation)parent;
+    }
 
 }
 

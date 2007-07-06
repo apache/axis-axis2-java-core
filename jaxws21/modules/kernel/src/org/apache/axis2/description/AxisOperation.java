@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package org.apache.axis2.description;
 
@@ -59,20 +62,6 @@ public abstract class AxisOperation extends AxisDescription
 
     // to store mepURL
     private String mepURI;
-    // List of Header QNames that have been registered as understood, for example by message receivers.
-    // This list DOES NOT contain QNames for headers understood by handlers (e.g. security or sandesha)
-    // This list is used in the Axis2 Engine checkMustUnderstand processing to identify headers 
-    // marked as mustUnderstand which  have not yet been processed (via dispatch handlers), 
-    // but which will be processed by the message receiver.
-    // REVIEW: (1) This only supports a single list of understood headers; should there be 
-    // different lists for INPUT messages and OUTPUT messages?
-    // (2) This probably needs to support SOAP actors/roles
-    // (3) Strictly speaking, per the SOAP spec, all mustUnderstand checks should be performed
-    // before processing begins on the message.  So, ideally, even the QoSes should register
-    // the headers (and roles) they understand and the mustUnderstand checks should be done before
-    // they are invoked.  There are issues with that, however, in terms of targeting the operation, and
-    // the possible encryption of headers.
-    private ArrayList understoodHeaderQNames = new ArrayList();
 
     private MessageReceiver messageReceiver;
 
@@ -159,7 +148,7 @@ public abstract class AxisOperation extends AxisDescription
         // If I'm not, the operations will already have been added by someone above, so don't
         // do it again.
         if (selfEngaged) {
-            AxisService service = (AxisService)getParent();
+            AxisService service = getAxisService();
             if (service != null) {
                 service.addModuleOperations(axisModule);
             }
@@ -170,24 +159,24 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     protected void onDisengage(AxisModule module) {
-        if (getParent() != null) {
-            AxisService service = (AxisService) getParent();
-            AxisConfiguration axisConfiguration = service.getAxisConfiguration();
-            PhaseResolver phaseResolver = new PhaseResolver(axisConfiguration);
-            if (!service.isEngaged(module.getName()) &&
-                    (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
-                phaseResolver.disengageModuleFromGlobalChains(module);
-            }
-            phaseResolver.disengageModuleFromOperationChain(module, this);
+        AxisService service = getAxisService();
+        if (service == null) return;
 
-            //removing operations added at the time of module engagemnt
-            HashMap moduleOperations = module.getOperations();
-            if (moduleOperations != null) {
-                Iterator moduleOperations_itr = moduleOperations.values().iterator();
-                while (moduleOperations_itr.hasNext()) {
-                    AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
-                    service.removeOperation(operation.getName());
-                }
+        AxisConfiguration axisConfiguration = service.getAxisConfiguration();
+        PhaseResolver phaseResolver = new PhaseResolver(axisConfiguration);
+        if (!service.isEngaged(module.getName()) &&
+                (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
+            phaseResolver.disengageModuleFromGlobalChains(module);
+        }
+        phaseResolver.disengageModuleFromOperationChain(module, this);
+
+        //removing operations added at the time of module engagemnt
+        HashMap moduleOperations = module.getOperations();
+        if (moduleOperations != null) {
+            Iterator moduleOperations_itr = moduleOperations.values().iterator();
+            while (moduleOperations_itr.hasNext()) {
+                AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
+                service.removeOperation(operation.getName());
             }
         }
     }
@@ -509,7 +498,10 @@ public abstract class AxisOperation extends AxisDescription
 
     public void setFaultMessages(AxisMessage faultMessage) {
         faultMessages.add(faultMessage);
-        addFaultAction(faultMessage.getName(),"urn:" + faultMessage.getName());
+        if(getFaultAction(faultMessage.getName())==null){
+            addFaultAction(faultMessage.getName(),"urn:" + name.getLocalPart()
+                    + faultMessage.getName());
+        }
     }
 
     public void setSoapAction(String soapAction) {
@@ -564,30 +556,14 @@ public abstract class AxisOperation extends AxisDescription
     public Iterator getMessages(){
         return getChildren();
     }
-    
-    /**
-     * Return the list of SOAP header QNames that have been registered as understood by
-     * message receivers, for example.  Note that this list DOES NOT contain the QNames that are
-     * understood by handlers run prior to the message receiver.  This is used in the Axis2 
-     * Engine checkMustUnderstand processing to identify headers marked as mustUnderstand which
-     * have not yet been processed (via dispatch handlers), but which will be processed by
-     * the message receiver.
-     * 
-     * @return ArrayList of handler QNAames registered as understood by the message receiver.
-     */
-    public ArrayList getUnderstoodHeaderQNames() {
-        return understoodHeaderQNames;
-    }
 
     /**
-     * Add a SOAP header QName to the list of headers understood by this operation.  This is used
-     * by other (non dispatch handler) components such as a message receiver to register that it
-     * will process a header.
-     * @param understoodHeader
+     * Typesafe access to parent service
+     *
+     * @return the AxisService which contains this AxisOperation
      */
-    public void registerUnderstoodHeaderQName(QName understoodHeader) {
-        if (understoodHeader != null) {
-            understoodHeaderQNames.add(understoodHeader);
-        }
+    public AxisService getAxisService() {
+        return (AxisService)getParent();
     }
+    
  }

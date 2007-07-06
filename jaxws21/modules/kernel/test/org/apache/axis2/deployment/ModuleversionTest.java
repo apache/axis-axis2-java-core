@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
@@ -9,23 +27,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.Utils;
 
 import java.util.Iterator;
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
 
 public class ModuleversionTest extends TestCase {
 
@@ -96,5 +97,41 @@ public class ModuleversionTest extends TestCase {
         if (!found3) {
             fail("Didn't find testModule-1.93");
         }
+    }
+
+     public void testModuleWithSNAPSHOT() throws AxisFault {
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        AxisModule module1 = new AxisModule();
+        module1.setName("Module1");
+        axisConfiguration.addModule(module1);
+
+        AxisModule module2 = new AxisModule();
+        module2.setName("Module1-SNAPSHOT");
+        axisConfiguration.addModule(module2);
+
+        AxisModule module3 = new AxisModule();
+        module3.setName("Module1-0.95");
+        axisConfiguration.addModule(module3);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        assertEquals(module2, axisConfiguration.getDefaultModule("Module1"));
+    }
+
+
+     public void testModuleWithSNAPSHOT2() throws AxisFault {
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        AxisModule module1 = new AxisModule();
+        module1.setName("Module1-a");
+        axisConfiguration.addModule(module1);
+
+        AxisModule module2 = new AxisModule();
+        module2.setName("Module1-a-SNAPSHOT");
+        axisConfiguration.addModule(module2);
+
+        AxisModule module3 = new AxisModule();
+        module3.setName("Module1-a-0.95");
+        axisConfiguration.addModule(module3);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
+        assertEquals(module2, axisConfiguration.getDefaultModule("Module1-a"));
     }
 }

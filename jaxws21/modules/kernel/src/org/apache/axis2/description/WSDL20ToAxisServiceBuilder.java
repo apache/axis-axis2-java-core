@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.description;
 
 import org.apache.axiom.soap.SOAP11Constants;
@@ -21,6 +39,8 @@ import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsI
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
+import org.apache.woden.internal.wsdl20.BindingFaultImpl;
+import org.apache.woden.internal.wsdl20.BindingOperationImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.BindingFault;
@@ -75,22 +95,6 @@ import java.util.TreeMap;
 import java.util.Comparator;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
-
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
@@ -234,7 +238,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private void processEndpoints() throws AxisFault {
+    private void processEndpoints(Interface serviceInterface) throws AxisFault {
         Endpoint[] endpoints = wsdlService.getEndpoints();
 
         if (endpoints.length == 0) {
@@ -257,12 +261,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             axisService
-                    .addEndpoint(endpoint.getName().toString(), processEndpoint(endpoint));
+                    .addEndpoint(endpoint.getName().toString(), processEndpoint(endpoint, serviceInterface));
         } else {
             for (int i = 0; i < endpoints.length; i++) {
                 axisService
                         .addEndpoint(endpoints[i].getName().toString(),
-                                     processEndpoint(endpoints[i]));
+                                     processEndpoint(endpoints[i], serviceInterface));
             }
         }
 
@@ -304,11 +308,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (isCodegen) {
             axisService.setOperationsNameList(operationNames);
         }
-        processEndpoints();
+        processEndpoints(serviceInterface);
 
     }
 
-    private AxisEndpoint processEndpoint(Endpoint endpoint) throws AxisFault {
+    private AxisEndpoint processEndpoint(Endpoint endpoint, Interface serviceInterface) throws AxisFault {
         AxisEndpoint axisEndpoint = new AxisEndpoint();
         axisEndpoint.setName(endpoint.getName().toString());
         axisEndpoint.setEndpointURL(endpoint.getAddress().toString());
@@ -316,7 +320,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisEndpoint.setBinding(
                     (AxisBinding) processedBindings.get(endpoint.getBinding().getName()));
         } else {
-            axisEndpoint.setBinding(processBinding(endpoint.getBinding()));
+            axisEndpoint.setBinding(processBinding(endpoint.getBinding(), serviceInterface));
         }
 
         SOAPEndpointExtensions soapEndpointExtensions = null;
@@ -404,7 +408,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private AxisBinding processBinding(Binding binding)
+    private AxisBinding processBinding(Binding binding, Interface serviceInterface)
             throws AxisFault {
         AxisBinding axisBinding = new AxisBinding();
         axisBinding.setName(binding.getName());
@@ -412,9 +416,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         axisBinding.setType(bindingType);
 
         if (bindingType.equals(WSDL2Constants.URI_WSDL2_SOAP)) {
-            processSOAPBindingExtention(binding, axisBinding);
+            processSOAPBindingExtention(binding, axisBinding, serviceInterface);
         } else if (bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
-            processHTTPBindingExtention(binding, axisBinding);
+            processHTTPBindingExtention(binding, axisBinding, serviceInterface);
         }
 
         // We should process the interface based on the service not on a binding
@@ -424,7 +428,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return axisBinding;
     }
 
-    private void processSOAPBindingExtention(Binding binding, AxisBinding axisBinding)
+    private void processSOAPBindingExtention(Binding binding, AxisBinding axisBinding, Interface serviceInterface)
             throws AxisFault {
 
         // Capture all the binding specific properties
@@ -480,9 +484,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingFault[] bindingFaults = binding.getBindingFaults();
         for (int i = 0; i < bindingFaults.length; i++) {
-            BindingFault bindingFault = bindingFaults[i];
-            InterfaceFault interfaceFault = bindingFault.getInterfaceFault();
-
+            BindingFaultImpl bindingFault = (BindingFaultImpl) bindingFaults[i];
+            InterfaceFault interfaceFault = serviceInterface.getFromAllInterfaceFaults(bindingFault.getRef());
             AxisBindingMessage axisBindingFault = new AxisBindingMessage();
             axisBindingFault.setFault(true);
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
@@ -522,11 +525,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingOperation[] bindingOperations = binding.getBindingOperations();
         for (int i = 0; i < bindingOperations.length; i++) {
-            BindingOperation bindingOperation = bindingOperations[i];
+            BindingOperationImpl bindingOperation = (BindingOperationImpl) bindingOperations[i];
 
             AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(bindingOperation.getRef());
             AxisOperation axisOperation =
-                    axisService.getOperation(bindingOperation.getInterfaceOperation().getName());
+                    axisService.getOperation(interfaceOperation.getName());
 
             axisBindingOperation.setAxisOperation(axisOperation);
             axisBindingOperation.setParent(axisBinding);
@@ -652,7 +656,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding)
+    private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding, Interface serviceInterface)
             throws AxisFault {
 
 
@@ -683,9 +687,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingFault[] bindingFaults = binding.getBindingFaults();
         for (int i = 0; i < bindingFaults.length; i++) {
-            BindingFault bindingFault = bindingFaults[i];
-            InterfaceFault interfaceFault = bindingFault.getInterfaceFault();
-
+            BindingFaultImpl bindingFault = (BindingFaultImpl) bindingFaults[i];
+            InterfaceFault interfaceFault =
+                    serviceInterface.getFromAllInterfaceFaults(bindingFault.getRef());
             AxisBindingMessage axisBindingFault = new AxisBindingMessage();
             axisBindingFault.setFault(true);
             axisBindingFault.setName(interfaceFault.getName().getLocalPart());
@@ -717,11 +721,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         BindingOperation[] bindingOperations = binding.getBindingOperations();
         for (int i = 0; i < bindingOperations.length; i++) {
-            BindingOperation bindingOperation = bindingOperations[i];
+            BindingOperationImpl bindingOperation = (BindingOperationImpl) bindingOperations[i];
 
             AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+            InterfaceOperation interfaceOperation = serviceInterface.getFromAllInterfaceOperations(bindingOperation.getRef());
             AxisOperation axisOperation =
-                    axisService.getOperation(bindingOperation.getInterfaceOperation().getName());
+                    axisService.getOperation(interfaceOperation.getName());
 
             axisBindingOperation.setAxisOperation(axisOperation);
             axisBindingOperation.setParent(axisBinding);

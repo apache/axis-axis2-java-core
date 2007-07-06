@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
@@ -5,6 +23,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -16,23 +35,6 @@ import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import java.util.*;
-
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*/
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
 
@@ -226,53 +228,20 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             AxisOperation axisOperation = service.getOperation(new QName(methodName));
             if (axisOperation == null) {
                 axisOperation = Utils.getAxisOperationForJmethod(jMethod);
+                if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                        axisOperation.getMessageExchangePattern())){
+                    AxisMessage outMessage = axisOperation.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if (outMessage !=null ){
+                        outMessage.setName(methodName + RESPONSE);
+                    }
+                }
                 addToService = true;
             }
             // Maintain a list of methods we actually work with
             list.add(jMethod);
 
-            if (jMethod.getExceptionTypes().length > 0) {
-                JClass[] extypes = jMethod.getExceptionTypes();
-                for (int j = 0; j < extypes.length; j++) {
-                    JClass extype = extypes[j];
-                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
-                        continue;
-                    }
-                    if (!generateBaseException) {
-                        methodSchemaType = createSchemaTypeForMethodPart("Exception");
-                        sequence = new XmlSchemaSequence();
-                        QName schemaTypeName = typeTable.getSimpleSchemaTypeName(Exception.class.getName());
-                        addContentToMethodSchemaType(sequence,
-                                schemaTypeName,
-                                "Exception",
-                                false);
-                        methodSchemaType.setParticle(sequence);
-                        generateBaseException = true;
-                    }
-                    String partQname = extype.getSimpleName();
-                    methodSchemaType = createSchemaTypeForMethodPart(partQname);
-                    sequence = new XmlSchemaSequence();
-                    if (Exception.class.getName().equals(extype.getQualifiedName())) {
-                        addContentToMethodSchemaType(sequence,
-                                typeTable.getComplexSchemaType("Exception"),
-                                partQname,
-                                false);
-                        methodSchemaType.setParticle(sequence);
-                        typeTable.addComplexSchema(Exception.class.getPackage().getName(),
-                                methodSchemaType.getQName());
-                    } else {
-                        generateSchemaForType(sequence, extype, extype.getSimpleName());
-                        methodSchemaType.setParticle(sequence);
-                    }
-                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
-                        continue;
-                    }
-                    AxisMessage faultMessage = new AxisMessage();
-                    faultMessage.setName(extype.getSimpleName());
-                    faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
-                    axisOperation.setFaultMessages(faultMessage);
-                }
-            }
+            processException(jMethod,axisOperation);
             uniqueMethods.put(methodName, jMethod);
             JParameter[] paras = jMethod.getParameters();
             String parameterNames[] = null;
@@ -350,6 +319,72 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     /**
+     *  This method will generate Schema element for all the excetion types in a given JMethod
+     *  - No matter what it will generate Schema element for java.lang.Exception so that for other
+     *    exception which extend java.lang.Excetion can use as the base class type
+     */
+    protected void processException(JMethod jMethod, 
+                                                 AxisOperation axisOperation) throws Exception {
+        XmlSchemaComplexType methodSchemaType;
+        XmlSchemaSequence sequence;
+        if (jMethod.getExceptionTypes().length > 0) {
+            if (!generateBaseException) {
+                sequence = new XmlSchemaSequence();
+                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+                QName elementName = new QName(schemaTargetNameSpace,
+                        "Exception",
+                        schema_namespace_prefix);
+                XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+                complexType.setName("Exception");
+                xmlSchema.getItems().add(complexType);
+                xmlSchema.getElements().add(elementName, complexType);
+                typeTable.addComplexSchema(Exception.class.getName(), elementName);
+                QName schemaTypeName = TypeTable.ANY_TYPE;
+                addContentToMethodSchemaType(sequence,
+                        schemaTypeName,
+                        "Exception",
+                        false);
+                complexType.setParticle(sequence);
+                generateBaseException = true;
+            }
+            JClass[] extypes = jMethod.getExceptionTypes();
+            for (int j = 0; j < extypes.length; j++) {
+                JClass extype = extypes[j];
+                if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
+                    continue;
+                }
+                String partQname = extype.getSimpleName();
+                methodSchemaType = createSchemaTypeForFault(partQname);
+                QName elementName =
+                        new QName(this.schemaTargetNameSpace, partQname, this.schema_namespace_prefix);
+                sequence = new XmlSchemaSequence();
+                if (Exception.class.getName().equals(extype.getQualifiedName())) {
+                    addContentToMethodSchemaType(sequence,
+                            typeTable.getComplexSchemaType(Exception.class.getName()),
+                            partQname,
+                            false);
+                    methodSchemaType.setParticle(sequence);
+                    typeTable.addComplexSchema(Exception.class.getPackage().getName(),
+                            methodSchemaType.getQName());
+                } else {
+                    generateSchemaForType(sequence, extype, extype.getSimpleName());
+                    methodSchemaType.setParticle(sequence);
+                }
+
+                typeTable.addComplexSchema(partQname,elementName);
+
+                if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
+                    continue;
+                }
+                AxisMessage faultMessage = new AxisMessage();
+                faultMessage.setName(extype.getSimpleName());
+                faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
+                axisOperation.setFaultMessages(faultMessage);
+            }
+        }
+    }
+
+    /**
      * JAM convert first name of an attribute into UpperCase as an example if there is a instance
      * variable called foo in a bean , then Jam give that as Foo so this method is to correct that
      * error
@@ -413,7 +448,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     tgtNamespace =
                             resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName());
                     tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
-                    generateSchema(sup);
+                    QName superClassQname = generateSchema(sup);
+                    if(superClassQname!=null){
+                        tgtNamespacepfx = superClassQname.getPrefix();
+                        tgtNamespace = superClassQname.getNamespaceURI();
+                    }
                 }
 
                 if (tgtNamespacepfx == null) {
@@ -465,7 +504,6 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             Arrays.sort(properties);
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
-                String propertyName = getQualifiedName(property.getType());
                 boolean isArryType = property.getType().isArrayType();
 
                 String propname = getCorrectName(property.getSimpleName());
@@ -540,6 +578,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             propertyName = getQualifiedName(type);
 
         if (isArryType && "byte".equals(propertyName)) {
+            propertyName = "base64Binary";
+        }
+        if ("javax.activation.DataHandler".equals(propertyName)) {
             propertyName = "base64Binary";
         }
 
@@ -671,6 +712,25 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         typeTable.addComplexSchema(localPartName, elementName);
 
+        return complexType;
+    }
+
+    private XmlSchemaComplexType createSchemaTypeForFault(String localPartName) {
+        XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+        QName elementName =
+                new QName(this.schemaTargetNameSpace, localPartName, this.schema_namespace_prefix);
+
+        XmlSchemaComplexType complexType = getComplexTypeForElement(xmlSchema, elementName);
+        if (complexType == null) {
+            complexType = new XmlSchemaComplexType(xmlSchema);
+
+            XmlSchemaElement globalElement = new XmlSchemaElement();
+            globalElement.setSchemaType(complexType);
+            globalElement.setName(localPartName);
+            globalElement.setQName(elementName);
+            xmlSchema.getItems().add(globalElement);
+            xmlSchema.getElements().add(elementName, globalElement);
+        }
         return complexType;
     }
 

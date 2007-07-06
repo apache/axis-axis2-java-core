@@ -1,3 +1,21 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <project basedir="." default="help">
 
     <!--Set your elcipse home directory  -->
@@ -6,7 +24,7 @@
 	
     <!-- properties file to load the versions of dependencies -->
     <property file="../../../etc/project.properties"/>
-    <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"></property>
+    <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_${version_number}"></property>
     <property name="codegen.plugin.zip.name" value="axis2-eclipse-codegen-wizard.zip"></property>
 	
     <property name="src" value="./src"></property>
@@ -26,10 +44,11 @@
     <property name="plugin.project.file.name" value=".project"></property>
     <property name="plugin.classpath.file.name" value=".classpath"></property>
     <property name="plugin.help.file.name" value="help_toc.xml"></property>
+    <property name="tool_docs_version" value="1_3"></property>
 
     <property name="codegen.resource.dir" value="../conf/codegen"></property>
-    <property name="codegen.help.resource.file" value="../../../xdocs/tools/1_1/eclipse/wsdl2java-plugin.html"></property>
-    <property name="codegen.help.images.dir" value="../../../xdocs/tools/1_1/eclipse/images"></property>
+    <property name="codegen.help.resource.file" value="../../../xdocs/tools/${tool_docs_version}/eclipse/wsdl2java-plugin.html"></property>
+    <property name="codegen.help.images.dir" value="../../../xdocs/tools/${tool_docs_version}/eclipse/images"></property>
     <property name="axis2.lib.dir" value="../../../target/lib"></property>
 
     <!--Filter tockens for the copy command to filter the versions of external dependencies -->
@@ -47,6 +66,9 @@
      <filter token="log4j.version" value="${log4j.version}" />
      <filter token="wsdl4j.version" value="${wsdl4j.version}" />
      <filter token="woden.version" value="${woden.version}" />
+     <filter token="commons.httpclient.version" value="${commons.httpclient.version}" />
+     <filter token="commons.codec.version" value="${commons.codec.version}" />
+     <filter token="jibx.version" value="${jibx.version}" />
 
 
      <!--Codegen wizard libraries -->
@@ -67,6 +89,11 @@
 		<include name="xbean-${xbean.version}.jar" />
 		<include name="XmlSchema-${XmlSchema.version}.jar" />
 		<include name="woden-${woden.version}.jar" />
+		<include name="commons-httpclient-${commons.httpclient.version}.jar" />
+		<include name="commons-codec-${commons.codec.version}.jar" />
+		<include name="axis2-jibx-${version_number}.jar" />
+		<include name="jibx-bind-${jibx.version}.jar" />
+		<include name="jibx-run-${jibx.version}.jar" />
     </fileset>
 	
     <!-- Default target to generate all the services -->

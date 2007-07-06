@@ -1,17 +1,20 @@
-/**
- * Copyright 2004,2005 The Apache Software Foundation.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 
@@ -96,10 +99,11 @@ public class ServiceBuilder extends DescriptionBuilder {
             // then use that as the service name
             if (serviceNameatt != null) {
                 if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
-                    AxisService wsdlService = (AxisService) wsdlServiceMap.get(serviceNameatt.getAttributeValue());
-                    if(wsdlService!=null){
+                    AxisService wsdlService = (AxisService)wsdlServiceMap.get(
+                            serviceNameatt.getAttributeValue());
+                    if (wsdlService != null) {
                         wsdlService.setClassLoader(service.getClassLoader());
-                        wsdlService.setParent(service.getParent());
+                        wsdlService.setParent(service.getAxisServiceGroup());
                         service = wsdlService;
                         service.setWsdlFound(true);
                         service.setCustomWsdl(true);
@@ -391,8 +395,17 @@ public class ServiceBuilder extends DescriptionBuilder {
         while (operations.hasNext()) {
             AxisOperation operation = (AxisOperation) operations.next();
             if (operation.getMessageReceiver() == null) {
-                operation.setMessageReceiver(loadDefaultMessageReceiver(
-                        operation.getMessageExchangePattern(), service));
+                MessageReceiver messageReceiver = loadDefaultMessageReceiver(
+                        operation.getMessageExchangePattern(), service);
+                if (messageReceiver == null  &&
+                        //we assume that if the MEP is ROBUST_IN_ONLY then the in-out MR can handle that
+                        WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                                operation.getMessageExchangePattern())) {
+                    messageReceiver = loadDefaultMessageReceiver(
+                            WSDL2Constants.MEP_URI_IN_OUT, service);
+
+                }
+                operation.setMessageReceiver(messageReceiver);
             }
         }
     }

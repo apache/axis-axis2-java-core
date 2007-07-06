@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.rpc;
 
 import org.apache.axis2.integration.LocalTestCase;
@@ -23,7 +41,7 @@ public class AddressServiceTest extends LocalTestCase
     }
     
     public void testAddAndFetchEntry() throws Exception {
-        QName opAddEntry = new QName("http://rpc.axis2.apache.org/xsd", "addEntry");
+        QName opAddEntry = new QName("http://rpc.axis2.apache.org", "addEntry");
 
         Entry entry = new Entry();
 
@@ -47,7 +65,7 @@ public class AddressServiceTest extends LocalTestCase
         Object[] ret = serviceClient.invokeBlocking(opAddEntry, opAddEntryArgs, new Class[]{Integer.class});
         assertEquals(ret[0], new Integer(1));
 
-        QName opFindEntry = new QName("http://rpc.axis2.apache.org/xsd", "findEntry");
+        QName opFindEntry = new QName("http://rpc.axis2.apache.org", "findEntry");
         String name = "Abby Cadabby";
 
         Object[] opFindEntryArgs = new Object[] { name };
@@ -73,7 +91,7 @@ public class AddressServiceTest extends LocalTestCase
     }
 
     public void testEntry1() throws Exception {
-        QName opAddEntry = new QName("http://rpc.axis2.apache.org/xsd", "getEntries1");
+        QName opAddEntry = new QName("http://rpc.axis2.apache.org", "getEntries1");
 
         Object[] opAddEntryArgs = new Object[] { };
 
@@ -92,7 +110,7 @@ public class AddressServiceTest extends LocalTestCase
     }
 
     public void testEntry2() throws Exception {
-        QName opAddEntry = new QName("http://rpc.axis2.apache.org/xsd", "getEntries2");
+        QName opAddEntry = new QName("http://rpc.axis2.apache.org", "getEntries2");
 
         Object[] opAddEntryArgs = new Object[] { };
 
@@ -111,7 +129,7 @@ public class AddressServiceTest extends LocalTestCase
     }
 
     public void testEntry3() throws Exception {
-        QName opAddEntry = new QName("http://rpc.axis2.apache.org/xsd", "getEntries3");
+        QName opAddEntry = new QName("http://rpc.axis2.apache.org", "getEntries3");
 
         Object[] opAddEntryArgs = new Object[] { };
 

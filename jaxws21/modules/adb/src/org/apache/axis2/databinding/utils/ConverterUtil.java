@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
@@ -30,21 +48,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 /**
  * Converter methods to go from 1. simple type -> String 2. simple type -> Object 3. String ->
@@ -511,6 +514,10 @@ public class ConverterUtil {
         return new IDRefs(s);
     }
 
+    public static URI convertToURI(String s){
+        return convertToAnyURI(s);
+    }
+
     public static URI convertToAnyURI(String s) {
         try {
             return new URI(s);
@@ -678,71 +685,106 @@ public class ConverterUtil {
      */
     public static Object convertToArray(Class baseArrayClass, List objectList) {
         int listSize = objectList.size();
-        Object returnArray = Array.newInstance(baseArrayClass, listSize);
+        Object returnArray = null;
         if (int.class.equals(baseArrayClass)) {
+            int[] array = new int[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setInt(returnArray, i, Integer.parseInt(o.toString()));
+                    array[i] = Integer.parseInt(o.toString());
+                } else {
+                    array[i] = Integer.MIN_VALUE;
                 }
             }
+            returnArray = array;
         } else if (float.class.equals(baseArrayClass)) {
+            float[] array = new float[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setFloat(returnArray, i, Float.parseFloat(o.toString()));
+                    array[i] = Float.parseFloat(o.toString());
+                } else {
+                    array[i] = Float.NaN;
                 }
             }
+            returnArray = array;
         } else if (short.class.equals(baseArrayClass)) {
+            short[] array = new short[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setShort(returnArray, i, Short.parseShort(o.toString()));
+                    array[i] = Short.parseShort(o.toString());
+                } else {
+                    array[i] = Short.MIN_VALUE;
                 }
             }
+            returnArray = array;
         } else if (byte.class.equals(baseArrayClass)) {
+            byte[] array = new byte[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setByte(returnArray, i, Byte.parseByte(o.toString()));
+                    array[i] = Byte.parseByte(o.toString());
+                } else {
+                    array[i] = Byte.MIN_VALUE;
                 }
             }
+            returnArray = array;
         } else if (long.class.equals(baseArrayClass)) {
+            long[] array = new long[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setLong(returnArray, i, Long.parseLong(o.toString()));
+                    array[i] = Long.parseLong(o.toString());
+                } else {
+                    array[i] = Long.MIN_VALUE;
                 }
             }
+            returnArray = array;
         } else if (boolean.class.equals(baseArrayClass)) {
+            boolean[] array = new boolean[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setBoolean(returnArray, i, Boolean.getBoolean(o.toString()));
+                    array[i] = Boolean.getBoolean(o.toString());
                 }
             }
+            returnArray = array;
         } else if (char.class.equals(baseArrayClass)) {
+            char[] array = new char[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setChar(returnArray, i, o.toString().toCharArray()[0]);
+                    array[i] = o.toString().toCharArray()[0];
                 }
             }
+            returnArray = array;
         } else if (double.class.equals(baseArrayClass)) {
+            double[] array = new double[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.setDouble(returnArray, i, Double.parseDouble(o.toString()));
+                    array[i] = Double.parseDouble(o.toString());
+                } else {
+                    array[i] = Double.NaN;
                 }
             }
+            returnArray = array;
         } else if (Calendar.class.equals(baseArrayClass)) {
+            Calendar[] array = new Calendar[listSize];
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    Array.set(returnArray, i, o);
+                    if (o instanceof String){
+                        array[i] = ConverterUtil.convertToDateTime(o.toString());
+                    } else if (o instanceof Calendar) {
+                        array[i] = (Calendar) o;
+                    }
                 }
             }
+            returnArray = array;
         } else {
+            returnArray = Array.newInstance(baseArrayClass, listSize);
             ConvertToArbitraryObjectArray(returnArray, baseArrayClass, objectList);
         }
         return returnArray;

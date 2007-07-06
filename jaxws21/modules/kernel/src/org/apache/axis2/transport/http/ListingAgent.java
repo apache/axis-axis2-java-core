@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 
 package org.apache.axis2.transport.http;
@@ -208,19 +211,40 @@ public class ListingAgent extends AbstractAgent {
                 if (wsdl2 >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-                    String ip = extractHostAndPort(filePart, isHttp);
-                    ((AxisService) serviceObj)
-                            .printWSDL2(out);
-                    out.flush();
-                    out.close();
+                    String wsdlName = req.getParameter("wsdl2");
+                    if (!"".equals(wsdlName)) {
+                        InputStream in = ((AxisService) serviceObj).getClassLoader()
+                                .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
+                        if (in != null) {
+                            out.write(IOUtils.getStreamAsByteArray(in));
+                            out.flush();
+                            out.close();
+                        } else {
+                            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        }
+                    } else {
+                        ((AxisService) serviceObj)
+                                .printWSDL2(out);
+                        out.flush();
+                        out.close();
+                    }
                     return;
                 } else if (wsdl >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
-                    ((AxisService) serviceObj).printWSDL(out, ip);
-                    out.flush();
-                    out.close();
+                    String wsdlName = req.getParameter("wsdl");
+
+                    if (!"".equals(wsdlName)) {
+                        AxisService axisServce = (AxisService) serviceObj;
+                        axisServce.printUserWSDL(out, wsdlName);
+                        out.flush();
+                        out.close();
+                    } else {
+                        ((AxisService) serviceObj).printWSDL(out, ip);
+                        out.flush();
+                        out.close();
+                    }
                     return;
                 } else if (xsd >= 0) {
                     OutputStream out = res.getOutputStream();

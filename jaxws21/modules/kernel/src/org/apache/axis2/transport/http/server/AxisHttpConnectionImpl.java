@@ -1,30 +1,20 @@
 /*
- * $HeadURL$
- * $Revision$
- * $Date$
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * ====================================================================
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Copyright 1999-2006 The Apache Software Foundation
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.apache.axis2.transport.http.server;
@@ -41,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.Header;
+import org.apache.http.HttpConnectionMetrics;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -83,6 +74,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
     private final HttpRequestFactory requestfactory;
     private final ContentLengthStrategy contentLenStrategy;
     private final int maxHeaderCount;
+    private final int maxLineLen;
 
     private OutputStream out = null;
     private InputStream in = null;
@@ -106,12 +98,13 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         
         int buffersize = HttpConnectionParams.getSocketBufferSize(params);
         this.socket = socket;
-        this.datatransmitter = new SocketHttpDataTransmitter(socket, buffersize); 
-        this.datareceiver = new SocketHttpDataReceiver(socket, buffersize); 
+        this.datatransmitter = new SocketHttpDataTransmitter(socket, buffersize, params); 
+        this.datareceiver = new SocketHttpDataReceiver(socket, buffersize, params); 
         this.charbuffer = new CharArrayBuffer(256);
         this.requestfactory = new DefaultHttpRequestFactory();
         this.contentLenStrategy = new StrictContentLengthStrategy();
         this.maxHeaderCount = params.getIntParameter(HttpConnectionParams.MAX_HEADER_COUNT, -1);
+        this.maxLineLen = params.getIntParameter(HttpConnectionParams.MAX_LINE_LENGTH, -1);
     }
 
     public void close() throws IOException {
@@ -147,11 +140,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         }
     }
 
-    public HttpRequest receiveRequest(final HttpParams params) 
-            throws HttpException, IOException {
-        if (params == null) {
-            throw new IllegalArgumentException("HTTP parameters may not be null");
-        }
+    public HttpRequest receiveRequest() throws HttpException, IOException {
         this.charbuffer.clear();
         int i = this.datareceiver.readLine(this.charbuffer);
         if (i == -1) {
@@ -159,8 +148,10 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         }
         RequestLine requestline = BasicRequestLine.parse(this.charbuffer, 0, this.charbuffer.length());
         HttpRequest request = this.requestfactory.newHttpRequest(requestline);
-        request.getParams().setDefaults(params);
-        Header[] headers = HeaderUtils.parseHeaders(this.datareceiver, this.maxHeaderCount);
+        Header[] headers = HeaderUtils.parseHeaders(
+                this.datareceiver, 
+                this.maxHeaderCount,
+                this.maxLineLen);
         request.setHeaders(headers);
         
         if (HEADERLOG.isDebugEnabled()) {
@@ -306,6 +297,10 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         } else {
             return -1;
         }
+    }
+
+    public HttpConnectionMetrics getMetrics() {
+        return null;
     }
 
     public String toString() {

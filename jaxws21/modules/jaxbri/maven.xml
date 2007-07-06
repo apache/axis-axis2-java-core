@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 <!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
 
 <project default="jar"
@@ -16,4 +35,36 @@
             <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
         </j:if>
     </preGoal>
+    <preGoal name="test:compile">
+                                <!-- Theres got to be a better way to do this -->
+                                <property name="schema.source.dir" value="test-resources/xsd"/>
+                                <property name="wsdl.source.dir" value="test-resources/wsdl"/>
+                                <property name="schema.output.base.dir" value="target/schema"/>
+                                <property name="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
+                                <property name="schema.generated.classes.dir"
+                                          value="${schema.output.base.dir}/classes"/>
+                                <!-- make the dirs -->
+                                <mkdir dir="${schema.output.base.dir}"/>
+                                <mkdir dir="${schema.generated.src.dir}"/>
+                                <mkdir dir="${schema.generated.classes.dir}"/>
+                                <!-- Run JAXB schema compiler with designated schemas -->
+                                <echo>Generating JAX-B classes from XSDs</echo>
+                                <echo>Generating java from soap 11</echo>
+                                <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <classpath refid="maven.dependency.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/DocLitBareService.wsdl"/>
+                                </java>
+
+								<!-- Compile the generated classes -->
+								<ant:echo>Compiling generated schema</ant:echo>
+								<javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
+									<classpath refid="maven.dependency.classpath"></classpath>
+									<classpath location="${compiled.classes.dir}"></classpath>
+								</javac>
+						
+								<ant:path id="schema.generated.classes.dir" location="${schema.generated.classes.dir}"/>
+								<maven:addPath id="maven.dependency.classpath" refid="schema.generated.classes.dir"/>
+    </preGoal>
+
 </project>

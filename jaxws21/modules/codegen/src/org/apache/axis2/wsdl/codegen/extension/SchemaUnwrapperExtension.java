@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.AxisFault;
@@ -20,21 +38,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 /**
  * This extension invokes the schema unwrapper depending on the users setting. it is desirable to
@@ -122,7 +125,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 // find the schema type from all the schemas
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
-                AxisService axisService = (AxisService) message.getParent().getParent();
+                AxisService axisService = message.getAxisOperation().getAxisService();
                 ArrayList schemasList = axisService.getSchema();
 
                 XmlSchema schema = null;
@@ -143,7 +146,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     qnameSuffix);
         } else if ((schemaType instanceof XmlSchemaSimpleType) ||
                ((schemaTypeQname != null) && (schemaTypeQname.equals(new QName("http://www.w3.org/2001/XMLSchema", "anyType")))) ) {
-            QName opName = ((AxisOperation) message.getParent()).getName();
+            QName opName = message.getAxisOperation().getName();
             partNameList.add(WSDLUtil.getPartQName(opName.getLocalPart(),
                     qnameSuffix,
                     schemaElement.getQName().getLocalPart()));
@@ -167,7 +170,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             // attach the opName and the parts name list into the
             // axis message by using the holder
             MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
-            infoHolder.setOperationName(((AxisOperation) message.getParent()).getName());
+            infoHolder.setOperationName(message.getAxisOperation().getName());
             infoHolder.setPartsList(partNameList);
 
             //attach it to the parameters
@@ -209,7 +212,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                                    AxisMessage message,
                                    List partNameList,
                                    String qnameSuffix) {
-        QName opName = ((AxisOperation) message.getParent()).getName();
+        QName opName = message.getAxisOperation().getName();
         XmlSchemaObjectCollection xmlObjectCollection = complexType.getAttributes();
         XmlSchemaObject item;
         XmlSchemaAttribute xmlSchemaAttribute;
@@ -246,7 +249,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
-                AxisService axisService = (AxisService) message.getParent().getParent();
+                AxisService axisService = message.getAxisOperation().getAxisService();
                 ArrayList schemasList = axisService.getSchema();
 
                 XmlSchema parentSchema = null;
@@ -307,7 +310,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             // get the name of the operation name and namespace,
             // part name and hang them somewhere ? The ideal place
             // would be the property bag in the codegen config!
-            QName opName = ((AxisOperation) message.getParent()).getName();
+            QName opName = message.getAxisOperation().getName();
 
             XmlSchemaSequence sequence = (XmlSchemaSequence) schemaParticle;
             XmlSchemaObjectCollection items = sequence.getItems();

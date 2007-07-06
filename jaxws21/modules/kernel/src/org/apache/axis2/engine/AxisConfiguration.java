@@ -1,17 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.apache.axis2.engine;
@@ -53,7 +56,9 @@ public class AxisConfiguration extends AxisDescription {
     private HashMap dataLocators = new HashMap();
     private HashMap dataLocatorClassNames = new HashMap();
 
-    /** This is a Map of String name -> AxisModule for all available Modules. */
+    /**
+     * This is a Map of String name -> AxisModule for all available Modules.
+     */
     private final HashMap allModules = new HashMap();
 
     // To store mapping between default version and module name
@@ -162,7 +167,7 @@ public class AxisConfiguration extends AxisDescription {
      * Register a messageBuilder implementation against a content type.
      * This is used by Axis2 to support different message formats.
      *
-     * @param contentType the relevant content-type (i.e. "text/xml")
+     * @param contentType    the relevant content-type (i.e. "text/xml")
      * @param messageBuilder a Builder implementation
      */
     public void addMessageBuilder(String contentType,
@@ -175,7 +180,7 @@ public class AxisConfiguration extends AxisDescription {
      * This is used by Axis2 to support serialization of messages to different
      * message formats. (Eg: JSON)
      *
-     * @param contentType the relevant content-type (i.e. "text/xml")
+     * @param contentType      the relevant content-type (i.e. "text/xml")
      * @param messageFormatter a MessageFormatter implementation
      */
     public void addMessageFormatter(String contentType,
@@ -191,16 +196,23 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
-        notifyObservers(AxisEvent.MODULE_DEPLOY, module);
 
-        String moduleName = module.getName();
-        if (moduleName.endsWith("SNAPSHOT")) {
-            moduleName = moduleName.substring(0, moduleName.indexOf("SNAPSHOT") - 1);
-            module.setName(moduleName);
-            allModules.put(moduleName, module);
-        } else {
-            allModules.put(module.getName(), module);
+        if (module.getVersion() == null) {
+            if (module.getName().endsWith(AxisModule.VERSION_SNAPSHOT)) {
+                allModules.put(module.getName(), module);
+                String moduleName =
+                        module.getName().substring(0,
+                                                   module.getName().indexOf(AxisModule.VERSION_SNAPSHOT) - 1);
+                module.setName(moduleName);
+                module.setVersion(AxisModule.VERSION_SNAPSHOT);
+            } else {
+                allModules.put(module.getName(), module);
+            }
+
+        } else { // Calculate the module version from the name
+            allModules.put(Utils.getModuleName(module.getName(), module.getVersion()), module);
         }
+        notifyObservers(AxisEvent.MODULE_DEPLOY, module);
 
         // Registering the policy namespaces that the module understand
         registerModulePolicySupport(module);
@@ -222,9 +234,21 @@ public class AxisConfiguration extends AxisDescription {
      * To remove a given module from the system
      *
      * @param module name of module to remove
+     * @deprecated Use {@link #removeModule(String,String)}
      */
     public void removeModule(String module) {
         allModules.remove(module);
+        // TODO disengage has to be done here
+    }
+
+    /**
+     * Remove a module with moduleName & moduleVersion
+     *
+     * @param moduleName
+     * @param moduleVersion
+     */
+    public void removeModule(String moduleName, String moduleVersion) {
+        allModules.remove(Utils.getModuleName(moduleName, moduleVersion));
         // TODO disengage has to be done here
     }
 
@@ -282,7 +306,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         Iterator enModule = getEngagedModules().iterator();
         while (enModule.hasNext()) {
-            axisServiceGroup.engageModule((AxisModule)enModule.next());
+            axisServiceGroup.engageModule((AxisModule) enModule.next());
         }
         services = axisServiceGroup.getServices();
         ArrayList servicesIAdded = new ArrayList();
@@ -297,7 +321,7 @@ public class AxisConfiguration extends AxisDescription {
                 // Whoops, must have been a duplicate!  If we had a problem here, we have to
                 // remove all the ones we added...
                 for (Iterator i = servicesIAdded.iterator(); i.hasNext();) {
-                    AxisService service = (AxisService)i.next();
+                    AxisService service = (AxisService) i.next();
                     allServices.remove(service.getName());
                 }
                 // And toss this in case anyone wants it?
@@ -323,7 +347,7 @@ public class AxisConfiguration extends AxisDescription {
 
     public void addToAllServicesMap(AxisService axisService) throws AxisFault {
         String serviceName = axisService.getName();
-        AxisService oldService = (AxisService)allServices.get(serviceName);
+        AxisService oldService = (AxisService) allServices.get(serviceName);
         if (oldService == null) {
             allServices.put(serviceName, axisService);
         } else {
@@ -516,7 +540,7 @@ public class AxisConfiguration extends AxisDescription {
     public synchronized void removeService(String name) throws AxisFault {
         AxisService service = (AxisService) allServices.remove(name);
         if (service != null) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) service.getParent();
+            AxisServiceGroup serviceGroup = service.getAxisServiceGroup();
             serviceGroup.removeService(name);
             log.debug(Messages.getMessage("serviceremoved", name));
         }
@@ -524,7 +548,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Add an AxisModule to the list of globally deployed modules.
-     *
+     * <p/>
      * TODO: should this check for duplicate names?
      *
      * @param moduleName name of AxisModule to add to list.
@@ -540,7 +564,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void engageGlobalModules() throws AxisFault {
         for (Iterator i = globalModuleList.iterator(); i.hasNext();) {
-            engageModule((String)i.next());
+            engageModule((String) i.next());
         }
     }
 
@@ -632,8 +656,9 @@ public class AxisConfiguration extends AxisDescription {
         String moduleName = name;
         String defaultModuleVersion = getDefaultModuleVersion(moduleName);
         if (defaultModuleVersion != null) {
-            module = (AxisModule) allModules.get(Utils.getModuleName(
-                    moduleName, defaultModuleVersion));
+            module =
+                    (AxisModule) allModules.get(Utils.getModuleName(moduleName,
+                                                                    defaultModuleVersion));
             if (module != null) {
                 return module;
             }
@@ -641,7 +666,25 @@ public class AxisConfiguration extends AxisDescription {
         return null;
     }
 
-    // the class loader that becomes the parent of all the modules
+    /**
+     * Return the module having name=moduleName & version=moduleVersion
+     *
+     * @param moduleName    The module name
+     * @param moduleVersion The version of the module
+     * @return The AxisModule having name=moduleName & version=moduleVersion
+     */
+    public AxisModule getModule(String moduleName, String moduleVersion) {
+        if (moduleVersion == null && moduleVersion.trim().length() == 0) {
+            moduleVersion = getDefaultModuleVersion(moduleName);
+        }
+        return (AxisModule) allModules.get(Utils.getModuleName(moduleName, moduleVersion));
+    }
+
+    /**
+     * The class loader that becomes the parent of all the modules
+     *
+     * @return
+     */
     public ClassLoader getModuleClassLoader() {
         return this.moduleClassLoader;
     }
@@ -769,13 +812,24 @@ public class AxisConfiguration extends AxisDescription {
         return transportsOut;
     }
 
-    public boolean isEngaged(String moduleName) {
-        AxisModule module = (AxisModule)allModules.get(moduleName);
-        if (module == null) return false;
-        boolean isEngaged = super.isEngaged(moduleName);
+    public boolean isEngaged(String moduleId) {
+        AxisModule module = getModule(moduleId);
+        if (module == null) {
+            return false;
+        }
+        boolean isEngaged = super.isEngaged(module);
         if (!isEngaged) {
-            AxisModule defaultModule = getDefaultModule(moduleName);
+            AxisModule defaultModule = getDefaultModule(moduleId);
             isEngaged = engagedModules != null && engagedModules.values().contains(defaultModule);
+        }
+        return isEngaged;
+    }
+
+    public boolean isEngaged(AxisModule axisModule) {
+        boolean isEngaged = super.isEngaged(axisModule);
+        if (!isEngaged) {
+            isEngaged = engagedModules != null &&
+                        engagedModules.values().contains(axisModule);
         }
         return isEngaged;
     }
@@ -1036,8 +1090,8 @@ public class AxisConfiguration extends AxisDescription {
         this.configurator = configurator;
     }
 
-    public void cleanup(){
-        if(configurator != null){
+    public void cleanup() {
+        if (configurator != null) {
             configurator.cleanup();
         }
     }

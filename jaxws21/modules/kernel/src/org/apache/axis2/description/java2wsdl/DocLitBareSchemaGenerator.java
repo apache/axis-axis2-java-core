@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
@@ -5,6 +23,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,23 +33,6 @@ import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import java.util.*;
-
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*/
 
 public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
@@ -86,54 +88,20 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             AxisOperation axisOperation = service.getOperation(new QName(methodName));
             if (axisOperation == null) {
                 axisOperation = Utils.getAxisOperationForJmethod(jMethod);
+                if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+                        axisOperation.getMessageExchangePattern())){
+                    AxisMessage outMessage = axisOperation.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if (outMessage !=null ){
+                        outMessage.setName(methodName + RESULT);
+                    }
+                }
                 addToService = true;
             }
 
             // Maintain a list of methods we actually work with
             list.add(jMethod);
-
-            if (jMethod.getExceptionTypes().length > 0) {
-                JClass[] extypes = jMethod.getExceptionTypes();
-                for (int j = 0; j < extypes.length; j++) {
-                    JClass extype = extypes[j];
-                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
-                        continue;
-                    }
-                     if (!generateBaseException) {
-                        methodSchemaType = createSchemaTypeForMethodPart("Exception");
-                        sequence = new XmlSchemaSequence();
-                        QName schemaTypeName = typeTable.getSimpleSchemaTypeName(Exception.class.getName());
-                        addContentToMethodSchemaType(sequence,
-                                schemaTypeName,
-                                "Exception",
-                                false);
-                        methodSchemaType.setParticle(sequence);
-                        generateBaseException = true;
-                    }
-                    String partQname = extype.getSimpleName();
-                    methodSchemaType = createSchemaTypeForMethodPart(partQname);
-                    sequence = new XmlSchemaSequence();
-                    if (Exception.class.getName().equals(extype.getQualifiedName())) {
-                        addContentToMethodSchemaType(sequence,
-                                typeTable.getComplexSchemaType("Exception"),
-                                partQname,
-                                false);
-                        methodSchemaType.setParticle(sequence);
-                        typeTable.addComplexSchema(Exception.class.getPackage().getName(),
-                                methodSchemaType.getQName());
-                    } else {
-                        generateSchemaForType(sequence, extype, extype.getSimpleName());
-                        methodSchemaType.setParticle(sequence);
-                    }
-                    if (AxisFault.class.getName().equals(extype.getQualifiedName())) {
-                        continue;
-                    }
-                    AxisMessage faultMessage = new AxisMessage();
-                    faultMessage.setName(extype.getSimpleName());
-                    faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
-                    axisOperation.setFaultMessages(faultMessage);
-                }
-            }
+            processException(jMethod,axisOperation);
             uniqueMethods.put(getSimpleName(jMethod), jMethod);
             //create the schema type for the method wrapper
 
@@ -388,7 +356,11 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                     tgtNamespace =
                             resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName());
                     tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
-                    generateSchema(sup);
+                    QName superClassQname = generateSchema(sup);
+                    if(superClassQname!=null){
+                        tgtNamespacepfx = superClassQname.getPrefix();
+                        tgtNamespace = superClassQname.getNamespaceURI();
+                    }
                 }
 
                 if (tgtNamespacepfx == null) {

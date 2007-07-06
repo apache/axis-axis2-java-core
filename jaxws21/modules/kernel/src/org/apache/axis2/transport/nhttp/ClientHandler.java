@@ -1,52 +1,68 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.transport.nhttp;
 
-import org.apache.http.nio.NHttpClientHandler;
-import org.apache.http.nio.NHttpClientConnection;
-import org.apache.http.nio.ContentDecoder;
-import org.apache.http.nio.ContentEncoder;
-import org.apache.http.params.HttpParams;
-import org.apache.http.*;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.protocol.*;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.nhttp.util.PipeImpl;
-import org.apache.axis2.transport.nhttp.util.WorkerPool;
-import org.apache.axis2.transport.nhttp.util.WorkerPoolFactory;
-import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
-
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.io.IOException;
+
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.transport.nhttp.util.PipeImpl;
+import org.apache.axis2.transport.nhttp.util.WorkerPool;
+import org.apache.axis2.transport.nhttp.util.WorkerPoolFactory;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.Header;
+import org.apache.http.HttpConnection;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.nio.ContentDecoder;
+import org.apache.http.nio.ContentEncoder;
+import org.apache.http.nio.NHttpClientConnection;
+import org.apache.http.nio.NHttpClientHandler;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpParamsLinker;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpExecutionContext;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.RequestConnControl;
+import org.apache.http.protocol.RequestContent;
+import org.apache.http.protocol.RequestExpectContinue;
+import org.apache.http.protocol.RequestTargetHost;
+import org.apache.http.protocol.RequestUserAgent;
 
 /**
  * The client connection handler. An instance of this class is used by each IOReactor, to
@@ -123,7 +139,7 @@ public class ClientHandler implements NHttpClientHandler {
             context.setAttribute(REQUEST_SOURCE_CHANNEL, axis2Req.getSourceChannel());
 
             HttpRequest request = axis2Req.getRequest();
-            request.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(request, this.params);
             this.httpProcessor.process(request, context);
 
             conn.submitRequest(request);
@@ -157,7 +173,7 @@ public class ClientHandler implements NHttpClientHandler {
             context.setAttribute(REQUEST_SOURCE_CHANNEL, axis2Req.getSourceChannel());
 
             HttpRequest request = axis2Req.getRequest();
-            request.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(request, this.params);
             this.httpProcessor.process(request, context);
 
             conn.submitRequest(request);
@@ -242,7 +258,6 @@ public class ClientHandler implements NHttpClientHandler {
      */
     public void outputReady(final NHttpClientConnection conn, final ContentEncoder encoder) {
         HttpContext context = conn.getContext();
-        HttpResponse response = conn.getHttpResponse();
 
         ReadableByteChannel source = (ReadableByteChannel) context.getAttribute(REQUEST_SOURCE_CHANNEL);
         ByteBuffer outbuf = (ByteBuffer) context.getAttribute(RESPONSE_BUFFER);

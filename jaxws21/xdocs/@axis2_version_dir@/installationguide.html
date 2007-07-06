@@ -1,3 +1,21 @@
+<!--
+~ Licensed to the Apache Software Foundation (ASF) under one
+~ or more contributor license agreements. See the NOTICE file
+~ distributed with this work for additional information
+~ regarding copyright ownership. The ASF licenses this file
+~ to you under the Apache License, Version 2.0 (the
+~ "License"); you may not use this file except in compliance
+~ with the License. You may obtain a copy of the License at
+~
+~ http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing,
+~ software distributed under the License is distributed on an
+~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~ KIND, either express or implied. See the License for the
+~ specific language governing permissions and limitations
+~ under the License.
+-->
 <html>
 <head>
   <meta http-equiv="content-type" content="">
@@ -23,14 +41,14 @@ prefix every email subject with [Axis2].</p>
 <ul>
   <li><a href="#Download_Axis2">Axis2 Distributions</a></li>
   <li><a href="#requirements">System Requirements</a></li>
-  <li><a href="#standalone">Installing Axis2 as a Standalone Server using
-    the Standard Binary Distribution</a>
+  <li><a href="#standalone">Installing Axis2 as a Standalone Server using the
+    Standard Binary Distribution</a>
     <ul>
       <li><a href="#standalone1">Installing the Apache Axis2 Binary
         Distribution</a></li>
       <li><a href="#standalone2">Starting up Axis2 Standalone Server</a></li>
-      <li><a href="#standalone3">Building the Axis2 WAR File Using the Standard Binary
-        Distribution</a></li>
+      <li><a href="#standalone3">Building the Axis2 WAR File Using the
+        Standard Binary Distribution</a></li>
       <li><a href="#standalone4">Getting Familiar with Convenient Axis2
         Scripts</a></li>
     </ul>
@@ -63,7 +81,8 @@ the Standard Binary Distribution.</p>
 
 <p><a
 href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">Download</a>
-distribution packages of the Apache Axis2 @axis2_version@ version (latest).</p>
+distribution packages of the Apache Axis2 @axis2_version@ version
+(latest).</p>
 
 <p></p>
 
@@ -192,11 +211,13 @@ variable JAVA_HOME to the pathname of the directory into which you installed
 the JDK release.</p>
 
 <p>Download and unpack the <a
-href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">Axis2 Standard
-Binary Distribution</a> into a convenient location so that the distribution
-resides in its own directory. Set an environment variable AXIS2_HOME to the
-pathname of the extracted directory of Axis2 (Eg: /opt/axis2-@axis2_version@).</p>
-<a name="standalone2"></a>
+href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi">Axis2
+Standard Binary Distribution</a> into a convenient location so that the
+distribution resides in its own directory. Set an environment variable
+AXIS2_HOME to the pathname of the extracted directory of Axis2 (Eg:
+/opt/axis2-@axis2_version@). Linux users can alternatively run the setenv.sh
+file available in the AXIS2_HOME/bin directory to set the AXIS2_HOME
+environment variable to the Axis2 classpath.</p>
 
 <h3>2. Starting up Axis2 Standalone Server</h3>
 
@@ -250,6 +271,7 @@ able to run the following scripts from anywhere.</p>
         location(AXIS2_HOME/conf/axis2.xml) for you. With this you can be
         relieved from setting all the above Axis2 specific parameters.<br>
 
+
         <p><em>Usage : axis2.{sh.bat}  [-options] class [args...]</em></p>
       </td>
     </tr>
@@ -273,8 +295,8 @@ able to run the following scripts from anywhere.</p>
       <td>wsdl2java.{bat|sh}</td>
       <td>This script generates Java code according to a given WSDL file to
         handle Web service invocations (client-side stubs). This script also
-        has the ability to generate web service skeletons according to the given
-        WSDL.<br>
+        has the ability to generate web service skeletons according to the
+        given WSDL.<br>
 
 
         <p><em>Usage:  wsdl2java.{sh|bat} [OPTION]... -uri &lt;Location of
@@ -332,8 +354,8 @@ container is as follows:</p>
     If the validation fails then the WAR has failed to install properly or
     some essential jars are missing. In such a situation, refer to the
     documentation of the particular servlet container to find the problem.
-    The following page shows a successful validation. Note the statement
-    that indicates the core Axis2 libraries are present.</li>
+    The following page shows a successful validation. Note the statement that
+    indicates the core Axis2 libraries are present.</li>
 </ol>
 
 <p align="center"><img src="images/happyaxis.jpg"></p>
@@ -346,9 +368,10 @@ Specific Configuration Guide</a>.</p>
 <h2>Uploading Services</h2>
 <ol>
   <p>The Axis2 Web application also provides an interface to upload services.
-  Once a service archive file is created according to the service specification as
-  described in the <a name="adv-userguide.html" target="_blank">Advanced
-  User's Guide</a>, that .aar file can be uploaded using the upload page.</p>
+  Once a service archive file is created according to the service
+  specification as described in the <a name="adv-userguide.html"
+  target="_blank">Advanced User's Guide</a>, that .aar file can be uploaded
+  using the upload page.</p>
 
   <p align="center"><strong><img src="images/clip_image010.jpg"
   alt=""></strong></p>

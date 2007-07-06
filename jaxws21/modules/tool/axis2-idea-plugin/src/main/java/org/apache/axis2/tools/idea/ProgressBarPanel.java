@@ -1,88 +1,106 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.tools.idea;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 
-public class ProgressBarPanel extends JPanel {
-    protected JLabel lbltitle;
-    protected JProgressBar progressBar;
-    protected JLabel lblprogress;
+public class ProgressBarPanel  extends JPanel {
+    private  volatile boolean stop = false;
+    private static int DELAY = 100;
+    public volatile String val=null;
+    private JLabel progressDescription;
+    private JProgressBar progressSent;
 
-    public ProgressBarPanel(){
+    public ProgressBarPanel (){
+        init();
+    }
+    public  void requestStop() {
+        stop = true;
+    }
+    private void init(){
+        setVisible(false);
+        progressDescription =new JLabel();
+        progressDescription.setText("");
+        progressSent =new JProgressBar();
+        progressSent.setStringPainted(true);
+        this.setLayout(new GridBagLayout());
 
-        ProgressLayout customLayout = new ProgressLayout();
+        this.add(progressDescription
+                , new GridBagConstraints(0, 0, GridBagConstraints.REMAINDER, 1,  1.0, 1.0
+                , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+                , new Insets(10, 10, 0, 10), 0, 0));
 
-        setLayout(customLayout);
-
-        lbltitle =new JLabel("Scanning files .......");
-        add(lbltitle );
-
-        progressBar =new JProgressBar(0,100);
-        progressBar.setBorderPainted(true);
-        progressBar.setStringPainted(true);
-        Dimension dim=new Dimension();
-        dim.setSize(440,24);
-        progressBar.setPreferredSize(dim);
-        add(progressBar );
-
-        lblprogress=new JLabel();
-        add(lblprogress);
-
-
-
-        setSize(getPreferredSize());
+        this.add(progressSent
+                , new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 1.0, 1.0
+                , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
+                , new Insets(10, 10, 0,10), 0, 0));
 
     }
-    public JProgressBar getProgressBar(){
-        return progressBar;
-    }
-     public JLabel getLabelProgress(){
-        return lblprogress;
-    }
-     public JLabel getLabelTitle(){
-        return lblprogress;
+    public void setProgressText(String s) {
+        progressDescription.setText(s);
     }
 
-}
-class ProgressLayout implements LayoutManager {
-    public ProgressLayout() {
+    public void setProgressValue(int i) {
+        progressSent.setValue(i);
     }
+    public void aboutToDisplayPanel() {
 
-    public void addLayoutComponent(String name, Component comp) {
+        setProgressValue(0);
+        setProgressText("Connecting to Server...");
+
     }
+    public void displayingPanel() {
 
-    public void removeLayoutComponent(Component comp) {
-    }
+        Thread t = new Thread() {
 
-    public Dimension preferredLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
+            public void run() {
 
-        Insets insets = parent.getInsets();
-        dim.width = 500 + insets.left + insets.right;
-        dim.height = 100 + insets.top + insets.bottom;
+                int minimum = progressSent.getMinimum();
+                int maximum =progressSent.getMaximum();
+                Runnable runner = new Runnable() {
+                    public void run() {
+                        if(stop && progressSent .getValue()<100){
 
-        return dim;
-    }
+                            progressSent .setIndeterminate(false);
+                            int value = progressSent .getValue();
+                            progressSent .setValue(value+10);
+                            setProgressValue(value+9);
+                            progressDescription .setText("Genarate Code. Please wait.....");
+                        } else if(!stop){
+                            progressSent .setIndeterminate(true);
 
-    public Dimension minimumLayoutSize(Container parent) {
-        return new Dimension(0, 0);
-    }
-
-    public void layoutContainer(Container parent) {
-        Insets insets = parent.getInsets();
-
-        Component c;
-        c = parent.getComponent(1);
-        if (c.isVisible()) {
-            c.setBounds(insets.left +8, insets.top + 30, 440, 24);
-        }
-        c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 460, insets.top + 30, 30, 24);
-        }
-        c = parent.getComponent(0);
-        if (c.isVisible()) {
-            c.setBounds(insets.left +8, insets.top , 200, 24);
-        }
+                        }
+                    }
+                };
+                for (int i=minimum; i<maximum; i++) {
+                    try {
+                        SwingUtilities.invokeAndWait(runner);
+                        // Our task for each step is to just sleep
+                        Thread.sleep(DELAY);
+                    } catch (InterruptedException ignoredException) {
+                    } catch (InvocationTargetException ignoredException) {
+                    }
+                }
+            }
+        };
+        t.start();
     }
 }

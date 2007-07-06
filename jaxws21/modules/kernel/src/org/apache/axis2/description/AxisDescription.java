@@ -38,7 +38,7 @@ import java.util.Map;
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
 
-    private AxisDescription parent = null;
+    protected AxisDescription parent = null;
 
     private ParameterInclude parameterInclude;
 
@@ -87,13 +87,24 @@ public abstract class AxisDescription implements ParameterInclude,
 
     }
 
+    /**
+     * If the parameter found in the current decription then the paremeter will be
+     * writable else it will be read only
+     * @param name
+     * @return
+     */
     public Parameter getParameter(String name) {
         Parameter parameter = parameterInclude.getParameter(name);
         if (parameter != null) {
+            parameter.setEditable(true);
             return parameter;
         }
         if (parent != null) {
-            return parent.getParameter(name);
+            parameter = parent.getParameter(name);
+            if (parameter!=null) {
+                parameter.setEditable(false);
+            }
+            return parameter;
         }
         return null;
     }
@@ -152,6 +163,7 @@ public abstract class AxisDescription implements ParameterInclude,
         return policyInclude;
     }
 
+    // NOTE - These are NOT typesafe!
     public void addChild(AxisDescription child) {
         children.put(child.getKey(), child);
     }
@@ -270,10 +282,6 @@ public abstract class AxisDescription implements ParameterInclude,
      * @throws AxisFault an error occurred applying the policy
      */
     public void applyPolicy() throws AxisFault {
-
-        if (this instanceof AxisMessage) {
-            return;
-        }
 
         AxisConfiguration configuration = getAxisConfiguration();
         if (configuration == null) {
@@ -443,7 +451,8 @@ public abstract class AxisDescription implements ParameterInclude,
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
-        engagedModules.put(axisModule.getName(), axisModule);
+        engagedModules.put(Utils.getModuleName(axisModule.getName(), axisModule.getVersion()),
+                           axisModule);
     }
 
     protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
@@ -451,6 +460,7 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     static Collection NULL_MODULES = new ArrayList(0);
+    
     public Collection getEngagedModules() {
         return engagedModules == null ? NULL_MODULES : engagedModules.values();
     }
@@ -466,12 +476,17 @@ public abstract class AxisDescription implements ParameterInclude,
         return engagedModules != null && engagedModules.keySet().contains(moduleName);
     }
 
+    public boolean isEngaged(AxisModule axisModule) {
+        String id = Utils.getModuleName(axisModule.getName(), axisModule.getVersion());
+        return engagedModules != null && engagedModules.keySet().contains(id);
+    }
+
     public void disengageModule(AxisModule module) throws AxisFault {
-        if ((module == null) || (engagedModules == null)) return;
-        String moduleName = module.getName();
-        if (isEngaged(moduleName)) {
+        if (module == null || engagedModules == null) return;
+//        String id = Utils.getModuleName(module.getName(), module.getVersion());
+        if (isEngaged(module)) {
             onDisengage(module);
-            engagedModules.remove(module.getName());
+            engagedModules.remove(Utils.getModuleName(module.getName(), module.getVersion()));
         }
     }
 
@@ -483,7 +498,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
         if (axisDescription instanceof AxisOperation) {
             AxisOperation operation = (AxisOperation) axisDescription;
-            AxisService service = (AxisService) operation.getParent();
+            AxisService service = operation.getAxisService();
 
             if (service != null) {
 

@@ -1,26 +1,29 @@
 /*
-* Copyright 2004,2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -42,11 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provides methods to process axis2 admin requests.
@@ -398,6 +397,35 @@ public class AdminAgent extends AbstractAgent {
             throws IOException, ServletException {
         req.getSession().invalidate();
         renderView("index.jsp", req, res);
+    }
+
+    protected void processviewServiceGroupConetxt(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        String type = req.getParameter("TYPE");
+        String sgID = req.getParameter("ID");
+        ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
+        req.getSession().setAttribute("ServiceGroupContext",sgContext);
+        req.getSession().setAttribute("TYPE",type);
+        req.getSession().setAttribute("ConfigurationContext",configContext);
+        renderView("viewServiceGroupContext.jsp", req, res);
+    }
+
+    protected void processviewServiceContext(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
+        String type = req.getParameter("TYPE");
+        String sgID = req.getParameter("PID");
+        String ID = req.getParameter("ID");
+        ServiceGroupContext sgContext = configContext.getServiceGroupContext(sgID);
+        if (sgContext != null) {
+            AxisService service = sgContext.getDescription().getService(ID);
+            ServiceContext serviceContext = sgContext.getServiceContext(service);
+            req.setAttribute("ServiceContext",serviceContext);
+            req.setAttribute("TYPE",type);
+        } else {
+            req.setAttribute("ServiceContext",null);
+            req.setAttribute("TYPE",type);
+        }
+        renderView("viewServiceContext.jsp", req, res);
     }
 
     protected void processSelectServiceParaEdit(HttpServletRequest req, HttpServletResponse res)

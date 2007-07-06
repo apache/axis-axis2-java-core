@@ -1,17 +1,20 @@
 /*
- * Copyright 2006 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package org.apache.axis2.jibx;
@@ -732,7 +735,7 @@ public class CodeGenerationUtility {
                 XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
 
                 // add child param element matching each child of wrapper element
-                QName opName = ((AxisOperation)msg.getParent()).getName();
+                QName opName = msg.getAxisOperation().getName();
                 XmlSchemaObjectCollection items = sequence.getItems();
                 boolean first = true;
                 for (Iterator iter = items.getIterator(); iter.hasNext();) {
@@ -950,7 +953,7 @@ public class CodeGenerationUtility {
         // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
         //  it's used here to fit into the ADB-based code generation model
         MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
-        infoHolder.setOperationName(((AxisOperation)msg.getParent()).getName());
+        infoHolder.setOperationName(msg.getAxisOperation().getName());
         infoHolder.setPartsList(partNameList);
         try {
             msg.addParameter(new Parameter(Constants.UNWRAPPED_DETAILS, infoHolder));

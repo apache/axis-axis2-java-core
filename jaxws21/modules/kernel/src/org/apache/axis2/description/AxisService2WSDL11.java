@@ -13,6 +13,7 @@ import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
@@ -142,6 +143,14 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         namespaceMap.put(prefix, axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
+        boolean disableREST = false;
+        Parameter disableRESTParameter =
+                axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+        if (disableRESTParameter != null &&
+                JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+            disableREST = true;
+        }
+
         // adding documentation element
         // <documentation>&lt;b&gt;NEW!&lt;/b&gt; This method accepts an ISBN
         // string and returns &lt;b&gt;Amazon.co.uk&lt;/b&gt; Sales Rank for
@@ -177,9 +186,11 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         generatePortType(fac, ele);
         generateSOAP11Binding(fac, ele);
         generateSOAP12Binding(fac, ele);
-        generateHTTPBinding(fac, ele);
+        if (!disableREST) {
+            generateHTTPBinding(fac, ele);
+        }
 
-        generateService(fac, ele);
+        generateService(fac, ele, disableREST);
         addPoliciesToDefinitionElement(policiesInDefinitions.values()
                 .iterator(), definition);
 
@@ -222,6 +233,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     || WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
+                    .equals(MEP)
+                    || WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
@@ -362,6 +375,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
+                    || WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
+                    .equals(MEP)
                     || WSDL2Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
@@ -406,7 +421,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
     /**
      * Generate the service
      */
-    public void generateService(OMFactory fac, OMElement defintions)
+    public void generateService(OMFactory fac, OMElement defintions, boolean disableREST)
             throws Exception {
         OMElement service = fac.createOMElement(SERVICE_LOCAL_NAME, wsdl);
         defintions.addChild(service);
@@ -416,7 +431,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
         addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
                 .getPolicyInclude(), service, fac);
+        if (!disableREST) {
             generateHTTPPorts(fac, service);
+        }
         }
 
     private void generateSOAP11Ports(OMFactory fac, OMElement service)
@@ -597,6 +614,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
+                    || WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
+                    .equals(MEP)
                     || WSDL2Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
@@ -730,6 +749,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     || WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
+                    .equals(MEP)
+                    || WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
                     || WSDL2Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {

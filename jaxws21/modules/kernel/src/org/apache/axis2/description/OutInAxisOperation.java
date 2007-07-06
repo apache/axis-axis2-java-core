@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2006 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.util.UUIDGenerator;
@@ -25,6 +28,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -106,19 +110,19 @@ class OutInAxisOperationClient extends OperationClient {
     }
 
     /**
-     * Adds message context to operation context , so that it will handle the
+     * Adds message context to operation context, so that it will handle the
      * logic correctly if the OperationContext is null then new one will be
-     * created , and Operation Context will become null when some one calls reset().
+     * created, and Operation Context will become null when some one calls reset().
      *
-     * @param mc
+     * @param msgContext the MessageContext to add
      * @throws AxisFault
      */
-    public void addMessageContext(MessageContext mc) throws AxisFault {
-        mc.setServiceContext(sc);
-        if (mc.getMessageID() == null) {
-            setMessageID(mc);
+    public void addMessageContext(MessageContext msgContext) throws AxisFault {
+        msgContext.setServiceContext(sc);
+        if (msgContext.getMessageID() == null) {
+            setMessageID(msgContext);
         }
-        axisOp.registerOperationContext(mc, oc);
+        axisOp.registerOperationContext(msgContext, oc);
     }
 
     /**
@@ -138,7 +142,6 @@ class OutInAxisOperationClient extends OperationClient {
     public void setCallback(Callback callback) {
         this.callback = callback;
     }
-
 
     /**
      * Executes the MEP. What this does depends on the specific MEP client. The
@@ -190,7 +193,12 @@ class OutInAxisOperationClient extends OperationClient {
             }
         }
         EndpointReference replyTo = mc.getReplyTo();
-        if(replyTo!=null&&!replyTo.hasAnonymousAddress()){
+        if (replyTo !=null && replyTo.hasNoneAddress()) {
+            throw new AxisFault( replyTo.getAddress() + "" +
+                    " can not be used with OutInAxisOperationClient , user either "
+                    + "fireAndForget or sendRobust)");
+        }
+        if (replyTo!=null && !replyTo.hasAnonymousAddress()){
             useAsync = true;
         }
 
@@ -233,6 +241,8 @@ class OutInAxisOperationClient extends OperationClient {
         SyncCallBack internalCallback = null;
         if (callback != null) {
             callbackReceiver.addCallback(mc.getMessageID(), callback);
+        } else if (axisCallback != null) {
+            callbackReceiver.addCallback(mc.getMessageID(), axisCallback);            
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Creating internal callback");
@@ -272,21 +282,8 @@ class OutInAxisOperationClient extends OperationClient {
         mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
         AxisEngine.send(mc);
         if (internalCallback != null) {
-            long timeout = options.getTimeOutInMilliSeconds();
-            synchronized (internalCallback) {
-                if (!internalCallback.isComplete() && timeout >= 0) {
-                    try {
-                        internalCallback.wait(timeout);
-                    } catch (InterruptedException e) {
-                        // We were interrupted for some reason, keep waiting
-                        // or throw new AxisFault( "Callback was interrupted by someone?" );
-                    }
-                    if (!internalCallback.isComplete()) {
-                       timeOut();
-                        return;
-                    }
-                }
-            }
+            internalCallback.waitForCompletion(options.getTimeOutInMilliSeconds());
+
             // process the result of the invocation
             if (internalCallback.envelope == null) {
                 if (internalCallback.error == null) {
@@ -300,17 +297,10 @@ class OutInAxisOperationClient extends OperationClient {
     }
 
     /**
-     * If there is no response after  the specified timeout interval
-     * sendAync method will call this method.
-     * @throws AxisFault AxisFault saying time out
-     */
-    protected void timeOut() throws AxisFault{
-         throw new AxisFault( Messages.getMessage("responseTimeOut"));
-    }
-
-    /**
-     * When Operation client get the response back after sending the
-     * message will call this method to handle the response.
+     * When synchronous send() gets back a response MessageContext, this is the workhorse
+     * method which processes it.
+     *
+     * @param responseMessageContext the active response MessageContext
      * @throws AxisFault if something went wrong
      */
     protected void handleResponse(MessageContext responseMessageContext) throws AxisFault{
@@ -356,35 +346,36 @@ class OutInAxisOperationClient extends OperationClient {
     }
 
     /**
-     * @param msgctx
+     * Synchronously send the request and receive a response.  This relies on the transport
+     * correctly connecting the response InputStream!
+     *
+     * @param msgContext the request MessageContext to send.
      * @return Returns MessageContext.
      * @throws AxisFault Sends the message using a two way transport and waits for a response
      */
-    protected MessageContext send(MessageContext msgctx) throws AxisFault {
-
-        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
+    protected MessageContext send(MessageContext msgContext) throws AxisFault {
 
         // create the responseMessageContext
 
         MessageContext responseMessageContext =
-                msgctx.getConfigurationContext().createMessageContext();
+                msgContext.getConfigurationContext().createMessageContext();
 
         responseMessageContext.setServerSide(false);
-        responseMessageContext.setMessageID(msgctx.getMessageID());
+        responseMessageContext.setMessageID(msgContext.getMessageID());
         addMessageContext(responseMessageContext);
-        responseMessageContext.setServiceContext(msgctx.getServiceContext());
+        responseMessageContext.setServiceContext(msgContext.getServiceContext());
         responseMessageContext.setAxisMessage(
                 axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
 
         //sending the message
-        engine.send(msgctx);
+        AxisEngine.send(msgContext);
 
-        responseMessageContext.setDoingREST(msgctx.isDoingREST());
+        responseMessageContext.setDoingREST(msgContext.isDoingREST());
 
-        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
+        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgContext
                 .getProperty(MessageContext.TRANSPORT_IN));
-        responseMessageContext.setTransportIn(msgctx.getTransportIn());
-        responseMessageContext.setTransportOut(msgctx.getTransportOut());
+        responseMessageContext.setTransportIn(msgContext.getTransportIn());
+        responseMessageContext.setTransportOut(msgContext.getTransportOut());
         handleResponse(responseMessageContext);
         return responseMessageContext;
     }
@@ -434,27 +425,64 @@ class OutInAxisOperationClient extends OperationClient {
     /**
      * This class acts as a callback that allows users to wait on the result.
      */
-    private class SyncCallBack extends Callback {
+    private class SyncCallBack implements AxisCallback {
+        boolean complete;
+        boolean receivedFault;
 
-        private SOAPEnvelope envelope;
-
-        private Exception error;
-
-
-        public void onComplete(AsyncResult result) {
-            if (log.isDebugEnabled()) {
-                log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onComplete");
+        public boolean waitForCompletion(long timeout) throws AxisFault {
+            synchronized (this) {
+                try {
+                    if (complete) return !receivedFault;
+                    wait(timeout);
+                    if (!complete) {
+                        // We timed out!
+                        throw new AxisFault( Messages.getMessage("responseTimeOut"));
+                    }
+                } catch (InterruptedException e) {
+                    // Something interrupted our wait!
+                    error = e;
+                }
             }
+
+            if (error != null) throw AxisFault.makeFault(error);
+
+            return !receivedFault;
+        }
+
+        /**
+         * This is called when we receive a message.
+         *
+         * @param msgContext the (response) MessageContext
+         */
+        public void onMessage(MessageContext msgContext) {
             // Transport input stream gets closed after calling setComplete
             // method. Have to build the whole envelope including the
             // attachments at this stage. Data might get lost if the input
             // stream gets closed before building the whole envelope.
-            this.envelope = result.getResponseEnvelope();
+            this.envelope = msgContext.getEnvelope();
             this.envelope.buildWithAttachments();
-            if (log.isDebugEnabled()) {
-                log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onComplete");
-            }
         }
+
+        /**
+         * This gets called when a fault message is received.
+         *
+         * @param msgContext the MessageContext containing the fault.
+         */
+        public void onFault(MessageContext msgContext) {
+        }
+
+        /**
+         * This is called at the end of the MEP no matter what happens, quite like a
+         * finally block.
+         */
+        public synchronized void onComplete() {
+            complete = true;
+            notify();
+        }
+
+        private SOAPEnvelope envelope;
+
+        private Exception error;
 
         public void onError(Exception e) {
             if (log.isDebugEnabled()) {

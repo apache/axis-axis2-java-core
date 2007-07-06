@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.AxisFault;
@@ -73,25 +91,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
-
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
@@ -186,7 +185,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final Log log = LogFactory.getLog(AxisServiceBasedMultiLanguageEmitter.class);
     protected URIResolver resolver;
 
+    // this is used to keep the current service infoHolder
     protected Map infoHolder;
+    // this is used to keep infoHolders for all services
+    protected Map allServiceInfoHolder;
 
     protected CodeGenConfiguration codeGenConfiguration;
 
@@ -211,6 +213,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     public AxisServiceBasedMultiLanguageEmitter() {
         infoHolder = new HashMap();
+        allServiceInfoHolder = new HashMap();
     }
 
     /**
@@ -262,19 +265,23 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return property;
     }
+    
+    private Policy getBindingPolicyFromMessage(QName qName, String key) {
 
-
-    private Policy getBindingPolicyFromOperation(QName qName) {
         AxisBindingOperation axisBindingOperation = null;
-
         if (axisBinding != null) {
             axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
         }
 
+        AxisBindingMessage axisBindingMessage = null;
+        
         if (axisBindingOperation != null) {
-            return axisBindingOperation.getEffectivePolicy();
+        
+            axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
+            if (axisBindingMessage != null) {
+                return axisBindingMessage.getEffectivePolicy();
+            }
         }
-
         return null;
     }
 
@@ -392,6 +399,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         containsKey(faultMessage.getName())) {
                     //make a name
                     String className = makeJavaClassName(faultMessage.getName());
+                    QName faultQName = new QName(codeGenConfiguration.getTargetNamespace(), faultMessage.getName());
+                    if (this.mapper.getQNameToMappingObject(faultQName) != null) {
+                        // i.e we already have an entry
+                        className = makeJavaClassName(className + "Exception" + (uniqueFaultNameCounter++));
+                    }
                     while (fullyQualifiedFaultClassNameMap.containsValue(className)) {
                         className = makeJavaClassName(className + (uniqueFaultNameCounter++));
                     }
@@ -1261,10 +1273,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         try {
 
+            allServiceInfoHolder = new HashMap();
             Map originalMap = getNewCopy(this.mapper.getAllMappedNames());
             // we are going to generate following files seperately per service
             for (Iterator axisServicesIter = this.axisServices.iterator();
                  axisServicesIter.hasNext();) {
+                // create a new hash map for each service
+                this.infoHolder = new HashMap();
                 this.axisService = (AxisService) axisServicesIter.next();
                 this.axisBinding =
                         axisService.getEndpoint(axisService.getEndpointName()).getBinding();
@@ -1311,6 +1326,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     //we need to serialize the WSDL's
                     writeWSDLFiles();
                 }
+                // save the info holder with the service
+                allServiceInfoHolder.put(this.axisService.getName(),this.infoHolder);
             }
 
             // save back type map
@@ -1898,6 +1915,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return DOM Element
      */
     protected Element getServiceElement(String serviceName, String className, Document doc) {
+
+        if (allServiceInfoHolder.get(serviceName) != null){
+            this.infoHolder = (Map) allServiceInfoHolder.get(serviceName);
+        }
         Element rootElement = doc.createElement("interface");
 
         addAttribute(doc, "package", "", rootElement);
@@ -2156,24 +2177,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-
-        /*
-         * Setting the policy of the operation
-         */
-        Policy policy = getBindingPolicyFromOperation(axisOperation.getName());
-
-        if (policy != null) {
-            try {
-                addAttribute(doc, "policy",
-                        PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
-                        methodElement);
-            } catch (Exception ex) {
-                throw new RuntimeException("can't serialize the policy ..");
-            }
-        }
-
-//        System.out.println(DOM2Writer.nodeToString(methodElement));
-
+        
 
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getInputElement(doc,
@@ -2630,6 +2634,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             for (int i = 0; i < parameterElementList.size(); i++) {
                 inputElt.appendChild((Element) parameterElementList.get(i));
             }
+            
+            /*
+             * Setting the effective policy of input message
+             */
+            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            inputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
+            }
+            
         }
         return inputElt;
     }
@@ -2683,6 +2703,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (int i = 0; i < outputElementList.size(); i++) {
                 outputElt.appendChild((Element) outputElementList.get(i));
+            }
+            
+            /*
+             * Setting the effective policy for the output message.
+             */
+            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            outputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
             }
         }
         return outputElt;

@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -9,7 +27,9 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 
@@ -161,6 +181,14 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         // Add the interface element
         descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, omFactory, interfaceName));
 
+        boolean disableREST = false;
+        Parameter disableRESTParameter =
+                axisService.getParameter(Constants.Configuration.DISABLE_REST);
+        if (disableRESTParameter != null &&
+                JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+            disableREST = true;
+        }
+
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
         Set bindings = new HashSet();
@@ -179,7 +207,14 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 // https then we have two endpoints populated so we should serialize them instead
                 // of updating the endpoints.
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
-                bindings.add(axisEndpoint.getBinding());
+                AxisBinding axisBinding = axisEndpoint.getBinding();
+                String type = axisBinding.getType();
+                if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
+                    if (disableREST) {
+                        continue;
+                    }
+                }
+                bindings.add(axisBinding);
                 for (int i = 0; i < eprs.length; i++) {
                     String epr = eprs[i];
                     OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, epr);
@@ -225,12 +260,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
-            descriptionElement.addChild(
-                    WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl, whttp,
-                                                              tns));
+            if (!disableREST) {
+                descriptionElement.addChild(
+                        WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
+                                                                  whttp,
+                                                                  tns));
+            }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService));
+                                                                           axisService, disableREST));
         }
 
         return descriptionElement;
@@ -257,6 +295,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         int i = 0;
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
             interfaceOperations.add(i, generateInterfaceOperationElement(axisOperation, wsdl, tns, wsdlx));
             i++;
             Iterator faultsIterator = axisOperation.getFaultMessages().iterator();
@@ -337,7 +378,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             axisOperationElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_SAFE, wsdlx, (param.getValue()).toString()));
         }
-        AxisService axisService = (AxisService) axisOperation.getParent();
+        AxisService axisService = axisOperation.getAxisService();
         Map nameSpaceMap = axisService.getNameSpacesMap();
 
         // Add the input element

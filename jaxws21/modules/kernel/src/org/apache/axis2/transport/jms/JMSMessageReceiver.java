@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.transport.jms;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
@@ -167,9 +170,16 @@ public class JMSMessageReceiver implements MessageListener {
                     axisConf.getAxisConfiguration().getTransportOut(Constants.TRANSPORT_JMS));
             // the reply is assumed to be on the JMSReplyTo destination, using
             // the same incoming connection factory
-            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                                   new JMSOutTransportInfo(jmsConFac.getConFactory(),
-                                                           message.getJMSReplyTo()));
+            
+            
+            JMSOutTransportInfo jmsOutTransportInfo;
+            
+            if ((jmsConFac.getJndiUser() == null) || (jmsConFac.getJndiPass() == null))
+            	jmsOutTransportInfo= new JMSOutTransportInfo(jmsConFac.getConFactory(), message.getJMSReplyTo());
+            else
+            	jmsOutTransportInfo= new JMSOutTransportInfo(jmsConFac.getConFactory(), jmsConFac.getUser(), jmsConFac.getPass(), message.getJMSReplyTo());
+            
+            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, jmsOutTransportInfo);
 
             msgContext.setServerSide(true);
             msgContext.setMessageID(message.getJMSMessageID());

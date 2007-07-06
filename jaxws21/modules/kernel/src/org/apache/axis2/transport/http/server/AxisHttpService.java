@@ -1,30 +1,21 @@
 /*
-* $HeadURL$
-* $Revision$
-* $Date$
-*
-* ====================================================================
-*
-*  Copyright 1999-2004 The Apache Software Foundation
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-* ====================================================================
-*
-* This software consists of voluntary contributions made by many
-* individuals on behalf of the Apache Software Foundation.  For more
-* information on the Apache Software Foundation, please see
-* <http://www.apache.org/>.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.transport.http.server;
 
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
@@ -34,7 +25,6 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
@@ -45,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.*;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 
@@ -131,7 +122,8 @@ public class AxisHttpService {
 
         HttpResponse response;
         try {
-            HttpRequest request = conn.receiveRequest(this.params);
+            HttpRequest request = conn.receiveRequest();
+            HttpParamsLinker.link(request, this.params);
             HttpVersion ver = request.getRequestLine().getHttpVersion();
             if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
                 // Downgrade protocol version if greater than HTTP/1.1 
@@ -140,13 +132,13 @@ public class AxisHttpService {
 
             response = this.responseFactory.newHttpResponse
                     (ver, HttpStatus.SC_OK, context);
-            response.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(response, this.params);
 
             if (request instanceof HttpEntityEnclosingRequest) {
                 if (((HttpEntityEnclosingRequest) request).expectContinue()) {
                     HttpResponse ack = this.responseFactory.newHttpResponse
                             (ver, HttpStatus.SC_CONTINUE, context);
-                    ack.getParams().setDefaults(this.params);
+                    HttpParamsLinker.link(ack, this.params);
                     conn.sendResponse(ack);
                     conn.flush();
                 }
@@ -191,7 +183,7 @@ public class AxisHttpService {
             response = this.responseFactory.newHttpResponse
                     (HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR,
                      context);
-            response.getParams().setDefaults(this.params);
+            HttpParamsLinker.link(response, this.params);
             handleException(ex, response);
             this.httpProcessor.process(response, context);
             conn.sendResponse(response);

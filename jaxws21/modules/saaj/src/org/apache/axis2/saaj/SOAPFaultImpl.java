@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package org.apache.axis2.saaj;
 
@@ -22,6 +25,7 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
@@ -60,8 +64,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 
     protected org.apache.axiom.soap.SOAPFault fault;
     private boolean isDetailAdded;
-    private Name faultCodeName;
     private Locale faultReasonLocale;
+    private boolean defaultsSet;
 
     /** @param fault  */
     public SOAPFaultImpl(org.apache.axiom.soap.SOAPFault fault) {
@@ -69,6 +73,26 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         this.fault = fault;
     }
 
+    void setDefaults() throws SOAPException {
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            setFaultCode(SOAP11Constants.QNAME_SENDER_FAULTCODE);
+        } else {
+            setFaultCode(SOAP12Constants.QNAME_SENDER_FAULTCODE);
+        }
+        setFaultString("Fault string, and possibly fault code, not set");
+        defaultsSet = true;
+    }
+    
+    void removeDefaults() {
+        if (defaultsSet) {
+            SOAPFaultReason reason = this.fault.getReason();
+            if (reason != null) {
+                reason.detach();
+            }
+            defaultsSet = false;
+        }
+    }
+    
     /**
      * Sets this <CODE>SOAPFault</CODE> object with the given fault code.
      * <p/>
@@ -189,36 +213,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultString() getFaultString()
      */
     public void setFaultString(String faultString) throws SOAPException {
-
-        boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
-                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-
-        if (this.fault.getReason() != null) {
-            SOAPFaultReason reason = this.fault.getReason();
-            if (isSoap11) {
-                reason.setText(faultString);
-            } else {
-                if (reason.getFirstSOAPText() != null) {
-                    reason.getFirstSOAPText().getFirstOMChild().detach();
-                    reason.getFirstSOAPText().setText(faultString);
-                } else {
-                    SOAPFaultText text = new SOAP12FaultTextImpl(reason,
-                                                                 (SOAPFactory)this.element
-                                                                         .getOMFactory());
-                    text.setText(faultString);
-                    reason.addSOAPText(text);
-                }
-            }
-        } else {
-            org.apache.axiom.soap.SOAPFactory soapFactory =
-                    (SOAPFactory)this.element.getOMFactory();
-            SOAPFaultReason faultReason = soapFactory.createSOAPFaultReason(fault);
-            if (isSoap11) {
-                faultReason.setText(faultString);
-            } else {
-                SOAPFaultText faultText = soapFactory.createSOAPFaultText(faultReason);
-                faultText.setText(faultString);
-            }
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            setFaultString(faultString, null);
+        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            setFaultString(faultString, Locale.getDefault());
         }
     }
 
@@ -265,11 +263,13 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @throws SOAPException - if there was an error in adding the faultcode element to the
      *                       underlying XML tree.
      */
-    public void setFaultCode(Name faultCodeQName) throws SOAPException {
-        if (faultCodeQName.getURI() == null || faultCodeQName.getURI().trim().length() == 0) {
+    public void setFaultCode(Name faultCodeName) throws SOAPException {
+        if (faultCodeName.getURI() == null || faultCodeName.getURI().trim().length() == 0) {
             throw new SOAPException("faultCodeQName must be namespace qualified.");
         }
-        this.faultCodeName = faultCodeQName;
+        QName faultCodeQName = 
+            new QName(faultCodeName.getURI(), faultCodeName.getLocalName(), faultCodeName.getPrefix());
+        setFaultCode(faultCodeQName);
     }
 
     /* (non-Javadoc)
@@ -301,7 +301,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
       * @see javax.xml.soap.SOAPFault#getFaultCodeAsName()
       */
     public Name getFaultCodeAsName() {
-        return this.faultCodeName;
+        return new PrefixedQName(getFaultCodeAsQName());
     }
 
 
@@ -322,12 +322,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             if (this.element.getOMFactory() instanceof SOAP11Factory) {
                 reason.setText(faultString);
             } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
-                if (reason.getFirstSOAPText() != null) {
-                    reason.getFirstSOAPText().setText(faultString);
-                    reason.getFirstSOAPText().setLang(locale.toString());
-                } else {
-                    addFaultReasonText(faultString, locale);
-                }
+                addFaultReasonText(faultString, locale);
             }
         } else {
             if (this.element.getOMFactory() instanceof SOAP11Factory) {
@@ -393,6 +388,8 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
             throw new UnsupportedOperationException("Not supported in SOAP 1.1");
         } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            removeDefaults();
+            
             String existingReasonText = getFaultReasonText(locale);
             if (existingReasonText == null) {
                 org.apache.axiom.soap.SOAPFactory soapFactory = null;
@@ -571,7 +568,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             throw new UnsupportedOperationException("Message does not support the " +
                     "SOAP 1.2 concept of Fault Reason");
         } else {
-            Iterator soapTextsItr = new ArrayList().iterator();
+            Iterator soapTextsItr = null;
             SOAPFaultReason soapFaultReason = this.fault.getReason();
             if (soapFaultReason != null) {
                 List soapTexts = soapFaultReason.getAllSoapTexts();
@@ -731,7 +728,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
                                                           qname.getPrefix());
             soapFaultValue.declareNamespace(omNamespace);
+            soapFaultCode.setValue(soapFaultValue);
         }
+        
+        this.fault.setCode(soapFaultCode);
     }
 
     /**

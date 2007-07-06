@@ -1,19 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.rpc;
 
 import java.io.ByteArrayInputStream;
@@ -66,7 +68,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add(bean);
         args.add("159");
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "editBean", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "editBean", "req"), args.toArray());
         MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class, response.getFirstElement(),
                                                       new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
@@ -89,7 +91,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add(bean);
 
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBean", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoBean", "req"), args.toArray());
         MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class,
                                                       response.getFirstElement(),
                                                       new DefaultObjectSupplier(), null);
@@ -113,7 +115,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add(mail);
 
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoMail", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoMail", "req"), args.toArray());
         Mail resBean = (Mail)BeanUtil.deserialize(Mail.class, response.getFirstElement(),
                                                   new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
@@ -127,7 +129,7 @@ public class RPCCallTest extends RPCLocalTestCase {
 
         ArrayList args = new ArrayList();
         args.add("foo");
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoString", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoString", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), "foo");
     }
 
@@ -137,7 +139,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList args = new ArrayList();
         args.add("100");
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoInt", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoInt", "req"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 100);
     }
 
@@ -148,7 +150,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add("100");
         args.add("200");
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "add", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "add", "req"), args.toArray());
         assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
     }
 
@@ -159,7 +161,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         String hello = "hello";
         args.add(hello.getBytes());
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "testByteArray", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "testByteArray", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), hello);
     }
 
@@ -171,7 +173,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList args = new ArrayList();
         args.add("10");
         args.add("0");
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "divide", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "divide", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), "INF");
     }
 
@@ -181,7 +183,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList args = new ArrayList();
         args.add("true");
 
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBool", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoBool", "req"), args.toArray());
         assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(), true);
     }
 
@@ -190,7 +192,7 @@ public class RPCCallTest extends RPCLocalTestCase {
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoByte", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoByte", "req"), args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
     }
 
@@ -220,7 +222,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         com.setPersons(ps);
         ArrayList args = new ArrayList();
         args.add(com);
-        sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoCompany", "req"), args.toArray());
+        sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoCompany", "req"), args.toArray());
     }
 
 
@@ -256,7 +258,7 @@ public class RPCCallTest extends RPCLocalTestCase {
 
         ArrayList req = new ArrayList();
         req.add(args.toArray());
-        OMElement value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "testCompanyArray", "req"), req.toArray());
+        OMElement value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "testCompanyArray", "req"), req.toArray());
         assertEquals("4", value.getFirstElement().getText());
     }
 
@@ -297,7 +299,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         resobj.add(Company.class);
         resobj.add(Company.class);
         resobj.add(Company.class);
-        Object [] value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "CompanyArray", "req"), req.toArray(),
+        Object [] value = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "CompanyArray", "req"), req.toArray(),
                                                 (Class[])resobj.toArray(new Class[resobj.size()]));
         assertEquals(4, value.length);
         assertEquals(((Company)value[0]).getName(), "MyCompany");
@@ -309,7 +311,7 @@ public class RPCCallTest extends RPCLocalTestCase {
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoOM", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoOM", "req"), args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getFirstElement().getText()), 1);
     }
 
@@ -320,7 +322,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList args = new ArrayList();
         Date date = Calendar.getInstance().getTime();
         args.add(zulu.format(date));
-        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoCalander", "req"), args.toArray());
+        OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoCalander", "req"), args.toArray());
         assertEquals(response.getFirstElement().getText(), zulu.format(date));
     }
 
@@ -344,7 +346,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList ret = new ArrayList();
         ret.add(MyBean.class);
 
-        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoBean", "req"), args.toArray(),
+        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoBean", "req"), args.toArray(),
                                                    (Class[])ret.toArray(new Class[ret.size()]));
         MyBean resBean = (MyBean)response[0];
         assertNotNull(resBean);
@@ -360,7 +362,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
 
-        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "echoInt", "req"), args.toArray(),
+        Object [] response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoInt", "req"), args.toArray(),
                                                    (Class[])ret.toArray(new Class[ret.size()]));
         assertEquals(((Integer)response[0]).intValue(), 100);
     }
@@ -397,7 +399,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add(values);
         ArrayList ret = new ArrayList();
         ret.add(Boolean.class);
-        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "handleStringArray", "req"), args.toArray(),
+        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "handleStringArray", "req"), args.toArray(),
                                                (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(Boolean.TRUE, Boolean.valueOf(objs[0].toString()));
@@ -418,7 +420,7 @@ public class RPCCallTest extends RPCLocalTestCase {
 
         ArrayList ret = new ArrayList();
         ret.add(Integer.class);
-        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "multiArrays", "req"), args.toArray(),
+        Object [] objs = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "multiArrays", "req"), args.toArray(),
                                                (Class[])ret.toArray(new Class[ret.size()]));
         assertNotNull(objs);
         assertEquals(19, Integer.parseInt(objs[0].toString()));
@@ -431,7 +433,7 @@ public class RPCCallTest extends RPCLocalTestCase {
         args.add("foo");
 
 
-        OMElement element = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org/xsd", "mulReturn", "req"), args.toArray());
+        OMElement element = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "mulReturn", "req"), args.toArray());
         System.out.println("element = " + element);
 //        assertEquals(response.getFirstElement().getText(), "foo");
     }
@@ -447,7 +449,7 @@ public class RPCCallTest extends RPCLocalTestCase {
     public void testomElementArray() throws Exception {
         RPCServiceClient sender = getRPCClient("EchoXMLService", "omElementArray");
         
-        String str = "<req:omElementArray xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
+        String str = "<req:omElementArray xmlns:req=\"http://rpc.axis2.apache.org\">\n" +
                 "    <arg0><abc>vaue1</abc></arg0>\n" +
                 "    <arg0><abc>vaue2</abc></arg0>\n" +
                 "    <arg0><abc>vaue3</abc></arg0>\n" +
@@ -465,7 +467,7 @@ public class RPCCallTest extends RPCLocalTestCase {
     }
 
     private OMElement getPayload() throws Exception {
-        String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org/xsd\">\n" +
+        String str = "<req:handleArrayList xmlns:req=\"http://rpc.axis2.apache.org\">\n" +
                 "  <arg0>\n" +
                 "    <item0>abc</item0>\n" +
                 "    <item0>def</item0>\n" +

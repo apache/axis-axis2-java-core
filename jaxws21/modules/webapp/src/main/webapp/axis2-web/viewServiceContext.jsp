@@ -7,59 +7,45 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
- /*
-  * Copyright 2004,2005 The Apache Software Foundation.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  *
-  */
-%>
+<%--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
 <jsp:include page="include/adminheader.jsp"/>
 <h1>Running Context Hierarchy</h1>
 <%
-    ConfigurationContext configContext = (ConfigurationContext) request.getSession().getAttribute(Constants.CONFIG_CONTEXT);
-    Hashtable serviceGroupContextsMap = configContext.getServiceGroupContexts();
-    String type = request.getParameter("TYPE");
-    String sgID = request.getParameter("PID");
-    String ID = request.getParameter("ID");
-    ServiceGroupContext sgContext = (ServiceGroupContext) serviceGroupContextsMap.get(sgID);
-    AxisService service = sgContext.getDescription().getService(ID);
-    ServiceContext serviceContext = sgContext.getServiceContext(service);
-    if (sgID != null && serviceContext != null) {
+    ServiceContext serviceContext = (ServiceContext) request.getSession().getAttribute("ServiceContext");
+    String type = (String) request.getSession().getAttribute("TYPE");
+    if (serviceContext != null) {
         if (type != null) {
             if ("VIEW".equals(type)) {
-                Map perMap = serviceContext.getProperties();
-                if (perMap.size() > 0) {
+                Iterator propertyNames = serviceContext.getPropertyNames();
 %>
 <h4>Persistance Properties</h4><ul>
     <%
-        Iterator itr = perMap.keySet().iterator();
-        while (itr.hasNext()) {
-            String key = (String) itr.next();
-            Object property = perMap.get(key);
+        while (propertyNames.hasNext()) {
+            String key = (String) propertyNames.next();
+            Object property = serviceContext.getProperty(key);
     %>
     <li><%=key%> : <%=property.toString()%></li>
     <%
         }
     %></ul>
 <%
-} else {
-%>
-<h4>No persistance properties found in the context</h4>
-<%
-        }
     }
 } else {
 %> <h4>No Service Context Found</h4><%

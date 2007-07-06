@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:axis2="http://tempuri.org" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns0="http://tempuri.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org">
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns0="http://tempuri.org"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:ns1="http://org.apache.axis2/xsd"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  targetNamespace="http://tempuri.org">
     <wsdl:types>
-        <xs:schema xmlns:ns="http://tempuri.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/xsd">
+        <xs:schema xmlns:ns="http://tempuri.org" attributeFormDefault="qualified"
+                   elementFormDefault="qualified" targetNamespace="http://tempuri.org">
             <xs:element name="retBool">
                 <xs:complexType>
                     <xs:sequence>
@@ -33,14 +59,16 @@
             <xs:element name="retByteArray">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inByteArray" nillable="true" type="xs:base64Binary"/>
+                        <xs:element minOccurs="0" name="inByteArray" nillable="true"
+                                    type="xs:base64Binary"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="retByteArrayResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:base64Binary"/>
+                        <xs:element minOccurs="0" name="return" nillable="true"
+                                    type="xs:base64Binary"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -131,7 +159,8 @@
             <xs:element name="retObject">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inObject" nillable="true" type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="inObject" nillable="true"
+                                    type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -187,7 +216,8 @@
             <xs:element name="retDecimal">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inDecimal" nillable="true" type="xs:decimal"/>
+                        <xs:element minOccurs="0" name="inDecimal" nillable="true"
+                                    type="xs:decimal"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -215,7 +245,8 @@
             <xs:element name="retDateTime">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inDateTime" nillable="true" type="xs:dateTime"/>
+                        <xs:element minOccurs="0" name="inDateTime" nillable="true"
+                                    type="xs:dateTime"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -229,7 +260,8 @@
             <xs:element name="retTimeSpan">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="inTimeSpan" nillable="true" type="xs:anyType"/>
+                        <xs:element minOccurs="0" name="inTimeSpan" nillable="true"
+                                    type="xs:anyType"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -446,95 +478,139 @@
     </wsdl:message>
     <wsdl:portType name="BaseDataTypesPortType">
         <wsdl:operation name="retUInt">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUIntRequest" wsaw:Action="urn:retUInt"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUIntResponse" wsaw:Action="urn:retUIntResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retUIntRequest" wsaw:Action="urn:retUInt"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retUIntResponse" wsaw:Action="urn:retUIntResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retSingle">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSingleRequest" wsaw:Action="urn:retSingle"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSingleResponse" wsaw:Action="urn:retSingleResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retSingleRequest" wsaw:Action="urn:retSingle"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retSingleResponse" wsaw:Action="urn:retSingleResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retTimeSpan">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retTimeSpanRequest" wsaw:Action="urn:retTimeSpan"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retTimeSpanResponse" wsaw:Action="urn:retTimeSpanResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retTimeSpanRequest" wsaw:Action="urn:retTimeSpan"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retTimeSpanResponse" wsaw:Action="urn:retTimeSpanResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDateTime">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDateTimeRequest" wsaw:Action="urn:retDateTime"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDateTimeResponse" wsaw:Action="urn:retDateTimeResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retDateTimeRequest" wsaw:Action="urn:retDateTime"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retDateTimeResponse" wsaw:Action="urn:retDateTimeResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retGuid">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retGuidRequest" wsaw:Action="urn:retGuid"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retGuidResponse" wsaw:Action="urn:retGuidResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retGuidRequest" wsaw:Action="urn:retGuid"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retGuidResponse" wsaw:Action="urn:retGuidResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retByteArray">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteArrayRequest" wsaw:Action="urn:retByteArray"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteArrayResponse" wsaw:Action="urn:retByteArrayResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retByteArrayRequest" wsaw:Action="urn:retByteArray"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retByteArrayResponse" wsaw:Action="urn:retByteArrayResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retByte">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteRequest" wsaw:Action="urn:retByte"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retByteResponse" wsaw:Action="urn:retByteResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retByteRequest" wsaw:Action="urn:retByte"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retByteResponse" wsaw:Action="urn:retByteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retSByte">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSByteRequest" wsaw:Action="urn:retSByte"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retSByteResponse" wsaw:Action="urn:retSByteResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retSByteRequest" wsaw:Action="urn:retSByte"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retSByteResponse" wsaw:Action="urn:retSByteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retShort">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retShortRequest" wsaw:Action="urn:retShort"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retShortResponse" wsaw:Action="urn:retShortResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retShortRequest" wsaw:Action="urn:retShort"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retShortResponse" wsaw:Action="urn:retShortResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retUri">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUriRequest" wsaw:Action="urn:retUri"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUriResponse" wsaw:Action="urn:retUriResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retUriRequest" wsaw:Action="urn:retUri"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retUriResponse" wsaw:Action="urn:retUriResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retQName">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retQNameRequest" wsaw:Action="urn:retQName"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retQNameResponse" wsaw:Action="urn:retQNameResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retQNameRequest" wsaw:Action="urn:retQName"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retQNameResponse" wsaw:Action="urn:retQNameResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retFloatRequest" wsaw:Action="urn:retFloat"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retFloatResponse" wsaw:Action="urn:retFloatResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retFloatRequest" wsaw:Action="urn:retFloat"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retFloatResponse" wsaw:Action="urn:retFloatResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retObject">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retObjectRequest" wsaw:Action="urn:retObject"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retObjectResponse" wsaw:Action="urn:retObjectResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retObjectRequest" wsaw:Action="urn:retObject"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retObjectResponse" wsaw:Action="urn:retObjectResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retBool">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retBoolRequest" wsaw:Action="urn:retBool"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retBoolResponse" wsaw:Action="urn:retBoolResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retBoolRequest" wsaw:Action="urn:retBool"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retBoolResponse" wsaw:Action="urn:retBoolResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDouble">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDoubleRequest" wsaw:Action="urn:retDouble"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDoubleResponse" wsaw:Action="urn:retDoubleResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retDoubleRequest" wsaw:Action="urn:retDouble"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retDoubleResponse" wsaw:Action="urn:retDoubleResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retDecimal">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDecimalRequest" wsaw:Action="urn:retDecimal"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retDecimalResponse" wsaw:Action="urn:retDecimalResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retDecimalRequest" wsaw:Action="urn:retDecimal"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retDecimalResponse" wsaw:Action="urn:retDecimalResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retLong">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retLongRequest" wsaw:Action="urn:retLong"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retLongResponse" wsaw:Action="urn:retLongResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retLongRequest" wsaw:Action="urn:retLong"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retLongResponse" wsaw:Action="urn:retLongResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retInt">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retIntRequest" wsaw:Action="urn:retInt"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retIntResponse" wsaw:Action="urn:retIntResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retIntRequest" wsaw:Action="urn:retInt"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retIntResponse" wsaw:Action="urn:retIntResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retChar">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retCharRequest" wsaw:Action="urn:retChar"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retCharResponse" wsaw:Action="urn:retCharResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retCharRequest" wsaw:Action="urn:retChar"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retCharResponse" wsaw:Action="urn:retCharResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retString">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retStringRequest" wsaw:Action="urn:retString"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retStringResponse" wsaw:Action="urn:retStringResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retStringRequest" wsaw:Action="urn:retString"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retStringResponse" wsaw:Action="urn:retStringResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retUShort">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUShortRequest" wsaw:Action="urn:retUShort"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retUShortResponse" wsaw:Action="urn:retUShortResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retUShortRequest" wsaw:Action="urn:retUShort"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retUShortResponse" wsaw:Action="urn:retUShortResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retULong">
-            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retULongRequest" wsaw:Action="urn:retULong"/>
-            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" message="axis2:retULongResponse" wsaw:Action="urn:retULongResponse"/>
+            <wsdl:input xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                        message="ns0:retULongRequest" wsaw:Action="urn:retULong"/>
+            <wsdl:output xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                         message="ns0:retULongResponse" wsaw:Action="urn:retULongResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="BaseDataTypesSOAP11Binding" type="axis2:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesSOAP11Binding" type="ns0:BaseDataTypesPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap:operation soapAction="urn:retUInt" style="document"/>
@@ -735,7 +811,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="BaseDataTypesSOAP12Binding" type="axis2:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesSOAP12Binding" type="ns0:BaseDataTypesPortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap12:operation soapAction="urn:retUInt" style="document"/>
@@ -936,7 +1012,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="BaseDataTypesHttpBinding" type="axis2:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesHttpBinding" type="ns0:BaseDataTypesPortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="retUInt">
             <http:operation location="BaseDataTypes/retUInt"/>
@@ -1138,13 +1214,13 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="BaseDataTypes">
-        <wsdl:port name="BaseDataTypesSOAP11port_http" binding="axis2:BaseDataTypesSOAP11Binding">
+        <wsdl:port name="BaseDataTypesSOAP11port_http" binding="ns0:BaseDataTypesSOAP11Binding">
             <soap:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesSOAP12port_http" binding="axis2:BaseDataTypesSOAP12Binding">
+        <wsdl:port name="BaseDataTypesSOAP12port_http" binding="ns0:BaseDataTypesSOAP12Binding">
             <soap12:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesHttpport" binding="axis2:BaseDataTypesHttpBinding">
+        <wsdl:port name="BaseDataTypesHttpport" binding="ns0:BaseDataTypesHttpBinding">
             <http:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
     </wsdl:service>

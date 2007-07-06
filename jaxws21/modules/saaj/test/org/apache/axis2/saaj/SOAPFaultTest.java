@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package org.apache.axis2.saaj;
 
@@ -442,9 +445,11 @@ public class SOAPFaultTest extends TestCase {
 
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault", Locale.ENGLISH);
+            SOAPFault sf = body.addFault();
+            
             String expected = "Its my fault again";
             boolean found = false;
+            sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
             sf.addFaultReasonText(expected, Locale.ENGLISH);
             Iterator i = sf.getFaultReasonTexts();
             int j = 0;
@@ -481,14 +486,14 @@ public class SOAPFaultTest extends TestCase {
         SOAPPart soapPart = soapMessage.getSOAPPart();
         SOAPEnvelope envelope = soapPart.getEnvelope();
         SOAPBody body = envelope.getBody();
-
+        SOAPFault sf = body.addFault();
+        
         String expected1 = "Its my fault";
         String expected2 = "Its my fault again";
 
-        SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, expected1, Locale.UK);
-
         boolean found1 = false;
         boolean found2 = false;
+        sf.addFaultReasonText(expected1, Locale.UK);
         sf.addFaultReasonText(expected2, Locale.ENGLISH);
         Iterator i = sf.getFaultReasonTexts();
         int j = 0;
@@ -645,7 +650,8 @@ public class SOAPFaultTest extends TestCase {
             SOAPPart soapPart = soapMessage.getSOAPPart();
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-
+            SOAPFault sf = body.addFault();
+            
             Locale expected1 = Locale.ENGLISH;
             Locale expected2 = Locale.UK;
             Locale expected3 = Locale.GERMAN;
@@ -653,9 +659,8 @@ public class SOAPFaultTest extends TestCase {
             boolean found2 = false;
             boolean found3 = false;
 
-            SOAPFault sf = body.addFault(SOAPConstants.SOAP_RECEIVER_FAULT, "Its my fault1", expected1);
-
             System.out.println("Adding FaultReasonText to SOAPFault");
+            sf.addFaultReasonText("Its my fault1", expected1);
             sf.addFaultReasonText("Its my fault2", expected2);
             sf.addFaultReasonText("Its my fault3", expected3);
             System.out.println("Getting FaultReasonLocales from SOAPFault");
@@ -820,11 +825,19 @@ public class SOAPFaultTest extends TestCase {
 
             Name name = fac.createName("myfault", "flt", "http://example.com");
             sf.setFaultCode(name);
-            Name name2 = sf.getFaultCodeAsName();
+            
+            Name name2 = sf.getFaultCodeAsName();            
             assertNotNull(name2);
-            assertEquals(name2.getLocalName(), name.getLocalName());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getURI(), name.getURI());
+            assertEquals(name.getLocalName(), name2.getLocalName());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getURI(), name2.getURI());
+            
+            QName name3 = sf.getFaultCodeAsQName();            
+            assertNotNull(name3);
+            assertEquals(name.getLocalName(), name3.getLocalPart());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getURI(), name3.getNamespaceURI());
+            
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -839,11 +852,19 @@ public class SOAPFaultTest extends TestCase {
                                        qname.getPrefix(), qname.getNamespaceURI());
             SOAPFault sf = fac.createFault();
             sf.setFaultCode(name);
-            Name name2 = sf.getFaultCodeAsName();
+            
+            Name name2 = sf.getFaultCodeAsName();            
             assertNotNull(name2);
-            assertEquals(name2.getLocalName(), name.getLocalName());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getURI(), name.getURI());
+            assertEquals(name.getLocalName(), name2.getLocalName());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getURI(), name2.getURI());
+            
+            QName name3 = sf.getFaultCodeAsQName();            
+            assertNotNull(name3);
+            assertEquals(name.getLocalName(), name3.getLocalPart());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getURI(), name3.getNamespaceURI());
+                      
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -857,12 +878,18 @@ public class SOAPFaultTest extends TestCase {
 
         QName name = new QName("http://example.com", "myfault", "flt");
         sf.setFaultCode(name);
+        
         QName name2 = sf.getFaultCodeAsQName();
-
         assertNotNull(name2);
-        assertEquals(name2.getLocalPart(), name.getLocalPart());
-        assertEquals(name2.getPrefix(), name.getPrefix());
-        assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
+        assertEquals(name.getLocalPart(), name2.getLocalPart());
+        assertEquals(name.getPrefix(), name2.getPrefix());
+        assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
+        
+        Name name3 = sf.getFaultCodeAsName();
+        assertNotNull(name3);
+        assertEquals(name.getLocalPart(), name3.getLocalName());
+        assertEquals(name.getPrefix(), name3.getPrefix());
+        assertEquals(name.getNamespaceURI(), name3.getURI());
     }
 
 
@@ -872,12 +899,18 @@ public class SOAPFaultTest extends TestCase {
             SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
             SOAPFault sf = fac.createFault();
             sf.setFaultCode(name);
+            
             QName name2 = sf.getFaultCodeAsQName();
-
             assertNotNull(name2);
-            assertEquals(name2.getLocalPart(), name.getLocalPart());
-            assertEquals(name2.getPrefix(), name.getPrefix());
-            assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
+            assertEquals(name.getLocalPart(), name2.getLocalPart());
+            assertEquals(name.getPrefix(), name2.getPrefix());
+            assertEquals(name.getNamespaceURI(), name2.getNamespaceURI());
+            
+            Name name3 = sf.getFaultCodeAsName();
+            assertNotNull(name3);
+            assertEquals(name.getLocalPart(), name3.getLocalName());
+            assertEquals(name.getPrefix(), name3.getPrefix());
+            assertEquals(name.getNamespaceURI(), name3.getURI());
         } catch (Exception e) {
             fail(e.getMessage());
         }

@@ -1,18 +1,21 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 
 package org.apache.axis2.util;
@@ -161,8 +164,7 @@ public class Utils {
                                                                            ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext =
-                configurationContext.createServiceGroupContext((AxisServiceGroup)axisService
-                        .getParent());
+                configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
 
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext);
@@ -172,12 +174,13 @@ public class Utils {
     /**
      * Break a full path into pieces
      *
-     * @param path
      * @return an array where element [0] always contains the service, and element 1, if not null, contains
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
-        log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        if(log.isDebugEnabled()) {
+            log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        }
         if (path == null) {
             return null;
         }
@@ -321,14 +324,37 @@ public class Utils {
         while (allModules.hasNext()) {
             AxisModule axisModule = (AxisModule) allModules.next();
             String moduleName = axisModule.getName();
-            String moduleNameString = getModuleName(moduleName);
-            String moduleVersionString = getModuleVersion(moduleName);
+            String moduleNameString;
+            String moduleVersionString;
+            if (AxisModule.VERSION_SNAPSHOT.equals(axisModule.getVersion())) {
+                moduleNameString = axisModule.getName();
+                moduleVersionString = axisModule.getVersion();
+            } else {
+                if (axisModule.getVersion() == null ) {
+                    moduleNameString = getModuleName(moduleName);
+                    moduleVersionString = getModuleVersion(moduleName);
+                    if (moduleVersionString!=null) {
+                        try {
+                            Float.valueOf(moduleVersionString);
+                            axisModule.setVersion(moduleVersionString);
+                            axisModule.setName(moduleName);
+                        } catch (NumberFormatException e) {
+                            moduleVersionString = null;
+                        }
+                    }
+                } else {
+                    moduleNameString = axisModule.getName();
+                    moduleVersionString = axisModule.getVersion();
+                }
+            }
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
                 // if the module version is null then , that will be ignore in this case
-                if (moduleVersionString != null &&
-                        isLatest(moduleVersionString, currentDefaultVerison)) {
-                    defaultModules.put(moduleNameString, moduleVersionString);
+                if (!AxisModule.VERSION_SNAPSHOT.equals(currentDefaultVerison)) {
+                    if (moduleVersionString != null &&
+                            isLatest(moduleVersionString, currentDefaultVerison)) {
+                        defaultModules.put(moduleNameString, moduleVersionString);
+                    }
                 }
             } else {
                 defaultModules.put(moduleNameString, moduleVersionString);
@@ -343,7 +369,7 @@ public class Utils {
     }
 
     public static boolean isLatest(String moduleVersion, String currentDefaultVersion) {
-        if ("SNAPSHOT".equals(moduleVersion)) {
+        if (AxisModule.VERSION_SNAPSHOT.equals(moduleVersion)) {
             return true;
         } else {
             float m_version = Float.parseFloat(moduleVersion);

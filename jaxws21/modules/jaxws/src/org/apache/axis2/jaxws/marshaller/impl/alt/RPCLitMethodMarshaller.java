@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- *      
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -112,7 +112,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Indicate the style and operation element name.  This triggers the message to
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
-            m.setOperationElement(getRPCOperationQName(operationDesc));
+            m.setOperationElement(getRPCOperationQName(operationDesc, true));
 
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
@@ -276,7 +276,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             m.setStyle(Style.RPC);
 
 
-            QName rpcOpQName = getRPCOperationQName(operationDesc);
+            QName rpcOpQName = getRPCOperationQName(operationDesc, false);
             String localPart = rpcOpQName.getLocalPart() + "Response";
             QName responseOp =
                     new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
@@ -520,13 +520,18 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
      * @param opDesc
      * @return qualified qname to use in the rpc message to represent the operation (per WSI BP)
      */
-    private static QName getRPCOperationQName(OperationDescription opDesc) {
+    private static QName getRPCOperationQName(OperationDescription opDesc, boolean isRequest) {
         QName qName = opDesc.getName();
 
         String localPart = qName.getLocalPart();
-        String uri = (qName.getNamespaceURI().length() == 0) ?
-                opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
-                qName.getNamespaceURI();
+        String uri = null;
+        
+        if (isRequest) {
+            uri = opDesc.getBindingInputNamespace();
+        } else {
+            uri = opDesc.getBindingOutputNamespace();
+        }
+        
         String prefix = "rpcOp";  // Prefer using an actual prefix
 
 
