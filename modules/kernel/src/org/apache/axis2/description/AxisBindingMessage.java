@@ -200,7 +200,7 @@ public class AxisBindingMessage extends AxisDescription {
         // AxisBindingOperation policies
         AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
         if (axisBindingOperation != null) {
-            policyList.add(axisBindingOperation.getPolicyInclude()
+            policyList.addAll(axisBindingOperation.getPolicyInclude()
                     .getAttachedPolicies());
         }
 
