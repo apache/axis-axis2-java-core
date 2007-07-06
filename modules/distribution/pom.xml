@@ -257,9 +257,9 @@
 				<mkdir dir="tmp-repository/modules"/>
 				<mkdir dir="tmp-repository/services"/>
 
-				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" todir="tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
+				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
 				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
-				<copy file="../../modules/ping/target/ping-${version}.mar" todir="tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="tmp-repository/modules/ping-${ping.mar.version}.mar"/>
 			
 				<!-- generate modules.list -->			        
 				<echo file="tmp-repository/modules/modules.list" append="false">
