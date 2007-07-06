@@ -47,6 +47,13 @@
 				</excludes>
 				<filtering>false</filtering>
 			</resource>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>**/module.xml</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
 		</resources>
 		<testResources>
 			<testResource>
