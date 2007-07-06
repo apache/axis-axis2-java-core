@@ -116,6 +116,14 @@
                 <include>tools/**</include>
             </includes>
         </fileSet>
+	<!-- copying licenses -->
+        <fileSet>
+            <directory>../../legal</directory>
+            <outputDirectory>legal</outputDirectory>
+            <excludes>
+                <exclude>.svn/**</exclude>
+            </excludes>
 
+        </fileSet>
     </fileSets>
 </assembly>
