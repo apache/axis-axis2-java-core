@@ -42,7 +42,11 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+        </dependency>
+    </dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
