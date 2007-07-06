@@ -10,45 +10,11 @@
 
     <fileSets>
         <!--********************** creating the repository ********************** -->
-        <!-- copy the soapmonitor mar -->
         <fileSet>
-            <directory>../../modules/soapmonitor/target</directory>
-            <outputDirectory>repository/modules</outputDirectory>
+            <directory>tmp-repository</directory>
+            <outputDirectory>repository</outputDirectory>
             <includes>
-                <include>soapmonitor-${version}.mar</include>
-            </includes>
-        </fileSet>
-        <!-- copy the addressing mar -->
-        <fileSet>
-            <directory>../../modules/addressing/target</directory>
-            <outputDirectory>repository/modules</outputDirectory>
-            <includes>
-                <include>addressing-${version}.mar</include>
-            </includes>
-        </fileSet>
-        <!-- copy the ping mar -->
-        <fileSet>
-            <directory>../../modules/ping/target</directory>
-            <outputDirectory>repository/modules</outputDirectory>
-            <includes>
-                <include>ping-${version}.mar</include>
-            </includes>
-        </fileSet>
-        <!-- copy the mex mar -->
-        <fileSet>
-            <directory>../../modules/mex-mar/target</directory>
-            <outputDirectory>repository/modules</outputDirectory>
-            <includes>
-                <include>mex-${version}.mar</include>
-            </includes>
-        </fileSet>
-
-        <!-- copy the sample services -->
-        <fileSet>
-            <directory>../../modules/samples/target/toWar/services</directory>
-            <outputDirectory>repository/services</outputDirectory>
-            <includes>
-                <include>version.aar</include>
+                <include>**/*</include>
             </includes>
         </fileSet>
 
@@ -274,17 +240,17 @@
             </includes>
         </fileSet>
 
-		<!-- TODO: Need to rename this file to INSTALL.txt -->
-		<fileSet>
+	<!-- TODO: Need to rename this file to INSTALL.txt -->
+	<fileSet>
             <directory>../../release-docs/readme-files/</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
             </includes>
-		</fileSet>
+	</fileSet>
 
-		<!-- TODO: Need to add filters to update the version strings within the files -->
-		<fileSet>
+	<!-- TODO: Need to add filters to update the version strings within the files -->
+	<fileSet>
             <directory>../../</directory>
             <outputDirectory></outputDirectory>
             <includes>
@@ -293,7 +259,7 @@
                 <include>README.txt</include>
                 <include>release-notes.html</include>
             </includes>
-		</fileSet>
+	</fileSet>
 
         <!-- copy samples -->
         <fileSet>
@@ -348,9 +314,9 @@
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
-<!--
+                 <!--
                  <exclude>org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar</exclude>
--->
+                 -->
                  <exclude>org.apache.geronimo.specs:geronimo-jsp_2.0_spec:jar</exclude>
                  <exclude>org.apache.activemq:activemq-console:jar</exclude>
                  <exclude>org.apache.activemq:activemq-core:jar</exclude>
@@ -358,7 +324,9 @@
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-web:jar</exclude>
+		 <!--
                  <exclude>org.apache.activemq:activemq:jar</exclude>
+		 -->
                  <exclude>org.apache.activemq:activemq-web-demo:war</exclude>
                  <exclude>xstream:xstream:jar</exclude>
                  <exclude>xom:xom:jar</exclude>

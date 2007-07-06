@@ -233,14 +233,55 @@
                         <configuration>
                             <finalName>axis2-${version}</finalName>
                             <descriptors>
-                                <descriptor>src/main/assembly/src-assembly.xml</descriptor>
-                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor> 
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>service-module-list-generation</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+				<mkdir dir="tmp-repository"/>
+				<mkdir dir="tmp-repository/modules"/>
+				<mkdir dir="tmp-repository/services"/>
+
+				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" todir="tmp-repository/modules"/>
+				<copy file="../../modules/addressing/target/addressing-${version}.mar" todir="tmp-repository/modules"/>
+				<copy file="../../modules/ping/target/ping-${version}.mar" todir="tmp-repository/modules"/>
+				<copy file="../../modules/mex-mar/target/mex-${version}.mar" todir="tmp-repository/modules"/>
+				<!-- generate modules.list -->			        
+				<echo file="tmp-repository/modules/modules.list" append="false">
+				soapmonitor-${version}.mar
+				addressing-${version}.mar
+				ping-${version}.mar
+				mex-${version}.mar
+			        </echo>
+
+				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="tmp-repository/services"/>
+				<!-- generate services.list -->			        
+			        <echo file="tmp-repository/services/services.list" append="false">
+				version.aar
+			        </echo>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+	     </plugin>
         </plugins>
     </build>
 
