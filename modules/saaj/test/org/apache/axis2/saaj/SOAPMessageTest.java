@@ -257,7 +257,7 @@ public class SOAPMessageTest extends TestCase {
       * Do not add this test unless below mentioned resources are accessible
       */
 
-    public void testGetAttachmentsByHREF() {
+    public void _testGetAttachmentsByHREF() {
         String NS_PREFIX = "mypre";
         String NS_URI = "http://myuri.org/";
 
@@ -345,7 +345,7 @@ public class SOAPMessageTest extends TestCase {
     /*
       * Do not add this test unless below mentioned resources are accessible
       */
-    public void testGetAttachmentByHREF2() {
+    public void _testGetAttachmentByHREF2() {
         String NS_PREFIX = "mypre";
         String NS_URI = "http://myuri.org/";
 
@@ -440,7 +440,7 @@ public class SOAPMessageTest extends TestCase {
         }
     }
 
-    public void testMessageCreation() {
+    public void _testMessageCreation() {
         try {
             final String NS_PREFIX = "ns-prefix";
             final String NS_URI = "ns-uri";
