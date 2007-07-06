@@ -20,6 +20,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -69,7 +70,8 @@ public class ModuleDeployer implements Deployer {
             metaData.setFileName(deploymentFileData.getFile().toURL());
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                                         metaData.getName()));
+                                         Utils.getModuleName(metaData.getName(),
+                                                             metaData.getVersion())));
         } catch (DeploymentException e) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
                                           deploymentFileData.getName(),

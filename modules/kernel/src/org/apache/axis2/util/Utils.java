@@ -92,26 +92,26 @@ public class Utils {
                                             className,
                                             opName);
     }
-    
-    
+
+
     public static AxisService createSimpleInOnlyService(QName serviceName,
-            MessageReceiver messageReceiver,
-            QName opName)
-        throws AxisFault {
+                                                        MessageReceiver messageReceiver,
+                                                        QName opName)
+            throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        
+
         AxisOperation axisOp = new InOnlyAxisOperation(opName);
-        
+
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
         service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(),
-        axisOp);
-        
+                                     axisOp);
+
         return service;
     }
-    
+
 
     public static AxisService createSimpleService(QName serviceName,
                                                   MessageReceiver messageReceiver, String className,
@@ -153,7 +153,8 @@ public class Utils {
     }
 
     public static ServiceContext fillContextInformation(AxisService axisService,
-                                                        ConfigurationContext configurationContext) throws AxisFault {
+                                                        ConfigurationContext configurationContext)
+            throws AxisFault {
 
         // 2. if null, create new opCtxt
         // fill the service group context and service context info
@@ -161,7 +162,8 @@ public class Utils {
     }
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
-                                                                           ConfigurationContext configurationContext) throws AxisFault {
+                                                                           ConfigurationContext configurationContext)
+            throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext =
                 configurationContext.createServiceGroupContext(axisService.getAxisServiceGroup());
@@ -178,8 +180,8 @@ public class Utils {
      *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(String path, String servicePath) {
-        if(log.isDebugEnabled()) {
-            log.debug("parseRequestURLForServiceAndOperation : ["+ path +"]["+ servicePath +"]");
+        if (log.isDebugEnabled()) {
+            log.debug("parseRequestURLForServiceAndOperation : [" + path + "][" + servicePath + "]");
         }
         if (path == null) {
             return null;
@@ -208,7 +210,7 @@ public class Utils {
                     values[0] = service.substring(0, operationIndex);
                     values[1] = service.substring(operationIndex + 1);
                     operationIndex = values[1].lastIndexOf('/');
-                    if (operationIndex > 0){
+                    if (operationIndex > 0) {
                         values[1] = values[1].substring(operationIndex + 1);
                     }
                 } else {
@@ -216,7 +218,7 @@ public class Utils {
                 }
             }
         } else {
-            log.info("Unable to parse request URL ["+ path +"]["+ servicePath +"]");
+            log.info("Unable to parse request URL [" + path + "][" + servicePath + "]");
         }
 
         return values;
@@ -227,7 +229,7 @@ public class Utils {
         File file = new File(repositry);
         if (!file.exists()) {
             throw new Exception("repository directory " + file.getAbsolutePath()
-                    + " does not exists");
+                                + " does not exists");
         }
         File axis2xml = new File(file, "axis.xml");
         String axis2xmlString = null;
@@ -249,20 +251,24 @@ public class Utils {
     /**
      * Get the name of the module , where archive name is combination of module name + its version
      * The format of the name is as follows:
-     *   moduleName-00.0000
+     * moduleName-00.0000
      * Example: "addressing-01.0001.mar" would return "addressing"
+     *
      * @param moduleName the name of the module archive
      * @return the module name parsed out of the file name
      */
     public static String getModuleName(String moduleName) {
+        if (moduleName.endsWith("-SNAPSHOT")) {
+            return moduleName.substring(0, moduleName.indexOf("-SNAPSHOT"));
+        }
         char delimiter = '-';
         int version_index = moduleName.lastIndexOf(delimiter);
         if (version_index > 0) {
-            String versionString  = getModuleVersion(moduleName);
-            if (versionString ==  null) {
+            String versionString = getModuleVersion(moduleName);
+            if (versionString == null) {
                 return moduleName;
             } else {
-              return  moduleName.substring(0, version_index);
+                return moduleName.substring(0, version_index);
             }
         } else {
             return moduleName;
@@ -270,6 +276,9 @@ public class Utils {
     }
 
     public static String getModuleVersion(String moduleName) {
+        if (moduleName.endsWith("-SNAPSHOT")) {
+            return "SNAPSHOT";
+        }
         char version_seperator = '-';
         int version_index = moduleName.lastIndexOf(version_seperator);
         if (version_index > 0) {
@@ -285,24 +294,19 @@ public class Utils {
         }
     }
 
-
-    public static String getModuleName(String name, String versionID) {
-        String moduleName;
-        if (versionID != null && versionID.length() != 0) {
-            moduleName = name + "-" + versionID;
-        } else {
-            moduleName = name;
-        }
+    public static String getModuleName(String moduleName, String moduleVersion) {
+        if (moduleVersion != null && moduleVersion.length() != 0) {
+            moduleName = moduleName + "-" + moduleVersion;
+        } 
         return moduleName;
     }
 
     /**
-     * 
      * - if he trying to engage the same module then method will returen false
      * - else it will return true
      *
      * @param deployingModuleName the module we're currently deploying
-     * @param deployedModulename an existing module
+     * @param deployedModulename  an existing module
      * @return true if these are different modules, false if they're the same
      * @throws AxisFault if two different versions of the same module are deployed
      */
@@ -316,7 +320,7 @@ public class Utils {
             if (module1version != null) {
                 if (!module1version.equals(module2version)) {
                     throw new AxisFault("trying to engage two different module versions " +
-                            module1version + " : " + module2version);
+                                        module1version + " : " + module2version);
                 } else {
                     return true;
                 }
@@ -341,7 +345,7 @@ public class Utils {
                 moduleNameString = axisModule.getName();
                 moduleVersionString = axisModule.getVersion();
             } else {
-                if (axisModule.getVersion() == null ) {
+                if (axisModule.getVersion() == null) {
                     moduleNameString = getModuleName(moduleName);
                     moduleVersionString = getModuleVersion(moduleName);
                     if (moduleVersionString != null) {
@@ -363,7 +367,7 @@ public class Utils {
                 // if the module version is null then , that will be ignore in this case
                 if (!AxisModule.VERSION_SNAPSHOT.equals(currentDefaultVerison)) {
                     if (moduleVersionString != null &&
-                            isLatest(moduleVersionString, currentDefaultVerison)) {
+                        isLatest(moduleVersionString, currentDefaultVerison)) {
                         defaultModules.put(moduleNameString, moduleVersionString);
                     }
                 }
@@ -391,8 +395,9 @@ public class Utils {
 
     /**
      * Check if a MessageContext property is true.
+     *
      * @param messageContext the MessageContext
-     * @param propertyName the property name
+     * @param propertyName   the property name
      * @return true if the property is Boolean.TRUE, "true", 1, etc. or false otherwise
      * @deprecated please use MessageContext.isTrue(propertyName) instead
      */
@@ -412,50 +417,50 @@ public class Utils {
         int mepConstant = WSDLConstants.MEP_CONSTANT_INVALID;
 
         if (WSDL2Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
+            WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) ||
+            WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_OUT;
         } else if (
                 WSDL2Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) ||
-                        WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY
-                                .equals(messageExchangePattern)) {
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY
+                        .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_ONLY;
         } else if (WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
                 .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
-                .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT
-                        .equals(messageExchangePattern)) {
+                                                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
+                                                        .equals(messageExchangePattern) ||
+                                                                                        WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT
+                                                                                                .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT;
         } else if (WSDL2Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
-                        WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN
-                                .equals(messageExchangePattern)) {
+                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) ||
+                   WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN
+                           .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_IN;
         } else if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY
-                .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants
-                .MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
+                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY
+                           .equals(messageExchangePattern) ||
+                                                           WSDLConstants.WSDL20_2004_Constants
+                                                                   .MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_ONLY;
         } else if (WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
-                .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN
-                        .equals(messageExchangePattern)) {
+                   WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
+                           .equals(messageExchangePattern) ||
+                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN
+                                                                   .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN;
         } else if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
-                .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY
-                        .equals(messageExchangePattern)) {
+                   WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
+                           .equals(messageExchangePattern) ||
+                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY
+                                                                   .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY;
         } else if (WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
-                .equals(messageExchangePattern) ||
-                WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY
-                        .equals(messageExchangePattern)) {
+                   WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
+                           .equals(messageExchangePattern) ||
+                                                           WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY
+                                                                   .equals(messageExchangePattern)) {
             mepConstant = WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
 
@@ -484,7 +489,7 @@ public class Utils {
         if (result == null) {
             SOAPEnvelope envelope = messageContext.getEnvelope();
             if (envelope == null || envelope.getBody() == null ||
-                    envelope.getBody().getFault() == null) {
+                envelope.getBody().getFault() == null) {
                 // Not going to be able to 
                 throw new IllegalArgumentException(
                         "The MessageContext does not have an associated SOAPFault.");
