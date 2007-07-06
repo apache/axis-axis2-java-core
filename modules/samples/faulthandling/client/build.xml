@@ -40,6 +40,8 @@
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
             <arg line="-uri ${wsdl.uri}"/>
             <arg line="-u"/>
+<arg line="-ap"/>
+
             <arg line="-o ${target}"/>
             <classpath>
                 <fileset dir="${env.AXIS2_HOME}\lib">

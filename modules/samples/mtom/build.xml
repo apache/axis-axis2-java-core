@@ -41,6 +41,7 @@
 			<arg value="-uri" />
 			<arg value="${basedir}/resources/MTOMSample.wsdl" />
 			<arg value="-ss" />
+                  <arg value="-ap" />
 			<arg value="-sd" />
 			<arg value="-p" />
 			<arg value="sample.mtom.service" />
@@ -73,6 +74,7 @@
 			<arg value="-uri" />
 			<arg value="resources/MTOMSample.wsdl" />
 			<arg value="-p" />
+			<arg value="-ap" />
 			<arg value="sample.mtom.service" />
 			<arg value="-o" />
 			<arg value="${client.dir}" />
