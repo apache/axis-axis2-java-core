@@ -108,6 +108,14 @@
                 <include>pom.xml</include>
             </includes>
         </fileSet>
+	<!-- copying tools section of xdocs. This is needed by eclipse plugins -->
+        <fileSet>
+            <directory>../../xdocs</directory>
+            <outputDirectory>xdocs</outputDirectory>
+            <includes>
+                <include>tools/**</include>
+            </includes>
+        </fileSet>
 
     </fileSets>
 </assembly>
