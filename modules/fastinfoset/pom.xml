@@ -225,9 +225,6 @@
                    <includes>
                        <include>**/*Test.java</include>
                    </includes>
-                   <excludes>
-                       <exclude>**/*FastInfosetInputOutputTest.java</exclude>
-                    </excludes>
                     <systemProperties>
                         <property>
                             <name>build.repository</name>
