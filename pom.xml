@@ -189,4 +189,16 @@
 			</plugin>
 		</plugins>
 	</build>
+        <reporting>
+               <plugins>
+                       <plugin>
+                               <groupId>org.apache.maven.plugins</groupId>
+                               <artifactId>maven-site-plugin</artifactId>
+                               <configuration>
+                                 <siteDirectory>${basedir}/xdocs</siteDirectory>
+                                 <resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
+                               </configuration>
+                       </plugin>
+               </plugins>
+     </reporting>
 </project>
