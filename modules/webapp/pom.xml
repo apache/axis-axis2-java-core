@@ -224,9 +224,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-soapmonitor</artifactId>
+            <artifactId>soapmonitor</artifactId>
             <version>${version}</version>
-            <type>jar</type>
+            <type>mar</type>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
