@@ -581,6 +581,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "src", codeGenConfiguration.getSourceLocation(), rootElement);
         addAttribute(doc, "resource", codeGenConfiguration.getResourceLocation(), rootElement);
 
+        if (codeGenConfiguration.getAxisServices().size() > 1){
+            addAttribute(doc, "artifactname", "Services", rootElement);
+        } else {
+            addAttribute(doc, "artifactname", this.axisService.getName() , rootElement);
+        }
+
         if (!codeGenConfiguration.isWriteTestCase()) {
             addAttribute(doc, "testOmit", "true", rootElement);
         }

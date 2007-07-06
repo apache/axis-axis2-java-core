@@ -21,7 +21,7 @@ Building the Service
 
 Type "ant generate.service" from Axis2_HOME/samples/quickstartadb
 directory and then deploy the 
-Axis2_HOME/samples/quickstartadb/build/service/build/lib/Services.aar
+Axis2_HOME/samples/quickstartadb/build/service/build/lib/StockQuoteService.aar
 
 Running the Client
 ==================
