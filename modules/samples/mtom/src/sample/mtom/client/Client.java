@@ -32,12 +32,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.OptionsValidator;
+import org.apache.ws.axis2.mtomsample.MTOMSampleMTOMSampleSOAP11Port_httpStub;
 
-import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub;
-import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentRequest;
-import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentResponse;
-import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType;
-import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary;
 
 public class Client {
 
@@ -103,9 +99,9 @@ public class Client {
 		 */
 
 		// Populating the code generated beans
-		AttachmentRequest attachmentRequest = new AttachmentRequest();
-		AttachmentType attachmentType = new AttachmentType();
-		Base64Binary base64Binary = new Base64Binary();
+		MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentRequest attachmentRequest = new MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentRequest();
+		MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType attachmentType = new MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType();
+		MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary base64Binary = new MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary();
 
 		// Creating a javax.activation.FileDataSource from the input file.
 		FileDataSource fileDataSource = new FileDataSource(file);
@@ -114,12 +110,14 @@ public class Client {
 		// javax.activation.DataSource interface can fit here.
 		DataHandler dataHandler = new DataHandler(fileDataSource);
 		base64Binary.setBase64Binary(dataHandler);
-		base64Binary.setContentType(dataHandler.getContentType());
+        MTOMSampleMTOMSampleSOAP11Port_httpStub.ContentType_type0 param = new MTOMSampleMTOMSampleSOAP11Port_httpStub.ContentType_type0();
+        param.setContentType_type0(dataHandler.getContentType());
+        base64Binary.setContentType(param);
 		attachmentType.setBinaryData(base64Binary);
 		attachmentType.setFileName(destination);
 		attachmentRequest.setAttachmentRequest(attachmentType);
 
-		AttachmentResponse response = serviceStub.attachment(attachmentRequest);
+		MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentResponse response = serviceStub.attachment(attachmentRequest);
 		System.out.println(response.getAttachmentResponse());
 	}
 
