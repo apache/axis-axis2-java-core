@@ -44,6 +44,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-scripting</artifactId>
+            <type>mar</type>
             <version>${version}</version>
             <exclusions>
                 <exclusion>
