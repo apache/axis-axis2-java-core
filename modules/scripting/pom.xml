@@ -26,7 +26,6 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>axis2-scripting</artifactId>
-	<packaging>jar</packaging>
 	<name>Apache Axis 2.0 - Scripting</name>
 	<description>Axis2 scripting support for services implemented with scripting languages</description>
 	<dependencies>
