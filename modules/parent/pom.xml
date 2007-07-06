@@ -838,6 +838,12 @@
             <artifactId>xalan</artifactId>
         </dependency>
 
+        <!-- Stax implementation class -->
+        <dependency>
+            <groupId>${stax.impl.groupid}</groupId>
+            <artifactId>${stax.impl.artifactid}</artifactId>
+        </dependency>
+
     </dependencies>
     <distributionManagement>
         <repository>
