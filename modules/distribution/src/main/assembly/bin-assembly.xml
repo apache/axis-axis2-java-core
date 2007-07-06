@@ -272,9 +272,7 @@
 				<include>googlespellcheck/**/*</include>
 				<include>jaxws-calculator/**/*</include>
 				<include>jms/**/*</include>
-				<include>mex/**/*</include>
 				<include>mtom/**/*</include>
-				<include>ping/**/*</include>
 				<include>pojo/**/*</include>
 				<include>pojoguide/**/*</include>
 				<include>pojoguidespring/**/*</include>
