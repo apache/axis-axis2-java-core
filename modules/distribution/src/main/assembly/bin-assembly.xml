@@ -293,14 +293,12 @@
 				<include>yahoorestsearch/**/*</include>            
             </includes>
         </fileSet>
-        <!-- TODO: generate modules.list in repository/modules -->
-        <!-- TODO: generate services.list in repository/services -->
     </fileSets>
     
       <dependencySets>
         <dependencySet>
           <outputDirectory>lib</outputDirectory>
-
+	    <!-- TODO - incorrect xercesImpl version(2.6.2) is being copied. -->	
             <excludes>
                  <exclude>mx4j:mx4j-jmx:jar</exclude>
                  <exclude>mx4j:mx4j-impl:jar</exclude>
@@ -319,6 +317,8 @@
                  -->
                  <exclude>org.apache.geronimo.specs:geronimo-jsp_2.0_spec:jar</exclude>
                  <exclude>org.apache.activemq:activemq-console:jar</exclude>
+
+		 <!-- TODO following line does not seem to have any effect -->
                  <exclude>org.apache.activemq:activemq-core:jar</exclude>
                  <exclude>org.apache.activemq:activemq-jaas:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
