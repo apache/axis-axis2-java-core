@@ -253,25 +253,25 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-				<mkdir dir="tmp-repository"/>
-				<mkdir dir="tmp-repository/modules"/>
-				<mkdir dir="tmp-repository/services"/>
+				<mkdir dir="target/tmp-repository"/>
+				<mkdir dir="target/tmp-repository/modules"/>
+				<mkdir dir="target/tmp-repository/services"/>
 
-				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
-				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
-				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
+				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
+				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
 			
 				<!-- generate modules.list -->			        
-				<echo file="tmp-repository/modules/modules.list" append="false">
+				<echo file="target/tmp-repository/modules/modules.list" append="false">
 				soapmonitor-${soapmonitor.mar.version}.mar
 				addressing-${addressing.mar.version}.mar
 				ping-${ping.mar.version}.mar
 				mex-${mex.mar.version}.mar
 			        </echo>
 
-				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="tmp-repository/services"/>
+				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
 				<!-- generate services.list -->			        
-			        <echo file="tmp-repository/services/services.list" append="false">
+			        <echo file="target/tmp-repository/services/services.list" append="false">
 				version.aar
 			        </echo>
                             </tasks>

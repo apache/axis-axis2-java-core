@@ -11,7 +11,7 @@
     <fileSets>
         <!--********************** creating the repository ********************** -->
         <fileSet>
-            <directory>tmp-repository</directory>
+            <directory>target/tmp-repository</directory>
             <outputDirectory>repository</outputDirectory>
             <includes>
                 <include>**/*</include>
