@@ -36,7 +36,7 @@ public class AXIOMClient {
     public static OMElement getPricePayload(String symbol) {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace(
-                                                 "http://quickstart.samples/xsd", "tns");
+                                                 "http://quickstart.samples", "tns");
 
         OMElement method = fac.createOMElement("getPrice", omNs);
         OMElement value = fac.createOMElement("symbol", omNs);
@@ -48,7 +48,7 @@ public class AXIOMClient {
     public static OMElement updatePayload(String symbol, double price) {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace(
-                                                 "http://quickstart.samples/xsd", "tns");
+                                                 "http://quickstart.samples", "tns");
 
         OMElement method = fac.createOMElement("update", omNs);
 

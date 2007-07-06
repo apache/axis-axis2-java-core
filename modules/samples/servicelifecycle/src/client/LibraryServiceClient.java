@@ -185,7 +185,7 @@ public class LibraryServiceClient {
         rpcClient.getOptions().setAction("urn:returnBook");
         ArrayList args = new ArrayList();
         args.add(isbn);
-        rpcClient.invokeRobust(new QName("http://servicelifecycle.sample/xsd",
+        rpcClient.invokeRobust(new QName("http://servicelifecycle.sample",
                 "returnBook"), args.toArray());
     }
 
@@ -195,7 +195,7 @@ public class LibraryServiceClient {
         ArrayList args = new ArrayList();
         args.add(isbn);
         args.add(userName);
-        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "lendBook"), args.toArray(), new Class[]{Book.class});
         Book book = (Book) obj[0];
         System.out.println("Title : " + book.getTitle());
@@ -211,7 +211,7 @@ public class LibraryServiceClient {
         ArrayList args = new ArrayList();
         args.add(userName);
         args.add(passWord);
-        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "register"), args.toArray(), new Class[]{Boolean.class});
         return ((Boolean) obj[0]).booleanValue();
     }
@@ -223,21 +223,21 @@ public class LibraryServiceClient {
         ArrayList args = new ArrayList();
         args.add(userName);
         args.add(passWord);
-        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        Object obj [] = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "login"), args.toArray(), new Class[]{Boolean.class});
         return ((Boolean) obj[0]).booleanValue();
     }
 
     public void listAvailableBook(RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:listAvailableBook");
-        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "listAvailableBook"), new Object[]{null});
         printBookData(elemnt);
     }
 
     private void printBookData(OMElement element) throws Exception {
         if (element != null) {
-            Iterator values = element.getChildrenWithName(new QName("http://servicelifecycle.sample/xsd", "return"));
+            Iterator values = element.getChildrenWithName(new QName("http://servicelifecycle.sample", "return"));
             while (values.hasNext()) {
                 OMElement omElement = (OMElement) values.next();
                 Book book = (Book) BeanUtil.deserialize(Book.class, omElement, new DefaultObjectSupplier(), "book");
@@ -252,14 +252,14 @@ public class LibraryServiceClient {
 
     public void listAllBook(RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:listAllBook");
-        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "listAllBook"), new Object[]{null});
         printBookData(elemnt);
     }
 
     public void listLendBook(RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:listLendBook");
-        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
+        OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample",
                 "listLendBook"), new Object[]{null});
         printBookData(elemnt);
     }

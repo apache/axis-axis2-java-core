@@ -121,7 +121,7 @@ public class SWAClient {
 		SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 		SOAPEnvelope env = fac.getDefaultEnvelope();
 		OMNamespace omNs = fac.createOMNamespace(
-				"http://service.soapwithattachments.sample/xsd", "swa");
+				"http://service.soapwithattachments.sample", "swa");
 		OMElement uploadFile = fac.createOMElement("uploadFile", omNs);
 		OMElement nameEle = fac.createOMElement("name", omNs);
 		nameEle.setText(destinationFile);
@@ -138,7 +138,7 @@ public class SWAClient {
 				.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 	  	SOAPBody body = response.getEnvelope().getBody();
 	  	OMElement element = body.getFirstElement().getFirstChildWithName(
-	  	new QName("http://service.soapwithattachments.sample/xsd","return"));
+	  	new QName("http://service.soapwithattachments.sample","return"));
 		System.out.println(element.getText());
 	}
 }
