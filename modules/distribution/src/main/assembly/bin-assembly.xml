@@ -267,9 +267,7 @@
             <outputDirectory>samples</outputDirectory>
             <includes>
 				<include>databinding/**/*</include>
-				<include>eventing/**/*</include>
 				<include>faulthandling/**/*</include>
-				<include>googlespellcheck/**/*</include>
 				<include>jaxws-calculator/**/*</include>
 				<include>jms/**/*</include>
 				<include>mtom/**/*</include>
@@ -281,7 +279,6 @@
 				<include>quickstartaxiom/**/*</include>
 				<include>quickstartjibx/**/*</include>
 				<include>quickstartxmlbeans/**/*</include>
-				<include>security/**/*</include>
 				<include>servicelifecycle/**/*</include>
 				<include>soapwithattachments/**/*</include>
 				<include>userguide/**/*</include>
