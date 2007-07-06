@@ -189,7 +189,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/tools/target</directory>
+            <directory>../../modules/tool/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-tools-${version}.jar</include>
