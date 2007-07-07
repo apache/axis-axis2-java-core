@@ -19,7 +19,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.util.ObjectStateUtils;
-import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -128,6 +127,7 @@ public class Parameter implements Externalizable {
     public Parameter(String name, Object value) {
         this.name = name;
         this.value = value;
+        parseValueForType(this.value);
     }
 
     /**
@@ -206,14 +206,23 @@ public class Parameter implements Externalizable {
             log.debug("Parameter "  + getName() + "  can not be edit");
             return;
         }
-        if (value instanceof String){
+        parseValueForType(value);
+        this.value = value;
+    }
+
+    /**
+     * The purpose of this method is to pars the injected value for its type.
+     * Type will be set using setParameterType.
+     * @param value
+     */
+    private void parseValueForType(Object value) {
+        if (value instanceof String) {
             setParameterType(TEXT_PARAMETER);
         } else if (value instanceof OMElement) {
             setParameterType(OM_PARAMETER);
         } else {
             setParameterType(ANY_PARAMETER);
         }
-        this.value = value;
     }
 
     public String toString() {
