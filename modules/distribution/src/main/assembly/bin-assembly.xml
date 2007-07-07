@@ -269,7 +269,6 @@
 				<include>databinding/**/*</include>
 				<include>faulthandling/**/*</include>
 				<include>jaxws-calculator/**/*</include>
-				<include>jms/**/*</include>
 				<include>mtom/**/*</include>
 				<include>pojo/**/*</include>
 				<include>pojoguide/**/*</include>
