@@ -67,7 +67,9 @@
               toDir="${build.dir}/service/resources/"
               overwrite="yes">
         </copy>
-        <ant dir="${build.dir}/service"/>
+        <ant dir="${build.dir}/service">
+            <property name="axis2.home" value="../../${AXIS2_HOME}"/>
+        </ant>
     </target>
 
     <target name="generate.client" depends="init">
@@ -86,7 +88,9 @@
               toDir="${build.dir}/client/src/samples/quickstart/clients/"
               overwrite="yes">
         </copy>
-        <ant dir="${build.dir}/client"/>
+        <ant dir="${build.dir}/client">
+            <property name="axis2.home" value="../../${AXIS2_HOME}"/>
+        </ant>
     </target>
 
     <target name="generate.all" depends="generate.service, generate.client"/>
