@@ -189,7 +189,7 @@
 							<tasks>
 							   <mkdir dir="target/version" />
         <jar destfile="target/version/version.jar">
-            <fileset dir="target/classes">
+            <fileset dir="version/target/classes">
                 <include name="sample/axisversion/**"/>
             </fileset>
             <fileset dir="version/src/sample/axisversion/">
