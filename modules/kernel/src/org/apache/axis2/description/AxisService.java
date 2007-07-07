@@ -887,7 +887,8 @@ public class AxisService extends AxisDescription {
                 }
             }
         }
-        return (String[]) eprList.toArray(new String[eprList.size()]);
+        eprs = (String[]) eprList.toArray(new String[eprList.size()]);
+        return eprs;
     }
 
     private void printUserWSDL(OutputStream out) throws AxisFault {
@@ -1460,6 +1461,7 @@ public class AxisService extends AxisDescription {
     public void setExposedTransports(List transports) {
         enableAllTransports = false;
         this.exposedTransports = transports;
+        calculateEPRs();
     }
 
     public void addExposedTransport(String transport) {
