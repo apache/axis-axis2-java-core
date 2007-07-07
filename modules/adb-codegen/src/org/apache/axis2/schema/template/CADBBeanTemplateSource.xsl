@@ -952,8 +952,8 @@
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
-                                          element = (void*)axis2_<xsl:value-of select="@type"/>_create( env);
-                                          status =  axis2_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
+                                          element = (void*)adb_<xsl:value-of select="@type"/>_create( env);
+                                          status =  adb_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
                                                                              axiom_node_get_first_child(current_node, env)==NULL?current_node:axiom_node_get_first_child(current_node, env));
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -1107,8 +1107,8 @@
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
-                                          element = (void*)axis2_<xsl:value-of select="@type"/>_create( env);
-                                          status =  axis2_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
+                                          element = (void*)adb_<xsl:value-of select="@type"/>_create( env);
+                                          status =  adb_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
                                                                              axiom_node_get_first_child(current_node, env)==NULL?current_node:axiom_node_get_first_child(current_node, env));
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -1274,7 +1274,7 @@
             <xsl:for-each select="property">
                 <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
                 <xsl:choose>
-                    <xsl:when test="not(@type) or (@ours='yes' and (@type='uri' or @type='qname' or @type='date_time' or @type='base64_binary' or @type='char')) or @type='char' or @type='axis2_char_t*' or @type='axutil_base64_binary_t*' or @type='axutil_date_time_t*' or @type='axiom_node_t*' or @type='axutil_uri_t*'">
+                    <xsl:when test="not(@type) or (@ours='yes' and (@type='uri' or @type='qname' or @type='date_time' or @type='base64_binary' or @type='char')) or @type='char' or @type='axis2_char_t*' or @type='axutil_base64_binary_t*' or @type='axutil_date_time_t*' or @type='axiom_node_t*' or @type='axutil_uri_t*' or @type='axutil_qname_t*'">
                     axis2_char_t *text_value_<xsl:value-of select="$position"/>;
                     </xsl:when>
                     <xsl:otherwise>
@@ -1319,6 +1319,12 @@
                 {
                     current_element = axiom_element_create (env, parent, "<xsl:value-of select="$originalName"/>", ns1 , &amp;current_node);
                     axiom_element_set_namespace( current_element, env, ns1, current_node);
+                    <xsl:if test="@child-nsuri and @child-nsprefix and @ours">
+                    ns1 = axiom_namespace_create (env,
+                                         "<xsl:value-of select="@child-nsuri"/>",
+                                         "<xsl:value-of select="@child-nsprefix"/>");
+                    axiom_element_declare_namespace(current_element, env, current_node, ns1);    
+                    </xsl:if>
                     parent = current_node;
                 }
                </xsl:if>
@@ -1404,7 +1410,7 @@
                    <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
+              <xsl:variable name="propertyName"><xsl:value-of select="@originalName"></xsl:value-of></xsl:variable>
               <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
 
               <xsl:variable name="attriName"><!--these are used in arrays to take the native type-->
@@ -1564,14 +1570,30 @@
 
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                            if(has_parent)
+                                axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                             adb_<xsl:value-of select="@type"/>_serialize( <xsl:value-of select="$attriName"/>, env, current_node, AXIS2_TRUE);
-                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                            if(has_parent)
+                                axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
 
                         <!-- add int s -->
                         <xsl:when test="$nativePropertyType='int'">
+                           <xsl:choose>
+                             <xsl:when test="@isarray">
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", *((<xsl:value-of select="$nativePropertyType"/>*)element) );
+                             </xsl:when>
+                             <xsl:otherwise>
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$attriName"/> );
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                        </xsl:when>
+
+                        <xsl:when test="$nativePropertyType='unsigned int'">
                            <xsl:choose>
                              <xsl:when test="@isarray">
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", *((<xsl:value-of select="$nativePropertyType"/>*)element) );
@@ -1600,6 +1622,34 @@
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
+                        <xsl:when test="$nativePropertyType='unsigned char'">
+                           <xsl:choose>
+                             <xsl:when test="@isarray">
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", *((<xsl:value-of select="$nativePropertyType"/>*)element) );
+                             </xsl:when>
+                             <xsl:otherwise>
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$attriName"/> );
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                        </xsl:when>
+
+                        <xsl:when test="$nativePropertyType='axis2_byte_t'">
+                           <xsl:choose>
+                             <xsl:when test="@isarray">
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", *((<xsl:value-of select="$nativePropertyType"/>*)element) );
+                             </xsl:when>
+                             <xsl:otherwise>
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$attriName"/> );
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                        </xsl:when>
+
                         <!-- add short s -->
                         <xsl:when test="$nativePropertyType='short'">
                            <xsl:choose>
@@ -1608,6 +1658,20 @@
                              </xsl:when>
                              <xsl:otherwise>
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$attriName"/> );
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                        </xsl:when>
+
+                        <xsl:when test="$nativePropertyType='unsigned short'">
+                           <xsl:choose>
+                             <xsl:when test="@isarray">
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%hu", *((<xsl:value-of select="$nativePropertyType"/>*)element) );
+                             </xsl:when>
+                             <xsl:otherwise>
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%hu", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
@@ -1625,6 +1689,21 @@
                              </xsl:when>
                              <xsl:otherwise>
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", (int)<xsl:value-of select="$attriName"/> );
+                             </xsl:otherwise>
+                           </xsl:choose>
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                        </xsl:when>
+
+                        <!-- add long s -->
+                        <xsl:when test="$nativePropertyType='unsigned long'">
+                           <xsl:choose>
+                             <xsl:when test="@isarray">
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%lu", (int)*((<xsl:value-of select="$nativePropertyType"/>*)element) );
+                             </xsl:when>
+                             <xsl:otherwise>
+                               sprintf ( text_value_<xsl:value-of select="$position"/>, "%lu", (int)<xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
@@ -1680,7 +1759,7 @@
 
                         <!-- add axis2_qname_t s -->
                         <xsl:when test="$nativePropertyType='axutil_qname_t*'">
-                           text_value_<xsl:value-of select="$position"/> = AXIS2_QNAME_TO_STRING(<xsl:value-of select="$attriName"/>, env);
+                           text_value_<xsl:value-of select="$position"/> = axutil_qname_to_string(<xsl:value-of select="$attriName"/>, env);
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
