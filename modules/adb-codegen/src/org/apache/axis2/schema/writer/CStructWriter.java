@@ -176,10 +176,10 @@ public class CStructWriter implements BeanWriter {
     }
 
     /**
-     * @param complexType
+     * @param qName
      * @param typeMap
      * @param metainf
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
+     * @param isAbstract
      * @throws org.apache.axis2.schema.SchemaCompilationException
      *
      * @see org.apache.axis2.schema.writer.BeanWriter
@@ -285,7 +285,6 @@ public class CStructWriter implements BeanWriter {
      * @param metainf
      * @param typeMap
      * @param isElement
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @return Returns String.
      * @throws Exception
      */
