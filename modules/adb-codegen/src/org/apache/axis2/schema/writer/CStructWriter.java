@@ -550,6 +550,7 @@ public class CStructWriter implements BeanWriter {
             String xmlName = makeUniqueCStructName(new ArrayList(), name.getLocalPart());
 
             XSLTUtils.addAttribute(model, "name", xmlName, property);
+            XSLTUtils.addAttribute(model, "originalName", name.getLocalPart(), property);
 
 
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
