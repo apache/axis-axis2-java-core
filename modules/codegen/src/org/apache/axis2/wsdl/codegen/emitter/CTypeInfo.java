@@ -52,7 +52,7 @@ public class CTypeInfo extends Constants {
         CTypeInfo.addTypemapping(XSD_SHORT, "short");
         CTypeInfo.addTypemapping(XSD_BYTE, "axis2_byte_t");
         CTypeInfo.addTypemapping(XSD_ANY, "axiom_node_t*");
-        CTypeInfo.addTypemapping(XSD_DECIMAL, "int");
+        CTypeInfo.addTypemapping(XSD_DECIMAL, "double");
 
         //anytype is mapped to the OMElement instead of the java.lang.Object
         CTypeInfo.addTypemapping(XSD_ANYTYPE,
