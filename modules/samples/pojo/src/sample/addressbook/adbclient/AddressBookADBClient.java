@@ -18,11 +18,7 @@
  */
 package sample.addressbook.adbclient;
 
-import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub;
-import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.AddEntry;
-import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.Entry;
-import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.FindEntry;
-import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.FindEntryResponse;
+import sample.addressbook.stub.AddressBookServiceStub;
 
 
 public class AddressBookADBClient {
@@ -32,17 +28,17 @@ public class AddressBookADBClient {
     public static void main(String[] args) {
 
         try {
-            AddressBookServiceAddressBookServiceSOAP11Port_httpStub stub;
+            AddressBookServiceStub stub;
 
             if (args != null && args.length != 0) {
-                stub = new AddressBookServiceAddressBookServiceSOAP11Port_httpStub(args[0]);
+                stub = new AddressBookServiceStub(args[0]);
                 
             } else {
-                stub = new AddressBookServiceAddressBookServiceSOAP11Port_httpStub(URL);
+                stub = new AddressBookServiceStub(URL);
             }
             
-            AddEntry addEntry = new AddEntry();
-            Entry entry = new Entry();
+            AddressBookServiceStub.AddEntry addEntry = new AddressBookServiceStub.AddEntry();
+            AddressBookServiceStub.Entry entry = new AddressBookServiceStub.Entry();
             
             entry.setName("Abby Cadabby");
             entry.setStreet("Sesame Street");
@@ -53,12 +49,12 @@ public class AddressBookADBClient {
             addEntry.setParam0(entry);
             stub.addEntry(addEntry);
             
-            FindEntry findEntry = new FindEntry();
+            AddressBookServiceStub.FindEntry findEntry = new AddressBookServiceStub.FindEntry();
             
             findEntry.setParam0("Abby Cadabby");
             
-            FindEntryResponse response = stub.findEntry(findEntry);
-            Entry responseEntry = response.get_return();
+            AddressBookServiceStub.FindEntryResponse response = stub.findEntry(findEntry);
+            AddressBookServiceStub.Entry responseEntry = response.get_return();
             
             System.out.println("Name   :" + responseEntry.getName());
             System.out.println("Street :" + responseEntry.getStreet());
