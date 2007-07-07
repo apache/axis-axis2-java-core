@@ -158,6 +158,8 @@
 									<fileset dir="modules/adb/target/classes"/>
 									<fileset dir="modules/adb-codegen/target/classes"/>
 									<fileset dir="modules/xmlbeans/target/classes"/>
+									<fileset dir="modules/clustering/target/classes"/>
+
 								</jar>
 							</tasks>
 						</configuration>
