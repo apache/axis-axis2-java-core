@@ -58,6 +58,7 @@
 		<module>modules/tool/axis2-wsdl2code-maven-plugin</module>
 		<module>modules/webapp</module>
 		<module>modules/xmlbeans</module>
+		<module>modules/samples</module>
 	</modules>
  	<profiles>
 	   <profile>
