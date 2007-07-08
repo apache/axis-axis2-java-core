@@ -601,11 +601,15 @@ public class Utils {
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
         if (extractJars) {
-            URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-            return new DeploymentClassLoader(urls1, null, serviceClassLoader);
-        } else {
-            List embedded_jars = Utils.findLibJars(urls[0]);
-            return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
+            try {
+                URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
+                return new DeploymentClassLoader(urls1, null, serviceClassLoader);
+            } catch (Exception e){
+                log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
+                log.debug(e.getMessage(), e);
+            }
         }
+        List embedded_jars = Utils.findLibJars(urls[0]);
+        return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
     }
 }
