@@ -21,9 +21,14 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.DispatchPhase;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.RequestBlockingHandler;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
@@ -32,6 +37,8 @@ import org.apache.axis2.clustering.context.ClusteringContextListener;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
@@ -69,6 +76,43 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public void init() throws ClusteringFault {
+
+        // Until the clustering stuff is properly initialized, we have to block.
+        configurationContext.setProperty(ClusteringConstants.BLOCK_ALL_REQUESTS, "true");
+        AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+        for (Iterator iterator = axisConfig.getInFlowPhases().iterator();
+             iterator.hasNext();) {
+            Phase phase = (Phase) iterator.next();
+            if (phase instanceof DispatchPhase) {
+                PhaseRule rule = new PhaseRule("Dispatch");
+                rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                rule.setBefore("InstanceDispatcher");
+                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
+                HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                handlerDesc.setHandler(requestBlockingHandler);
+                handlerDesc.setName("RequestBlockingHandler");
+                handlerDesc.setRules(rule);
+                phase.addHandler(requestBlockingHandler);
+                break;
+            }
+        }
+        for (Iterator iterator = axisConfig.getInFaultFlowPhases().iterator();
+             iterator.hasNext();) {
+            Phase phase = (Phase) iterator.next();
+            if (phase instanceof DispatchPhase) {
+                PhaseRule rule = new PhaseRule("Dispatch");
+                rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                rule.setBefore("InstanceDispatcher");
+                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
+                HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                handlerDesc.setHandler(requestBlockingHandler);
+                handlerDesc.setName("RequestBlockingHandler");
+                handlerDesc.setRules(rule);
+                phase.addHandler(requestBlockingHandler);
+                break;
+            }
+        }
+
         ChannelSender sender = new ChannelSender();
 
         channelListener = new ChannelListener(configurationContext,
@@ -169,7 +213,7 @@ public class TribesClusterManager implements ClusterManager {
                         log.error(e);
                         break;
                     }
-                    numberOfTries ++;
+                    numberOfTries++;
                 }
                 configurationContext.
                         setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
@@ -181,6 +225,7 @@ public class TribesClusterManager implements ClusterManager {
             String message = "Error starting Tribes channel";
             throw new ClusteringFault(message, e);
         }
+        configurationContext.removeProperty(ClusteringConstants.BLOCK_ALL_REQUESTS);
     }
 
     public void setConfigurationManager(ConfigurationManager configurationManager) {
