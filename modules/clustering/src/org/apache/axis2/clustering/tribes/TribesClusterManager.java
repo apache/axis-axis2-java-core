@@ -174,8 +174,7 @@ public class TribesClusterManager implements ClusterManager {
                 configurationContext.
                         setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
                                                  "true");
-                ClusteringContextListener contextListener = new ClusteringContextListener();
-                //TODO: May need to set the context listener somewhere to be useful
+                ClusteringContextListener contextListener = new ClusteringContextListener(sender);
                 configurationContext.addContextListener(contextListener);
             }
         } catch (ChannelException e) {
