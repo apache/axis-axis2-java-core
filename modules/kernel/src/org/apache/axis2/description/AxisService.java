@@ -1461,7 +1461,7 @@ public class AxisService extends AxisDescription {
     public void setExposedTransports(List transports) {
         enableAllTransports = false;
         this.exposedTransports = transports;
-        calculateEPRs();
+        eprs = null; //Do not remove this. We need to force EPR recalculation.
     }
 
     public void addExposedTransport(String transport) {

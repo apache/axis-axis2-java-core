@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
 
 /**
  *
@@ -77,5 +78,26 @@ public class RequestBlockingHandler extends AbstractHandler {
                                 "Please try again in a few seconds.");
         }
         return InvocationResponse.CONTINUE;
+    }
+
+
+    public boolean equals(Object obj) {
+        if(obj instanceof RequestBlockingHandler){
+            RequestBlockingHandler that = (RequestBlockingHandler) obj;
+            HandlerDescription thisDesc = this.getHandlerDesc();
+            HandlerDescription thatDesc = that.getHandlerDesc();
+            if(thisDesc != null && thatDesc != null && thisDesc.getName().equals(thatDesc.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public int hashCode() {
+        if(this.handlerDesc != null){
+            return this.handlerDesc.hashCode();
+        }
+        return super.hashCode();
     }
 }

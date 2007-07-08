@@ -84,15 +84,17 @@ public class TribesClusterManager implements ClusterManager {
              iterator.hasNext();) {
             Phase phase = (Phase) iterator.next();
             if (phase instanceof DispatchPhase) {
-                PhaseRule rule = new PhaseRule("Dispatch");
-                rule.setAfter("SOAPMessageBodyBasedDispatcher");
-                rule.setBefore("InstanceDispatcher");
                 RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
-                HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
-                handlerDesc.setHandler(requestBlockingHandler);
-                handlerDesc.setName("RequestBlockingHandler");
-                handlerDesc.setRules(rule);
-                phase.addHandler(requestBlockingHandler);
+                if (!phase.getHandlers().contains(requestBlockingHandler)) {
+                    PhaseRule rule = new PhaseRule("Dispatch");
+                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                    rule.setBefore("InstanceDispatcher");
+                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                    handlerDesc.setHandler(requestBlockingHandler);
+                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
+                    handlerDesc.setRules(rule);
+                    phase.addHandler(requestBlockingHandler);
+                }
                 break;
             }
         }
@@ -100,16 +102,18 @@ public class TribesClusterManager implements ClusterManager {
              iterator.hasNext();) {
             Phase phase = (Phase) iterator.next();
             if (phase instanceof DispatchPhase) {
-                PhaseRule rule = new PhaseRule("Dispatch");
-                rule.setAfter("SOAPMessageBodyBasedDispatcher");
-                rule.setBefore("InstanceDispatcher");
                 RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
-                HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
-                handlerDesc.setHandler(requestBlockingHandler);
-                handlerDesc.setName("RequestBlockingHandler");
-                handlerDesc.setRules(rule);
-                phase.addHandler(requestBlockingHandler);
-                break;
+                if (!phase.getHandlers().contains(requestBlockingHandler)) {
+                    PhaseRule rule = new PhaseRule("Dispatch");
+                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                    rule.setBefore("InstanceDispatcher");
+                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                    handlerDesc.setHandler(requestBlockingHandler);
+                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
+                    handlerDesc.setRules(rule);
+                    phase.addHandler(requestBlockingHandler);
+                    break;
+                }
             }
         }
 

@@ -28,6 +28,7 @@ public final class ClusteringConstants {
     public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
     public static final String DOMAIN = "domain";
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
+    public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
     public static final String TIME_TO_SEND = "local_cluster.time.to.send";
     public static final String BLOCK_ALL_REQUESTS = "local_wso2wsas.block.requests";
