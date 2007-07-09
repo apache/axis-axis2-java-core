@@ -57,17 +57,17 @@ public class ConfigurationContextFactory {
      *
      * @param axisConfigurator : AxisConfigurator
      * @return Returns ConfigurationContext.
-     * @throws AxisFault  : If somthing goes wrong
+     * @throws AxisFault : If somthing goes wrong
      */
     public static ConfigurationContext createConfigurationContext(
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
-        
+
         if (axisConfig.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         if (axisConfigurator instanceof DeploymentEngine) {
             ((DeploymentEngine) axisConfigurator).setConfigContext(configContext);
         }
@@ -125,7 +125,7 @@ public class ConfigurationContextFactory {
             configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         }
 
-       Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
+        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
         if (contextPath != null) {
             String cpath = ((String) contextPath.getValue()).trim();
             if (cpath.length() > 0) {
@@ -210,41 +210,41 @@ public class ConfigurationContextFactory {
     private static void initModules(ConfigurationContext context) {
         AxisConfiguration configuration = context.getAxisConfiguration();
         HashMap modules = configuration.getModules();
-            Collection col = modules.values();
-            Map faultyModule = new HashMap();
+        Collection col = modules.values();
+        Map faultyModule = new HashMap();
 
-            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                AxisModule axismodule = (AxisModule) iterator.next();
-                Module module = axismodule.getModule();
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            AxisModule axismodule = (AxisModule) iterator.next();
+            Module module = axismodule.getModule();
 
-                if (module != null) {
-                    try {
-                        module.init(context, axismodule);
-                    } catch (AxisFault axisFault) {
-                        log.info(axisFault.getMessage());
-                        faultyModule.put(module,axisFault);
-                    }
+            if (module != null) {
+                try {
+                    module.init(context, axismodule);
+                } catch (AxisFault axisFault) {
+                    log.info(axisFault.getMessage());
+                    faultyModule.put(axismodule, axisFault);
                 }
             }
+        }
 
-            //Checking whether we have found any faulty services during the module initilization ,
-            // if so we need to mark them as fautyModule and need to remove from the modules list
-            if (faultyModule.size() >0 ) {
-                Iterator axisModules = faultyModule.keySet().iterator();
-                while (axisModules.hasNext()) {
-                    AxisModule axisModule = (AxisModule) axisModules.next();
-                    String fileName;
-                    if (axisModule.getFileName() != null) {
-                         fileName = axisModule.getFileName().toString();
-                    } else {
-                        fileName = axisModule.getName();
-                    }
-                    configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
-                    //removing from original list
-                    configuration.removeModule(org.apache.axis2.util.Utils.getModuleName(axisModule.getName()),
-                            org.apache.axis2.util.Utils.getModuleVersion(axisModule.getName()));
+        //Checking whether we have found any faulty services during the module initilization ,
+        // if so we need to mark them as fautyModule and need to remove from the modules list
+        if (faultyModule.size() > 0) {
+            Iterator axisModules = faultyModule.keySet().iterator();
+            while (axisModules.hasNext()) {
+                AxisModule axisModule = (AxisModule) axisModules.next();
+                String fileName;
+                if (axisModule.getFileName() != null) {
+                    fileName = axisModule.getFileName().toString();
+                } else {
+                    fileName = axisModule.getName();
                 }
+                configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
+                //removing from original list
+                configuration.removeModule(org.apache.axis2.util.Utils.getModuleName(axisModule.getName()),
+                                           org.apache.axis2.util.Utils.getModuleVersion(axisModule.getName()));
             }
+        }
 
 
     }
@@ -285,9 +285,9 @@ public class ConfigurationContextFactory {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfiguration);
         if (axisConfiguration.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         setContextPaths(axisConfiguration, configContext);
         return configContext;
     }
@@ -305,11 +305,11 @@ public class ConfigurationContextFactory {
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
-        
+
         if (axisConfig.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         setContextPaths(axisConfig, configContext);
         return configContext;
     }
