@@ -291,6 +291,13 @@ class ServiceDescriptionImpl
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
                     endpointDescription = new EndpointDescriptionImpl(sei, portQName, this);
                     addEndpointDescription(endpointDescription);
+                    /*
+                     * We must reset the service runtime description after adding a new endpoint
+                     * since the runtime description information could have references to old
+                     * information. See MarshalServiceRuntimeDescriptionFactory and 
+                     * MarshalServiceRuntimeDescription.
+                     */
+                    resetServiceRuntimeDescription();
                 } else
                 if (getEndpointSEI(portQName) == null && !endpointDescription.isDynamicPort()) {
                     // Existing endpointDesc from a declared port needs to be updated with an SEI
@@ -1533,6 +1540,10 @@ class ServiceDescriptionImpl
     public void setServiceRuntimeDesc(ServiceRuntimeDescription srd) {
         // TODO Add toString support
         runtimeDescMap.put(srd.getKey(), srd);
+    }
+    
+    private void resetServiceRuntimeDescription() {
+        runtimeDescMap.clear();
     }
 
     /** Return a string representing this Description object and all the objects it contains. */
