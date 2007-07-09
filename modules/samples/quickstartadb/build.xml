@@ -21,6 +21,10 @@
     <property environment="env"/>
     <property name="AXIS2_HOME" value="../.."/>
 
+	<property name="wsdl.uri" value="./resources/META-INF/StockQuoteService.wsdl"/>
+	<property name="service.target" value="build/service"/>
+    <property name="client.target" value="build/client"/>
+
     <property name="build.dir" value="build"/>
 
     <path id="axis2.classpath">
@@ -43,21 +47,25 @@
         <mkdir dir="${build.dir}/client"/>
     </target>
 
-    <target name="generate.service" depends="init">
-        <taskdef name="wsdl2java"
-                 classname="org.apache.axis2.tool.ant.AntCodegenTask"
-                 classpathref="axis2.classpath"/>
-        <wsdl2java wsdlFilename="${basedir}/resources/META-INF/StockQuoteService.wsdl"
-                   output="${build.dir}/service"
-                   packageName="samples.quickstart.service.adb"
-                   language="java"
-                   databindingName="adb"
-                   synconly="true"
-                   serverside="true"
-                   serverSideInterface="true"
-                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"
-                   generateservicexml="true"/>
-        <copy file="${basedir}/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java"
+	<target name="generate.service">
+        <delete dir="${service.target}"/>
+        <mkdir dir="${service.target}"/>
+        <mkdir dir="${service.target}/classes"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true" classpathref="axis2.classpath">
+            <arg line="-uri ${wsdl.uri}"/>
+			<arg line="-s"/>
+            <arg line="-ss"/>
+            <arg line="-sd"/>
+			<arg line="-ssi"/>
+            <arg line="-ap"/>
+			<arg line="-ns2p http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"/>
+			<arg line="-l java"/>
+            <arg line="-p samples.quickstart.service.adb"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/service"/>
+        </java>
+        
+		<copy file="${basedir}/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java"
               toDir="${build.dir}/service/src/samples/quickstart/service/adb/"
               overwrite="yes">    
         </copy>
@@ -67,20 +75,26 @@
         </copy>
         <ant dir="${build.dir}/service">
             <property name="axis2.home" value="../../${AXIS2_HOME}"/>
-        </ant>
+        </ant> 
+		<copy file="${basedir}/build/service/build/lib/StockQuoteService.aar"
+              toDir="${basedir}/../../repository/services/StockQuoteService.aar"
+              overwrite="yes">
+        </copy>
+		
     </target>
 
-    <target name="generate.client" depends="init">
-        <taskdef name="wsdl2java"
-                 classname="org.apache.axis2.tool.ant.AntCodegenTask"
-                 classpathref="axis2.classpath"/>
-        <wsdl2java wsdlFilename="${basedir}/resources/META-INF/StockQuoteService.wsdl"
-                   output="${build.dir}/client"
-                   packageName="samples.quickstart.service.adb"
-                   databindingName="adb"
-                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"
-                   language="java"
-                   synconly="true"/>
+    <target name="generate.client">
+		<delete dir="${client.target}"/>
+		<mkdir dir="${client.target}"/>
+         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true" classpathref="axis2.classpath">
+            <arg line="-uri ${wsdl.uri}"/>
+			<arg line="-s"/>
+            <arg line="-ns2p http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"/>
+			<arg line="-l java"/>
+            <arg line="-p samples.quickstart.service.adb"/>
+            <arg line="-d adb"/>
+            <arg line="-o ${build.dir}/client"/>
+        </java>
         <copy file="${basedir}/src/samples/quickstart/clients/ADBClient.java"
               toDir="${build.dir}/client/src/samples/quickstart/clients/"
               overwrite="yes">
@@ -88,6 +102,7 @@
         <ant dir="${build.dir}/client">
             <property name="axis2.home" value="../../${AXIS2_HOME}"/>
         </ant>
+		
     </target>
 
     <target name="generate.all" depends="generate.service, generate.client"/>
