@@ -241,8 +241,7 @@ public class ConfigurationContextFactory {
                 }
                 configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
                 //removing from original list
-                configuration.removeModule(org.apache.axis2.util.Utils.getModuleName(axisModule.getName()),
-                                           org.apache.axis2.util.Utils.getModuleVersion(axisModule.getName()));
+                configuration.removeModule(axisModule.getName(), axisModule.getName());
             }
         }
 
