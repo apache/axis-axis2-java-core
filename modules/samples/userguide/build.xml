@@ -82,7 +82,7 @@
             </fileset>
        </jar>
        <copy file="build/logging.mar" tofile="../../repository/modules/sample-logging.mar" overwrite="true"/>
-       <echo message="*** Please add the logging phase to the ../../conf/axis2.xml. For more details please refer to the http://ws.apache.org/axis2/1_1/modules.html ***"/>
+       <echo message="*** Please add the logging phase to the ../../conf/axis2.xml. For more details please refer to the http://ws.apache.org/axis2/1_2/modules.html ***"/>
     </target>
 
     <target name="run.client.blocking" depends="compile">

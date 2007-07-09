@@ -12,7 +12,7 @@ Introduction
 ============
 
 The following sample clients are located at 
-Axis2_home/samples/userguide/samples/userguide/src/userguide/clients directory. 
+AXIS2_HOME/samples/userguide/samples/userguide/src/userguide/clients directory. 
 
 EchoBlockingClient.java -- Demonstrates the request-response, blocking client which 
 is written using Axis2's primary APIs.
@@ -45,9 +45,11 @@ Apache Ant 1.6.2 or later
 
 Building the Service
 ====================
-
+* Type "ant generate.module" from Axis2_HOME/samples/userguide to generate the logging module.
+* Add the logging phase to the ../../conf/axis2.xml. For more details please refer to the 
+  http://ws.apache.org/axis2/1_2/modules.html
 * Type "ant generate.service" or just "ant" from Axis2_HOME/samples/userguide
-* Then go to Axis2_HOME/bin directory and run either axis2server.bat or axis2server.sh depending on your platform.
+* Then go to AXIS2_HOME/bin directory and run either axis2server.bat or axis2server.sh depending on your platform.
 
 Alternatively you can copy the the generated service archives in to a servlet container.
 
@@ -74,6 +76,12 @@ Type the following ant commands from Axis2_HOME/samples/userguide to run the cli
 You can find more information on the above clients in Axis2 users guide, RESTFul Web services support, 
 TCP Transport documents found in the Documents Distribution's xdocs directory. Also, you may find it 
 useful to try out the above services and clients while going through these documents.
+
+Note
+==============
+Sometimes, if you're having trouble running the client successfully, 
+It may be necessary to clean the services repository before you generate the service, deploy it
+and run the client. (i.e. delete services created from previous samples.)
 
 Help
 ====
