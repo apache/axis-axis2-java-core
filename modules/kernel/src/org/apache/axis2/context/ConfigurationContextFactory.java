@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ConfigurationContextFactory {
 
@@ -54,9 +55,9 @@ public class ConfigurationContextFactory {
      * Depending on the implementation getAxisConfiguration(), gets
      * the AxisConfiguration and uses it to create the ConfigurationContext.
      *
-     * @param axisConfigurator
+     * @param axisConfigurator : AxisConfigurator
      * @return Returns ConfigurationContext.
-     * @throws AxisFault
+     * @throws AxisFault  : If somthing goes wrong
      */
     public static ConfigurationContext createConfigurationContext(
             AxisConfigurator axisConfigurator) throws AxisFault {
@@ -204,30 +205,54 @@ public class ConfigurationContextFactory {
      * Initializes the modules. If the module needs to perform some recovery process
      * it can do so in init and this is different from module.engage().
      *
-     * @param context
+     * @param context : ConfigurationContext
      */
     private static void initModules(ConfigurationContext context) {
-        try {
-            HashMap modules = context.getAxisConfiguration().getModules();
+        AxisConfiguration configuration = context.getAxisConfiguration();
+        HashMap modules = configuration.getModules();
             Collection col = modules.values();
+            Map faultyModule = new HashMap();
 
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 AxisModule axismodule = (AxisModule) iterator.next();
                 Module module = axismodule.getModule();
 
                 if (module != null) {
-                    module.init(context, axismodule);
+                    try {
+                        module.init(context, axismodule);
+                    } catch (AxisFault axisFault) {
+                        log.info(axisFault.getMessage());
+                        faultyModule.put(module,axisFault);
+                    }
                 }
             }
-        } catch (AxisFault e) {
-            log.info(e.getMessage());
-        }
+
+            //Checking whether we have found any faulty services during the module initilization ,
+            // if so we need to mark them as fautyModule and need to remove from the modules list
+            if (faultyModule.size() >0 ) {
+                Iterator axisModules = faultyModule.keySet().iterator();
+                while (axisModules.hasNext()) {
+                    AxisModule axisModule = (AxisModule) axisModules.next();
+                    String fileName;
+                    if (axisModule.getFileName() != null) {
+                         fileName = axisModule.getFileName().toString();
+                    } else {
+                        fileName = axisModule.getName();
+                    }
+                    configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
+                    //removing from original list
+                    configuration.removeModule(org.apache.axis2.util.Utils.getModuleName(axisModule.getName()),
+                            org.apache.axis2.util.Utils.getModuleVersion(axisModule.getName()));
+                }
+            }
+
+
     }
 
     /**
      * Initializes TransportSenders and TransportListeners with appropriate configuration information
      *
-     * @param configContext
+     * @param configContext : ConfigurationContext
      */
     private static void initTransportSenders(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
