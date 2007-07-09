@@ -465,7 +465,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 //        serviceGroup.setParent(axisConfig);
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
-
+        serviceGroup.setParent(axisConfig);
         for (int i = 0; i < groupModules.size(); i++) {
             String moduleName = (String) groupModules.get(i);
             AxisModule module = axisConfig.getModule(moduleName);
