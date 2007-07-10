@@ -1,0 +1,1 @@
+#Dummy MENIFEST.MF to replace the maven2 incerted MENIFEST.MF
