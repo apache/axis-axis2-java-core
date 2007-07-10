@@ -87,7 +87,7 @@
 	{
 	    svc_skeleton->func_array = axutil_array_list_create(env, 10);
         <xsl:for-each select="method">
-	      axutil_array_list_add(svc_skeleton->func_array, env, "<xsl:value-of select="@localpart"/>");
+	      axutil_array_list_add(svc_skeleton->func_array, env, axutil_strdup(env, "<xsl:value-of select="@localpart"/>"));
         </xsl:for-each>
 
 	    /* Any initialization stuff of <xsl:value-of select="$svcname"/> goes here */
