@@ -185,6 +185,7 @@ public class MessageContextBuilder {
             newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
+        newmsgCtx.setDoingSwA(inMessageContext.isDoingSwA());
         newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
 
         // Ensure transport settings match the scheme for the To EPR
