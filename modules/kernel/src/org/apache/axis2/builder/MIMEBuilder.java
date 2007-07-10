@@ -53,7 +53,10 @@ public class MIMEBuilder implements Builder {
 
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
-
+        // We set the following for all the MIME messages.. Will be overridden
+        // by subsequent builders(eg:MTOMBuilder) if needed..
+        msgContext.setDoingSwA(true);
+        
         Builder builder =
                 BuilderUtil.getBuilderFromSelector(attachments.getAttachmentSpecType(), msgContext);
         OMElement element = builder.processDocument(attachments.getSOAPPartInputStream(),
