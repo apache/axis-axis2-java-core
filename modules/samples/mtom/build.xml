@@ -91,7 +91,7 @@
     </target>	
 
 	<!-- Run Client -->
-	<target name="run.client" depends="check-parameters" if="parameters.set">
+	<target name="run.client" depends="check-parameters,generate.client" if="parameters.set">
 		<!-- Accept two arguments from the command line, Also use the class.path set earlier -->
 		<java classname="sample.mtom.client.Client" fork="true">
 			<arg value="-file" />
