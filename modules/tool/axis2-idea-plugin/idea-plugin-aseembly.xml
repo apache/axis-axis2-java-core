@@ -26,6 +26,10 @@
             <directory>./target/classes</directory>
             <outputDirectory>classes</outputDirectory>
      	</fileSet>
+        <fileSet>
+            <directory>./target/classes/META-INF</directory>
+            <outputDirectory>META-INF</outputDirectory>
+     	</fileSet>
     </fileSets>
 	<dependencySets>
         <dependencySet>
