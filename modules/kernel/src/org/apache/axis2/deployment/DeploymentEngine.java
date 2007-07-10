@@ -1024,9 +1024,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             serviceGroup.setServiceGroupName(serviceFile.getName());
             AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
 
-            HashMap wsdlServices = new HashMap();
             ArchiveReader archiveReader = new ArchiveReader();
-            archiveReader.processFilesInFolder(serviceFile, wsdlServices);
+            HashMap wsdlServices = archiveReader.processWSDLs(currentDeploymentFile);
             InputStream serviceXml = classLoader.getResourceAsStream("META-INF/services.xml");
             ArrayList serviceList = archiveReader.buildServiceGroup(serviceXml,
                                                                     currentDeploymentFile,
