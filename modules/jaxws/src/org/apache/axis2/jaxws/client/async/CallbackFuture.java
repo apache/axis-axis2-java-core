@@ -222,6 +222,13 @@ class CallbackFutureTask implements Callable {
         // Now that the content is available, call the JAX-WS AsyncHandler class
         // to deliver the response to the user.
         try {
+            ClassLoader cl = handler.getClass().getClassLoader();
+        	if (log.isDebugEnabled()) {
+        		log.debug("Setting up the thread's ClassLoader");
+        		log.debug(cl.toString());
+        	}
+        	Thread.currentThread().setContextClassLoader(cl);
+            
             if (debug) {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");
                 log.debug("AyncHandler class: " + handler.getClass());
