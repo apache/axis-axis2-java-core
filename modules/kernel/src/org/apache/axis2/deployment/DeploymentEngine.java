@@ -1014,7 +1014,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                     ConfigurationContext configCtx)
             throws AxisFault {
         try {
-            DeploymentFileData currentDeploymentFile = new DeploymentFileData(null, null);
+            DeploymentFileData currentDeploymentFile = new DeploymentFileData(serviceFile, null);
             DeploymentClassLoader classLoader = new DeploymentClassLoader(new URL[]{serviceFile.toURL()},
                                                                           new ArrayList(),
                                                                           Thread.currentThread().getContextClassLoader());

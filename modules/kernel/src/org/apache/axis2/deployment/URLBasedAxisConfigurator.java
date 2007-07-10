@@ -57,9 +57,9 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 if (axis2repoPara != null) {
                     String repoValue = (String) axis2repoPara.getValue();
                     if (repoValue != null && !"".equals(repoValue.trim())) {
-                        if (repoValue.startsWith("file://")) {
+                        if (repoValue.startsWith("file:/")) {
                             // we treat this case specially , by assuming file is
-                            // locate in the local machine
+                            // located in the local machine
                             loadRepository(repoValue);
                         } else {
                             loadRepositoryFromURL(new URL(repoValue));
