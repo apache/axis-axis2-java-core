@@ -177,6 +177,14 @@ public class TribesClusterManager implements ClusterManager {
             TribesMembershipListener membershipListener = new TribesMembershipListener();
             channel.addMembershipListener(membershipListener);
             channel.start(Channel.DEFAULT);
+            String localHost = TribesUtil.getLocalHost(channel);
+            if (localHost.startsWith("127.0.")) {
+                channel.stop(Channel.DEFAULT);
+                throw new ClusteringFault("Cannot join cluster using IP " + localHost +
+                                          ". Please set an IP address other than " +
+                                          localHost + " in your /etc/hosts file and retry.");
+            }
+
             sender.setChannel(channel);
 
             if (contextManager != null) {
