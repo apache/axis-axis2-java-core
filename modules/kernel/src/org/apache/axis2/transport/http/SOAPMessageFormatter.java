@@ -69,15 +69,15 @@ public class SOAPMessageFormatter implements MessageFormatter {
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
             if (!format.isOptimized()) {
-                // why are we creating a new OMOutputFormat
-                OMOutputFormat format2 = new OMOutputFormat();
-                format2.setCharSetEncoding(format.getCharSetEncoding());
                 if (format.isDoingSWA()) {
+                    // Why are we creating a new OMOutputFormat
+                    OMOutputFormat format2 = new OMOutputFormat();
+                    format2.setCharSetEncoding(format.getCharSetEncoding());
                     StringWriter bufferedSOAPBody = new StringWriter();
                     element.serializeAndConsume(bufferedSOAPBody, format2);
                     writeSwAMessage(msgCtxt, bufferedSOAPBody, bytesOut, format);
                 } else {
-                    element.serializeAndConsume(bytesOut, format2);
+                    element.serializeAndConsume(bytesOut, format);
                 }
                 return bytesOut.toByteArray();
             } else {
