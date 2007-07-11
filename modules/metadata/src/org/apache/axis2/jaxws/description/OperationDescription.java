@@ -217,4 +217,8 @@ public interface OperationDescription {
     */
     public String getBindingOutputNamespace();
     
+    /**
+    * @return Attachment Description for the return type or null
+    */
+    public AttachmentDescription getResultAttachmentDescription();
 }

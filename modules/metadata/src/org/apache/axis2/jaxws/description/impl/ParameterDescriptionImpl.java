@@ -20,6 +20,8 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
@@ -63,6 +65,10 @@ class ParameterDescriptionImpl
     private WebParam.Mode webParamMode;
     public static final Boolean WebParam_Header_DEFAULT = new Boolean(false);
     private Boolean webParamHeader;
+    
+    // Attachment Description information
+    private boolean             _setAttachmentDesc = false;
+    private AttachmentDescription attachmentDesc = null;
     
     // This boolean indicates whether or not there was an @XMLList on the parameter
     private boolean isListType = false;
@@ -375,6 +381,10 @@ class ParameterDescriptionImpl
             string.append("Type: " + getParameterType());
             string.append(sameline);
             string.append("Actual type: " + getParameterActualType());
+            if (getAttachmentDescription() != null) {
+                string.append(newline);
+                string.append(getAttachmentDescription().toString());
+            }
         }
         catch (Throwable t) {
             string.append(newline);
@@ -387,5 +397,38 @@ class ParameterDescriptionImpl
 
     public boolean isListType() {
     	return isListType;
+    }
+    
+    public AttachmentDescription getAttachmentDescription() {
+        if (_setAttachmentDesc) {
+            return attachmentDesc;
+        }
+        _setAttachmentDesc = true;
+        
+        // TODO
+        // The annotation description should be constructed using the
+        // wsdl information.  
+        // In order to test the marshalling processing, I am 
+        // creating a dummy attachment triggered solely by the part name and
+        // part type.
+        
+        String partName = this.getPartName();
+        if (partName != null && 
+            partName.startsWith("dummyAttachment")) {
+            Class paramType = getParameterActualType();
+            if (paramType == String.class) {
+                // TODO For the purposes of testing, assume this is text/plain
+                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
+                        new String[] {"text/plain"});
+                
+            } else if (paramType == byte[].class) {
+                // TODO For the purposes of testing, assume this is image/gif
+                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
+                        new String[] {"text/plain"});
+            }
+            
+        }
+       
+        return attachmentDesc;
     }
 }

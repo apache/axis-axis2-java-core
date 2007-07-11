@@ -27,6 +27,8 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -164,6 +166,11 @@ class OperationDescriptionImpl
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean webResultHeader;
+    
+    //  Web Result Attachment Description information
+    private boolean             _setAttachmentDesc = false;
+    private AttachmentDescription attachmentDesc = null;
+    
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
     // For JAX-WS client async methods, this is the corresponding Sync method; for everything else,
@@ -1754,6 +1761,38 @@ class OperationDescriptionImpl
         return null;
     }
     
+    public AttachmentDescription getResultAttachmentDescription() {
+        if (_setAttachmentDesc) {
+            return attachmentDesc;
+        }
+        _setAttachmentDesc = true;
+
+        // TODO
+        // The annotation description should be constructed using the
+        // wsdl information.  
+        // In order to test the marshalling processing, I am 
+        // creating a dummy attachment triggered solely by the part name and
+        // part type.
+
+        String partName = this.getResultPartName();
+        if (partName != null && 
+                partName.startsWith("dummyAttachment")) {
+            Class paramType = getResultActualType();
+            if (paramType == String.class) {
+                // TODO For the purposes of testing, assume this is text/plain
+                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
+                                                               new String[] {"text/plain"});
+
+            } else if (paramType == byte[].class) {
+                // TODO For the purposes of testing, assume this is image/gif
+                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
+                                                               new String[] {"text/plain"});
+            }
+        }
+
+        return attachmentDesc;
+    }
+            
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";
@@ -1793,6 +1832,10 @@ class OperationDescriptionImpl
             string.append("Result type: " + getResultType());
             string.append(sameline);
             string.append("Result actual type: " + getResultActualType());
+            if (getResultAttachmentDescription() != null) {
+                string.append(newline);
+                string.append(getResultAttachmentDescription().toString());
+            }
             //
             string.append(newline);
             string.append("Request Wrapper class: " + getRequestWrapperClassName());
