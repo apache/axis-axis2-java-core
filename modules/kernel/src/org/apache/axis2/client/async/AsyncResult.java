@@ -28,6 +28,8 @@ import org.apache.axis2.context.MessageContext;
  * engine returns an instance of this class via the {@link
  * Callback#onComplete(AsyncResult)} method when the operation completes
  * successfully.
+ *
+ * @deprecated please see org.apache.axis2.client.async.AxisCallback.
  */
 public class AsyncResult {
 

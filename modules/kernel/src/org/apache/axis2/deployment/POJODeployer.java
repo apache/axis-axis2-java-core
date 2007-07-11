@@ -72,7 +72,8 @@ public class POJODeployer implements Deployer {
                 File parentFile = file.getParentFile();
                 if (file != null) {
                     ClassLoader classLoader =
-                           Utils.getClassLoader(configCtx.getAxisConfiguration().getSystemClassLoader(), parentFile);
+                           Utils.getClassLoader(configCtx.getAxisConfiguration().
+                                   getSystemClassLoader(), parentFile);
 
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
@@ -127,12 +128,14 @@ public class POJODeployer implements Deployer {
                                 messageReciverMap.put(
                                         WSDL2Constants.MEP_URI_IN_OUT,
                                         inOutmessageReceiver);
-                                 messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,inOutmessageReceiver);
-                                AxisService axisService = AxisService.createService(className,
-                                                                                    configCtx.getAxisConfiguration(),
-                                                                                    messageReciverMap,
-                                                                                    null, null,
-                                                                                    classLoader);
+                                messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
+                                                      inOutmessageReceiver);
+                                AxisService axisService =
+                                        AxisService.createService(className,
+                                                                  configCtx.getAxisConfiguration(),
+                                                                  messageReciverMap,
+                                                                  null, null,
+                                                                  classLoader);
                                 configCtx.getAxisConfiguration().addService(axisService);
                             }
                         }
@@ -173,7 +176,8 @@ public class POJODeployer implements Deployer {
                             new URL[]{deploymentFileData.getFile().toURL()},
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
                             true,
-                            (File)configCtx.getAxisConfiguration().getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                            (File)configCtx.getAxisConfiguration().
+                                    getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
@@ -217,7 +221,7 @@ public class POJODeployer implements Deployer {
                     }
                 }
                 AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                serviceGroup.setServiceGroupName(deploymentFileData.getServiceName());
+                serviceGroup.setServiceGroupName(deploymentFileData.getName());
                 for (int i = 0; i < axisServiceList.size(); i++) {
                     AxisService axisService = (AxisService) axisServiceList.get(i);
                     serviceGroup.addService(axisService);
@@ -298,6 +302,5 @@ public class POJODeployer implements Deployer {
             }
         }
      }
-
 }
 

@@ -29,25 +29,23 @@ import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
- * ArchiveFileData stores information about the module or service item to be deployed.
+ * DeploymentFileData represents a "thing to deploy" in Axis2.  It consists of a file,
+ * a deployment ClassLoader, and a Deployer.
  */
 public class DeploymentFileData {
-    private File file = null;
-    private ArrayList deployableServices = new ArrayList();
+    private File file;
     private ClassLoader classLoader;
-    private String messageReceiver;
-
     private Deployer deployer;
 
     public DeploymentFileData(File file) {
+        if (file == null) throw new IllegalArgumentException("Filename must not be null");
         this.file = file;
     }
 
     public DeploymentFileData(File file, Deployer deployer) {
-        this.file = file;
+        this(file);
         this.deployer = deployer;
     }
 
@@ -59,28 +57,27 @@ public class DeploymentFileData {
         return classLoader;
     }
 
-    public ArrayList getDeployableServices() {
-        return deployableServices;
-    }
-
     public File getFile() {
         return file;
     }
 
-    public String getMessageReceiver() {
-        return messageReceiver;
-    }
-
+    /**
+     * Get the name of the file.
+     *
+     * @return the name of the referenced file
+     */
     public String getName() {
-        return file.getName();
+        return file.getName(); // No need to check for null due to constructor check
     }
 
+    /**
+     * Get the name of the file.
+     *
+     * @return the name of the referenced file
+     * @deprecated please use getName() instead - this will disappear after 1.3.
+     */
     public String getServiceName() {
-        if (file != null) {
-            return file.getName();
-        } else {
-            return null;
-        }
+        return getName();
     }
 
     public static boolean isModuleArchiveFile(String filename) {
@@ -127,15 +124,6 @@ public class DeploymentFileData {
             }
         }
     }
-
-    public void setDeployableServices(ArrayList deployableServices) {
-        this.deployableServices = deployableServices;
-    }
-
-    public void setMessageReceiver(String messageReceiver) {
-        this.messageReceiver = messageReceiver;
-    }
-
 
     public Deployer getDeployer() {
         return deployer;

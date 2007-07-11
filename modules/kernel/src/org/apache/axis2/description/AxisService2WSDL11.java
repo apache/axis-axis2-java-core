@@ -128,7 +128,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
         policiesInDefinitions = new HashMap();
 
-        Map namespaceMap = axisService.getNameSpacesMap();
+        Map namespaceMap = axisService.getNamespaceMap();
+        if (namespaceMap == null) namespaceMap = new HashMap();
+        
         WSDLSerializationUtil.populateNamespaces(ele, namespaceMap);
         soap = ele.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
         soap12 = ele.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
@@ -434,7 +436,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         if (!disableREST) {
             generateHTTPPorts(fac, service);
         }
-        }
+    }
 
     private void generateSOAP11Ports(OMFactory fac, OMElement service)
             throws Exception {
