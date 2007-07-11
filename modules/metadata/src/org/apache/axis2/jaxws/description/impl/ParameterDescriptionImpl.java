@@ -28,6 +28,8 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
@@ -42,6 +44,7 @@ import java.lang.reflect.Type;
 /** @see ../ParameterDescription */
 class ParameterDescriptionImpl
         implements ParameterDescription, ParameterDescriptionJava, ParameterDescriptionWSDL {
+    private static final Log log = LogFactory.getLog(ParameterDescriptionImpl.class);
     private OperationDescription parentOperationDescription;
     // The Class representing the parameter.  Note that for a Generic, including the JAX-WS Holder<T> Generic, 
     // this represents the raw type of the Generic (e.g. List for List<T> or Holder for Holder<T>).
@@ -399,36 +402,32 @@ class ParameterDescriptionImpl
     	return isListType;
     }
     
-    public AttachmentDescription getAttachmentDescription() {
-        if (_setAttachmentDesc) {
-            return attachmentDesc;
+    /**
+     * Helper method to get to parent impl object.
+     */
+    private OperationDescriptionImpl getOperationDescriptionImpl() {
+        if(this.getOperationDescription() instanceof OperationDescriptionImpl) {
+                return (OperationDescriptionImpl) this.getOperationDescription();
         }
-        _setAttachmentDesc = true;
-        
-        // TODO
-        // The annotation description should be constructed using the
-        // wsdl information.  
-        // In order to test the marshalling processing, I am 
-        // creating a dummy attachment triggered solely by the part name and
-        // part type.
-        
+        return null;
+    }
+    
+    /**
+     * This method will return an AttachmentDescription based on the part name of the parameter.
+     */
+    public AttachmentDescription getAttachmentDescription() {
         String partName = this.getPartName();
-        if (partName != null && 
-            partName.startsWith("dummyAttachment")) {
-            Class paramType = getParameterActualType();
-            if (paramType == String.class) {
-                // TODO For the purposes of testing, assume this is text/plain
-                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
-                        new String[] {"text/plain"});
-                
-            } else if (paramType == byte[].class) {
-                // TODO For the purposes of testing, assume this is image/gif
-                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
-                        new String[] {"text/plain"});
+        if(partName != null && getOperationDescriptionImpl() != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Returning parameter AttachmentDescription for partName: " + 
+                          partName);
             }
+            return getOperationDescriptionImpl().getPartAttachmentDescription(partName);
             
         }
-       
-        return attachmentDesc;
+        if(log.isDebugEnabled()) {
+            log.debug("Did not find parameter AttachmentDescription for partName: " + partName);
+        }
+        return null;
     }
 }

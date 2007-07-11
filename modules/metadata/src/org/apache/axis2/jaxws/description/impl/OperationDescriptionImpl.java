@@ -179,10 +179,12 @@ class OperationDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
-
+    private Map<String, AttachmentDescription> partAttachmentMap;
+    
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
 		checkForXmlListAnnotation(method.getAnnotations());
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
@@ -198,6 +200,7 @@ class OperationDescriptionImpl
 
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
         this.operationQName = axisOperation.getName();
     }
@@ -207,6 +210,7 @@ class OperationDescriptionImpl
                              AxisOperation axisOperation) {
 
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         methodComposite = mdc;
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
@@ -218,6 +222,7 @@ class OperationDescriptionImpl
         parameterDescriptions = createParameterDescriptions();
         faultDescriptions = createFaultDescriptions();
 		isListType = mdc.isListType();
+        buildAttachmentInformation();
 
         //If an AxisOperation was already created for us by populateService then just use that one
         //Otherwise, create it
@@ -1762,35 +1767,47 @@ class OperationDescriptionImpl
     }
     
     public AttachmentDescription getResultAttachmentDescription() {
-        if (_setAttachmentDesc) {
-            return attachmentDesc;
-        }
-        _setAttachmentDesc = true;
-
-        // TODO
-        // The annotation description should be constructed using the
-        // wsdl information.  
-        // In order to test the marshalling processing, I am 
-        // creating a dummy attachment triggered solely by the part name and
-        // part type.
-
         String partName = this.getResultPartName();
-        if (partName != null && 
-                partName.startsWith("dummyAttachment")) {
-            Class paramType = getResultActualType();
-            if (paramType == String.class) {
-                // TODO For the purposes of testing, assume this is text/plain
-                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
-                                                               new String[] {"text/plain"});
-
-            } else if (paramType == byte[].class) {
-                // TODO For the purposes of testing, assume this is image/gif
-                attachmentDesc = new AttachmentDescriptionImpl(AttachmentType.SWAREF,
-                                                               new String[] {"text/plain"});
+        if (partName != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Returning result AttachmentDescription for partName: " + partName);
             }
+            return partAttachmentMap.get(partName);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Did not find result AttachmentDescription for partName: " + partName);
+        }
+        return null;
+    }
+    
+    /**
+     * This method will drive the building of AttachmentDescription objects for the
+     * operation input/output messages in the WSDL.
+     *
+     */
+    private void buildAttachmentInformation() {
+
+        // Only building attachment info if we find a full WSDL
+        if (this.getEndpointInterfaceDescriptionImpl()
+                .getEndpointDescriptionImpl()
+                .isWSDLFullySpecified()) {
+            DescriptionUtils.getAttachmentFromBinding(this,
+                                                      this.getEndpointInterfaceDescriptionImpl()
+                                                          .getEndpointDescriptionImpl()
+                                                          .getWSDLBinding());
         }
 
-        return attachmentDesc;
+    }
+
+    /**
+     * This will return an AttachmentDescription based on a part name.
+     */
+    public AttachmentDescription getPartAttachmentDescription(String partName) {
+        return partAttachmentMap.get(partName);
+    }
+
+    public void addPartAttachmentDescription(String partName, AttachmentDescription attachmentDesc) {
+        partAttachmentMap.put(partName, attachmentDesc);
     }
             
     public String toString() {
@@ -1877,6 +1894,21 @@ class OperationDescriptionImpl
                 string.append("No Fault Descriptions");
             }
 
+            if(!partAttachmentMap.isEmpty()) {
+                string.append(newline);
+                string.append("Number of Attachment Descriptions: "  + partAttachmentMap.size());
+                string.append(newline);
+                Iterator<AttachmentDescription> adIter = partAttachmentMap.values().iterator();
+                while(adIter.hasNext()) {
+                        string.append(adIter.next().toString());
+                        string.append(newline);
+                }
+            } else {
+                string.append(newline);
+                string.append("No Attachment Descriptions");
+                string.append(newline);
+            }
+            
             string.append("RuntimeDescriptions:" + this.runtimeDescMap.size());
             string.append(newline);
             for (OperationRuntimeDescription runtimeDesc : runtimeDescMap.values()) {

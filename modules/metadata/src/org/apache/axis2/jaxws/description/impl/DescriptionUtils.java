@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.description.impl;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
@@ -29,6 +31,12 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Operation;
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap12.SOAP12Body;
@@ -405,5 +413,86 @@ public class DescriptionUtils {
         }
         return null;
     }
-    
+    /**
+     * This method will process a WSDL Binding and build AttachmentDescription objects if the
+     * WSDL dicatates attachments.
+     */
+    public static void getAttachmentFromBinding(OperationDescriptionImpl opDesc, Binding binding) {
+        if (binding != null) {
+            Iterator bindingOpIter = binding.getBindingOperations().iterator();
+            while (bindingOpIter.hasNext()) {
+                BindingOperation bindingOp = (BindingOperation) bindingOpIter.next();
+                // found the BindingOperation that matches the current OperationDescription
+                if (bindingOp.getName().equals(opDesc.getOperationName())) {
+                    if (bindingOp.getBindingInput() != null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Processing binding input");
+                        }
+                        processBindingForMIME(bindingOp.getBindingInput()
+                                                       .getExtensibilityElements(),
+                                              opDesc,
+                                              bindingOp.getOperation());
+                    }
+                    if (bindingOp.getBindingOutput() != null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Processing binding output");
+                        }
+                        processBindingForMIME(bindingOp.getBindingOutput()
+                                                       .getExtensibilityElements(),
+                                              opDesc,
+                                              bindingOp.getOperation());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * This method will loop through the extensibility elements for a given BindingInput or
+     * BindingOutput element and determine if it has any MIMEMultipartRelated content. If it 
+     * does it will build up the appropriate AttachmentDescription objects.
+     */
+    private static void processBindingForMIME(List extensibilityElements,
+                                              OperationDescriptionImpl opDesc, Operation operation) {
+        Iterator extensibilityIter = extensibilityElements.iterator();
+        while (extensibilityIter.hasNext()) {
+            Object obj = extensibilityIter.next();
+            if (obj instanceof MIMEMultipartRelated) {
+                // Found mime information now process it and determine if we need to
+                // create an AttachmentDescription
+                MIMEMultipartRelated mime = (MIMEMultipartRelated) obj;
+                Iterator partIter = mime.getMIMEParts().iterator();
+                while (partIter.hasNext()) {
+                    MIMEPart mimePart = (MIMEPart) partIter.next();
+                    Iterator mExtIter = mimePart.getExtensibilityElements().iterator();
+                    // Process each mime part to determine if there is mime content
+                    while (mExtIter.hasNext()) {
+                        Object obj2 = mExtIter.next();
+                        // For mime content we need to potentially create an AttachmentDescription
+                        if (obj2 instanceof MIMEContent) {
+                            MIMEContent mimeContent = (MIMEContent) obj2;
+                            String part = mimeContent.getPart();
+                            String type = mimeContent.getType();
+                            // if we have not already processed this part for the operation
+                            if (opDesc.getPartAttachmentDescription(part) == null) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Adding new AttachmentDescription for part: " + part
+                                            + " on operation: " + opDesc.getOperationName());
+                                }
+                                AttachmentDescription attachmentDesc =
+                                        new AttachmentDescriptionImpl(AttachmentType.SWA,
+                                                                      new String[] { type });
+                                opDesc.addPartAttachmentDescription(part, attachmentDesc);
+                            } else {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Already created AttachmentDescription for part: "
+                                            + part + " of type: " + type);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
