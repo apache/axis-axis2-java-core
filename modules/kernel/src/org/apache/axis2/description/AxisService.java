@@ -2386,4 +2386,8 @@ public class AxisService extends AxisDescription {
     public void setParent(AxisServiceGroup parent) {
         this.parent = parent;
     }
+
+    public String toString() {
+        return getName();
+    }
 }
