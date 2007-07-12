@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 <module name="addressing" class="org.apache.axis2.addressing.AddressingModule">
-    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation.</Description>
+    <Description>This is the WS-Addressing implementaiton on Axis2, supporting the WS-Addressing 1.0 Recommendation, as well as the Submission version (2004/08).</Description>
     <InFlow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
             <order phase="PreDispatch"/>
