@@ -382,10 +382,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(
-                    Messages.getMessage(
-                            DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()),
-                    axisFault);
+            throw new DeploymentException(axisFault);
         }
         return service;
     }

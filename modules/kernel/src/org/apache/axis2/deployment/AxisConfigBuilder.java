@@ -277,8 +277,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
-            if (directory != null)
-                directoryToExtensionMappingMap.put(directory, extension);
+            if (directory != null) {
+                ArrayList extensionList = (ArrayList) directoryToExtensionMappingMap.get(directory);
+                if (extensionList == null) {
+                    extensionList = new ArrayList();
+                }
+                extensionList.add(extension);
+                directoryToExtensionMappingMap.put(directory, extensionList);
+            }
             extensionToDeployerMappingMap.put(extension, deployer);
         }
         if (deploymentEngine != null) {

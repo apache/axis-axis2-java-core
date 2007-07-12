@@ -37,6 +37,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
@@ -232,7 +233,12 @@ public class RepositoryListener implements DeploymentConstants {
             Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
             while (keys.hasNext()) {
                 String s = (String) keys.next();
-                findFileForGivenDirectory(s, (String) directoryToExtensionMappingMap.get(s));
+                ArrayList list = (ArrayList) directoryToExtensionMappingMap.get(s);
+                for (int i = 0; i < list.size(); i++) {
+                    String extension = (String) list.get(i);
+                    findFileForGivenDirectory(s, extension);
+                }
+
             }
         }
     }
