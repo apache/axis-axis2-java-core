@@ -297,7 +297,16 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      */
     public static ConfigurationContext createDefaultConfigurationContext() throws Exception {
-        InputStream in = Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+        return createBasicConfigurationContext(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+    }
+    
+    /**
+     * Creates configuration context using resource file found in the classpath.
+     *
+     * @return Returns ConfigurationContext.
+     */
+    public static ConfigurationContext createBasicConfigurationContext(String resourceName) throws Exception {
+        InputStream in = Loader.getResourceAsStream(resourceName);
 
         AxisConfiguration axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig, null);
