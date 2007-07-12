@@ -53,7 +53,7 @@ import java.util.*;
 public class TribesClusterManager implements ClusterManager {
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
-    private DefaultConfigurationManager configurationManager;
+        private DefaultConfigurationManager configurationManager;
     private DefaultContextManager contextManager;
 
     private HashMap parameters;
@@ -129,53 +129,51 @@ public class TribesClusterManager implements ClusterManager {
             configurationManager.setSender(sender);
         }
         controlCmdProcessor.setChannelSender(sender);
+        channel = new GroupChannel();
 
-        try {
+        // Set the domain for this Node
+        Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
+        byte[] domain;
+        if (domainParam != null) {
+            domain = ((String) domainParam.getValue()).getBytes();
+        } else {
+            domain = "apache.axis2.domain".getBytes();
+        }
+        channel.getMembershipService().setDomain(domain);
+        DomainFilterInterceptor dfi = new DomainFilterInterceptor();
+        dfi.setDomain(domain);
+        channel.addInterceptor(dfi);
 
-            channel = new GroupChannel();
-
-            // Set the domain for this Node
-            Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
-            byte[] domain;
-            if (domainParam != null) {
-                domain = ((String) domainParam.getValue()).getBytes();
-            } else {
-                domain = "apache.axis2.domain".getBytes();
+        // Add the NonBlockingCoordinator. This is used for leader election
+        /*nbc = new NonBlockingCoordinator() {
+            public void fireInterceptorEvent(InterceptorEvent event) {
+                String status = event.getEventTypeDesc();
+                System.err.println("$$$$$$$$$$$$ NBC status=" + status);
+                int type = event.getEventType();
             }
-            channel.getMembershipService().setDomain(domain);
-            DomainFilterInterceptor dfi = new DomainFilterInterceptor();
-            dfi.setDomain(domain);
-            channel.addInterceptor(dfi);
+        };
+        nbc.setPrevious(dfi);
+        channel.addInterceptor(nbc);*/
 
-            // Add the NonBlockingCoordinator. This is used for leader election
-            /*nbc = new NonBlockingCoordinator() {
-                public void fireInterceptorEvent(InterceptorEvent event) {
-                    String status = event.getEventTypeDesc();
-                    System.err.println("$$$$$$$$$$$$ NBC status=" + status);
-                    int type = event.getEventType();
-                }
-            };
-            nbc.setPrevious(dfi);
-            channel.addInterceptor(nbc);*/
+        /*Properties mcastProps = channel.getMembershipService().getProperties();
+       mcastProps.setProperty("mcastPort", "5555");
+       mcastProps.setProperty("mcastAddress", "224.10.10.10");
+       mcastProps.setProperty("mcastClusterDomain", "catalina");
+       mcastProps.setProperty("bindAddress", "localhost");
+       mcastProps.setProperty("memberDropTime", "20000");
+       mcastProps.setProperty("mcastFrequency", "500");
+       mcastProps.setProperty("tcpListenPort", "4000");
+       mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
-            /*Properties mcastProps = channel.getMembershipService().getProperties();
-            mcastProps.setProperty("mcastPort", "5555");
-            mcastProps.setProperty("mcastAddress", "224.10.10.10");
-            mcastProps.setProperty("mcastClusterDomain", "catalina");
-            mcastProps.setProperty("bindAddress", "localhost");
-            mcastProps.setProperty("memberDropTime", "20000");
-            mcastProps.setProperty("mcastFrequency", "500");
-            mcastProps.setProperty("tcpListenPort", "4000");
-            mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
+        /*TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+        tcpFailureDetector.setPrevious(nbc);
+        channel.addInterceptor(tcpFailureDetector);
+        tcpFailureDetector.*/
 
-            /*TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-            tcpFailureDetector.setPrevious(nbc);
-            channel.addInterceptor(tcpFailureDetector);
-            tcpFailureDetector.*/
-
-            channel.addChannelListener(channelListener);
-            TribesMembershipListener membershipListener = new TribesMembershipListener();
-            channel.addMembershipListener(membershipListener);
+        channel.addChannelListener(channelListener);
+        TribesMembershipListener membershipListener = new TribesMembershipListener();
+        channel.addMembershipListener(membershipListener);
+        try {
             channel.start(Channel.DEFAULT);
             String localHost = TribesUtil.getLocalHost(channel);
             if (localHost.startsWith("127.0.")) {
@@ -184,59 +182,60 @@ public class TribesClusterManager implements ClusterManager {
                                           ". Please set an IP address other than " +
                                           localHost + " in your /etc/hosts file and retry.");
             }
-
-            sender.setChannel(channel);
-
-            if (contextManager != null) {
-                contextManager.setSender(sender);
-                channelListener.setContextManager(contextManager);
-
-                Member[] members = channel.getMembers();
-                log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
-                TribesUtil.printMembers(members);
-
-                // If there is at least one member in the Tribe, get the current state from a member
-                Random random = new Random();
-                int numberOfTries = 0; // Don't keep on trying infinitely
-
-                // Keep track of members to whom we already sent a GetStateCommand
-                // Do not send another request to these members
-                List sentMembersList = new ArrayList();
-                while (members.length > 0 &&
-                       configurationContext.
-                               getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-                       && numberOfTries < 50) {
-
-                    // While there are members and GetStateResponseCommand is not received do the following
-                    try {
-                        members = channel.getMembers();
-                        int memberIndex = random.nextInt(members.length);
-                        Member member = members[memberIndex];
-                        if (!sentMembersList.contains(TribesUtil.getHost(member))) {
-                            long tts = sender.sendToMember(new GetStateCommand(), member);
-                            configurationContext.
-                                    setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
-                                                             new Long(tts));
-                            sentMembersList.add(TribesUtil.getHost(member));
-                            log.debug("WAITING FOR STATE UPDATE...");
-                            Thread.sleep(tts + 5);
-                        }
-                    } catch (Exception e) {
-                        log.error(e);
-                        break;
-                    }
-                    numberOfTries++;
-                }
-                configurationContext.
-                        setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED,
-                                                 "true");
-                ClusteringContextListener contextListener = new ClusteringContextListener(sender);
-                configurationContext.addContextListener(contextListener);
-            }
         } catch (ChannelException e) {
-            String message = "Error starting Tribes channel";
-            throw new ClusteringFault(message, e);
+            throw new ClusteringFault("Error starting Tribes channel", e);
         }
+        sender.setChannel(channel);
+
+        Member[] members = channel.getMembers();
+        log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
+        TribesUtil.printMembers(members);
+
+        if (contextManager != null) {
+            contextManager.setSender(sender);
+            channelListener.setContextManager(contextManager);
+
+            // If there is at least one member in the Tribe, get the current state from a member
+            Random random = new Random();
+            int numberOfTries = 0; // Don't keep on trying infinitely
+
+            // Keep track of members to whom we already sent a GetStateCommand
+            // Do not send another request to these members
+            List sentMembersList = new ArrayList();
+            while (members.length > 0 &&
+                   configurationContext.
+                           getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
+                   && numberOfTries < 50) {
+
+                // While there are members and GetStateResponseCommand is not received do the following
+                try {
+                    members = channel.getMembers();
+                    int memberIndex = random.nextInt(members.length);
+                    Member member = members[memberIndex];
+                    if (!sentMembersList.contains(TribesUtil.getHost(member))) {
+                        long tts = sender.sendToMember(new GetStateCommand(), member);
+                        configurationContext.
+                                setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                         new Long(tts));
+                        sentMembersList.add(TribesUtil.getHost(member));
+                        log.debug("WAITING FOR STATE UPDATE...");
+                        Thread.sleep(tts + 5);
+                    }
+                } catch (Exception e) {
+                    log.error(e);
+                    break;
+                }
+                numberOfTries++;
+            }
+            ClusteringContextListener contextListener = new ClusteringContextListener(sender);
+            configurationContext.addContextListener(contextListener);
+        }
+//        } catch (ChannelException e) {
+//            String message = "Error starting Tribes channel";
+//            throw new ClusteringFault(message, e);
+//        }
+        configurationContext.
+                setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
         configurationContext.removeProperty(ClusteringConstants.BLOCK_ALL_REQUESTS);
     }
 
