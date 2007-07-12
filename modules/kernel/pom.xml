@@ -111,6 +111,7 @@
 						<configuration>
                             <excludes>
                                 <exclude>**/*NIOSSL*.java</exclude>
+                                <exclude>**/HttpCoreNIOListener*.java</exclude>
                                 <exclude>**/SSLServerIOEventDispatch.java</exclude>
                                 <exclude>**/SSLClientIOEventDispatch.java</exclude>
                             </excludes>
