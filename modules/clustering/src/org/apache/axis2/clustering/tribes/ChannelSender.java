@@ -89,6 +89,7 @@ public class ChannelSender implements MessageSender {
                     channel.send(channel.getMembers(), throwable, Channel.SEND_OPTIONS_USE_ACK);
                     timeToSend = System.currentTimeMillis() - start;
                     log.debug("Sent " + throwable + " to group");
+                    break;
                 } catch (ChannelException e) {
                     String message = "Error sending exception message : " + throwable +
                                      ". Reason " + e.getMessage();

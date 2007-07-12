@@ -112,6 +112,8 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
             controlCommandProcessor.process((ControlCommand) msg,
                                             sender);
+        } else if (msg instanceof Throwable){
+            System.err.println("#####----------- Recd exception " + msg);
         }
     }
 }

@@ -110,8 +110,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                     service.setName(serviceNameatt.getAttributeValue());
                     //To be on the safe side
-                    if (service.getServiceDescription() == null) {
-                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    if (service.getDocumentation() == null) {
+                        service.setDocumentation(serviceNameatt.getAttributeValue());
                     }
                 }
             }
@@ -130,23 +130,23 @@ public class ServiceBuilder extends DescriptionBuilder {
                     descriptionValue.build();
                     descriptionValue.serialize(writer);
                     writer.flush();
-                    service.setServiceDescription(writer.toString());
+                    service.setDocumentation(writer.toString());
                 } else {
-                    service.setServiceDescription(descriptionElement.getText());
+                    service.setDocumentation(descriptionElement.getText());
                 }
             } else {
                 serviceNameatt =
                         service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    if (!"".equals(serviceNameatt.getAttributeValue().trim()) && service.getServiceDescription() == null) {
-                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    if (!"".equals(serviceNameatt.getAttributeValue().trim()) && service.getDocumentation() == null) {
+                        service.setDocumentation(serviceNameatt.getAttributeValue());
                     }
                 }
             }
 
             if (service.getParameter("ServiceClass") == null) {
-                log.info("The Service " + service.getName() + " does not specify a Service Class");
+                log.debug("The Service " + service.getName() + " does not specify a Service Class");
             }
 
             // Process WS-Addressing flag attribute
