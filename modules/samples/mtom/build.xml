@@ -65,7 +65,7 @@
 	</target>
 
 	<target name="print-usage" unless="parameters.set">
-		<echo message="ant -Dfile &lt;file to be transferred&gt;  -Ddest &lt;name of the destination file&gt;" />
+		<echo message="ant run.client -Dfile &lt;file to be transferred&gt;  -Ddest &lt;name of the destination file&gt;" />
 	</target>
 
 	<!-- Generate Client -->

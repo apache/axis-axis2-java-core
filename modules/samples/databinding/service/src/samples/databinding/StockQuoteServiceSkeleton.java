@@ -26,6 +26,7 @@
 package samples.databinding;
 import javanet.staxutils.StAXSource;
 import org.apache.axiom.om.impl.builder.SAXOMBuilder;
+import org.apache.axis2.AxisFault;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
@@ -53,7 +54,7 @@ public class StockQuoteServiceSkeleton {
      *
      * @param param0
      */
-    public org.apache.axiom.om.OMElement getStockQuote(org.apache.axiom.om.OMElement param0) {
+    public org.apache.axiom.om.OMElement getStockQuote(org.apache.axiom.om.OMElement param0) throws AxisFault {
         StAXSource staxSource =
                 new StAXSource(param0.getXMLStreamReader());
         Unmarshaller unmarshaller = new Unmarshaller(GetStockQuote.class);
@@ -67,6 +68,10 @@ public class StockQuoteServiceSkeleton {
             throw new RuntimeException(e);
         } catch (TransformerException e) {
             throw new RuntimeException(e);
+        }
+        
+        if (!stockQuote.getSymbol().equals("IBM")) {
+			throw new AxisFault("StockQuote details for the symbol '"+ stockQuote.getSymbol() + "' are not available.");
         }
         GetStockQuoteResponse stockQuoteResponse = new GetStockQuoteResponse();
         Quote quote = new Quote();
