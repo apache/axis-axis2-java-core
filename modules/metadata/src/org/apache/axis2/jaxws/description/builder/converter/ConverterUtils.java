@@ -33,6 +33,7 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.WebServiceRef;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -205,13 +206,7 @@ public class ConverterUtils {
             paramType = paramType + "<";
             for (int i = 0; i < genericTypes.length; i++) {
                 Type type = genericTypes[i];
-                if (type instanceof Class) {
-                    paramType = paramType + ((Class)type).getName();
-                } else if (type instanceof ParameterizedType) {
-                    paramType = getFullType((ParameterizedType)type, paramType);
-                } else if (type instanceof WildcardType) {
-                    paramType = paramType + "?";
-                }
+                paramType = getType(type, paramType);
 
                 // Set string for more parameters OR close the generic if this is the last one.
                 if (i != genericTypes.length - 1) {
@@ -224,4 +219,17 @@ public class ConverterUtils {
         }
         return paramType;
 	}
+    
+    private static String getType(Type type, String paramType) {
+        if (type instanceof Class) {
+            paramType = paramType + ((Class)type).getName();
+        } else if (type instanceof ParameterizedType) {
+            paramType = getFullType((ParameterizedType)type, paramType);
+        } else if (type instanceof WildcardType) {
+            paramType = paramType + "?";
+        } else if (type instanceof GenericArrayType) {
+            paramType = getType(((GenericArrayType)type).getGenericComponentType(), paramType) + "[]";
+        }
+        return paramType;
+    }
 }
