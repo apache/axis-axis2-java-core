@@ -211,7 +211,7 @@ class OutInAxisOperationClient extends OperationClient {
                 completed = true;
             } else {
                 sc.getConfigurationContext().getThreadPool().execute(
-                        new NonBlockingInvocationWorker(callback, mc));
+                        new NonBlockingInvocationWorker(callback, mc, axisCallback));
             }
         }
     }
@@ -388,11 +388,14 @@ class OutInAxisOperationClient extends OperationClient {
         private Callback callback;
 
         private MessageContext msgctx;
+        private AxisCallback axisCallback;
 
         public NonBlockingInvocationWorker(Callback callback,
-                                           MessageContext msgctx) {
+                                           MessageContext msgctx ,
+                                           AxisCallback axisCallback) {
             this.callback = callback;
             this.msgctx = msgctx;
+            this.axisCallback =axisCallback;
         }
 
         public void run() {
@@ -407,17 +410,34 @@ class OutInAxisOperationClient extends OperationClient {
                         // If a fault was found, create an AxisFault with a MessageContext so that
                         // other programming models can deserialize the fault to an alternative form.
                         AxisFault fault = new AxisFault(body.getFault(), response);
-                        callback.onError(fault);
+                        if (callback != null) {
+                            callback.onError(fault);
+                        } else {
+                            axisCallback.onError(fault);
+                        }
+
                     } else {
-                        AsyncResult asyncResult = new AsyncResult(response);
-                        callback.onComplete(asyncResult);
+                        if (callback != null) {
+                            AsyncResult asyncResult = new AsyncResult(response);
+                            callback.onComplete(asyncResult);
+                        } else {
+                            axisCallback.onMessage(response);
+                        }
+
                     }
                 }
 
             } catch (Exception e) {
-                callback.onError(e);
+                if (callback != null) {
+                    callback.onError(e);
+                } else {
+                    axisCallback.onError(e);
+                }
+
             } finally {
-                callback.setComplete(true);
+                if (callback != null) {
+                    callback.setComplete(true);
+                }
             }
         }
     }
