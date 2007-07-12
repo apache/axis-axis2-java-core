@@ -528,6 +528,7 @@ public class AxisInvocationController extends InvocationController {
             basicAuthentication.setPassword(password);
             basicAuthentication.setHost(url.getHost());
             basicAuthentication.setPort(url.getPort());
+            basicAuthentication.setPreemptiveAuthentication(true);
 
             ops.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
         } else if ((!properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
