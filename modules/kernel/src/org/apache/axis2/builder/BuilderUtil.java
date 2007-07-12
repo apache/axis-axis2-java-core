@@ -69,6 +69,7 @@ import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.Iterator;
+import java.util.Map;
 
 public class BuilderUtil {
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
@@ -451,9 +452,45 @@ public class BuilderUtil {
             }
         }
 
-        Attachments attachments = new Attachments(inStream, contentTypeString,
-                                                  fileCacheForAttachments, attachmentRepoDir,
-                                                  attachmentSizeThreshold);
+        // Get the content-length if it is available
+        int contentLength = 0;
+        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+        if (headers != null) {
+            String contentLengthValue = (String) headers.get(HTTPConstants.HEADER_CONTENT_LENGTH);
+            if (contentLengthValue != null) {
+                try {
+                    contentLength = new Integer(contentLengthValue).intValue();
+                } catch (NumberFormatException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Content-Length is not a valid number.  Will assume it is not set:" + e);
+                    }
+                }
+            }
+        }
+        Attachments attachments = null;
+        if (contentLength > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating an Attachments map.  The content-length is" + contentLength);
+            }
+            attachments = 
+                new Attachments(inStream,
+                                contentTypeString,
+                                fileCacheForAttachments,
+                                attachmentRepoDir,
+                                attachmentSizeThreshold,
+                                contentLength);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating an Attachments map.");
+            }
+            attachments = 
+                new Attachments(inStream,
+                                contentTypeString,
+                                fileCacheForAttachments,
+                                attachmentRepoDir,
+                                attachmentSizeThreshold);
+        }
+            
         return attachments;
     }
 
