@@ -130,8 +130,9 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             this.hide();
             setVisible(false);
             if (codeGen.isSelected()) {
-                codegenFrame = new CodegenFrame(project);
-                codegenFrame.setVisible(true);
+                codegenFrame = new CodegenFrame();
+                codegenFrame.setProject(project);
+		codegenFrame.setVisible(true);
                 codegenFrame .setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             }else{
                 ServiceArciveFrame window = new ServiceArciveFrame();

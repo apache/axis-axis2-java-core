@@ -69,7 +69,7 @@ public class ChooserPanel  extends WizardPanel {
                 , new Insets(10, 20, 0,0), 0, 0));
 
         // option button for java2wsdl
-        optionW2JRadioButton.setEnabled(false);
+        optionW2JRadioButton.setEnabled(true);
         this.add(optionW2JRadioButton
                 , new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0
                 , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
@@ -147,7 +147,7 @@ public class ChooserPanel  extends WizardPanel {
      */
     public void next() {
         if (selectedOption == 'A') {
-          //  switchPanel(CodegenFrame.PANEL_FIRST_A) ;
+            switchPanel(CodegenFrame.PANEL_FIRST_A) ;
 
         } else if (selectedOption == 'B') {
             switchPanel(CodegenFrame.PANEL_FIRST_B );

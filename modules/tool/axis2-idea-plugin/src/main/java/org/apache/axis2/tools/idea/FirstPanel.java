@@ -19,14 +19,16 @@
 package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
+import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.border.EmptyBorder;
+import javax.wsdl.WSDLException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 
 /**
@@ -34,177 +36,135 @@ import java.io.File;
  * Date: Jul 20, 2005
  * Time: 3:35:47 PM
  */
-public class FirstPanel extends JPanel implements ActionListener, MouseListener {
+public class FirstPanel extends WizardPanel {
 
-    JLabel lblWSDL;
-    JTextField txtWSDL;
-    JButton btnBrowse;
-    final JFileChooser fc = new JFileChooser();
+    private JLabel lblWSDL;
+    private JTextField txtWSDL;
+    private JButton btnBrowse;
+    private JButton btnHint;
+    private JLabel lblHint;
+    private boolean flag=false;
+    final private String hint="You can select only *.wsdl/*.xml file location.";
+
+
+    final JFileChooser FileChooser =new JFileChooser();
+
     private CodegenBean codegenBean;
 
-    public FirstPanel(CodegenBean codegenBean) {
-        this.codegenBean = codegenBean;
-        FirstPanelLayout customLayout = new FirstPanelLayout();
-        setLayout(customLayout);
-
-        setFont(new Font("Helvetica", Font.PLAIN, 12));
-        lblWSDL = new JLabel("WSDL File");
-        add(lblWSDL);
-
-        txtWSDL = new JTextField("");
-        add(txtWSDL);
-        txtWSDL.addActionListener(this);
-        txtWSDL.addMouseListener(this);
-
-        btnBrowse = new JButton("Browse...");
-        add(btnBrowse);
-        btnBrowse.addActionListener(this);
-
-
-        Dimension dim = new Dimension(450, 600);
-        setSize(dim);
-        fc.setFileFilter(new WSDLFileFilter());
-
-
+    public FirstPanel(WizardComponents wizardComponents,CodegenBean codegenBean) {
+        super(wizardComponents, "Option  was choosed");
+        this.codegenBean=codegenBean;
+        setPanelTopTitle("WSDL selection page");
+        setPanelBottomTitle("please Select the WSDl file location");
+        init();
     }
 
-    public void actionPerformed(ActionEvent e) {
-        Object obj = e.getSource();
-        if (obj == btnBrowse) {
+    private void init(){
 
-            int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                txtWSDL.setText(file.getAbsolutePath());
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(file.getAbsolutePath());
-            } 
-        } else if (obj == txtWSDL) {
-            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+        lblHint =new JLabel("");
+        btnHint =new JButton("Hint >>");
+        btnHint.setBorder(new EmptyBorder(new Insets(0,0,0,0)));
+
+        this.setLayout(new GridBagLayout());
+        lblWSDL =new JLabel("WSDL File Location");
+        txtWSDL =new JTextField();
+        btnBrowse = new JButton("Browse");
+
+        this.setLayout(new GridBagLayout());
+        this.add(lblWSDL
+                , new GridBagConstraints(0, 0, 1, 1, 0.1, 0.0
+                , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
+                , new Insets(5, 10, 0,10), 0, 0));
+
+        this.add(txtWSDL
+                , new GridBagConstraints(1, 0, GridBagConstraints.RELATIVE, 1, 2.0, 0.0
+                , GridBagConstraints.CENTER  , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 10, 0, 10), 0, 0));
+
+        this.add(btnBrowse
+                , new GridBagConstraints(2, 0, 1, 1, 0.1, 0.0
+                , GridBagConstraints.CENTER , GridBagConstraints.NONE
+                , new Insets(5, 10, 0,10), 0, 0));
+        btnBrowse.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                FileChooser.setFileFilter(new WSDLFileFilter());
+                int returnVal = FileChooser.showOpenDialog(btnBrowse);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = FileChooser.getSelectedFile();
+                    txtWSDL.setText(file.getAbsolutePath());
+                    codegenBean.setWSDLFileName(file.getAbsolutePath());
+                    update();
+                }
             }
+        });
 
-        }
-
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        Object obj = e.getSource();
-        if (obj == txtWSDL) {
-            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+        this.add(btnHint,
+                new GridBagConstraints(0, 1, 1, 1, 0.1,0.0
+                        , GridBagConstraints.NORTHWEST, GridBagConstraints.NONE
+                        , new Insets(5, 10, 0, 10), 0, 0));
+        btnHint.addActionListener(new ActionListener()  {
+            public void actionPerformed(ActionEvent e) {
+                if(flag){
+                    btnHint.setText("Hint >>");
+                    lblHint.setText("");
+                    flag=false;
+                }else{
+                    btnHint.setText("Hint <<");
+                    lblHint.setText(hint);
+                    flag=true;
+                }
             }
-        }
+        });
+
+        this.add(lblHint ,
+                new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0.1, 1.0
+                        , GridBagConstraints.NORTHWEST , GridBagConstraints.HORIZONTAL
+                        , new Insets(5, 10, 0,10), 0, 0));
+
+        this.setPageComplete(false);
     }
 
-    public void mouseEntered(MouseEvent e) {
+
+    public void next() {
+        if(txtWSDL.getText()!=null && isPageComplete()){
+            codegenBean.setWSDLFileName(txtWSDL.getText());
+            switchPanel(CodegenFrame.PANEL_OPTION_A );
+        } else
+            switchPanel(CodegenFrame.PANEL_FIRST_A );
+    }
+    public void back() {
+        switchPanel(CodegenFrame.PANEL_CHOOSER );
     }
 
-    public void mouseExited(MouseEvent e) {
-        Object obj = e.getSource();
-        if (obj == txtWSDL) {
-            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
+    public void update(){
+        if(!txtWSDL.getText().trim().equals("")){
+            try {
+                codegenBean.readWSDL();
+                setNextButtonEnabled(true);
+                setFinishButtonEnabled(false);
+                setPageComplete(true);
+            } catch (WSDLException e) {
+                setNextButtonEnabled(false);
+                setFinishButtonEnabled(false);
+                setPageComplete(false);
+                JOptionPane.showMessageDialog(this, "An error occured while parsing the " +
+                        "specified WSDL. Please make sure that the selected file is a valid WSDL.",
+                        "Error!", JOptionPane.ERROR_MESSAGE);
             }
+        }else{
+            setNextButtonEnabled(false);
+            setFinishButtonEnabled(false);
+            setPageComplete(false);
         }
+        setBackButtonEnabled(true);
+
     }
 
-    public void mousePressed(MouseEvent e) {
-        Object obj = e.getSource();
-        if (obj == txtWSDL) {
-            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
-            }
-        }
+    public  int getPageType() {
+        return  WizardPanel.WSDL_2_JAVA_TYPE;
     }
-
-    public void mouseReleased(MouseEvent e) {
-        Object obj = e.getSource();
-        if (obj == txtWSDL) {
-            if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(false,true, false, true);
-                codegenBean.setWSDLFileName(txtWSDL.getText().trim());
-            }
-        }
-    }
+     public String getWSDLFileName(){
+       return txtWSDL.getText().trim();
+   }
 }
 
-/*class WSDLFileFilter extends FileFilter {
-
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
-            return true;
-        }
-        String extension = getExtension(f);
-        if (extension != null) {
-            return extension.equals("wsdl");
-        }
-
-        return false;
-
-    }
-
-    public String getDescription() {
-        return ".wsdl";
-    }
-
-    private String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
-
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        }
-        return ext;
-    }
-
-}*/
-
-class FirstPanelLayout implements LayoutManager {
-
-    public FirstPanelLayout() {
-    }
-
-    public void addLayoutComponent(String name, Component comp) {
-    }
-
-    public void removeLayoutComponent(Component comp) {
-    }
-
-    public Dimension preferredLayoutSize(Container parent) {
-        Dimension dim = new Dimension(0, 0);
-
-        Insets insets = parent.getInsets();
-        dim.width = 541 + insets.left + insets.right;
-        dim.height = 600 + insets.top + insets.bottom;
-
-        return dim;
-    }
-
-    public Dimension minimumLayoutSize(Container parent) {
-        return new Dimension(0, 0);
-    }
-
-    public void layoutContainer(Container parent) {
-        Insets insets = parent.getInsets();
-
-        Component c;
-        c = parent.getComponent(0);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 8, 72, 24);
-        }
-        c = parent.getComponent(1);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 88, insets.top + 8, 350, 24);
-        }
-        c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 448, insets.top + 8, 90, 24);
-        }
-    }
-}
