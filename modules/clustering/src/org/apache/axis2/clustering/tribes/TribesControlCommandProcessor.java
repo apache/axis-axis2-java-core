@@ -24,6 +24,8 @@ import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
+import org.apache.axis2.clustering.control.GetConfigurationCommand;
+import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 
@@ -52,8 +54,7 @@ public class TribesControlCommandProcessor {
         if (command instanceof GetStateCommand) {
 
             // If a GetStateRequest is received by a node which has not yet initialized
-            // (i.e. by getting the GetStateResponseCommand), this node cannot send a response
-            // to the state requester. So we simply return.
+            // this node cannot send a response to the state requester. So we simply return.
             if (configurationContext.
                     getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
                 return;
@@ -62,6 +63,20 @@ public class TribesControlCommandProcessor {
             GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
             getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
             channelSender.sendToMember(getStateRespCmd, sender);
+        } else if (command instanceof GetConfigurationCommand) {
+
+            // If a GetConfigurationCommand is received by a node which has not yet initialized
+            // this node cannot send a response to the state requester. So we simply return.
+            if (configurationContext.
+                    getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                return;
+            }
+            command.execute(configurationContext);
+            GetConfigurationResponseCommand
+                    getConfigRespCmd = new GetConfigurationResponseCommand();
+            getConfigRespCmd.
+                    setServiceGroups(((GetConfigurationCommand) command).getServiceGroupNames());
+            channelSender.sendToMember(getConfigRespCmd, sender);
         } else if (command instanceof AckCommand) {
             AckCommand cmd = (AckCommand) command;
             cmd.setMemberId(TribesUtil.getHost(sender));

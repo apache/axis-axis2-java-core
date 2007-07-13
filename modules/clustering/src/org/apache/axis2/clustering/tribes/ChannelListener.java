@@ -30,6 +30,7 @@ import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
 import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
+import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
@@ -81,7 +82,8 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         // GetStateResponseCommand message
         if (configurationContext.
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-            && !(msg instanceof GetStateResponseCommand)) {
+            && !(msg instanceof GetStateResponseCommand) &&
+            !(msg instanceof GetConfigurationResponseCommand)) {
             return;
         }
         log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
