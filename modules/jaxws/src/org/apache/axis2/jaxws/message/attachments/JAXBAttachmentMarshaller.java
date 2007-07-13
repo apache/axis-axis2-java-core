@@ -62,6 +62,16 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         if (message != null) {
           value = message.isMTOMEnabled();
         }
+        
+        
+        // If the writer is not an MTOM XMLStreamWriter then we don't have
+        // any place to store the attachment
+        if (!(writer instanceof MTOMXMLStreamWriter)) {
+            if (log.isDebugEnabled()) {
+                log.debug("The writer is not enabled for MTOM.  MTOM values will not be optimized");
+            }
+            value = false;
+        }
     
         if (log.isDebugEnabled()){ 
             log.debug("isXOPPackage returns " + value);
@@ -107,9 +117,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         } catch (Throwable t) {
             throw ExceptionFactory.makeWebServiceException(t);
         }
-
-        return "cid:" + cid;
-
+        return cid == null ? null : "cid:" + cid;
     }
     
     @Override
@@ -118,7 +126,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             log.debug("Adding MTOM/XOP datahandler attachment for element: " + "{" + namespace + "}" + localPart);
         }
         String cid = addDataHandler(data);
-        return "cid:" + cid;
+        return cid == null ? null : "cid:" + cid;
     }
     
     @Override
@@ -142,16 +150,14 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             textNode = new OMTextImpl(dh, null);
             cid = textNode.getContentID();
             ((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
-        } else {
-            cid = UUIDGenerator.getUUID();
+            // Remember the attachment on the message.
+            message.addDataHandler(dh, cid);
         }
         
         if (log.isDebugEnabled()){ 
             log.debug("   content id=" + cid);
             log.debug("   dataHandler  =" + dh);
         }
-        // Remember the attachment on the message.
-        message.addDataHandler(dh, cid);
         return cid;
     }
 

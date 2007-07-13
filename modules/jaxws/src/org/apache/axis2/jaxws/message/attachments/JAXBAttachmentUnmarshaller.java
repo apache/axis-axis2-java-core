@@ -100,11 +100,9 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
                 return dh;
             }
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("A dataHandler was not found for [" + cid + "]");
-        }
-        return null;
+        // No Data Handler found
+        throw ExceptionFactory.makeWebServiceException("A data handler was not found " +
+                        "for content id " + cid);
     }
     
     /**

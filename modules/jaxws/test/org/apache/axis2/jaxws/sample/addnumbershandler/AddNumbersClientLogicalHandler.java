@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.xml.transform.OutputKeys;
@@ -32,6 +33,7 @@ import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
 /*
@@ -40,7 +42,8 @@ import org.apache.axis2.jaxws.handler.LogicalMessageContext;
  * sure what direction we're going.
  */
 
-public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+public class AddNumbersClientLogicalHandler 
+implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
     public void close(MessageContext messagecontext) {
     }
@@ -50,7 +53,8 @@ public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.Logi
     }
 
     public boolean handleMessage(LogicalMessageContext messagecontext) {
-        Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        Boolean outbound = 
+            (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound response on the client
 
             // previously caused a NPE due to internal Properties.putAll(map);
@@ -64,26 +68,44 @@ public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.Logi
              */
             String propKey = "AddNumbersClientProtocolHandlerOutboundAppScopedProperty";
             String myClientVal = (String)messagecontext.get(propKey);
-            if (myClientVal == null)
-                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+            if (myClientVal == null) {
+                throw new RuntimeException("Property " + propKey + " was null.  " +
+                                "MEPContext is not searching hard enough for the property.");
+            }
+            
+            // Check for the presences of the attachment property
+            propKey = MessageContext.INBOUND_MESSAGE_ATTACHMENTS;
+            Map map = (Map) messagecontext.get(propKey);
+            if (map == null) {
+                throw new RuntimeException("Property " + propKey + " was null");
+            }
+            if (!(map instanceof AttachmentsAdapter)) {
+                throw new RuntimeException("Expected AttachmentAddapter for Property " + 
+                                           propKey);
+            }
             propKey = "AddNumbersClientProtocolHandlerOutboundHandlerScopedProperty";
             myClientVal = (String)messagecontext.get(propKey);
-            if (myClientVal == null)
-                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
-
+            if (myClientVal == null) {
+                throw new RuntimeException("Property " + propKey + " was null.  " +
+                                "MEPContext is not searching hard enough for the property.");
+            }
+            
             /*
              * These props were set on the inbound flow.  Inbound flow handlers
              * should have access to them.
              */
             propKey = "AddNumbersClientProtocolHandlerInboundAppScopedProperty";
             myClientVal = (String)messagecontext.get(propKey);
-            if (myClientVal == null)
-                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
+            if (myClientVal == null) {
+                throw new RuntimeException("Property " + propKey + " was null.  " +
+                                "MEPContext is not searching hard enough for the property.");
+            }
             propKey = "AddNumbersClientProtocolHandlerInboundHandlerScopedProperty";
             myClientVal = (String)messagecontext.get(propKey);
-            if (myClientVal == null)
-                throw new RuntimeException("Property " + propKey + " was null.  MEPContext is not searching hard enough for the property.");
-            
+            if (myClientVal == null) {
+                throw new RuntimeException("Property " + propKey + " was null.  " +
+                                "MEPContext is not searching hard enough for the property.");
+            }
             LogicalMessage msg = messagecontext.getMessage();
             String st = getStringFromSourcePayload(msg.getPayload());
             String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - 1);
@@ -97,8 +119,20 @@ public class AddNumbersClientLogicalHandler implements javax.xml.ws.handler.Logi
             s = msg.getPayload();
             
             String st = getStringFromSourcePayload(msg.getPayload());
-            if (st.contains("<arg0>99</arg0>"))
+            if (st.contains("<arg0>99</arg0>")) {
                 throw new ProtocolException("I don't like the value 99");
+            }
+            
+            // Check for the presences of the attachment property
+            String propKey = MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS;
+            Map map = (Map) messagecontext.get(propKey);
+            if (map == null) {
+                throw new RuntimeException("Property " + propKey + " was null");
+            }
+            if (!(map instanceof AttachmentsAdapter)) {
+                throw new RuntimeException("Expected AttachmentAddapter for Property " +
+                                           propKey);
+            }
         }
         return true;
     }

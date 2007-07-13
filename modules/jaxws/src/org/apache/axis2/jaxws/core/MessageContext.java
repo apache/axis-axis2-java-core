@@ -56,6 +56,7 @@ public class MessageContext {
     private QName operationName;    //FIXME: This should become the OperationDescription
     private Message message;
     private Mode mode;
+    private boolean isOutbound;  // Outbound or inbound message context
     
     // TODO:  flag to set whether we delegate property setting up to the
     // axis2 options objecct or keep it local
@@ -73,17 +74,31 @@ public class MessageContext {
     // It is not converted into a Message.
     private Throwable localException = null;
 
+    /**
+     * Construct a MessageContext without a prior Axis2 MessageContext
+     * (usage outbound dispatch/proxy)
+     */
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
+        isOutbound = true;
         if (!DELEGATE_TO_OPTIONS) {
             properties = new HashMap<String, Object>();
         }
            
     }
+    
+    /**
+     * Construct a MessageContext with a prior MessageContext
+     * (usage inbound client/server or outbound server)
+     * @param mc
+     * @throws WebServiceException
+     */
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         if (!DELEGATE_TO_OPTIONS) {
             properties = new HashMap<String, Object>();
         }
+        // Assume inbound (caller must setOutbound)
+        isOutbound = false;
 
         /*
          * Instead of creating a member MEPContext object every time, we will
@@ -257,6 +272,20 @@ public class MessageContext {
             setMEPContext(new MEPContext(this));
         }
         return mepCtx;
+    }
+    
+    /**
+     * @return if outbound MessageContext
+     */
+    public boolean isOutbound() {
+        return isOutbound;
+    }
+
+    /**
+     * @param isOutbound true if outbound MessageContext
+     */
+    public void setOutbound(boolean isOutbound) {
+        this.isOutbound = isOutbound;
     }
     
     private class ReadOnlyProperties extends AbstractMap<String, Object> {

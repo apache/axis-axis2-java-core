@@ -42,6 +42,12 @@ public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
      */
     protected BaseMessageContext(MessageContext messageCtx) {
         this.messageCtx = messageCtx;
+        
+        // Install an an AttachmentsAdapter between the 
+        // jaxws attachment standard properties and the
+        // MessageContext Attachments implementation.
+        AttachmentsAdapter.install(messageCtx);
+        TransportHeadersAdapter.install(messageCtx);
     }
 
     /* (non-Javadoc)

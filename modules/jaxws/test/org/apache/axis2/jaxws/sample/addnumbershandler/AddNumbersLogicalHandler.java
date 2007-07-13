@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
@@ -34,9 +35,11 @@ import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
 
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
-public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
+public class AddNumbersLogicalHandler 
+implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
     private int deduction = 1;
     
@@ -58,23 +61,37 @@ public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHan
      * the trick for kicking the tires in the handler framework.  The AddNumbers service takes two
      * ints as incoming params, adds them, and returns the sum.  This method subtracts 1 from the 
      * first int on the inbound request, and subtracts "deduction" from the int on the outbound
-     * response.  So the client app should expect a sum 3 less than a sum with this handler manipulating
-     * the SOAP message.
+     * response.  So the client app should expect a sum 3 less than a sum with this handler 
+     * manipulating the SOAP message.
      */
     public boolean handleMessage(LogicalMessageContext messagecontext) {
         Boolean outbound = (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound request if we're on the server
             LogicalMessage msg = messagecontext.getMessage();
             String st = getStringFromSourcePayload(msg.getPayload());
-            if (st.contains("<arg0>99</arg0>"))
+            if (st.contains("<arg0>99</arg0>")) {
                 throw new ProtocolException("I don't like the value 99");
+            }
             String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - 1);
             st = replaceFirstArg(st, txt);
             msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
             
             messagecontext.put("AddNumbersLogicalHandlerInboundAppScopedProperty", "blargval");
-            messagecontext.setScope("AddNumbersLogicalHandlerInboundAppScopedProperty", Scope.APPLICATION);
-            messagecontext.put("AddNumbersLogicalHandlerInboundHandlerScopedProperty", "blargval");
+            messagecontext.setScope("AddNumbersLogicalHandlerInboundAppScopedProperty", 
+                                    Scope.APPLICATION);
+            messagecontext.put("AddNumbersLogicalHandlerInboundHandlerScopedProperty", 
+                               "blargval");
+            
+            // Check for the presences of the attachment property
+            String propKey = MessageContext.INBOUND_MESSAGE_ATTACHMENTS;
+            Map map = (Map) messagecontext.get(propKey);
+            if (map == null) {
+                throw new RuntimeException("Property " + propKey + " was null");
+            }
+            if (!(map instanceof AttachmentsAdapter)) {
+                throw new RuntimeException("Expected AttachmentAddapter for Property " + 
+                                           propKey);
+            }
 
         } else { // outbound response if we're on the server
             LogicalMessage msg = messagecontext.getMessage();
@@ -82,6 +99,17 @@ public class AddNumbersLogicalHandler implements javax.xml.ws.handler.LogicalHan
             String txt = String.valueOf(Integer.valueOf(getFirstArg(st)) - deduction);
             st = replaceFirstArg(st, txt);
             msg.setPayload(new StreamSource(new StringBufferInputStream(st)));
+            
+            // Check for the presences of the attachment property
+            String propKey = MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS;
+            Map map = (Map) messagecontext.get(propKey);
+            if (map == null) {
+                throw new RuntimeException("Property " + propKey + " was null");
+            }
+            if (!(map instanceof AttachmentsAdapter)) {
+                throw new RuntimeException("Expected AttachmentAddapter for Property " + 
+                                           propKey);
+            }
         }
         return true;
     }

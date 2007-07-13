@@ -37,6 +37,8 @@ import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
@@ -51,13 +53,12 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /** Miscellaneous Utilities that may be useful inside and outside the Message subcomponent. */
@@ -205,6 +206,14 @@ public class MessageUtils {
 
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);
+        }
+        
+        // Make sure the the JAX-WS AttachmentAdapter is correctly installed
+        // So that any user attachments provide are moved to the Axiom Attachments
+        // Map
+        if (message.getMessageContext() != null) {
+            AttachmentsAdapter.install(message.getMessageContext());
+            TransportHeadersAdapter.install(message.getMessageContext());
         }
         
         if (message.isDoingSWA()) {

@@ -156,6 +156,11 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         
         XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(baos, encoding);
         
+        // Since we are writing just the xml, 
+        // The writer will be a normal writer.
+        // All mtom objects will be inlined.
+        // writer = new MTOMXMLStreamWriter(writer);
+        
         // Write the business object to the writer
         _outputFromBO(busObj, busContext, writer);
         

@@ -36,7 +36,14 @@ public class PropertyMigrator implements ApplicationContextMigrator {
 
     public void migratePropertiesToMessageContext(Map<String, Object> userContext,
                                                   MessageContext messageContext) {
-        messageContext.setProperties(userContext);
+        
+        // Avoid using putAll as this causes copies of the propery set
+        if (userContext != null) {
+            for (String key: userContext.keySet()) {
+                Object value = userContext.get(key);
+                messageContext.setProperty(key, value);
+            }
+        }
     }
 
 }
