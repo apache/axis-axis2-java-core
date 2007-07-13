@@ -74,12 +74,10 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URISyntaxException;
 import java.security.PrivilegedAction;
 import java.util.*;
 
@@ -1563,7 +1561,7 @@ public class AxisService extends AxisDescription {
             Document doc = XMLUtils.newDocument(in);
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setFeature("javax.wsdl.importDocuments", true);
-            Definition wsdlDefinition = reader.readWSDL(null, doc);
+            Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
             return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
             log.error(e);
@@ -1577,6 +1575,19 @@ public class AxisService extends AxisDescription {
         } catch (WSDLException e) {
             log.error(e);
             throw AxisFault.makeFault(e);
+        }
+    }
+
+    private static String getBaseURI(String currentURI)  {
+        try {
+            File file = new File(currentURI);
+            if (file.exists()) {
+                return file.getCanonicalFile().getParentFile().toURI().toString();
+            }
+            String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
+            return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+        } catch (IOException e) {
+            return null;
         }
     }
 
