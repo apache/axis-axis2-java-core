@@ -21,28 +21,26 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.deployment.repository.util.WSInfo;
+import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Enumeration;
-import java.util.ArrayList;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
-
-    static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     protected DeploymentEngine deploymentEngine;
     private HashMap directoryToExtensionMappingMap;
@@ -162,7 +160,7 @@ public class RepositoryListener implements DeploymentConstants {
                         path = path.substring(1);
                     }
                     try {
-                        path = URLDecoder.decode(path, defaultEncoding);
+                        path = URLDecoder.decode(path, Utils.defaultEncoding);
                     } catch (UnsupportedEncodingException e) {
                         // Log this?
                     }
@@ -196,9 +194,7 @@ public class RepositoryListener implements DeploymentConstants {
                 location = url.toString();
             }
             if (location.startsWith("file")) {
-                String path = URLDecoder.decode(url.getPath(), defaultEncoding);
-                java.io.File file =
-                        new java.io.File(path.replace('/', File.separatorChar).replace('|', ':'));
+                File file = Utils.toFile(url);
                 return file.getAbsolutePath();
             } else {
                 return url.toString();

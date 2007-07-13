@@ -243,7 +243,7 @@ public class ScriptDeploymentEngine extends DeploymentEngine {
         try {
             Reader reader = new InputStreamReader(is, "UTF-8");
             char[] buffer = new char[1024];
-            StringBuilder source = new StringBuilder();
+            StringBuffer source = new StringBuffer();
             int count;
             while ((count = reader.read(buffer)) > 0) {
                 source.append(buffer, 0, count);

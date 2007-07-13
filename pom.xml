@@ -59,6 +59,7 @@
 		<module>modules/webapp</module>
 		<module>modules/xmlbeans</module>
 		<module>modules/samples</module>
+	    <module>modules/scripting</module>
 	</modules>
  	<profiles>
 	   <profile>
@@ -72,21 +73,89 @@
 			</modules>
 	    </profile>	
 		<profile>
+			<id>java14</id>
+			<activation>
+				<jdk>1.4</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>axis2-jar</id>
+								<phase>package</phase>
+								<configuration>
+									<tasks>
+										<mkdir dir="target/lib"/>
+										<jar destfile="target/lib/axis2-${pom.version}.jar">
+											<fileset dir="modules/java2wsdl/target/classes"/>
+											<fileset dir="modules/kernel/target/classes"/>
+											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/codegen/target/classes"/>
+											<fileset dir="modules/adb/target/classes"/>
+											<fileset dir="modules/adb-codegen/target/classes"/>
+											<fileset dir="modules/xmlbeans/target/classes"/>
+										</jar>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>java15</id>
 			<activation>
 				<jdk>1.5</jdk>
 			</activation>
 			<modules>
-				<module>modules/scripting</module>
 				<module>modules/jaxbri</module>
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
-                                <module>modules/jws-api</module>
+                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>
 			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>axis2-jar</id>
+								<phase>package</phase>
+								<configuration>
+									<tasks>
+										<mkdir dir="target/lib"/>
+										<jar destfile="target/lib/axis2-${pom.version}.jar">
+											<fileset dir="modules/java2wsdl/target/classes"/>
+											<fileset dir="modules/kernel/target/classes"/>
+											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/codegen/target/classes"/>
+											<fileset dir="modules/adb/target/classes"/>
+											<fileset dir="modules/adb-codegen/target/classes"/>
+											<fileset dir="modules/xmlbeans/target/classes"/>
+											<fileset dir="modules/clustering/target/classes"/>
+										</jar>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>java16</id>
@@ -98,11 +167,43 @@
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
-                                <module>modules/jws-api</module>
+                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>
 			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>axis2-jar</id>
+								<phase>package</phase>
+								<configuration>
+									<tasks>
+										<mkdir dir="target/lib"/>
+										<jar destfile="target/lib/axis2-${pom.version}.jar">
+											<fileset dir="modules/java2wsdl/target/classes"/>
+											<fileset dir="modules/kernel/target/classes"/>
+											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/codegen/target/classes"/>
+											<fileset dir="modules/adb/target/classes"/>
+											<fileset dir="modules/adb-codegen/target/classes"/>
+											<fileset dir="modules/xmlbeans/target/classes"/>
+											<fileset dir="modules/clustering/target/classes"/>
+										</jar>
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 	<ciManagement>
@@ -140,35 +241,6 @@
 	</distributionManagement>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>axis2-jar</id>
-						<phase>package</phase>
-						<configuration>
-							<tasks>
-								<mkdir dir="target/lib"/>
-								<jar destfile="target/lib/axis2-${pom.version}.jar">
-									<fileset dir="modules/java2wsdl/target/classes"/>
-									<fileset dir="modules/kernel/target/classes"/>
-									<fileset dir="modules/addressing/target/classes"/>
-									<fileset dir="modules/codegen/target/classes"/>
-									<fileset dir="modules/adb/target/classes"/>
-									<fileset dir="modules/adb-codegen/target/classes"/>
-									<fileset dir="modules/xmlbeans/target/classes"/>
-									<fileset dir="modules/clustering/target/classes"/>
-
-								</jar>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
