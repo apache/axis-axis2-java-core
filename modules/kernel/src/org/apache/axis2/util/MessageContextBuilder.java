@@ -490,6 +490,9 @@ public class MessageContextBuilder {
             soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
                     ? getSenderFaultCode(context.getEnvelope().getNamespace())
                     : soapFaultCode;
+        }
+        
+        if (faultCode == null) {
             if (context.isSOAP11()) {
                 fault.getCode().setText(soapFaultCode);
             } else {
@@ -497,9 +500,6 @@ public class MessageContextBuilder {
             }
         }
 
-        if (faultCode == null && !context.isSOAP11()) {
-            fault.getCode().getValue().setText(soapFaultCode);
-        }
         SOAPFaultReason faultReason = (SOAPFaultReason)context.getProperty(
                                             SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
 
