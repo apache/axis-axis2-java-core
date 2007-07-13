@@ -47,7 +47,7 @@ public class RPCLitSWAProxyTests extends TestCase {
     private QName portName = new QName("http://org/apache/axis2/jaxws/proxy/rpclitswa",
             "RPCLitSWA");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+
-    "test/org/apache/axis2/jaxws/proxy/rpclitswa/META-INF/rpclitswa.wsdl";
+    "test/org/apache/axis2/jaxws/proxy/rpclitswa/META-INF/RPCLitSWA.wsdl";
         
     private DataSource imageDS;
     
