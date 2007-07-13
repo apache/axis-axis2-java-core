@@ -27,8 +27,12 @@ import org.apache.axis2.context.ConfigurationContext;
 public class ExceptionCommand extends ConfigurationClusteringCommand {
     private Throwable exception;
 
+    public ExceptionCommand(Throwable exception) {
+        this.exception = exception;
+    }
+
     public int getCommandType() {
-        return ConfigurationClusteringCommand.COMMIT;
+        return ConfigurationClusteringCommand.EXCEPTION;
     }
 
     public Throwable getException() {
@@ -56,6 +60,6 @@ public class ExceptionCommand extends ConfigurationClusteringCommand {
     }
 
     public String toString() {
-        return "ExceptionCommand";
+        return "ExceptionCommand["+exception.getClass()+"]: \"" + exception.getMessage() + "\"";
     }
 }

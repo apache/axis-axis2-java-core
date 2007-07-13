@@ -74,34 +74,6 @@ public class ChannelSender implements MessageSender {
         }
     }
 
-    public long sendToGroup(Throwable throwable) throws ClusteringFault {
-        if (channel == null) {
-            return 0;
-        }
-
-        long timeToSend = 0;
-
-        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
-        while (true) {
-            if (channel.getMembers().length > 0) {
-                try {
-                    long start = System.currentTimeMillis();
-                    channel.send(channel.getMembers(), throwable, Channel.SEND_OPTIONS_USE_ACK);
-                    timeToSend = System.currentTimeMillis() - start;
-                    log.debug("Sent " + throwable + " to group");
-                    break;
-                } catch (ChannelException e) {
-                    String message = "Error sending exception message : " + throwable +
-                                     ". Reason " + e.getMessage();
-                    log.warn(message);
-                }
-            } else {
-                break;
-            }
-        }
-        return timeToSend;
-    }
-
     public long sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         long timeToSend = 0;
         try {

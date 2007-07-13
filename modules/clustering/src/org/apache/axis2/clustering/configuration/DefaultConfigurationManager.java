@@ -83,7 +83,7 @@ public class DefaultConfigurationManager implements ConfigurationManager {
             log.debug("Enter: DefaultConfigurationManager::exceptionOccurred");
         }
 
-        send(throwable);
+        send(new ExceptionCommand(throwable));
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DefaultConfigurationManager::exceptionOccurred");
@@ -159,7 +159,7 @@ public class DefaultConfigurationManager implements ConfigurationManager {
     }
 
     protected void send(Throwable throwable) throws ClusteringFault {
-        sender.sendToGroup(throwable);
+        send(new ExceptionCommand(throwable));
     }
 
     protected void send(ConfigurationClusteringCommand command) throws ClusteringFault {
