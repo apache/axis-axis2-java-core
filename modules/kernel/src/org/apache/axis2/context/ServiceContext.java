@@ -726,9 +726,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      */
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
-            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
-                log.warn(logCorrelationIDString + ":" + methodname + "(): ****WARNING**** " +
-                    myClassName + ".activate(configurationContext) needs to be invoked.");
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(logCorrelationIDString + ":" + methodname + "(): ****WARNING**** "
+                        + myClassName + ".activate(configurationContext) needs to be invoked.");
             }
         }
     }
