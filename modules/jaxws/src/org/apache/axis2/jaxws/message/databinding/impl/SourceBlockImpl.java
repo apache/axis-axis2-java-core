@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.message.databinding.SourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -191,17 +192,9 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 
     /** Creates an XMLStreamReader from a Source using a slow but proven algorithm. */
     private XMLStreamReader _slow_getReaderFromSource(Source src) throws XMLStreamException {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Result result = new StreamResult(out);
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(src, result);
-            ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
-            return StAXUtils.createXMLStreamReader(bytes);
-        } catch (TransformerException e) {
-            throw new XMLStreamException(e);
-        }
-
+        byte[] bytes = (byte[]) ConvertUtils.convert(src, byte[].class);
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        return StAXUtils.createXMLStreamReader(bais);
     }
 
     @Override

@@ -74,6 +74,13 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     public String addMtomAttachment(byte[] data, int offset, int length,
                                     String mimeType, String namespace, String localPart) {
 
+        if (offset != 0 || length != data.length) {
+            int len = length - offset;
+            byte[] newData = new byte[len];
+            System.arraycopy(data, offset, newData, 0, len);
+            data = newData;
+        }
+        
         if (mimeType == null || mimeType.length() == 0) {
             mimeType = APPLICATION_OCTET;
         }

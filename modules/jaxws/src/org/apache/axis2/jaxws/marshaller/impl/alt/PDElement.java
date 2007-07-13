@@ -21,19 +21,31 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 
 
-/** A PDElement object holds a ParameterDescription and the matching Element object */
+/** A PDElement object holds a ParameterDescription  
+ *  Element object.
+ * 
+ * If this Element represents an attachment, 
+ *   1) The Element represents the xml element that references the attachment (null if SWA Attachment)
+ *   2) The Attachment object represents the attachment
+ */
 public class PDElement {
     private ParameterDescription param;
     private Element element;
+    private Attachment attachment; // Null if not an attachment
     private Class byJavaTypeClass;  // Class for "by java type" marshalling and unmarshalling is used....normally null
 
-    public PDElement(ParameterDescription param, Element element, Class byType) {
+    public PDElement(ParameterDescription param, Element element, Class byType, Attachment attachment) {
         super();
         this.param = param;
         this.element = element;
         this.byJavaTypeClass = byType;
+        this.attachment = attachment;
     }
 
+    public PDElement(ParameterDescription param, Element element, Class byType) {
+        this(param, element, byType, null);
+    }
+    
     public ParameterDescription getParam() {
         return param;
     }
@@ -49,5 +61,9 @@ public class PDElement {
 
     public void setByJavaTypeClass(Class byType) {
         this.byJavaTypeClass = byType;
+    }
+    
+    public Attachment getAttachment() {
+        return attachment;
     }
 }

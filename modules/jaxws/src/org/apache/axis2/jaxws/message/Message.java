@@ -65,9 +65,16 @@ public interface Message extends XMLPart {
     
     /**
      * Get the list of attachment content ids for the message
-     * @return Set<String>
+     * @return List<String>
      */
-    public Set<String> getAttachmentIDs();
+    public List<String> getAttachmentIDs();
+  
+    /**
+     * Get the indicated (non-soap part) attachment id
+     * @param index
+     * @return CID or null if not present
+     */
+    public String getAttachmentID(int index);
     
     /**
      * Get the attachment identified by the contentID 
@@ -75,6 +82,18 @@ public interface Message extends XMLPart {
      * @return
      */
     public DataHandler getDataHandler(String cid);
+    
+    /**
+     * Indicate that an SWA DataHandler was added to the message.
+     * This information will be used to trigger SWA serialization.
+     * @param value
+     */
+    public void setDoingSWA(boolean value);
+    
+    /**
+     * @return true if SWA DataHandler is present
+     */
+    public boolean isDoingSWA();
     
     /** 
      * Get the attachment and remove it from the Message

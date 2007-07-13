@@ -66,6 +66,7 @@ import org.apache.axis2.jaxws.provider.StringProviderTests;
 import org.apache.axis2.jaxws.proxy.GorillaDLWProxyTests;
 import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.jaxws.proxy.ProxyTests;
+import org.apache.axis2.jaxws.proxy.RPCLitSWAProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
@@ -158,6 +159,7 @@ public class JAXWSTest extends TestCase {
         //TODO: FIXME - Was working, now doesn't
         //suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(RPCProxyTests.class);
+        suite.addTestSuite(RPCLitSWAProxyTests.class);
         suite.addTestSuite(GorillaDLWProxyTests.class);
         suite.addTestSuite(SOAP12ProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);

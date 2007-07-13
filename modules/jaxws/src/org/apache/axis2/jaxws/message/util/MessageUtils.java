@@ -206,6 +206,13 @@ public class MessageUtils {
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);
         }
+        
+        if (message.isDoingSWA()) {
+            // Enable SWA on the Axis2 MessageContext
+            msgContext.setDoingSwA(true);
+            Options opts = msgContext.getOptions();
+            opts.setProperty(Configuration.ENABLE_SWA, "true");
+        }
 
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {

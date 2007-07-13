@@ -423,7 +423,7 @@ public class DescriptionUtils {
             while (bindingOpIter.hasNext()) {
                 BindingOperation bindingOp = (BindingOperation) bindingOpIter.next();
                 // found the BindingOperation that matches the current OperationDescription
-                if (bindingOp.getName().equals(opDesc.getOperationName())) {
+                if (bindingOp.getName().equals(opDesc.getName().getLocalPart())) {
                     if (bindingOp.getBindingInput() != null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Processing binding input");

@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.message.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Set;
 
 import javax.activation.DataHandler;
@@ -87,6 +88,7 @@ public class MessageImpl implements Message {
     
     // Set after we have past the pivot point when the message is consumed
     private boolean postPivot = false;
+    private boolean doingSWA = false;
     
     /**
      * MessageImpl should be constructed via the MessageFactory.
@@ -229,6 +231,37 @@ public class MessageImpl implements Message {
         
     }
     
+    /**
+     * Get the indicated (non-soap part) attachment id
+     * @param index
+     * @return CID or null if not present
+     */
+    public String getAttachmentID(int index) {
+        List<String> cids = getAttachmentIDs();
+        String spCID = getSOAPPartContentID();
+        if (log.isDebugEnabled()) {
+            log.debug("getAttachmentID for index =" + index);
+            for (int i = 0; i < cids.size(); i++) {
+                log.debug("Attachment CID (" + i + ") = " + cids.indexOf(i));
+            }
+            log.debug("The SOAP Part CID is ignored.  It's CID is (" + spCID + ")");
+        }
+        int spIndex = (spCID == null) ? -1 : cids.indexOf(spCID);
+        
+        // Bump index so we don't consider the soap part
+        index = (spIndex != -1 && spIndex <= index) ? index + 1 : index;
+        
+        // Return the content id at the calculated index
+        String resultCID = null;
+        if (index < cids.size()) {
+            resultCID = cids.get(index);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Returning CID=" + resultCID);
+         }
+        return resultCID;
+    }
+    
     private String getSOAPPartContentID() {
         String contentID = null;
         if (messageContext == null) {
@@ -287,8 +320,8 @@ public class MessageImpl implements Message {
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.message.Message#getAttachmentIDs()
      */
-    public Set<String> getAttachmentIDs() {
-        return attachments.getContentIDSet();
+    public List<String> getAttachmentIDs() {
+        return attachments.getContentIDList();
     }
     
     
@@ -533,5 +566,11 @@ public class MessageImpl implements Message {
         }
         this.messageContext = messageContext;
     }
-    
+    public void setDoingSWA(boolean value) {
+        doingSWA = value;
+    }
+
+    public boolean isDoingSWA() {
+        return doingSWA;
+    }
 }

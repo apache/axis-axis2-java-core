@@ -196,6 +196,7 @@ class OperationDescriptionImpl
                 axisOperation = createClientAxisOperation();
             }
         }
+        buildAttachmentInformation();
     }
 
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
@@ -203,6 +204,7 @@ class OperationDescriptionImpl
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
         this.operationQName = axisOperation.getName();
+        buildAttachmentInformation();
     }
 
     OperationDescriptionImpl(MethodDescriptionComposite mdc,
@@ -221,7 +223,7 @@ class OperationDescriptionImpl
 
         parameterDescriptions = createParameterDescriptions();
         faultDescriptions = createFaultDescriptions();
-		isListType = mdc.isListType();
+        isListType = mdc.isListType();
         buildAttachmentInformation();
 
         //If an AxisOperation was already created for us by populateService then just use that one
@@ -1786,17 +1788,44 @@ class OperationDescriptionImpl
      *
      */
     private void buildAttachmentInformation() {
-
+        if (log.isDebugEnabled()) {
+            log.debug("Start buildAttachmentInformation");
+        }
         // Only building attachment info if we find a full WSDL
         if (this.getEndpointInterfaceDescriptionImpl()
                 .getEndpointDescriptionImpl()
                 .isWSDLFullySpecified()) {
+            if (log.isDebugEnabled()) {
+                log.debug("A full WSDL is available.  Query the WSDL binding for the AttachmentDescription information.");
+            }
             DescriptionUtils.getAttachmentFromBinding(this,
                                                       this.getEndpointInterfaceDescriptionImpl()
                                                           .getEndpointDescriptionImpl()
                                                           .getWSDLBinding());
+        }  else {
+            if (log.isDebugEnabled()) {
+                log.debug("A full WSDL is not available. AttachmentDescriptions are not built.  Processing continues.");
+            }
+            // TODO: Dummy attachment code to get the attachment test working.  I am working on the code
+            // to get this information built automatically from the wsdl
+            // START_HACK
+            if (log.isDebugEnabled()) {
+                log.debug("Adding dummy Attachment information.");
+            }
+            addPartAttachmentDescription("dummyAttachmentIN",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"text/plain"}));
+            addPartAttachmentDescription("dummyAttachmentINOUT",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"image/jpeg"}));
+            addPartAttachmentDescription("dummyAttachmentOUT",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"text/plain"}));
+            // END_HACK
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("End buildAttachmentInformation");
+        }
     }
 
     /**

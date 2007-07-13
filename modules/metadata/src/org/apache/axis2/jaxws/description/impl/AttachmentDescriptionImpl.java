@@ -17,10 +17,14 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.jaxws.description.AttachmentType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class AttachmentDescriptionImpl implements
         org.apache.axis2.jaxws.description.AttachmentDescription {
 
+    private static final Log log = LogFactory.getLog(AttachmentDescriptionImpl.class);
+    
     private AttachmentType attachmentType;
     private String[] mimeTypes;
     
@@ -31,6 +35,11 @@ public class AttachmentDescriptionImpl implements
     public AttachmentDescriptionImpl(AttachmentType attachmentType, String[] mimeTypes) {
         this.attachmentType = attachmentType;
         this.mimeTypes = mimeTypes;
+        if (log.isDebugEnabled()) {
+            String debugString = toString();
+            log.debug("Created AttachmentDescriptionImpl");
+            log.debug(debugString);
+        }
     }
 
     public AttachmentType getAttachmentType() {

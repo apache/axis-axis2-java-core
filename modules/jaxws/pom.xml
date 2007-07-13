@@ -228,6 +228,12 @@
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
 								</java>
+							   <echo>Generating java from RPCLitSWA.wsdl</echo>
+                               <java classname="com.sun.tools.xjc.Driver" fork="true">
+			                        <classpath refid="maven.runtime.classpath"/>
+			                        <classpath location="${compiled.classes.dir}"/>
+			                        <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl"/>
+								</java>
 								<echo>Generating java from gorilla_dlw.wsdl</echo>
 								<java classname="com.sun.tools.xjc.Driver" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
@@ -531,6 +537,17 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+							    <copy toDir="target/test-classes/services/RPCLitSWA/">
+			                        <fileset dir="target/test-classes">
+				                        <include name="org/apache/axis2/jaxws/proxy/rpclitswa/**"/>
+			                        </fileset>
+			                        <fileset dir="test/org/apache/axis2/jaxws/proxy/rpclitswa">
+		                                <include name="META-INF/**"/>
+			                        </fileset>
+			                        <fileset dir="target/classes">
+		                                <include name="org/apache/axis2/jaxws/server/**"/>
+			                       </fileset>
+		                       </copy>
 								<copy toDir="target/test-classes/services/SOAP12EchoService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
