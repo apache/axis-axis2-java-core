@@ -2139,6 +2139,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 ByteArrayOutputStream msgData = new ByteArrayOutputStream();
 
                 OMOutputFormat outputFormat = new OMOutputFormat();
+                outputFormat.setAutoCloseWriter(true);
 
                 outputFormat.setSOAP11(isSOAP11);
 
