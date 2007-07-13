@@ -372,18 +372,18 @@ public class SOAPPartImpl extends SOAPPart {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            InputStream is;
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            XMLStreamReader reader;
+
             if (source instanceof StreamSource) {
-                is = ((StreamSource)source).getInputStream();
+                reader = inputFactory.createXMLStreamReader(source);
             } else {
                 Result result = new StreamResult(baos);
                 Transformer xformer = TransformerFactory.newInstance().newTransformer();
                 xformer.transform(source, result);
-                is = new ByteArrayInputStream(baos.toByteArray());
+                InputStream is = new ByteArrayInputStream(baos.toByteArray());
+                reader = inputFactory.createXMLStreamReader(is);
             }
-
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = inputFactory.createXMLStreamReader(is);
 
             StAXSOAPModelBuilder builder1 = null;
             if (this.envelope.element.getOMFactory() instanceof SOAP11Factory) {
