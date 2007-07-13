@@ -305,29 +305,13 @@ public class Utils {
      * - if he trying to engage the same module then method will returen false
      * - else it will return true
      *
-     * @param deployingModuleName the module we're currently deploying
-     * @param deployedModulename  an existing module
-     * @return true if these are different modules, false if they're the same
-     * @throws AxisFault if two different versions of the same module are deployed
      */
-    public static boolean checkVersion(String deployingModuleName,
-                                       String deployedModulename) throws AxisFault {
-        String module1name = getModuleName(deployingModuleName);
-        String module2name = getModuleName(deployedModulename);
-        String module1version = getModuleVersion(deployingModuleName);
-        String module2version = getModuleVersion(deployedModulename);
-        if (module1name.equals(module2name)) {
-            if (module1version != null) {
-                if (!module1version.equals(module2version)) {
-                    throw new AxisFault("trying to engage two different module versions " +
-                                        module1version + " : " + module2version);
-                } else {
-                    return true;
-                }
-            } else if (module2version != null) {
-                // TODO: Check default version?
-                return false;
-            }
+    public static boolean checkVersion(String module1version,
+                                       String module2version) throws AxisFault {
+        if ((module1version !=null && !module1version.equals(module2version)) ||
+                module2version !=null && !module2version.equals(module1version)) {
+            throw new AxisFault("trying to engage two different module versions " +
+                    module1version + " : " + module2version);
         }
         return true;
     }
