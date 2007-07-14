@@ -64,30 +64,12 @@ public class DefaultConfigurationManager implements ConfigurationManager {
     }
 
     public void commit() throws ClusteringFault {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: DefaultConfigurationManager::commit");
-        }
-
         CommitCommand command = new CommitCommand();
         send(command);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: DefaultConfigurationManager::commit");
-        }
     }
 
     public void exceptionOccurred(Throwable throwable) throws ClusteringFault {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: DefaultConfigurationManager::exceptionOccurred");
-        }
-
-        send(new ExceptionCommand(throwable));
-
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: DefaultConfigurationManager::exceptionOccurred");
-        }
+        sender.sendToGroup(new ExceptionCommand(throwable));
     }
 
     public void loadServiceGroups(String[] serviceGroupNames) throws ClusteringFault {
@@ -159,7 +141,7 @@ public class DefaultConfigurationManager implements ConfigurationManager {
     }
 
     protected void send(Throwable throwable) throws ClusteringFault {
-        send(new ExceptionCommand(throwable));
+        sender.sendToGroup(new ExceptionCommand(throwable));
     }
 
     protected void send(ConfigurationClusteringCommand command) throws ClusteringFault {
