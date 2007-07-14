@@ -270,7 +270,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
-                    <siteDirectory>${basedir}/xdocs</siteDirectory>
+                    <xdocDirectory>${basedir}/xdocs</xdocDirectory>
                     <resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
                 </configuration>
             </plugin>
