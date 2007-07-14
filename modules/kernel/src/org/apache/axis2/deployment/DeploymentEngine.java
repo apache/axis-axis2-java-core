@@ -1021,7 +1021,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             currentDeploymentFile.setClassLoader(classLoader);
             AxisServiceGroup serviceGroup = new AxisServiceGroup();
             serviceGroup.setServiceGroupClassLoader(classLoader);
-            serviceGroup.setServiceGroupName(serviceFile.getName());
+
+            // Drop the extension and take the name
+            String fileName = serviceFile.getName();
+            String serviceGroupName = fileName.substring(0, fileName.lastIndexOf("."));
+            serviceGroup.setServiceGroupName(serviceGroupName);
             AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
 
             ArchiveReader archiveReader = new ArchiveReader();
