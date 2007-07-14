@@ -30,50 +30,51 @@ import java.net.URL;
 import java.util.Random;
 
 /**
- *
+ *  A Utility for handling some of the functions needed by the clustering implementation
  */
 public class ClusteringUtils {
 
-    private static final Log log = LogFactory.getLog(ClusteringUtils.class);
-
-    public static boolean isURL(String location) {
-        try {
-            new URL(location);
-            return true;
-        } catch (MalformedURLException e) {
-            return false;
-        }
-    }
-
+    /**
+     * Load a ServiceGroup having name <code>serviceGroupName</code>
+     *
+     * @param serviceGroupName
+     * @param configCtx
+     * @param tempDirectory
+     * @throws Exception
+     */
     public static void loadServiceGroup(String serviceGroupName,
                                         ConfigurationContext configCtx,
                                         String tempDirectory) throws Exception {
         if (!serviceGroupName.endsWith(".aar")) {
             serviceGroupName += ".aar";
         }
+        File serviceArchive;
+        String axis2Repo = System.getProperty(Constants.AXIS2_REPO);
+        if (isURL(axis2Repo)) {
+            DataHandler dh = new DataHandler(new URL(axis2Repo + "services/" + serviceGroupName));
+            String tempDir =
+                    tempDirectory + File.separator +
+                    (System.currentTimeMillis() + new Random().nextDouble());
+            new File(tempDir).mkdirs();
+            serviceArchive = new File(tempDir + File.separator + serviceGroupName);
+            FileOutputStream out = new FileOutputStream(serviceArchive);
+            dh.writeTo(out);
+            out.close();
+        } else {
+            serviceArchive = new File(axis2Repo + File.separator + "services" +
+                                      File.separator + serviceGroupName);
+        }
+        AxisServiceGroup asGroup =
+                DeploymentEngine.loadServiceGroup(serviceArchive, configCtx);
+        configCtx.getAxisConfiguration().addServiceGroup(asGroup);
+    }
+
+    private static boolean isURL(String location) {
         try {
-            File serviceArchive;
-            String axis2Repo = System.getProperty(Constants.AXIS2_REPO);
-            if (isURL(axis2Repo)) {
-                DataHandler dh = new DataHandler(new URL(axis2Repo + "services/" + serviceGroupName));
-                String tempDir =
-                        tempDirectory + File.separator +
-                        (System.currentTimeMillis() + new Random().nextDouble());
-                new File(tempDir).mkdirs();
-                serviceArchive = new File(tempDir + File.separator + serviceGroupName);
-                FileOutputStream out = new FileOutputStream(serviceArchive);
-                dh.writeTo(out);
-                out.close();
-            } else {
-                serviceArchive = new File(axis2Repo + File.separator + "services" +
-                                          File.separator + serviceGroupName);
-            }
-            AxisServiceGroup asGroup =
-                    DeploymentEngine.loadServiceGroup(serviceArchive, configCtx);
-            configCtx.getAxisConfiguration().addServiceGroup(asGroup);
-        } catch (Exception e) {
-            log.error(e);
-            throw e;
+            new URL(location);
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
         }
     }
 }
