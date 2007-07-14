@@ -486,6 +486,10 @@ public class Utils {
                             configCtx);
                     for (int j = 0; j < serviceList.size(); j++) {
                         AxisService axisService = (AxisService) serviceList.get(j);
+                        Parameter moduleService = new Parameter();
+                        moduleService.setValue("true");
+                        moduleService.setName(AxisModule.MODULE_SERVICE);
+                        axisService.addParameter(moduleService);
                         serviceGroup.addService(axisService);
                     }
                     axisConfig.addServiceGroup(serviceGroup);

@@ -78,6 +78,8 @@ public class AxisModule implements ParameterInclude {
 
     private QName[] localPolicyAssertions;
     public static final String VERSION_SNAPSHOT = "SNAPSHOT";
+    public static final String MODULE_SERVICE = "moduleService";
+
 
     /**
      * Constructor ModuleDescription.
