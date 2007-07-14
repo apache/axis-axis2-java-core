@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -50,6 +51,7 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
 import java.io.StringReader;
@@ -109,7 +111,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // TODO Re-evaluate Unmarshall construction w/ MTOM
             Unmarshaller u = JAXBUtils.getJAXBUnmarshaller(ctx.getJAXBContext());
 
-            if (log.isDebugEnabled()) {
+            if (DEBUG_ENABLED) {
                 log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
             }
             
@@ -133,7 +135,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             reader.close();
             return jaxb;
         } catch (JAXBException je) {
-            if (log.isDebugEnabled()) {
+            if (DEBUG_ENABLED) {
                 try {
                     log.debug("JAXBContext for unmarshal failure:" + ctx.getJAXBContext());
                 } catch (Exception e) {
@@ -188,7 +190,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             Marshaller m = JAXBUtils.getJAXBMarshaller(ctx.getJAXBContext());
             
             
-            if (log.isDebugEnabled()) {
+            if (DEBUG_ENABLED) {
                 log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
             }
             
@@ -201,7 +203,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             
             // Marshal the object
             if (ctx.getProcessType() == null) {
-                marshalByElement(busObject, m, writer);
+                marshalByElement(busObject, m, writer, !am.isXOPPackage());
             } else {
             	marshalByType(busObject, m, writer, ctx.getProcessType(), ctx.isxmlList(), ctx.getConstructionType());
             }
@@ -209,7 +211,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // Successfully marshalled the data
             JAXBUtils.releaseJAXBMarshaller(ctx.getJAXBContext(), m);
         } catch (JAXBException je) {
-            if (log.isDebugEnabled()) {
+            if (DEBUG_ENABLED) {
                 try {
                     log.debug("JAXBContext for marshal failure:" + ctx.getJAXBContext());
                 } catch (Exception e) {
@@ -241,11 +243,26 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param m      Marshaller
      * @param writer XMLStreamWriter
      */
-    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer)
-            throws WebServiceException {
-        // TODO Log and trace here would be helpful
+    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer,
+                                         boolean optimize) throws WebServiceException {
+        // Marshalling directly to the output stream is faster than marshalling through the
+        // XMLStreamWriter.  Take advantage of this optimization if there is an output stream.
         try {
-            m.marshal(b, writer);
+            OutputStream os = (optimize) ? getOutputStream(writer) : null;
+            if (os != null) {
+                if (DEBUG_ENABLED) {
+                    log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. Object is "
+                            + getDebugName(b));
+                }
+                writer.flush();
+                m.marshal(b, os);
+            } else {
+                if (DEBUG_ENABLED) {
+                    log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. Object is "
+                            + getDebugName(b));
+                }
+                m.marshal(b, writer);
+            }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -261,9 +278,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      */
     private static Object unmarshalByElement(final Unmarshaller u, final XMLStreamReader reader)
             throws WebServiceException {
-        // TODO Log and trace here would be helpful
         try {
-        	 if(log.isDebugEnabled()){
+        	 if(DEBUG_ENABLED){
         	    log.debug("Invoking unMarshalByElement");
         	 }
         	 return AccessController.doPrivileged(new PrivilegedAction() {
@@ -293,7 +309,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     private static void marshalByType(final Object b, final Marshaller m, 
     		final XMLStreamWriter writer, final Class type, final boolean isList, final JAXBUtils.CONSTRUCTION_TYPE ctype)
             throws WebServiceException {
-        // TODO Log and trace here would be helpful
     	AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
 		try {
@@ -326,7 +341,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			Object jbo = b;
                         
 			if (isList || (type!=null && type.isArray())) {
-				if(log.isDebugEnabled()){
+				if(DEBUG_ENABLED){
 					log.debug("marshalling type which is a List or Array");
 				}
 				//We conver to xsdListString only if the type is not known
@@ -522,31 +537,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         
 }
 
-    /**
-     * Detect if t represents an xsd:list
-     *
-     * @param t
-     * @return
-     * @deprecated - Code to check if element is list has been moved to JABXBlockContext.
-     */
-    private static boolean isXSDList(Class t) {
-        // TODO This code returns true if the 
-        // class is an array or List.  The correct solution
-        // is to probably pass this information into the
-        // JAXBBlockContext.  I noticed that JAX-WS marks
-        // each xsd:list param/return with an @XmlList annotation.
-
-        // 
-        // Example:
-        // <xsd:simpleType name="LongList">
-        //   <xsd:list>
-        //     <xsd:simpleType>
-        //       <xsd:restriction base="xsd:unsignedInt"/>
-        //     </xsd:simpleType>
-        //   </xsd:list>
-        // </xsd:simpleType>
-        return (t.isArray() || List.class.isAssignableFrom(t));
-    }
 
     public boolean isElementData() {
         return true;
@@ -571,5 +561,16 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	private static String getDebugName(Object o) {
 		return (o == null) ? "null" : o.getClass().getCanonicalName();
 	}
-    
+   
+   /**
+     * If the writer is backed by an OutputStream, then return the OutputStream
+     * @param writer
+     * @return OutputStream or null
+     */
+    private static OutputStream getOutputStream(XMLStreamWriter writer) throws XMLStreamException {
+        if (writer.getClass() == MTOMXMLStreamWriter.class) {
+            return ((MTOMXMLStreamWriter) writer).getOutputStream();
+        }
+        return null;
+    }
 }
