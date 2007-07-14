@@ -101,11 +101,13 @@ public class POJODeployer implements Deployer {
                                 // try to see whether JAX-WS jars in the class path , if so use them
                                 // to process annotated pojo else use annogen to process the pojo class
                                 AxisService axisService;
-                                axisService = createAxisService(classLoader, className);
+                                axisService = createAxisService(classLoader,
+                                                                className,deploymentFileData.getFile().toURL());
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
-                                AxisService axisService = createAxisServiceUsingAnnogen(className,
-                                        classLoader);
+                                AxisService axisService = createAxisServiceUsingAnnogen(className, 
+                                                                                        classLoader,
+                                                                                        deploymentFileData.getFile().toURL());
                                 configCtx.getAxisConfiguration().addService(axisService);
                             }
                         }
@@ -172,7 +174,8 @@ public class POJODeployer implements Deployer {
                                     jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
                                 AxisService axisService;
-                                axisService = createAxisService(classLoader, className);
+                                axisService = createAxisService(classLoader,
+                                                                className,deploymentFileData.getFile().toURL());
                                 axisServiceList.add(axisService);
                             }
                         }
@@ -196,7 +199,8 @@ public class POJODeployer implements Deployer {
     }
 
     private AxisService createAxisService(ClassLoader classLoader,
-                                          String className) throws ClassNotFoundException,
+                                          String className,
+                                          URL serviceLocation) throws ClassNotFoundException,
             InstantiationException,
             IllegalAccessException,
             AxisFault {
@@ -219,13 +223,14 @@ public class POJODeployer implements Deployer {
         } catch (Exception e) {
             // Seems like the jax-ws jars missin in the class path .
             // lets tryu annogen
-            axisService = createAxisServiceUsingAnnogen(className,
-                    classLoader);
+            axisService = createAxisServiceUsingAnnogen(className, classLoader, serviceLocation);
         }
         return axisService;
     }
 
-    private AxisService createAxisServiceUsingAnnogen(String className, ClassLoader classLoader)
+    private AxisService createAxisServiceUsingAnnogen(String className,
+                                                      ClassLoader classLoader,
+                                                      URL serviceLocation)
             throws ClassNotFoundException,
             InstantiationException,
             IllegalAccessException,
@@ -251,6 +256,7 @@ public class POJODeployer implements Deployer {
                                           messageReciverMap,
                                           null, null,
                                           classLoader);
+        axisService.setFileName(serviceLocation);
         return axisService;
     }
 
