@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.message.attachments;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -68,7 +67,8 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         // any place to store the attachment
         if (!(writer instanceof MTOMXMLStreamWriter)) {
             if (log.isDebugEnabled()) {
-                log.debug("The writer is not enabled for MTOM.  MTOM values will not be optimized");
+                log.debug("The writer is not enabled for MTOM.  " +
+                                "MTOM values will not be optimized");
             }
             value = false;
         }
@@ -96,7 +96,8 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         }
         
         if (log.isDebugEnabled()){ 
-            log.debug("Adding MTOM/XOP byte array attachment for element: " + "{" + namespace + "}" + localPart);
+            log.debug("Adding MTOM/XOP byte array attachment for element: " + 
+                      "{" + namespace + "}" + localPart);
         }
         
         String cid;
@@ -123,7 +124,8 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     @Override
     public String addMtomAttachment(DataHandler data, String namespace, String localPart) {
         if (log.isDebugEnabled()){ 
-            log.debug("Adding MTOM/XOP datahandler attachment for element: " + "{" + namespace + "}" + localPart);
+            log.debug("Adding MTOM/XOP datahandler attachment for element: " + 
+                      "{" + namespace + "}" + localPart);
         }
         String cid = addDataHandler(data);
         return cid == null ? null : "cid:" + cid;

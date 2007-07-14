@@ -66,8 +66,8 @@ import java.util.Iterator;
  * An XMLSpine consists is an OMEnvelope (either a default one or one create from an incoming
  * message). As Blocks are added or requested, they are placed in the tree as OMSourcedElements.
  * <p/>
- * NOTE: For XML/HTTP (REST) messages, a SOAP 1.1 envelope is built and the xml payload is placed in
- * the body.  This purposely mimics the implementation used by Axis2.
+ * NOTE: For XML/HTTP (REST) messages, a SOAP 1.1 envelope is built and the xml payload is 
+ * placed in the body.  This purposely mimics the implementation used by Axis2.
  */
 class XMLSpineImpl implements XMLSpine {
 
@@ -177,7 +177,8 @@ class XMLSpineImpl implements XMLSpine {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
+      * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, 
+      * boolean)
       */
     public void outputTo(XMLStreamWriter writer, boolean consume)
             throws XMLStreamException, WebServiceException {
@@ -265,7 +266,8 @@ class XMLSpineImpl implements XMLSpine {
 
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+      * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, 
+      * org.apache.axis2.jaxws.message.factory.BlockFactory)
       */
     public Block getBodyBlock(int index, Object context, BlockFactory blockFactory)
             throws WebServiceException {
@@ -294,7 +296,8 @@ class XMLSpineImpl implements XMLSpine {
     }
 
     /* (non-Javadoc)
-    * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+    * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, 
+    * org.apache.axis2.jaxws.message.factory.BlockFactory)
     */
     public Block getBodyBlock(Object context, BlockFactory blockFactory)
             throws WebServiceException {
@@ -306,8 +309,9 @@ class XMLSpineImpl implements XMLSpine {
 
         // TODO Need to upgrade the code to get Blocks that represent text and elements.
 
-        // Calling getBodyBlock assumes that there is only one or zero body blocks in the message.  Subsequent
-        // Blocks are lost.  If the caller needs access to multiple body blocks, then getBodyBlocks(index,...) should be used
+        // Calling getBodyBlock assumes that there is only one or zero body blocks in the message.
+        // Subsequent Blocks are lost.  If the caller needs access to multiple body blocks, 
+        // then getBodyBlocks(index,...) should be used
 
         // Get the indicated block
         OMElement omElement = _getChildOMElement(_getBodyBlockParent(), 0);
@@ -372,7 +376,8 @@ class XMLSpineImpl implements XMLSpine {
             OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
             bElement.addChild(newOM);
         } else {
-            // This needs to be fixed, but for now we will require that there must be an element...otherwise no block is added
+            // This needs to be fixed, but for now we will require that there must be an 
+            // element...otherwise no block is added
             try {
                 QName qName = block.getQName();
 
@@ -381,7 +386,8 @@ class XMLSpineImpl implements XMLSpine {
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
                     log.debug(
-                            "An attempt was made to pass a Source or String that does not have an xml element. Processing continues with an empty payload.");
+                            "An attempt was made to pass a Source or String that does not " +
+                            "have an xml element. Processing continues with an empty payload.");
                 }
             }
         }
@@ -513,7 +519,8 @@ class XMLSpineImpl implements XMLSpine {
                 }
                 
                 try {   
-                    if (!root.isComplete() && root.getBuilder() != null && !root.getBuilder().isCompleted()) {
+                    if (!root.isComplete() && root.getBuilder() != null && 
+                            !root.getBuilder().isCompleted()) {
                         // Forward the parser to the end so it will close
                         while (root.getBuilder().next() != XMLStreamConstants.END_DOCUMENT) {
                             //do nothing
@@ -669,7 +676,8 @@ class XMLSpineImpl implements XMLSpine {
      * @param index
      * @return child om or null
      */
-    private static OMElement _getChildOMElement(OMElement om, String namespace, String localPart) {
+    private static OMElement _getChildOMElement(OMElement om, String namespace, 
+                                                String localPart) {
         if (om == null) {
             return null;
         }

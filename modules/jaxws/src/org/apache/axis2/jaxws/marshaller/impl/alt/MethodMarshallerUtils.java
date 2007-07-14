@@ -97,8 +97,8 @@ public class MethodMarshallerUtils {
      * @param marshalDesc
      * @param params          ParameterDescription for this operation
      * @param sigArguments    arguments
-     * @param isInput         indicates if input or output  params(input args on client, output args
-     *                        on server)
+     * @param isInput         indicates if input or output  params(input args on client, 
+     *                        output args on server)
      * @param isDocLitWrapped
      * @param isRPC
      * @return PDElements
@@ -136,10 +136,12 @@ public class MethodMarshallerUtils {
                 // Get the formal type representing the value
                 Class formalType = pd.getParameterActualType();
 
-                // The namespace and local name are obtained differently depending on the style/use and header
+                // The namespace and local name are obtained differently depending on 
+                // the style/use and header
                 QName qName = null;
                 if (pd.isHeader()) {
-                    // Headers (even rpc) are marshalled with the name defined by the element= attribute on the wsd:part
+                    // Headers (even rpc) are marshalled with the name defined by the 
+                    // element= attribute on the wsd:part
                     qName = new QName(pd.getTargetNamespace(), pd.getParameterName());
                 } else if (isDocLitWrapped) {
                     // For doc/lit wrapped, the localName comes from the PartName
@@ -159,8 +161,10 @@ public class MethodMarshallerUtils {
                     pdeList.add(pde);
                 } else {
                     if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
-                        /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
-                         * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List and recreate
+                        /* when a schema defines a SimpleType with xsd list jaxws tooling 
+                         * generates artifacts with array rather than a java.util.List
+                         * However the ObjectFactory definition uses a List and thus 
+                         * marshalling fails. Lets convert the Arrays to List and recreate
                          * the JAXBElements for the same.
                          */
                         if (pd.isListType()) {
@@ -198,24 +202,33 @@ public class MethodMarshallerUtils {
      * @param formalType
      * @return
      */
-    private static PDElement createPDElementForAttachment(ParameterDescription pd, QName qName, Object value, Class formalType) {
+    private static PDElement createPDElementForAttachment(ParameterDescription pd, 
+                                                          QName qName, 
+                                                          Object value, 
+                                                          Class formalType) {
         PDElement pde;
         if (log.isDebugEnabled()) {
-            log.debug("Creating a PDElement for an attachment value: " + ((value == null)? "null":value.getClass().getName()));
+            log.debug("Creating a PDElement for an attachment value: " + 
+                      ((value == null)? "null":value.getClass().getName()));
             log.debug("ParameterDescription = " + pd.toString());
         }
         AttachmentDescription attachmentDesc = pd.getAttachmentDescription();
         
         AttachmentType attachmentType = attachmentDesc.getAttachmentType();
         if (attachmentType == AttachmentType.SWA) {
-            Attachment attachment = new Attachment(value, formalType, attachmentDesc);  // Create an Attachment object with the signature value
+            // Create an Attachment object with the signature value
+            Attachment attachment = new Attachment(value, 
+                                                   formalType, 
+                                                   attachmentDesc);  
             pde = new PDElement(pd, 
-                    null,   // For SWA Attachments, there is no element reference to the attachment
+                    null, // For SWA Attachments, there is no element reference to the attachment
                     null, 
                     attachment);
         } else {
             // TODO NLS and clean this up
-            throw ExceptionFactory.makeWebServiceException("SWAREF and MTOM attachment parameters are not supported in this style/use.");
+            throw ExceptionFactory.
+            makeWebServiceException("SWAREF and MTOM attachment parameters are not " +
+                        "supported in this style/use.");
         }
         return pde;
     }
@@ -229,7 +242,8 @@ public class MethodMarshallerUtils {
      * @param isInput indicates if input or output  params (input on server, output on client)
      * @param hasReturnInBody if isInput=false, then this parameter indicates whether a 
      * return value is expected in the body.
-     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios that require unmarshalling by java type
+     * @param unmarshalByJavaType in most scenarios this is null.  
+     * Only use this in the scenarios that require unmarshalling by java type
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params,
@@ -294,7 +308,8 @@ public class MethodMarshallerUtils {
                     if (pd.isHeader()) {
                         
                         // Get the Block from the header
-                        // NOTE The parameter name is always used to get the header element...even if the style is RPC.
+                        // NOTE The parameter name is always used to get the header 
+                        // element...even if the style is RPC.
                         String localName = pd.getParameterName();
                         block = message.getHeaderBlock(pd.getTargetNamespace(),
                                                        localName,
@@ -313,7 +328,8 @@ public class MethodMarshallerUtils {
                         index++;
                     }
                     
-                    Element element = new Element(block.getBusinessObject(true), block.getQName());
+                    Element element = new Element(block.getBusinessObject(true), 
+                                                  block.getQName());
                     PDElement pde =
                         new PDElement(pd, element, unmarshalByJavaType == null ? null
                                 : unmarshalByJavaType[i]);
@@ -330,7 +346,8 @@ public class MethodMarshallerUtils {
                     } else {
                         // TODO NLS and clean this up
                         throw ExceptionFactory.makeWebServiceException("SWAREF and MTOM " +
-                                        "attachment parameters are not supported in this style/use.");
+                                        "attachment parameters are not supported " +
+                                        "in this style/use.");
                     }
                 }
             }
@@ -529,15 +546,19 @@ public class MethodMarshallerUtils {
                 }
             } else {
                 // The parameter is an attachment
-                AttachmentType type = pde.getParam().getAttachmentDescription().getAttachmentType();
+                AttachmentType type = pde.getParam().
+                   getAttachmentDescription().getAttachmentType();
                 if (type == AttachmentType.SWA) {
                     // All we need to do is set the data handler on the message.  
                     // For SWA attachments, the message does not reference the attachment.
-                    message.addDataHandler(attachment.getDataHandler(), attachment.getContentID());
+                    message.addDataHandler(attachment.getDataHandler(), 
+                                           attachment.getContentID());
                     message.setDoingSWA(true);
                 } else {
                     // TODO NLS and cleanup
-                    throw ExceptionFactory.makeWebServiceException("SWAREF and MTOM attachment parameters are not supported in this style/use.");
+                    throw ExceptionFactory.
+                       makeWebServiceException("SWAREF and MTOM attachment parameters " +
+                                "are not supported in this style/use.");
                 }
             }
         }
@@ -594,7 +615,8 @@ public class MethodMarshallerUtils {
      * @param isHeader
      * @param headerNS                 (only needed if isHeader)
      * @param headerLocalPart          (only needed if isHeader)
-     * @param hasOutputBodyParams (true if the method has out or inout params other than the return value)
+     * @param hasOutputBodyParams (true if the method has out or inout params other 
+     * than the return value)
      * @return Element
      * @throws WebService
      * @throws XMLStreamException
@@ -660,9 +682,12 @@ public class MethodMarshallerUtils {
 
         try {
 
-            // There are 5 different categories of exceptions.  Each category has a little different marshaling code.
-            // A) Service Exception that matches the JAX-WS specification (chapter 2.5 of the spec)
-            // B) Service Exception that matches the JAX-WS "legacy" exception (chapter 3.7 of the spec)
+            // There are 5 different categories of exceptions.  
+            // Each category has a little different marshaling code.
+            // A) Service Exception that matches the JAX-WS 
+            //    specification (chapter 2.5 of the spec)
+            // B) Service Exception that matches the JAX-WS "legacy" 
+            //    exception (chapter 3.7 of the spec)
             // C) SOAPFaultException
             // D) WebServiceException
             // E) Other runtime exceptions (i.e. NullPointerException)
@@ -680,10 +705,13 @@ public class MethodMarshallerUtils {
                 // Create the JAXB Context
                 JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
 
-                // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
+                // The exception is a Service Exception.  
+                // It may be (A) JAX-WS compliant exception or 
+                // (B) JAX-WS legacy exception
 
-                // The faultBeanObject is a JAXB object that represents the data of the exception.  It is marshalled in the detail
-                // section of the soap fault.  The faultBeanObject is obtained direction from the exception (A) or via 
+                // The faultBeanObject is a JAXB object that represents the data of the exception.
+                // It is marshalled in the detail section of the soap fault.  
+                // The faultBeanObject is obtained direction from the exception (A) or via 
                 // the legacy exception rules (B).
                 Object faultBeanObject = null;
 
@@ -714,7 +742,8 @@ public class MethodMarshallerUtils {
                 QName faultBeanQName = new QName(faultBeanDesc.getFaultBeanNamespace(),
                                                  faultBeanDesc.getFaultBeanLocalName());
                 // Make sure the faultBeanObject can be marshalled as an element
-                if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement())
+                if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).
+                        hasXmlRootElement())
                 {
                     faultBeanObject = new JAXBElement(faultBeanQName, faultBeanObject.getClass(),
                                                       faultBeanObject);
@@ -738,7 +767,8 @@ public class MethodMarshallerUtils {
                 xmlfault = createXMLFaultFromSystemException(t);
             }
         } catch (Throwable e) {
-            // If an exception occurs while demarshalling an exception, then rinse and repeat with a system exception
+            // If an exception occurs while demarshalling an exception, 
+            // then rinse and repeat with a system exception
             if (log.isDebugEnabled()) {
                 log.debug("An exception (" + e + ") occurred while marshalling exception (" + t +
                         ")");
@@ -772,9 +802,10 @@ public class MethodMarshallerUtils {
                 SOAPFault soapFault = sfe.getFault();
                 if (soapFault == null) {
                     // No fault ?  I will treat this like category E
-                    xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                                            new XMLFaultReason(
-                                                    t.toString()));  // Assumes text is the language supported by the current Locale
+                    xmlfault = 
+                        new XMLFault(null,       // Use the default XMLFaultCode
+                                     new XMLFaultReason(
+                                     t.toString()));  // Assumes text lang of current Locale
                 } else {
                     xmlfault = XMLFaultUtils.createXMLFault(soapFault);
                 }
@@ -795,7 +826,7 @@ public class MethodMarshallerUtils {
                 }
                 xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                                         new XMLFaultReason(
-                                                text));  // Assumes text is the language supported by the current Locale
+                                             text));  // Assumes text lang of current Locale
             } else {
                 if (log.isErrorEnabled()) {
                     log.debug("Marshal as a unchecked System Exception");
@@ -811,12 +842,13 @@ public class MethodMarshallerUtils {
                 }
                 xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                                         new XMLFaultReason(
-                                                text));  // Assumes text is the language supported by the current Locale
+                                                text));  // Assumes text lang of current Locale
             }
             return xmlfault;
         } catch (Throwable e) {
             try {
-                // If an exception occurs while demarshalling an exception, then rinse and repeat with a webservice exception
+                // If an exception occurs while demarshalling an exception, 
+                // then rinse and repeat with a webservice exception
                 if (log.isDebugEnabled()) {
                     log.debug("An exception (" + e + ") occurred while marshalling exception (" +
                             t + ")");
@@ -830,7 +862,7 @@ public class MethodMarshallerUtils {
 
                 return new XMLFault(null,       // Use the default XMLFaultCode
                                     new XMLFaultReason(
-                                            text));  // Assumes text is the language supported by the current Locale
+                                            text));  // Assumes text lang of current Locale
             } catch (Exception e2) {
                 // Exception while creating Exception for Exception
                 throw ExceptionFactory.makeWebServiceException(e2);
@@ -906,7 +938,7 @@ public class MethodMarshallerUtils {
 
 
         if (faultDesc == null) {
-            // This is a system exception if the method does not throw a checked exception or if 
+            // This is a system exception if the method does not throw a checked exception or if
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
         } else {
@@ -925,7 +957,8 @@ public class MethodMarshallerUtils {
             Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());
 
             // Use "by java type" marshalling if necessary
-            if (blockContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
+            if (blockContext.getConstructionType() != 
+                JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
                     isNotJAXBRootElement(faultBeanFormalClass, marshalDesc)) {
                 blockContext.setProcessType(faultBeanFormalClass);
             }
@@ -1117,7 +1150,9 @@ public class MethodMarshallerUtils {
         Exception exception = null;
         if (isLegacyException) {
             // Legacy Exception
-            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean, marshalDesc);
+            exception = LegacyExceptionUtil.createFaultException(exceptionclass, 
+                                                                 bean, 
+                                                                 marshalDesc);
         } else {
             // Normal case, use the contstructor to create the exception
             Constructor constructor =

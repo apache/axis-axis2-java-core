@@ -18,29 +18,9 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Set;
-
-import javax.activation.DataHandler;
-import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.namespace.QName;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -59,9 +39,26 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 /**
  * MessageImpl
@@ -105,7 +102,8 @@ public class MessageImpl implements Message {
      * @param root
      * @param protocol or null
      */
-    MessageImpl(OMElement root, Protocol protocol) throws WebServiceException, XMLStreamException  {
+    MessageImpl(OMElement root, Protocol protocol) 
+    throws WebServiceException, XMLStreamException  {
         createXMLPart(root, protocol);
     }
     
@@ -138,7 +136,8 @@ public class MessageImpl implements Message {
      * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private void createXMLPart(OMElement root, Protocol protocol) throws WebServiceException, XMLStreamException {
+    private void createXMLPart(OMElement root, Protocol protocol) 
+    throws WebServiceException, XMLStreamException {
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.createFrom(root, protocol);
         this.protocol = xmlPart.getProtocol();
@@ -154,7 +153,8 @@ public class MessageImpl implements Message {
     private void createXMLPart(Protocol protocol) throws WebServiceException, XMLStreamException {
         this.protocol = protocol;
         if (protocol.equals(Protocol.unknown)) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
+            throw ExceptionFactory.
+            makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
         } 
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.create(protocol);
@@ -207,7 +207,8 @@ public class MessageImpl implements Message {
             defaultHeaders.setHeader("Content-type", contentType +"; charset=UTF-8");
             SOAPMessage soapMessage = mf.createMessage(defaultHeaders, inStream);
             
-            // At this point the XMLPart is still an OMElement.  We need to change it to the new SOAPEnvelope.
+            // At this point the XMLPart is still an OMElement.  
+            // We need to change it to the new SOAPEnvelope.
             createXMLPart(soapMessage.getSOAPPart().getEnvelope());
             
             // If axiom read the message from the input stream, 
@@ -270,7 +271,8 @@ public class MessageImpl implements Message {
         try {
             contentID = attachments.getSOAPPartContentID();
         } catch (RuntimeException e) {
-            // OM will kindly throw an OMException or NPE if the attachments is set up programmatically. 
+            // OM will kindly throw an OMException or NPE if the attachments is set up 
+            // programmatically. 
             return null;
         }
         return contentID;
@@ -278,7 +280,8 @@ public class MessageImpl implements Message {
     
     
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Message#getValue(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+     * @see org.apache.axis2.jaxws.message.Message#getValue(java.lang.Object, 
+     * org.apache.axis2.jaxws.message.factory.BlockFactory)
      */
     public Object getValue(Object context, BlockFactory blockFactory) throws WebServiceException {
         try {
@@ -296,16 +299,21 @@ public class MessageImpl implements Message {
                 if (blockFactory instanceof SOAPEnvelopeBlockFactory) {
                     value = getAsSOAPMessage();
                 } else {
-                    // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
-                    // This is not performant. Scheu 
+                    // TODO: This doesn't seem right to me.
+                    // We should not have an intermediate StringBlock.
+                    // This is not performant. Scheu
                     OMElement messageOM = getAsOMElement();
-                    String stringValue = messageOM.toString();  
-                    String soapNS = (protocol == Protocol.soap11) ? SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE : SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE; 
+                    String stringValue = messageOM.toString();
+                    String soapNS =
+                            (protocol == Protocol.soap11) ? SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE
+                                    : SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
                     QName soapEnvQname = new QName(soapNS, "Envelope");
-                    
-                    
-                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-                    Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
+
+
+                    XMLStringBlockFactory stringFactory =
+                            (XMLStringBlockFactory) 
+                            FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+                    Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);
                     Block block = blockFactory.createFrom(stringBlock, context);
                     value = block.getBusinessObject(true);
                 }
@@ -369,11 +377,14 @@ public class MessageImpl implements Message {
         return xmlPart.getAsSOAPEnvelope();
     }
     
-    public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
+    public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) 
+    throws WebServiceException {
         return xmlPart.getBodyBlock(index, context, blockFactory);
     }
     
-    public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
+    public Block getHeaderBlock(String namespace, String localPart, Object context, 
+                                BlockFactory blockFactory) 
+    throws WebServiceException {
         return xmlPart.getHeaderBlock(namespace, localPart, context, blockFactory);
     }
     
@@ -385,7 +396,8 @@ public class MessageImpl implements Message {
         return xmlPart.getNumHeaderBlocks();
     }
     
-    public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
+    public XMLStreamReader getXMLStreamReader(boolean consume) 
+    throws WebServiceException {
         return xmlPart.getXMLStreamReader(consume);
     }
     
@@ -393,7 +405,8 @@ public class MessageImpl implements Message {
         return xmlPart.isConsumed();
     }
     
-    public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
+    public void outputTo(XMLStreamWriter writer, boolean consume) 
+    throws XMLStreamException, WebServiceException {
         xmlPart.outputTo(writer, consume);
     }
     
@@ -401,15 +414,18 @@ public class MessageImpl implements Message {
         xmlPart.removeBodyBlock(index);
     }
     
-    public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
+    public void removeHeaderBlock(String namespace, String localPart) 
+    throws WebServiceException {
         xmlPart.removeHeaderBlock(namespace, localPart);
     }
     
-    public void setBodyBlock(int index, Block block) throws WebServiceException {
+    public void setBodyBlock(int index, Block block) 
+    throws WebServiceException {
         xmlPart.setBodyBlock(index, block);
     }
     
-    public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
+    public void setHeaderBlock(String namespace, String localPart, Block block) 
+    throws WebServiceException {
         xmlPart.setHeaderBlock(namespace, localPart, block);
     }
     
@@ -510,7 +526,8 @@ public class MessageImpl implements Message {
         }
     }
     
-    public Block getBodyBlock(Object context, BlockFactory blockFactory) throws WebServiceException {
+    public Block getBodyBlock(Object context, BlockFactory blockFactory) 
+    throws WebServiceException {
         return xmlPart.getBodyBlock(context, blockFactory);
     }
     
