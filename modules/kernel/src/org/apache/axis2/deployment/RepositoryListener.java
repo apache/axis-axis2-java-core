@@ -122,7 +122,7 @@ public class RepositoryListener implements DeploymentConstants {
             }
         } catch (Exception e) {
             // Oh well, log the problem
-            log.info(e);
+            log.debug(e);
         }
 
         String classPath = getLocation();
