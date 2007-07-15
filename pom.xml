@@ -92,7 +92,9 @@
 										<jar destfile="target/lib/axis2-${pom.version}.jar">
 											<fileset dir="modules/java2wsdl/target/classes"/>
 											<fileset dir="modules/kernel/target/classes"/>
-											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/addressing/target/classes">
+											    <exclude name="**/module.xml"/>
+											</fileset>
 											<fileset dir="modules/codegen/target/classes"/>
 											<fileset dir="modules/adb/target/classes"/>
 											<fileset dir="modules/adb-codegen/target/classes"/>
@@ -139,7 +141,9 @@
 										<jar destfile="target/lib/axis2-${pom.version}.jar">
 											<fileset dir="modules/java2wsdl/target/classes"/>
 											<fileset dir="modules/kernel/target/classes"/>
-											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/addressing/target/classes">
+											    <exclude name="**/module.xml"/>
+											</fileset>
 											<fileset dir="modules/codegen/target/classes"/>
 											<fileset dir="modules/adb/target/classes"/>
 											<fileset dir="modules/adb-codegen/target/classes"/>
@@ -187,7 +191,9 @@
 										<jar destfile="target/lib/axis2-${pom.version}.jar">
 											<fileset dir="modules/java2wsdl/target/classes"/>
 											<fileset dir="modules/kernel/target/classes"/>
-											<fileset dir="modules/addressing/target/classes"/>
+											<fileset dir="modules/addressing/target/classes">
+											    <exclude name="**/module.xml"/>
+											</fileset>
 											<fileset dir="modules/codegen/target/classes"/>
 											<fileset dir="modules/adb/target/classes"/>
 											<fileset dir="modules/adb-codegen/target/classes"/>
