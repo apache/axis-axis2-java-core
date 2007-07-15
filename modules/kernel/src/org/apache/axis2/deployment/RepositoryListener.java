@@ -30,10 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -114,11 +111,23 @@ public class RepositoryListener implements DeploymentConstants {
         try {
             Enumeration moduleURLs = loader.getResources("META-INF/module.xml");
             while (moduleURLs.hasMoreElements()) {
-                URL url = (URL)moduleURLs.nextElement();
-                String fileName = url.toString();
-                fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                File f = new File(new URI(fileName));
-                addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                try {
+                    URL url = (URL)moduleURLs.nextElement();
+                    String fileName = url.toString();
+                    if (fileName.startsWith("jar")) {
+                        url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
+                        fileName = url.toString();
+                         File f = new File(new URI(fileName));
+                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                    } else if (fileName.startsWith("file")) {
+                        fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
+                        File f = new File(new URI(fileName));
+                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                    } 
+
+                } catch (URISyntaxException e) {
+                    log.info(e);
+                }
             }
         } catch (Exception e) {
             // Oh well, log the problem
