@@ -43,6 +43,8 @@ import org.codehaus.jam.JamServiceParams;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -190,7 +192,13 @@ public class POJODeployer implements Deployer {
                 configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter errorWriter = new StringWriter();
+            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+            e.printStackTrace(error_ptintWriter);
+            String serviceStatus = "Error:\n" + errorWriter.toString();
+            configCtx.getAxisConfiguration().getFaultyServices().put(
+                    deploymentFileData.getFile().getAbsolutePath(),
+                    serviceStatus);
         } finally {
             if (threadClassLoader != null) {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
