@@ -148,7 +148,7 @@ public class TransportUtils {
             Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
             if (log.isDebugEnabled()) {
                 log.debug("createSOAPEnvelope using Builder (" + 
-                          builder.getClass().getCanonicalName() + ") selected from type (" + type +")");
+                          builder.getClass() + ") selected from type (" + type +")");
             }
             if (builder != null) {
                 documentElement = builder.processDocument(inStream, contentType, msgContext);
