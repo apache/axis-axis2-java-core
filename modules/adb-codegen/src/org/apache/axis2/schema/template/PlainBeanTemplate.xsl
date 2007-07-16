@@ -22,12 +22,12 @@
      <!-- cater for the multiple classes - wrappped mode -->
     <xsl:template match="/beans">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-        /**
-        * <xsl:value-of select="$name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="$name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
 
         package <xsl:value-of select="@package"/>;
 
@@ -48,12 +48,13 @@
 
 
     <xsl:template match="bean">
-        /**
-        * <xsl:value-of select="@name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
+
         package <xsl:value-of select="@package"/>;
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
 

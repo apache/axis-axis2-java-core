@@ -35,12 +35,13 @@
     <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
     <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
 
-    /**
-     * <xsl:value-of select="@name"/>.java
-     *
-     * This file was auto-generated from WSDL
-     * by the Apache Axis2 version: #axisVersion# #today#
-     */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
+
     package <xsl:value-of select="$package"/>;
 
     /*

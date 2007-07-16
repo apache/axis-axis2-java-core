@@ -22,12 +22,12 @@
     <!-- cater for the multiple classes - wrappped mode -->
     <xsl:template match="/beans">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-        /**
-        * <xsl:value-of select="$name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="$name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
 
         <xsl:if test="string-length(normalize-space(@package)) > 0">
             package <xsl:value-of select="@package"/>;
@@ -71,12 +71,12 @@
     <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
-            /**
-            * <xsl:value-of select="$name"/>.java
-            *
-            * This file was auto-generated from WSDL
-            * by the Apache Axis2 version: #axisVersion# #today#
-            */
+/**
+ * <xsl:value-of select="$name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
             <xsl:if test="string-length(normalize-space(@package)) > 0">
                 package <xsl:value-of select="@package"/>;
             </xsl:if>
@@ -3466,12 +3466,12 @@
        <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
-            /**
-            * <xsl:value-of select="$name"/>.java
-            *
-            * This file was auto-generated from WSDL
-            * by the Apache Axis2 version: #axisVersion# #today#
-            */
+/**
+ * <xsl:value-of select="$name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
 
             package <xsl:value-of select="@package"/>;
             /**
@@ -5869,12 +5869,12 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         <xsl:variable name="helperMode" select="@helpermode"/>
 
          <xsl:if test="not(not(@unwrapped) or (@skip-write))">
-            /**
-            * <xsl:value-of select="$name"/>.java
-            *
-            * This file was auto-generated from WSDL
-            * by the Apache Axis2 version: #axisVersion# #today#
-            */
+/**
+ * <xsl:value-of select="$name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
 
             package <xsl:value-of select="@package"/>;
             /**
