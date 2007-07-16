@@ -47,7 +47,7 @@ public class PrettyPrinter {
         // If the user has set "axis2.jalopy=false" on the system property,
         // then just return back to caller
         String property = System.getProperty("axis2.jalopy");
-        if(JavaUtils.isFalseExplicitly(property)){
+        if(property != null && JavaUtils.isFalseExplicitly(property)){
             return;
         }
         PrintStream backupOutputStream = System.out;
