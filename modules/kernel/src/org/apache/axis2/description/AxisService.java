@@ -196,9 +196,12 @@ public class AxisService extends AxisDescription {
      * A good place to add a file extension if needed
      */
     private String customSchemaNameSuffix = null;
+
     /////////////////////////////////////////
     // WSDL related stuff ////////////////////
     ////////////////////////////////////////
+
+    /** Map of prefix -> namespaceURI */
     private NamespaceMap namespaceMap;
 
     private String soapNsUri;
@@ -1826,10 +1829,21 @@ public class AxisService extends AxisDescription {
         }
     }
 
+    /**
+     * Get the namespace map for this service.
+     *
+     * @return a Map of prefix (String) to namespace URI (String)
+     * @deprecated please use getNamespaceMap()
+     */
     public Map getNameSpacesMap() {
         return namespaceMap;
     }
 
+    /**
+     * Get the namespace map for this service.
+     *
+     * @return a Map of prefix (String) to namespace URI (String)
+     */
     public Map getNamespaceMap() {
         return namespaceMap;
     }

@@ -125,10 +125,10 @@ public class CodeGenerationUtility {
 
             Map nameSpacesMap = new HashMap();
             List axisServices = cgconfig.getAxisServices();
-            AxisService axisService = null;
+            AxisService axisService;
             for (Iterator iter = axisServices.iterator(); iter.hasNext();) {
                 axisService = (AxisService)iter.next();
-                nameSpacesMap.putAll(axisService.getNameSpacesMap());
+                nameSpacesMap.putAll(axisService.getNamespaceMap());
             }
 
             // process all the schemas and make a list of all of them for
