@@ -295,6 +295,19 @@ public class AxisFault extends RemoteException {
         setFaultCode(faultCode);
     }
 
+    
+    /**
+     * @param message
+     * @param faultMessageContext
+     * @param cause
+     */
+    public AxisFault(String message, MessageContext faultMessageContext, Throwable cause) {
+        super(message, cause);
+
+        this.faultMessageContext = faultMessageContext;
+    }
+
+
     /**
      * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
      * @param faultCode   - this will appear as the Value in the Code information item of SOAP Fault

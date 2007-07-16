@@ -126,9 +126,17 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                 // If this is a fault message, we want to throw it as an
                 // exception so that the transport can do the appropriate things
                 if (responseMsgCtx.getMessage().isFault()) {
-                    faultToReturn = new AxisFault("An error was detected during JAXWS processing",
-                                                  axisResponseMsgCtx);
-                } else {
+                    
+                    //Rather than create a new AxisFault, we should use the AxisFault that was
+                    //created at the causedBy
+                    if (responseMsgCtx.getCausedByException() != null)
+                        faultToReturn = responseMsgCtx.getCausedByException();
+                    else {
+                        faultToReturn = new AxisFault("An error was detected during JAXWS processing",
+                                                                                 axisResponseMsgCtx);
+                        
+                    }
+                                    } else {
                     //This assumes that we are on the ultimate execution thread
                     ThreadContextMigratorUtil.performMigrationToContext(
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);

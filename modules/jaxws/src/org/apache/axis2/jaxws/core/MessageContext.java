@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.core;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -73,6 +74,7 @@ public class MessageContext {
     // If a local exception is thrown, the exception is placed on the message context.
     // It is not converted into a Message.
     private Throwable localException = null;
+    private AxisFault causedByException = null;
 
     /**
      * Construct a MessageContext without a prior Axis2 MessageContext
@@ -252,6 +254,21 @@ public class MessageContext {
         localException = t;
     }
     
+    /**
+     * @param t
+     */
+    public void setCausedByException (AxisFault t){
+        this.causedByException = t;
+    }
+    
+    /**
+     * @return
+     */
+    public AxisFault getCausedByException(){
+        return this.causedByException;
+    }
+    
+
     /**
      * Set the wrapper MEPContext.  Internally, this method also sets
      * the MEPContext's children so the pointer is bi-directional; you can
