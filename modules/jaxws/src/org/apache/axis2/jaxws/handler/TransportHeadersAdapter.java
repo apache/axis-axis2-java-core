@@ -35,25 +35,27 @@ import java.util.Set;
 
 /**
  * The JAX-WS exposes transport properties whose value is Map<String, List<String>>.  The
- * String is the content-id and DataHandler is the data handler representing the attachment.
+ * String is the content-id and DataHandler is the data handler representing the TransportHeaders.
  * 
  * The JAX-WS MessageContext stores transport properties in an Map object located on the AXIS2
  * MessageContext.
  * 
- * This class, TransportHeadersAdapter, is an adapter between the Map<String, List<String>> interface needed
- * by the properties and the actual implementation.  All useful function is delegated through the MessageContext, so 
- * that we only have one copy of the information.  
+ * This class, TransportHeadersAdapter, is an adapter between the Map<String, List<String>> 
+ * interface needed by the properties and the actual implementation.  
+ * All useful function is delegated through the MessageContext, 
+ * so that we only have one copy of the information.  
  * 
- * To use this class, invoke the install method.  This will create an TransportHeadersAdapter (if necessary) and install it
- * on the property JAX-WS standard attachment property.  (See BaseMessageContext.)
+ * To use this class, invoke the install method.  This will create an TransportHeadersAdapter 
+ * (if necessary) and install it on the property JAX-WS standard TransportHeaders properties.  
+ * (See BaseMessageContext.)
  */
 public class TransportHeadersAdapter implements Map {
 
     private static final Log log = LogFactory.getLog(TransportHeadersAdapter.class);
-    
-    MessageContext mc;    // MessageContext which provides the backing implementation
-    String propertyName;  // The name of the JAX-WS property
-    
+
+    MessageContext mc; // MessageContext which provides the backing implementation
+    String propertyName; // The name of the JAX-WS property
+
     /**
      * @param mc
      * @param propertyName
@@ -64,48 +66,49 @@ public class TransportHeadersAdapter implements Map {
     }
 
     /**
-     * Add the AttachmentAdapter as the property for the inbound or
-     * outbound attachment property
+     * Add the TransportHeadersAdapter as the property for TransportHeaders
      * @param mc MessageContext
      */
     public static void install(MessageContext mc) {
-        
+
         boolean isRequest = (mc.getMEPContext().getRequestMessageContext() == mc);
-        
+
         // The property is either a request or response
-        String propertyName = (isRequest) ?
-                javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS :
-                javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS;
-        
-        
+        String propertyName =
+                (isRequest) ? javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS
+                        : javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS;
+
+
         if (log.isDebugEnabled()) {
-            log.debug("Installing AttachmentsAdapter for " + propertyName);
+            log.debug("Installing TransportHeadersAdapter for " + propertyName);
         }
-        
+
         // See if there is an existing map
         Object map = mc.getProperty(propertyName);
-        
-        // Reuse existing AttachmentsAdapter
+
+        // Reuse existing TransportHeadersAdapter
         if (map instanceof TransportHeadersAdapter) {
             if (log.isDebugEnabled()) {
-                log.debug("An TransportHeadersAdapter is already installed.  Reusing the existing one.");
+                log.debug("An TransportHeadersAdapter is already installed.  " +
+                                "Reusing the existing one.");
             }
             return;
-        } 
-        
-        // Create a new AttachmentsAdapter and set it on the property 
+        }
+
+        // Create a new TransportHeadersAdapter and set it on the property 
         TransportHeadersAdapter tha = new TransportHeadersAdapter(mc, propertyName);
-        
+
         if (map != null) {
             if (log.isDebugEnabled()) {
-                log.debug("The TransportHeaders in the existing map (" + propertyName + ") are copied to the TransportHeadersAdapter.");
+                log.debug("The TransportHeaders in the existing map (" + propertyName
+                        + ") are copied to the TransportHeadersAdapter.");
             }
             // Copy the existing Map contents to this new adapter
             tha.putAll((Map) map);
         }
         mc.setProperty(propertyName, tha);
     }
-    
+
     /**
      * Get/Create the implementation map from the Axis2 properties
      * @param mc
@@ -120,7 +123,7 @@ public class TransportHeadersAdapter implements Map {
         }
         return map;
     }
-    
+
     /**
      * Convert intput into a List
      * @param o
@@ -136,17 +139,18 @@ public class TransportHeadersAdapter implements Map {
             l.add(o);
             return l;
         } else {
-            throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass() + " to List<String>");
+            throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass()
+                    + " to List<String>");
         }
     }
-    
+
     private static String convertToString(Object o) {
         if (o == null) {
             return null;
         } else if (o instanceof String) {
             return (String) o;
         } else if (o instanceof List) {
-           
+
             List l = (List) o;
             if (l.size() == 0) {
                 return null;
@@ -154,10 +158,11 @@ public class TransportHeadersAdapter implements Map {
                 return (String) l.get(0);
             }
         }
-        throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass() + " to String");
+        throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass()
+                + " to String");
     }
-    
-    
+
+
     public int size() {
         return getDelegateMap(mc).size();
     }
@@ -197,7 +202,7 @@ public class TransportHeadersAdapter implements Map {
     }
 
     public void putAll(Map t) {
-        for(Object key: t.keySet()) {
+        for (Object key : t.keySet()) {
             Object value = t.get(key);
             if (log.isDebugEnabled()) {
                 log.debug("put via putAll (" + key + " , " + value + ")");
@@ -211,7 +216,7 @@ public class TransportHeadersAdapter implements Map {
     }
 
     public Set keySet() {
-       return getDelegateMap(mc).keySet();
+        return getDelegateMap(mc).keySet();
     }
 
     public Collection values() {
@@ -225,5 +230,4 @@ public class TransportHeadersAdapter implements Map {
         tempMap.putAll(this);
         return tempMap.entrySet();
     }
-
 }
