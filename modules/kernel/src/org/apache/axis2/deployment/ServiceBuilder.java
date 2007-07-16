@@ -304,7 +304,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String transportName = trsEle.getText().trim();
                     trs.add(transportName);
                     if (axisConfig.getTransportIn(transportName) == null) {
-                        throw new AxisFault("Service is trying to expose in a transport : "
+                        throw new AxisFault("Service [ "+ service.getName() +  "] is trying to expose in a transport : "
                                 + transports + " and which is not available in Axis2");
                     }
                 }
