@@ -58,7 +58,10 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * MessageImpl
@@ -75,7 +78,10 @@ public class MessageImpl implements Message {
     XMLPart xmlPart = null; // the representation of the xmlpart
     
     boolean mtomEnabled;
-    private MimeHeaders mimeHeaders = new MimeHeaders(); 
+    
+    // The transport headers are stored in a Map, which is the 
+    // same data representation used by the Axis2 MessageContext (TRANSPORT_HEADERS).
+    private Map transportHeaders = null; 
     
     // The Message is connected to a MessageContext.
     // Prior to that connection, attachments are stored locally
@@ -192,8 +198,26 @@ public class MessageImpl implements Message {
             // Create soapMessage object from Message Factory using the input
             // stream created from OM.
             
-            // Get the MimeHeaders
-            MimeHeaders defaultHeaders = this.getMimeHeaders();
+            // Get the MimeHeaders from the transportHeaders map
+            MimeHeaders defaultHeaders = new MimeHeaders();
+            if (transportHeaders != null) {
+                Iterator it = transportHeaders.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String key = (String) entry.getKey();
+                    if (entry.getValue() instanceof String) {
+                        // Normally there is one value per key
+                        defaultHeaders.addHeader(key, (String) entry.getValue());
+                    } else {
+                        // There may be multiple values for each key.  This code
+                        // assumes the value is an array of String.
+                        String values[] = (String[]) entry.getValue();
+                        for (int i=0; i<values.length; i++) {
+                            defaultHeaders.addHeader(key, values[i]);
+                        }
+                    }
+                }
+            }
             
             // Toggle based on SOAP 1.1 or SOAP 1.2
             String contentType = null;
@@ -512,18 +536,22 @@ public class MessageImpl implements Message {
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.message.Attachment#getMimeHeaders()
      */
-    public MimeHeaders getMimeHeaders() {
-        return mimeHeaders;
-    }
+    public Map getMimeHeaders() {
+        // Lazily create transport headers.
+        if (transportHeaders == null) {
+            transportHeaders = new HashMap();
+        }
+        return transportHeaders;
+     }
     
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#setMimeHeaders(javax.xml.soap.MimeHeaders)
+     * @see org.apache.axis2.jaxws.message.Attachment#setMimeHeaders(java.util.Map)
      */
-    public void setMimeHeaders(MimeHeaders mhs) {
-        mimeHeaders = mhs;
-        if (mimeHeaders == null) {
-            mimeHeaders = new MimeHeaders();
-        }
+    public void setMimeHeaders(Map map) {
+        transportHeaders = map;
+        if (transportHeaders == null) {
+            transportHeaders = new HashMap();
+          }
     }
     
     public Block getBodyBlock(Object context, BlockFactory blockFactory) 

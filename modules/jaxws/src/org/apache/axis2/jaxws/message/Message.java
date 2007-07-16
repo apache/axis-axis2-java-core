@@ -22,11 +22,11 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 import javax.activation.DataHandler;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
+
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Message
@@ -119,15 +119,16 @@ public interface Message extends XMLPart {
     public void setMTOMEnabled(boolean b);
     
 
-    /** @return get the MimeHeaders */
-    public MimeHeaders getMimeHeaders();
+    /** 
+     * @return get the transport headers map.
+     */
+    public Map getMimeHeaders();
 
     /**
-     * Set the MimeHeaders
-     *
-     * @param mhs MimeHeaders
+     * Set the transport headers
+     * @param map Map
      */
-    public void setMimeHeaders(MimeHeaders mhs);
+    public void setMimeHeaders(Map map);
 
     /**
      * Indicate that this message is passed the pivot point. For example, this is set in the JAX-WS

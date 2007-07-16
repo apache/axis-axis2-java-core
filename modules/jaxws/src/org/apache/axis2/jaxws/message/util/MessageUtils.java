@@ -158,16 +158,11 @@ public class MessageUtils {
             }
 
             // Add all the MimeHeaders from the Axis2 MessageContext
-            MimeHeaders mhs = message.getMimeHeaders();
             Map headerMap = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headerMap != null) {
-                Iterator it = headerMap.keySet().iterator();
-                while (it.hasNext()) {
-                    String key = (String)it.next();
-                    String value = (String)headerMap.get(key);
-                    mhs.addHeader(key, value);
-                }
+                message.setMimeHeaders(headerMap);
             }
+            
             // TODO: This is a WORKAROUND for missing SOAPFault data.  If we do a toString on the
             // SOAPEnvelope, then all the data will be available to the provider.  Otherwise, it
             // will be missing the <Reason> element corresponding to the <faultstring> element.  
@@ -197,12 +192,7 @@ public class MessageUtils {
         msgContext.setEnvelope(envelope);
 
         // Put the Headers onto the MessageContext
-        // TODO: Merge with latest TransportHeaders impl.
-        Map headerMap = new HashMap();
-        for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
-            MimeHeader mh = (MimeHeader)it.next();
-            headerMap.put(mh.getName(), mh.getValue());
-        }
+        Map headerMap = message.getMimeHeaders();
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
 
         if (message.getProtocol() == Protocol.rest) {
