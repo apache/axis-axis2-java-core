@@ -85,6 +85,11 @@ public class PrettyPrinter {
             Method put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
             put.invoke(settings, new Object[]{key, "true"});
 
+            field = clazz3.getField("COMMENT_FORMAT_MULTI_LINE");
+            key = field.get(null);
+            put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
+            put.invoke(settings, new Object[]{key, "true"});
+
             // format and overwrite the given input file
             Method format = clazz.getMethod("format", new Class[]{});
             format.invoke(prettifier, new Object[]{});
