@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.JavaUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -206,6 +207,7 @@ public class MessageUtils {
 
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
         }
         
         // Make sure the the JAX-WS AttachmentAdapter is correctly installed

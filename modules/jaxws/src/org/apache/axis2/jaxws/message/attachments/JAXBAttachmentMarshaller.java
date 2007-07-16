@@ -138,6 +138,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         }
         
         String cid = addDataHandler(data);
+        message.setDoingSWA(true);
         return "cid:" + cid;
     }
     
