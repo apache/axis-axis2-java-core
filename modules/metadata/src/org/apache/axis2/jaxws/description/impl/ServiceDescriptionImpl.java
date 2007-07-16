@@ -21,36 +21,6 @@ package org.apache.axis2.jaxws.description.impl;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.jws.HandlerChain;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
-import javax.xml.ws.soap.SOAPBinding;
-
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -73,6 +43,33 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jws.HandlerChain;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.ws.soap.SOAPBinding;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 /** @see ../ServiceDescription */
@@ -817,6 +814,7 @@ class ServiceDescriptionImpl
 
                 } else { //this is an implicit SEI (i.e. impl w/out endpointInterface
 
+                    
                     checkImplicitSEIAgainstWSDL();
                     //	TODO:	Call ValidateWebMethodAnnots()
                     //			- this method will check that all methods are public - ???
@@ -829,6 +827,16 @@ class ServiceDescriptionImpl
                                 + composite.getClassName());
             }
 
+            // Verify that the SOAPBinding annotations are supported.
+            //REVIEW: The assumption here is that SOAPBinding annotation can be place on an impl. class
+            //        (implicit SEI) or a WebServiceProvider
+            if (composite.getSoapBindingAnnot() != null) {
+                if (composite.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+                    throw ExceptionFactory.makeWebServiceException("Validation error: Unsupported SOAPBinding annotation value. The ENCODED setting is not supported for SOAPBinding.Use. Implementation class: " 
+                                +composite.getClassName());  
+                }
+            }
+            
             //TODO: don't think this is necessary
             checkMethodsAgainstWSDL();
         }
@@ -1253,6 +1261,13 @@ class ServiceDescriptionImpl
                             + "; Invalid endpointInterface value: " +
                             seic.getWebServiceAnnot().endpointInterface());
         }
+        // Verify that the SOAPBinding annotations are supported.
+        if (seic.getSoapBindingAnnot() != null) {
+        if (seic.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+               throw ExceptionFactory.makeWebServiceException("Validation error: Unsupported SOAPBinding annotation value. The ENCODED setting is not supported for SOAPBinding.Use. Implementation class: " 
+                        +seic.getClassName());  
+        }
+       }
 
         checkSEIAgainstWSDL();
 
