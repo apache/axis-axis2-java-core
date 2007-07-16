@@ -124,6 +124,17 @@
     <!--<targetResolver class="" />-->
     <!--</targetResolvers>-->
 
+    <!-- ================================================= -->
+    <!-- SOAP Must Understand Header Checkers -->
+    <!-- ================================================= -->
+    <!-- Uncomment the following and specify the class name for your SOAPMustUnderstandHeaderChecker -->
+    <!-- implementation to add a header checker.  Header checkers are used to identify SOAP Header -->
+    <!-- QNames that will be processed by components (such as a MessageReceiver) after the point -->
+    <!-- the Axis2 engine checks that all mustUnderstand headers are understood. -->
+    <!-- <soapMustUnderstandCheckers> -->
+    <!--    <soapMustUnderstandChecker class="" /> -->
+    <!-- </soapMustUnderstandCheckers> -->
+
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

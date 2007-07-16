@@ -58,6 +58,7 @@ import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.JAXBProviderTests;
 import org.apache.axis2.jaxws.provider.SOAPFaultProviderTests;
 import org.apache.axis2.jaxws.provider.SoapMessageProviderTests;
+import org.apache.axis2.jaxws.provider.SoapMessageMUProviderTests;
 import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceProviderTests;
 import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
@@ -152,6 +153,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SourceMessageProviderTests.class);
         // TODO FIXME: Test fails
         //suite.addTestSuite(SoapMessageProviderTests.class);
+        suite.addTestSuite(SoapMessageMUProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         //TODO: FIXME - Was working, now doesn't
