@@ -203,6 +203,14 @@ public class POJODeployer implements Deployer {
             configCtx.getAxisConfiguration().getFaultyServices().put(
                     deploymentFileData.getFile().getAbsolutePath(),
                     serviceStatus);
+        }catch (Throwable t) {
+            StringWriter errorWriter = new StringWriter();
+            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+            t.printStackTrace(error_ptintWriter);
+            String serviceStatus = "Error:\n" + errorWriter.toString();
+            configCtx.getAxisConfiguration().getFaultyServices().put(
+                    deploymentFileData.getFile().getAbsolutePath(),
+                    serviceStatus);
         } finally {
             if (threadClassLoader != null) {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
