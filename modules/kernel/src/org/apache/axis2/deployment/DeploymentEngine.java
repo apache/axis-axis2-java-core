@@ -625,11 +625,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                         // if user has deleted the file from the repository
                         serviceDeployer.unDeploy(wsInfo.getFileName());
                     } else {
-                        if (isHotUpdate()) {
-                            Deployer deployer = wsInfo.getDeployer();
-                            if (deployer != null) {
-                                deployer.unDeploy(wsInfo.getFileName());
-                            }
+                        //We need to undeploy the service whether we have enable hotUpdate or not ,
+                        // o.w what happen if someone delete the service from the repo
+                        Deployer deployer = wsInfo.getDeployer();
+                        if (deployer != null) {
+                            deployer.unDeploy(wsInfo.getFileName());
                         }
                     }
                 }
