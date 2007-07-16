@@ -183,13 +183,17 @@ public class POJODeployer implements Deployer {
                         }
                     }
                 }
-                AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                serviceGroup.setServiceGroupName(deploymentFileData.getName());
-                for (int i = 0; i < axisServiceList.size(); i++) {
-                    AxisService axisService = (AxisService) axisServiceList.get(i);
-                    serviceGroup.addService(axisService);
+                if (axisServiceList.size() >0 ) {
+                    AxisServiceGroup serviceGroup = new AxisServiceGroup();
+                    serviceGroup.setServiceGroupName(deploymentFileData.getName());
+                    for (int i = 0; i < axisServiceList.size(); i++) {
+                        AxisService axisService = (AxisService) axisServiceList.get(i);
+                        serviceGroup.addService(axisService);
+                    }
+                    configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
+                } else {
+                    log.info("No annotated class found in the jar: "  + deploymentFileData.getFile().getName());
                 }
-                configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
             }
         } catch (Exception e) {
             StringWriter errorWriter = new StringWriter();
