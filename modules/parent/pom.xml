@@ -106,6 +106,7 @@
         <groovy.all.version>1.0-jsr-06</groovy.all.version>
         <intellij.version>5.0</intellij.version>
         <httpcore.version>4.0-alpha5</httpcore.version>
+        <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.0</jaxb.api.version>
         <jaxbri.version>2.0.5</jaxbri.version>
         <jaxen.version>1.1.1</jaxen.version>
@@ -803,6 +804,11 @@
                 <artifactId>apache-activemq</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
+			<dependency>
+				<groupId>jalopy</groupId>
+				<artifactId>jalopy</artifactId>
+                <version>${jalopy.version}</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
