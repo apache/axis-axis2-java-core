@@ -157,6 +157,13 @@ public class AxisInvocationController extends InvocationController {
     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeOneWay(org.apache.axis2.jaxws.core.InvocationContext)
     */
     public void doInvokeOneWay(MessageContext request) throws WebServiceException {
+        // Make sure that a one-way invocation does not attempt to use a separate channel
+        // for the response.
+        Boolean useAsyncMep = (Boolean) request.getProperty(Constants.USE_ASYNC_MEP);
+        if (useAsyncMep != null && useAsyncMep.booleanValue()) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("onewayAsync"));
+        }
+        
         // We need the qname of the operation being invoked to know which 
         // AxisOperation the OperationClient should be based on.
         // Note that the OperationDesc is only set through use of the Proxy. Dispatch
