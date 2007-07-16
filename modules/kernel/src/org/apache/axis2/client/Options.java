@@ -520,7 +520,7 @@ public class Options implements Externalizable {
      */
     public boolean isUseSeparateListener() {
         if (useSeparateListener == null && parent != null) {
-            useSeparateListener = parent.useSeparateListener;
+            useSeparateListener = new Boolean(parent.isUseSeparateListener());
         }
 
         return useSeparateListener != null
