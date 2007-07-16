@@ -129,7 +129,10 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
             // Successfully unmarshalled the object
             JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(), u);
-            reader.close();
+            
+            // Don't close the reader.  The reader is owned by the caller, and it
+            // may contain other xml instance data (other than this JAXB object)
+            // reader.close();
             return jaxb;
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
