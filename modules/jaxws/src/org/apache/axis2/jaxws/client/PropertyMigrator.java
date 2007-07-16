@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
@@ -34,20 +35,20 @@ public class PropertyMigrator implements ApplicationContextMigrator {
 	private static final Log log = LogFactory.getLog(PropertyMigrator.class);
     public void migratePropertiesFromMessageContext(Map<String, Object> userContext,
                                                     MessageContext messageContext) {
-       
-    	if(log.isDebugEnabled()){
-    		log.debug("Starting migratePropertyFromMessageContext");
-    	}
-    	MEPContext mepContext =messageContext.getMEPContext();
-    	if(mepContext!=null){
-    		if(log.isDebugEnabled()){
-    			log.debug("Reading ApplicationScopedProperties from MEPContext");
-    		}
-    		userContext.putAll(mepContext.getApplicationScopedProperties());
-    	}
-    	if(log.isDebugEnabled()){
-    		log.debug("migratePropertyFromMessageContext Complete");
-    	}
+
+        if (log.isDebugEnabled()) {
+            log.debug("Starting migratePropertyFromMessageContext");
+        }
+        MEPContext mepContext = messageContext.getMEPContext();
+        if (mepContext != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Reading ApplicationScopedProperties from MEPContext");
+            }
+            userContext.putAll(mepContext.getApplicationScopedProperties());
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("migratePropertyFromMessageContext Complete");
+        }
     }
 
     public void migratePropertiesToMessageContext(Map<String, Object> userContext,
@@ -57,6 +58,12 @@ public class PropertyMigrator implements ApplicationContextMigrator {
         if (userContext != null) {
             for (String key: userContext.keySet()) {
                 Object value = userContext.get(key);
+                // Make sure mtom state in the user context, the message context, 
+                // the MEP context are the same.
+                if(key.equalsIgnoreCase(Constants.Configuration.ENABLE_MTOM)){
+                    value = messageContext.getMessage().isMTOMEnabled();
+                    messageContext.getMEPContext().put(key, value);
+                }
                 messageContext.setProperty(key, value);
             }
         }
