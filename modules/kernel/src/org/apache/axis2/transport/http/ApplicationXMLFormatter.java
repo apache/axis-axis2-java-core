@@ -20,6 +20,8 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axis2.AxisFault;
@@ -27,6 +29,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
@@ -39,67 +44,87 @@ import java.net.URL;
  */
 public class ApplicationXMLFormatter implements MessageFormatter {
 
+    private static final Log log = LogFactory.getLog(ApplicationXMLFormatter.class);
     public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
 
-        OMElement omElement;
+        if (log.isDebugEnabled()) {
+            log.debug("start getBytes()");
+            log.debug("  fault flow=" + (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW));
+        }
+        try {
+            OMElement omElement;
 
-        if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
-            SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
-            SOAPFaultDetail soapFaultDetail = fault.getDetail();
-            omElement = soapFaultDetail.getFirstElement();
+            if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
+                SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
+                SOAPFaultDetail soapFaultDetail = fault.getDetail();
+                omElement = soapFaultDetail.getFirstElement();
 
-            if (omElement == null) {
-                omElement = fault.getReason();
+                if (omElement == null) {
+                    omElement = fault.getReason();
+                }
+
+            } else {
+                omElement = messageContext.getEnvelope().getBody().getFirstElement();
+            }
+            ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+
+            if (omElement != null) {
+
+                try {
+                    omElement.serializeAndConsume(bytesOut, format);
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
+
+                return bytesOut.toByteArray();
             }
 
-        } else {
-            omElement = messageContext.getEnvelope().getBody().getFirstElement();
-        }
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-
-        if (omElement != null) {
-
-            try {
-                omElement.serializeAndConsume(bytesOut, format);
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
+            return new byte[0];
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("end getBytes()");
             }
-
-            return bytesOut.toByteArray();
         }
-
-        return new byte[0];
     }
 
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {
 
-        OMElement omElement = null;
-
-        if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
-            SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
-            SOAPFaultDetail soapFaultDetail = fault.getDetail();
-            if (soapFaultDetail != null) {
-                omElement = soapFaultDetail.getFirstElement();
-            }
-            if (omElement == null) {
-                omElement = fault.getReason();
-            }
-
-        } else {
-            omElement = messageContext.getEnvelope().getBody().getFirstElement();
-        }
-        if (omElement != null) {
-            try {
-                omElement.serializeAndConsume(outputStream, format);
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
-            }
+        if (log.isDebugEnabled()) {
+            log.debug("start writeTo()");
         }
         try {
-            outputStream.flush();
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+            OMElement omElement = null;
+
+            if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
+                SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
+                SOAPFaultDetail soapFaultDetail = fault.getDetail();
+                if (soapFaultDetail != null) {
+                    omElement = soapFaultDetail.getFirstElement();
+                }
+                if (omElement == null) {
+                    omElement = fault.getReason();
+                }
+
+            } else {
+                omElement = messageContext.getEnvelope().getBody().getFirstElement();
+            }
+            if (omElement != null) {
+                try {
+                    omElement.serializeAndConsume(outputStream, format);
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
+            }
+            try {
+                outputStream.flush();
+            } catch (IOException e) {
+                throw AxisFault.makeFault(e);
+            }
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("end writeTo()");
+            }
         }
     }
 
@@ -110,8 +135,19 @@ public class ApplicationXMLFormatter implements MessageFormatter {
         String contentType;
         contentType = (String) messageContext.getProperty(Constants.Configuration.CONTENT_TYPE);
 
+        if (log.isDebugEnabled()) {
+            log.debug("contentType set from messageContext =" + contentType);
+            log.debug("(NOTE) contentType from format is=" + format.getContentType());
+        }
+        
         if (contentType == null) {
             contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+        } else if (isSOAPContentType(contentType)) {
+            contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+            if (log.isDebugEnabled()) {
+                log.debug("contentType is set incorrectly for Application XML.");
+                log.debug("It is changed to " + contentType);
+            }
         }
 
         if (encoding != null) {
@@ -124,7 +160,9 @@ public class ApplicationXMLFormatter implements MessageFormatter {
                 && !"\"\"".equals(soapAction.trim())) {
             contentType = contentType;
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("contentType returned =" + contentType);
+        }
         return contentType;
     }
 
@@ -141,5 +179,16 @@ public class ApplicationXMLFormatter implements MessageFormatter {
     public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
                                    String soapAction) {
         return soapAction;
+    }
+    
+    private boolean isSOAPContentType(String contentType) {
+        if (JavaUtils.indexOfIgnoreCase(contentType, SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+            return true;
+        }
+        // search for "type=text/xml"
+        else if (JavaUtils.indexOfIgnoreCase(contentType, SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+            return true;
+        }
+        return false;
     }
 }

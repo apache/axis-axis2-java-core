@@ -29,6 +29,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -39,8 +41,16 @@ import java.net.URL;
 
 public class SOAPMessageFormatter implements MessageFormatter {
 
+    private static final Log log = LogFactory.getLog(SOAPMessageFormatter.class);
+    
     public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
                         OutputStream out, boolean preserve) throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("start writeTo()");
+            log.debug("  preserve=" + preserve);
+            log.debug("  isOptimized=" + format.isOptimized());
+            log.debug("  isDoingSWA=" + format.isDoingSWA());
+        }
         OMElement element = msgCtxt.getEnvelope();
         try {
             if (!(format.isOptimized()) & format.isDoingSWA()) {
@@ -60,11 +70,20 @@ public class SOAPMessageFormatter implements MessageFormatter {
             }
         } catch (XMLStreamException e) {
             throw AxisFault.makeFault(e);
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("end writeTo()");
+            }
         }
     }
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format)
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("start getBytes()");
+            log.debug("  isOptimized=" + format.isOptimized());
+            log.debug("  isDoingSWA=" + format.isDoingSWA());
+        }
         OMElement element = msgCtxt.getEnvelope();
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
@@ -88,6 +107,10 @@ public class SOAPMessageFormatter implements MessageFormatter {
             throw AxisFault.makeFault(e);
         } catch (FactoryConfigurationError e) {
             throw AxisFault.makeFault(e);
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("end getBytes()");
+            }
         }
     }
 
@@ -95,6 +118,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
                                  String soapActionString) {
         String encoding = format.getCharSetEncoding();
         String contentType = format.getContentType();
+        if (log.isDebugEnabled()) {
+            log.debug("contentType from the OMOutputFormat =" + contentType);
+        }
         if (encoding != null) {
             contentType += "; charset=" + encoding;
         }
@@ -105,6 +131,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 && !"".equals(soapActionString.trim())
                 && !"\"\"".equals(soapActionString.trim())) {
             contentType = contentType + "; action=\"" + soapActionString+ "\"";
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("contentType returned =" + contentType);
         }
         return contentType;
     }
@@ -140,6 +169,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
     private void writeSwAMessage(MessageContext msgCtxt,
                                  StringWriter bufferedSOAPBody, OutputStream outputStream,
                                  OMOutputFormat format) {
+        if (log.isDebugEnabled()) {
+            log.debug("start writeSwAMessage()");
+        }
         Object property = msgCtxt
                 .getProperty(Constants.Configuration.MM7_COMPATIBLE);
         boolean MM7CompatMode = false;
@@ -172,6 +204,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
             MIMEOutputUtils.writeMM7Message(bufferedSOAPBody, outputStream,
                                             msgCtxt.getAttachmentMap(), format, partCID,
                                             innerBoundary);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("end writeSwAMessage()");
         }
     }
 

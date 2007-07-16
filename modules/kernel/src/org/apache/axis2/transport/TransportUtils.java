@@ -125,8 +125,8 @@ public class TransportUtils {
                                                   MessageContext msgContext,
                                                   InputStream inStream) throws AxisFault, XMLStreamException {
         OMElement documentElement = null;
+        String type = null;
         if (contentType != null) {
-            String type;
             int index = contentType.indexOf(';');
             if (index > 0) {
                 type = contentType.substring(0, index);
@@ -146,17 +146,27 @@ public class TransportUtils {
                 }
             }
             Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
+            if (log.isDebugEnabled()) {
+                log.debug("createSOAPEnvelope using Builder (" + 
+                          builder.getClass().getCanonicalName() + ") selected from type (" + type +")");
+            }
             if (builder != null) {
                 documentElement = builder.processDocument(inStream, contentType, msgContext);
             }
         }
         if (documentElement == null) {
             if (msgContext.isDoingREST()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not find a Builder for type (" + type + ").  Using REST.");
+                }
                 StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, null);
                 documentElement = builder.getDocumentElement();
             } else {
                 // FIXME making soap defualt for the moment..might effect the
                 // performance
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not find a Builder for type (" + type + ").  Using SOAP.");
+                }
                 String charSetEnc = (String) msgContext
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 StAXBuilder builder = BuilderUtil.getSOAPBuilder(inStream, charSetEnc);
@@ -175,10 +185,16 @@ public class TransportUtils {
      * @param contentType
      */
     public static String getCharSetEncoding(String contentType) {
+        if (log.isDebugEnabled()) {
+            log.debug("Input contentType (" + contentType + ")");
+        }
         int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
 
         if (index == -1) {    // Charset encoding not found in the content-type header
             // Using the default UTF-8
+            if (log.isDebugEnabled()) {
+                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING + ")");
+            }
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
@@ -199,8 +215,11 @@ public class TransportUtils {
         if (value.indexOf('\"') != -1) {
             value = value.replaceAll("\"", "");
         }
-
-        return value.trim();
+        value = value.trim();
+        if (log.isDebugEnabled()) {
+            log.debug("CharSetEncoding from content-type (" + value + ")");
+        }
+        return value;
     }
 
     public static void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
