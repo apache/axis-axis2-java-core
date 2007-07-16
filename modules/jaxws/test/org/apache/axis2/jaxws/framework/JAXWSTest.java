@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.message.FaultTests;
 import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
-import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.misc.JAXBContextTest;
 import org.apache.axis2.jaxws.misc.NS2PkgTest;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
@@ -126,7 +125,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MessageTests.class);
         suite.addTestSuite(FaultTests.class);
         suite.addTestSuite(SAAJConverterTests.class);
-        suite.addTestSuite(XMLStreamReaderSplitterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
