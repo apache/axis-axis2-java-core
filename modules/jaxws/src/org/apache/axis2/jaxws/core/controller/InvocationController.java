@@ -22,8 +22,10 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
@@ -124,6 +126,8 @@ public abstract class InvocationController {
             response.setEndpointDescription(request.getEndpointDescription());
 
             // Invoke inbound handlers.
+            TransportHeadersAdapter.install(response);
+            AttachmentsAdapter.install(response);
             HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
                                                       ic.getHandlers(),
                                                       HandlerChainProcessor.MEP.RESPONSE,

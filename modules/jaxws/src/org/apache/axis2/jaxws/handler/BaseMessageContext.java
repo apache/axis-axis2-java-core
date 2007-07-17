@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.handler;
 
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.Set;
  * 
  */
 public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
+    private static final Log log = LogFactory.getLog(BaseMessageContext.class);
 
     protected MessageContext messageCtx;
     
@@ -82,7 +85,44 @@ public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
      * @see java.util.Map#get(java.lang.Object)
      */
     public Object get(Object key) {
-        return messageCtx.getMEPContext().get(key);
+        // There are some properties that, in some cases, should not span the message exchange;
+        // that is, they should come from only the current message context.  For others properties,
+        // they should span the message exchange, meaning a property could be set on the request
+        // and it will also be available on the response.  [JAXWS 2.0, Sec 9.4.1.1, pp. 110-113]
+        Object returnValue = null;
+        if (shouldPropertySpanMEP(key)) {
+            returnValue = messageCtx.getMEPContext().get(key);
+        } else {
+            returnValue = messageCtx.getProperty((String) key);
+        }
+
+        // For the HTTP_REQUEST_HEADERS and HTTP_RESPONSE_HEADERS, the CTS tests want a null returned 
+        // if there are no headers.  Since we always put an instance of TransportHeadersAdapter,
+        // which contains the headers, on the message context, return a null if it is empty.
+        if (returnValue != null && (returnValue instanceof TransportHeadersAdapter)) {
+            TransportHeadersAdapter adapter = (TransportHeadersAdapter) returnValue;
+            if (adapter.isEmpty()) {
+                return null;
+            }
+        }
+        return returnValue;
+    }
+
+    private boolean shouldPropertySpanMEP(Object key) {
+        boolean shouldSpan = true;
+        String keyString = (String) key;
+
+        // The CTS tests require that HTTP_REQUEST_HEADERS span the request and response contexts
+        // on the service-provider, but do NOT span the request and response context on the 
+        // service-requester.  So, for an INBOUND flow, do not allow HTTP_REQUEST_HEADERS to
+        // span the request and response contexts.  The result is that the service-requester
+        // inbound handler will not see the request headers while processing a response.
+        Boolean outbound = (Boolean) messageCtx.getMEPContext().get(MESSAGE_OUTBOUND_PROPERTY);
+        if (outbound != null && !outbound)
+            if (javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS.equals(keyString)) {
+            shouldSpan = false;
+        }
+        return shouldSpan;
     }
 
     /* (non-Javadoc)

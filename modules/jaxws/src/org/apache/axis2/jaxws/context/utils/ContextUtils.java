@@ -175,10 +175,6 @@ public class ContextUtils {
             }
         }
         
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE,
-                               axisMsgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE));
-        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE,
-                                    Scope.APPLICATION);
     }
 
     public static void addWSDLProperties(MessageContext jaxwsMessageContext) {
