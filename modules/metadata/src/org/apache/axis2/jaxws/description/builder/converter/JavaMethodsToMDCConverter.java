@@ -32,6 +32,7 @@ import javax.jws.WebResult;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebEndpoint;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -67,6 +68,7 @@ public class JavaMethodsToMDCConverter {
                 setExceptionList(mdc, method);
                 mdc.setMethodName(method.getName());
                 setReturnType(mdc, method);
+                setIsListType(mdc, method);
                 mdc.setDeclaringClass(method.getDeclaringClass().getName());
                 attachHandlerChainAnnotation(mdc, method);
                 attachOnewayAnnotation(mdc, method);
@@ -302,4 +304,9 @@ public class JavaMethodsToMDCConverter {
             mdc.setReturnType(((Class)type).getName());
 		}
 	}
+    
+    private void setIsListType(MethodDescriptionComposite mdc, Method method) {
+        mdc.setIsListType(ConverterUtils.hasXmlListAnnotation(method.getAnnotations()));
+    }
+        
 }

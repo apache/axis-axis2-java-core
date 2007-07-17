@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.converter.ConverterUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -186,7 +187,7 @@ class OperationDescriptionImpl
         parentEndpointInterfaceDescription = parent;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
-		checkForXmlListAnnotation(method.getAnnotations());
+		isListType = ConverterUtils.hasXmlListAnnotation(method.getAnnotations());
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
@@ -1658,14 +1659,6 @@ class OperationDescriptionImpl
     public void setOperationRuntimeDesc(OperationRuntimeDescription ord) {
         // TODO Add toString support
         runtimeDescMap.put(ord.getKey(), ord);
-    }
-
-    private void checkForXmlListAnnotation(Annotation[] annotations) {
-    	for(Annotation annotation : annotations) {
-    		if(annotation.annotationType() == XmlList.class) {
-    			isListType = true;
-    		}
-    	}
     }
     
     public boolean isListType() {
