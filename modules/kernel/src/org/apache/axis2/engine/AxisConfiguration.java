@@ -33,7 +33,6 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.util.SOAPMustUnderstandHeaderChecker;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -125,8 +124,6 @@ public class AxisConfiguration extends AxisDescription {
     private boolean start;
 
     private ArrayList targetResolvers;
-    
-    private ArrayList mustUnderstandHeaderCheckers;
 
     private ClusterManager clusterManager;
 
@@ -159,7 +156,6 @@ public class AxisConfiguration extends AxisDescription {
 
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
-        mustUnderstandHeaderCheckers = new ArrayList();
     }
 
     public void addMessageReceiver(String mepURL,
@@ -1015,29 +1011,6 @@ public class AxisConfiguration extends AxisDescription {
     public void addTargetResolver(TargetResolver tr) {
         targetResolvers.add(tr);
     }
-    
-    /**
-     * Return an iterator over implentations of SOAPMustUnderstandHeaderChecker.  These 
-     * implentations are called during mustUnderstand validation with a HashMap of headers
-     * for the actor/role the engine is currently acting in.  They can remove headers they 
-     * understand from the map so those headers, if marked mustUnderstand and not yet processed, 
-     * do not cause a mustUnderstand fault to be thrown.
-     * 
-     * @return an iterator over SOAPMustUnderstandHeaderChecker implementations.  It may be
-     *  empty if none are configured.
-     */
-    public Iterator getMustUnderstandHeaderCheckers() {
-        return mustUnderstandHeaderCheckers.iterator();
-    }
-
-    /**
-     * Add an implementation of SOAPMustUnderstandHeaderChecker to the list of checkers. 
-     * 
-     * @param checker The implementation to be added.
-     */
-    public void addMustUnderstandHeaderChecker(SOAPMustUnderstandHeaderChecker checker) {
-        mustUnderstandHeaderCheckers.add(checker);
-    }
 
     public void addLocalPolicyAssertion(QName name) {
         this.localPolicyAssertions.add(name);
@@ -1123,4 +1096,3 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 }
-

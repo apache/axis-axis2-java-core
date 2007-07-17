@@ -51,8 +51,6 @@ public interface DeploymentConstants {
     String TAG_TYPE = "type";
     String TAG_TARGET_RESOLVERS = "targetResolvers";
     String TAG_TARGET_RESOLVER = "targetResolver";
-    String TAG_MUSTUNDERSTAND_CHECKERS = "soapMustUnderstandCheckers";
-    String TAG_MUSTUNDERSTAND_CHECKER = "soapMustUnderstandChecker";
     String TAG_TRANSPORT_SENDER = "transportSender";
     String TAG_TRANSPORT_RECEIVER = "transportReceiver";
     String TAG_SERVICE_GROUP = "serviceGroup";

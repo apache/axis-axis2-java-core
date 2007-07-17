@@ -36,13 +36,11 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.SOAPMustUnderstandHeaderChecker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -65,10 +63,7 @@ public class AxisEngine {
     public AxisEngine(ConfigurationContext engineContext) {
     }
 
-    public static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-        if (msgContext == null) {
-            return;
-        }
+    private static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope.getHeader() == null) {
             return;
@@ -77,12 +72,9 @@ public class AxisEngine {
         // Get all the headers targeted to us
         Iterator headerBlocks = envelope.getHeader().getHeadersToProcess(null);
 
-        // Have the mustUnderstand Header checkers remove any headers from the list they understand
-        Iterator notUnderstoodHeaders = removeUnderstoodHeaders(msgContext, headerBlocks);
-        
-        while (notUnderstoodHeaders.hasNext()) {
-            SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) notUnderstoodHeaders.next();
-            
+        while (headerBlocks.hasNext()) {
+            SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
+
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
             if (headerBlock.isProcessed() || !headerBlock.getMustUnderstand()) {
@@ -97,51 +89,6 @@ public class AxisEngine {
         }
     }
 
-    private static Iterator removeUnderstoodHeaders(MessageContext msgContext, Iterator headerBlocks) {
-        Iterator mustUnderstandCheckers = msgContext.getConfigurationContext()
-            .getAxisConfiguration().getMustUnderstandHeaderCheckers();
-        Iterator notUnderstoodHeaders = null;
-        
-        if (mustUnderstandCheckers != null && mustUnderstandCheckers.hasNext()) {
-            // Create a map of the headers that need to be understood keyed by the header QName 
-            // to make it easy for the checkers to find the headers they understand, then let 
-            // each of the checkers remove any headers from the map that they will understand.
-            // REVIEW: Can there be duplicate SOAP header QNames?  If so, the vaules of the map 
-            // need to be a linked list or the collection needs to support duplicate keys.
-            HashMap notYetUnderstoodHeaders = new HashMap();
-            while (headerBlocks.hasNext()) {
-                SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
-                notYetUnderstoodHeaders.put(headerBlock.getQName(), headerBlock);
-            }
-            
-            while (mustUnderstandCheckers.hasNext()) {
-                SOAPMustUnderstandHeaderChecker checker = 
-                    (SOAPMustUnderstandHeaderChecker) mustUnderstandCheckers.next();
-                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("Before calling mustUnderstandChecker " 
-                              + checker
-                              + " list of not-yet-understood headers is: " 
-                              + notYetUnderstoodHeaders);
-                }
-
-                notYetUnderstoodHeaders = 
-                    checker.removeUnderstoodHeaders(msgContext, notYetUnderstoodHeaders);
-
-                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("After calling mustUnderstandChecker " 
-                              + checker
-                              + " list of not-yet-understood headers is: " 
-                              + notYetUnderstoodHeaders);
-                }
-            }
-            notUnderstoodHeaders = notYetUnderstoodHeaders.values().iterator();
-        } else {
-            // There are no validators, so just return the Iterator paramster unchanged
-            notUnderstoodHeaders = headerBlocks;
-        }
-        return notUnderstoodHeaders;
-    }
-    
     /**
      * This method is called to handle any error that occurs at inflow or outflow. But if the
      * method is called twice, it implies that sending the error handling has failed, in which case
@@ -185,9 +132,9 @@ public class AxisEngine {
             InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
             if (pi.equals(InvocationResponse.CONTINUE)) {
-                checkMustUnderstand(msgContext);
                 if (msgContext.isServerSide()) {
                     // invoke the Message Receivers
+                    checkMustUnderstand(msgContext);
 
                     MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
                     if (receiver == null) {
@@ -330,9 +277,9 @@ public class AxisEngine {
         //invoking the MR
 
         if (pi.equals(InvocationResponse.CONTINUE)) {
-            checkMustUnderstand(msgContext);
             if (msgContext.isServerSide()) {
                 // invoke the Message Receivers
+                checkMustUnderstand(msgContext);
                 MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
                 if (receiver == null) {
                     throw new AxisFault(Messages.getMessage(
