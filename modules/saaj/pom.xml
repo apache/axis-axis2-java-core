@@ -33,52 +33,6 @@
 		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_2/modules/saaj</developerConnection>
 		<url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_2/modules/saaj</url>
 	</scm>
-	<profiles>
-		<profile>
-			<id>java16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<inherited>true</inherited>
-						<configuration>
-							<skip>false</skip>
-							<forkMode>pertest</forkMode>
-							<argLine>-Xms256m -Xmx512m</argLine>
-							<includes>
-							   <include>**/*Test.java</include>
-							</includes>
-							<excludes>
-							   <exclude>**/SAAJResultTest.java</exclude>
-							   <exclude>**/SOAPPartTest.java</exclude>
-							</excludes>
-							<systemProperties>
-								<property>
-									<name>javax.xml.soap.MessageFactory</name>
-									<value>org.apache.axis2.saaj.MessageFactoryImpl</value>
-								</property>
-								<property>
-									<name>javax.xml.soap.SOAPFactory</name>
-									<value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
-								</property>
-								<property>
-									<name>javax.xml.soap.SOAPConnectionFactory</name>
-									<value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
-								</property>
-								<property>
-									<name>javax.xml.soap.MetaFactory</name>
-									<value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
-								</property>
-							</systemProperties>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
@@ -129,6 +83,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skip>false</skip>
+					<forkMode>once</forkMode>
+					 <argLine>-Djava.endorsed.dirs=${project.build.directory}/../../saaj-api/target/</argLine>
 					<systemProperties>
 						<property>
 							<name>javax.xml.soap.MessageFactory</name>
