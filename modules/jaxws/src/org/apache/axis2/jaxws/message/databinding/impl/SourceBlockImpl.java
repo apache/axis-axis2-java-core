@@ -77,6 +77,13 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             staxSource = forName("javax.xml.transform.stax.StAXSource");
         } catch (Exception e) {
         }
+        try {
+            // Woodstox does not work with StAXSource
+            if(XMLInputFactory.newInstance().getClass().getName().indexOf("wstx")!=-1){
+                staxSource = null;
+            }
+        } catch (Exception e){
+        }
     }
 
     /**
