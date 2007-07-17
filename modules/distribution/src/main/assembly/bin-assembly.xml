@@ -360,7 +360,6 @@
                  <exclude>activesoap:jaxp-api:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
                  <exclude>junit:junit:jar</exclude>
-                 <exclude>log4j:log4j:jar</exclude>
 		 <!-- need to fix this (sending version for exclusion) -->
 		 <!-- servlet-api-2.3 must be included & following must be excluded -->
                  <exclude>org.mortbay.jetty:servlet-api-2.5:jar:6.0.1</exclude>
