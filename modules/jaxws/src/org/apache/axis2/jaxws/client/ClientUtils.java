@@ -37,12 +37,12 @@ public class ClientUtils {
     public static String findSOAPAction(MessageContext ctx) {
         OperationDescription op = ctx.getOperationDescription();
         Boolean useSoapAction =
-                (Boolean)ctx.getProperties().get(BindingProvider.SOAPACTION_USE_PROPERTY);
+                (Boolean)ctx.getProperty(BindingProvider.SOAPACTION_USE_PROPERTY);
         if (useSoapAction != null && useSoapAction.booleanValue()) {
             // If SOAPAction use hasn't been disabled by the client, then first
             // look in the context properties.
             String action =
-                    (String)ctx.getProperties().get(BindingProvider.SOAPACTION_URI_PROPERTY);
+                    (String)ctx.getProperty(BindingProvider.SOAPACTION_URI_PROPERTY);
             if (action != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Setting soap action from JAX-WS request context.  Action [" +

@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.core;
+package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 
@@ -87,7 +88,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         return requestMC;
     }
     
-    protected void setResponseMessageContext(MessageContext responseMC) {
+    public void setResponseMessageContext(MessageContext responseMC) {
         // TODO does ApplicationAccessLocked mean anything here? -- method is protected, so probably not
         this.responseMC = responseMC;
         // if callers are being careful, the responseMC should not be set

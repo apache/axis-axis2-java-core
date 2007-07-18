@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 
@@ -223,7 +224,7 @@ public class MessageContext {
     public boolean isMaintainSession() {
         boolean maintainSession = false;
 
-        Boolean value = (Boolean) getProperties().get(BindingProvider.SESSION_MAINTAIN_PROPERTY);
+        Boolean value = (Boolean) getProperty(BindingProvider.SESSION_MAINTAIN_PROPERTY);
         if (value != null && value.booleanValue()) {
             maintainSession = true;
         }

@@ -36,9 +36,9 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -223,7 +223,7 @@ public class AxisInvocationController extends InvocationController {
         // Setup the client so that it knows whether the underlying call to
         // Axis2 knows whether or not to start a listening port for an
         // asynchronous response.
-        Boolean useAsyncMep = (Boolean)request.getProperties().get(Constants.USE_ASYNC_MEP);
+        Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
@@ -299,7 +299,7 @@ public class AxisInvocationController extends InvocationController {
         // Setup the client so that it knows whether the underlying call to
         // Axis2 knows whether or not to start a listening port for an
         // asynchronous response.
-        Boolean useAsyncMep = (Boolean)request.getProperties().get(Constants.USE_ASYNC_MEP);
+        Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
@@ -391,7 +391,7 @@ public class AxisInvocationController extends InvocationController {
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            String targetUrl = (String)requestMsgCtx.getProperties().get(
+            String targetUrl = (String)requestMsgCtx.getProperty(
                     BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
             EndpointReference toEPR = new EndpointReference(targetUrl);
             options.setTo(toEPR);

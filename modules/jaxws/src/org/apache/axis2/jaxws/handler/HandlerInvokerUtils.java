@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import org.apache.axis2.jaxws.core.MEPContext;
-import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Protocol;
 
 import javax.xml.ws.handler.Handler;
