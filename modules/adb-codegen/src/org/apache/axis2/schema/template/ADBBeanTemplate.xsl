@@ -2062,14 +2062,30 @@
                         <!-- handle binary - Since it is a Datahandler, we can just add it to the list
                           and the ADB pullparser would handle it right-->
                          <xsl:when test="@binary">
-                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                      "<xsl:value-of select="$propertyName"/>"));
+                            <xsl:choose>
+                                <xsl:when test="$simple">
+                                      elementList.add(org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                      elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                        "<xsl:value-of select="$propertyName"/>"));
+                                </xsl:otherwise>
+                            </xsl:choose>
                             elementList.add(<xsl:value-of select="$varName"/>);
                         </xsl:when>
                         <!-- the usual case!!!!-->
                         <xsl:otherwise>
-                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                             <xsl:choose>
+                                 <xsl:when test="$simple">
+                                     <!-- if the type is simple then  this must be only the element text -->
+                                     elementList.add(org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT);
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                      elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
                                                                       "<xsl:value-of select="$propertyName"/>"));
+                                 </xsl:otherwise>
+                             </xsl:choose>
+
                             <xsl:if test="@primitive">
                                 elementList.add(
                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
