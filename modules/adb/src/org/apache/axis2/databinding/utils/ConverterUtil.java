@@ -33,6 +33,7 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -1023,5 +1024,21 @@ public class ConverterUtil {
             super(message, cause);
         }
 
+    }
+
+    // serialization methods for xsd any type
+
+    /**
+     * serialize the any type string object
+     * @param string
+     * @param xmlStreamWriter
+     */
+    public static void serializeAnyType(String string, XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+         if (xmlStreamWriter.getPrefix(Constants.XSI_NAMESPACE) == null){
+             String prefix = BeanUtil.getUniquePrefix();
+             xmlStreamWriter.writeNamespace(prefix,Constants.XSI_NAMESPACE);
+             xmlStreamWriter.setPrefix(prefix,Constants.XSI_NAMESPACE);
+         }
+         
     }
 }
