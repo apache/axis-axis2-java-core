@@ -132,9 +132,9 @@ public class AxisEngine {
             InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
             if (pi.equals(InvocationResponse.CONTINUE)) {
+                checkMustUnderstand(msgContext);
                 if (msgContext.isServerSide()) {
                     // invoke the Message Receivers
-                    checkMustUnderstand(msgContext);
 
                     MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
                     if (receiver == null) {
@@ -277,9 +277,9 @@ public class AxisEngine {
         //invoking the MR
 
         if (pi.equals(InvocationResponse.CONTINUE)) {
+            checkMustUnderstand(msgContext);
             if (msgContext.isServerSide()) {
                 // invoke the Message Receivers
-                checkMustUnderstand(msgContext);
                 MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
                 if (receiver == null) {
                     throw new AxisFault(Messages.getMessage(
