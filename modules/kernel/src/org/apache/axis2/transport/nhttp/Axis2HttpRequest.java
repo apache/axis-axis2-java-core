@@ -126,7 +126,7 @@ public class Axis2HttpRequest {
             soapAction = msgContext.getWSAAction();
         }
         if (soapAction == null) {
-            msgContext.getAxisOperation().getInputAction();
+            msgContext.getAxisOperation().getSoapAction();
         }
 
         if (msgContext.isSOAP11() && soapAction != null &&

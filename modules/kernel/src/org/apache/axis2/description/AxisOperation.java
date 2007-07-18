@@ -507,9 +507,25 @@ public abstract class AxisOperation extends AxisDescription
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
-
+    
+    /*
+     * Convenience method to access the WS-A Input Action per the
+     * WS-A spec. Effectively use the soapAction if available else
+     * use the first entry in the WSA Mapping list.
+     * 
+     * Use getSoapAction when you want to get the soap action and this
+     * when you want to get the wsa input action.
+     */
     public String getInputAction() {
-        return soapAction;
+    	String result = null;
+    	if(soapAction != null && !"".equals(soapAction)){
+    		result = soapAction;
+    	}else{
+    		if(wsamappingList != null && !wsamappingList.isEmpty()){
+    			result = (String)wsamappingList.get(0);
+    		}
+    	}
+    	return result;
     }
 
     public String getOutputAction() {
@@ -565,5 +581,9 @@ public abstract class AxisOperation extends AxisDescription
     public AxisService getAxisService() {
         return (AxisService)getParent();
     }
+
+	public String getSoapAction() {
+		return soapAction;
+	}
     
  }

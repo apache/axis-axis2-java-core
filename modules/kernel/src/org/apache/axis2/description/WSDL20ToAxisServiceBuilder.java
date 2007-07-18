@@ -74,6 +74,7 @@ import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
+import org.apache.woden.xml.XMLAttr;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
@@ -368,6 +369,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 DescriptionElement descriptionElement = null;
                 if (wsdlURI != null && !"".equals(wsdlURI)) {
                     description = readInTheWSDLFile(wsdlURI);
+                    descriptionElement = description.toElement();
                 } else if (in != null) {
 
                     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
@@ -866,6 +868,18 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             } else {
                 MEP = pattern.toString();
             }
+            if(!isServerSide){
+            	// If in the client, need to toggle in-out to out-in etc.
+            	if(WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)){
+            		MEP = WSDL2Constants.MEP_URI_OUT_IN;
+            	}
+            	if(WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)){
+            		MEP = WSDL2Constants.MEP_URI_OUT_ONLY;
+            	}
+            	if(WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)){
+            		MEP = WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN;
+            	}
+            }
             axisOperation = AxisOperationFactory.getOperationDescription(MEP);
             axisOperation.setName(opName);
 
@@ -971,6 +985,30 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         message.setName(elementQName != null ? elementQName.getLocalPart() : axisOperation.getName().getLocalPart());
         axisOperation.addMessage(message, messageLabel);
 
+        
+        if(WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(messageLabel)){
+        	XMLAttr xa = messageReference.toElement().getExtensionAttribute(new QName("http://www.w3.org/2006/05/addressing/wsdl","Action"));
+        	if(xa!=null){
+        		String value = (String)xa.getContent();
+        		if(value != null){
+        			ArrayList al = axisOperation.getWSAMappingList();
+        			if(al == null){
+        				al = new ArrayList();
+        				axisOperation.setWsamappingList(al);
+        			}
+        			al.add(value);
+        		}
+        	}
+        }else{
+        	XMLAttr xa = messageReference.toElement().getExtensionAttribute(new QName("http://www.w3.org/2006/05/addressing/wsdl","Action"));
+        	if(xa!=null){
+        		String value = (String)xa.getContent();
+        		if(value != null){
+        			axisOperation.setOutputAction(value);
+        		}
+        	}
+        }
+        
         // populate this map so that this can be used in SOAPBody based dispatching
         if (elementQName != null) {
             axisService

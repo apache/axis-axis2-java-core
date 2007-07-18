@@ -381,7 +381,7 @@ public class Utils {
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
-            if (operation.getInputAction() == null) {
+            if (operation.getSoapAction() == null) {
                 operation.setSoapAction("urn:" + opName);
             }
         }

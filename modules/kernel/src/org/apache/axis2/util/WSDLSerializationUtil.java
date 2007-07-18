@@ -264,7 +264,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
             opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
                                                          tns.getPrefix() + ":" + name));
             opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
-                                                         axisOperation.getInputAction()));
+                                                         axisOperation.getSoapAction()));
         }
     }
 
