@@ -59,6 +59,12 @@ import java.lang.reflect.Method;
  *  </pre>
  */
 public interface OperationDescription {
+    /**
+     * Paramater set on AxisOperation which contains an ArrayList of SOAP header QNames
+     * corresponding to SEI parameters. 
+     */
+    public static final String HEADER_PARAMETER_QNAMES = "org.apache.axis2.jaxws.description.OperationDescription.headerParameterQNames";
+    
     public EndpointInterfaceDescription getEndpointInterfaceDescription();
 
     public FaultDescription[] getFaultDescriptions();

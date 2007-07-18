@@ -220,6 +220,10 @@
                      class="org.apache.axis2.jaxws.provider.SoapMessageMUProviderChecker">
                 <order phase="OperationInPhase"/>
             </handler>
+            <handler name="MustUnderstandChecker"
+                     class="org.apache.axis2.jaxws.dispatchers.MustUnderstandChecker">
+                <order phase="OperationInPhase"/>
+            </handler>
         </phase>
     </phaseOrder>
     <phaseOrder type="OutFlow">
@@ -269,6 +273,10 @@
         <phase name="OperationInPhase">
             <handler name="SoapMessageMUProviderChecker"
                      class="org.apache.axis2.jaxws.provider.SoapMessageMUProviderChecker">
+                <order phase="OperationInPhase"/>
+            </handler>
+            <handler name="MustUnderstandChecker"
+                     class="org.apache.axis2.jaxws.dispatchers.MustUnderstandChecker">
                 <order phase="OperationInPhase"/>
             </handler>
         </phase>
