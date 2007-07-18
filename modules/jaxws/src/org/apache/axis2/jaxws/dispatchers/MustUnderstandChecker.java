@@ -46,51 +46,7 @@ public class MustUnderstandChecker extends org.apache.axis2.handlers.AbstractHan
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // Get the list of headers for the roles we're acting in, then mark any we understand
         // as processed.
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        if (envelope.getHeader() == null) {
-            return InvocationResponse.CONTINUE;
-        }
-        
-        AxisOperation axisOperation = msgContext.getAxisOperation();
-        if (axisOperation == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Axis operation on messageContext is null: " + msgContext);
-            }
-            return InvocationResponse.CONTINUE;
-        }
-        
-        Parameter headerQNamesParameter = axisOperation.getParameter(OperationDescription.HEADER_PARAMETER_QNAMES);
-        if (headerQNamesParameter == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Parameter not on AxisOperation " + axisOperation + "; " 
-                          + OperationDescription.HEADER_PARAMETER_QNAMES);
-            }
-            return InvocationResponse.CONTINUE;
-        }
-        
-        ArrayList understoodHeaderQNames = (ArrayList) headerQNamesParameter.getValue();
-        if (understoodHeaderQNames == null || understoodHeaderQNames.isEmpty()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Parameter value on AxisOperation is empty: "  + axisOperation + "; " 
-                          + OperationDescription.HEADER_PARAMETER_QNAMES);
-            }
-            return InvocationResponse.CONTINUE;
-        }
-
-        // Passing in null will get headers targeted for NEXT and ULTIMATE RECEIVER
-        Iterator headerBlocks = envelope.getHeader().getHeadersToProcess(null);
-        while (headerBlocks.hasNext()) {
-            SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
-            QName headerQN = headerBlock.getQName();
-            if (understoodHeaderQNames.contains(headerQN)) {
-                headerBlock.setProcessed();
-                if (log.isDebugEnabled()) {
-                    log.debug("Header marked as processed by JAXWS MustUnderstandChecker: " 
-                              + headerQN);
-                }
-            }
-        }
-
+        MustUnderstandUtils.markUnderstoodHeaderParameters(msgContext);
         return InvocationResponse.CONTINUE;
     }
 }
