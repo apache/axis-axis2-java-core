@@ -472,13 +472,13 @@ public abstract class AbstractHTTPSender {
                 httpClient = (HttpClient) msgContext.getConfigurationContext()
                         .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
             }
-            if (httpClient == null) {
-                MultiThreadedHttpConnectionManager connectionManager =
-                        new MultiThreadedHttpConnectionManager();
-                httpClient = new HttpClient(connectionManager);
-                msgContext.getConfigurationContext()
-                        .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
-            }
+            if (httpClient != null)
+                return httpClient;
+            MultiThreadedHttpConnectionManager connectionManager =
+                new MultiThreadedHttpConnectionManager();
+            httpClient = new HttpClient(connectionManager);
+            msgContext.getConfigurationContext()
+                .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
         } else {
             HttpConnectionManager connManager =
                     (HttpConnectionManager) msgContext.getProperty(
