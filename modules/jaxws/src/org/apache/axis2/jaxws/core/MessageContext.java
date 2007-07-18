@@ -144,7 +144,7 @@ public class MessageContext {
     
     public Object getProperty(String key) {
         if (DELEGATE_TO_OPTIONS) {
-            return axisMsgCtx.getOptions().getProperty(key);
+            return axisMsgCtx.getProperty(key);
         }
         return getProperties().get(key);
     }
