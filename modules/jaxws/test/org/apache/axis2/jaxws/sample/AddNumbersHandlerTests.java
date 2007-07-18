@@ -91,7 +91,7 @@ public class AddNumbersHandlerTests extends TestCase {
 			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);	
 			int total = proxy.addNumbersHandler(10,10);
-			
+
             assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
             TestLogger.logger.debug("----------------------------------");

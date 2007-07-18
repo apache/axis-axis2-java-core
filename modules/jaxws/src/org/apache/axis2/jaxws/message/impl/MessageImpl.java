@@ -22,7 +22,6 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.Constants.Configuration;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -598,8 +597,7 @@ public class MessageImpl implements Message {
             if (!isMTOMEnabled()) {
                 String[] cids = newMap.getAllContentIDs();
                 if (cids.length > 0) {
-                    Options opts = messageContext.getAxisMessageContext().getOptions();
-                    opts.setProperty(Configuration.ENABLE_SWA, "true");
+                    messageContext.setProperty(Configuration.ENABLE_SWA, "true");
                 }
             }
             if (log.isDebugEnabled()) {

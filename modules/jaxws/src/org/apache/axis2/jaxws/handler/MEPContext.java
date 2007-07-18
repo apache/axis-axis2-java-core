@@ -111,7 +111,10 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (scopes.get(s) == null) {
             // JAX-WS default 9.4.1.  However, we try to set the scope for
             // every incoming property to HANDLER.  If a property is coming from
-            // the axis2 Options bag, we want those to be APPLICATION scoped.
+            // the axis2 AbstractContext properties bag, we want those to be
+            // APPLICATION scoped.  Those properties may have been set by an
+            // axis application handler, and may need to be accessible by 
+            // a client app or endpoint.
             return Scope.APPLICATION;
         }
         return scopes.get(s);
@@ -179,14 +182,14 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         // TODO should check ApplicationAccessLocked flag
         // and return only APPLICATION scoped properties if true
         if (isApplicationAccessLocked()) {
-            return new ReadOnlySet(getApplicationScopedProperties().entrySet());
+            return getApplicationScopedProperties().entrySet();
         }
         HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
         }
-        return new ReadOnlySet(tempProps.entrySet());
+        return tempProps.entrySet();
     }
 
     public Object get(Object keyObject) {
@@ -216,14 +219,14 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
 
     public Set keySet() {
         if (isApplicationAccessLocked()) {
-            return new ReadOnlySet(getApplicationScopedProperties().keySet());
+            return getApplicationScopedProperties().keySet();
         }
         HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
         }
-        return new ReadOnlySet(tempProps.keySet());
+        return tempProps.keySet();
     }
 
     public Object put(String key, Object value) {
@@ -295,16 +298,16 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         return tempProps.size();
     }
 
-    public ReadOnlyCollection values() {
+    public Collection values() {
         if (isApplicationAccessLocked()) {
-            return new ReadOnlyCollection(getApplicationScopedProperties().values());
+            return getApplicationScopedProperties().values();
         }
         HashMap tempProps = new HashMap();
         tempProps.putAll(requestMC.getProperties());
         if (responseMC != null) {
             tempProps.putAll(responseMC.getProperties());
         }
-        return new ReadOnlyCollection(tempProps.values());
+        return tempProps.values();
     }
 
     public Message getMessageObject() {
@@ -368,158 +371,6 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
             }
         }
         return tempMap;
-    }
-    
-    
-    /*
-     * nested classes to be used to enforce read-only Collection, Set, and Iterator for MEPContext
-     */
-    
-    class ReadOnlyCollection implements Collection {
-        
-        private Collection containedCollection;
-        
-        private ReadOnlyCollection(Collection containedCollection) {
-            this.containedCollection = containedCollection;
-        }
-        
-        public boolean add(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean addAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean contains(Object o) {
-            return containedCollection.contains(o);
-        }
-
-        public boolean containsAll(Collection c) {
-            return containedCollection.containsAll(c);
-        }
-
-        public boolean isEmpty() {
-            return containedCollection.isEmpty();
-        }
-
-        public Iterator iterator() {
-            return new ReadOnlyIterator(containedCollection.iterator());
-        }
-
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean removeAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean retainAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int size() {
-            return containedCollection.size();
-        }
-
-        public Object[] toArray() {
-            return containedCollection.toArray();
-        }
-
-        public Object[] toArray(Object[] a) {
-            return containedCollection.toArray(a);
-        }
-
-    }
-    
-    class ReadOnlyIterator implements Iterator {
-        
-        private Iterator containedIterator;
-        
-        private ReadOnlyIterator(Iterator containedIterator) {
-            this.containedIterator = containedIterator;
-        }
-        
-        // override remove() to make this Iterator class read-only
-        
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean hasNext() {
-            return containedIterator.hasNext();
-        }
-
-        public Object next() {
-            return containedIterator.next();
-        }
-    }
-    
-    class ReadOnlySet implements Set {
-
-        private Set containedSet;
-        
-        private ReadOnlySet(Set containedSet) {
-            this.containedSet = containedSet;
-        }
-        
-        public boolean add(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean addAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean contains(Object o) {
-            return containedSet.contains(o);
-        }
-
-        public boolean containsAll(Collection c) {
-            return containedSet.containsAll(c);
-        }
-
-        public boolean isEmpty() {
-            return containedSet.isEmpty();
-        }
-
-        public Iterator iterator() {
-            return new ReadOnlyIterator(containedSet.iterator());
-        }
-
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean removeAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean retainAll(Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int size() {
-            return containedSet.size();
-        }
-
-        public Object[] toArray() {
-            return containedSet.toArray();
-        }
-
-        public Object[] toArray(Object[] a) {
-            return containedSet.toArray(a);
-        }
-        
     }
     
 }
