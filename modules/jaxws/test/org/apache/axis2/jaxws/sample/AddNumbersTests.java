@@ -46,6 +46,7 @@ public class AddNumbersTests extends TestCase {
         TestLogger.logger.debug("Total =" + total);
         TestLogger.logger.debug("----------------------------------");
 
+        assertEquals("sum", 20, total);
         assertEquals("http response code", 
                      new Integer(200), p.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE));
         Map headers = (Map) p.getResponseContext().get(MessageContext.HTTP_RESPONSE_HEADERS);
