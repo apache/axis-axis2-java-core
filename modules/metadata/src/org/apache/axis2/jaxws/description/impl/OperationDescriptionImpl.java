@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.converter.ConverterUtils;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +60,7 @@ import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
 import javax.wsdl.extensions.AttributeExtensible;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.namespace.QName;
@@ -68,10 +70,12 @@ import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1795,7 +1799,8 @@ class OperationDescriptionImpl
                 .getEndpointDescriptionImpl()
                 .isWSDLFullySpecified()) {
             if (log.isDebugEnabled()) {
-                log.debug("A full WSDL is available.  Query the WSDL binding for the AttachmentDescription information.");
+                log.debug("A full WSDL is available.  Query the WSDL binding for the " +
+                                "AttachmentDescription information.");
             }
             DescriptionUtils.getAttachmentFromBinding(this,
                                                       this.getEndpointInterfaceDescriptionImpl()
@@ -1803,24 +1808,67 @@ class OperationDescriptionImpl
                                                           .getWSDLBinding());
         }  else {
             if (log.isDebugEnabled()) {
-                log.debug("A full WSDL is not available. AttachmentDescriptions are not built.  Processing continues.");
+                log.debug("The WSDL is not available.  Looking for @WebService wsdlLocation.");
             }
-            // TODO: Dummy attachment code to get the attachment test working.  I am working on the code
-            // to get this information built automatically from the wsdl
-            // START_HACK
-            if (log.isDebugEnabled()) {
-                log.debug("Adding dummy Attachment information.");
+            
+            // Try getting a WSDL
+            String wsdlLocation = this.getEndpointInterfaceDescriptionImpl().
+                getEndpointDescriptionImpl().
+                getAnnoWebServiceWSDLLocation();
+            
+            if (wsdlLocation == null || wsdlLocation.length() == 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("@WebService wsdlLocation is not specified.  " +
+                                "Processing continues without AttachmentDescription information");
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("@WebService wsdlLocation is " + wsdlLocation);
+                }
+                
+                Definition def = null;
+                WSDL4JWrapper wsdl4j = null;
+                try {
+                    File file = new File(wsdlLocation);
+                    URL url = file.toURL();
+                    wsdl4j = new WSDL4JWrapper(url);
+                    def = wsdl4j.getDefinition();
+                } catch (Throwable t) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error occurred while loading WSDL.  " +
+                                        "Procesing continues without AttachmentDescription " +
+                                        "information. " + t);
+                    }
+                }
+                if (def != null) {
+                    // Set the WSDL on the server
+                    this.getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().
+                        getServiceDescriptionImpl().setWsdlWrapper(wsdl4j);
+                    if (log.isDebugEnabled()) {
+                        log.debug("WSDL Definition is loaded.  Get the WSDL Binding.");
+                    }
+                    
+                    Binding binding = this.getEndpointInterfaceDescriptionImpl().
+                        getEndpointDescriptionImpl().getWSDLBinding();
+                    
+                    if (binding == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("WSDL Binding was not found for serviceName=" +  
+                                      this.getEndpointInterfaceDescription().
+                                        getEndpointDescription().getServiceQName() +
+                                      " and portName=" +
+                                      this.getEndpointInterfaceDescription().
+                                        getEndpointDescription().getPortQName());
+                        }
+                    } else {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Query Binding for AttachmentDescription Information");
+                        }
+                        DescriptionUtils.getAttachmentFromBinding(this, binding);
+                    }          
+                }
             }
-            addPartAttachmentDescription("dummyAttachmentIN",
-                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
-                                                                       new String[] {"text/plain"}));
-            addPartAttachmentDescription("dummyAttachmentINOUT",
-                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
-                                                                       new String[] {"image/jpeg"}));
-            addPartAttachmentDescription("dummyAttachmentOUT",
-                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
-                                                                       new String[] {"text/plain"}));
-            // END_HACK
+            
         }
         if (log.isDebugEnabled()) {
             log.debug("End buildAttachmentInformation");
