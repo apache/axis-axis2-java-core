@@ -73,6 +73,10 @@ public interface ParameterDescription {
 //  TODO: Fix this to not be the WebParam mode
 
     public WebParam.Mode getMode();
-
+    
+    /**
+     * @return AttachmentDescription for this parameter or null
+     */
+    public AttachmentDescription getAttachmentDescription();
 
 }

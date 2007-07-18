@@ -23,7 +23,13 @@ import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.Handler;
 
+/**
+ * This is the main interface in the Axis2 clustering implementation.
+ * In order to plug-in a new clustering implementation, this interface has to be
+ * implmented.
+ */
 public interface ClusterManager extends ParameterInclude {
 
     /**
@@ -31,37 +37,32 @@ public interface ClusterManager extends ParameterInclude {
      *
      * @throws ClusteringFault
      */
-    public void init() throws ClusteringFault;
+    void init() throws ClusteringFault;
 
     /**
-     *
      * @return The ContextManager
      */
-    public ContextManager getContextManager ();
+    ContextManager getContextManager();
 
     /**
-     *
      * @return The ConfigurationManager
      */
-    public ConfigurationManager getConfigurationManager ();
+    ConfigurationManager getConfigurationManager();
 
     /**
-     *
      * @param contextManager
      */
-    public void setContextManager (ContextManager contextManager);
+    void setContextManager(ContextManager contextManager);
 
     /**
-     *
      * @param configurationManager
      */
-    public void setConfigurationManager (ConfigurationManager configurationManager);
+    void setConfigurationManager(ConfigurationManager configurationManager);
 
     /**
-     *
      * @throws ClusteringFault
      */
-    public void shutdown () throws ClusteringFault;
+    void shutdown() throws ClusteringFault;
 
     /**
      * Set the configuration context

@@ -22,11 +22,11 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 import javax.activation.DataHandler;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
+
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Message
@@ -65,9 +65,16 @@ public interface Message extends XMLPart {
     
     /**
      * Get the list of attachment content ids for the message
-     * @return Set<String>
+     * @return List<String>
      */
-    public Set<String> getAttachmentIDs();
+    public List<String> getAttachmentIDs();
+  
+    /**
+     * Get the indicated (non-soap part) attachment id
+     * @param index
+     * @return CID or null if not present
+     */
+    public String getAttachmentID(int index);
     
     /**
      * Get the attachment identified by the contentID 
@@ -75,6 +82,18 @@ public interface Message extends XMLPart {
      * @return
      */
     public DataHandler getDataHandler(String cid);
+    
+    /**
+     * Indicate that an SWA DataHandler was added to the message.
+     * This information will be used to trigger SWA serialization.
+     * @param value
+     */
+    public void setDoingSWA(boolean value);
+    
+    /**
+     * @return true if SWA DataHandler is present
+     */
+    public boolean isDoingSWA();
     
     /** 
      * Get the attachment and remove it from the Message
@@ -100,15 +119,16 @@ public interface Message extends XMLPart {
     public void setMTOMEnabled(boolean b);
     
 
-    /** @return get the MimeHeaders */
-    public MimeHeaders getMimeHeaders();
+    /** 
+     * @return get the transport headers map.
+     */
+    public Map getMimeHeaders();
 
     /**
-     * Set the MimeHeaders
-     *
-     * @param mhs MimeHeaders
+     * Set the transport headers
+     * @param map Map
      */
-    public void setMimeHeaders(MimeHeaders mhs);
+    public void setMimeHeaders(Map map);
 
     /**
      * Indicate that this message is passed the pivot point. For example, this is set in the JAX-WS

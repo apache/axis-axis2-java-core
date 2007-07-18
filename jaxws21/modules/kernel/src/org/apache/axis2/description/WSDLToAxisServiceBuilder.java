@@ -105,9 +105,9 @@ public abstract class WSDLToAxisServiceBuilder {
     }
 
     /**
-     * Sets a custom xmlschema resolver
+     * Sets a custom xmlschema URI resolver
      *
-     * @param customResolver
+     * @param customResolver a URIResolver to use when working with schemas
      */
     public void setCustomResolver(URIResolver customResolver) {
         this.customResolver = customResolver;
@@ -142,10 +142,12 @@ public abstract class WSDLToAxisServiceBuilder {
 
     /**
      * Find the XML schema prefix
+     *
+     * @return the active schema prefix, or the default schema prefix if not declared
      */
     protected String findSchemaPrefix() {
         String xsdPrefix = null;
-        Map declaredNameSpaces = axisService.getNameSpacesMap();
+        Map declaredNameSpaces = axisService.getNamespaceMap();
         if (declaredNameSpaces.containsValue(XMLSCHEMA_NAMESPACE_URI)) {
             //loop and find the prefix
             Iterator it = declaredNameSpaces.keySet().iterator();
@@ -167,6 +169,8 @@ public abstract class WSDLToAxisServiceBuilder {
 
     /**
      * Utility method that returns a DOM Builder
+     *
+     * @return a namespace-aware DOM DocumentBuilder
      */
     protected DocumentBuilder getDOMDocumentBuilder() {
         DocumentBuilder documentBuilder;
@@ -182,6 +186,9 @@ public abstract class WSDLToAxisServiceBuilder {
     }
 
     /**
+     * Get a temporary namespace prefix.  NOT threadsafe.
+     *
+     * @return a new namespace prefix of the form "nsX"
      */
     protected String getTemporaryNamespacePrefix() {
         return "ns" + nsCount++;

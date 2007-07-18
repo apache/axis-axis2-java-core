@@ -1,21 +1,3 @@
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements. See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership. The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License. You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied. See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
-  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
@@ -123,7 +105,16 @@
     <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
     <xsl:variable name="outputtype">
       <xsl:choose>
-        <xsl:when test="output/param/@ours">axis2_<xsl:value-of select="output/param/@type"></xsl:value-of>_t*</xsl:when>
+        <xsl:when test="output/param/@ours">
+            <xsl:choose>
+                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
+                    adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
+                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
+                    <xsl:otherwise>
+                    axis2_<xsl:value-of select="output/param/@type"/>_t*</xsl:otherwise>
+                </xsl:choose>
+            
+                </xsl:when>
         <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -151,7 +142,7 @@
          <xsl:text> </xsl:text>
          <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                               <xsl:variable name="inputtype">
-                                                  <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
+                                                  <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                               </xsl:variable>
                                               <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                               </xsl:for-each>)
@@ -163,6 +154,9 @@
             const axis2_char_t *soap_action = NULL;
             axutil_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
+            <xsl:if test="$style='doc'">
+            const axutil_string_t *soap_act = NULL;
+            </xsl:if>    
             <xsl:if test="output/param/@ours">
            	    <!-- this means data binding is enable -->
                 <xsl:value-of select="$outputtype"/> ret_val = NULL;
@@ -174,7 +168,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -197,6 +191,10 @@
             if ( NULL == soap_action )
             {
               soap_action = "<xsl:value-of select="$soapAction"/>";
+              <xsl:if test="$style='doc'">
+              soap_act = axutil_string_create(env, "<xsl:value-of select="$soapAction"/>");
+              axis2_options_set_soap_action(options, env, soap_act);    
+              </xsl:if>
               axis2_options_set_action( options, env, soap_action );
             }
             <xsl:if test="$soapVersion='1.2'">
@@ -221,9 +219,9 @@
                     {
                         return NULL;
                     }
-                    ret_val = axis2_<xsl:value-of select="output/param/@type"/>_create(env);
+                    ret_val = adb_<xsl:value-of select="output/param/@type"/>_create(env);
 
-                    axis2_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, ret_node );
+                    adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, ret_node );
                     return ret_val;
                 </xsl:when>
                 <xsl:otherwise>
@@ -246,7 +244,7 @@
          <xsl:variable name="callbackonerror"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_error</xsl:text></xsl:variable>
          void <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                     <xsl:variable name="inputtype">
-                                                        <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
+                                                        <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                     </xsl:variable>
                                                     <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                                   </xsl:for-each>,
@@ -262,12 +260,16 @@
             const axis2_char_t *soap_action = NULL;
             axiom_node_t *payload = NULL;
 
+            <xsl:if test="$style='doc'">
+            axutil_string_t *soap_act = NULL;
+            </xsl:if>
+
             <!-- for service client currently suppported only 1 input param -->
             <xsl:for-each select="input/param[@type!='']">
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -290,6 +292,10 @@
             if ( NULL == soap_action )
             {
               soap_action = "<xsl:value-of select="$soapAction"/>";
+              <xsl:if test="$style='doc'">
+              soap_act = axutil_string_create(env, "<xsl:value-of select="$soapAction"/>");
+              axis2_options_set_soap_action(options, env, soap_act);
+              </xsl:if>
               axis2_options_set_action( options, env, soap_action );
             }
             <xsl:choose>
@@ -327,7 +333,7 @@
          axis2_status_t
          <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
                                                  <xsl:variable name="inputtype">
-                                                    <xsl:if test="@ours">axis2_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
+                                                    <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                  </xsl:variable>
                                                  <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                               </xsl:for-each>)
@@ -346,7 +352,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = axis2_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;

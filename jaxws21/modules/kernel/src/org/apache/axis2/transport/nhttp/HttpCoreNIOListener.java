@@ -36,7 +36,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.impl.nio.reactor.DefaultListeningIOReactor;
-//import org.apache.http.impl.nio.reactor.SSLIOSessionHandler;
+import org.apache.http.impl.nio.reactor.SSLIOSessionHandler;
 import org.apache.http.nio.NHttpServiceHandler;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListeningIOReactor;
@@ -66,7 +66,7 @@ public class HttpCoreNIOListener implements TransportListener {
     /** SSLContext if this listener is a SSL listener */
     private SSLContext sslContext = null;
     /** The SSL session handler that manages client authentication etc */
-//    private SSLIOSessionHandler sslIOSessionHandler = null;
+    private SSLIOSessionHandler sslIOSessionHandler = null;
 
     /**
      * configure and start the IO reactor on the specified port
@@ -83,7 +83,7 @@ public class HttpCoreNIOListener implements TransportListener {
 
         NHttpServiceHandler handler = new ServerHandler(cfgCtx, params, sslContext != null);
         IOEventDispatch ioEventDispatch = getEventDispatch(
-            handler, sslContext, /*sslIOSessionHandler,*/ params);
+            handler, sslContext, sslIOSessionHandler, params);
 
         try {
             ioReactor.listen(new InetSocketAddress(port));
@@ -98,7 +98,7 @@ public class HttpCoreNIOListener implements TransportListener {
 
     protected IOEventDispatch getEventDispatch(
         NHttpServiceHandler handler, SSLContext sslContext, 
-        /*SSLIOSessionHandler sslioSessionHandler,*/ HttpParams params) {
+        SSLIOSessionHandler sslioSessionHandler, HttpParams params) {
         return new PlainServerIOEventDispatch(handler, params);
     }
 

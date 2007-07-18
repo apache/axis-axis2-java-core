@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2WSDL11;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,9 +36,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
     AxisService theService = null;
     String request_Identifier = null;
 
-
     protected WSDLDataLocator() {
-
     }
 
     /**
@@ -58,15 +57,15 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
                           MessageContext msgContext) throws DataRetrievalException {
         log.trace("Default WSDL DataLocator getData starts");
 
-        request_Identifier = (String) request.getIdentifier();
+        request_Identifier = request.getIdentifier();
 
-        OutputForm outputform = (OutputForm) request.getOutputForm();
+        OutputForm outputform = request.getOutputForm();
 
         if (outputform == null) { // not defined, defualt to inline
             outputform = OutputForm.INLINE_FORM;
         }
 
-        Data[] output = null;
+        Data[] output;
 
         String outputFormString = outputform.getType();
 
@@ -87,8 +86,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
             if (log.isTraceEnabled()) {
                 log.trace(
                         "Null data return! Data Locator does not know how to handle request for dialect= " +
-                                (String) request.getDialect()
-                                + " in the form of " + outputFormString);
+                                request.getDialect() + " in the form of " + outputFormString);
             }
         }
 
@@ -134,8 +132,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
             }
 
             if (wsdlElement != null) {
-                log
-                        .trace("Default WSDL DataLocator successfully generated WSDL.");
+                log.trace("Default WSDL DataLocator successfully generated WSDL.");
                 result = new Data[1];
                 result[0] = new Data(wsdlElement, null);
             }

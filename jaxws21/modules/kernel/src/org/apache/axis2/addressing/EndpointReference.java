@@ -28,7 +28,9 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,6 +56,15 @@ public class EndpointReference implements Serializable {
     private static final long serialVersionUID = 5278892171162372439L;
 
     private static final Log log = LogFactory.getLog(EndpointReference.class);
+
+    private static final String myClassName = "EndpointReference";
+
+    /**
+     * An ID which can be used to correlate operations on an instance of
+     * this object in the log files
+     */
+    private String logCorrelationIDString = null;
+
 
     /**
      * <EndpointReference>
@@ -368,7 +379,7 @@ public class EndpointReference implements Serializable {
      * @param localName
      * @param prefix
      * @throws AxisFault
-     * @deprecated use EndpointReferenceHelper#toOM(EndpointReference, QName, String) instead.
+     * @deprecated use {@link EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
      */
     public OMElement toOM(String nsurl, String localName, String prefix) throws AxisFault {
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -398,8 +409,10 @@ public class EndpointReference implements Serializable {
             }
 
             if (this.referenceParameters != null) {
-                OMElement refParameterElement = fac.createOMElement(
-                        AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, epr);
+                OMElement refParameterElement =
+                        fac.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS,
+                                            wsaNS,
+                                            epr);
                 Iterator refParms = referenceParameters.values().iterator();
                 while (refParms.hasNext()) {
                     refParameterElement.addChild((OMNode) refParms.next());
@@ -539,7 +552,9 @@ public class EndpointReference implements Serializable {
         return true;
     }
 
-    //REVIEW: The following code is rather heavyweight, because we have to build the OM tree -- it would probably be better to have two serialization/deserialization paths and therefore, for trivial EPRs, store a smaller amount of info
+    //REVIEW: The following code is rather heavyweight, because we have to build 
+    //   the OM tree -- it would probably be better to have two serialization/deserialization 
+    //   paths and therefore, for trivial EPRs, store a smaller amount of info  
 
     /**
      * Write the EPR to the specified OutputStream.  Because of potential
@@ -548,19 +563,48 @@ public class EndpointReference implements Serializable {
      */
     private void writeObject(java.io.ObjectOutputStream out)
             throws IOException {
-        OMElement om = EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(), this,
-                                                    new QName("urn:axis2", "omepr", "ser"),
-                                                    AddressingConstants.Final.WSA_NAMESPACE);
+        String logCorrelationIDString = getLogCorrelationIDString();
+
+        // String object id
+        ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString
+                + ".logCorrelationIDString");
+
+        OMElement om =
+                EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(),
+                                             this,
+                                             new QName("urn:axis2", "omepr", "ser"),
+                                             AddressingConstants.Final.WSA_NAMESPACE);
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
             om.serialize(baos);
+        } catch (Exception e) {
+            IOException ioe = new IOException("Unable to serialize the EndpointReference with logCorrelationID ["
+                                              +logCorrelationIDString+"]"); 
+            ioe.initCause(e);
+
+            if (log.isDebugEnabled()) {
+                log.debug("writeObject(): Unable to serialize the EPR with logCorrelationID ["
+                          +logCorrelationIDString+"]   original error ["+e.getClass().getName()
+                          +"]  message ["+e.getMessage()+"]",e);  
+            }
+
+            throw ioe;
         }
-        catch (javax.xml.stream.XMLStreamException e) {
-            throw (IOException) (new IOException("Unable to serialize the EPR")).initCause(e);
-        }
+
         out.writeInt(baos.size());
         out.write(baos.toByteArray());
+
+        if (log.isDebugEnabled()) {
+            byte[] buffer = baos.toByteArray();
+            String content = new String(buffer);
+
+            log.debug("writeObject(): EPR logCorrelationID ["+logCorrelationIDString+"] "    
+                      +"    EPR content size ["+baos.size()+"]"
+                      +"    EPR content ["+content+"]"); 
+        }
+
     }
 
     /**
@@ -568,33 +612,130 @@ public class EndpointReference implements Serializable {
      */
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
+
+        // String object id
+        logCorrelationIDString = ObjectStateUtils.readString(in, "EndpointReference.logCorrelationIDString");
+
         int numBytes = in.readInt();
 
         byte[] serBytes = new byte[numBytes];
 
-        in.read(serBytes, 0, numBytes);
+        // read the data from the input stream
+
+        int bytesRead = 0;
+        int numberOfBytesLastRead;
+
+        while (bytesRead < numBytes) {
+            numberOfBytesLastRead = in.read(serBytes, bytesRead, numBytes - bytesRead);
+
+            if (numberOfBytesLastRead == -1) {
+                // TODO: What should we do if the reconstitution fails?
+                // For now, log the event and throw an exception
+                if (log.isDebugEnabled()) {
+                    log.debug("readObject(): EPR logCorrelationID ["+logCorrelationIDString+"] "    
+                            + " ***WARNING*** unexpected end to data:    data read from input stream ["
+                            + bytesRead + "]    expected data size [" + numBytes + "]");
+                }
+
+                IOException ioe = new IOException("Unable to deserialize the EndpointReference with logCorrelationID ["
+                                                  +logCorrelationIDString+"]"
+                                                  +"  Cause: Unexpected end to data from input stream"); 
+
+                throw ioe;
+            }
+
+            bytesRead += numberOfBytesLastRead;
+        }
+
+
+        if (bytesRead == 0) {
+            IOException ioe = new IOException("Unable to deserialize the EndpointReference with logCorrelationID ["
+                                              +logCorrelationIDString+"]"
+                                              +"  Cause: No data from input stream"); 
+
+            throw ioe;
+        }
+
         ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
+
+        if (log.isDebugEnabled()) {
+            String content = new String(serBytes);
+
+            log.debug("readObject(): EPR logCorrelationID ["+logCorrelationIDString+"] "    
+                      +"    expected content size ["+numBytes+"]"
+                      +"    content size ["+content.length()+"]"
+                      +"    EPR buffered content ["+content+"]"); 
+        }
+
         XMLStreamReader xmlReader = null;
+
         try {
             xmlReader = StAXUtils.createXMLStreamReader(bais);
             StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
             OMElement om = builder.getDocumentElement();
 
+            // expand the OM so we can close the stream reader
+            om.build();
+
+            // trace point
+            if (log.isDebugEnabled()) {
+                log.debug(myClassName + ":readObject():  "  
+                          + " EPR ["+logCorrelationIDString + "]"
+                          + " EPR OM content ["+om.toString()+ "]");
+            }
+
             EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
-        } catch (javax.xml.stream.XMLStreamException e) {
-            throw (IOException) (new IOException("Unable to deserialize the EPR")).initCause(e);
-        } finally{
-        	// Make sure that the stream and reader are properly closed
-        	if(xmlReader != null){
-        		try{
-        			xmlReader.close();
-        		} catch (javax.xml.stream.XMLStreamException e) {
-                    throw (IOException) (new IOException("Unable to deserialize the EPR")).initCause(e);
-                } 
-        	}
-        	if(bais != null){
-        		bais.close();
-        	}
+
+
+        } catch (Exception e) {
+            IOException ioe = new IOException("Unable to deserialize the EndpointReference with logCorrelationID ["
+                                              +logCorrelationIDString+"]"); 
+            ioe.initCause(e);
+
+            if (log.isDebugEnabled()) {
+                log.debug("readObject(): Unable to deserialize the EPR with logCorrelationID ["
+                          +logCorrelationIDString+"]   original error ["+e.getClass().getName()
+                          +"]  message ["+e.getMessage()+"]",e);  
+            }
+
+            throw ioe;
+
+        } finally {
+        	// Make sure that the reader is properly closed
+            // Note that closing a ByteArrayInputStream has no effect
+
+            if (xmlReader != null) {
+                try {
+                    xmlReader.close();
+                } catch (Exception e2) {
+                    IOException ioe2 = new IOException("Unable to close the XMLStreamReader for the EndpointReference with logCorrelationID ["
+                                                      +logCorrelationIDString+"]"); 
+                    ioe2.initCause(e2);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("readObject(): Unable to close the XMLStreamReader for the EPR with logCorrelationID ["
+                                  +logCorrelationIDString+"]   original error ["+e2.getClass().getName()
+                                  +"]  message ["+e2.getMessage()+"]",e2);  
+                    }
+
+                    throw ioe2;
+                }
+            }
         }
     }
+
+    /**
+     * Get the ID associated with this object instance.
+     *
+     * @return A string that can be output to a log file as an identifier
+     *         for this object instance.  It is suitable for matching related log
+     *         entries.
+     */
+    public String getLogCorrelationIDString() {
+        if (logCorrelationIDString == null) {
+            logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+        }
+        return logCorrelationIDString;
+    }
+
 }

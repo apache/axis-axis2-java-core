@@ -103,46 +103,82 @@ public class HTTPTransportUtils {
         }
     }
 
+    /**
+     * <p>
+     * Checks whether MTOM needs to be enabled for the message represented by
+     * the msgContext. We check value assigned to the "enableMTOM" property
+     * either using the config files (axis2.xml, services.xml) or
+     * programatically. Programatic configuration is given priority. If the
+     * given value is "optional", MTOM will be enabled only if the incoming
+     * message was an MTOM message.
+     * </p>
+     * 
+     * @param msgContext
+     * @return true if SwA needs to be enabled
+     */
     public static boolean doWriteMTOM(MessageContext msgContext) {
-        // check whether isDoingMTOM is already true in the message context
-//        if (msgContext.isDoingMTOM()) {
-//            return true;
-//        }
-
         boolean enableMTOM = false;
-        Object enableMTOMObject=null;
+        Object enableMTOMObject = null;
+        // First check the whether MTOM is enabled by the configuration
+        // (Eg:Axis2.xml, services.xml)
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_MTOM);
         if (parameter != null) {
             enableMTOMObject = parameter.getValue();
         }
+        // Check whether the configuration is overridden programatically..
+        // Priority given to programatically setting of the value
         Object property = msgContext.getProperty(Constants.Configuration.ENABLE_MTOM);
         if (property != null) {
             enableMTOMObject = property;
         }
         enableMTOM = JavaUtils.isTrueExplicitly(enableMTOMObject);
-        //Handle the optional value for enableMTOM
-        if(!enableMTOM && msgContext.isDoingMTOM() && (enableMTOMObject instanceof String)){
-            if (((String)enableMTOMObject).equalsIgnoreCase(Constants.VALUE_OPTIONAL)){
-                enableMTOM=true;
+        // Handle the optional value for enableMTOM
+        // If the value for 'enableMTOM' is given as optional and if the request
+        // message was a MTOM message we sent out MTOM
+        if (!enableMTOM && msgContext.isDoingMTOM() && (enableMTOMObject instanceof String)) {
+            if (((String) enableMTOMObject).equalsIgnoreCase(Constants.VALUE_OPTIONAL)) {
+                enableMTOM = true;
             }
         }
         return enableMTOM;
     }
 
+    /**
+     * <p>
+     * Checks whether SOAP With Attachments (SwA) needs to be enabled for the
+     * message represented by the msgContext. We check value assigned to the
+     * "enableSwA" property either using the config files (axis2.xml,
+     * services.xml) or programatically. Programatic configuration is given
+     * priority. If the given value is "optional", SwA will be enabled only if
+     * the incoming message was SwA type.
+     * </p>
+     * 
+     * @param msgContext
+     * @return true if SwA needs to be enabled
+     */
     public static boolean doWriteSwA(MessageContext msgContext) {
-        // check whether isDoingSWA is already true in the message context
-//        if (msgContext.isDoingSwA()) {
-//            return true;
-//        }
         boolean enableSwA = false;
+        Object enableSwAObject = null;
+        // First check the whether SwA is enabled by the configuration
+        // (Eg:Axis2.xml, services.xml)
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_SWA);
         if (parameter != null) {
-            enableSwA = JavaUtils.isTrueExplicitly(
-                    parameter.getValue());
+            enableSwAObject = parameter.getValue();
         }
+        // Check whether the configuration is overridden programatically..
+        // Priority given to programatically setting of the value
         Object property = msgContext.getProperty(Constants.Configuration.ENABLE_SWA);
         if (property != null) {
-            enableSwA = JavaUtils.isTrueExplicitly(property);
+            enableSwAObject = property;
+        }
+        enableSwA = JavaUtils.isTrueExplicitly(enableSwAObject);
+        // Handle the optional value for enableSwA
+        // If the value for 'enableSwA' is given as optional and if the request
+        // message was a SwA message we sent out SwA
+        if (!enableSwA && msgContext.isDoingSwA() && (enableSwAObject instanceof String)) {
+            if (((String) enableSwAObject).equalsIgnoreCase(Constants.VALUE_OPTIONAL)) {
+                enableSwA = true;
+            }
         }
         return enableSwA;
     }

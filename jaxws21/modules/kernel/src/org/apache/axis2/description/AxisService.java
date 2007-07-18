@@ -36,6 +36,7 @@ import org.apache.axis2.dataretrieval.DataRetrievalException;
 import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
+import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.deployment.DeploymentConstants;
@@ -68,18 +69,15 @@ import org.xml.sax.SAXException;
 import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.schema.SchemaReference;
-import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URISyntaxException;
 import java.security.PrivilegedAction;
 import java.util.*;
 
@@ -120,7 +118,6 @@ public class AxisService extends AxisDescription {
     // to store module ref at deploy time parsing
     private ArrayList moduleRefs = null;
 
-    // to store the wsdl definition , which is build at the deployment time
     // to keep the time that last update time of the service
     private long lastupdate;
     private HashMap moduleConfigmap;
@@ -199,10 +196,13 @@ public class AxisService extends AxisDescription {
      * A good place to add a file extension if needed
      */
     private String customSchemaNameSuffix = null;
+
     /////////////////////////////////////////
     // WSDL related stuff ////////////////////
     ////////////////////////////////////////
-    private NamespaceMap nameSpacesMap;
+
+    /** Map of prefix -> namespaceURI */
+    private NamespaceMap namespaceMap;
 
     private String soapNsUri;
     private String endpointName;
@@ -226,11 +226,13 @@ public class AxisService extends AxisDescription {
     private HashMap dataLocatorClassNames;
     private AxisDataLocatorImpl defaultDataLocator;
     // Define search sequence for datalocator based on Data Locator types.
-    LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT,
-                                                                LocatorType.SERVICE_LEVEL,
-                                                                LocatorType.GLOBAL_DIALECT,
-                                                                LocatorType.GLOBAL_LEVEL,
-                                                                LocatorType.DEFAULT_AXIS};
+    LocatorType[] availableDataLocatorTypes = new LocatorType[] {
+            LocatorType.SERVICE_DIALECT,
+            LocatorType.SERVICE_LEVEL,
+            LocatorType.GLOBAL_DIALECT,
+            LocatorType.GLOBAL_LEVEL,
+            LocatorType.DEFAULT_AXIS
+    };
 
     // name of the  binding used : use in codegeneration
     private String bindingName;
@@ -794,7 +796,7 @@ public class AxisService extends AxisDescription {
 
     private XmlSchema addNameSpaces(int i) {
         XmlSchema schema = (XmlSchema) schemaList.get(i);
-        NamespaceMap map = (NamespaceMap) nameSpacesMap.clone();
+        NamespaceMap map = (NamespaceMap) namespaceMap.clone();
         NamespacePrefixList namespaceContext = schema.getNamespaceContext();
         String prefixes[] = namespaceContext.getDeclaredPrefixes();
         for (int j = 0; j < prefixes.length; j++) {
@@ -887,21 +889,8 @@ public class AxisService extends AxisDescription {
                 }
             }
         }
-        return (String[]) eprList.toArray(new String[eprList.size()]);
-    }
-
-    private void printUserWSDL(OutputStream out) throws AxisFault {
-        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-        if (wsld4jdefinition != null) {
-            try {
-                Definition definition = (Definition) wsld4jdefinition.getValue();
-                printDefinitionObject(definition, out);
-            } catch (WSDLException e) {
-                throw AxisFault.makeFault(e);
-            }
-        } else {
-            printWSDLError(out);
-        }
+        eprs = (String[]) eprList.toArray(new String[eprList.size()]);
+        return eprs;
     }
 
     private void printDefinitionObject(Definition definition, OutputStream out)
@@ -919,12 +908,16 @@ public class AxisService extends AxisDescription {
 
     public void printUserWSDL(OutputStream out,
                               String wsdlName) throws AxisFault {
+        Definition definition = null;
         // first find the correct wsdl definition
-        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-        if (wsld4jdefinition != null) {
+        Parameter wsdlParameter = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+        if (wsdlParameter != null) {
+            definition = (Definition) wsdlParameter.getValue();
+        }
+
+        if (definition != null) {
             try {
-                Definition definition = (Definition) wsld4jdefinition.getValue();
-                printDefinitionObject(getWSDLDefinition(definition,wsdlName), out);
+                printDefinitionObject(getWSDLDefinition(definition, wsdlName), out);
             } catch (WSDLException e) {
                 throw AxisFault.makeFault(e);
             }
@@ -941,6 +934,8 @@ public class AxisService extends AxisDescription {
      * @return wsdl definition
      */
     private Definition getWSDLDefinition(Definition parentDefinition, String name) {
+
+        if (name == null) return parentDefinition;
 
         Definition importedDefinition = null;
         Iterator iter = parentDefinition.getImports().values().iterator();
@@ -976,14 +971,16 @@ public class AxisService extends AxisDescription {
 
         //adjust the schema locations in types section
         Types types = definition.getTypes();
-        List extensibilityElements = types.getExtensibilityElements();
-        Object extensibilityElement = null;
-        Schema schema = null;
-        for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
-            extensibilityElement = iter.next();
-            if (extensibilityElement instanceof Schema) {
-                schema = (Schema) extensibilityElement;
-                changeLocations(schema.getElement());
+        if (types != null) {
+            List extensibilityElements = types.getExtensibilityElements();
+            Object extensibilityElement = null;
+            Schema schema = null;
+            for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
+                extensibilityElement = iter.next();
+                if (extensibilityElement instanceof Schema) {
+                    schema = (Schema) extensibilityElement;
+                    changeLocations(schema.getElement());
+                }
             }
         }
 
@@ -1032,17 +1029,38 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * @param out
-     * @param requestIP
-     * @throws AxisFault
+     * Produces a WSDL for this AxisService and prints it to the specified OutputStream.
+     *
+     * @param out destination stream.  The WSDL will be sent here.
+     * @param requestIP the hostname the WSDL request was directed at.  This should be the address
+     *                  that appears in the generated WSDL.
+     * @throws AxisFault if an error occurs
      */
     public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
+        // If we're looking for pre-existing WSDL, use that.
         if (isUseUserWSDL()) {
-            printUserWSDL(out);
-        } else {
-            String[] eprArray = calculateEPRs(requestIP);
-            getWSDL(out, eprArray);
+            printUserWSDL(out, null);
+            return;
         }
+
+        // If we find a WSDLSupplier, use that
+        WSDLSupplier supplier = (WSDLSupplier)getParameterValue("WSDLSupplier");
+        if (supplier != null) {
+            try {
+                Definition definition = supplier.getWSDL(this);
+                if (definition != null) {
+                    printDefinitionObject(getWSDLDefinition(definition, null), out);
+                }
+            } catch (Exception e) {
+                printWSDLError(out, e);
+            }
+            return;
+        }
+
+        // Otherwise, generate WSDL ourselves
+        String[] eprArray = requestIP == null ? new String[] { this.endpointName } :
+                calculateEPRs(requestIP);
+        getWSDL(out, eprArray);
     }
 
     /**
@@ -1052,13 +1070,7 @@ public class AxisService extends AxisDescription {
      * @throws AxisFault
      */
     public void printWSDL(OutputStream out) throws AxisFault {
-        if (isUseUserWSDL()) {
-            printUserWSDL(out);
-        } else {
-            setWsdlFound(true);
-            //pick the endpointName and take it as the epr for the WSDL
-            getWSDL(out, new String[]{this.endpointName});
-        }
+        printWSDL(out, null);
     }
 
     private void setPortAddress(Definition definition) throws AxisFault {
@@ -1113,17 +1125,24 @@ public class AxisService extends AxisDescription {
     }
 
     private void printWSDLError(OutputStream out) throws AxisFault {
+        printWSDLError(out, null);
+    }
+
+    private void printWSDLError(OutputStream out, Exception e) throws AxisFault {
         try {
             String wsdlntfound = "<error>" +
                                  "<description>Unable to generate WSDL 1.1 for this service</description>" +
                                  "<reason>If you wish Axis2 to automatically generate the WSDL 1.1, then please +" +
-                                 "set useOriginalwsdl as false in your services.xml</reason>" +
-                                 "</error>";
+                                 "set useOriginalwsdl as false in your services.xml</reason>";
             out.write(wsdlntfound.getBytes());
+            if (e != null) {
+                e.printStackTrace(new PrintWriter(out));
+            }
+            out.write("</error>".getBytes());
             out.flush();
             out.close();
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+        } catch (IOException ex) {
+            throw AxisFault.makeFault(ex);
         }
     }
 
@@ -1460,6 +1479,7 @@ public class AxisService extends AxisDescription {
     public void setExposedTransports(List transports) {
         enableAllTransports = false;
         this.exposedTransports = transports;
+        eprs = null; //Do not remove this. We need to force EPR recalculation.
     }
 
     public void addExposedTransport(String transport) {
@@ -1544,7 +1564,7 @@ public class AxisService extends AxisDescription {
             Document doc = XMLUtils.newDocument(in);
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setFeature("javax.wsdl.importDocuments", true);
-            Definition wsdlDefinition = reader.readWSDL(null, doc);
+            Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
             return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
             log.error(e);
@@ -1558,6 +1578,19 @@ public class AxisService extends AxisDescription {
         } catch (WSDLException e) {
             log.error(e);
             throw AxisFault.makeFault(e);
+        }
+    }
+
+    private static String getBaseURI(String currentURI)  {
+        try {
+            File file = new File(currentURI);
+            if (file.exists()) {
+                return file.getCanonicalFile().getParentFile().toURI().toString();
+            }
+            String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
+            return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+        } catch (IOException e) {
+            return null;
         }
     }
 
@@ -1796,12 +1829,35 @@ public class AxisService extends AxisDescription {
         }
     }
 
+    /**
+     * Get the namespace map for this service.
+     *
+     * @return a Map of prefix (String) to namespace URI (String)
+     * @deprecated please use getNamespaceMap()
+     */
     public Map getNameSpacesMap() {
-        return nameSpacesMap;
+        return namespaceMap;
     }
 
+    /**
+     * Get the namespace map for this service.
+     *
+     * @return a Map of prefix (String) to namespace URI (String)
+     */
+    public Map getNamespaceMap() {
+        return namespaceMap;
+    }
+
+    /**
+     * Sets the
+     * @param nameSpacesMap
+     */
     public void setNameSpacesMap(NamespaceMap nameSpacesMap) {
-        this.nameSpacesMap = nameSpacesMap;
+        this.namespaceMap = nameSpacesMap;
+    }
+
+    public void setNamespaceMap(NamespaceMap namespaceMap) {
+        this.namespaceMap = namespaceMap;
     }
 
     private void addSchemaNameSpace(XmlSchema schema) {
@@ -1809,9 +1865,9 @@ public class AxisService extends AxisDescription {
         String prefix = schema.getNamespaceContext().getPrefix(targetNameSpace);
 
         boolean found = false;
-        if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
-            Iterator itr = nameSpacesMap.values().iterator();
-            Set keys = nameSpacesMap.keySet();
+        if (namespaceMap != null && namespaceMap.size() > 0) {
+            Iterator itr = namespaceMap.values().iterator();
+            Set keys = namespaceMap.keySet();
             while (itr.hasNext()) {
                 String value = (String) itr.next();
                 if (value.equals(targetNameSpace) && keys.contains(prefix)) {
@@ -1819,11 +1875,11 @@ public class AxisService extends AxisDescription {
                 }
             }
         }
-        if (nameSpacesMap == null) {
-            nameSpacesMap = new NamespaceMap();
+        if (namespaceMap == null) {
+            namespaceMap = new NamespaceMap();
         }
         if (!found) {
-            nameSpacesMap.put("ns" + nsCount, targetNameSpace);
+            namespaceMap.put("ns" + nsCount, targetNameSpace);
             nsCount++;
         }
     }
@@ -2354,5 +2410,9 @@ public class AxisService extends AxisDescription {
 
     public void setParent(AxisServiceGroup parent) {
         this.parent = parent;
+    }
+
+    public String toString() {
+        return getName();
     }
 }

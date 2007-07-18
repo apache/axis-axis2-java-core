@@ -21,13 +21,13 @@ Building the Service
 
 Type "ant generate.service" from Axis2_HOME/samples/quickstartxmlbeans
 directory. Then deploy the 
-Axis2_HOME/samples/quickstartxmlbeans/build/service/build/lib/StockQuoteService.aar
+AXIS2_HOME/samples/quickstartxmlbeans/build/service/build/lib/StockQuoteService.aar
 
 
 Running the Client
 ==================
 
-type ant run.client in the Axis2_HOME/samples/quickstartxmlbeans directory
+type ant run.client in the AXIS2_HOME/samples/quickstartxmlbeans directory
 
 Help
 ====

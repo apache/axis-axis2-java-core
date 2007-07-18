@@ -71,7 +71,6 @@ public class SOAPEnvelopeTest extends TestCase {
                                  new ByteArrayInputStream(XML_STRING.getBytes()));
         SOAPPart sp = smsg.getSOAPPart();
         SOAPEnvelope se = sp.getEnvelope();
-        smsg.writeTo(System.out);
         assertTrue(se != null);
 
         // validate the body
@@ -86,7 +85,6 @@ public class SOAPEnvelopeTest extends TestCase {
                                  new ByteArrayInputStream(XML_STRING.getBytes()));
         SOAPPart sp = smsg.getSOAPPart();
         SOAPEnvelope se = sp.getEnvelope();
-        smsg.writeTo(System.out);
         assertTrue(se != null);
         SOAPHeader header = se.getHeader();
         assertNotNull(header);
@@ -132,8 +130,6 @@ public class SOAPEnvelopeTest extends TestCase {
         mimeheaders.addHeader("Content-Type", "text/xml");
         SOAPMessage smsg =
                 mf.createMessage(mimeheaders, baIS);
-
-        smsg.writeTo(System.out);
 
         SOAPEnvelope envelope = smsg.getSOAPPart().getEnvelope();
         SOAPBody body = envelope.getBody();
@@ -184,7 +180,6 @@ public class SOAPEnvelopeTest extends TestCase {
                                               soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
-        message.writeTo(System.out);
         assertTrue(envelope != null);
         assertTrue(envelope.getBody() != null);
     }
@@ -210,7 +205,6 @@ public class SOAPEnvelopeTest extends TestCase {
                                               soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
-        message.writeTo(System.out);
         assertTrue(envelope != null);
         assertTrue(envelope.getBody() != null);
     }
@@ -242,7 +236,6 @@ public class SOAPEnvelopeTest extends TestCase {
                                               soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
-        message.writeTo(System.out);
         assertTrue(envelope != null);
         assertTrue(envelope.getBody() != null);
     }

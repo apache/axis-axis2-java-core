@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ConfigurationContextFactory {
 
@@ -54,19 +55,19 @@ public class ConfigurationContextFactory {
      * Depending on the implementation getAxisConfiguration(), gets
      * the AxisConfiguration and uses it to create the ConfigurationContext.
      *
-     * @param axisConfigurator
+     * @param axisConfigurator : AxisConfigurator
      * @return Returns ConfigurationContext.
-     * @throws AxisFault
+     * @throws AxisFault : If somthing goes wrong
      */
     public static ConfigurationContext createConfigurationContext(
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
-        
+
         if (axisConfig.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         if (axisConfigurator instanceof DeploymentEngine) {
             ((DeploymentEngine) axisConfigurator).setConfigContext(configContext);
         }
@@ -124,7 +125,7 @@ public class ConfigurationContextFactory {
             configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         }
 
-       Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
+        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
         if (contextPath != null) {
             String cpath = ((String) contextPath.getValue()).trim();
             if (cpath.length() > 0) {
@@ -204,30 +205,53 @@ public class ConfigurationContextFactory {
      * Initializes the modules. If the module needs to perform some recovery process
      * it can do so in init and this is different from module.engage().
      *
-     * @param context
+     * @param context : ConfigurationContext
      */
     private static void initModules(ConfigurationContext context) {
-        try {
-            HashMap modules = context.getAxisConfiguration().getModules();
-            Collection col = modules.values();
+        AxisConfiguration configuration = context.getAxisConfiguration();
+        HashMap modules = configuration.getModules();
+        Collection col = modules.values();
+        Map faultyModule = new HashMap();
 
-            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                AxisModule axismodule = (AxisModule) iterator.next();
-                Module module = axismodule.getModule();
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            AxisModule axismodule = (AxisModule) iterator.next();
+            Module module = axismodule.getModule();
 
-                if (module != null) {
+            if (module != null) {
+                try {
                     module.init(context, axismodule);
+                } catch (AxisFault axisFault) {
+                    log.info(axisFault.getMessage());
+                    faultyModule.put(axismodule, axisFault);
                 }
             }
-        } catch (AxisFault e) {
-            log.info(e.getMessage());
         }
+
+        //Checking whether we have found any faulty services during the module initilization ,
+        // if so we need to mark them as fautyModule and need to remove from the modules list
+        if (faultyModule.size() > 0) {
+            Iterator axisModules = faultyModule.keySet().iterator();
+            while (axisModules.hasNext()) {
+                AxisModule axisModule = (AxisModule) axisModules.next();
+                String fileName;
+                if (axisModule.getFileName() != null) {
+                    fileName = axisModule.getFileName().toString();
+                } else {
+                    fileName = axisModule.getName();
+                }
+                configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
+                //removing from original list
+                configuration.removeModule(axisModule.getName(), axisModule.getName());
+            }
+        }
+
+
     }
 
     /**
      * Initializes TransportSenders and TransportListeners with appropriate configuration information
      *
-     * @param configContext
+     * @param configContext : ConfigurationContext
      */
     private static void initTransportSenders(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
@@ -260,9 +284,9 @@ public class ConfigurationContextFactory {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfiguration);
         if (axisConfiguration.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         setContextPaths(axisConfiguration, configContext);
         return configContext;
     }
@@ -273,18 +297,27 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      */
     public static ConfigurationContext createDefaultConfigurationContext() throws Exception {
-        InputStream in = Loader.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+        return createBasicConfigurationContext(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+    }
+    
+    /**
+     * Creates configuration context using resource file found in the classpath.
+     *
+     * @return Returns ConfigurationContext.
+     */
+    public static ConfigurationContext createBasicConfigurationContext(String resourceName) throws Exception {
+        InputStream in = Loader.getResourceAsStream(resourceName);
 
         AxisConfiguration axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig, null);
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
-        
+
         if (axisConfig.getClusterManager() != null) {
-        	configContext.initCluster();
+            configContext.initCluster();
         }
-        
+
         setContextPaths(axisConfig, configContext);
         return configContext;
     }

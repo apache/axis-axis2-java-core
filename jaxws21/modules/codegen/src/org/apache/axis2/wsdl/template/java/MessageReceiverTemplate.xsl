@@ -33,12 +33,12 @@
 
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
         <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
-        /**
-        * <xsl:value-of select="@name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
         package <xsl:value-of select="@package"/>;
 
         /**
@@ -301,12 +301,12 @@
     <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInMessageReceiver']">
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
 
-        /**
-        * <xsl:value-of select="@name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
         package <xsl:value-of select="@package"/>;
 
         /**
@@ -437,12 +437,12 @@
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
         <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
 
-        /**
-        * <xsl:value-of select="@name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
         package <xsl:value-of select="@package"/>;
 
         /**

@@ -160,7 +160,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             TransportOutDescription transportOut = msgContext.getConfigurationContext().
                     getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
 
-            //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2 
+            //if a parameter has set been set, we will omit the SOAP action for SOAP 1.2
             if (transportOut != null) {
                 if (!msgContext.isSOAP11()) {
                     Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
@@ -339,6 +339,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
     private static String findSOAPAction(MessageContext messageContext) {
         String soapActionString = null;
+
+        Parameter parameter =
+                messageContext.getTransportOut().getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+        if (parameter != null && JavaUtils.isTrueExplicitly(parameter.getValue()) &&
+            !messageContext.isSOAP11()) {
+            return "\"\"";
+        }
 
         Object disableSoapAction = messageContext.getOptions().getProperty(
                 Constants.Configuration.DISABLE_SOAP_ACTION);

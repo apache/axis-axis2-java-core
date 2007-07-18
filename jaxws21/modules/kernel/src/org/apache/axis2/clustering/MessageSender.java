@@ -27,5 +27,4 @@ public interface MessageSender {
 
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault;
 
-    public long sendToGroup(Throwable throwable) throws ClusteringFault;
 }

@@ -73,7 +73,8 @@ public class AttachmentUtils {
         //
         // The traversal is
         // is A B D D' e B' C F F' g C' A'
-        // The ' indicates that this is the second time the node is visited (i.e. nav.visited() returns true)
+        // The ' indicates that this is the second time the node is visited (i.e. nav.visited() 
+        // returns true)
 
         OMNavigator nav = new OMNavigator(root);
 
@@ -81,8 +82,8 @@ public class AttachmentUtils {
             OMNode curr = nav.next();
 
             // Inspect elements that have been visited. 
-            // It is probably safer to inspect the node when it is visited, because this guarantees that its
-            // children have been processed/expanded.
+            // It is probably safer to inspect the node when it is visited, because 
+            // this guarantees that its children have been processed/expanded.
             if (nav.visited() && curr instanceof OMElement) {
                 OMElement element = (OMElement)curr;
                 if (element.getQName().equals(XOP_INCLUDE)) {
@@ -93,28 +94,6 @@ public class AttachmentUtils {
                 }
             }
         }
-
-        /* LEGACY SEARCH CODE
-         // If it has no children, then it's a leaf and we need
-         // to check if it's an <xop:include> element.  If not, then
-         // we need to grab each of the children and continue traversing
-         // down the tree.
-         Iterator itr = root.getChildren();
-         if (itr == null || !itr.hasNext()) {
-             if (log.isDebugEnabled())
-                 log.debug("[leaf] " + root.getLocalName());
-
-             if (root.getQName().equals(XOP_INCLUDE)) {
-                 xops.add(root);
-             }
-         }
-         else if (itr != null && itr.hasNext()) {
-             while (itr.hasNext()) {
-                 OMElement next = (OMElement) itr.next();
-                 findXopElements(next, xops);
-             }
-         }
-        */
     }
 
     /**
@@ -153,7 +132,8 @@ public class AttachmentUtils {
         // The traversal is
         // The traversal is
         // is A B D D' e B' C F F' g C' A'
-        // The ' indicates that this is the second time the node is visited (i.e. nav.isVisited() returns true)
+        // The ' indicates that this is the second time the node is visited 
+        // (i.e. nav.isVisited() returns true)
         OMNavigator nav = new OMNavigator(node);
 
         while (nav.isNavigable()) {
@@ -172,29 +152,6 @@ public class AttachmentUtils {
                 }
             }
         }
-
-        /* LEGACY SEARCH CODE
-        if (node instanceof OMText) {
-            if (log.isDebugEnabled())
-                log.debug("text node found");
-            
-            OMText textNode = (OMText) node;
-            if (textNode.isOptimized()) {
-                if (log.isDebugEnabled())
-                    log.debug("optimized text node found");
-                
-                attachments.add(textNode);
-            }
-        }
-        else if (node instanceof OMElement){
-            OMElement element = (OMElement) node;
-            Iterator itr = element.getChildren();
-            while (itr.hasNext()) {
-                OMNode next = (OMNode) itr.next();
-                findBinaryElements(next, attachments);
-            }
-        }
-        */
     }
 
     /**

@@ -25,8 +25,8 @@
 		<version>SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>axis2-soapmonitor</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>soapmonitor</artifactId>
+	<packaging>mar</packaging>
 	<name>Apache Axis 2.0 - SOAP Monitor</name>
 	<description>soapmonitor for Axis 2.0</description>
 	<dependencies>
@@ -49,9 +49,10 @@
 			</resource>
 			<resource>
 				<directory>src</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
+				<includes>
+					<include>**/module.xml</include>
+				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<testResources>

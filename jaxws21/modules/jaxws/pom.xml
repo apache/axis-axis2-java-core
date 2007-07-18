@@ -28,37 +28,37 @@
 	<artifactId>axis2-jaxws</artifactId>
 	<name>Apache Axis 2.0 - JAXWS</name>
 	<description>Axis2 JAXWS Implementation</description>
-	<dependencies>
-                 <dependency>
-                        <groupId>org.apache.geronimo.specs</groupId>
-                        <artifactId>geronimo-annotation_1.0_spec</artifactId>
-                </dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-jaxws-api</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-saaj-api</artifactId>
-			<version>${version}</version>
-                        <exclusions>
-                                <exclusion>
-                                        <groupId>org.apache.geronimo.specs</groupId>
-                                        <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                                </exclusion>
-                        </exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
-			<version>${version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-annotation_1.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws-api</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj-api</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-saaj</artifactId>
@@ -69,7 +69,11 @@
 			<artifactId>axis2-metadata</artifactId>
 			<version>${version}</version>
 		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+        </dependency>
+        <dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
@@ -90,7 +94,6 @@
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -224,6 +227,12 @@
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
+								</java>
+							   <echo>Generating java from RPCLitSWA.wsdl</echo>
+                               <java classname="com.sun.tools.xjc.Driver" fork="true">
+			                        <classpath refid="maven.runtime.classpath"/>
+			                        <classpath location="${compiled.classes.dir}"/>
+			                        <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl"/>
 								</java>
 								<echo>Generating java from gorilla_dlw.wsdl</echo>
 								<java classname="com.sun.tools.xjc.Driver" fork="true">
@@ -456,6 +465,17 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+                                <copy toDir="target/test-classes/services/SoapMessageMUProviderService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgmu">
+                                        <include name="META-INF/**"/>
+                                    </fileset>
+                                    <fileset dir="target/classes">
+                                        <include name="org/apache/axis2/jaxws/server/**"/>
+                                    </fileset>
+                                </copy>
 								<copy toDir="target/test-classes/services/JAXBProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
@@ -528,6 +548,17 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+							    <copy toDir="target/test-classes/services/RPCLitSWA/">
+			                        <fileset dir="target/test-classes">
+				                        <include name="org/apache/axis2/jaxws/proxy/rpclitswa/**"/>
+			                        </fileset>
+			                        <fileset dir="test/org/apache/axis2/jaxws/proxy/rpclitswa">
+		                                <include name="META-INF/**"/>
+			                        </fileset>
+			                        <fileset dir="target/classes">
+		                                <include name="org/apache/axis2/jaxws/server/**"/>
+			                       </fileset>
+		                       </copy>
 								<copy toDir="target/test-classes/services/SOAP12EchoService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
@@ -786,6 +817,7 @@
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
+										<include name="**/axis2.xml"/>
 									</fileset>
 								</copy>
 							</tasks>
@@ -830,6 +862,11 @@
 						<property>
 							<name>build.repository</name>
 							<value>./target/test-classes</value>
+						</property>
+						<!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->
+						<property>
+						    <name>org.apache.axis2.jaxws.config.path</name>
+						    <value>./target/test-classes/axis2.xml</value>
 						</property>
 					</systemProperties>
 				</configuration>

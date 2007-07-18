@@ -303,7 +303,11 @@ public abstract class OperationClient {
                     .getAxisConfiguration(), toEPR, mc);
         }
         mc.setTransportOut(senderTransport);
-
+        if (options.getParent() !=null && options.getParent().isManageSession()) {
+            mc.getOptions().setManageSession(true);
+        } else if (options.isManageSession()) {
+            mc.getOptions().setManageSession(true);
+        }
         addReferenceParameters(mc);
     }
 }

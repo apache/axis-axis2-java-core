@@ -20,22 +20,23 @@
                  javax.xml.namespace.QName,
                  java.util.Collection,
                  java.util.Iterator"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page import="org.apache.axis2.description.AxisModule" %>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Globally Engaged Modules</h1>
      <%
-	boolean foundModules = false;
-	boolean wroteUL = false;
+         boolean foundModules = false;
+         boolean wroteUL = false;
          String modulename = "";
-         Collection moduleCol = (Collection)request.getSession().getAttribute(Constants.MODULE_MAP);
-         request.getSession().setAttribute(Constants.MODULE_MAP,null);
-         if(moduleCol != null && moduleCol.size() > 0) {
+         Collection moduleCol = (Collection) request.getSession().getAttribute(Constants.MODULE_MAP);
+         request.getSession().setAttribute(Constants.MODULE_MAP, null);
+         if (moduleCol != null && moduleCol.size() > 0) {
              for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                 String axisOperation = (String) iterator.next();
-                 modulename = axisOperation;
-		if (!wroteUL){
-			wroteUL = true;
-%>
+                 AxisModule axisOperation = (AxisModule) iterator.next();
+                 modulename = axisOperation.getName();
+                 if (!wroteUL) {
+                     wroteUL = true;
+     %>
 	<ul>
 <%
 		}

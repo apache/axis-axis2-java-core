@@ -35,6 +35,9 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * An AxisBinding represents a WSDL binding, and contains AxisBindingOperations.
+ */
 public class AxisBinding extends AxisDescription {
 
     private QName name;
@@ -108,31 +111,38 @@ public class AxisBinding extends AxisDescription {
     }
 
     /**
-     * Generates the binding element
-     * @param tns - The targetnamespace
-     * @param wsoap - The SOAP namespace (WSDL 2.0)
-     * @param whttp - The HTTP namespace (WSDL 2.0)
-     * @param interfaceName - The name of the interface
-     * @param nameSpaceMap - The namespacemap of the service
-     * @return The generated binding element
+     * Generate the &lt;binding&gt; element
+     *
+     * @param wsdl the WSDL namespace
+     * @param tns the target namespace
+     * @param wsoap the SOAP namespace
+     * @param whttp the HTTP namespace
+     * @param interfaceName the name of the interface
+     * @param nameSpaceMap the namespaceMap (prefix -> namespaceURI) of the service
+     * @param addressingFlag addressing usage flag (see AddressingConstants)
+     * @param serviceName the name of the service
+     * @return the generated binding element
      */
-public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
-                          String interfaceName,  Map nameSpaceMap, String addressingFlag, String serviceName) {
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap,
+                              OMNamespace whttp, String interfaceName, Map nameSpaceMap,
+                              String addressingFlag, String serviceName) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingElement;
         bindingElement = omFactory.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
         bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
                                                                 this.name.getLocalPart()));
-        bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME, null,
-                                                                tns.getPrefix() + ":" + interfaceName));
+        bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME,
+                                                                null, tns.getPrefix() + ":" +
+                interfaceName));
 
         if (WSDL2Constants.URI_WSDL2_SOAP.equals(type) || Constants.URI_SOAP11_HTTP.equals(type) ||
                 Constants.URI_SOAP12_HTTP.equals(type)) {
             // SOAP Binding specific properties
-            bindingElement.addAttribute(
-                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE, null, WSDL2Constants.URI_WSDL2_SOAP));
-            property = (String) options.get(WSDL2Constants.ATTR_WSOAP_VERSION);
+            bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE,
+                                                                    null,
+                                                                    WSDL2Constants.URI_WSDL2_SOAP));
+            property = (String)options.get(WSDL2Constants.ATTR_WSOAP_VERSION);
             if (property != null) {
                 if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(property)) {
                     bindingElement.addAttribute(omFactory.createOMAttribute(
@@ -144,41 +154,44 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
                             WSDL2Constants.SOAP_VERSION_1_2));
                 }
             }
-            property = (String) options.get(WSDL2Constants.ATTR_WSOAP_PROTOCOL);
+            property = (String)options.get(WSDL2Constants.ATTR_WSOAP_PROTOCOL);
             if (property != null) {
                 bindingElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_PROTOCOL, wsoap, property));
             }
-            property = (String) options.get(WSDL2Constants.ATTR_WSOAP_MEP);
+            property = (String)options.get(WSDL2Constants.ATTR_WSOAP_MEP);
             if (property != null) {
                 bindingElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_MEP_DEFAULT, wsoap, property));
             }
-            ArrayList soapModules = (ArrayList) options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
+            ArrayList soapModules = (ArrayList)options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
             if (soapModules != null && soapModules.size() > 0) {
-                WSDLSerializationUtil.addSOAPModuleElements(omFactory, soapModules, wsoap, bindingElement);
+                WSDLSerializationUtil
+                        .addSOAPModuleElements(omFactory, soapModules, wsoap, bindingElement);
             }
 
-            WSDLSerializationUtil.addWSAddressingToBinding(addressingFlag, omFactory, bindingElement);
+            WSDLSerializationUtil
+                    .addWSAddressingToBinding(addressingFlag, omFactory, bindingElement);
 
         } else if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
             // HTTP Binding specific properties
-            property = (String) options.get(WSDL2Constants.ATTR_WHTTP_METHOD);
+            property = (String)options.get(WSDL2Constants.ATTR_WHTTP_METHOD);
             if (property != null) {
                 bindingElement.addAttribute(omFactory.createOMAttribute(
                         WSDL2Constants.ATTRIBUTE_METHOD_DEFAULT, whttp, property));
             }
-            bindingElement.addAttribute(
-                        omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE, null, WSDL2Constants.URI_WSDL2_HTTP));
+            bindingElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_TYPE,
+                                                                    null,
+                                                                    WSDL2Constants.URI_WSDL2_HTTP));
         }
 
         // Common Properties
-        property = (String) options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
+        property = (String)options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
         if (property != null) {
             bindingElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING_DEFAULT, whttp, property));
         }
-        property = (String) options.get(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        property = (String)options.get(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
         if (property != null) {
             bindingElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_QUERY_PARAMETER_SEPERATOR_DEFAULT, whttp, property));
@@ -188,16 +201,18 @@ public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap, 
         if (faults != null) {
             Iterator iterator = faults.values().iterator();
             while (iterator.hasNext()) {
-                AxisBindingMessage axisBindingFault = (AxisBindingMessage) iterator.next();
-                bindingElement.addChild(axisBindingFault.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
+                AxisBindingMessage axisBindingFault = (AxisBindingMessage)iterator.next();
+                bindingElement
+                        .addChild(axisBindingFault.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
             }
         }
 
         // Populate Binding Operations
         Iterator iterator = this.getChildren();
         while (iterator.hasNext()) {
-            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) iterator.next();
-            bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type, nameSpaceMap, serviceName));
+            AxisBindingOperation axisBindingOperation = (AxisBindingOperation)iterator.next();
+            bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type,
+                                                                  nameSpaceMap, serviceName));
         }
         WSDLSerializationUtil.addWSDLDocumentationElement(this, bindingElement, omFactory, wsdl);
         return bindingElement;

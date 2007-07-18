@@ -1,4 +1,4 @@
-Sample: Data Binding
+3Sample: Data Binding
 ====================
 
 Introduction
@@ -16,8 +16,9 @@ Pre-Requisites
  * Download latest stax-utils jar from
    https://stax-utils.dev.java.net/servlets/ProjectDocumentList?folderID=1106 and drop that into the
    new lib directory.
- * Download latest Castor jar from http://www.castor.org/download.html and drop that into the new
-   lib directory
+ * Download version 1.0.4 of Castor jar from http://dist.codehaus.org/castor/1.0.4/castor-1.0.4.jar and drop that into the new
+   lib directory.(The latest releases of castor are available at http://www.castor.org/download.html, but this example may not run 	
+   with versions later than 1.0.4)
 
 You can achieve all three of the above steps by running "ant download.jars", but it will take some 
 time to download those two jars, using ant.
@@ -31,14 +32,14 @@ simply ant in the command prompt, will build the service against StockQuoteServi
 inside Axis2_HOME/samples/databinding and put it under Axis2_HOME/repository/services.
 
 You need to then startup the server to deploy the service. Go to Axis2_HOME/bin folder and execute either
-axis2server.bat or axis2server.sh, depending on your platform.
+axis2server.bat (in Windows) or axis2server.sh(in Linux), depending on your platform.
 
 
 Running the Client
 ==================
 
-Running the run.client runs the client/src/samples/databinding/StockClient.java class. You may use
-the command scripts to do so. You need to supply 2 parameters to the command- url and symbol.
+Typing the command "ant run.client" inside Axis2_HOME/samples/databinding runs the Axis2_HOME/samples/databinding/client/src/samples/databinding/StockClient.java class. You may use
+the command scripts (as specified above) to do so. You need to supply 2 parameters to the command- url and symbol.
 
  * ant run.client -Durl=http://localhost:8080/axis2/services/StockQuoteService -Dsymbol=IBM
    Succeeds with a Price of 99.0. You will see "Price = 99.0"
@@ -59,6 +60,12 @@ How It Works
 - Get StAX events from the castor objects and construct OMElements from them. Those StAX events
   are fed into StAXOMBuilder which can create OM tree from it.
 - Feed those OMElement in to generated code.
+
+Note
+==============
+Sometimes, if you're having trouble running the client successfully, 
+It may be necessary to clean the services repository before you generate the service, deploy it
+and run the client. (i.e. delete services created from previous samples.)
 
 Help
 ====

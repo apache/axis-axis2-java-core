@@ -8,7 +8,8 @@ ___________________
 Documentation
 ===================
  
-Documentation can be found in the 'docs' distribution of this release and in the main site.
+Documentation can be found in the 'docs' distribution of this release 
+and in the main site.
 
 ___________________
 Deploying
@@ -19,11 +20,11 @@ be performed:
   1) Create the Web service implementation class, supporting classes 
      and the services.xml file, 
   2) Archive the class files into a jar with the services.xml file in 
-     the META-INF
+     the META-INF directory
   3) Drop the jar file to the $AXIS2_HOME/WEB-INF/services directory
-where $AXIS2_HOME represents the install directory of your Axis2 
-runtime. (In the case of a servelet container this would be the
-"axis2" directory inside "webapps".)
+     where $AXIS2_HOME represents the install directory of your Axis2 
+     runtime. (In the case of a servelet container this would be the
+     "axis2" directory inside "webapps".)
 
 To verify the deployment please go to http://<yourip>:<port>/axis2/ and
 follow the "Services" Link.

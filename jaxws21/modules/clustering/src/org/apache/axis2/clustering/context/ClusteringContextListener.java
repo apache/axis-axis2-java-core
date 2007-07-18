@@ -18,20 +18,37 @@
  */
 package org.apache.axis2.clustering.context;
 
-import org.apache.axis2.context.ContextListener;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.MessageSender;
 import org.apache.axis2.context.AbstractContext;
+import org.apache.axis2.context.ContextListener;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
  */
 public class ClusteringContextListener implements ContextListener {
+    private static final Log log = LogFactory.getLog(ClusteringContextListener.class);
+
+    private MessageSender sender;
+
+    public ClusteringContextListener(MessageSender sender) {
+        this.sender = sender;
+    }
+
     public void contextCreated(AbstractContext context) {
-        //TODO: Method implementation
-        System.err.println("$$$$$$$$$$$$$$ Context created: " + context);
     }
 
     public void contextRemoved(AbstractContext context) {
-        //TODO: Method implementation
-        System.err.println("$$$$$$$$$$$$$$ Context removed: " + context);
+        ContextClusteringCommand command =
+                ContextClusteringCommandFactory.getRemoveCommand(context);
+        if(command != null){
+            try {
+                sender.sendToGroup(command);
+            } catch (ClusteringFault e) {
+                log.error(e);
+            }
+        }
     }
 }

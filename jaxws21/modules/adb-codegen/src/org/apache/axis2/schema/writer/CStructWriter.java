@@ -54,7 +54,7 @@ import com.ibm.wsdl.util.xml.DOM2Writer;
 public class CStructWriter implements BeanWriter {
 
     public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
-    public static final String AXIS2_PREFIX = "axis2_";
+    public static final String AXIS2_PREFIX = "adb_";
     private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
     private Templates sourceTemplateCache;
@@ -176,10 +176,10 @@ public class CStructWriter implements BeanWriter {
     }
 
     /**
-     * @param complexType
+     * @param qName
      * @param typeMap
      * @param metainf
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
+     * @param isAbstract
      * @throws org.apache.axis2.schema.SchemaCompilationException
      *
      * @see org.apache.axis2.schema.writer.BeanWriter
@@ -285,7 +285,6 @@ public class CStructWriter implements BeanWriter {
      * @param metainf
      * @param typeMap
      * @param isElement
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @return Returns String.
      * @throws Exception
      */
@@ -551,6 +550,7 @@ public class CStructWriter implements BeanWriter {
             String xmlName = makeUniqueCStructName(new ArrayList(), name.getLocalPart());
 
             XSLTUtils.addAttribute(model, "name", xmlName, property);
+            XSLTUtils.addAttribute(model, "originalName", name.getLocalPart(), property);
 
 
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);

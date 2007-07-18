@@ -2,243 +2,28 @@
     <id>war</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
-        <format>war</format>
+        <format>zip</format>
     </formats>
 
-    <fileSets>
-	<!-- Copy the java2wsdl jar -->
-        <fileSet>
-            <directory>../../modules/java2wsdl/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-java2wsdl-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <!-- Copy the kernel jar -->
-        <fileSet>
-            <directory>../../modules/kernel/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-kernel-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the adb jar -->
-        <fileSet>
-            <directory>../../modules/adb/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-adb-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the adb  codegen jar -->
-        <fileSet>
-            <directory>../../modules/adb-codegen/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-adb-codegen-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-	<!-- Copy the json jar -->
-        <fileSet>
-            <directory>../../modules/json/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-json-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-
-        <!-- Copy the codegen jar -->
-        <fileSet>
-            <directory>../../modules/codegen/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-codegen-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the xmlbeans jar -->
-        <fileSet>
-            <directory>../../modules/xmlbeans/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-xmlbeans-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the spring jar -->
-        <fileSet>
-            <directory>../../modules/spring/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-spring-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-
-        <!-- Copy the jibx jar -->
-        <fileSet>
-            <directory>../../modules/jibx/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-jibx-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the fastinfoset jar -->
-        <fileSet>
-            <directory>../../modules/fastinfoset/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-fastinfoset-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-	<!-- copy jdk 1.5 dependent modules -->
-        <fileSet>
-            <directory>target/bin/jdk1.5-modules</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-
-	<!-- copy externel dependencies -->
-        <fileSet>
-            <directory>target/bin/external-dependencies</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-	    <excludes>
-		<exclude>servlet-api*.jar</exclude>
-		<exclude>jibx-bind*.jar</exclude>
-		<exclude>jettison*.jar</exclude>
-		<exclude>jaxb*.jar</exclude>
-		<exclude>jakarta-httpcore*.jar</exclude>
-		<exclude>geronimo*.jar</exclude>
-	    </excludes>
-        </fileSet>
-
-	
-
-
-        <fileSet>
-            <directory>../../modules/addressing/target</directory>
-            <outputDirectory>WEB-INF/modules</outputDirectory>
-            <includes>
-                <include>addressing-${version}.mar</include>
-            </includes>
-        </fileSet>
-
-        <!-- Copy the soapmonitor jar - the servlet classes -->
-        <fileSet>
-            <directory>../../modules/soapmonitor/target</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>axis2-soapmonitor-${version}.jar</include>
-            </includes>
-        </fileSet>
-
-
-        <!-- copy the soapmonitor mar -->
-        <fileSet>
-            <directory>../../modules/soapmonitor/target</directory>
-            <outputDirectory>WEB-INF/modules</outputDirectory>
-            <includes>
-                <include>soapmonitor-${version}.mar</include>
-            </includes>
-        </fileSet>
-
-        <!-- copy the addressing mar -->
-
-        <fileSet>
-            <directory>../../modules/addressing/target</directory>
-            <outputDirectory>WEB-INF/modules</outputDirectory>
-            <includes>
-                <include>addressing-${version}.mar</include>
-            </includes>
-        </fileSet>
-
-<!-- TODO -->
-        <echo file="target/temp/war/toWEB-INF/modules/modules.list" append="false">
-            addressing-${addressing_version}.mar
-            soapmonitor-${soapmonitor_version}.mar
-        </echo>
-<!-- end TODO -->
-
-        <!-- copy the sample services -->
-        <fileSet>
-            <directory>../../modules/samples/target/toWar/services</directory>
-            <outputDirectory>WEB-INF/services</outputDirectory>
-            <includes>
-                <include>version.aar</include>
-            </includes>
-        </fileSet>
-
-
-<!-- TODO -->
-        <echo file="target/temp/war/toWEB-INF/services/services.list" append="false">version.aar
-        </echo>
-<!-- end TODO -->
-
-        <!-- copy the axis2.xml into conf directoy -->
-        <fileSet>
-            <directory>../../modules/kernel/conf</directory>
-            <outputDirectory>WEB-INF/conf</outputDirectory>
-            <includes>
-                <include>axis2.xml</include>
-            </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>../../modules/webapp/src/main/webapp/axis2-web</directory>
-            <outputDirectory>axis2-web</outputDirectory>
-	    <excludes>
-		<exclude>project.xml</exclude>
-		<exclude>**/*.iml</exclude>
-		<exclude>**/.*</exclude>
-		<exclude>**/conf/**</exclude>
-	    </excludes>
-        </fileSet>
-
-        <!-- copy web.xml -->
-        <fileSet>
-            <directory>../../modules/webapp/conf</directory>
-            <outputDirectory>WEB-INF</outputDirectory>
-            <includes>
-                <include>web.xml</include>
-            </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>../../modules/kernel/conf</directory>
-            <outputDirectory>WEB-INF/classes</outputDirectory>
-            <includes>
-                <include>*.properties</include>
-            </includes>
-        </fileSet>
-
-        <!--copy the license files -->
-        <fileSet>
-            <directory>../../legal/war</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>*.txt</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>../../legal/std</directory>
-            <outputDirectory>WEB-INF/lib</outputDirectory>
-            <includes>
-                <include>*.txt</include>
-            </includes>
-        </fileSet>
-
-    </fileSets>
-
-
+  <fileSets>
+    <fileSet>
+			<directory>../../modules/webapp/target</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>*.war</include>
+			</includes>
+    </fileSet>
+	<fileSet>
+		<directory>../../</directory>
+		<outputDirectory></outputDirectory>
+		<includes>
+			<include>*.txt</include>
+		</includes>
+    </fileSet>
+  </fileSets>
+	<moduleSets>
+	  <moduleSet>
+			<includes><include>org.apache.axis2:webapp</include></includes>
+	  </moduleSet>
+	</moduleSets>
 </assembly>

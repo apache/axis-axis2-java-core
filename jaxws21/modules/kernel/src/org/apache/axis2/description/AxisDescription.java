@@ -433,13 +433,19 @@ public abstract class AxisDescription implements ParameterInclude,
         if (engagedModules == null) engagedModules = new HashMap();
         String moduleName = axisModule.getName();
         for (Iterator iterator = engagedModules.values().iterator(); iterator.hasNext();) {
-            String existing = ((AxisModule)iterator.next()).getName();
-            if (!Utils.checkVersion(moduleName, existing)) {
-                throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
-                        getClass().getName(),
-                        moduleName,
-                        existing));
+            AxisModule tempAxisModule = ((AxisModule) iterator.next());
+            String tempModuleName = tempAxisModule.getName();
+
+            if (moduleName.equals(tempModuleName)) {
+                String existing = tempAxisModule.getVersion();
+                if (!Utils.checkVersion(axisModule.getVersion(), existing)) {
+                    throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
+                            getClass().getName(),
+                            moduleName,
+                            existing));
+                }
             }
+            
         }
 
         // Let the Module know it's being engaged.  If it's not happy about it, it can throw.

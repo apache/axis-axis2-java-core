@@ -393,13 +393,15 @@ public abstract class AbstractHTTPSender {
 
         httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
 
-        //setting the cookie in the out path
-        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
+        if (msgContext.getOptions() != null && msgContext.getOptions().isManageSession()) {
+            // setting the cookie in the out path
+            Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
 
-        if (cookieString != null) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(cookieString);
-            httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
+            if (cookieString != null) {
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(cookieString);
+                httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
+            }
         }
 
         if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {

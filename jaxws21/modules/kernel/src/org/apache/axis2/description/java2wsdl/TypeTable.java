@@ -85,6 +85,14 @@ public class TypeTable {
         simpleTypetoxsd.put("java.util.Calendar",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
+        // SQL date time
+         simpleTypetoxsd.put("java.sql.Date",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+         simpleTypetoxsd.put("java.sql.Time",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "time", "xs"));
+        simpleTypetoxsd.put("java.sql.Timestamp",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+
          //consider BigDecimal, BigInteger, Day, Duration, Month, MonthDay,
         //Time, Year, YearMonth as SimpleType as well
         simpleTypetoxsd.put("java.math.BigDecimal",

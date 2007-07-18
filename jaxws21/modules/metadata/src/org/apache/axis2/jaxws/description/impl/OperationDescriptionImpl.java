@@ -27,6 +27,8 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -164,6 +166,11 @@ class OperationDescriptionImpl
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean webResultHeader;
+    
+    //  Web Result Attachment Description information
+    private boolean             _setAttachmentDesc = false;
+    private AttachmentDescription attachmentDesc = null;
+    
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
     // For JAX-WS client async methods, this is the corresponding Sync method; for everything else,
@@ -172,10 +179,12 @@ class OperationDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
-
+    private Map<String, AttachmentDescription> partAttachmentMap;
+    
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
 		checkForXmlListAnnotation(method.getAnnotations());
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
@@ -187,12 +196,15 @@ class OperationDescriptionImpl
                 axisOperation = createClientAxisOperation();
             }
         }
+        buildAttachmentInformation();
     }
 
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
         this.operationQName = axisOperation.getName();
+        buildAttachmentInformation();
     }
 
     OperationDescriptionImpl(MethodDescriptionComposite mdc,
@@ -200,6 +212,7 @@ class OperationDescriptionImpl
                              AxisOperation axisOperation) {
 
         parentEndpointInterfaceDescription = parent;
+        partAttachmentMap = new HashMap<String, AttachmentDescription>();
         methodComposite = mdc;
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
@@ -210,7 +223,8 @@ class OperationDescriptionImpl
 
         parameterDescriptions = createParameterDescriptions();
         faultDescriptions = createFaultDescriptions();
-		isListType = mdc.isListType();
+        isListType = mdc.isListType();
+        buildAttachmentInformation();
 
         //If an AxisOperation was already created for us by populateService then just use that one
         //Otherwise, create it
@@ -1754,6 +1768,77 @@ class OperationDescriptionImpl
         return null;
     }
     
+    public AttachmentDescription getResultAttachmentDescription() {
+        String partName = this.getResultPartName();
+        if (partName != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Returning result AttachmentDescription for partName: " + partName);
+            }
+            return partAttachmentMap.get(partName);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Did not find result AttachmentDescription for partName: " + partName);
+        }
+        return null;
+    }
+    
+    /**
+     * This method will drive the building of AttachmentDescription objects for the
+     * operation input/output messages in the WSDL.
+     *
+     */
+    private void buildAttachmentInformation() {
+        if (log.isDebugEnabled()) {
+            log.debug("Start buildAttachmentInformation");
+        }
+        // Only building attachment info if we find a full WSDL
+        if (this.getEndpointInterfaceDescriptionImpl()
+                .getEndpointDescriptionImpl()
+                .isWSDLFullySpecified()) {
+            if (log.isDebugEnabled()) {
+                log.debug("A full WSDL is available.  Query the WSDL binding for the AttachmentDescription information.");
+            }
+            DescriptionUtils.getAttachmentFromBinding(this,
+                                                      this.getEndpointInterfaceDescriptionImpl()
+                                                          .getEndpointDescriptionImpl()
+                                                          .getWSDLBinding());
+        }  else {
+            if (log.isDebugEnabled()) {
+                log.debug("A full WSDL is not available. AttachmentDescriptions are not built.  Processing continues.");
+            }
+            // TODO: Dummy attachment code to get the attachment test working.  I am working on the code
+            // to get this information built automatically from the wsdl
+            // START_HACK
+            if (log.isDebugEnabled()) {
+                log.debug("Adding dummy Attachment information.");
+            }
+            addPartAttachmentDescription("dummyAttachmentIN",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"text/plain"}));
+            addPartAttachmentDescription("dummyAttachmentINOUT",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"image/jpeg"}));
+            addPartAttachmentDescription("dummyAttachmentOUT",
+                                         new AttachmentDescriptionImpl(AttachmentType.SWA, 
+                                                                       new String[] {"text/plain"}));
+            // END_HACK
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("End buildAttachmentInformation");
+        }
+    }
+
+    /**
+     * This will return an AttachmentDescription based on a part name.
+     */
+    public AttachmentDescription getPartAttachmentDescription(String partName) {
+        return partAttachmentMap.get(partName);
+    }
+
+    public void addPartAttachmentDescription(String partName, AttachmentDescription attachmentDesc) {
+        partAttachmentMap.put(partName, attachmentDesc);
+    }
+            
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";
@@ -1793,6 +1878,10 @@ class OperationDescriptionImpl
             string.append("Result type: " + getResultType());
             string.append(sameline);
             string.append("Result actual type: " + getResultActualType());
+            if (getResultAttachmentDescription() != null) {
+                string.append(newline);
+                string.append(getResultAttachmentDescription().toString());
+            }
             //
             string.append(newline);
             string.append("Request Wrapper class: " + getRequestWrapperClassName());
@@ -1834,6 +1923,21 @@ class OperationDescriptionImpl
                 string.append("No Fault Descriptions");
             }
 
+            if(!partAttachmentMap.isEmpty()) {
+                string.append(newline);
+                string.append("Number of Attachment Descriptions: "  + partAttachmentMap.size());
+                string.append(newline);
+                Iterator<AttachmentDescription> adIter = partAttachmentMap.values().iterator();
+                while(adIter.hasNext()) {
+                        string.append(adIter.next().toString());
+                        string.append(newline);
+                }
+            } else {
+                string.append(newline);
+                string.append("No Attachment Descriptions");
+                string.append(newline);
+            }
+            
             string.append("RuntimeDescriptions:" + this.runtimeDescMap.size());
             string.append(newline);
             for (OperationRuntimeDescription runtimeDesc : runtimeDescMap.values()) {

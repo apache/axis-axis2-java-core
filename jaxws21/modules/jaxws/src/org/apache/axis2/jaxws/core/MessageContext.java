@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.core;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -56,6 +57,7 @@ public class MessageContext {
     private QName operationName;    //FIXME: This should become the OperationDescription
     private Message message;
     private Mode mode;
+    private boolean isOutbound;  // Outbound or inbound message context
     
     // TODO:  flag to set whether we delegate property setting up to the
     // axis2 options objecct or keep it local
@@ -72,18 +74,33 @@ public class MessageContext {
     // If a local exception is thrown, the exception is placed on the message context.
     // It is not converted into a Message.
     private Throwable localException = null;
+    private AxisFault causedByException = null;
 
+    /**
+     * Construct a MessageContext without a prior Axis2 MessageContext
+     * (usage outbound dispatch/proxy)
+     */
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
+        isOutbound = true;
         if (!DELEGATE_TO_OPTIONS) {
             properties = new HashMap<String, Object>();
         }
            
     }
+    
+    /**
+     * Construct a MessageContext with a prior MessageContext
+     * (usage inbound client/server or outbound server)
+     * @param mc
+     * @throws WebServiceException
+     */
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         if (!DELEGATE_TO_OPTIONS) {
             properties = new HashMap<String, Object>();
         }
+        // Assume inbound (caller must setOutbound)
+        isOutbound = false;
 
         /*
          * Instead of creating a member MEPContext object every time, we will
@@ -238,6 +255,21 @@ public class MessageContext {
     }
     
     /**
+     * @param t
+     */
+    public void setCausedByException (AxisFault t){
+        this.causedByException = t;
+    }
+    
+    /**
+     * @return
+     */
+    public AxisFault getCausedByException(){
+        return this.causedByException;
+    }
+    
+
+    /**
      * Set the wrapper MEPContext.  Internally, this method also sets
      * the MEPContext's children so the pointer is bi-directional; you can
      * get the MEPContext from the MessageContext and vice-versa.
@@ -257,6 +289,20 @@ public class MessageContext {
             setMEPContext(new MEPContext(this));
         }
         return mepCtx;
+    }
+    
+    /**
+     * @return if outbound MessageContext
+     */
+    public boolean isOutbound() {
+        return isOutbound;
+    }
+
+    /**
+     * @param isOutbound true if outbound MessageContext
+     */
+    public void setOutbound(boolean isOutbound) {
+        this.isOutbound = isOutbound;
     }
     
     private class ReadOnlyProperties extends AbstractMap<String, Object> {

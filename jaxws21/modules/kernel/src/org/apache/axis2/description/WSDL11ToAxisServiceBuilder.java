@@ -221,7 +221,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     public AxisService populateService() throws AxisFault {
         try {
-
             setup();
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
@@ -409,7 +408,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBinding.setName(wsdl4jBinding.getQName());
             axisBinding.setParent(axisEndpoint);
             axisEndpoint.setBinding(axisBinding);
-            axisEndpoint.setBinding(axisBinding);
+            axisBinding.setParent(axisEndpoint);
             populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
             processedBindings.put(wsdl4jBinding.getQName(), axisBinding);
         }
@@ -532,6 +531,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingInMessage.setAxisMessage(axisInMessage);
                 axisBindingInMessage.setDirection(axisInMessage.getDirection());
 
+                axisBindingInMessage.setParent(axisBindingOperation);
                 axisBindingOperation
                         .addChild(axisBindingInMessage.getDirection(), axisBindingInMessage);
             }
@@ -570,6 +570,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingOutMessage.setAxisMessage(axisOutMessage);
                 axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
 
+                axisBindingOutMessage.setParent(axisBindingOperation);
                 axisBindingOperation
                         .addChild(axisBindingOutMessage.getDirection(), axisBindingOutMessage);
             }

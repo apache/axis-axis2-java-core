@@ -110,7 +110,9 @@ public class EndpointController {
          * Since we're on the server, and there apparently is no Binding object
          * anywhere to be found...
          */
-        ic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
+        if (ic.getHandlers() == null) {
+            ic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
+        }
 
         if (!bindingTypesMatch(requestMsgCtx, endpointDesc.getServiceDescription())) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();

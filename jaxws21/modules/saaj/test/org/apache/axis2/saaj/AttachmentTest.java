@@ -75,8 +75,6 @@ public class AttachmentTest extends TestCase {
             String id = attachment.getContentId();
             assertEquals(content, stringContent);
         }
-        message.writeTo(System.out);
-
         message.removeAllAttachments();
         assertTrue(message.countAttachments() == 0);
     }
@@ -229,32 +227,25 @@ public class AttachmentTest extends TestCase {
                     if (!foundHeader1) {
                         foundHeader1 = true;
                         //MimeHeaders do match for header1
-                        //System.out.println("receive: name="+name+", value="+value);
                     } else {
                         fail("Error: Received the same header1 header twice");
-                        //System.out.println("received: name="+name+", value="+value);
                     }
                 } else if (name.equalsIgnoreCase("Content-Id") && value.equals("id@abc.com")) {
                     if (!foundHeader2) {
                         foundHeader2 = true;
                         //MimeHeaders do match for header2
-                        //System.out.println("receive: name="+name+", value="+value);
                     } else {
                         fail("Error: Received the same header2 header twice");
-                        //System.out.println("received: name="+name+", value="+value);
                     }
                 } else if (name.equals("Content-Type") && value.equals("text/xml")) {
                     if (!foundDefaultHeader) {
                         foundDefaultHeader = true;
                         //MimeHeaders do match for default header
-                        //System.out.println("receive: name="+name+", value="+value);
                     } else {
                         fail("Error: Received the same default header header twice");
-                        //System.out.println("received: name="+name+", value="+value);
                     }
                 } else {
                     fail("Error: Received an invalid header");
-                    //System.out.println("received: name="+name+", value="+value);
                 }
             }
 
@@ -357,11 +348,9 @@ public class AttachmentTest extends TestCase {
         try {
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                //System.err.println("Method failed: " + method.getStatusLine());
                 return false;
             }
-            byte[] responseBody = method.getResponseBody();
-
+            //byte[] responseBody = method.getResponseBody();
         } catch (HttpException e) {
             e.printStackTrace();
             return false;
@@ -373,5 +362,4 @@ public class AttachmentTest extends TestCase {
         }
         return true;
     }
-
 }

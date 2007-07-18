@@ -41,6 +41,7 @@
 			<arg value="-uri" />
 			<arg value="${basedir}/resources/MTOMSample.wsdl" />
 			<arg value="-ss" />
+                  <arg value="-ap" />
 			<arg value="-sd" />
 			<arg value="-p" />
 			<arg value="sample.mtom.service" />
@@ -64,7 +65,7 @@
 	</target>
 
 	<target name="print-usage" unless="parameters.set">
-		<echo message="ant -Dfile &lt;file to be transferred&gt;  -Ddest &lt;name of the destination file&gt;" />
+		<echo message="ant run.client -Dfile &lt;file to be transferred&gt;  -Ddest &lt;name of the destination file&gt;" />
 	</target>
 
 	<!-- Generate Client -->
@@ -73,6 +74,7 @@
 			<arg value="-uri" />
 			<arg value="resources/MTOMSample.wsdl" />
 			<arg value="-p" />
+			<arg value="-ap" />
 			<arg value="sample.mtom.service" />
 			<arg value="-o" />
 			<arg value="${client.dir}" />
@@ -89,7 +91,7 @@
     </target>	
 
 	<!-- Run Client -->
-	<target name="run.client" depends="check-parameters" if="parameters.set">
+	<target name="run.client" depends="check-parameters,generate.client" if="parameters.set">
 		<!-- Accept two arguments from the command line, Also use the class.path set earlier -->
 		<java classname="sample.mtom.client.Client" fork="true">
 			<arg value="-file" />

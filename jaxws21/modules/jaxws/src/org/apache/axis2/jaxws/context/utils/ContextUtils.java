@@ -174,36 +174,11 @@ public class ContextUtils {
                 log.debug("SERVLET_RESPONSE Set");
             }
         }
-        // Set the transport properties
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS,
-                               axisMsgContext.getProperty(
-                                       org.apache.axis2.context.MessageContext.TRANSPORT_HEADERS));
-        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS,
-                                    Scope.APPLICATION);
-
-
+        
         soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE,
                                axisMsgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE));
         soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE,
                                     Scope.APPLICATION);
-
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS, null);
-        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS,
-                                    Scope.APPLICATION);
-
-        // Set the message properties
-
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS,
-                               axisMsgContext.getAttachmentMap());
-        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS,
-                                    Scope.APPLICATION);
-
-        soapMessageContext
-                .put(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, null);
-        soapMessageContext.setScope(
-                javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
-                Scope.APPLICATION);
-
     }
 
     public static void addWSDLProperties(MessageContext jaxwsMessageContext) {

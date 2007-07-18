@@ -22,9 +22,12 @@ package org.apache.axis2.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 /**
  * Tidies up the java source code using Jalopy.
@@ -41,8 +44,23 @@ public class PrettyPrinter {
      * @param file
      */
     public static void prettify(File file) {
+        // If the user has set "axis2.jalopy=false" on the system property,
+        // then just return back to caller
+        String property = System.getProperty("axis2.jalopy");
+        if(property != null && JavaUtils.isFalseExplicitly(property)){
+            return;
+        }
+        PrintStream backupOutputStream = System.out;
+        PrintStream backupErrorStream = System.err;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+        System.setErr(new PrintStream(new ByteArrayOutputStream()));
         try {
-            Loader.loadClass("org.apache.log4j.Priority");
+            Class clazzConfigurator = Loader.loadClass("org.apache.log4j.PropertyConfigurator");
+            Method configure = clazzConfigurator.getMethod("configure", new Class[]{Properties.class});
+            Properties properties = new Properties();
+            properties.setProperty("log4j.logger.de.hunsicker.jalopy.io",
+                    System.getProperty("log4j.logger.de.hunsicker.jalopy.io", "FATAL"));
+            configure.invoke(null, new Object[]{properties});
 
             // Create an instance of the Jalopy bean
             Class clazz = Loader.loadClass("de.hunsicker.jalopy.Jalopy");
@@ -67,6 +85,11 @@ public class PrettyPrinter {
             Method put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
             put.invoke(settings, new Object[]{key, "true"});
 
+            field = clazz3.getField("COMMENT_FORMAT_MULTI_LINE");
+            key = field.get(null);
+            put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
+            put.invoke(settings, new Object[]{key, "true"});
+
             // format and overwrite the given input file
             Method format = clazz.getMethod("format", new Class[]{});
             format.invoke(prettifier, new Object[]{});
@@ -77,6 +100,9 @@ public class PrettyPrinter {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {
             log.debug("Exception occurred while trying to pretty print file " + file, t);
+        } finally {
+            System.setOut(backupOutputStream);
+            System.setErr(backupErrorStream);
         }
     }
 }

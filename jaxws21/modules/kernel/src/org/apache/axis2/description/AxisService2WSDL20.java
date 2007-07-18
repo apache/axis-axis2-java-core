@@ -60,7 +60,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      */
     public OMElement generateOM() throws Exception {
 
-        Map nameSpacesMap = axisService.getNameSpacesMap();
+        Map nameSpacesMap = axisService.getNamespaceMap();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMNamespace wsdl;
 
@@ -245,7 +245,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 descriptionElement
                         .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
                                                    interfaceName,
-                                                   axisService.getNameSpacesMap(),
+                                                   axisService.getNamespaceMap(),
                                                    axisService.getWSAddressingFlag(),
                                                    axisService.getName()));
             }
@@ -277,11 +277,12 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     /**
      * Generates the interface element for the service
      *
-     * @param tns           - The target namespace
-     * @param wsdlx         - wsdl extentions namespace
-     * @param fac           - OMFactory
-     * @param interfaceName - The name of the interface
-     * @return - The generated interface element
+     * @param wsdl The WSDL namespace
+     * @param tns The target namespace
+     * @param wsdlx The WSDL extensions namespace
+     * @param fac The active OMFactory
+     * @param interfaceName The name of the interface
+     * @return The generated interface element
      */
     private OMElement getInterfaceElement(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
                                           OMFactory fac, String interfaceName) {
@@ -311,7 +312,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                             fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, name));
                     faultElement.addAttribute(fac.createOMAttribute(
                             WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil
-                            .getElementName(faultMessage, axisService.getNameSpacesMap())));
+                            .getElementName(faultMessage, axisService.getNamespaceMap())));
                     interfaceFaults.add(name);
                     interfaceElement.addChild(faultElement);
                 }
@@ -327,10 +328,11 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     /**
      * Generates the service element for the service
      *
-     * @param tns           - The target namespace
-     * @param omFactory     - OMFactory
-     * @param interfaceName - The name of the interface
-     * @return - The generated service element
+     * @param wsdl the WSDL namespace
+     * @param tns the target namespace
+     * @param omFactory the active OMFactory
+     * @param interfaceName the name of the interface
+     * @return the generated service element
      */
     private OMElement getServiceElement(OMNamespace wsdl, OMNamespace tns, OMFactory omFactory,
                                         String interfaceName) {
@@ -349,11 +351,17 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * Generates the interface Operation element. As with the binding operations we dont need to
      * ask AxisMessage to serialize its message cause AxisMessage does not have specific properties
      * as bindings.
-     * @param tns - The targetnamespace
-     * @param wsdlx - The WSDL extentions namespace (WSDL 2.0)
-     * @return The generated binding element
+     *
+     * @param axisOperation the operation to write
+     * @param wsdl the WSDL namespace
+     * @param tns the target namespace
+     * @param wsdlx the WSDL extentions namespace (WSDL 2.0)
+     * @return the generated &lt;operation&gt; element
      */
-    public OMElement generateInterfaceOperationElement(AxisOperation axisOperation, OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx) {
+    public OMElement generateInterfaceOperationElement(AxisOperation axisOperation,
+                                                       OMNamespace wsdl,
+                                                       OMNamespace tns,
+                                                       OMNamespace wsdlx) {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
                 omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
@@ -379,7 +387,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     WSDL2Constants.ATTRIBUTE_SAFE, wsdlx, (param.getValue()).toString()));
         }
         AxisService axisService = axisOperation.getAxisService();
-        Map nameSpaceMap = axisService.getNameSpacesMap();
+        Map nameSpaceMap = axisService.getNamespaceMap();
 
         // Add the input element
         AxisMessage inMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_IN_MESSAGE);

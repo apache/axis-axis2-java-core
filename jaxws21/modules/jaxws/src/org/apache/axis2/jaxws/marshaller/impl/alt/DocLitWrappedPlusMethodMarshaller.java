@@ -305,10 +305,11 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             MarshalServiceRuntimeDescription marshalDesc =
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+            String packagesKey = marshalDesc.getPackagesKey();
 
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
-            JAXBBlockContext blockContext = new JAXBBlockContext(packages);
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
@@ -442,6 +443,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             MarshalServiceRuntimeDescription marshalDesc =
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+            String packagesKey = marshalDesc.getPackagesKey();
 
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -539,7 +541,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 
             Block block = factory.createFrom(object,
-                                             new JAXBBlockContext(packages),
+                                             new JAXBBlockContext(packages, packagesKey),
                                              wrapperQName);  // The factory will get the qname from the value
             m.setBodyBlock(block);
 
@@ -574,6 +576,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
         MarshalServiceRuntimeDescription marshalDesc =
                 MethodMarshallerUtils.getMarshalDesc(endpointDesc);
         TreeSet<String> packages = marshalDesc.getPackages();
+        String packagesKey = marshalDesc.getPackagesKey();
 
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
@@ -654,7 +657,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = factory.createFrom(object,
-                                             new JAXBBlockContext(packages),
+                                             new JAXBBlockContext(packages, packagesKey),
                                              wrapperQName);  // The factory will get the qname from the value
             m.setBodyBlock(block);
 

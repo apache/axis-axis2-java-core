@@ -21,27 +21,23 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.deployment.repository.util.WSInfo;
+import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.net.URI;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Enumeration;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
-
-    static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     protected DeploymentEngine deploymentEngine;
     private HashMap directoryToExtensionMappingMap;
@@ -115,15 +111,27 @@ public class RepositoryListener implements DeploymentConstants {
         try {
             Enumeration moduleURLs = loader.getResources("META-INF/module.xml");
             while (moduleURLs.hasMoreElements()) {
-                URL url = (URL)moduleURLs.nextElement();
-                String fileName = url.toString();
-                fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                File f = new File(new URI(fileName));
-                addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                try {
+                    URL url = (URL)moduleURLs.nextElement();
+                    String fileName = url.toString();
+                    if (fileName.startsWith("jar")) {
+                        url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
+                        fileName = url.toString();
+                         File f = new File(new URI(fileName));
+                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                    } else if (fileName.startsWith("file")) {
+                        fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
+                        File f = new File(new URI(fileName));
+                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
+                    } 
+
+                } catch (URISyntaxException e) {
+                    log.info(e);
+                }
             }
         } catch (Exception e) {
             // Oh well, log the problem
-            log.info(e);
+            log.debug(e);
         }
 
         String classPath = getLocation();
@@ -161,7 +169,7 @@ public class RepositoryListener implements DeploymentConstants {
                         path = path.substring(1);
                     }
                     try {
-                        path = URLDecoder.decode(path, defaultEncoding);
+                        path = URLDecoder.decode(path, Utils.defaultEncoding);
                     } catch (UnsupportedEncodingException e) {
                         // Log this?
                     }
@@ -195,9 +203,7 @@ public class RepositoryListener implements DeploymentConstants {
                 location = url.toString();
             }
             if (location.startsWith("file")) {
-                String path = URLDecoder.decode(url.getPath(), defaultEncoding);
-                java.io.File file =
-                        new java.io.File(path.replace('/', File.separatorChar).replace('|', ':'));
+                File file = Utils.toFile(url);
                 return file.getAbsolutePath();
             } else {
                 return url.toString();
@@ -232,7 +238,12 @@ public class RepositoryListener implements DeploymentConstants {
             Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
             while (keys.hasNext()) {
                 String s = (String) keys.next();
-                findFileForGivenDirectory(s, (String) directoryToExtensionMappingMap.get(s));
+                ArrayList list = (ArrayList) directoryToExtensionMappingMap.get(s);
+                for (int i = 0; i < list.size(); i++) {
+                    String extension = (String) list.get(i);
+                    findFileForGivenDirectory(s, extension);
+                }
+
             }
         }
     }

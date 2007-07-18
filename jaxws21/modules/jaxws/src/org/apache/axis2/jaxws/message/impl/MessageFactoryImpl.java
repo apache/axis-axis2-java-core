@@ -88,6 +88,7 @@ public class MessageFactoryImpl implements MessageFactory {
             Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
             if (message.countAttachments() > 0) {
                 Iterator it = message.getAttachments();
+                m.setDoingSWA(true);
                 while (it.hasNext()) {
                     AttachmentPart ap = (AttachmentPart)it.next();
                     m.addDataHandler(ap.getDataHandler(), ap.getContentId());

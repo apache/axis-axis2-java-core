@@ -20,12 +20,16 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
@@ -40,6 +44,7 @@ import java.lang.reflect.Type;
 /** @see ../ParameterDescription */
 class ParameterDescriptionImpl
         implements ParameterDescription, ParameterDescriptionJava, ParameterDescriptionWSDL {
+    private static final Log log = LogFactory.getLog(ParameterDescriptionImpl.class);
     private OperationDescription parentOperationDescription;
     // The Class representing the parameter.  Note that for a Generic, including the JAX-WS Holder<T> Generic, 
     // this represents the raw type of the Generic (e.g. List for List<T> or Holder for Holder<T>).
@@ -63,6 +68,10 @@ class ParameterDescriptionImpl
     private WebParam.Mode webParamMode;
     public static final Boolean WebParam_Header_DEFAULT = new Boolean(false);
     private Boolean webParamHeader;
+    
+    // Attachment Description information
+    private boolean             _setAttachmentDesc = false;
+    private AttachmentDescription attachmentDesc = null;
     
     // This boolean indicates whether or not there was an @XMLList on the parameter
     private boolean isListType = false;
@@ -375,6 +384,10 @@ class ParameterDescriptionImpl
             string.append("Type: " + getParameterType());
             string.append(sameline);
             string.append("Actual type: " + getParameterActualType());
+            if (getAttachmentDescription() != null) {
+                string.append(newline);
+                string.append(getAttachmentDescription().toString());
+            }
         }
         catch (Throwable t) {
             string.append(newline);
@@ -387,5 +400,34 @@ class ParameterDescriptionImpl
 
     public boolean isListType() {
     	return isListType;
+    }
+    
+    /**
+     * Helper method to get to parent impl object.
+     */
+    private OperationDescriptionImpl getOperationDescriptionImpl() {
+        if(this.getOperationDescription() instanceof OperationDescriptionImpl) {
+                return (OperationDescriptionImpl) this.getOperationDescription();
+        }
+        return null;
+    }
+    
+    /**
+     * This method will return an AttachmentDescription based on the part name of the parameter.
+     */
+    public AttachmentDescription getAttachmentDescription() {
+        String partName = this.getPartName();
+        if(partName != null && getOperationDescriptionImpl() != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Returning parameter AttachmentDescription for partName: " + 
+                          partName);
+            }
+            return getOperationDescriptionImpl().getPartAttachmentDescription(partName);
+            
+        }
+        if(log.isDebugEnabled()) {
+            log.debug("Did not find parameter AttachmentDescription for partName: " + partName);
+        }
+        return null;
     }
 }

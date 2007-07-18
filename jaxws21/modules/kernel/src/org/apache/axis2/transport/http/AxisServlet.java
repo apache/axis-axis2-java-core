@@ -597,12 +597,18 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             msgContext.setIncomingTransportName(trsPrefix);
         } else {
             msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+            trsPrefix = Constants.TRANSPORT_HTTP;
         }
         TransportInDescription transportIn =
                 axisConfiguration.getTransportIn(msgContext.getIncomingTransportName());
         //set the default output description. This will be http
-        TransportOutDescription transportOut = configContext.getAxisConfiguration()
-                .getTransportOut(Constants.TRANSPORT_HTTP);
+
+        TransportOutDescription transportOut = axisConfiguration.getTransportOut(trsPrefix);
+        if (transportOut == null) {
+            // if the req coming via https but we do not have a https sender
+            transportOut = axisConfiguration.getTransportOut(Constants.TRANSPORT_HTTP);
+        }
+
 
         msgContext.setTransportIn(transportIn);
         msgContext.setTransportOut(transportOut);

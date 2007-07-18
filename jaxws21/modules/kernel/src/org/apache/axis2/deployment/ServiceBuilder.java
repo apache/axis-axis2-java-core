@@ -79,6 +79,10 @@ public class ServiceBuilder extends DescriptionBuilder {
 
     /**
      * Populates service from corresponding OM.
+     *
+     * @param service_element an OMElement for the &lt;service&gt; tag
+     * @return a filled-in AxisService, configured from the passed XML
+     * @throws DeploymentException if there is a problem
      */
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
@@ -110,8 +114,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                     service.setName(serviceNameatt.getAttributeValue());
                     //To be on the safe side
-                    if (service.getServiceDescription() == null) {
-                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    if (service.getDocumentation() == null) {
+                        service.setDocumentation(serviceNameatt.getAttributeValue());
                     }
                 }
             }
@@ -130,23 +134,23 @@ public class ServiceBuilder extends DescriptionBuilder {
                     descriptionValue.build();
                     descriptionValue.serialize(writer);
                     writer.flush();
-                    service.setServiceDescription(writer.toString());
+                    service.setDocumentation(writer.toString());
                 } else {
-                    service.setServiceDescription(descriptionElement.getText());
+                    service.setDocumentation(descriptionElement.getText());
                 }
             } else {
                 serviceNameatt =
                         service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    if (!"".equals(serviceNameatt.getAttributeValue().trim()) && service.getServiceDescription() == null) {
-                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    if (!"".equals(serviceNameatt.getAttributeValue().trim()) && service.getDocumentation() == null) {
+                        service.setDocumentation(serviceNameatt.getAttributeValue());
                     }
                 }
             }
 
             if (service.getParameter("ServiceClass") == null) {
-                log.info("The Service " + service.getName() + " does not specify a Service Class");
+                log.debug("The Service " + service.getName() + " does not specify a Service Class");
             }
 
             // Process WS-Addressing flag attribute
@@ -300,7 +304,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String transportName = trsEle.getText().trim();
                     trs.add(transportName);
                     if (axisConfig.getTransportIn(transportName) == null) {
-                        throw new AxisFault("Service is trying to expose in a transport : "
+                        throw new AxisFault("Service [ "+ service.getName() +  "] is trying to expose in a transport : "
                                 + transports + " and which is not available in Axis2");
                     }
                 }
@@ -382,10 +386,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(
-                    Messages.getMessage(
-                            DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()),
-                    axisFault);
+            throw new DeploymentException(axisFault);
         }
         return service;
     }
@@ -423,14 +424,15 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To process the packe name to Qname mapping
-     * <packageMapping>
-     * <mapping packageName="foo.bar" qname="http://foo/bar/xsd">
-     * ......
-     * ......
-     * </packageMapping>
+     * Process the package name to QName mapping:
      *
-     * @param packageMappingElement
+     * &lt;packageMapping&gt;
+     * &lt;mapping packageName="foo.bar" qname="http://foo/bar/xsd"%gt;
+     * ......
+     * ......
+     * &lt;/packageMapping&gt;
+     *
+     * @param packageMappingElement OMElement for the packageMappingElement
      */
     private void processTypeMappings(OMElement packageMappingElement) {
         Iterator elementItr = packageMappingElement.getChildrenWithName(new QName(TAG_MAPPING));
@@ -445,10 +447,10 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (packageName == null || qName == null) {
                 continue;
             }
-            Iterator keys = service.getNameSpacesMap().keySet().iterator();
+            Iterator keys = service.getNamespaceMap().keySet().iterator();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                if (qName.equals(service.getNameSpacesMap().get(key))) {
+                if (qName.equals(service.getNamespaceMap().get(key))) {
                     typeTable.addComplexSchema(packageName,
                                                new QName(qName, packageName, key));
                 }
@@ -506,9 +508,11 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To get the methods which dose not use RPC* Message Recievers
+     * To get the methods which do not use RPC* MessageReceivers
      *
-     * @return ArrayList
+     * @param axisService the AxisService to search
+     * @return an ArrayList of the LOCAL PARTS of the QNames of any non-RPC operations
+     * TODO: Why not just return the AxisOperations themselves??
      */
     private ArrayList getNonRPCMethods(AxisService axisService) {
         ArrayList excludeOperations = new ArrayList();
@@ -538,22 +542,18 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     /**
-     * If there is <excludeOperations>
-     * <operation>foo</operation>
-     * </excludeOperations>
-     * <p/>
-     * Then the operation object will be removed from the AxisService , so that
-     * the operation wont be exposed
+     * Process &lt;excludeOperation&gt; element in services.xml.  Each operation referenced
+     * will be removed from the AxisService.
      *
-     * @param exculeOperations
+     * @param excludeOperations the &lt;excludeOperations&gt; element from services.xml
+     * @return an ArrayList of the String contents of the &lt;operation&gt; elements
      */
-    private ArrayList processExcludeOperations(OMElement exculeOperations) {
+    private ArrayList processExcludeOperations(OMElement excludeOperations) {
         ArrayList exOps = new ArrayList();
-        Iterator excludeOp_itr = exculeOperations.getChildrenWithName(new QName(TAG_OPERATION));
+        Iterator excludeOp_itr = excludeOperations.getChildrenWithName(new QName(TAG_OPERATION));
         while (excludeOp_itr.hasNext()) {
             OMElement opName = (OMElement) excludeOp_itr.next();
             exOps.add(opName.getText().trim());
-            // service.removeOperation(new QName(opName.getText().trim()));
         }
         return exOps;
     }

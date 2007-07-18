@@ -37,11 +37,11 @@ public class DataLocatorFactory {
     }
 
     public static AxisDataLocator createDataLocator(String dialect,
-                                                       ServiceData[] serviceDataArray) {
-        AxisDataLocator dataLocator = null;
+                                                    ServiceData[] serviceDataArray) {
+        AxisDataLocator dataLocator;
+
         if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)) {
             dataLocator = getWsdlDataLocator(serviceDataArray);
-
         } else if (dialect.trim().equals(DRConstants.SPEC.DIALECT_TYPE_POLICY)) {
             if (policyDataLocator == null) {
                 dataLocator = new PolicyDataLocator(serviceDataArray);

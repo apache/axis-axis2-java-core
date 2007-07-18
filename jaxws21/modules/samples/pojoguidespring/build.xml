@@ -16,7 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="pojoguidespring" basedir="." default="generate.service" name="WeatherSpringService">
+<project name="pojoguidespring" basedir="." default="generate.service">
 
 	<property environment="env" />
 	<property name="service-name" value="WeatherSpringService" />

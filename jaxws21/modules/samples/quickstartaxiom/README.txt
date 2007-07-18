@@ -21,15 +21,15 @@ Apache Ant 1.6.2 or later
 Building the Service
 ====================
 
-Type "ant generate.service" from Axis2_HOME/samples/quickstartaxiom directory.
+Type "ant generate.service" from AXIS2_HOME/samples/quickstartaxiom directory.
 Then deploy the 
-Axis2_HOME/samples/quickstartaxiom/build/StockQuoteService.aar
+AXIS2_HOME/samples/quickstartaxiom/build/StockQuoteService.aar
 
 
 Running the Client
 ==================
 
-Type ant run.client in the Axis2_HOME/samples/quickstartaxiom directory
+Type ant run.client in the AXIS2_HOME/samples/quickstartaxiom directory
 
 Help
 ====

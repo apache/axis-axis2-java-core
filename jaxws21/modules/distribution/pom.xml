@@ -215,6 +215,14 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>apache-activemq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jalopy</groupId>
+            <artifactId>jalopy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -231,15 +239,57 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <finalName>axis2-${version}</finalName>
                             <descriptors>
-                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
-                                <!--<descriptor>src/main/assembly/src-assembly.xml</descriptor>-->
-                                <!--<descriptor>src/main/assembly/war-assembly.xml</descriptor>-->
+                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor> 
+                                <descriptor>src/main/assembly/war-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>service-module-list-generation</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+				<mkdir dir="target/tmp-repository"/>
+				<mkdir dir="target/tmp-repository/modules"/>
+				<mkdir dir="target/tmp-repository/services"/>
+
+				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
+				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
+				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+			
+				<!-- generate modules.list -->			        
+				<echo file="target/tmp-repository/modules/modules.list" append="false">
+				soapmonitor-${soapmonitor.mar.version}.mar
+				addressing-${addressing.mar.version}.mar
+				ping-${ping.mar.version}.mar
+				mex-${mex.mar.version}.mar
+			        </echo>
+
+				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
+				<!-- generate services.list -->			        
+			        <echo file="target/tmp-repository/services/services.list" append="false">
+				version.aar
+			        </echo>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+	     </plugin>
         </plugins>
     </build>
 

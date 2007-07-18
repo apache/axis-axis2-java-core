@@ -170,8 +170,8 @@ public final class Replicator {
                 }
             } catch (InterruptedException ignored) {
             }
-            if (System.currentTimeMillis() - start > 15000) {
-                throw new ClusteringFault("ACKs not received from all members within 15 sec. " +
+            if (System.currentTimeMillis() - start > 45000) {
+                throw new ClusteringFault("ACKs not received from all members within 45 sec. " +
                                           "Aborting wait.");
             }
         } while (!contextManager.isMessageAcknowledged(msgUUID));

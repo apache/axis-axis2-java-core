@@ -38,12 +38,12 @@
         <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
         <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
         <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
-        /**
-        * <xsl:value-of select="@name"/>.java
-        *
-        * This file was auto-generated from WSDL
-        * by the Apache Axis2 version: #axisVersion# #today#
-        */
+/**
+ * <xsl:value-of select="@name"/>.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: #axisVersion# #today#
+ */
         package <xsl:value-of select="$package"/>;
 
         <!-- Put the MTOM enable flag -->
@@ -90,11 +90,11 @@
 	    
 
 	    <xsl:if test="input/@policy">
-	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
 	    </xsl:if>
 	    
 	    <xsl:if test="output/@policy">
-	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
 	    </xsl:if>
 	    
             _operations[<xsl:value-of select="position()-1"/>]=__operation;

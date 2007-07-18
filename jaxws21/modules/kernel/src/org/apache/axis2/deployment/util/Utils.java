@@ -28,8 +28,19 @@ import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.description.*;
-import org.apache.axis2.description.java2wsdl.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.java2wsdl.AnnotationConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -42,17 +53,35 @@ import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Utils {
+
+    public static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     private static Log log = LogFactory.getLog(Utils.class);
 
@@ -457,6 +486,10 @@ public class Utils {
                             configCtx);
                     for (int j = 0; j < serviceList.size(); j++) {
                         AxisService axisService = (AxisService) serviceList.get(j);
+                        Parameter moduleService = new Parameter();
+                        moduleService.setValue("true");
+                        moduleService.setName(AxisModule.MODULE_SERVICE);
+                        axisService.addParameter(moduleService);
                         serviceGroup.addService(axisService);
                     }
                     axisConfig.addServiceGroup(serviceGroup);
@@ -601,11 +634,23 @@ public class Utils {
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
         if (extractJars) {
-            URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-            return new DeploymentClassLoader(urls1, null, serviceClassLoader);
-        } else {
-            List embedded_jars = Utils.findLibJars(urls[0]);
-            return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
+            try {
+                URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
+                return new DeploymentClassLoader(urls1, null, serviceClassLoader);
+            } catch (Exception e){
+                log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
+                log.debug(e.getMessage(), e);
+            }
         }
+        List embedded_jars = Utils.findLibJars(urls[0]);
+        return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
     }
+
+    public static File toFile(URL url) throws UnsupportedEncodingException {
+        String path = URLDecoder.decode(url.getPath(), defaultEncoding);
+        File file =
+                new File(path.replace('/', File.separatorChar).replace('|', ':'));
+        return file;
+    }
+
 }

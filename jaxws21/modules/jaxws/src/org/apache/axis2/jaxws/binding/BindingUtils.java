@@ -34,9 +34,10 @@ public class BindingUtils {
             // Do we default to the SOAPBinding?            
         }
         
-        String bindingType = ed.getClientBindingID();
-        if (bindingType == null)
-            bindingType = ed.getBindingType();
+        String bindingType = 
+            (ed.getServiceDescription().isServerSide()) ? 
+                    ed.getBindingType()
+                    : ed.getClientBindingID();
         
         if (BindingUtils.isSOAPBinding(bindingType)) {
             return new SOAPBinding(ed);

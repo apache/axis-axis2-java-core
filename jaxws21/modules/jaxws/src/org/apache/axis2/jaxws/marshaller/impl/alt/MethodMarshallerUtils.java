@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.AttachmentDescription;
+import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -33,7 +35,6 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -47,6 +48,8 @@ import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.jws.WebService;
 import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -59,6 +62,8 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -68,9 +73,7 @@ import java.math.BigInteger;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -94,8 +97,8 @@ public class MethodMarshallerUtils {
      * @param marshalDesc
      * @param params          ParameterDescription for this operation
      * @param sigArguments    arguments
-     * @param isInput         indicates if input or output  params(input args on client, output args
-     *                        on server)
+     * @param isInput         indicates if input or output  params(input args on client, 
+     *                        output args on server)
      * @param isDocLitWrapped
      * @param isRPC
      * @return PDElements
@@ -133,10 +136,12 @@ public class MethodMarshallerUtils {
                 // Get the formal type representing the value
                 Class formalType = pd.getParameterActualType();
 
-                // The namespace and local name are obtained differently depending on the style/use and header
+                // The namespace and local name are obtained differently depending on 
+                // the style/use and header
                 QName qName = null;
                 if (pd.isHeader()) {
-                    // Headers (even rpc) are marshalled with the name defined by the element= attribute on the wsd:part
+                    // Headers (even rpc) are marshalled with the name defined by the 
+                    // element= attribute on the wsd:part
                     qName = new QName(pd.getTargetNamespace(), pd.getParameterName());
                 } else if (isDocLitWrapped) {
                     // For doc/lit wrapped, the localName comes from the PartName
@@ -150,36 +155,82 @@ public class MethodMarshallerUtils {
 
                 // Create an Element rendering
                 Element element = null;
-                if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
-                    /* when a schema defines a SimpleType with xsd list jaxws tooling generates art-effects with array rather than a java.util.List
-                     * However the ObjectFactory definition uses a List and thus marshalling fails. Lets convert the Arrays to List and recreate
-                     * the JAXBElements for the same.
-                     */
-                    if(pd.isListType()){
-                        
-                       List<Object> list= new ArrayList<Object>();
-                       if(formalType.isArray()){
-                            for(int count = 0; count < Array.getLength(value); count++){
-                                Object obj = Array.get(value, count);
-                                list.add(obj);
+                AttachmentDescription attachmentDesc = pd.getAttachmentDescription();
+                if (attachmentDesc != null) {
+                    PDElement pde = createPDElementForAttachment(pd, qName, value, formalType);
+                    pdeList.add(pde);
+                } else {
+                    if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
+                        /* when a schema defines a SimpleType with xsd list jaxws tooling 
+                         * generates artifacts with array rather than a java.util.List
+                         * However the ObjectFactory definition uses a List and thus 
+                         * marshalling fails. Lets convert the Arrays to List and recreate
+                         * the JAXBElements for the same.
+                         */
+                        if (pd.isListType()) {
+                            
+                            List<Object> list = new ArrayList<Object>();
+                            if (formalType.isArray()) {
+                                for (int count = 0; count < Array.getLength(value); count++) {
+                                    Object obj = Array.get(value, count);
+                                    list.add(obj);
+                                }
+
                             }
                             element = new Element(list, qName, List.class);
+                        } else {
+                            element = new Element(value, qName, formalType);
                         }
                       }
                     else{
-                        element = new Element(value, qName, formalType);
+                        element = new Element(value, qName);
                     }
-                } else {
-                    element = new Element(value, qName);
+                    // The object is now ready for marshalling
+                    PDElement pde = new PDElement(pd, element, null);
+                    pdeList.add(pde);
                 }
-
-                // The object is now ready for marshalling
-                PDElement pde = new PDElement(pd, element, null);
-                pdeList.add(pde);
             }
         }
 
         return pdeList;
+    }
+    
+    /**
+     * @param pd
+     * @param qName
+     * @param value
+     * @param formalType
+     * @return
+     */
+    private static PDElement createPDElementForAttachment(ParameterDescription pd, 
+                                                          QName qName, 
+                                                          Object value, 
+                                                          Class formalType) {
+        PDElement pde;
+        if (log.isDebugEnabled()) {
+            log.debug("Creating a PDElement for an attachment value: " + 
+                      ((value == null)? "null":value.getClass().getName()));
+            log.debug("ParameterDescription = " + pd.toString());
+        }
+        AttachmentDescription attachmentDesc = pd.getAttachmentDescription();
+        
+        AttachmentType attachmentType = attachmentDesc.getAttachmentType();
+        if (attachmentType == AttachmentType.SWA) {
+            // Create an Attachment object with the signature value
+            Attachment attachment = new Attachment(value, 
+                                                   formalType, 
+                                                   attachmentDesc);  
+            pde = new PDElement(pd, 
+                    null, // For SWA Attachments, there is no element reference to the attachment
+                    null, 
+                    attachment);
+        } else {
+            // TODO NLS and clean this up
+            throw ExceptionFactory.
+            makeWebServiceException("SWAREF and MTOM attachment parameters are not " +
+                        "supported in this style/use.");
+        }
+        return pde;
     }
 
     /**
@@ -191,7 +242,8 @@ public class MethodMarshallerUtils {
      * @param isInput indicates if input or output  params (input on server, output on client)
      * @param hasReturnInBody if isInput=false, then this parameter indicates whether a 
      * return value is expected in the body.
-     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios that require unmarshalling by java type
+     * @param unmarshalByJavaType in most scenarios this is null.  
+     * Only use this in the scenarios that require unmarshalling by java type
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params,
@@ -211,7 +263,7 @@ public class MethodMarshallerUtils {
             if (pd.getMode() == Mode.IN && isInput ||
                     pd.getMode() == Mode.INOUT ||
                     pd.getMode() == Mode.OUT && !isInput) {
-                if (!pd.isHeader()) {
+                if (!pd.isHeader() && !isSWAAttachment(pd)) {
                     totalBodyBlocks++;
                 }
             }
@@ -222,6 +274,9 @@ public class MethodMarshallerUtils {
         }
             
         int index = (!isInput && hasReturnInBody) ? 1 : 0;
+        // TODO What if return is an swa attachment, then this should start
+        // at 1 not 0.
+        int swaIndex = 0;
         for (int i = 0; i < params.length; i++) {
             ParameterDescription pd = params[i];
 
@@ -239,37 +294,62 @@ public class MethodMarshallerUtils {
                 Block block = null;
                 JAXBBlockContext context = new JAXBBlockContext(packages);
 
-                // Trigger unmarshal by java type if necessary
-                if (unmarshalByJavaType != null && unmarshalByJavaType[i] != null) {
-                    context.setProcessType(unmarshalByJavaType[i]);
-                    context.setIsxmlList(pd.isListType());
-                }
-
-                // Unmarshal the object into a JAXB object or JAXBElement
-                if (pd.isHeader()) {
-
-                    // Get the Block from the header
-                    // NOTE The parameter name is always used to get the header element...even if the style is RPC.
-                    String localName = pd.getParameterName();
-                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, context,
-                                                   factory);
-                } else {
-                    if (totalBodyBlocks > 1) {
-                        // You must use this method if there are more than one body block
-                        // This method may cause OM expansion
-                        block = message.getBodyBlock(index, context, factory);
-                    } else {
-                        // Use this method if you know there is only one body block.
-                        // This method prevents OM expansion.
-                        block = message.getBodyBlock(context, factory);
+                AttachmentDescription attachmentDesc = pd.getAttachmentDescription();
+                if (attachmentDesc == null) {
+                    
+                    // Normal Processing: Not an Attachment
+                    // Trigger unmarshal by java type if necessary
+                    if (unmarshalByJavaType != null && unmarshalByJavaType[i] != null) {
+                        context.setProcessType(unmarshalByJavaType[i]);
+                        context.setIsxmlList(pd.isListType());
                     }
-                    index++;
+                    
+                    // Unmarshal the object into a JAXB object or JAXBElement
+                    if (pd.isHeader()) {
+                        
+                        // Get the Block from the header
+                        // NOTE The parameter name is always used to get the header 
+                        // element...even if the style is RPC.
+                        String localName = pd.getParameterName();
+                        block = message.getHeaderBlock(pd.getTargetNamespace(),
+                                                       localName,
+                                                       context,
+                                                       factory);
+                    } else {
+                        if (totalBodyBlocks > 1) {
+                            // You must use this method if there are more than one body block
+                            // This method may cause OM expansion
+                            block = message.getBodyBlock(index, context, factory);
+                        } else {
+                            // Use this method if you know there is only one body block.
+                            // This method prevents OM expansion.
+                            block = message.getBodyBlock(context, factory);
+                        }
+                        index++;
+                    }
+                    
+                    Element element = new Element(block.getBusinessObject(true), 
+                                                  block.getQName());
+                    PDElement pde =
+                        new PDElement(pd, element, unmarshalByJavaType == null ? null
+                                : unmarshalByJavaType[i]);
+                    pdeList.add(pde);
+                } else {
+                    // Attachment Processing
+                    if (attachmentDesc.getAttachmentType() == AttachmentType.SWA) {
+                        String cid = message.getAttachmentID(swaIndex);
+                        DataHandler dh = message.getDataHandler(cid);
+                        Attachment attachment = new Attachment(dh, cid);
+                        PDElement pde = new PDElement(pd, null, null, attachment);
+                        pdeList.add(pde);
+                        swaIndex++;
+                    } else {
+                        // TODO NLS and clean this up
+                        throw ExceptionFactory.makeWebServiceException("SWAREF and MTOM " +
+                                        "attachment parameters are not supported " +
+                                        "in this style/use.");
+                    }
                 }
-
-                Element element = new Element(block.getBusinessObject(true), block.getQName());
-                PDElement pde = new PDElement(pd, element, unmarshalByJavaType == null ? null :
-                        unmarshalByJavaType[i]);
-                pdeList.add(pde);
             }
         }
 
@@ -277,18 +357,20 @@ public class MethodMarshallerUtils {
     }
 
     /**
-     * Creates the request signature arguments (server) from a list of element eabled object
-     * (PDEements)
-     *
-     * @param pds    ParameterDescriptions for this Operation
+     * Creates the request signature arguments (server) from a list
+     * of element eabled object (PDEements)
+     * @param pds ParameterDescriptions for this Operation
      * @param pvList Element enabled object
      * @return Signature Args
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    static Object[] createRequestSignatureArgs(ParameterDescription[] pds, List<PDElement> pdeList)
-            throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    static Object[] createRequestSignatureArgs(ParameterDescription[] pds, 
+                                               List<PDElement> pdeList)
+    throws InstantiationException, IOException,
+    IllegalAccessException,
+    ClassNotFoundException {
         Object[] args = new Object[pds.length];
         int pdeIndex = 0;
         for (int i = 0; i < args.length; i++) {
@@ -307,7 +389,12 @@ public class MethodMarshallerUtils {
             } else {
 
                 // We have a matching paramValue.  Get the type object that represents the type
-                Object value = pde.getElement().getTypeValue();
+                Object value = null;
+                if (pde.getAttachment() != null) {
+                    value = pde.getAttachment().getDataHandler();
+                } else {
+                    value = pde.getElement().getTypeValue();
+                }
                 pdeIndex++;
 
                 // Now that we have the type, there may be a mismatch
@@ -362,7 +449,12 @@ public class MethodMarshallerUtils {
             ParameterDescription pd = pds[i];
             if (pde != null && pde.getParam() == pd) {
                 // We have a matching paramValue.  Get the value that represents the type
-                Object value = pde.getElement().getTypeValue();
+                Object value = null;
+                if (pde.getAttachment() == null) {
+                    value = pde.getElement().getTypeValue();
+                } else {
+                    value = pde.getAttachment().getDataHandler();
+                }
                 pdeIndex++;
 
                 // Now that we have the type, there may be a mismatch
@@ -404,7 +496,8 @@ public class MethodMarshallerUtils {
         int totalBodyBlocks = 0;
         for (int i = 0; i < pdeList.size(); i++) {
             PDElement pde = pdeList.get(i);
-            if (!pde.getParam().isHeader()) {
+            if (!pde.getParam().isHeader() &&
+                 pde.getElement() != null) { // Element is null for SWARef attachment
                 totalBodyBlocks++;
             }
         }
@@ -416,37 +509,57 @@ public class MethodMarshallerUtils {
             // Create JAXBContext
             JAXBBlockContext context = new JAXBBlockContext(packages);
 
-            // Marshal by type only if necessary
-            if (pde.getByJavaTypeClass() != null) {
-                context.setProcessType(pde.getByJavaTypeClass());
-                if(pde.getParam()!=null){
-                    context.setIsxmlList(pde.getParam().isListType());
+            Attachment attachment = pde.getAttachment();
+            if (attachment == null) {
+                // Normal Flow: Not an attachment
+                
+                
+                // Marshal by type only if necessary
+                if (pde.getByJavaTypeClass() != null) {
+                    context.setProcessType(pde.getByJavaTypeClass());
+                    if(pde.getParam()!=null){
+                        context.setIsxmlList(pde.getParam().isListType());
+                    }
                 }
-            }
-
-            // Create a JAXBBlock out of the value.
-            // (Note that the PDElement.getValue always returns an object
-            // that has an element rendering...ie. it is either a JAXBElement o
-            // has @XmlRootElement defined
-            Block block = factory.createFrom(pde.getElement().getElementValue(),
-                                             context,
-                                             pde.getElement().getQName());
-
-            if (pde.getParam().isHeader()) {
-                // Header block
-                QName qname = block.getQName();
-                message.setHeaderBlock(qname.getNamespaceURI(),
-                                       qname.getLocalPart(),
-                                       block);
-            } else {
-                // Body block
-                if (totalBodyBlocks < 1) {
-                    // If there is only one block, use the following "more performant" method
-                    message.setBodyBlock(block);
+                // Create a JAXBBlock out of the value.
+                // (Note that the PDElement.getValue always returns an object
+                // that has an element rendering...ie. it is either a JAXBElement o
+                // has @XmlRootElement defined
+                Block block =
+                    factory.createFrom(pde.getElement().getElementValue(),
+                                       context,
+                                       pde.getElement().getQName());
+                
+                if (pde.getParam().isHeader()) {
+                    // Header block
+                    QName qname = block.getQName();
+                    message.setHeaderBlock(qname.getNamespaceURI(), qname.getLocalPart(), block);
                 } else {
-                    message.setBodyBlock(index, block);
+                    // Body block
+                    if (totalBodyBlocks < 1) {
+                        // If there is only one block, use the following "more performant" method
+                        message.setBodyBlock(block);
+                    } else {
+                        message.setBodyBlock(index, block);
+                    }
+                    index++;
                 }
-                index++;
+            } else {
+                // The parameter is an attachment
+                AttachmentType type = pde.getParam().
+                   getAttachmentDescription().getAttachmentType();
+                if (type == AttachmentType.SWA) {
+                    // All we need to do is set the data handler on the message.  
+                    // For SWA attachments, the message does not reference the attachment.
+                    message.addDataHandler(attachment.getDataHandler(), 
+                                           attachment.getContentID());
+                    message.setDoingSWA(true);
+                } else {
+                    // TODO NLS and cleanup
+                    throw ExceptionFactory.
+                       makeWebServiceException("SWAREF and MTOM attachment parameters " +
+                                "are not supported in this style/use.");
+                }
             }
         }
     }
@@ -502,7 +615,8 @@ public class MethodMarshallerUtils {
      * @param isHeader
      * @param headerNS                 (only needed if isHeader)
      * @param headerLocalPart          (only needed if isHeader)
-     * @param hasOutputBodyParams (true if the method has out or inout params other than the return value)
+     * @param hasOutputBodyParams (true if the method has out or inout params other 
+     * than the return value)
      * @return Element
      * @throws WebService
      * @throws XMLStreamException
@@ -568,9 +682,12 @@ public class MethodMarshallerUtils {
 
         try {
 
-            // There are 5 different categories of exceptions.  Each category has a little different marshaling code.
-            // A) Service Exception that matches the JAX-WS specification (chapter 2.5 of the spec)
-            // B) Service Exception that matches the JAX-WS "legacy" exception (chapter 3.7 of the spec)
+            // There are 5 different categories of exceptions.  
+            // Each category has a little different marshaling code.
+            // A) Service Exception that matches the JAX-WS 
+            //    specification (chapter 2.5 of the spec)
+            // B) Service Exception that matches the JAX-WS "legacy" 
+            //    exception (chapter 3.7 of the spec)
             // C) SOAPFaultException
             // D) WebServiceException
             // E) Other runtime exceptions (i.e. NullPointerException)
@@ -588,10 +705,13 @@ public class MethodMarshallerUtils {
                 // Create the JAXB Context
                 JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
 
-                // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
+                // The exception is a Service Exception.  
+                // It may be (A) JAX-WS compliant exception or 
+                // (B) JAX-WS legacy exception
 
-                // The faultBeanObject is a JAXB object that represents the data of the exception.  It is marshalled in the detail
-                // section of the soap fault.  The faultBeanObject is obtained direction from the exception (A) or via 
+                // The faultBeanObject is a JAXB object that represents the data of the exception.
+                // It is marshalled in the detail section of the soap fault.  
+                // The faultBeanObject is obtained direction from the exception (A) or via 
                 // the legacy exception rules (B).
                 Object faultBeanObject = null;
 
@@ -622,7 +742,8 @@ public class MethodMarshallerUtils {
                 QName faultBeanQName = new QName(faultBeanDesc.getFaultBeanNamespace(),
                                                  faultBeanDesc.getFaultBeanLocalName());
                 // Make sure the faultBeanObject can be marshalled as an element
-                if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement())
+                if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).
+                        hasXmlRootElement())
                 {
                     faultBeanObject = new JAXBElement(faultBeanQName, faultBeanObject.getClass(),
                                                       faultBeanObject);
@@ -646,7 +767,8 @@ public class MethodMarshallerUtils {
                 xmlfault = createXMLFaultFromSystemException(t);
             }
         } catch (Throwable e) {
-            // If an exception occurs while demarshalling an exception, then rinse and repeat with a system exception
+            // If an exception occurs while demarshalling an exception, 
+            // then rinse and repeat with a system exception
             if (log.isDebugEnabled()) {
                 log.debug("An exception (" + e + ") occurred while marshalling exception (" + t +
                         ")");
@@ -680,9 +802,10 @@ public class MethodMarshallerUtils {
                 SOAPFault soapFault = sfe.getFault();
                 if (soapFault == null) {
                     // No fault ?  I will treat this like category E
-                    xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                                            new XMLFaultReason(
-                                                    t.toString()));  // Assumes text is the language supported by the current Locale
+                    xmlfault = 
+                        new XMLFault(null,       // Use the default XMLFaultCode
+                                     new XMLFaultReason(
+                                     t.toString()));  // Assumes text lang of current Locale
                 } else {
                     xmlfault = XMLFaultUtils.createXMLFault(soapFault);
                 }
@@ -703,7 +826,7 @@ public class MethodMarshallerUtils {
                 }
                 xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                                         new XMLFaultReason(
-                                                text));  // Assumes text is the language supported by the current Locale
+                                             text));  // Assumes text lang of current Locale
             } else {
                 if (log.isErrorEnabled()) {
                     log.debug("Marshal as a unchecked System Exception");
@@ -719,12 +842,13 @@ public class MethodMarshallerUtils {
                 }
                 xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                                         new XMLFaultReason(
-                                                text));  // Assumes text is the language supported by the current Locale
+                                                text));  // Assumes text lang of current Locale
             }
             return xmlfault;
         } catch (Throwable e) {
             try {
-                // If an exception occurs while demarshalling an exception, then rinse and repeat with a webservice exception
+                // If an exception occurs while demarshalling an exception, 
+                // then rinse and repeat with a webservice exception
                 if (log.isDebugEnabled()) {
                     log.debug("An exception (" + e + ") occurred while marshalling exception (" +
                             t + ")");
@@ -738,7 +862,7 @@ public class MethodMarshallerUtils {
 
                 return new XMLFault(null,       // Use the default XMLFaultCode
                                     new XMLFaultReason(
-                                            text));  // Assumes text is the language supported by the current Locale
+                                            text));  // Assumes text lang of current Locale
             } catch (Exception e2) {
                 // Exception while creating Exception for Exception
                 throw ExceptionFactory.makeWebServiceException(e2);
@@ -814,7 +938,7 @@ public class MethodMarshallerUtils {
 
 
         if (faultDesc == null) {
-            // This is a system exception if the method does not throw a checked exception or if 
+            // This is a system exception if the method does not throw a checked exception or if
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
         } else {
@@ -833,7 +957,8 @@ public class MethodMarshallerUtils {
             Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());
 
             // Use "by java type" marshalling if necessary
-            if (blockContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
+            if (blockContext.getConstructionType() != 
+                JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
                     isNotJAXBRootElement(faultBeanFormalClass, marshalDesc)) {
                 blockContext.setProcessType(faultBeanFormalClass);
             }
@@ -1025,7 +1150,9 @@ public class MethodMarshallerUtils {
         Exception exception = null;
         if (isLegacyException) {
             // Legacy Exception
-            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean, marshalDesc);
+            exception = LegacyExceptionUtil.createFaultException(exceptionclass, 
+                                                                 bean, 
+                                                                 marshalDesc);
         } else {
             // Normal case, use the contstructor to create the exception
             Constructor constructor =
@@ -1136,5 +1263,10 @@ public class MethodMarshallerUtils {
         e.printStackTrace(pw);       
         pw.close();       
         return sw.getBuffer().toString();      
+    }
+    
+    static boolean isSWAAttachment(ParameterDescription pd) {
+        return pd.getAttachmentDescription() != null &&
+            pd.getAttachmentDescription().getAttachmentType() == AttachmentType.SWA;
     }
 }

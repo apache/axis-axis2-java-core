@@ -19,6 +19,7 @@
 package org.apache.axis2.scripting;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,6 +27,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -55,11 +57,11 @@ public class ScriptModuleTest extends TestCase {
 //        assertEquals("petra", s);
 //    }
 
-    public void testGetScriptServicesDirectory() throws AxisFault, MalformedURLException, URISyntaxException {
+    public void testGetScriptServicesDirectory() throws AxisFault, MalformedURLException, URISyntaxException, UnsupportedEncodingException {
         ScriptModule module = new ScriptModule();
         AxisConfiguration axisConfig = new AxisConfiguration();
         URL url = getClass().getClassLoader().getResource("org/apache/axis2/scripting/testrepo/test.js");
-        File dir = new File(url.toURI()).getParentFile();
+        File dir = Utils.toFile(url).getParentFile();
         axisConfig.setRepository(dir.getParentFile().toURL());
         axisConfig.addParameter(new Parameter("scriptServicesDir", dir.getName()));
         assertEquals(dir.toURL(), module.getScriptServicesDirectory(axisConfig).toURL());
@@ -73,11 +75,11 @@ public class ScriptModuleTest extends TestCase {
 //        assertEquals("petra", axisService.getParameterValue(ScriptReceiver.SCRIPT_SRC_PROP));
 //    }
 
-    public void testInit() throws AxisFault, MalformedURLException, URISyntaxException, InterruptedException {
+    public void testInit() throws AxisFault, MalformedURLException, URISyntaxException, InterruptedException, UnsupportedEncodingException {
         ScriptModule module = new ScriptModule();
         AxisConfiguration axisConfig = new AxisConfiguration();
         URL url = getClass().getClassLoader().getResource("org/apache/axis2/scripting/testrepo/test.js");
-        File dir = new File(url.toURI()).getParentFile();
+        File dir = Utils.toFile(url).getParentFile();
         axisConfig.setRepository(dir.getParentFile().toURL());
         axisConfig.addParameter(new Parameter("scriptServicesDir", dir.getName()));
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);

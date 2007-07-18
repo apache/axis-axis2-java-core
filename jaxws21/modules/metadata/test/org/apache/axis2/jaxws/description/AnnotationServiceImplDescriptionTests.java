@@ -345,14 +345,25 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     }
 
     public void testSOAPBindingDocEncBare() {
-        EndpointInterfaceDescription testEndpointInterfaceDesc =
+        //verify that we throw an exception when SOAPBinding.Use == ENCODED is specified
+        try {
+            EndpointInterfaceDescription testEndpointInterfaceDesc =
                 getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
+            fail("Should have caused exception");
+        } catch (Exception e) {
+            // Expected path, SOAPBinding.Use == ENCODED is not supported
+        }
+    }
+    
+    public void testSOAPBindingDocLitBare() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc =
+                getEndpointInterfaceDesc(SOAPBindingDocLitBareTestImpl.class);
 
         assertNotNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED,
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
@@ -361,13 +372,13 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     public void testSOAPBindingMethodAnnotation() {
         // Verify that an impl without the method annotation uses the settings from the type
         EndpointInterfaceDescription testEndpointInterfaceDesc =
-                getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
+                getEndpointInterfaceDesc(SOAPBindingDocLitBareTestImpl.class);
 
         assertNotNull(
                 ((EndpointInterfaceDescriptionJava)testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
                      testEndpointInterfaceDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED,
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL,
                      testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      testEndpointInterfaceDesc.getSoapBindingParameterStyle());
@@ -378,7 +389,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNull(((OperationDescriptionJava)operationDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
                      operationDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, operationDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      operationDesc.getSoapBindingParameterStyle());
 
@@ -400,7 +411,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(((OperationDescriptionJava)operationDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT,
                      operationDesc.getSoapBindingStyle());
-        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, operationDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, operationDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE,
                      operationDesc.getSoapBindingParameterStyle());
     }
@@ -1178,17 +1189,31 @@ class SOAPBindingDefaultTestImpl {
     }
 }
 // ============================================================================
-// SOAPBindingDocEncBareTestImpl service implementation class
+// SOAPBindingDocLiBareTestImpl service implementation class
 // Note that Style should default
 // ============================================================================
 
 @WebService()
-@SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.ENCODED,
+@SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.LITERAL,
              parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
-class SOAPBindingDocEncBareTestImpl {
+class SOAPBindingDocLitBareTestImpl {
     public String echoString(String s) {
         return s;
     }
+}
+
+//============================================================================
+//SOAPBindingDocEncBareTestImpl service implementation class
+//Note that Style should default
+//============================================================================
+
+@WebService()
+@SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.ENCODED,
+          parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+class SOAPBindingDocEncBareTestImpl {
+ public String echoString(String s) {
+     return s;
+ }
 }
 // ============================================================================
 // SOAPBindingDefaultMethodTest service implementation class
@@ -1197,7 +1222,7 @@ class SOAPBindingDocEncBareTestImpl {
 
 @WebService()
 class SOAPBindingDefaultMethodTestImpl {
-    @SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.ENCODED,
+    @SOAPBinding(use = javax.jws.soap.SOAPBinding.Use.LITERAL,
                  parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
     public String echoString(String s) {
         return s;

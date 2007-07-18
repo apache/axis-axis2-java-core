@@ -224,9 +224,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-soapmonitor</artifactId>
+            <artifactId>soapmonitor</artifactId>
             <version>${version}</version>
-            <type>jar</type>
+            <type>mar</type>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
@@ -373,7 +373,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.0.2</version>
                 <configuration>
+                    <warName>axis2</warName>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
@@ -415,14 +417,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../../legal/std</directory>
-                            <targetPath>WEB-INF/lib</targetPath>
-                            <includes>
-                                <include>*.txt</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <directory>${basedir}/../../legal/war</directory>
+                            <directory>${basedir}/../../legal</directory>
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
                                 <include>*.txt</include>

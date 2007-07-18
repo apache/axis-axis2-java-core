@@ -19,8 +19,11 @@
 package org.apache.axis2.scripting;
 
 import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
@@ -43,6 +46,8 @@ import org.apache.neethi.Policy;
 public class ScriptModule implements Module {
 
     private static final Log log = LogFactory.getLog(ScriptModule.class);
+
+    static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     /**
      * Init by creating and deploying AxisServices for each script
@@ -73,11 +78,14 @@ public class ScriptModule implements Module {
             URL axis2Repository = axisConfig.getRepository();
             Parameter scriptsDirParam = axisConfig.getParameter("scriptServicesDir");
             String scriptsDir = scriptsDirParam == null ? "scriptServices" : (String)scriptsDirParam.getValue();
-            File scriptsDirFile = new File(new File(axis2Repository.toURI()), scriptsDir);
-            return scriptsDirFile;
 
-        } catch (URISyntaxException e) {
-            throw new DeploymentException("URISyntaxException getting script service directory", e);
+            String path = URLDecoder.decode(axis2Repository.getPath(), defaultEncoding);
+            java.io.File repoDir =
+                    new java.io.File(path.replace('/', File.separatorChar).replace('|', ':'));
+
+            return new File(repoDir, scriptsDir);
+        } catch (UnsupportedEncodingException e) {
+            throw new DeploymentException("UnsupportedEncodingException getting script service directory", e);
         }
     }
 

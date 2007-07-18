@@ -59,6 +59,8 @@ public class MTOMBuilder implements Builder {
                     .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
             BuilderUtil.validateCharSetEncoding(charSetEncoding, builder.getDocument()
                     .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
+            //Overriding the earlier setting by MIMEBuilder
+            messageContext.setDoingSwA(false);
             messageContext.setDoingMTOM(true);
             return envelope;
         } catch (IOException e) {

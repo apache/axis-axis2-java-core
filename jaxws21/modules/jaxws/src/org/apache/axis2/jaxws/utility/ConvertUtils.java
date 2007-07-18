@@ -18,9 +18,29 @@
  */
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.WebServiceException;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -102,6 +122,30 @@ public class ConvertUtils {
             return isConvertable(JavaUtils.getWrapperClass(src), dest);
         }
 
+        if (InputStream.class.isAssignableFrom(src) && dest == byte[].class) {
+            return true;
+         }
+         
+         if (Source.class.isAssignableFrom(src) && dest == byte[].class) {
+             return true;
+         }
+         
+         if (DataHandler.class.isAssignableFrom(src) && isConvertable(byte[].class, dest)) {
+            return true;
+        }
+
+        if (DataHandler.class.isAssignableFrom(src) && dest == Image.class) {
+            return true;
+        }
+
+        if (DataHandler.class.isAssignableFrom(src) && dest == Source.class) {
+            return true;
+        }
+
+        if (byte[].class.isAssignableFrom(src) && dest == String.class) {
+            return true;
+        }
+         
         // If it's a MIME type mapping and we want a DataHandler,
         // then we're good.
         // REVIEW Do we want to support this
@@ -133,7 +177,7 @@ public class ConvertUtils {
      * @param destClass the actual class we want
      * @return object of destClass if conversion possible, otherwise returns arg
      */
-    public static Object convert(Object arg, Class destClass) {
+    public static Object convert(Object arg, Class destClass) throws WebServiceException {
         if (destClass == null) {
             return arg;
         }
@@ -157,6 +201,56 @@ public class ConvertUtils {
         // Convert between HashMap and Hashtable
         if (arg instanceof HashMap && destClass == Hashtable.class) {
             return new Hashtable((HashMap)arg);
+        }
+        
+        if (arg instanceof InputStream && destClass == byte[].class) {
+
+            try {
+                InputStream is = (InputStream) arg;
+                return getBytesFromStream(is);
+            } catch (IOException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+        }
+
+        if (arg instanceof Source && destClass == byte[].class) {
+            try {
+                if (arg instanceof StreamSource) {
+                    InputStream is = ((StreamSource) arg).getInputStream();
+                    if (is != null) {
+                        return getBytesFromStream(is);
+                    }
+                }
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Result result = new StreamResult(out);
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.transform((Source) arg, result);
+                byte[] bytes = out.toByteArray();
+                return bytes;
+
+            } catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+        }
+
+
+        if (arg instanceof DataHandler) {
+            try {
+                InputStream is = ((DataHandler) arg).getInputStream();
+                if (destClass == Image.class) {
+                    return ImageIO.read(is);
+                } else if (destClass == Source.class) {
+                    return new StreamSource(is);
+                }
+                byte[] bytes = getBytesFromStream(is);
+                return convert(bytes, destClass);
+            } catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+        }
+
+        if (arg instanceof byte[] && destClass == String.class) {
+            return new String((byte[]) arg);
         }
 
         // If the destination is an array and the source
@@ -269,5 +363,12 @@ public class ConvertUtils {
             destValue = arg;
         }
         return destValue;
+    }
+    
+    private static byte[] getBytesFromStream(InputStream is) throws IOException {
+        // TODO This code assumes that available is the length of the stream.
+        byte[] bytes = new byte[is.available()];
+        is.read(bytes);
+        return bytes;
     }
 }

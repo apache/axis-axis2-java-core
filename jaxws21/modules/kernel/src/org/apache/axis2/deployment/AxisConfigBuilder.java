@@ -48,6 +48,7 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.SOAPMustUnderstandHeaderChecker;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -122,6 +123,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
             processTargetResolvers(axisConfig, targetResolvers);
 
+            // Process SOAPMustUnderstandHeaderCheckers
+            OMElement headerCheckers =
+                config_element.getFirstChildWithName(new QName(TAG_MUSTUNDERSTAND_CHECKERS));
+            processMustUnderstandCheckers(axisConfig, headerCheckers);
+            
+            
             // Process Observers
             Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
 
@@ -246,6 +253,30 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
+    private void processMustUnderstandCheckers(AxisConfiguration axisConfig, OMElement headerCheckers) {
+        if (headerCheckers != null) {
+            Iterator iterator = headerCheckers.getChildrenWithName(new QName(TAG_MUSTUNDERSTAND_CHECKER));
+            while (iterator.hasNext()) {
+                OMElement headerChecker = (OMElement) iterator.next();
+                OMAttribute classNameAttribute =
+                        headerChecker.getAttribute(new QName(TAG_CLASS_NAME));
+                String className = classNameAttribute.getAttributeValue();
+                try {
+                    Class classInstance = Loader.loadClass(className);
+                    SOAPMustUnderstandHeaderChecker checkerClass = 
+                        (SOAPMustUnderstandHeaderChecker) classInstance.newInstance();
+                    axisConfig.addMustUnderstandHeaderChecker(checkerClass);
+                } catch (Exception e) {
+                    if (log.isTraceEnabled()) {
+                        log.trace(
+                                "processHeaderCheckers: Exception thrown initialising SOAPMustUnderstandHeaderChecker: " +
+                                        e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
     private void processDeployers(Iterator deployerItr) {
         HashMap directoryToExtensionMappingMap = new HashMap();
         HashMap extensionToDeployerMappingMap = new HashMap();
@@ -277,8 +308,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
-            if (directory != null)
-                directoryToExtensionMappingMap.put(directory, extension);
+            if (directory != null) {
+                ArrayList extensionList = (ArrayList) directoryToExtensionMappingMap.get(directory);
+                if (extensionList == null) {
+                    extensionList = new ArrayList();
+                }
+                extensionList.add(extension);
+                directoryToExtensionMappingMap.put(directory, extensionList);
+            }
             extensionToDeployerMappingMap.put(extension, deployer);
         }
         if (deploymentEngine != null) {

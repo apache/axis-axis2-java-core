@@ -37,12 +37,15 @@ import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.JavaUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,13 +54,12 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /** Miscellaneous Utilities that may be useful inside and outside the Message subcomponent. */
@@ -156,16 +158,11 @@ public class MessageUtils {
             }
 
             // Add all the MimeHeaders from the Axis2 MessageContext
-            MimeHeaders mhs = message.getMimeHeaders();
             Map headerMap = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headerMap != null) {
-                Iterator it = headerMap.keySet().iterator();
-                while (it.hasNext()) {
-                    String key = (String)it.next();
-                    String value = (String)headerMap.get(key);
-                    mhs.addHeader(key, value);
-                }
+                message.setMimeHeaders(headerMap);
             }
+            
             // TODO: This is a WORKAROUND for missing SOAPFault data.  If we do a toString on the
             // SOAPEnvelope, then all the data will be available to the provider.  Otherwise, it
             // will be missing the <Reason> element corresponding to the <faultstring> element.  
@@ -195,16 +192,27 @@ public class MessageUtils {
         msgContext.setEnvelope(envelope);
 
         // Put the Headers onto the MessageContext
-        // TODO: Merge with latest TransportHeaders impl.
-        Map headerMap = new HashMap();
-        for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
-            MimeHeader mh = (MimeHeader)it.next();
-            headerMap.put(mh.getName(), mh.getValue());
-        }
+        Map headerMap = message.getMimeHeaders();
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
 
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+        }
+        
+        // Make sure the the JAX-WS AttachmentAdapter is correctly installed
+        // So that any user attachments provide are moved to the Axiom Attachments
+        // Map
+        if (message.getMessageContext() != null) {
+            AttachmentsAdapter.install(message.getMessageContext());
+            TransportHeadersAdapter.install(message.getMessageContext());
+        }
+        
+        if (message.isDoingSWA()) {
+            // Enable SWA on the Axis2 MessageContext
+            msgContext.setDoingSwA(true);
+            Options opts = msgContext.getOptions();
+            opts.setProperty(Configuration.ENABLE_SWA, "true");
         }
 
         // Enable MTOM Attachments 

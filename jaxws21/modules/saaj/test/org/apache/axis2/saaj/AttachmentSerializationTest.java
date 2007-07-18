@@ -126,7 +126,6 @@ public class AttachmentSerializationTest extends TestCase {
 
         msg.writeTo(os);
         os.flush();
-        msg.writeTo(System.out);
         return msg.countAttachments();
     }
 

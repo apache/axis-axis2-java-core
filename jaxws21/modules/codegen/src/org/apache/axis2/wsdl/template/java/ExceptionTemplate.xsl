@@ -25,6 +25,7 @@
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: #axisVersion# #today#
  */
+
 package <xsl:value-of select="@package"/>;
 
 public class <xsl:value-of select="@shortName"/> extends java.lang.Exception{

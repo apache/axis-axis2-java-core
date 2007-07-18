@@ -24,7 +24,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.axis2.wsdl.HTTPHeaderMessage;
@@ -112,10 +111,10 @@ public class WSDLSerializationUtil {
                     getPrefix(qName.getNamespaceURI(), nameSpaceMap) + ":" + qName.getLocalPart()));
             soapHeaderElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_MUST_UNDERSTAND, null,
-                    new Boolean(soapHeaderMessage.isMustUnderstand()).toString()));
+                    Boolean.toString(soapHeaderMessage.isMustUnderstand())));
             soapHeaderElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_REQUIRED, null,
-                    new Boolean(soapHeaderMessage.isRequired()).toString()));
+                    Boolean.toString(soapHeaderMessage.isRequired())));
             element.addChild(soapHeaderElement);
         }
     }
@@ -161,7 +160,7 @@ public class WSDLSerializationUtil {
                     getPrefix(qName.getNamespaceURI(), nameSpaceMap) + ":" + qName.getLocalPart()));
             httpHeaderElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_REQUIRED, null,
-                    new Boolean(httpHeaderMessage.isRequired()).toString()));
+                    Boolean.valueOf(httpHeaderMessage.isRequired()).toString()));
             element.addChild(httpHeaderElement);
         }
     }
@@ -170,12 +169,14 @@ public class WSDLSerializationUtil {
      * Generates a default SOAP 11 Binding for a given AxisService
      * @param fac - The OMFactory
      * @param axisService - The AxisService
+     * @param wsdl the WSDL namespace
      * @param wsoap - The WSDL 2.0 SOAP namespace
      * @param tns - The target namespace
      * @return - The generated SOAP11Binding element
      */
     public static OMElement generateSOAP11Binding(OMFactory fac, AxisService axisService,
-                                                  OMNamespace wsdl, OMNamespace wsoap, OMNamespace tns) {
+                                                  OMNamespace wsdl, OMNamespace wsoap,
+                                                  OMNamespace tns) {
         OMElement binding = fac.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
         binding.addAttribute(
                 fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, axisService.getName() +
@@ -195,12 +196,14 @@ public class WSDLSerializationUtil {
      * Generates a default SOAP 12 Binding for a given AxisService
      * @param fac - The OMFactory
      * @param axisService - The AxisService
+     * @param wsdl the WSDL namespace
      * @param wsoap - The WSDL 2.0 SOAP namespace
      * @param tns - The target namespace
      * @return - The generated SOAP12Binding element
      */
     public static OMElement generateSOAP12Binding(OMFactory fac, AxisService axisService,
-                                                  OMNamespace wsdl, OMNamespace wsoap, OMNamespace tns) {
+                                                  OMNamespace wsdl, OMNamespace wsoap,
+                                                  OMNamespace tns) {
         OMElement binding = fac.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
         binding.addAttribute(
                 fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, axisService.getName() +
@@ -220,12 +223,14 @@ public class WSDLSerializationUtil {
      * Generates a default HTTP Binding for a given AxisService
      * @param fac - The OMFactory
      * @param axisService - The AxisService
+     * @param wsdl the WSDL namespace
      * @param whttp - The WSDL 2.0 HTTP namespace
      * @param tns - The target namespace
      * @return - The generated HTTPBinding element
      */
     public static OMElement generateHTTPBinding(OMFactory fac, AxisService axisService,
-                                                OMNamespace wsdl, OMNamespace whttp, OMNamespace tns) {
+                                                OMNamespace wsdl, OMNamespace whttp,
+                                                OMNamespace tns) {
         OMElement binding = fac.createOMElement(WSDL2Constants.BINDING_LOCAL_NAME, wsdl);
         String serviceName = axisService.getName();
         binding.addAttribute(
@@ -266,19 +271,22 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
     /**
      * Generates a default service element
      * @param omFactory - The OMFactory
+     * @param wsdl the WSDL namespace
      * @param tns - The targetnamespace
      * @param axisService - The AxisService
+     * @param disableREST only generate REST endpoint if this is false
      * @return - The generated service element
      * @throws AxisFault - Thrown in case an exception occurs
      */
-    public static OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl, OMNamespace tns,
-                                                   AxisService axisService, boolean disableREST)
+    public static OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
+                                                   OMNamespace tns, AxisService axisService,
+                                                   boolean disableREST)
             throws AxisFault {
         String[] eprs = axisService.getEPRs();
         if (eprs == null) {
             eprs = new String[]{axisService.getName()};
         }
-        OMElement serviceElement = null;
+        OMElement serviceElement;
         serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
                     serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                             null, axisService.getName()));
@@ -398,19 +406,19 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
         extElement.addAttribute(att1Name, att1Value, null);
     }
 
-    public static void addWSAddressingToBinding(String addressingFlag, OMFactory omFactory, OMElement bindingElement) {
+    public static void addWSAddressingToBinding(String addressingFlag,
+                                                OMFactory omFactory,
+                                                OMElement bindingElement) {
         // Add WS-Addressing UsingAddressing element if appropriate
         // SHOULD be on the binding element per the specification
-        if (addressingFlag.equals(
-                AddressingConstants.ADDRESSING_OPTIONAL)) {
+        if (addressingFlag.equals(AddressingConstants.ADDRESSING_OPTIONAL)) {
             OMNamespace wsawNamespace = omFactory.createOMNamespace(
                     AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(omFactory, bindingElement,
                                 AddressingConstants.USING_ADDRESSING,
                                 "required", "true",
                                 wsawNamespace);
-        } else if (addressingFlag.equals(
-                AddressingConstants.ADDRESSING_REQUIRED)) {
+        } else if (addressingFlag.equals(AddressingConstants.ADDRESSING_REQUIRED)) {
             OMNamespace wsawNamespace = omFactory.createOMNamespace(
                     AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(omFactory, bindingElement,

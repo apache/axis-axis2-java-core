@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.soap.SOAPBinding;
+import org.apache.axis2.AxisFault;
 import java.lang.reflect.Method;
 
 /**
@@ -126,6 +127,14 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         if (faultThrown) {
             responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
             responseMsgCtx.setMessage(message);
+
+            AxisFault axisFault = new AxisFault("An error was detected during JAXWS processing",
+                                              responseMsgCtx.getAxisMessageContext(),
+                                              fault);
+            
+            responseMsgCtx.setCausedByException(axisFault);
+
+
         } else {
             responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);
             responseMsgCtx.setMessage(message);

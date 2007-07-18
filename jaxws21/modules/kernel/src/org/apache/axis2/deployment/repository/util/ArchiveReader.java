@@ -462,8 +462,7 @@ public class ArchiveReader implements DeploymentConstants {
 
         // get attribute values
         boolean moduleXMLFound = false;
-        String shortFileName =
-                DescriptionBuilder.getShortFileName(deploymentFile.getServiceName());
+        String shortFileName = DescriptionBuilder.getShortFileName(deploymentFile.getName());
         if (!explodedDir) {
             ZipInputStream zin;
             FileInputStream fin;

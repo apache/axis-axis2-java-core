@@ -69,6 +69,7 @@ import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.Iterator;
+import java.util.Map;
 
 public class BuilderUtil {
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
@@ -237,25 +238,43 @@ public class BuilderUtil {
         
         if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
             encoding = "UTF-8";
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from BOM =" + encoding);
+            }
             unread = n - 3;
         } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
             encoding = "UTF-16BE";
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from BOM =" + encoding);
+            }
             unread = n - 2;
         } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
             encoding = "UTF-16LE";
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from BOM =" + encoding);
+            }
             unread = n - 2;
         } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE)
                 && (bom[3] == (byte) 0xFF)) {
             encoding = "UTF-32BE";
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from BOM =" + encoding);
+            }
             unread = n - 4;
         } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00)
                 && (bom[3] == (byte) 0x00)) {
             encoding = "UTF-32LE";
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from BOM =" + encoding);
+            }
             unread = n - 4;
         } else {
             
             // Unicode BOM mark not found, unread all bytes
             encoding = defaultEncoding;
+            if (log.isDebugEnabled()) {
+                log.debug("char set encoding set from default =" + encoding);
+            }
             unread = n;
         }
         
@@ -289,8 +308,14 @@ public class BuilderUtil {
      * @param contentType
      */
     public static String getCharSetEncoding(String contentType) {
+        if (log.isDebugEnabled()) {
+            log.debug("Input contentType (" + contentType + ")");
+        }
         if (contentType == null) {
             // Using the default UTF-8
+            if (log.isDebugEnabled()) {
+                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING + ")");
+            }
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
@@ -298,6 +323,9 @@ public class BuilderUtil {
 
         if (index == -1) {    // Charset encoding not found in the content-type header
             // Using the default UTF-8
+            if (log.isDebugEnabled()) {
+                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING + ")");
+            }
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
@@ -318,8 +346,11 @@ public class BuilderUtil {
         if (value.indexOf('\"') != -1) {
             value = value.replaceAll("\"", "");
         }
-
-        return value.trim();
+        value = value.trim();
+        if (log.isDebugEnabled()) {
+            log.debug("CharSetEncoding from content-type (" + value + ")");
+        }
+        return value;
     }
 
     public static StAXBuilder getAttachmentsBuilder(MessageContext msgContext,
@@ -451,9 +482,45 @@ public class BuilderUtil {
             }
         }
 
-        Attachments attachments = new Attachments(inStream, contentTypeString,
-                                                  fileCacheForAttachments, attachmentRepoDir,
-                                                  attachmentSizeThreshold);
+        // Get the content-length if it is available
+        int contentLength = 0;
+        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+        if (headers != null) {
+            String contentLengthValue = (String) headers.get(HTTPConstants.HEADER_CONTENT_LENGTH);
+            if (contentLengthValue != null) {
+                try {
+                    contentLength = new Integer(contentLengthValue).intValue();
+                } catch (NumberFormatException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Content-Length is not a valid number.  Will assume it is not set:" + e);
+                    }
+                }
+            }
+        }
+        Attachments attachments = null;
+        if (contentLength > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating an Attachments map.  The content-length is" + contentLength);
+            }
+            attachments = 
+                new Attachments(inStream,
+                                contentTypeString,
+                                fileCacheForAttachments,
+                                attachmentRepoDir,
+                                attachmentSizeThreshold,
+                                contentLength);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Creating an Attachments map.");
+            }
+            attachments = 
+                new Attachments(inStream,
+                                contentTypeString,
+                                fileCacheForAttachments,
+                                attachmentRepoDir,
+                                attachmentSizeThreshold);
+        }
+            
         return attachments;
     }
 

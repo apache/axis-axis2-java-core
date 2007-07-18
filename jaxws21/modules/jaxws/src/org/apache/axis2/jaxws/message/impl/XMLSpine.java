@@ -130,8 +130,9 @@ interface XMLSpine {
     public int getNumBodyBlocks() throws WebServiceException;
 
     /**
-     * getBodyBlock Get the body block at the specificed index. The BlockFactory and object context
-     * are passed in to help create the proper kind of block. Calling this method will cache the OM.
+     * getBodyBlock Get the body block at the specificed index. The BlockFactory and object 
+     * context are passed in to help create the proper kind of block. Calling this method 
+     * will cache the OM.
      * Avoid it in performant situations.
      *
      * @param index

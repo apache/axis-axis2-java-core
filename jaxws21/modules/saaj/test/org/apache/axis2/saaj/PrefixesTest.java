@@ -78,8 +78,6 @@ public class PrefixesTest extends TestCase {
                                                            new ByteArrayInputStream(
                                                                    soappacket.getBytes()));
         SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
-        msg.writeTo(System.out);
-
         validateBody(body.getChildElements());
     }
 

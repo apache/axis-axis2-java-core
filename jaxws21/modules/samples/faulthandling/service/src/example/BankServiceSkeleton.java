@@ -35,12 +35,12 @@
 
          */
         public  example.WithdrawResponse withdraw(example.Withdraw param0)
-           throws InsufficientFundFaultMessageException,AccountNotExistFaultMessageException{
+           throws InsufficientFundFaultMessage,AccountNotExistFaultMessage{
                 final String account = param0.getAccount();
         if (account.equals("13")) {
             final AccountNotExistFault fault = new AccountNotExistFault();
             fault.setAccount(account);
-            AccountNotExistFaultMessageException messageException = new AccountNotExistFaultMessageException("Account does not exist!");
+            AccountNotExistFaultMessage messageException = new AccountNotExistFaultMessage("Account does not exist!");
             messageException.setFaultMessage(fault);
             throw messageException;
         }
@@ -51,7 +51,7 @@
             fault.setAccount(account);
             fault.setBalance(1000);
             fault.setRequestedFund(amount);
-            InsufficientFundFaultMessageException messageException = new InsufficientFundFaultMessageException("Insufficient funds");
+            InsufficientFundFaultMessage messageException = new InsufficientFundFaultMessage("Insufficient funds");
             messageException.setFaultMessage(fault);
             throw messageException;
         }

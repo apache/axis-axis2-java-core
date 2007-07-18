@@ -22,7 +22,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
-public class ProgressBarPanel  extends JPanel {
+public class
+        ProgressBarPanel  extends JPanel {
     private  volatile boolean stop = false;
     private static int DELAY = 100;
     public volatile String val=null;
@@ -77,12 +78,12 @@ public class ProgressBarPanel  extends JPanel {
                 int maximum =progressSent.getMaximum();
                 Runnable runner = new Runnable() {
                     public void run() {
-                        if(stop && progressSent .getValue()<100){
+                        if(stop && progressSent .getValue()<75){
 
                             progressSent .setIndeterminate(false);
                             int value = progressSent .getValue();
-                            progressSent .setValue(value+10);
-                            setProgressValue(value+9);
+                            progressSent .setValue(value+4);
+                            setProgressValue(value+4);
                             progressDescription .setText("Genarate Code. Please wait.....");
                         } else if(!stop){
                             progressSent .setIndeterminate(true);

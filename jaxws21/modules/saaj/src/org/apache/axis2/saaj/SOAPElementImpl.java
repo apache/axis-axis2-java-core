@@ -129,11 +129,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         String namespaceURI = soapElement.getNamespaceURI();
         String prefix = soapElement.getPrefix();
         String localName = soapElement.getLocalName();
-        element.declareNamespace(namespaceURI, prefix);
 
-        SOAPElementImpl childEle =
+        SOAPElementImpl childEle;        
+        if (namespaceURI == null || namespaceURI.trim().length() == 0) {
+            childEle =  new SOAPElementImpl((ElementImpl)getOwnerDocument().createElement(localName));
+        } else {
+            element.declareNamespace(namespaceURI, prefix);
+            childEle =
                 new SOAPElementImpl((ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
                                                                                     localName));
+        }
+        
         for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
             Name name = (Name)iter.next();
             childEle.addAttribute(name, soapElement.getAttributeValue(name));
@@ -149,7 +155,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         }
 
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        if (namespaceURI != null && namespaceURI.trim().length() > 0) {
+            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        }
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);

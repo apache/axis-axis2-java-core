@@ -54,7 +54,7 @@ public class FastInfosetTest extends TestCase {
 		
 		if (serverCount == 0) {
 			int port = findAvailablePort();
-			port = 8080; //Uncomment to test with tcpmon
+			port = 5555; //Uncomment to test with tcpmon
 			target = new EndpointReference("http://127.0.0.1:" + (port)
                     + "/axis2/services/SimpleAddService");
 			
@@ -107,20 +107,20 @@ public class FastInfosetTest extends TestCase {
 
 
 	public void testAdd2() throws RemoteException {
-//        SimpleAddServiceClient client = new SimpleAddServiceClient(target, true); //Comment to test with tcpmon.
+        SimpleAddServiceClient client = new SimpleAddServiceClient(target, true); //Comment to test with tcpmon.
 ////		SimpleAddServiceClient client = new SimpleAddServiceClient(); //Uncomment to test with tcpmon.
 ////
-//		String result = client.addStrings("Hello ", "World!");
-//		System.out.println("Output: " + result);
-//		TestCase.assertEquals("Hello World!", result);
-//
-//		int result1 = client.addInts(17, 33);
-//		System.out.println("Output: " + result1);
-//		TestCase.assertEquals(50, result1);
-//
-//		float result2 = client.addFloats(17.64f, 32.36f);
-//		System.out.println("Output: " + result2);
-//		TestCase.assertEquals(50.0f, result2, 0.0005f);
+		String result = client.addStrings("Hello ", "World!");
+		System.out.println("Output: " + result);
+		TestCase.assertEquals("Hello World!", result);
+
+		int result1 = client.addInts(17, 33);
+		System.out.println("Output: " + result1);
+		TestCase.assertEquals(50, result1);
+
+		float result2 = client.addFloats(17.64f, 32.36f);
+		System.out.println("Output: " + result2);
+		TestCase.assertEquals(50.0f, result2, 0.0005f);
 	}
 
 	private int findAvailablePort() throws SocketException, IOException {

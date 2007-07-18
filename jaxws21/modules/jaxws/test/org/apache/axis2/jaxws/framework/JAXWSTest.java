@@ -52,7 +52,6 @@ import org.apache.axis2.jaxws.message.FaultTests;
 import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
-import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.misc.JAXBContextTest;
 import org.apache.axis2.jaxws.misc.NS2PkgTest;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
@@ -60,6 +59,7 @@ import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.JAXBProviderTests;
 import org.apache.axis2.jaxws.provider.SOAPFaultProviderTests;
 import org.apache.axis2.jaxws.provider.SoapMessageProviderTests;
+import org.apache.axis2.jaxws.provider.SoapMessageMUProviderTests;
 import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceProviderTests;
 import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
@@ -67,6 +67,7 @@ import org.apache.axis2.jaxws.provider.StringProviderTests;
 import org.apache.axis2.jaxws.proxy.GorillaDLWProxyTests;
 import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.jaxws.proxy.ProxyTests;
+import org.apache.axis2.jaxws.proxy.RPCLitSWAProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
@@ -126,7 +127,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MessageTests.class);
         suite.addTestSuite(FaultTests.class);
         suite.addTestSuite(SAAJConverterTests.class);
-        suite.addTestSuite(XMLStreamReaderSplitterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
@@ -157,11 +157,13 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SourceMessageProviderTests.class);
         // TODO FIXME: Test fails
         //suite.addTestSuite(SoapMessageProviderTests.class);
+        suite.addTestSuite(SoapMessageMUProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         //TODO: FIXME - Was working, now doesn't
         //suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(RPCProxyTests.class);
+        suite.addTestSuite(RPCLitSWAProxyTests.class);
         suite.addTestSuite(GorillaDLWProxyTests.class);
         suite.addTestSuite(SOAP12ProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);

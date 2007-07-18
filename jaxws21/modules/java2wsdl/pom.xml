@@ -61,21 +61,11 @@
 			<groupId>annogen</groupId>
 			<artifactId>annogen</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>

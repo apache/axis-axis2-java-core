@@ -159,9 +159,6 @@ public class IntegrationTest extends TestCase {
         msg.writeTo(baos);
         String responseStr = baos.toString();
 
-        System.out.println("\n\n----------------------Message-------------------------\n" +
-                responseStr);
-        System.out.println("-------------------------------------------------------\n\n");
         assertTrue(responseStr.indexOf("This is some text") != -1);
         return responseStr;
     }

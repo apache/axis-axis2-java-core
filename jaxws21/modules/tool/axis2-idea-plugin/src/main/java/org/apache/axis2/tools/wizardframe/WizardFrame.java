@@ -22,6 +22,9 @@ import org.apache.axis2.tools.component.*;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.tools.idea.ProgressBarPanel;
+import org.apache.axis2.tools.idea.FirstPanel;
+import org.apache.axis2.tools.idea.SecondPanel;
+import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,8 +56,7 @@ public class WizardFrame extends JFrame {
     protected Project project;
     private ProgressBarPanel progress;
 
-    public WizardFrame(Project project) {
-        this.project=project;
+    public WizardFrame() {
         init();
     }
 
@@ -82,7 +84,7 @@ public class WizardFrame extends JFrame {
         this.getContentPane().add(progress
                 , new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0
                 , GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL
-                , new Insets(10, 5, 5, 5), 0, 0));
+                , new Insets(0, 0, 0, 0), 0, 0));
 
         this.getContentPane().add(new JSeparator()
                 , new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0
@@ -146,7 +148,7 @@ public class WizardFrame extends JFrame {
         panelImageLabel.setIcon(image );
     }
 
-     protected JPanel createTitlePanel() {
+    protected JPanel createTitlePanel() {
 
         JPanel panel = new JPanel(new GridBagLayout() );
 
@@ -252,34 +254,37 @@ public class WizardFrame extends JFrame {
     }
 
     protected void handlePragress(){
-           progress.setVisible(true);
-           progress.aboutToDisplayPanel();
-           progress.displayingPanel();
-           new java.util.Timer(true).schedule(new TimerTask() {
-               public void run() {
-                   progress .requestStop();
-               }
-           }, 1000);
-       }
+        wizardComponents.getFinishButton().setEnabled(false);
+        progress.setVisible(true);
+        progress.aboutToDisplayPanel();
+        progress.displayingPanel();
+        new java.util.Timer(true).schedule(new TimerTask() {
+            public void run() {
+                progress.requestStop();
+            }
+        }, 1000);
+    }
 
-     protected void handleSuccess(){
+    protected void handleSuccess(){
         StringWriter writer = new StringWriter();
-        JOptionPane.showMessageDialog(errorPanel ,
+        JOptionPane.showMessageDialog(this ,
                 "Code genaration Successful !" + writer.toString(),
                 "Axis2 code generation",
                 JOptionPane.INFORMATION_MESSAGE );
+        dispose();
     }
 
-     protected void handleError(){
+    protected void handleError(){
+        wizardComponents.getFinishButton().setEnabled(true);
         StringWriter writer = new StringWriter();
-        JOptionPane.showMessageDialog(errorPanel ,
+        JOptionPane.showMessageDialog(this ,
                 "Code genaration failed! !" + writer.toString(),
                 "Axis2 code generation",
                 JOptionPane.ERROR_MESSAGE );
     }
 
     private void addLibsToProjectLib(String libDirectory, String outputLocation){
-        String newOutputLocation = outputLocation+File.separator+"aaaa";
+        String newOutputLocation = outputLocation+File.separator+"lib";
         //Create a lib directory; all ancestor directories must exist
         boolean success = (new File(newOutputLocation)).mkdir();
         if (!success) {
@@ -349,34 +354,71 @@ public class WizardFrame extends JFrame {
         new java.util.Timer(true).schedule(new TimerTask() {
             public void run() {
                 try {
-                    // wsdlgenBean.generate(); ToDO
+                    FirstPanel  first=(FirstPanel)wizardComponents.getWizardPanel(1);
+                    SecondPanel option=(SecondPanel)wizardComponents.getWizardPanel(3);
+                    WSDL2JavaOutputPanel output=(WSDL2JavaOutputPanel)wizardComponents.getWizardPanel(5);
+                    boolean isServerside,isServiceXML,isGenerateServerSideInterface  = false;
+                    if (option.getGenerateAll()){
+                        isServerside = true;
+                        isServiceXML = true;
+                        isGenerateServerSideInterface = true;
+                    }else{
+                        isServerside = option.isServerside();
+                        isServiceXML =option.isServerXML();
+                        isGenerateServerSideInterface = option.getGenerateServerSideInterface();
+                    }
+                    codegenBean.setPackageName(option.getPackageName());
+                    codegenBean.setLanguage(option.getSelectedLanguage());
+                    codegenBean.setPortName(option.getPortName());
+                    codegenBean.setServiceName(option.getServiceName());
+                    codegenBean.setDatabindingName(option.getDatabinderName());
+                    codegenBean.setAsyncOnly(option.isAsyncOnlyOn());
+                    codegenBean.setSyncOnly(option.isSyncOnlyOn());
+                    codegenBean.setTestCase(option.isGenerateTestCase());
+                    codegenBean.setGenerateAll(option.getGenerateAll());
+                    codegenBean.setServerXML(isServiceXML);
+                    codegenBean.setServerSide(isServerside);
+                    codegenBean.setServerSideInterface(isGenerateServerSideInterface);
+                    codegenBean.setOutput(output.getOutputLocation());
+                    codegenBean.setNamespace2packageList(option.getNs2PkgMapping());
+                    codegenBean.setWSDLFileName(first.getWSDLFileName());
+                    codegenBean.generate();
                     progress.setVisible(false);
                     handleSuccess();
-                    dispose();
-                } catch (Exception e1) {
+                }catch (Exception e1) {
                     progress.setVisible(false);
                     handleError();
-                    dispose();
                 }
-
             }
-        }, 3100);
+        }, 1000);
+
     }
-     protected void doFinishJava2WSDL(){
+
+    protected void doFinishJava2WSDL(){
         handlePragress();
         new java.util.Timer(true).schedule(new TimerTask() {
             public void run() {
-                 try {
+                try {
                     wsdlgenBean.generate();
                     progress.setVisible(false);
                     handleSuccess();
-                    dispose();
                 } catch (Exception e1) {
                     progress.setVisible(false);
                     handleError();
-                    dispose();
                 }
             }
         }, 3100);
     }
+    public void setProject(Project project){
+        this.project=project;
+    }
+    public JComponent getRootComponent() {
+        return this.getRootPane();
+    }
+    public void showUI() {
+        pack();
+        this.setVisible(true);
+        show();
+    }
+
 }
