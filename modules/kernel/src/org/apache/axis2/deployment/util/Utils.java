@@ -116,8 +116,14 @@ public class Utils {
         try {
             handlerClass = Loader.loadClass(loader1, handlername);
             if(handlerClass.getPackage().getName().equals("org.apache.axis2.engine")){
-                log.warn("Dispatcher " + handlerClass.getName() + " is now deprecated. Please edit axis2.xml " +
-                        "and replace with the same class in org.apache.axis2.dispatchers package");
+                String name = handlerClass.getName();
+                log.warn("Dispatcher " + name + " is now deprecated.");
+                if(name.indexOf("InstanceDispatcher")!=-1) {
+                    log.warn("Please remove the entry for " + handlerClass.getName() + "from axis2.xml");
+                } else {
+                    log.warn("Please edit axis2.xml " +
+                            "and replace with the same class in org.apache.axis2.dispatchers package");
+                }
             }
             handler = (Handler) handlerClass.newInstance();
             handler.init(desc);
