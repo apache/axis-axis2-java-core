@@ -36,7 +36,7 @@ public class ServiceXMLWriter extends FileWriter {
 
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
+        outputFile = org.apache.axis2.util.FileWriter.createClassFile(outputFileLocation,
                                                      packageName,
                                                      "services",
                                                      ".xml");

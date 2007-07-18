@@ -373,6 +373,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public CodeGenConfiguration(Map optionMap) {
         CodegenConfigLoader.loadConfig(this, optionMap);
         this.axisServices = new ArrayList();
+        this.outputXmlFileNamesList = new ArrayList();
     }
 
 
@@ -553,5 +554,20 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public void setOverride(boolean override) {
         isOverride = override;
+    }
+
+    // this is used to keep the generated xml file list to pretty print.
+    private List outputXmlFileNamesList;
+
+    public List getOutputXmlFileNamesList() {
+        return outputXmlFileNamesList;
+    }
+
+    public void setOutputXmlFileNamesList(List outputXmlFileNamesList) {
+        this.outputXmlFileNamesList = outputXmlFileNamesList;
+    }
+
+    public void addXmlFileName(String fileName){
+       this.outputXmlFileNamesList.add(fileName);
     }
 }
