@@ -44,6 +44,10 @@
 			<artifactId>axis2-kernel</artifactId>
 			<version>${version}</version>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -66,6 +70,13 @@
 				<directory>test-resources</directory>
 				<includes>
 					<include>**/*.*</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<targetPath></targetPath>
+				<directory>test-resources</directory>
+				<includes>
+					<include>**/*.properties</include>
 				</includes>
 			</testResource>
 		</testResources>
