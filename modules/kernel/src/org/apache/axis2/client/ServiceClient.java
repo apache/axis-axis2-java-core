@@ -256,6 +256,13 @@ public class ServiceClient {
     }
 
     /**
+     * Returns the AxisConfiguration associated with the client.    
+     */
+    public AxisConfiguration getAxisConfiguration() {
+        return axisConfig;
+    }
+    
+    /**
      * Return the AxisService this is a client for. This is primarily useful
      * when the AxisService is created anonymously or from WSDL as otherwise the
      * user had the AxisService to start with.
