@@ -282,8 +282,8 @@ public class AxisConfiguration extends AxisDescription {
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
-        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
         axisServiceGroup.setParent(this);
+        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
         AxisService axisService;
 
         Iterator services = axisServiceGroup.getServices();

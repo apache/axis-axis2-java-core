@@ -190,7 +190,6 @@ public class POJODeployer implements Deployer {
                         AxisService axisService = (AxisService) axisServiceList.get(i);
                         serviceGroup.addService(axisService);
                     }
-                    serviceGroup.setParent(configCtx.getAxisConfiguration());
                     configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
                 } else {
                     log.info("No annotated class found in the jar: "  + deploymentFileData.getFile().getName());
