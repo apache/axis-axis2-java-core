@@ -165,7 +165,7 @@ public class Metadata extends MexOM implements IMexOM {
 	  if (aFactory == null) {
 	     aFactory = factory;
 	   }
-	   Iterator mexSections = mexElement.getChildrenWithName(new QName(MexConstants.SPEC.METADATA_SECTION));
+	   Iterator mexSections = mexElement.getChildrenWithName(new QName(namespaceValue, MexConstants.SPEC.METADATA_SECTION));
         
            if (mexSections == null){
          	throw new MexOMException("Metadata element does not contain MetadataSection element.");

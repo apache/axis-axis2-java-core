@@ -33,13 +33,13 @@ import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.mex.om.Location;
 import org.apache.axis2.mex.om.Metadata;
 import org.apache.axis2.mex.om.MetadataReference;
 import org.apache.axis2.mex.om.MetadataSection;
 import org.apache.axis2.mex.om.MexOMException;
 import org.apache.axis2.mex.util.MexUtil;
+import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,7 +49,7 @@ import javax.xml.namespace.QName;
  * Message Receiver for processing WS-MEX GetMetadata request. 
  *
  */
-public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
+public class MexMessageReceiver extends AbstractInOutMessageReceiver {
 	private static final Log log = LogFactory.getLog(MexMessageReceiver.class);
 	Parameter axisConfigMEXParm = null;
     Parameter serviceConfigMEXParm = null;
@@ -113,8 +113,10 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 		OMElement aReq = body.getFirstChildWithName(new QName(
                 MexConstants.Spec_2004_09.NS_URI,
 				MexConstants.SPEC.GET_METADATA));
+        
 		List metadata_request_list;
 		if (aReq != null) {
+            mexNamespaceValue = MexConstants.Spec_2004_09.NS_URI;
 			metadata_request_list = determineMetadataTypes(aReq);
 
 		} else {
@@ -136,27 +138,32 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 	
 	public Metadata processRequest(List metadata_request_list,
 			MessageContext msgContext, OMElement aReq) throws MexException {
-			
-		String identifier_value = null;
 		
+	    //  Instantiate Metadata instance to build the WS-Mex Metadata element
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        String soapNamespaceURI = envelope.getNamespace().getNamespaceURI();
+        SOAPFactory factory = MexUtil.getSOAPFactory(soapNamespaceURI);
+        
+        Metadata metadata = new Metadata(factory, mexNamespaceValue);
 		DataRetrievalRequest requestOptions = new DataRetrievalRequest();
+        
+        String identifier_value = null;
 		// Check if Identifier element included in request
-		OMElement identifier = aReq.getFirstChildWithName(new QName(
-				MexConstants.SPEC.IDENTIFIER));
-		if (identifier != null) {
-			identifier_value = identifier.getText();
-			if (identifier_value != null && identifier_value.length() > 0) {
-				requestOptions.putIdentifier(identifier_value);
-			}
-		}
-
-		// Instantiate Metadata instance to build the WS-Mex Metadata element
-		SOAPEnvelope envelope = msgContext.getEnvelope();
-		String soapNamespaceURI = envelope.getNamespace().getNamespaceURI();
-		SOAPFactory factory = MexUtil.getSOAPFactory(soapNamespaceURI);
-		mexNamespaceValue = MexConstants.Spec_2004_09.NS_URI;
-		Metadata metadata = new Metadata(factory, mexNamespaceValue);
-
+        OMElement dialectElem = aReq.getFirstChildWithName(new QName(
+                mexNamespaceValue, MexConstants.SPEC.DIALECT));
+        
+        if (dialectElem != null)  {
+    		OMElement identifier = dialectElem.getFirstChildWithName(new QName(
+                    mexNamespaceValue, MexConstants.SPEC.IDENTIFIER));
+            
+    		if (identifier != null) {
+    			identifier_value = identifier.getText();
+    			if (identifier_value != null && identifier_value.length() > 0) {
+    				requestOptions.putIdentifier(identifier_value);
+    			}
+    		}
+        }
+        
 		// Process the request and append MetadataSection to Metadata
 		// Loop through the metadata_request_list for Dialect(s)), and setup requestOptions.
 		// Basically, one requestOptions is setup for each supported outputForm for the Dialect
@@ -165,7 +172,8 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 		OutputForm[] outputforms;
 		
 		for (int i = 0; i < len; i++) { // metadata request
-			String dialect = "";
+
+            String dialect = "";
 			try {
 				dialect = (String) metadata_request_list.get(i);
 
@@ -195,6 +203,7 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 			} catch (Throwable e) {
 				
 				log.error("Throwable detected for dialect, " + dialect , e);
+                e.printStackTrace();
 
 				throw new MexException(e);
 			}
@@ -275,16 +284,18 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 		boolean allTypes = false;
 
-		OMElement dialect = aReq.getFirstChildWithName(new QName(
+		OMElement dialect = aReq.getFirstChildWithName(new QName(mexNamespaceValue,
 				MexConstants.SPEC.DIALECT));
 		if (dialect != null) {
 			String dialectText = dialect.getText();
 			if (dialectText != null && dialectText.length() > 0) {
 				metadata_request_list.add(dialectText.trim());
-			} else
+			} else {
 				allTypes = true;
-		} else
+            }
+		} else {
 			allTypes = true;
+        }
 
 		if (allTypes) { // retrieve all metadata
 			metadata_request_list.add(MexConstants.SPEC.DIALECT_TYPE_POLICY);

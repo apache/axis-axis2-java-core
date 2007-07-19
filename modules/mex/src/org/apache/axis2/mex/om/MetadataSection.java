@@ -101,7 +101,7 @@ public  class MetadataSection extends MexOM implements IMexOM {
 			setIdentifier(identifierAttr.getAttributeValue());		
 		}
 		// validate one of the following element must exist: Location, MetadataReference, inline data
-		OMElement locationElem = element.getFirstChildWithName(new QName(MexConstants.SPEC.LOCATION));
+		OMElement locationElem = element.getFirstChildWithName(new QName(namespaceValue, MexConstants.SPEC.LOCATION));
 		Location location = null;
 		MetadataReference ref = null;
 		
@@ -110,7 +110,7 @@ public  class MetadataSection extends MexOM implements IMexOM {
 		    setLocation(location.fromOM(locationElem));	
 		}
 		else { // check for MetadataReference
-			OMElement refElem = element.getFirstChildWithName(new QName(MexConstants.SPEC.METADATA_REFERENCE));
+			OMElement refElem = element.getFirstChildWithName(new QName(namespaceValue, MexConstants.SPEC.METADATA_REFERENCE));
 			if (refElem != null ){
 				ref = new MetadataReference(factory, namespaceValue);
 				setMetadataReference(ref.fromOM(refElem));
