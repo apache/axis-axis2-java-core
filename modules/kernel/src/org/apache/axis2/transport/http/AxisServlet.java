@@ -182,6 +182,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 }
             } finally {
                 closeStaxBuilder(msgContext);
+                TransportUtils.deleteAttachments(msgContext);
             }
         } else {
             if (!disableREST) {

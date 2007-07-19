@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
+import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
@@ -607,6 +608,12 @@ public class MessageImpl implements Message {
             }
             attachments = newMap;
         }
+        
+        // Check for cached attachment file(s) if attachments exist.
+        if(attachments != null && !messageContext.getAxisMessageContext().isServerSide()){
+        	AttachmentUtils.findCachedAttachment(attachments);
+        }
+        
         this.messageContext = messageContext;
     }
     public void setDoingSWA(boolean value) {
