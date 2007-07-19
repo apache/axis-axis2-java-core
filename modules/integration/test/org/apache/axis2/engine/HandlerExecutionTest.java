@@ -159,9 +159,9 @@ public class HandlerExecutionTest extends LocalTestCase {
 
         TestingUtils.compareWithCreatedOMElement(result);
 
-        List expectedExecutionState = Arrays.asList(new String[] { "COut1", "COut2", "COut3", "In1",
-                "In2", "In3", "In4", "In5", "In6", "Out1", "Out2", "Out3", "FCOut3", "FCOut2",
-                "FCOut1", "FCIn6", "FCIn5", "FCIn4", "FCIn3", "FCIn2", "FCIn1", "FCCOut3",
+        List expectedExecutionState = Arrays.asList(new String[] { "COut1", "COut2", "COut3", "In2",
+                "In3", "In1", "In4", "In5", "In6", "Out1", "Out2", "Out3", "FCOut3", "FCOut2",
+                "FCOut1", "FCIn6", "FCIn5", "FCIn4", "FCIn1", "FCIn3", "FCIn2", "FCCOut3",
                 "FCCOut2", "FCCOut1", "CIn1", "CIn2", "CIn3", "FCCIn3", "FCCIn2", "FCCIn1" });
         assertEquals(expectedExecutionState, testResults);
     }
@@ -231,8 +231,8 @@ public class HandlerExecutionTest extends LocalTestCase {
         }
         catch (AxisFault e) {
         }
-        List expectedExecutionState = Arrays.asList(new String[] { "In1", "In2", "In3", "In4",
-                "kaboom", "FCIn4", "FCIn3", "FCIn2", "FCIn1" });
+        List expectedExecutionState = Arrays.asList(new String[] { "In2", "In3", "In1", "In4",
+                "kaboom", "FCIn4", "FCIn1", "FCIn3", "FCIn2" });
         assertEquals(expectedExecutionState, testResults);
         middleOperationInHandler.shouldFail(false);
     }
@@ -248,7 +248,7 @@ public class HandlerExecutionTest extends LocalTestCase {
         catch (AxisFault e) {
         }
         List expectedExecutionState = Arrays.asList(
-                new String[] { "In1", "In2", "In3", "kaboom", "FCIn3", "FCIn2", "FCIn1" });
+                new String[] { "In2", "In3", "In1", "kaboom", "FCIn1", "FCIn3", "FCIn2" });
         assertEquals(expectedExecutionState, testResults);
         firstOperationInHandler.shouldFail(false);
     }
@@ -263,7 +263,7 @@ public class HandlerExecutionTest extends LocalTestCase {
         }
         catch (AxisFault e) {
         }
-        List expectedExecutionState = Arrays.asList(new String[] { "In1", "kaboom", "FCIn1" });
+        List expectedExecutionState = Arrays.asList(new String[] { "kaboom"});
         assertEquals(expectedExecutionState, testResults);
         middleGlobalInHandler.shouldFail(false);
     }
@@ -278,9 +278,9 @@ public class HandlerExecutionTest extends LocalTestCase {
         }
         catch (AxisFault e) {
         }
-        List expectedExecutionState = Arrays.asList(new String[] { "In1", "In2", "In3", "In4",
-                "In5", "In6", "Out1", "kaboom", "FCOut1", "FCIn6", "FCIn5", "FCIn4", "FCIn3",
-                "FCIn2", "FCIn1" });
+        List expectedExecutionState = Arrays.asList(new String[] { "In2", "In3", "In1", "In4",
+                "In5", "In6", "Out1", "kaboom", "FCOut1", "FCIn6", "FCIn5", "FCIn4", "FCIn1",
+                "FCIn3", "FCIn2" });
         assertEquals(expectedExecutionState, testResults);
         middleOperationOutHandler.shouldFail(false);
     }
@@ -385,9 +385,9 @@ public class HandlerExecutionTest extends LocalTestCase {
         catch (AxisFault e) {
         }
 
-        List expectedExecutionState = Arrays.asList(new String[] { "In1", "In2", "In3", "In4",
+        List expectedExecutionState = Arrays.asList(new String[] { "In2", "In3", "In1", "In4",
                 "In5", "In6", "Out1", "Out2", "Out3", "FCOut3", "FCOut2", "FCOut1", "FCIn6",
-                "FCIn5", "FCIn4", "FCIn3", "FCIn2", "FCIn1", "CIn1", "kaboom", "FCCIn1" });
+                "FCIn5", "FCIn4", "FCIn1", "FCIn3", "FCIn2", "CIn1", "kaboom", "FCCIn1" });
         assertEquals(expectedExecutionState, testResults);
     }
 
