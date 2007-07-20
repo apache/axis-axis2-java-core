@@ -1,0 +1,29 @@
+<assembly>
+    <id>war</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+  <fileSets>
+    <fileSet>
+			<directory>../../modules/webapp/target</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>*.war</include>
+			</includes>
+    </fileSet>
+	<fileSet>
+		<directory>../../</directory>
+		<outputDirectory></outputDirectory>
+		<includes>
+			<include>*.txt</include>
+		</includes>
+    </fileSet>
+  </fileSets>
+	<moduleSets>
+	  <moduleSet>
+			<includes><include>org.apache.axis2:webapp</include></includes>
+	  </moduleSet>
+	</moduleSets>
+</assembly>
