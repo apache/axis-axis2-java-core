@@ -21,9 +21,11 @@ package org.apache.axis2.jaxws.dispatchers;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +60,7 @@ public class MustUnderstandUtils {
             return;
         }
         
-        ArrayList understoodHeaderQNames = MustUnderstandUtils.getSEIHeaderParamaterList(msgContext);
+        ArrayList understoodHeaderQNames = MustUnderstandUtils.getHeaderParamaterList(msgContext);
         if (understoodHeaderQNames == null) {
             return;
         }
@@ -80,13 +82,13 @@ public class MustUnderstandUtils {
 
     /**
      * Return an ArrayList of QNames corresponding to SOAP headers which map to method parameters
-     * for any methods on the corresponding SEI.
+     * for any methods on the corresponding SEI and the SOAP handlers.
      * 
      * @param msgContext
-     * @return ArrayList of QNames for all header parameters for an SEI.  The list may be empty but
-     *   will not be null.
+     * @return ArrayList of QNames for all header parameters for an SEI and SOAP handlers.  
+     *         The list may be empty but will not be null.
      */
-    public static ArrayList getSEIHeaderParamaterList(MessageContext msgContext) {
+    public static ArrayList getHeaderParamaterList(MessageContext msgContext) {
         ArrayList returnList = new ArrayList();
         // Build a list of understood headers for all the operations under the service
         AxisService axisService = msgContext.getAxisService();
@@ -94,11 +96,14 @@ public class MustUnderstandUtils {
             log.debug("Building list of understood headers for all operations under " + axisService);
         }
         if (axisService != null) {
+            ArrayList understoodHeaders;
+            
+            // examine SEI methods
             Iterator operationIterator = axisService.getOperations();
             if (operationIterator != null) {
                 while (operationIterator.hasNext()) {
                     AxisOperation operation = (AxisOperation) operationIterator.next();
-                    ArrayList understoodHeaders = getSEIMethodHeaderParameterList(operation);
+                    understoodHeaders = getSEIMethodHeaderParameterList(operation);
                     if (log.isDebugEnabled()) {
                         log.debug("Adding headers from operation " + operation + "; headers = "
                                   + understoodHeaders);
@@ -107,6 +112,15 @@ public class MustUnderstandUtils {
                         returnList.addAll(understoodHeaders);
                     }
                 }
+            }
+            
+            // examine handlers
+            understoodHeaders = getHandlersHeaderParameterList(axisService);
+            if (log.isDebugEnabled()) {
+                log.debug("Adding headers from SOAP handlers; headers = " + understoodHeaders);
+            }
+            if (understoodHeaders != null && !understoodHeaders.isEmpty()) {
+                returnList.addAll(understoodHeaders);
             }
         }
         return returnList;
@@ -120,12 +134,25 @@ public class MustUnderstandUtils {
      * @return ArrayList of header QNames for all header paramters on an operation, or null if none.
      */
     public static ArrayList getSEIMethodHeaderParameterList(AxisOperation axisOperation) {
-        
-        Parameter headerQNamesParameter = axisOperation.getParameter(OperationDescription.HEADER_PARAMETER_QNAMES);
+        return getHeaderParameterList(axisOperation, OperationDescription.HEADER_PARAMETER_QNAMES);
+    }
+    
+    /**
+     * Return an ArrayList of QNames that is a collection of SOAP handlers 
+     * 
+     * @param axisService
+     * @return ArrayList of header QNames.     
+     */
+    public static ArrayList getHandlersHeaderParameterList(AxisService axisService) {
+        return getHeaderParameterList(axisService, EndpointDescription.HANDLER_PARAMETER_QNAMES);
+    }
+    
+    private static ArrayList getHeaderParameterList(AxisDescription axisDescription, String paramName) {        
+        Parameter headerQNamesParameter = axisDescription.getParameter(paramName);
         if (headerQNamesParameter == null) {
             if (log.isDebugEnabled()) {
-                log.debug("Parameter not on AxisOperation " + axisOperation + "; " 
-                          + OperationDescription.HEADER_PARAMETER_QNAMES);
+                log.debug("Parameter not on " + axisDescription + "; " 
+                          + paramName);
             }
             return null;
         }
@@ -133,8 +160,8 @@ public class MustUnderstandUtils {
         ArrayList understoodHeaderQNames = (ArrayList) headerQNamesParameter.getValue();
         if (understoodHeaderQNames == null || understoodHeaderQNames.isEmpty()) {
             if (log.isDebugEnabled()) {
-                log.debug("Parameter value on AxisOperation is empty: "  + axisOperation + "; " 
-                          + OperationDescription.HEADER_PARAMETER_QNAMES);
+                log.debug("Parameter value is empty: "  + axisDescription + "; " 
+                          + paramName);
             }
             return null;
         }

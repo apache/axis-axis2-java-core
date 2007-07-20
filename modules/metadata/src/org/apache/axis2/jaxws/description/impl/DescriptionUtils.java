@@ -20,9 +20,14 @@ package org.apache.axis2.jaxws.description.impl;
 
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
@@ -45,6 +50,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.soap.SOAPHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +63,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /** Utilities used throughout the Description package. */
@@ -494,5 +502,38 @@ public class DescriptionUtils {
                 }
             }
         }
+    }
+    
+    public static void registerHandlerHeaders(AxisService axisService, List<Handler> handlers) {
+        if (handlers == null || axisService == null) {
+            return;
+        }
+        
+        ArrayList<QName> understoodHeaderQNames = new ArrayList<QName>();
+        for (Handler handler : handlers) {
+            if (handler instanceof SOAPHandler) {
+                SOAPHandler soapHandler = (SOAPHandler) handler;
+                
+                Set<QName> headers = soapHandler.getHeaders();
+                if (headers != null) {
+                    for (QName header : headers) {
+                        if (!understoodHeaderQNames.contains(header)) {
+                            understoodHeaderQNames.add(header);
+                        }
+                    }
+                } 
+            }
+        }
+        
+        if (!understoodHeaderQNames.isEmpty()) {
+            Parameter headerQNParameter = 
+                new Parameter(EndpointDescription.HANDLER_PARAMETER_QNAMES, understoodHeaderQNames);
+            try {
+                axisService.addParameter(headerQNParameter);
+            } catch (AxisFault e) {
+                // TODO: RAS
+                log.warn("Unable to add Parameter for header QNames to AxisService " + axisService, e);
+            }
+        }  
     }
 }
