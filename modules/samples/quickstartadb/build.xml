@@ -77,7 +77,7 @@
             <property name="axis2.home" value="../../${AXIS2_HOME}"/>
         </ant> 
 		<copy file="${basedir}/build/service/build/lib/StockQuoteService.aar"
-              toDir="${basedir}/../../repository/services/StockQuoteService.aar"
+              toDir="${basedir}/../../repository/services"
               overwrite="yes">
         </copy>
 		
