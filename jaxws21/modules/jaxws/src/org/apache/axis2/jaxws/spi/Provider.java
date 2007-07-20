@@ -75,27 +75,13 @@ public class Provider extends javax.xml.ws.spi.Provider {
             List<Element> metadata,
             String wsdlDocumentLocation,
             List<Element> referenceParameters) {
-        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
-        
-        if (address != null) {
-            axis2EPR = EndpointReferenceBuilder.createEndpointReference(address);
-        }
-        else if (serviceName != null && portName != null) {
-            axis2EPR = EndpointReferenceBuilder.createEndpointReference(serviceName, portName, wsdlDocumentLocation);
-        }
-        else {
-            //TODO NLS enable.
-            throw new IllegalStateException("Cannot create an endpoint reference because the address, service name, and port name are all null.");
-        }
+        String addressingNamespace = getAddressingNamespace(W3CEndpointReference.class);    	
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        	new EndpointReferenceBuilder().createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
         
         W3CEndpointReference w3cEPR = null;
         
         try {
-            //This enables EndpointReference.getPort() to work.
-            if (serviceName != null && portName != null) {
-                
-            }
-            
             if (metadata != null) {
                 for (Element element : metadata) {
                     OMElement omElement = XMLUtils.toOM(element);
@@ -110,7 +96,6 @@ public class Provider extends javax.xml.ws.spi.Provider {
                 }            
             }
             
-            String addressingNamespace = getAddressingNamespace(W3CEndpointReference.class);
             w3cEPR =
                 (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
         }
@@ -172,7 +157,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
             org.apache.axis2.addressing.EndpointReference axis2EPR =
-                new org.apache.axis2.addressing.EndpointReference("");
+                new EndpointReferenceBuilder().createEndpointReference("");
             String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
             
             jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);

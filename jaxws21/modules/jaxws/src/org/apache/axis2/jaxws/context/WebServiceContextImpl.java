@@ -18,10 +18,21 @@
  */
 package org.apache.axis2.jaxws.context;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -29,6 +40,7 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.w3c.dom.Element;
 
+import java.net.URI;
 import java.security.Principal;
 
 public class WebServiceContextImpl implements WebServiceContext {
@@ -97,13 +109,47 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
-        T jaxwsEPR = null;
+        EndpointReference jaxwsEPR = null;
+        String addressingNamespace = getAddressingNamespace(clazz);
         
+        if (soapMessageContext != null) {
+            QName service = (QName) soapMessageContext.get(MessageContext.WSDL_SERVICE);
+            QName endpoint = (QName) soapMessageContext.get(MessageContext.WSDL_PORT);
+            URI wsdlURI = (URI) soapMessageContext.get(MessageContext.WSDL_DESCRIPTION);
+            
+            org.apache.axis2.addressing.EndpointReference axis2EPR =
+                new EndpointReferenceBuilder().createEndpointReference(null, service, endpoint, wsdlURI.toString(), addressingNamespace);
+            
+            try {
+                if (referenceParameters != null) {
+                    for (Element element : referenceParameters) {
+                        OMElement omElement = XMLUtils.toOM(element);
+                        axis2EPR.addReferenceParameter(omElement);
+                    }            
+                }
+                
+                jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
+            }
+            catch (Exception e) {
+                //TODO NLS enable.
+                throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+            }
+        }
+        else {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Unable to create endpoint references.");        	
+        }
         
-        return jaxwsEPR;
+        return clazz.cast(jaxwsEPR);
     }
 
-    public EndpointReference getEndpointReference(Element... arg0) {
-        return getEndpointReference(W3CEndpointReference.class, arg0);
+    public EndpointReference getEndpointReference(Element... referenceParameters) {
+        return getEndpointReference(W3CEndpointReference.class, referenceParameters);
+    }
+
+    private String getAddressingNamespace(Class clazz) {
+        EndpointReferenceFactory eprFactory =
+            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
+        return eprFactory.getAddressingNamespace(clazz);
     }
 }

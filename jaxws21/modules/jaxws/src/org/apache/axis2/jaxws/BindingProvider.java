@@ -34,6 +34,7 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.client.PropertyValidator;
@@ -251,14 +252,11 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         
         if (epr == null || !addressingNamespace.equals(this.addressingNamespace)) {
             String address = endpointDesc.getEndpointAddress();
-            epr = new org.apache.axis2.addressing.EndpointReference(address);
             QName service = endpointDesc.getServiceQName();
             QName port = endpointDesc.getPortQName();
             URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
-            ServiceName serviceName = new ServiceName(service, port.getLocalPart());
-            WSDLLocation wsdlLocation = new WSDLLocation(port.getNamespaceURI(), wsdlURL.toString());
-            EndpointReferenceHelper.setServiceNameMetadata(epr, addressingNamespace, serviceName);
-            EndpointReferenceHelper.setWSDLLocationMetadata(epr, addressingNamespace, wsdlLocation);
+
+            epr = new EndpointReferenceBuilder().createEndpointReference(address, service, port, wsdlURL.toString(), addressingNamespace);
         }
         
         return epr;

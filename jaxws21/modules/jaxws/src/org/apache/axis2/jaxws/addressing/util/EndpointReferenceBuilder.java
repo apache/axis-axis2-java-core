@@ -18,43 +18,118 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
-import java.util.List;
+import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 
 public final class EndpointReferenceBuilder {
+    private static final EndpointMap map =
+        (EndpointMap) FactoryRegistry.getFactory(EndpointMap.class);
     
     public EndpointReferenceBuilder() {
     }
     
-    public static EndpointReference createEndpointReference(String address) {
+    public void addAddress(QName serviceName, QName endpoint, String address) {
+        EndpointKey key = new EndpointKey(serviceName, endpoint);
+        
+        if (address == null || "".equals(address))
+            throw new IllegalStateException("The specified address is not a valid value: " + address);
+        
+        map.put(key, address);
+    }
+    
+    public EndpointReference createEndpointReference(String address) {
+        if (address == null || "".equals(address))
+            throw new IllegalStateException("The specified address is not a valid value: " + address);
+
         return new EndpointReference(address);
     }
     
-    public static EndpointReference createEndpointReference(QName serviceName, QName endpoint, String wsdlDocumentLocation) {
-        return null;
+    public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
+        EndpointKey key = new EndpointKey(serviceName, endpoint);
+        String address = map.get(key);
+        
+        return createEndpointReference(address);
     }
     
-    public static EndpointReference createEndpointReference(String address,
-                                                            QName serviceName,
-                                                            QName endpoint,
-                                                            List<OMElement> metadata,
-                                                            String wsdlDocumentLocation,
-                                                            List<OMElement> referenceParameters,
-                                                            String addressingNamespace) throws AxisFault {
-        EndpointReference epr = new EndpointReference(address);
-        ServiceName service = new ServiceName(serviceName, endpoint.getLocalPart());
-        WSDLLocation wsdlLocation = new WSDLLocation(endpoint.getNamespaceURI(), wsdlDocumentLocation);
-        EndpointReferenceHelper.setServiceNameMetadata(epr, addressingNamespace, service);
-        EndpointReferenceHelper.setWSDLLocationMetadata(epr, addressingNamespace, wsdlLocation);
-
-        return epr;
+    public EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
+        EndpointReference axis2EPR = null;
+        
+        if (address != null) {
+            //TODO NLS enable.
+        	if (serviceName == null && portName != null)
+                throw new IllegalStateException("Cannot create an endpoint reference because the service name is null, and the port name is not null.");
+        		
+            axis2EPR = createEndpointReference(address);
+        }
+        else if (serviceName != null && portName != null) {
+            axis2EPR = createEndpointReference(serviceName, portName);
+        }
+        else {
+            //TODO NLS enable.
+            throw new IllegalStateException("Cannot create an endpoint reference because the address, service name, and/or port name are null.");
+        }
+        
+        try {
+            if (wsdlDocumentLocation != null) {
+            	URL wsdlURL = new URL(wsdlDocumentLocation);
+            	WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL);
+            	
+            	if (serviceName != null) {
+            		//TODO NLS
+            		if (wrapper.getService(serviceName) == null)
+            			throw new IllegalStateException("The specified service name does not exist in the WSDL from the specified location.");
+                	
+                	if (portName != null) {
+                		String[] ports = wrapper.getPorts(serviceName);
+                		String portLocalName = portName.getLocalPart();
+                		boolean found = false;
+                		
+                		if (ports != null) {
+                			for (String port : ports) {
+                				if (port.equals(portLocalName)) {
+                					found = true;
+                					break;
+                				}
+                			}
+                		}
+                		
+                		//TODO NLS
+                		if (!found)
+                			throw new IllegalStateException("The specified port name does not exist in the specified WSDL service.");
+                	}
+            	}
+            	
+                WSDLLocation wsdlLocation = new WSDLLocation(portName.getNamespaceURI(), wsdlDocumentLocation);
+                EndpointReferenceHelper.setWSDLLocationMetadata(axis2EPR, addressingNamespace, wsdlLocation);
+            }
+            
+            //TODO If no service name and port name are specified, but the wsdl location is
+            //specified, and the WSDL only contains one service and one port then maybe we
+            //should simply use those.
+            if (serviceName != null && portName != null) {
+                ServiceName service = new ServiceName(serviceName, portName.getLocalPart());
+                EndpointReferenceHelper.setServiceNameMetadata(axis2EPR, addressingNamespace, service);
+            }
+        }
+        catch (IllegalStateException ise) {
+        	throw ise;
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+        }
+        
+        return axis2EPR;
     }
 }
