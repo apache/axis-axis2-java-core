@@ -467,19 +467,6 @@ public class EndpointReferenceHelper {
         }
     }
     
-    /**
-     * 
-     * @param source
-     * @param destination
-     */
-    public static void transferReferenceParameters(EndpointReference source, EndpointReference destination) {
-        Map referenceParameters = source.getAllReferenceParameters();
-        Iterator iterator = referenceParameters.values().iterator();
-        while (iterator.hasNext()) {
-            destination.addReferenceParameter((OMElement) iterator.next());                        
-        }
-    }
-    
     static {
         finalQNames.put(AddressingConstants.EPR_ADDRESS, new QName(
                 AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));
