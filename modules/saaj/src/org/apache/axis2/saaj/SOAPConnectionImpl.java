@@ -115,6 +115,10 @@ public class SOAPConnectionImpl extends SOAPConnection {
         } catch (AxisFault e) {
             throw new SOAPException(e);
         }
+
+        options.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, 
+                            request.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
+
         opClient.setOptions(options);
 
         if (request.countAttachments() != 0) { // SOAPMessage with attachments
@@ -185,8 +189,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
             MessageContext msgCtx =
                     opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             return getSOAPMessage(msgCtx.getEnvelope());
-        } catch (AxisFault e) {
-            throw new SOAPException(e.getMessage());
+        } catch (Exception e) {
+            throw new SOAPException(e.getMessage(), e);
         }
     }
 

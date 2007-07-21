@@ -148,6 +148,10 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (uri == null || "".equals(uri)) {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElement(localName));
+        } else if (prefix == null || "".equals(prefix)) {
+            childEle = new SOAPBodyElementImpl(
+                (ElementImpl)getOwnerDocument().createElementNS(uri,
+                                                                localName));
         } else {
             childEle = new SOAPBodyElementImpl(
                     (ElementImpl)getOwnerDocument().createElementNS(uri,
