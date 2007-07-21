@@ -487,9 +487,11 @@ public class ListingAgent extends AbstractAgent {
 
         public EndpointReference[] getEPRsForService(String serviceName, String ip)
                 throws AxisFault {
-            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port +
-                                                                 "/" + axisConf.getServiceContextPath() + "/" +
-                                                                 serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+            String path = axisConf.getServiceContextPath() + "/" + serviceName;
+            if(path.charAt(0)!='/'){
+                path = '/' + path;
+            }
+            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path )};
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {

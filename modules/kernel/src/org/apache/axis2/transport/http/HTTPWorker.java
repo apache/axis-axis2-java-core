@@ -142,7 +142,7 @@ public class HTTPWorker implements Worker {
                 if (service != null) {
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL(response.getOutputStream());
+                    service.printWSDL(response.getOutputStream(), getHost(request));
                     return;
                 }
             }
@@ -329,17 +329,16 @@ public class HTTPWorker implements Worker {
 
     }
 
-    public String getHostAddress(AxisHttpRequest request) throws java.net.SocketException {
-        try {
-            Header hostHeader = request.getFirstHeader("host");
-            if (hostHeader != null) {
-                String host = hostHeader.getValue();
-                return new URI("http://" + host).getHost();
+    public String getHost(AxisHttpRequest request) throws java.net.SocketException {
+        String host = null;
+        Header hostHeader = request.getFirstHeader("host");
+        if (hostHeader != null) {
+            String parts[] = hostHeader.getValue().split("[:]");
+            if (parts.length > 0) {
+                host = parts[0].trim();
             }
-        } catch (Exception e) {
-
         }
-        return HttpUtils.getIpAddress();
+        return host;
     }
 
 }
