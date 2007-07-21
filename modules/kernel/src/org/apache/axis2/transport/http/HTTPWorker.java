@@ -131,7 +131,7 @@ public class HTTPWorker implements Worker {
                 if (service != null) {
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL2(response.getOutputStream());
+                    service.printWSDL2(response.getOutputStream(), getHost(request));
                     return;
                 }
             }

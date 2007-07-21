@@ -221,6 +221,7 @@ public class ListingAgent extends AbstractAgent {
                 if (wsdl2 >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
+                    String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl2");
                     if (!"".equals(wsdlName)) {
                         InputStream in = ((AxisService) serviceObj).getClassLoader()
@@ -234,7 +235,7 @@ public class ListingAgent extends AbstractAgent {
                         }
                     } else {
                         ((AxisService) serviceObj)
-                                .printWSDL2(out);
+                                .printWSDL2(out, ip);
                         out.flush();
                         out.close();
                     }
