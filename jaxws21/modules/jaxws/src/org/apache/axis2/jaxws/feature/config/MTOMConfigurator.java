@@ -23,7 +23,8 @@ import javax.xml.ws.soap.MTOMFeature;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
@@ -31,7 +32,7 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
 /**
  *
  */
-public class MTOMConfigurator implements WebServiceFeatureConfigurator {
+public class MTOMConfigurator implements ClientConfigurator, ServerConfigurator {
 
     /*
      *  (non-Javadoc)

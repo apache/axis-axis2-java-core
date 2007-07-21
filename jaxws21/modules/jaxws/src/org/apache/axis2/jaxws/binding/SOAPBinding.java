@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.binding;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.feature.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.feature.config.AddressingConfigurator;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
@@ -46,9 +46,9 @@ import java.util.Set;
  * explicitly specificied.
  */
 public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBinding {
-    private static final WebServiceFeatureConfigurator ADDRESSING_CONFIGURATOR =
+    private static final ClientConfigurator ADDRESSING_CONFIGURATOR =
         new AddressingConfigurator();
-    private static final WebServiceFeatureConfigurator MTOM_CONFIGURATOR =
+    private static final ClientConfigurator MTOM_CONFIGURATOR =
         new MTOMConfigurator();
 
     private boolean mtomEnabled = false;
@@ -58,9 +58,9 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     public SOAPBinding(EndpointDescription endpointDesc) {
         super(endpointDesc);
         
-        validator.addConfigurator(AddressingFeature.ID, ADDRESSING_CONFIGURATOR);
-        validator.addConfigurator(SubmissionAddressingFeature.ID, ADDRESSING_CONFIGURATOR);
-        validator.addConfigurator(MTOMFeature.ID, MTOM_CONFIGURATOR);
+        framework.addConfigurator(AddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+        framework.addConfigurator(SubmissionAddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+        framework.addConfigurator(MTOMFeature.ID, MTOM_CONFIGURATOR);
         
         if (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(bindingId) ||
                 SOAPBinding.SOAP12HTTP_MTOM_BINDING.equalsIgnoreCase(bindingId)) {

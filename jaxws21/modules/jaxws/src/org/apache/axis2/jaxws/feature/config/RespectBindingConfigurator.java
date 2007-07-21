@@ -23,14 +23,15 @@ import javax.xml.ws.RespectBindingFeature;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
+import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
  *
  */
-public class RespectBindingConfigurator implements WebServiceFeatureConfigurator {
+public class RespectBindingConfigurator implements ClientConfigurator, ServerConfigurator {
 
     /*
      *  (non-Javadoc)

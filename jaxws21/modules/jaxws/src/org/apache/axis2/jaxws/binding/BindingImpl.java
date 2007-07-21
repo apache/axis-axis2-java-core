@@ -28,8 +28,8 @@ import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator;
-import org.apache.axis2.jaxws.feature.WebServiceFeatureValidator;
+import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.feature.ClientFramework;
 import org.apache.axis2.jaxws.feature.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.spi.Binding;
@@ -40,7 +40,7 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
  * should extend this class instead.
  */
 public abstract class BindingImpl implements Binding {
-    private static final WebServiceFeatureConfigurator RESPECT_BINDING_CONFIGURATOR =
+    private static final ClientConfigurator RESPECT_BINDING_CONFIGURATOR =
         new RespectBindingConfigurator();
 
     // an unsorted list of handlers
@@ -52,7 +52,7 @@ public abstract class BindingImpl implements Binding {
 
     protected Set<String> roles = null;
     
-    protected WebServiceFeatureValidator validator = null;
+    protected ClientFramework framework = null;
 
     protected static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 
@@ -66,8 +66,8 @@ public abstract class BindingImpl implements Binding {
             // server
             this.bindingId = endpointDesc.getBindingType();
         
-        validator = new WebServiceFeatureValidator();
-        validator.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
+        framework = new ClientFramework();
+        framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
     }
 
     public List<Handler> getHandlerChain() {
@@ -98,17 +98,17 @@ public abstract class BindingImpl implements Binding {
     }
 
     public void configure(MessageContext messageContext, BindingProvider provider) {
-        validator.configure(messageContext, provider);
+        framework.configure(messageContext, provider);
     }
 
     public WebServiceFeature getWebServiceFeature(String id) {
-        return validator.getFeature(id);
+        return framework.getFeature(id);
     }
 
     public void setWebServiceFeatures(WebServiceFeature... features) {
         if (features != null) {
             for (WebServiceFeature feature : features) {
-                validator.addFeature(feature);
+                framework.addFeature(feature);
             }
         }
     }

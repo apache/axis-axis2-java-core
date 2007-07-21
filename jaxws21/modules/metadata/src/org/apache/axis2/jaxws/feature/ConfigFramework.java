@@ -19,36 +19,22 @@
 package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.spi.BindingProvider;
 
 import javax.xml.ws.WebServiceFeature;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public class WebServiceFeatureValidator {
+public abstract class ConfigFramework {
     private static final WebServiceFeature[] ZERO_LENGTH_ARRAY = new WebServiceFeature[0];
     
-    private Map<String, WebServiceFeatureConfigurator> configuratorMap;
-    private Map<String, WebServiceFeature> featureMap;
+    protected Map<String, WebServiceFeature> featureMap;
     
-    public WebServiceFeatureValidator() {
-        configuratorMap = new IdentityHashMap<String, WebServiceFeatureConfigurator>();
+    public ConfigFramework() {
         featureMap = new IdentityHashMap<String, WebServiceFeature>();
     }
     
-    public void addConfigurator(String id, WebServiceFeatureConfigurator configurator) {
-        configuratorMap.put(id, configurator);
-    }
-    
-    public boolean isValid(WebServiceFeature feature) {
-        if (feature == null)
-            return false;
-        
-        return configuratorMap.containsKey(feature.getID());
-    }
+    public abstract boolean isValid(WebServiceFeature feature);
     
     public void addFeature(WebServiceFeature feature) {
         //TODO NLS enable.
@@ -64,19 +50,5 @@ public class WebServiceFeatureValidator {
     
     public WebServiceFeature[] getAllFeatures() {
         return featureMap.values().toArray(ZERO_LENGTH_ARRAY);
-    }
-    
-    public void configure(MessageContext messageContext, BindingProvider provider) {
-        for (WebServiceFeature feature : getAllFeatures()) {
-            WebServiceFeatureConfigurator configurator = configuratorMap.get(feature.getID());
-            configurator.configure(messageContext, provider);
-        }
-    }
-    
-    public void configure(EndpointDescription endpointDescription) {
-        for (WebServiceFeature feature : getAllFeatures()) {
-            WebServiceFeatureConfigurator configurator = configuratorMap.get(feature.getID());
-            configurator.configure(endpointDescription);
-        }
     }
 }

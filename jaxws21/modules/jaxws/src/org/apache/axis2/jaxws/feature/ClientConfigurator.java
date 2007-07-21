@@ -19,14 +19,12 @@
 package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
  * 
  */
-public interface WebServiceFeatureConfigurator {
-
+public interface ClientConfigurator {
     /**
      * Perform client-side configuration for a <code>WebServiceFeature</code>.
      * 
@@ -34,11 +32,4 @@ public interface WebServiceFeatureConfigurator {
      * @param provider
      */
     public void configure(MessageContext messageContext, BindingProvider provider);
-
-    /**
-     * Perform server-side configuration for a <code>WebServiceFeature</code>.
-     * 
-     * @param endpointDescription
-     */
-    public void configure(EndpointDescription endpointDescription);
 }
