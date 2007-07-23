@@ -296,9 +296,11 @@ public class ServerWorker implements Runnable {
                 try {
                     response.addHeader(CONTENT_TYPE, TEXT_XML);
                     serverHandler.commitResponse(conn, response);
-                    service.printWSDL2(os);
-
+                    service.printWSDL2(os, getIpAddress());
                 } catch (AxisFault e) {
+                    handleException("Axis2 fault writing ?wsdl2 output", e);
+                    return;
+                } catch (SocketException e) {
                     handleException("Axis2 fault writing ?wsdl2 output", e);
                     return;
                 }

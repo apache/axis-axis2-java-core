@@ -37,6 +37,8 @@ import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,8 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 
 public class ListingAgent extends AbstractAgent {
+
+    private static final Log log = LogFactory.getLog(ListingAgent.class);
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
             "listServices.jsp";
@@ -84,6 +88,23 @@ public class ListingAgent extends AbstractAgent {
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
+
+        initTransportListener(httpServletRequest);
+
+        String query = httpServletRequest.getQueryString();
+        if (query != null) {
+            if (query.indexOf("wsdl2") > 0 || query.indexOf("wsdl") > 0 ||
+                query.indexOf("xsd") > 0 || query.indexOf("policy") > 0) {
+                processListService(httpServletRequest, httpServletResponse);
+            } else {
+                super.handle(httpServletRequest, httpServletResponse);
+            }
+        } else {
+            super.handle(httpServletRequest, httpServletResponse);
+        }
+    }
+
+    protected void initTransportListener(HttpServletRequest httpServletRequest) {
         // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
         String filePart = httpServletRequest.getRequestURL().toString();
         int ipindex = filePart.indexOf("//");
@@ -97,19 +118,8 @@ public class ListingAgent extends AbstractAgent {
             try {
                 addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
-                //
+                log.debug(e.toString(), e);
             }
-        }
-        String query = httpServletRequest.getQueryString();
-        if (query != null) {
-            if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 ||
-                query.indexOf("?xsd") > 0) {
-                processListService(httpServletRequest, httpServletResponse);
-            } else {
-                super.handle(httpServletRequest, httpServletResponse);
-            }
-        } else {
-            super.handle(httpServletRequest, httpServletResponse);
         }
     }
 
@@ -211,6 +221,7 @@ public class ListingAgent extends AbstractAgent {
                 if (wsdl2 >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
+                    String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl2");
                     if (!"".equals(wsdlName)) {
                         InputStream in = ((AxisService) serviceObj).getClassLoader()
@@ -224,7 +235,7 @@ public class ListingAgent extends AbstractAgent {
                         }
                     } else {
                         ((AxisService) serviceObj)
-                                .printWSDL2(out);
+                                .printWSDL2(out, ip);
                         out.flush();
                         out.close();
                     }
@@ -477,9 +488,11 @@ public class ListingAgent extends AbstractAgent {
 
         public EndpointReference[] getEPRsForService(String serviceName, String ip)
                 throws AxisFault {
-            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port +
-                                                                 "/" + axisConf.getServiceContextPath() + "/" +
-                                                                 serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+            String path = axisConf.getServiceContextPath() + "/" + serviceName;
+            if(path.charAt(0)!='/'){
+                path = '/' + path;
+            }
+            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path )};
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
