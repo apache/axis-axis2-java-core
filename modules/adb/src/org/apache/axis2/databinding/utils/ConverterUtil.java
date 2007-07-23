@@ -26,6 +26,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.i18n.ADBMessages;
 import org.apache.axis2.databinding.types.*;
 
@@ -1027,18 +1028,181 @@ public class ConverterUtil {
     }
 
     // serialization methods for xsd any type
+    public static void serializeAnyType(Object value, XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+        if (value instanceof String) {
+            serializeAnyType("string", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Integer) {
+            serializeAnyType("int", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Boolean) {
+            serializeAnyType("boolean", value.toString(), xmlStreamWriter);
+        } else if (value instanceof URI) {
+            serializeAnyType("anyURI", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Date) {
+            serializeAnyType("date", convertToString((Date) value), xmlStreamWriter);
+        } else if (value instanceof Calendar) {
+            serializeAnyType("dateTime", convertToString((Calendar) value), xmlStreamWriter);
+        } else if (value instanceof Time) {
+            serializeAnyType("time", convertToString((Time) value), xmlStreamWriter);
+        } else if (value instanceof Float) {
+            serializeAnyType("float", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Long) {
+            serializeAnyType("long", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Double) {
+            serializeAnyType("double", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Short) {
+            serializeAnyType("short", value.toString(), xmlStreamWriter);
+        } else if (value instanceof BigDecimal) {
+            serializeAnyType("decimal", value.toString(), xmlStreamWriter);
+        } else if (value instanceof QName) {
+            QName qNameValue = (QName) value;
+            String prefix = xmlStreamWriter.getPrefix(qNameValue.getNamespaceURI());
+            if (prefix == null) {
+                prefix = BeanUtil.getUniquePrefix();
+                xmlStreamWriter.writeNamespace(prefix, qNameValue.getNamespaceURI());
+                xmlStreamWriter.setPrefix(prefix, qNameValue.getNamespaceURI());
+            }
+            String attributeValue = qNameValue.getLocalPart();
+            if (!prefix.equals("")) {
+                attributeValue = prefix + ":" + attributeValue;
+            }
+            serializeAnyType("QName", attributeValue, xmlStreamWriter);
+        } else if (value instanceof UnsignedLong) {
+            serializeAnyType("unsignedLong", convertToString((UnsignedLong) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedInt) {
+            serializeAnyType("unsignedInt", convertToString((UnsignedInt) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedShort) {
+            serializeAnyType("unsignedShort", convertToString((UnsignedShort) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedByte) {
+            serializeAnyType("unsignedByte", convertToString((UnsignedByte) value), xmlStreamWriter);
+        } else if (value instanceof PositiveInteger) {
+            serializeAnyType("positiveInteger", convertToString((PositiveInteger) value), xmlStreamWriter);
+        } else if (value instanceof NegativeInteger) {
+            serializeAnyType("negativeInteger", convertToString((NegativeInteger) value), xmlStreamWriter);
+        } else if (value instanceof NonNegativeInteger) {
+            serializeAnyType("nonNegativeInteger", convertToString((NonNegativeInteger) value), xmlStreamWriter);
+        } else if (value instanceof NonPositiveInteger) {
+            serializeAnyType("nonPositiveInteger", convertToString((NonPositiveInteger) value), xmlStreamWriter);
+        } else {
+            throw new XMLStreamException("Unknow type can not serialize");
+        }
+    }
+
 
     /**
-     * serialize the any type string object
-     * @param string
+     * this method writes the xsi:type attrubte and the value to the xmlstreamwriter
+     * to serialize the anytype object
+     * @param type  - xsd type of the attribute
+     * @param value - string value of the object
      * @param xmlStreamWriter
+     * @throws XMLStreamException
      */
-    public static void serializeAnyType(String string, XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
-         if (xmlStreamWriter.getPrefix(Constants.XSI_NAMESPACE) == null){
-             String prefix = BeanUtil.getUniquePrefix();
-             xmlStreamWriter.writeNamespace(prefix,Constants.XSI_NAMESPACE);
-             xmlStreamWriter.setPrefix(prefix,Constants.XSI_NAMESPACE);
-         }
-         
+    private static void serializeAnyType(String type,
+                                         String value,
+                                         XMLStreamWriter xmlStreamWriter)
+            throws XMLStreamException {
+
+        String prefix = xmlStreamWriter.getPrefix(Constants.XSI_NAMESPACE);
+        if (prefix == null) {
+            prefix = BeanUtil.getUniquePrefix();
+            xmlStreamWriter.writeNamespace(prefix, Constants.XSI_NAMESPACE);
+            xmlStreamWriter.setPrefix(prefix, Constants.XSI_NAMESPACE);
+        }
+
+        prefix = xmlStreamWriter.getPrefix(Constants.XSD_NAMESPACE);
+        if (prefix == null) {
+            prefix = BeanUtil.getUniquePrefix();
+            xmlStreamWriter.writeNamespace(prefix, Constants.XSD_NAMESPACE);
+            xmlStreamWriter.setPrefix(prefix, Constants.XSD_NAMESPACE);
+        }
+
+        String attributeValue = null;
+        if (prefix.equals("")) {
+            attributeValue = type;
+        } else {
+            attributeValue = prefix + ":" + type;
+        }
+
+        xmlStreamWriter.writeAttribute(Constants.XSI_NAMESPACE, "type", attributeValue);
+        xmlStreamWriter.writeCharacters(value);
     }
+
+    public static Object getAnyTypeObject(XMLStreamReader xmlStreamReader) throws XMLStreamException {
+        Object returnObject = null;
+
+        // first check whether this element is null or not
+        String nillableValue = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "nil");
+        if ("true".equals(nillableValue) || "1".equals(nillableValue)){
+            returnObject = null;
+        } else {
+            String attributeType = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "type");
+            if (attributeType != null) {
+                if (attributeType.indexOf(":") > -1) {
+                    attributeType = attributeType.substring(attributeType.indexOf(":") + 1);
+                }
+                String attribValue = xmlStreamReader.getElementText();
+                if (attribValue != null){
+                    if (attributeType.equals("string")) {
+                        returnObject = attribValue;
+                    } else if (attributeType.equals("int")) {
+                        returnObject = new Integer(attribValue);
+                    } else if (attributeType.equals("QName")) {
+                        String namespacePrefix = null;
+                        String localPart = null;
+                        if (attribValue.indexOf(":") > -1){
+                            namespacePrefix = attribValue.substring(0,attribValue.indexOf(":"));
+                            localPart = attribValue.substring(attribValue.indexOf(":") + 1);
+                            returnObject = new QName(xmlStreamReader.getNamespaceURI(namespacePrefix),localPart);
+                        }
+                    } else if ("boolean".equals(attributeType)) {
+                        returnObject = new Boolean(attribValue);
+                    } else if ("anyURI".equals(attributeType)) {
+                        try {
+                            returnObject = new URI(attribValue);
+                        } catch (URI.MalformedURIException e) {
+                            throw new XMLStreamException("Invalid URI");
+                        }
+                    } else if ("date".equals(attributeType)) {
+                        returnObject = ConverterUtil.convertToDate(attribValue);
+                    } else if ("dateTime".equals(attributeType)) {
+                        returnObject = ConverterUtil.convertToDateTime(attribValue);
+                    } else if ("time".equals(attributeType)) {
+                        returnObject = ConverterUtil.convertToTime(attribValue);
+                    } else if ("float".equals(attributeType)) {
+                        returnObject = new Float(attribValue);
+                    } else if ("long".equals(attributeType)) {
+                        returnObject = new Long(attribValue);
+                    } else if ("double".equals(attributeType)) {
+                        returnObject = new Double(attribValue);
+                    } else if ("decimal".equals(attributeType)) {
+                        returnObject = new BigDecimal(attribValue);
+                    } else if ("unsignedLong".equals(attributeType)) {
+                        returnObject = new UnsignedLong(attribValue);
+                    } else if ("unsignedInt".equals(attributeType)) {
+                        returnObject = new UnsignedInt(attribValue);
+                    } else if ("unsignedShort".equals(attributeType)) {
+                        returnObject = new UnsignedShort(attribValue);
+                    } else if ("unsignedByte".equals(attributeType)) {
+                        returnObject = new UnsignedByte(attribValue);
+                    } else if ("positiveInteger".equals(attributeType)) {
+                        returnObject = new PositiveInteger(attribValue);
+                    } else if ("negativeInteger".equals(attributeType)) {
+                        returnObject = new NegativeInteger(attribValue);
+                    } else if ("nonNegativeInteger".equals(attributeType)) {
+                        returnObject = new NonNegativeInteger(attribValue);
+                    } else if ("nonPositiveInteger".equals(attributeType)) {
+                        returnObject = new NonPositiveInteger(attribValue);
+                    } else {
+                        throw new ADBException("Unknown type ==> " + attributeType);
+                    }
+                } else {
+                    throw new ADBException("Attribute value is null");
+                }
+
+            } else {
+                throw new ADBException("Any type element type has not been given");
+            }
+        }
+        return returnObject;
+    }
+
 }

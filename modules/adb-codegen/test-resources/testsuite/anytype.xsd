@@ -1,0 +1,63 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+           targetNamespace="http://www.w3.org/2005/05/xmlmime">
+    <xs:element name="TestAnyTypeElement1" type="xs:anyType"/>
+    <xs:element name="TestAnyTypeElement2" type="xs:anyType" nillable="true"/>
+    <xs:element name="TestAnyTypeElement3">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" maxOccurs="unbounded" minOccurs="0" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement4">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" maxOccurs="unbounded" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement5">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" maxOccurs="unbounded" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement6">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+     <xs:element name="TestAnyTypeElement7">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" minOccurs="0" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement8">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement9">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestAnyTypeElement10">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="xs:anyType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+

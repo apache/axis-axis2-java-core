@@ -88,7 +88,7 @@ public class JavaTypeMap implements TypeMap {
 
         //anytype is mapped to the OMElement instead of the java.lang.Object
         addTypemapping(SchemaConstants.XSD_ANYTYPE,
-                OMElement.class.getName());
+                Object.class.getName());
 
         //Qname maps to  jax rpc QName class
         addTypemapping(SchemaConstants.XSD_QNAME,

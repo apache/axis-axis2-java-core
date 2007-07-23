@@ -35,17 +35,17 @@ public class XsdAnyElementsTest extends AbstractTest {
     public static final int MIN_EQUALS_ONE_NILLABLE_FALSE_TEST = 4;
 
     public void testAnyTypeArray() {
-        OMElement[] returnObject;
+        Object[] returnObject;
         System.out.println("minOccurs = 0 and nillable true");
         try {
             returnObject = testAnyTypeArray(null, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{null}));
-            returnObject = testAnyTypeArray(new OMElement[]{null}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{null}));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement()}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement()}));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement(), null}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement(), null}));
+            assertTrue(assertArrayEqual(returnObject, new Object[]{null}));
+            returnObject = testAnyTypeArray(new Object[]{null}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{null}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67)}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67)}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67), null}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67), null}));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -55,12 +55,12 @@ public class XsdAnyElementsTest extends AbstractTest {
         try {
             returnObject = testAnyTypeArray(null, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
             assertTrue(assertArrayEqual(returnObject, null));
-            returnObject = testAnyTypeArray(new OMElement[]{null}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
+            returnObject = testAnyTypeArray(new Object[]{null}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
             assertTrue(assertArrayEqual(returnObject, null));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement()}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement()}));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement(), null}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement()}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67)}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67)}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67), null}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67)}));
         } catch (Exception e) {
             fail();
         }
@@ -68,13 +68,13 @@ public class XsdAnyElementsTest extends AbstractTest {
         System.out.println("minOccurs = 1 and nillable true");
         try {
             returnObject = testAnyTypeArray(null, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{null}));
-            returnObject = testAnyTypeArray(new OMElement[]{null}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{null}));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement()}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement()}));
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement(), null}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement(), null}));
+            assertTrue(assertArrayEqual(returnObject, new Object[]{null}));
+            returnObject = testAnyTypeArray(new Object[]{null}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{null}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67)}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67)}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67), null}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67), null}));
         } catch (Exception e) {
             fail();
         }
@@ -89,32 +89,32 @@ public class XsdAnyElementsTest extends AbstractTest {
         }
 
         try {
-            returnObject = testAnyTypeArray(new OMElement[]{null}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{null}));
+            returnObject = testAnyTypeArray(new Object[]{null}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{null}));
             fail();
         } catch (Exception e) {
             assertTrue(true);
         }
 
         try {
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement(), null}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement(), null}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67), null}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67), null}));
             fail();
         } catch (Exception e) {
             assertTrue(true);
         }
 
         try {
-            returnObject = testAnyTypeArray(new OMElement[]{getOMElement()}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
-            assertTrue(assertArrayEqual(returnObject, new OMElement[]{getOMElement()}));
+            returnObject = testAnyTypeArray(new Object[]{new Double(5.67)}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
+            assertTrue(assertArrayEqual(returnObject, new Object[]{new Double(5.67)}));
         } catch (Exception e) {
             fail();
         }
     }
 
-    public OMElement[] testAnyTypeArray(OMElement[] innerElement, int type) throws Exception {
+    public Object[] testAnyTypeArray(Object[] innerElement, int type) throws Exception {
         OMElement omElement;
-        OMElement[] returnObject = null;
+        Object[] returnObject = null;
         String omElementString;
         switch (type) {
             case MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST : {
@@ -167,31 +167,31 @@ public class XsdAnyElementsTest extends AbstractTest {
 
     public void testAnyType() {
 
-        OMElement returnObject;
+        Object returnObject;
         System.out.println("minOccurs = 0 nillable true");
         try {
             returnObject = testAnyType(null, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, null));
-            returnObject = testAnyType(getOMElement(), MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, getOMElement()));
+            assertTrue(isObjectsEqual(returnObject, null));
+            returnObject = testAnyType(new Double(23.45), MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(isObjectsEqual(returnObject, new Double(23.45)));
         } catch (Exception e) {
             fail();
         }
         System.out.println("minOccurs = 0 nillable false");
         try {
             returnObject = testAnyType(null, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, null));
-            returnObject = testAnyType(getOMElement(), MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, getOMElement()));
+            assertTrue(isObjectsEqual(returnObject, null));
+            returnObject = testAnyType(new Double(23.45), MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
+            assertTrue(isObjectsEqual(returnObject, new Double(23.45)));
         } catch (Exception e) {
             fail();
         }
         System.out.println("minOccurs = 1 nillable true");
         try {
             returnObject = testAnyType(null, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, null));
-            returnObject = testAnyType(getOMElement(), MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, getOMElement()));
+            assertTrue(isObjectsEqual(returnObject, null));
+            returnObject = testAnyType(new Double(23.45), MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
+            assertTrue(isObjectsEqual(returnObject, new Double(23.45)));
         } catch (Exception e) {
             fail();
         }
@@ -204,17 +204,17 @@ public class XsdAnyElementsTest extends AbstractTest {
         }
 
         try {
-            returnObject = testAnyType(getOMElement(), MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
-            assertTrue(isOMElementsEqual(returnObject, getOMElement()));
+            returnObject = testAnyType(new Double(23.45), MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
+            assertTrue(isObjectsEqual(returnObject, new Double(23.45)));
         } catch (Exception e) {
             fail();
         }
 
     }
 
-    public OMElement testAnyType(OMElement innerElement, int type) throws Exception {
+    public Object testAnyType(Object innerElement, int type) throws Exception {
         OMElement omElement;
-        OMElement returnObject = null;
+        Object returnObject = null;
         String omElementString;
         switch (type) {
             case MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST : {

@@ -47,6 +47,16 @@ public class AbstractTest  extends TestCase {
         return isEqual;
     }
 
+     protected boolean isObjectsEqual(Object object1,Object object2){
+        boolean isEqual = false;
+        if ((object1 == null) || (object2 == null)){
+            isEqual = (object1 == object2);
+        } else {
+            isEqual = object1.equals(object2);
+        }
+        return isEqual;
+    }
+
     public void testMethod(){
 	    // dummy test method
     }

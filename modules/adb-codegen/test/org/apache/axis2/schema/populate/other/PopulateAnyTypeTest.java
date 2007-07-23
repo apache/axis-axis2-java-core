@@ -29,15 +29,8 @@ import org.apache.axiom.om.util.StAXUtils;
 
 public class PopulateAnyTypeTest extends TestCase {
 
-     private String xmlString = "<myObject xmlns=\"http://soapinterop.org/xsd2\">" +
-            "<soapStructures>" +
-            "<varFloat>3.3</varFloat>" +
-            "<varInt>5</varInt>" +
-            "<varString>Hello11</varString>" +
-            "<varString>Hello11</varString>" +
-            "<varString>Hello12</varString>" +
-            "<varString>Hello13</varString>" +
-            "</soapStructures>" +
+     private String xmlString = "<myObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://soapinterop.org/xsd2\" xsi:type=\"xsd:int\">" +
+            "5" +
             "</myObject>";
 
     public void testPopulate() throws Exception{
