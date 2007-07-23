@@ -45,15 +45,30 @@ public class ComplexExtenstionTest extends TestCase {
 
         try {
             OMElement omElement = testComplexElement.getOMElement(TestComplexElement.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
-            String omElementString = omElement.toStringWithConsume();
+            String omElementString;
+            XMLStreamReader xmlReader;
+            TestComplexElement result;
+
+            omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestComplexElement result = TestComplexElement.Factory.parse(xmlReader);
+            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            result = TestComplexElement.Factory.parse(xmlReader);
             assertEquals(result.getTestComplexElement().getFirst(),"Amila");
             assertEquals(result.getTestComplexElement().getMiddle(),"Chinthaka");
             assertEquals(result.getTestComplexElement().getLast(),"Suriarachchi");
             assertEquals(result.getTestComplexElement().getParentElement1(),"test1");
             assertEquals(result.getTestComplexElement().getParentElement2(),"test2");
+
+            omElementString = omElement.toString();
+            System.out.println("OM String ==> " + omElementString);
+            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            result = TestComplexElement.Factory.parse(xmlReader);
+            assertEquals(result.getTestComplexElement().getFirst(),"Amila");
+            assertEquals(result.getTestComplexElement().getMiddle(),"Chinthaka");
+            assertEquals(result.getTestComplexElement().getLast(),"Suriarachchi");
+            assertEquals(result.getTestComplexElement().getParentElement1(),"test1");
+            assertEquals(result.getTestComplexElement().getParentElement2(),"test2");
+
         } catch (Exception e) {
             assertFalse(true);
         }
