@@ -258,13 +258,19 @@ public class WSDLSerializationUtil {
 private static void generateDefaultSOAPBindingOperations(AxisService axisService, OMFactory omFactory, OMElement binding, OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap) {        Iterator iterator = axisService.getChildren();
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
             OMElement opElement = omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
             binding.addChild(opElement);
             String name = axisOperation.getName().getLocalPart();
             opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
                                                          tns.getPrefix() + ":" + name));
-            opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
-                                                         axisOperation.getSoapAction()));
+            String soapAction = axisOperation.getSoapAction();
+            if (soapAction != null) {
+                opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
+                        soapAction));
+            }
         }
     }
 
