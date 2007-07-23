@@ -450,9 +450,7 @@ public class AdminAgent extends AbstractAgent {
             String turnon = req.getParameter("turnon");
             if (serviceName != null) {
                 if (turnon != null) {
-                    AxisService service = configContext.getAxisConfiguration()
-                            .getServiceForActivation(serviceName);
-                    service.setActive(true);
+                    configContext.getAxisConfiguration().startService(serviceName);
                 }
             }
         }
@@ -467,9 +465,7 @@ public class AdminAgent extends AbstractAgent {
             String turnoff = req.getParameter("turnoff");
             if (serviceName != null) {
                 if (turnoff != null) {
-                    AxisService service =
-                            configContext.getAxisConfiguration().getService(serviceName);
-                    service.setActive(false);
+                    configContext.getAxisConfiguration().stopService(serviceName);
                 }
                 populateSessionInformation(req);
             }
