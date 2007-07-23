@@ -48,6 +48,7 @@ import java.net.URI;
 public class AxisService2WSDL20 implements WSDL2Constants {
 
     private AxisService axisService;
+    private String[] eprs = null;
 
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
@@ -268,7 +269,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST));
+                                                                           axisService, disableREST, eprs));
         }
 
         return descriptionElement;
@@ -428,5 +429,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             }
         }
         return axisOperationElement;
+    }
+
+    public void setEPRs(String[] eprs) {
+        this.eprs = eprs;
     }
 }
