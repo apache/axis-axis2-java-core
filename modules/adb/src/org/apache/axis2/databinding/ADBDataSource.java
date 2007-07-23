@@ -21,6 +21,7 @@ package org.apache.axis2.databinding;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.OMElementStreamWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -83,8 +84,10 @@ public abstract class ADBDataSource implements OMDataSource {
      */
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized
-        // we are safe in passing null here. 
-        return bean.getPullParser(parentQName);
+        // we are safe in passing null here.
+        OMElementStreamWriter omElementStreamWriter = new OMElementStreamWriter();
+        serialize(omElementStreamWriter);
+        return omElementStreamWriter.getOMElement().getXMLStreamReader();
     }
 
 }
