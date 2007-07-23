@@ -349,6 +349,9 @@ public class BeanUtil {
                     } else {
                         continue;
                     }
+                    OMAttribute attribute = parts.getAttribute(
+                            new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi"));
+
                     // if parts/@href != null then need to find element with id and deserialize.
                     // before that first check whether we already have it in the hashtable
                     String partsLocalName = parts.getLocalName();
@@ -359,18 +362,22 @@ public class BeanUtil {
                             continue;
 
                         Object partObj;
-                        if (SimpleTypeMapper.isSimpleType(parameters)) {
-                            partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                        } else if (SimpleTypeMapper.isCollection(parameters)) {
-                            partObj = SimpleTypeMapper.getArrayList((OMElement)
-                                    parts.getParent(), prty.getName());
-                        } else if (SimpleTypeMapper.isDataHandler(parameters)){
-                            partObj = SimpleTypeMapper.getDataHandler(parts);
-                        } else if (parameters.isArray()) {
-                            partObj = deserialize(parameters, (OMElement)parts.getParent(),
-                                    objectSupplier, prty.getName());
+                        if (attribute != null) {
+                            partObj = null;
                         } else {
-                            partObj = deserialize(parameters, parts, objectSupplier, null);
+                            if (SimpleTypeMapper.isSimpleType(parameters)) {
+                                partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                            } else if (SimpleTypeMapper.isCollection(parameters)) {
+                                partObj = SimpleTypeMapper.getArrayList((OMElement)
+                                        parts.getParent(), prty.getName());
+                            } else if (SimpleTypeMapper.isDataHandler(parameters)){
+                                partObj = SimpleTypeMapper.getDataHandler(parts);
+                            } else if (parameters.isArray()) {
+                                partObj = deserialize(parameters, (OMElement)parts.getParent(),
+                                        objectSupplier, prty.getName());
+                            } else {
+                                partObj = deserialize(parameters, parts, objectSupplier, null);
+                            }
                         }
                         Object [] parms = new Object[] { partObj };
                         Method writeMethod = prty.getWriteMethod();
