@@ -231,6 +231,13 @@
                 <include>axis2-xmlbeans-${version}.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>../../modules/tool/axis2-ant-plugin/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-ant-plugin-${version}.jar</include>
+            </includes>
+        </fileSet>
 
         <fileSet>
             <directory>../../legal</directory>
