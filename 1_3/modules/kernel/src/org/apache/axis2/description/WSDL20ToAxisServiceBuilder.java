@@ -134,15 +134,13 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     public WSDL20ToAxisServiceBuilder(String wsdlUri,
-                                      String name, String interfaceName) throws Exception {
-        WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
-
+                                      String name, String interfaceName) throws WSDLException {
         String fullPath = wsdlUri;
         if (!wsdlUri.startsWith("http://")) {
             File file = new File(wsdlUri);
             fullPath = file.getAbsolutePath();
         }
-        Description description = wsdlReader.readWSDL(fullPath);
+        Description description = readInTheWSDLFile(fullPath);
 
         DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
@@ -358,7 +356,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @throws AxisFault
      */
-    protected void setup() throws AxisFault {
+    protected void setup() throws AxisFault, WSDLException {
         if (setupComplete) { // already setup, just do nothing and return
             return;
         }
@@ -379,6 +377,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Document document = documentBuilder.parse(in);
 
                     WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+                    // This turns on WSDL validation which is set off by default.
+                    reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
                     WSDLSource wsdlSource = reader.createWSDLSource();
                     wsdlSource.setSource(document.getDocumentElement());
                     wsdlSource.setBaseURI(new URI(getBaseUri()));
@@ -405,7 +405,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             setupComplete = true;
         } catch (AxisFault e) {
             throw e; // just rethrow AxisFaults
-        } catch (Exception e) {
+        } catch (WSDLException e) {
+            // Preserve the WSDLException
+            throw e;
+        } catch(Exception e) {
             throw AxisFault.makeFault(e);
         }
     }
@@ -1016,11 +1019,13 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private Description readInTheWSDLFile(String wsdlURI)
-            throws WSDLException {
+    private Description readInTheWSDLFile(String wsdlURI) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        return reader.readWSDL(wsdlURI);
+        // This turns on WSDL validation which is set off by default.
+//        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
+        Description description1 = reader.readWSDL(wsdlURI);
+        return description1;
     }
 
     /**
