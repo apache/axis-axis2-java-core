@@ -23,6 +23,7 @@
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" ref="service"/>
                 <xs:element minOccurs="0" ref="parameter"/>
+                <xs:element minOccurs="0" ref="module"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
