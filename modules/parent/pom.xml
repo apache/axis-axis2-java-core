@@ -114,7 +114,7 @@
         <jettison.version>1.0-RC1</jettison.version>
         <jibx.version>1.1.5</jibx.version>
         <junit.version>4.3.1</junit.version>
-        <log4j.version>1.2.13</log4j.version>
+        <log4j.version>1.2.14</log4j.version>
         <maven.archiver.version>2.2</maven.archiver.version>
         <maven.artifact.version>2.0.4</maven.artifact.version>
         <maven.assembly.version>2.2-beta-1</maven.assembly.version>
@@ -809,6 +809,11 @@
 				<artifactId>jalopy</artifactId>
                 <version>${jalopy.version}</version>
 			</dependency>
+            <dependency>
+                 <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.version}</version>
+           </dependency>
         </dependencies>
     </dependencyManagement>
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
@@ -847,8 +852,16 @@
             <groupId>${stax.impl.groupid}</groupId>
             <artifactId>${stax.impl.artifactid}</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
     </dependencies>
+
     <profiles>
         <profile>
             <id>java14</id>
