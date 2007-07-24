@@ -277,11 +277,12 @@ public class HandlerChainProcessor {
                 } else {
                     callCloseHandlers(0, handlers.size() - 1, direction);
                 }
-                if (savedException != null) {
-                    // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw any
-                    // other runtime exception --> No response" case.
-                    throw savedException;
-                }
+            }
+            if (savedException != null) {
+                // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw 
+                // ProtocolException or any other runtime exception --> No 
+                // response" case.
+                throw savedException;
             }
         }
     }

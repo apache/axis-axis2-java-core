@@ -562,7 +562,6 @@ public class HandlerChainProcessorTests extends TestCase {
         // reset result
         result = "";
 
-        // we want one false response:
         soaphandler1_MessageResultDesired = ResultDesired.TRUE;
         soaphandler1_FaultResultDesired = ResultDesired.TRUE;
         soaphandler2_MessageResultDesired = ResultDesired.TRUE;
@@ -575,11 +574,16 @@ public class HandlerChainProcessorTests extends TestCase {
         HandlerChainProcessor processor = new HandlerChainProcessor(handlers, Protocol.soap11);
         MessageContext mc1 = new MessageContext();
         mc1.setMEPContext(new MEPContext(mc1));
-        processor.processChain(mc1.getMEPContext(),
-                               HandlerChainProcessor.Direction.IN,
-                               HandlerChainProcessor.MEP.REQUEST,
-                               false);
-
+        Exception e = null;
+        try {
+            processor.processChain(mc1.getMEPContext(),
+                                   HandlerChainProcessor.Direction.IN,
+                                   HandlerChainProcessor.MEP.REQUEST,
+                                   false);
+        } catch (ProtocolException pe) {
+            e = pe;
+        }
+        assertNotNull(e);
         // no handleFault calls
         assertEquals("S2m:S1m:L1m:L1c:S1c:S2c:", result);
     }

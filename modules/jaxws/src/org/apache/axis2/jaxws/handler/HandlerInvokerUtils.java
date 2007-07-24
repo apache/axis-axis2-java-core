@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.message.Protocol;
 
 import javax.xml.ws.handler.Handler;
@@ -116,11 +117,17 @@ public class HandlerInvokerUtils {
             }
         } catch (RuntimeException re) {
             /*
-             * handler framework should only throw an exception here if
-             * we are in the server outbound case.  Make sure the message
-             * context and message are transformed.
+             * handler framework will throw an exception here on client outbound flow and
+             * server outbound flow.  Make sure the message context and message are transformed
+             * and the exception is saved on the message context.
              */
             HandlerChainProcessor.convertToFaultMessage(mepMessageCtx, re, proto);
+            if (mepMessageCtx.getRequestMessageContext() != null) {
+                mepMessageCtx.getRequestMessageContext().setCausedByException(new AxisFault("", re));
+            }
+            if (mepMessageCtx.getResponseMessageContext() != null) {
+                mepMessageCtx.getResponseMessageContext().setCausedByException(new AxisFault("", re));
+            }
             return false;
         }
 
