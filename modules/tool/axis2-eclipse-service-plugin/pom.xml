@@ -233,7 +233,7 @@
 								<filter token="version_number" value="${version_number}"/>
 								<filter token="ant.version" value="${ant.version}"/>
 								<filter token="commons.logging.version" value="${commons.logging.version}"/>
-								<filter token="log4j.version" value="1.2.13"/>
+								<filter token="log4j.version" value="1.2.14"/>
 								<delete dir="./target/plugin/${service.plugin.version}"/>
 								<mkdir dir="./target/plugin/${service.plugin.version}"/>
 								<delete dir="./target/dist"/>
