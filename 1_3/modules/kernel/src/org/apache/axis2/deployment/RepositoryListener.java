@@ -300,7 +300,7 @@ public class RepositoryListener implements DeploymentConstants {
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
                         addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
-                                        WSInfo.TYPE_CUSTOM);
+                                        WSInfo.TYPE_SERVICE);
                     }
                 }
             }
