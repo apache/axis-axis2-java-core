@@ -24,6 +24,8 @@ import org.tempuri.defaultnamepaces.TestSimpleUnion;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -65,9 +67,9 @@ public class DefaultNamespacesTest extends TestCase {
         try {
 
             XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(stringWriter);
-
+            MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
             testElement1.getTestElement1().serialize(new QName("http://tempuri.org/defaultnamepaces", "TestElement1", "ns1"),
-                    OMAbstractFactory.getSOAP11Factory(), xmlStreamWriter);
+                    OMAbstractFactory.getSOAP11Factory(), mtomAwareXMLStreamWriter);
             xmlStreamWriter.flush();
             xmlStreamWriter.close();
             String omElementString = stringWriter.toString();
