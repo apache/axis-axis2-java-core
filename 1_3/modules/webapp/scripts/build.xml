@@ -73,6 +73,9 @@
 				<include name="**" />
 				<exclude name="**servlet**" />
 				<exclude name="ant*.jar" />
+				<exclude name="axis2-adb-codegen*.jar"/>
+				<exclude name="axis2-codegen*.jar"/>
+				<exclude name="jibx-bind*.jar"/>
 			</lib>
 			<webinf dir="${temp}/WEB-INF" />
 			<fileset dir="${temp}">
