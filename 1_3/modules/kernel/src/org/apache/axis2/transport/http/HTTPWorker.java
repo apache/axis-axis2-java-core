@@ -171,6 +171,13 @@ public class HTTPWorker implements Worker {
                     //write out the correct schema
                     Map schemaTable = service.getSchemaMappingTable();
                     XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
+                    if (schema == null) {
+                        int dotIndex = schemaName.indexOf('.');
+                        if (dotIndex > 0) {
+                            String schemaKey = schemaName.substring(0,dotIndex);
+                            schema = (XmlSchema) schemaTable.get(schemaKey);
+                        }
+                    }
                     //schema found - write it to the stream
                     if (schema != null) {
                         response.setStatus(HttpStatus.SC_OK);
