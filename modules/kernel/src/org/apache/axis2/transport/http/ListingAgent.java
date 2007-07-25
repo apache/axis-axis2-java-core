@@ -272,6 +272,13 @@ public class ListingAgent extends AbstractAgent {
                     if (!"".equals(xsds)) {
                         XmlSchema schema =
                                 (XmlSchema) schemaMappingtable.get(xsds);
+                        if (schema == null) {
+                            int dotIndex = xsds.indexOf('.');
+                            if (dotIndex > 0) {
+                                String schemaKey = xsds.substring(0,dotIndex);
+                                schema = (XmlSchema) schemaMappingtable.get(schemaKey);
+                            }
+                        }
                         if (schema != null) {
                             //schema is there - pump it outs
                             OutputStream out = res.getOutputStream();
