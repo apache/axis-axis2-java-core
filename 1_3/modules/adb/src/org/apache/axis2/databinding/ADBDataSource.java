@@ -21,6 +21,10 @@ package org.apache.axis2.databinding;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.OMElementStreamWriter;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareOMBuilder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -73,8 +77,12 @@ public abstract class ADBDataSource implements OMDataSource {
      * @throws XMLStreamException
      * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
-    public abstract void serialize(XMLStreamWriter xmlWriter)
-            throws XMLStreamException;
+    public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException{
+        MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlWriter);
+        serialize(mtomAwareXMLStreamWriter);
+    }
+
+    public abstract void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
 
 
     /**
@@ -83,8 +91,10 @@ public abstract class ADBDataSource implements OMDataSource {
      */
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized
-        // we are safe in passing null here. 
-        return bean.getPullParser(parentQName);
+        // we are safe in passing null here.
+        MTOMAwareOMBuilder mtomAwareOMBuilder = new MTOMAwareOMBuilder();
+        serialize(mtomAwareOMBuilder);
+        return mtomAwareOMBuilder.getOMElement().getXMLStreamReader();
     }
 
 }

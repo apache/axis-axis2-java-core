@@ -710,7 +710,7 @@
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
 
-                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
                        <xsl:value-of select="$name"/>.this.serialize(parentQName,factory,xmlWriter);
                  }
                };
@@ -721,7 +721,7 @@
                 org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
 
-                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
                        <xsl:value-of select="$name"/>.this.serialize(MY_QNAME,factory,xmlWriter);
                  }
                };
@@ -735,7 +735,7 @@
 
          public void serialize(final javax.xml.namespace.QName parentQName,
                                final org.apache.axiom.om.OMFactory factory,
-                               javax.xml.stream.XMLStreamWriter xmlWriter)
+                               org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
             <xsl:choose>
 
@@ -1497,8 +1497,7 @@
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
-                                        org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-                                        <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                       xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
                                     }
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -1689,8 +1688,7 @@
                                                     <!-- Handling the null byte array -->
                                                 if (<xsl:value-of select="$varName"/>!=null)
                                                 {
-                                                    org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-                                                    <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                                    xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
                                                 }
                                              </xsl:when>
                                             <xsl:otherwise>
