@@ -377,7 +377,7 @@ will <strong>not</strong> work otherwise.</p>
 ./META-INF/services.xml
 ./applicationContext.xml
 ./lib
-./lib/axis2-spring-SNAPSHOT.jar
+./lib/axis2-spring-1.3.jar
 ./lib/spring.jar
 ./spring
 ./spring/MyBean.class
