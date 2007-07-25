@@ -219,14 +219,14 @@ public class ListingAgent extends AbstractAgent {
             if (serviceObj != null) {
                 boolean isHttp = "http".equals(req.getScheme());
                 if (wsdl2 >= 0) {
-                    OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl2");
-                    if (!"".equals(wsdlName)) {
+                    if (wsdlName != null && wsdlName.length()>0) {
                         InputStream in = ((AxisService) serviceObj).getClassLoader()
                                 .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
                         if (in != null) {
+                            OutputStream out = res.getOutputStream();
                             out.write(IOUtils.getStreamAsByteArray(in));
                             out.flush();
                             out.close();
@@ -234,6 +234,7 @@ public class ListingAgent extends AbstractAgent {
                             res.sendError(HttpServletResponse.SC_NOT_FOUND);
                         }
                     } else {
+                        OutputStream out = res.getOutputStream();
                         ((AxisService) serviceObj)
                                 .printWSDL2(out, ip);
                         out.flush();
@@ -246,7 +247,7 @@ public class ListingAgent extends AbstractAgent {
                     String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl");
 
-                    if (!"".equals(wsdlName)) {
+                    if (wsdlName != null && wsdlName.length()>0) {
                         AxisService axisServce = (AxisService) serviceObj;
                         axisServce.printUserWSDL(out, wsdlName);
                         out.flush();
@@ -258,7 +259,6 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else if (xsd >= 0) {
-                    OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     AxisService axisService = (AxisService) serviceObj;
                     //call the populator
@@ -274,6 +274,7 @@ public class ListingAgent extends AbstractAgent {
                                 (XmlSchema) schemaMappingtable.get(xsds);
                         if (schema != null) {
                             //schema is there - pump it outs
+                            OutputStream out = res.getOutputStream();
                             schema.write(new OutputStreamWriter(out, "UTF8"));
                             out.flush();
                             out.close();
@@ -281,6 +282,7 @@ public class ListingAgent extends AbstractAgent {
                             InputStream in = axisService.getClassLoader()
                                     .getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
                             if (in != null) {
+                                OutputStream out = res.getOutputStream();
                                 out.write(IOUtils.getStreamAsByteArray(in));
                                 out.flush();
                                 out.close();
@@ -301,6 +303,7 @@ public class ListingAgent extends AbstractAgent {
                         if (list.size() > 0) {
                             XmlSchema schema = axisService.getSchema(0);
                             if (schema != null) {
+                                OutputStream out = res.getOutputStream();
                                 schema.write(new OutputStreamWriter(out, "UTF8"));
                                 out.flush();
                                 out.close();
@@ -310,6 +313,7 @@ public class ListingAgent extends AbstractAgent {
                             String xsdNotFound = "<error>" +
                                     "<description>Unable to access schema for this service</description>" +
                                     "</error>";
+                            OutputStream out = res.getOutputStream();
                             out.write(xsdNotFound.getBytes());
                             out.flush();
                             out.close();
@@ -317,8 +321,6 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else if (policy >= 0) {
-
-                    OutputStream out = res.getOutputStream();
 
                     ExternalPolicySerializer serializer = new ExternalPolicySerializer();
                     serializer.setAssertionsToFilter(configContext
@@ -336,6 +338,7 @@ public class ListingAgent extends AbstractAgent {
                             XMLStreamWriter writer;
 
                             try {
+                                OutputStream out = res.getOutputStream();
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
@@ -356,6 +359,7 @@ public class ListingAgent extends AbstractAgent {
 
                         } else {
 
+                            OutputStream out = res.getOutputStream();
                             res.setContentType("text/html");
                             String outStr = "<b>No policy found for id="
                                             + idParam + "</b>";
@@ -371,6 +375,7 @@ public class ListingAgent extends AbstractAgent {
                             XMLStreamWriter writer;
 
                             try {
+                                OutputStream out = res.getOutputStream();
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
@@ -390,6 +395,7 @@ public class ListingAgent extends AbstractAgent {
                             }
                         } else {
 
+                            OutputStream out = res.getOutputStream();
                             res.setContentType("text/html");
                             String outStr = "<b>No effective policy for "
                                             + serviceName + " servcie</b>";

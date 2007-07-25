@@ -1136,7 +1136,9 @@ public class AxisService extends AxisDescription {
                                  "set useOriginalwsdl as false in your services.xml</reason>";
             out.write(wsdlntfound.getBytes());
             if (e != null) {
-                e.printStackTrace(new PrintWriter(out));
+                PrintWriter pw = new PrintWriter(out);
+                e.printStackTrace(pw);
+                pw.flush();
             }
             out.write("</error>".getBytes());
             out.flush();
