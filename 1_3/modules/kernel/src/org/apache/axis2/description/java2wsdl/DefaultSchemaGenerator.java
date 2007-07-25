@@ -174,6 +174,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                             annotation.getValue(AnnotationConstants.TARGETNAMESPACE).asString();
                     if (tns != null && !"".equals(tns)) {
                         targetNamespace = tns;
+                        schemaTargetNameSpace = tns;
                     }
                 }
                 methods = processMethods(jclass.getDeclaredMethods());
