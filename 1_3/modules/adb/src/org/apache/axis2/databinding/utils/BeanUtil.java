@@ -149,8 +149,7 @@ public class BeanUtil {
                     Method readMethod = propDesc.getReadMethod();
                     Object value;
                     if(readMethod!=null){
-                      value = readMethod.invoke(beanObject,
-                                                                   null);
+                      value = readMethod.invoke(beanObject, null);
                     } else {
                         throw new AxisFault("can not find read method for : "  + propDesc.getName());
                     }
@@ -159,7 +158,6 @@ public class BeanUtil {
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
-
                         Method readMethod = propDesc.getReadMethod();
                         Object value;
                         if(readMethod!=null){
@@ -169,17 +167,21 @@ public class BeanUtil {
                             throw new AxisFault("can not find read method for : "  + propDesc.getName());
                         }
                         if (value != null) {
-                            int i1 = Array.getLength(value);
-                            for (int j = 0; j < i1; j++) {
-                                Object o = Array.get(value, j);
+                            if("byte".equals(ptype.getComponentType().getName())) {
                                 addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
-                                object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
+                                object.add(Base64.encode((byte[]) value));
+                            } else {
+                                int i1 = Array.getLength(value);
+                                for (int j = 0; j < i1; j++) {
+                                    Object o = Array.get(value, j);
+                                    addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
+                                    object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
+                                }
                             }
                         } else {
                             addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                             object.add(value);
                         }
-
                     } else {
                         Object value [] = (Object[])propDesc.getReadMethod().invoke(beanObject,
                                                                                     null);
@@ -302,25 +304,29 @@ public class BeanUtil {
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = beanClass.getComponentType();
-                Iterator parts = beanElement.getChildElements();
-                OMElement omElement;
-                while (parts.hasNext()) {
-                    Object objValue = parts.next();
-                    if (objValue instanceof OMElement) {
-                        omElement = (OMElement)objValue;
-                        if (!arrayLocalName.equals(omElement.getLocalName())) {
-                            continue;
-                        }
-                        Object obj = deserialize(arrayClassType,
-                                                 omElement,
-                                                 objectSupplier, null);
-                        if (obj != null) {
-                            valueList.add(obj);
+                if ("byte".equals(arrayClassType.getName())) {
+                    return Base64.decode(beanElement.getFirstElement().getText());
+                } else {
+                    Iterator parts = beanElement.getChildElements();
+                    OMElement omElement;
+                    while (parts.hasNext()) {
+                        Object objValue = parts.next();
+                        if (objValue instanceof OMElement) {
+                            omElement = (OMElement)objValue;
+                            if (!arrayLocalName.equals(omElement.getLocalName())) {
+                                continue;
+                            }
+                            Object obj = deserialize(arrayClassType,
+                                    omElement,
+                                    objectSupplier, null);
+                            if (obj != null) {
+                                valueList.add(obj);
+                            }
                         }
                     }
+                    return ConverterUtil.convertToArray(arrayClassType,
+                            valueList);
                 }
-                return ConverterUtil.convertToArray(arrayClassType,
-                                                    valueList);
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
