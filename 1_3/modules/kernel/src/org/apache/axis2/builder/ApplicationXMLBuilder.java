@@ -48,25 +48,27 @@ public class ApplicationXMLBuilder implements Builder {
             throws AxisFault {
         SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
-        try {
-            PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream);
-            int b;
-            if ((b = pushbackInputStream.read()) > 0) {
-                pushbackInputStream.unread(b);
-                StAXBuilder builder =
-                        BuilderUtil.getPOXBuilder(pushbackInputStream,
-                                                  (String) messageContext.getProperty(
-                                                          Constants.Configuration.CHARACTER_SET_ENCODING));
-                OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
-                documentElement.setParent(null);
-                SOAPBody body = soapEnvelope.getBody();
-                body.addChild(documentElement);
-            }
+        if (inputStream != null) {
+            try {
+                PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream);
+                int b;
+                if ((b = pushbackInputStream.read()) > 0) {
+                    pushbackInputStream.unread(b);
+                    StAXBuilder builder =
+                            BuilderUtil.getPOXBuilder(pushbackInputStream,
+                                    (String) messageContext.getProperty(
+                                            Constants.Configuration.CHARACTER_SET_ENCODING));
+                    OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
+                    documentElement.setParent(null);
+                    SOAPBody body = soapEnvelope.getBody();
+                    body.addChild(documentElement);
+                }
 
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
+            } catch (XMLStreamException e) {
+                throw AxisFault.makeFault(e);
+            } catch (IOException e) {
+                throw AxisFault.makeFault(e);
+            }
         }
         return soapEnvelope;
     }
