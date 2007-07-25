@@ -36,6 +36,76 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jibx</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                 <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant-launcher</artifactId>
+		 </exclusion>
+		 <exclusion>
+		    <groupId>org.apache.ant</groupId>
+		    <artifactId>ant</artifactId>
+		 </exclusion>
+            </exclusions>
+	</dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                 <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant-launcher</artifactId>
+		 </exclusion>
+		 <exclusion>
+		    <groupId>org.apache.ant</groupId>
+		    <artifactId>ant</artifactId>
+		 </exclusion>
+            </exclusions>
+	</dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jalopy</groupId>
+            <artifactId>jalopy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>${version}</version>
+            <exclusions>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-core</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-beans</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-context</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-web</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+               </exclusion>
+             </exclusions>
+	</dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-fastinfoset</artifactId>
+            <version>${version}</version>
+	</dependency>
+	<dependency>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws</artifactId>
             <version>${version}</version>
             <exclusions>
