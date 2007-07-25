@@ -361,7 +361,7 @@ public class BeanUtil {
                     // if parts/@href != null then need to find element with id and deserialize.
                     // before that first check whether we already have it in the hashtable
                     String partsLocalName = parts.getLocalName();
-                    PropertyDescriptor prty = (PropertyDescriptor)properties.get(partsLocalName);
+                    PropertyDescriptor prty = (PropertyDescriptor)properties.remove(partsLocalName);
                     if (prty != null) {
                         Class parameters = prty.getPropertyType();
                         if (prty.equals("class"))
