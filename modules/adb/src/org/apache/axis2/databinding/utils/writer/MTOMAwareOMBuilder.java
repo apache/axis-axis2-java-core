@@ -17,7 +17,6 @@ package org.apache.axis2.databinding.utils.writer;
 
 import org.apache.axiom.om.*;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.NamespaceContext;
 import javax.activation.DataHandler;
@@ -26,8 +25,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-public class OMElementStreamWriter implements XMLStreamWriter {
-
+public class MTOMAwareOMBuilder implements MTOMAwareXMLStreamWriter {
     // this is the om Element we are going to create
     private OMElement rootElement;
     private OMFactory omFactory;
@@ -44,7 +42,7 @@ public class OMElementStreamWriter implements XMLStreamWriter {
     private OMStreamNamespaceContext omStreamNamespaceContext;
 
 
-    public OMElementStreamWriter() {
+    public MTOMAwareOMBuilder() {
         omFactory = OMAbstractFactory.getOMFactory();
         omElementStack = new Stack();
         currentOMElement = null;
@@ -133,10 +131,11 @@ public class OMElementStreamWriter implements XMLStreamWriter {
     public void flush() throws XMLStreamException {
         // nothing to do
 
+
     }
 
-    public void setDataHandler(DataHandler dataHandler){
-        OMText omText = omFactory.createOMText(dataHandler,true);
+    public void setDataHandler(DataHandler dataHandler) {
+        OMText omText = omFactory.createOMText(dataHandler, true);
         currentOMElement.addChild(omText);
     }
 
@@ -165,7 +164,7 @@ public class OMElementStreamWriter implements XMLStreamWriter {
     }
 
     public void writeComment(String string) throws XMLStreamException {
-        omFactory.createOMComment(currentOMElement,string);
+        omFactory.createOMComment(currentOMElement, string);
     }
 
     public void writeProcessingInstruction(String string) throws XMLStreamException {
@@ -219,7 +218,7 @@ public class OMElementStreamWriter implements XMLStreamWriter {
 
     public void setDefaultNamespace(String namespace) throws XMLStreamException {
         rootElement.declareDefaultNamespace(namespace);
-        getOMNamespace(namespace,"");
+        getOMNamespace(namespace, "");
     }
 
     public void setNamespaceContext(NamespaceContext namespaceContext) throws XMLStreamException {
@@ -232,5 +231,10 @@ public class OMElementStreamWriter implements XMLStreamWriter {
 
     public Object getProperty(String string) throws IllegalArgumentException {
         throw new UnsupportedOperationException("this method has not yet been implemented");
+    }
+
+    public void writeDataHandler(DataHandler dataHandler) throws XMLStreamException {
+        OMText omText = omFactory.createOMText(dataHandler, true);
+        currentOMElement.addChild(omText);
     }
 }
