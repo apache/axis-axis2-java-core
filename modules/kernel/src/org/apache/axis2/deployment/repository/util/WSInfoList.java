@@ -64,14 +64,20 @@ public class WSInfoList implements DeploymentConstants {
      * @param file actual jar files for either Module or service
      */
     public synchronized void addWSInfoItem(File file, Deployer deployer , int type) {
-        WSInfo info = getFileItem(file,deployer,type);
-        if (deploymentEngine.isHotUpdate() && isModified(file, info)) {
-            info.setLastModifiedDate(file.lastModified());
-            WSInfo wsInfo = new WSInfo(info.getFileName(), info.getLastModifiedDate(), deployer,type);
-            deploymentEngine.addWSToUndeploy(wsInfo);           // add entry to undeploy list
-            DeploymentFileData deploymentFileData = new DeploymentFileData(file, deployer);
-            deploymentEngine.addWSToDeploy(deploymentFileData);    // add entry to deploylist
+        WSInfo info = (WSInfo) currentJars.get(file.getName());
+        if (info != null) {
+            if (deploymentEngine.isHotUpdate() && isModified(file, info)) {
+//            info.setLastModifiedDate(file.lastModified());
+                WSInfo wsInfo = new WSInfo(info.getFileName(), info.getLastModifiedDate(), deployer,type);
+                deploymentEngine.addWSToUndeploy(wsInfo);           // add entry to undeploy list
+                DeploymentFileData deploymentFileData = new DeploymentFileData(file, deployer);
+                deploymentEngine.addWSToDeploy(deploymentFileData);    // add entry to deploylist
+            }
+        } else {
+            info = getFileItem(file,deployer,type);
+            setLastModifiedDate(file,info);
         }
+
         jarList.add(info.getFileName());
     }
 
@@ -174,14 +180,18 @@ public class WSInfoList implements DeploymentConstants {
     }
 
     private void setLastModifiedDate(File file, WSInfo wsInfo) {
-        File files [] = file.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            File fileItem = files[i];
-            if (fileItem.isDirectory()) {
-                setLastModifiedDate(fileItem, wsInfo);
-            } else {
-                fileItem.setLastModified(wsInfo.getLastModifiedDate());
+        if (file.isDirectory()) {
+            File files [] = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File fileItem = files[i];
+                if (fileItem.isDirectory()) {
+                    setLastModifiedDate(fileItem, wsInfo);
+                } else {
+                    fileItem.setLastModified(wsInfo.getLastModifiedDate());
+                }
             }
+        } else {
+            file.setLastModified(wsInfo.getLastModifiedDate());
         }
     }
 
