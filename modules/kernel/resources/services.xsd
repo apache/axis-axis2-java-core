@@ -46,6 +46,7 @@
             <xs:attribute name="name"/>
             <xs:attribute name="scope" type="xs:NCName"/>
             <xs:attribute name="targetNamespace" type="xs:anyURI"/>
+            <xs:attribute name="activate" type="xs:boolean" use="optional"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="description" type="xs:string"/>
