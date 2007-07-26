@@ -117,7 +117,7 @@ public class HTTPTransportUtils {
      * @return true if SwA needs to be enabled
      */
     public static boolean doWriteMTOM(MessageContext msgContext) {
-        boolean enableMTOM = false;
+        boolean enableMTOM;
         Object enableMTOMObject = null;
         // First check the whether MTOM is enabled by the configuration
         // (Eg:Axis2.xml, services.xml)
@@ -157,7 +157,7 @@ public class HTTPTransportUtils {
      * @return true if SwA needs to be enabled
      */
     public static boolean doWriteSwA(MessageContext msgContext) {
-        boolean enableSwA = false;
+        boolean enableSwA;
         Object enableSwAObject = null;
         // First check the whether SwA is enabled by the configuration
         // (Eg:Axis2.xml, services.xml)
@@ -246,8 +246,7 @@ public class HTTPTransportUtils {
         } else {
             msgContext.setDoingREST(true);
             msgContext.setEnvelope(envelope);
-            AxisEngine engine = new AxisEngine(configurationContext);
-            engine.receive(msgContext);
+            AxisEngine.receive(msgContext);
             return true;
         }
     }

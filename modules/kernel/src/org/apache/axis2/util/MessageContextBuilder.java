@@ -485,10 +485,11 @@ public class MessageContextBuilder {
             }
         }
 
-        // defaulting to fault code Sender, if no message is available
+        // defaulting to fault code Receiver, if no message is available
         if (faultCode == null && context.getEnvelope() != null) {
             soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
-                    ? getSenderFaultCode(context.getEnvelope().getNamespace())
+                    ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":" +
+                        context.getEnvelope().getVersion().getReceiverFaultCode().getLocalPart()
                     : soapFaultCode;
         }
         
