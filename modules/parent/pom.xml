@@ -88,7 +88,7 @@
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.4</antlr.version>
         <activemq.version>4.1.1</activemq.version>
-        <axiom.version>SNAPSHOT</axiom.version>
+        <axiom.version>1.2.5</axiom.version>
         <backport.util.concurrent.version>2.2</backport.util.concurrent.version>
         <bcel.version>5.2</bcel.version>
         <bsf.version>2.4.0</bsf.version>
