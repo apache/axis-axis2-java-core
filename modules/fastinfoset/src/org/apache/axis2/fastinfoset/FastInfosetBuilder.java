@@ -58,10 +58,10 @@ public class FastInfosetBuilder implements Builder {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Processing a Document with the content type: " + contentType);
 		}
+		//Create a instance of the StAX Parser which can handle the fast infoset stream 
 		XMLStreamReader streamReader = new StAXDocumentParser(inputStream);
-		//OMXMLParserWrapper builder = new StAXOMBuilder(streamReader);
 		StAXBuilder builder = new StAXSOAPModelBuilder(streamReader);
-		//TODO Check whether we need to perform any validations here...
+
 		return builder.getDocumentElement();
 	}
 }

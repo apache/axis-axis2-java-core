@@ -48,7 +48,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
 	private Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);
 	
 	/**
-	 * Plain Fast Infoset message formatter doesn't need to handle SOAP. Hence do nothing.
+	 * Fast Infoset message formatter doesn't need to handle SOAP. Hence do nothing.
 	 * 
 	 * @see org.apache.axis2.transport.MessageFormatter#formatSOAPAction(org.apache.axis2.context.MessageContext, org.apache.axiom.om.OMOutputFormat, java.lang.String)
 	 */
@@ -65,16 +65,14 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
 	 */
 	public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
 			throws AxisFault {
-//		OMElement element = messageContext.getEnvelope().getBody().getFirstElement();
 		OMElement element = messageContext.getEnvelope();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		
 		try {
 			//Creates StAX document serializer which actually implements the XMLStreamWriter
 			XMLStreamWriter streamWriter = new StAXDocumentSerializer(outStream);
-//			streamWriter.writeStartDocument();
 			element.serializeAndConsume(streamWriter);
-			//TODO Looks like the SOAP envelop doesn't have a end document tag. Find out why?
+			//TODO Looks like the SOAP envelop doesn't have an end document tag. Find out why?
 			streamWriter.writeEndDocument();
 			
 			return outStream.toByteArray();
@@ -95,7 +93,7 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
 		String contentType = (String) messageContext.getProperty(Constants.Configuration.CONTENT_TYPE);
 		String encoding = format.getCharSetEncoding();
 		
-		//FIXME Is this a right thing to do? Need to clarify with a vetarant
+		//If the Content Type is not available with the property "Content Type" retrieve it from the property "Message Type"
 		if (contentType == null) {
 			contentType = (String) messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
 		}
@@ -146,14 +144,11 @@ public class FastInfosetMessageFormatter implements MessageFormatter {
 	 */
 	public void writeTo(MessageContext messageContext, OMOutputFormat format,
 			OutputStream outputStream, boolean preserve) throws AxisFault {
-		
-		//OMElement element = messageContext.getEnvelope().getBody().getFirstElement();
         OMElement element = messageContext.getEnvelope();
 		
 		try {
 			//Create the StAX document serializer
 			XMLStreamWriter streamWriter = new StAXDocumentSerializer(outputStream);
-//			streamWriter.writeStartDocument();
 			if (preserve) {
 				element.serialize(streamWriter);
 			} else {

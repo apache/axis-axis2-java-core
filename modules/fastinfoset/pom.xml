@@ -52,10 +52,6 @@
 			<artifactId>commons-logging</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${stax.impl.groupid}</groupId>
-			<artifactId>${stax.impl.artifactid}</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
@@ -103,6 +99,26 @@
             <artifactId>neethi</artifactId>
         </dependency>
     </dependencies>
+	<profiles>
+		<profile>
+			<id>java14</id>
+			<activation>
+				<jdk>1.4</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.sun.xml.fastinfoset</groupId>
+					<artifactId>FastInfoset</artifactId>
+					<version>1.1.8</version>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>3.8.2</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
