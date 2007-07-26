@@ -362,6 +362,8 @@ class OutInAxisOperationClient extends OperationClient {
                 msgContext.getConfigurationContext().createMessageContext();
 
         responseMessageContext.setServerSide(false);
+        responseMessageContext.setOperationContext(msgContext.getOperationContext());
+        responseMessageContext.setOptions(new Options(options));
         responseMessageContext.setMessageID(msgContext.getMessageID());
         addMessageContext(responseMessageContext);
         responseMessageContext.setServiceContext(msgContext.getServiceContext());
