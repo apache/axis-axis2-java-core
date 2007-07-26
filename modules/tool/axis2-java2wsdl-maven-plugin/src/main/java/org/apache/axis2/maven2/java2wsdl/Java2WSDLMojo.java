@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
+import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -43,6 +45,10 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
  * @requiresDependencyResolution compile
  */
 public class Java2WSDLMojo extends AbstractMojo {
+    public static final String OPEN_BRACKET = "[";
+    public static final String CLOSE_BRACKET = "]";
+    public static final String COMMA = ",";
+
     /**
      * The maven project.
      * @parameter expression="${project}"
@@ -95,6 +101,72 @@ public class Java2WSDLMojo extends AbstractMojo {
      */
     private String outputFileName;
 
+    /**
+     * Style for the wsdl
+     * @parameter expression="${axis2.java2wsdl.style}"
+     */
+    private String style;
+
+    /**
+     * Use for the wsdl
+     * @parameter expression="${axis2.java2wsdl.use}"
+     */
+    private String use;
+
+    /**
+     * Version for the wsdl
+     * @parameter expression="${axis2.java2wsdl.wsdlVersion}"
+     */
+    private String wsdlVersion;
+
+    /**
+     * Namespace Generator
+     * @parameter expression="${axis2.java2wsdl.nsGenClassName}"
+     */
+    private String nsGenClassName;
+
+    /**
+     * Schema Generator
+     * @parameter expression="${axis2.java2wsdl.nsGenClassName}"
+     */
+    private String schemaGenClassName;
+
+    /**
+     * Location URI in the wsdl
+     * @parameter expression="${axis2.java2wsdl.locationUri}"
+     */
+    private String locationUri;
+
+    /**
+     * attrFormDefault setting for the schema
+     * @parameter expression="${axis2.java2wsdl.attrFormDefault}"
+     */
+    private String attrFormDefault;
+
+    /**
+     * elementFormDefault setting for the schema
+     * @parameter expression="${axis2.java2wsdl.elementFormDefault}"
+     */
+    private String elementFormDefault;
+
+    /**
+     * Switch on the Doc/Lit/Bare style schema
+     * @parameter expression="${axis2.java2wsdl.docLitBare}"
+     */
+    private String docLitBare;
+
+    /**
+     * Additional classes for which we need to generate schema
+     * @parameter expression="${axis2.java2wsdl.extraClasses}"
+     */
+    private String[] extraClasses;
+
+    /**
+     * Specify namespaces explicitly for packages
+     * @parameter expression="${axis2.java2wsdl.package2Namespace}"
+     */
+    private Properties package2Namespace;
+
     private void addToOptionMap(Map map, String option, String value) {
         addToOptionMap(map, option, new String[]{value});
     }
@@ -103,6 +175,13 @@ public class Java2WSDLMojo extends AbstractMojo {
         if (value != null) {
             map.put(option,
                     new Java2WSDLCommandLineOption(option, value));
+        }
+    }
+
+    private void addToOptionMap(Map map, String option, ArrayList values) {
+        if (values != null && !values.isEmpty()) {
+            map.put(option,
+                    new Java2WSDLCommandLineOption(option, values));
         }
     }
 
@@ -157,6 +236,63 @@ public class Java2WSDLMojo extends AbstractMojo {
         addToOptionMap( optionMap,
                         Java2WSDLConstants.CLASSPATH_OPTION,
                         artifactFileNames);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.STYLE_OPTION,
+                style);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.USE_OPTION,
+                use);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.WSDL_VERSION_OPTION,
+                wsdlVersion);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.DOC_LIT_BARE,
+                docLitBare);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.LOCATION_OPTION,
+                locationUri);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
+                nsGenClassName);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
+                schemaGenClassName);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION,
+                attrFormDefault);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION,
+                elementFormDefault);
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
+                extraClasses);
+
+        ArrayList list = new ArrayList();
+        Iterator iterator = package2Namespace.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String packageName = (String) entry.getKey();
+            String namespace = (String) entry.getValue();
+            list.add(OPEN_BRACKET +
+                    packageName +
+                    COMMA +
+                    namespace +
+                    CLOSE_BRACKET);
+        }
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
+                list);
 
         return optionMap;
     }
