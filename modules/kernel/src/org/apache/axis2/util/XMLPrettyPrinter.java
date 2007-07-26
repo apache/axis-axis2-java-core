@@ -27,6 +27,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -49,7 +51,7 @@ public class XMLPrettyPrinter {
      *
      * @param file
      */
-    public static void prettify(File file) {                                                                                                                
+    public static void prettify(final File file) {
         try {
             InputStream inputStream = new ByteArrayInputStream(IOUtils.getStreamAsByteArray(new FileInputStream(file)));
 
@@ -61,6 +63,19 @@ public class XMLPrettyPrinter {
             TransformerFactory tf = TransformerFactory.newInstance();
             Templates templates = tf.newTemplates(stylesheetSource);
             Transformer transformer = templates.newTransformer();
+            transformer.setErrorListener(new ErrorListener(){
+                public void warning(TransformerException exception) throws TransformerException {
+                    log.warn("Exception occurred while trying to pretty print file " + file, exception);
+                }
+
+                public void error(TransformerException exception) throws TransformerException {
+                    log.error("Exception occurred while trying to pretty print file " + file, exception);
+                }
+
+                public void fatalError(TransformerException exception) throws TransformerException {
+                    log.error("Exception occurred while trying to pretty print file " + file, exception);
+                }
+            });
             transformer.transform(xmlSource, new StreamResult(outputStream));
 
             inputStream.close();
