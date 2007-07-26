@@ -21,10 +21,8 @@ import java.io.InputStream;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.OMNodeImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
@@ -34,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
 
 /**
- * @author Sanjaya Karunasena
+ * @author Sanjaya Karunasena (sanjayak@yahoo.com)
  * @date May 19, 2007
  */
 
@@ -58,12 +56,10 @@ public class FastInfosetPOXBuilder implements Builder {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Processing a Document with the content type: " + contentType);
 		}
+		//Create a instance of the StAX Parser which can handle the fast infoset stream
 		XMLStreamReader streamReader = new StAXDocumentParser(inputStream);
 		StAXBuilder builder = new StAXOMBuilder(streamReader);
-        //TODO Check whether we need to perform any validations here...
-        OMElement element = builder.getDocumentElement();
-//        element = (OMElement) element.detach();
-//        ((OMNodeImpl) element).setParent(null);
-        return element;
+
+		return builder.getDocumentElement();
 	}
 }

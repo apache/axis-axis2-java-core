@@ -20,6 +20,11 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
 
+/**
+ * @author Sanjaya Karunasena (sanjayak@yahoo.com)
+ * @date May 19, 2007
+ */
+
 public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 
 	private Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);
@@ -42,15 +47,16 @@ public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 	 */
 	public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
 			throws AxisFault {
+		//For POX drop the SOAP envelope and use the message body
 		OMElement element = messageContext.getEnvelope().getBody().getFirstElement();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		
 		try {
 			//Creates StAX document serializer which actually implements the XMLStreamWriter
 			XMLStreamWriter streamWriter = new StAXDocumentSerializer(outStream);
-			//streamWriter.writeStartDocument();
+			//Since we drop the SOAP envelop we have to manually write the start document and the end document events
+			streamWriter.writeStartDocument();
 			element.serializeAndConsume(streamWriter);
-			//TODO Looks like the SOAP envelop doesn't have a end document tag. Find out why?
 			streamWriter.writeEndDocument();
 			
 			return outStream.toByteArray();
@@ -71,7 +77,7 @@ public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 		String contentType = (String) messageContext.getProperty(Constants.Configuration.CONTENT_TYPE);
 		String encoding = format.getCharSetEncoding();
 		
-		//FIXME Is this a right thing to do? Need to clarify with a vetarant
+		//If the Content Type is not available with the property "Content Type" retrieve it from the property "Message Type"
 		if (contentType == null) {
 			contentType = (String) messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
 		}
@@ -122,20 +128,19 @@ public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 	 */
 	public void writeTo(MessageContext messageContext, OMOutputFormat format,
 			OutputStream outputStream, boolean preserve) throws AxisFault {
-		
+		//For POX drop the SOAP envelope and use the message body
 		OMElement element = messageContext.getEnvelope().getBody().getFirstElement();
-//        OMElement element = messageContext.getEnvelope();
 		
 		try {
 			//Create the StAX document serializer
 			XMLStreamWriter streamWriter = new StAXDocumentSerializer(outputStream);
+			//Since we drop the SOAP envelop we have to manually write the start document and the end document events			
 			streamWriter.writeStartDocument();
 			if (preserve) {
 				element.serialize(streamWriter);
 			} else {
 				element.serializeAndConsume(streamWriter);
 			}
-//			TODO Looks like the SOAP envelop doesn't have a end document tag. Find out why?
 			streamWriter.writeEndDocument();
 		} catch (XMLStreamException xmlse) {
 			logger.error(xmlse.getMessage());
