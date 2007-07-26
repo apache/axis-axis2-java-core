@@ -580,6 +580,10 @@ public class ExtensionUtility {
 
         }
 
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.OFF_STRICT_VALIDATION)){
+            options.setOffStrictValidation(true);
+        }
+
         //set helper mode
         //this becomes effective only if the classes are unpacked
         if (!options.isWrapClasses()) {
