@@ -35,26 +35,29 @@ public class Java2WSDL {
     }
 
     public static void printUsage() {
-        System.out.println("Usage java2wsdl -cn <fully qualified class name> : class file name");
-        System.out.println("-o <output Location> : output file location");
-        System.out.println("-cp <class path uri> : list of classpath entries - (urls)");
-        System.out.println("-tn <target namespace> : target namespace");
-        System.out.println("-tp <target namespace prefix> : target namespace prefix");
-        System.out.println("-stn <schema target namespace> : target namespace for schema");
-        System.out.println("-stp <schema target namespace prefix> : target namespace prefix for schema");
-        System.out.println("-sn <service name> : service name");
-        System.out.println("-of <output file name> : output file name for the WSDL");
-        System.out.println("-st <binding style> : style for the WSDL");
-        System.out.println("-u <binding use> : use for the WSDL");
-        System.out.println("-l <soap address> : address of the port for the WSDL");
-        System.out.println("-nsg <generator class name> : fully qualified name of the class that implements NamespaceGenerator");
-        System.out.println("-p2n [<java package>,<namespace] [<java package>,<namespace]... : java package to namespace mapping for argument and return types..." +
-                                "\t\t to assign all types to a single namespace : -p2n [all , <namespace>] ...");
-        System.out.println("-efd <qualified/unqualified> : Setting for elementFormDefault (defaults to qualified)");
-        System.out.println("-afd <qualified/unqualified> : Setting for attributeFormDefault (defaults to qualified)");
-        System.out.println("-xc <extra class> : Extra class for which schematype must be generated.  " +
-                           "\t\tUse as : -xc class1 -xc class2 ...");
-        
+        System.out.println("Usage: java2wsdl [options] -cn <fully qualified class name>");
+        System.out.println("\nwhere [options] include:");
+        System.out.println("  -o <output location>                    output directory");
+        System.out.println("  -of <output file name>                  output file name for the WSDL");
+        System.out.println("  -sn <service name>                      service name");
+        System.out.println("  -l <soap address>                       address of the port for the WSDL");
+        System.out.println("  -cp <class path uri>                    list of classpath entries - (urls)");
+        System.out.println("  -tn <target namespace>                  target namespace for service");
+        System.out.println("  -tp <target namespace prefix>           target namespace prefix for service");
+        System.out.println("  -stn <schema target namespace>          target namespace for schema");
+        System.out.println("  -stp <schema target namespace prefix>   target namespace prefix for schema");
+        System.out.println("  -st <binding style>                     style for the WSDL");
+        System.out.println("  -u <binding use>                        use for the WSDL");
+        System.out.println("  -nsg <class name>                       fully qualified name of a class that implements NamespaceGenerator");
+        System.out.println("  -sg <class name>                        fully qualified name of a class that implements SchemaGenerator");
+        System.out.println("  -p2n [<java package>,<namespace] [<java package>,<namespace]... ");
+        System.out.println("                                          java package to namespace mapping for argument and return types");
+        System.out.println("  -p2n [all, <namespace>]                 to assign all types to a single namespace");
+        System.out.println("  -efd <qualified/unqualified>            setting for elementFormDefault (defaults to qualified)");
+        System.out.println("  -afd <qualified/unqualified>            setting for attributeFormDefault (defaults to qualified)");
+        System.out.println("  -xc class1 -xc class2...                extra class(es) for which schematype must be generated.  ");
+        System.out.println("  -wv <1.1/2.0>                           wsdl version - defaults to 1.1 if not specified");
+        System.out.println("  -dlb                                    generate schemas conforming to doc/lit/bare style");
         System.exit(0);
     }
 
