@@ -2091,7 +2091,12 @@ public class SchemaCompiler {
 
                 //register the occurence counts
                 metainfHolder.addMaxOccurs(referencedQName, elt.getMaxOccurs());
-                metainfHolder.addMinOccurs(referencedQName, elt.getMinOccurs());
+                // if the strict validation off then we consider all elements have minOccurs zero on it
+                if (this.options.isOffStrictValidation()){
+                    metainfHolder.addMinOccurs(referencedQName, 0);
+                } else {
+                    metainfHolder.addMinOccurs(referencedQName, elt.getMinOccurs());
+                }
                 //we need the order to be preserved. So record the order also
                 if (order) {
                     //record the order in the metainf holder
