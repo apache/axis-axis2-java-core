@@ -164,7 +164,12 @@ public class JiBXDataSource implements OMDataSource {
         try {
             
             if (marshallerIndex < 0) {
-                ((IMarshallable)dataObject).marshal(ctx);
+                if (dataObject instanceof IMarshallable) {
+                    ((IMarshallable)dataObject).marshal(ctx);
+                } else {
+                    throw new IllegalStateException("Object of class " + dataObject.getClass().getName() +
+                        " needs a JiBX <mapping> to be marshalled");
+                }
             } else {
                 IXMLWriter wrtr = ctx.getXmlWriter();
                 String name = elementName;
@@ -195,7 +200,7 @@ public class JiBXDataSource implements OMDataSource {
             ctx.getXmlWriter().flush();
 
         } catch (IOException e) {
-            throw new JiBXException("Error marshalling XML representation", e);
+            throw new JiBXException("Error marshalling XML representation: " + e.getMessage(), e);
         }
     }
 
@@ -211,7 +216,7 @@ public class JiBXDataSource implements OMDataSource {
             marshal(true, ctx);
             
         } catch (JiBXException e) {
-            throw new XMLStreamException("Error in JiBX marshalling", e);
+            throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
         }
     }
 
@@ -227,7 +232,7 @@ public class JiBXDataSource implements OMDataSource {
             marshal(true, ctx);
             
         } catch (JiBXException e) {
-            throw new XMLStreamException("Error in JiBX marshalling", e);
+            throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
         }
     }
 
@@ -262,7 +267,7 @@ public class JiBXDataSource implements OMDataSource {
             marshal(full, ctx);
             
         } catch (JiBXException e) {
-            throw new XMLStreamException("Error in JiBX marshalling", e);
+            throw new XMLStreamException("Error in JiBX marshalling: " + e.getMessage(), e);
         }
     }
 
