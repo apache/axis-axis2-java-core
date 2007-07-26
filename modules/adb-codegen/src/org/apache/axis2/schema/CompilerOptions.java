@@ -45,6 +45,8 @@ public class CompilerOptions {
     private String packageName = null;
     private boolean generateAll = false;
 
+    private boolean offStrictValidation = false;
+
     /**
      * Package for the mapper
      */
@@ -184,4 +186,14 @@ public class CompilerOptions {
     public void setSuppressPrefixesMode(boolean suppressPrefixesMode) {
         this.suppressPrefixesMode = suppressPrefixesMode;
     }
+
+    public boolean isOffStrictValidation() {
+        return offStrictValidation;
+    }
+
+    public void setOffStrictValidation(boolean offStrictValidation) {
+        this.offStrictValidation = offStrictValidation;
+    }
+
+
 }
