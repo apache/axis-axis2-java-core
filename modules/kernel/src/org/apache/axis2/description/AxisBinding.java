@@ -125,7 +125,9 @@ public class AxisBinding extends AxisDescription {
      */
     public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap,
                               OMNamespace whttp, String interfaceName, Map nameSpaceMap,
-                              String addressingFlag, String serviceName) {
+                              String addressingFlag,
+                              String serviceName,
+                              OMNamespace wsaw) {
         String property;
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement bindingElement;
@@ -171,7 +173,7 @@ public class AxisBinding extends AxisDescription {
             }
 
             WSDLSerializationUtil
-                    .addWSAddressingToBinding(addressingFlag, omFactory, bindingElement);
+                    .addWSAddressingToBinding(addressingFlag, omFactory, bindingElement, wsaw);
 
         } else if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
             // HTTP Binding specific properties

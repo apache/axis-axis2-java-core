@@ -30,6 +30,7 @@ import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 
@@ -49,6 +50,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 
     private AxisService axisService;
     private String[] eprs = null;
+    private OMNamespace wsaw;
 
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
@@ -82,7 +84,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
 
         descriptionElement.declareNamespace(axisService.getTargetNamespace(), axisService.getTargetNamespacePrefix());
-
+        wsaw = descriptionElement.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
         // Need to add the targetnamespace as an attribute according to the wsdl 2.0 spec
         OMAttribute targetNamespace = omFactory
                 .createOMAttribute(WSDL2Constants.TARGET_NAMESPACE, null,
@@ -248,7 +250,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                    interfaceName,
                                                    axisService.getNamespaceMap(),
                                                    axisService.getWSAddressingFlag(),
-                                                   axisService.getName()));
+                                                   axisService.getName(),wsaw));
             }
 
             descriptionElement.addChild(serviceElement);
@@ -395,7 +397,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         if (inMessage != null) {
             OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
             inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
-            WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, axisOperation.getInputAction());
+            WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, axisOperation.getInputAction(),wsaw);
             WSDLSerializationUtil.addWSDLDocumentationElement(inMessage, inMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(inMessageElement);
         }
@@ -405,7 +407,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         if (outMessage != null) {
             OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
             outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
-            WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction());
+            WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction(),wsaw);
             WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(outMessageElement);
         }
@@ -423,7 +425,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
                 }
                 faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
-                WSDLSerializationUtil.addWSAWActionAttribute(faultElement, axisOperation.getFaultAction(faultMessage.getName()));
+                WSDLSerializationUtil.addWSAWActionAttribute(faultElement, axisOperation.getFaultAction(faultMessage.getName()),wsaw);
                 WSDLSerializationUtil.addWSDLDocumentationElement(faultMessage, faultElement, omFactory, wsdl);
                 axisOperationElement.addChild(faultElement);
             }
