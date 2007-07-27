@@ -82,9 +82,6 @@
                                     <configuration>
                                       <tasks>
                                         <echo message="Creating soapmonitor jar..."/>
-                                           <!--
-                                           excludes="**/module.xml,org/apache/axis2/handlers/**/*,**/*Module*,**/*Handler*"
-                                           -->
                                         <jar destfile="${pom.basedir}/target/${project.build.finalName}.jar"
                                            basedir="${pom.basedir}/target/classes"
                                            excludes="**/module.xml,*handlers*,**/*Module*,**/*Handler*"
