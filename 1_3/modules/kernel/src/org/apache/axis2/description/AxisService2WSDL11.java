@@ -73,6 +73,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
     private OMNamespace wsdl;
 
+    private OMNamespace wsaw;
+
     private String style = DOCUMENT;
 
     private String use = LITERAL;
@@ -135,6 +137,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         soap12 = ele.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
         http = ele.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
         mime = ele.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
+        wsaw =ele.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
         String prefix = WSDLSerializationUtil.getPrefix(axisService.getTargetNamespace(),
                                                         namespaceMap);
         if (prefix == null || "".equals(prefix)) {
@@ -369,7 +372,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     addPolicyAsExtElement(PolicyInclude.INPUT_POLICY,
                                           inaxisMessage.getPolicyInclude(), input);
                     WSDLSerializationUtil.addWSAWActionAttribute(input, axisOperation
-                            .getInputAction());
+                            .getInputAction(),wsaw);
                     operation.addChild(input);
                 }
             }
@@ -396,7 +399,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     addPolicyAsExtElement(PolicyInclude.OUTPUT_POLICY,
                                           outAxisMessage.getPolicyInclude(), output);
                     WSDLSerializationUtil.addWSAWActionAttribute(output, axisOperation
-                            .getOutputAction());
+                            .getOutputAction(),wsaw);
                     operation.addChild(output);
                 }
             }
@@ -414,7 +417,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                             + ":" + faultyMessage.getName(), null);
                     fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(), null);
                     WSDLSerializationUtil.addWSAWActionAttribute(fault, axisOperation
-                            .getFaultAction(faultyMessage.getName()));
+                            .getFaultAction(faultyMessage.getName()),wsaw);
                     // TODO add policies for fault messages
                     operation.addChild(fault);
                 }
@@ -548,20 +551,16 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         // SHOULD be on the binding element per the specification
         if (axisService.getWSAddressingFlag().equals(
                 AddressingConstants.ADDRESSING_OPTIONAL)) {
-            OMNamespace wsawNamespace = fac.createOMNamespace(
-                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
-                                wsawNamespace);
+                    wsaw);
         } else if (axisService.getWSAddressingFlag().equals(
                 AddressingConstants.ADDRESSING_REQUIRED)) {
-            OMNamespace wsawNamespace = fac.createOMNamespace(
-                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
-                                wsawNamespace);
+                    wsaw);
         }
 
         for (Iterator operations = axisService.getOperations(); operations.hasNext();) {
@@ -688,20 +687,16 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         // SHOULD be on the binding element per the specification
         if (axisService.getWSAddressingFlag().equals(
                 AddressingConstants.ADDRESSING_OPTIONAL)) {
-            OMNamespace wsawNamespace = fac.createOMNamespace(
-                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
-                                wsawNamespace);
+                    wsaw);
         } else if (axisService.getWSAddressingFlag().equals(
                 AddressingConstants.ADDRESSING_REQUIRED)) {
-            OMNamespace wsawNamespace = fac.createOMNamespace(
-                    AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
-                                wsawNamespace);
+                    wsaw);
         }
 
         for (Iterator operations = axisService.getOperations(); operations.hasNext();) {
