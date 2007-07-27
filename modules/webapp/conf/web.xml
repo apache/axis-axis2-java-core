@@ -64,6 +64,11 @@
         <url-pattern>/axis2-admin/*</url-pattern>
     </servlet-mapping>
 
+    <mime-mapping>
+        <extension>inc</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+
    <welcome-file-list>
       <welcome-file>index.jsp</welcome-file>
       <welcome-file>index.html</welcome-file>
