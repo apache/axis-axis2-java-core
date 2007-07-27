@@ -21,6 +21,7 @@ package org.apache.axis2.wsdl.util;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.OptionsValidator;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 
 public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, OptionsValidator {
 
@@ -88,8 +89,8 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
                     WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.WSDL_VERSION_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.WSDL_VERSION_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                    WSDL2JavaConstants.XSDCONFIG_OPTION.equalsIgnoreCase(optionType) ||
-                    WSDL2JavaConstants.XSDCONFIG_OPTION_LONG.equalsIgnoreCase(optionType)
+                    XMLBeansExtension.XSDCONFIG_OPTION.equalsIgnoreCase(optionType) ||
+                    XMLBeansExtension.XSDCONFIG_OPTION_LONG.equalsIgnoreCase(optionType)
             );
 
         }
