@@ -98,7 +98,10 @@ public class DescriptionFactoryImpl {
                     log.debug(" creating new ServiceDescriptionImpl");
                 }
 
-                serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                ServiceDescriptionImpl serviceDescImpl = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                serviceDescImpl.setAxisConfigContext(configContext);
+                
+                serviceDesc = serviceDescImpl;
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " +
                         serviceQName + "; Class: " + serviceClass);
