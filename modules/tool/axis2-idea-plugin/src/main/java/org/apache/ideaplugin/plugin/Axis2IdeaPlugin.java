@@ -22,13 +22,13 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.apache.ideaplugin.frames.Axi2PluginPage;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;
 import javax.xml.stream.XMLInputFactory;
 
 public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
-    private Axi2PluginPage form;
+    private CodegenFrame form;
     private ImageIcon myIcon;
 
     /**
@@ -45,8 +45,8 @@ public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
         }
 
         if (form == null) {
-            form = new Axi2PluginPage();
-            form.setResizable(false);
+            form = new CodegenFrame();
+            form.setResizable(true);
             form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
         if (myIcon == null) {
@@ -85,7 +85,7 @@ public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
 
     public JComponent createComponent() {
         if (form == null) {
-            form = new Axi2PluginPage();
+            form = new CodegenFrame();
         }
         return form.getRootComponent();
     }
