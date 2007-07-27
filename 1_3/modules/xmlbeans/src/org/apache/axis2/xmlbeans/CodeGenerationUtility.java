@@ -28,6 +28,7 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -174,6 +175,7 @@ public class CodeGenerationUtility {
                     .toArray(new XmlSchema[completeSchemaList.size()]));
             er.setBaseUri(cgconfig.getBaseURI());
 
+            String xsdConfigFile = (String)cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION);
 
             sts = XmlBeans.compileXmlBeans(
                     // set the STS name; defaults to null, which makes the generated class
@@ -182,7 +184,7 @@ public class CodeGenerationUtility {
                     null,
                     convertToSchemaArray(topLevelSchemaList),
                     new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(),
-                                           cgconfig.getXsdConfigFile()),
+                                           xsdConfigFile),
                     XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig),
                     new XmlOptions().setEntityResolver(er));
