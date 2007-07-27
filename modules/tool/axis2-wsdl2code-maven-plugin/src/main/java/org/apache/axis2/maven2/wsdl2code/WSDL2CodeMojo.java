@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
 
 
 /**
@@ -179,6 +180,83 @@ public class WSDL2CodeMojo extends AbstractMojo {
      * @parameter expression="${axis2.wsdl2code.generateServerSideInterface}" default-value="false"
      */
     private boolean generateServerSideInterface = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.repositoryPath}"
+     */
+    private String repositoryPath = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.externalMapping}"
+     */
+    private String externalMapping = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.wsdlVersion}"
+     */
+    private String wsdlVersion = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.targetSourceFolderLocation}"
+     */
+    private String targetSourceFolderLocation = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.targetResourcesFolderLocation}"
+     */
+    private String targetResourcesFolderLocation = null;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.unwrap}" default-value="false" *
+     */
+    private boolean unwrap = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.allPorts}" default-value="false" *
+     */
+    private boolean allPorts = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.backwardCompatible}" default-value="false" *
+     */
+    private boolean backwardCompatible = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.flattenFiles}" default-value="false" *
+     */
+    private boolean flattenFiles = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.skipMessageReceiver}" default-value="false" *
+     */
+    private boolean skipMessageReceiver = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.skipBuildXML}" default-value="false" *
+     */
+    private boolean skipBuildXML = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.skipWSDL}" default-value="false" *
+     */
+    private boolean skipWSDL = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.overWrite}" default-value="false" *
+     */
+    private boolean overWrite = false;
+
+    /**
+     * @parameter expression="${axis2.wsdl2code.suppressPrefixes}" default-value="false" *
+     */
+    private boolean suppressPrefixes = false;
+
+    /**
+     * Specify databinding specific extra options
+     *
+     * @parameter expression="${axis2.java2wsdl.options}"
+     */
+    private Properties options;
 
     /** @parameter expression="${axis2.wsdl2code.namespaceToPackages}" */
     private String namespaceToPackages = null;
@@ -351,6 +429,131 @@ public class WSDL2CodeMojo extends AbstractMojo {
                             CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
                             new String[0]));
         }
+
+        if (unwrap) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                            new String[0]));
+        }
+
+        if (allPorts) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
+                            new String[0]));
+        }
+
+        if (backwardCompatible) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
+                            new String[0]));
+        }
+
+        if (flattenFiles) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+                            new String[0]));
+        }
+
+        if (skipMessageReceiver) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (skipBuildXML) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (skipWSDL) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (overWrite) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
+                            new String[0]));
+        }
+
+        if (suppressPrefixes) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
+                            new String[0]));
+        }
+
+        if (repositoryPath != null) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                            new String[]{repositoryPath}));
+        }
+
+        if (externalMapping != null) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                            new String[]{externalMapping}));
+        }
+
+        if (wsdlVersion != null) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                            new String[]{wsdlVersion}));
+        }
+
+        if (targetSourceFolderLocation != null) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                            new String[]{targetSourceFolderLocation}));
+        }
+
+        if (targetResourcesFolderLocation != null) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                            new String[]{targetResourcesFolderLocation}));
+        }
+
+        Iterator iterator = options.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
+            String value = (String) entry.getValue();
+            optionMap.put(
+                    key,
+                    new CommandLineOption(
+                            key,
+                            new String[]{value}));
+        }
+
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                 new CommandLineOption(
