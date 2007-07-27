@@ -34,7 +34,6 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
@@ -211,15 +210,13 @@ public class MessageUtils {
         if (message.isDoingSWA()) {
             // Enable SWA on the Axis2 MessageContext
             msgContext.setDoingSwA(true);
-            Options opts = msgContext.getOptions();
-            opts.setProperty(Configuration.ENABLE_SWA, "true");
+            msgContext.setProperty(Configuration.ENABLE_SWA, "true");
         }
 
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {
             // Enable MTOM on the Axis2 MessageContext
-            Options opts = msgContext.getOptions();
-            opts.setProperty(Configuration.ENABLE_MTOM, "true");
+            msgContext.setProperty(Configuration.ENABLE_MTOM, "true");
             if (false) {
                 makeBinaryNodes(message);
             }

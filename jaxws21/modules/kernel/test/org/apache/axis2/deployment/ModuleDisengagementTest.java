@@ -62,7 +62,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        phase = (Phase) globalinflow.get(2);
+        phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
         assertEquals(phase.getHandlerCount(), 0);
         AxisService service = config.getService(serviceName);
@@ -89,7 +89,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        phase = (Phase) globalinflow.get(2);
+        phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
         assertEquals(0, phase.getHandlerCount());
         AxisService service = config.getService(serviceName);
@@ -126,7 +126,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        phase = (Phase) globalinflow.get(2);
+        phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
         assertEquals(phase.getHandlerCount(), 0);
         AxisService service = config.getService(serviceName);
@@ -153,7 +153,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        predisptah = (Phase) globalinflow.get(2);
+        predisptah = (Phase) globalinflow.get(3);
         assertNotNull(predisptah);
         assertEquals(predisptah.getHandlerCount(), 0);
         AxisService service = config.getService(serviceName);
@@ -180,7 +180,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        phase = (Phase) globalinflow.get(2);
+        phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
         assertEquals(phase.getHandlerCount(), 0);
         AxisService service = config.getService(serviceName);
@@ -207,7 +207,7 @@ public class ModuleDisengagementTest extends TestCase {
         Phase userPhase;
         ArrayList globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
-        phase = (Phase) globalinflow.get(2);
+        phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
         assertEquals(phase.getHandlerCount(), 0);
         AxisService service = config.getService(serviceName);

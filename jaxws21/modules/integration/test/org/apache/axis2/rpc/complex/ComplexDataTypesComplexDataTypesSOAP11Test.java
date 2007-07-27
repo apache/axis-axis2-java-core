@@ -207,8 +207,9 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
         // now create the Article element with the above namespace
         OMElement articleElement = factory.createOMElement("Article", ns);
 
-        input.setAnyType(new OMElement[]{articleElement});
-        assertNotNull(stub.retArrayAnyType1D(input));
+       // comment out test case since now adb uses an object to represent an any type
+       // input.setAnyType(new OMElement[]{articleElement});
+       // assertNotNull(stub.retArrayAnyType1D(input));
     }
 
     /**
@@ -474,9 +475,10 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
         // now create the Article element with the above namespace
         OMElement articleElement = factory.createOMElement("Article", ns);
 
-        OMElement ret = stub.retObject(articleElement);
-        assertNotNull(ret);
-        assertEquals(ret.toString(), articleElement.toString());
+        // comment out this test case since adb now uses an object to represents the any type
+        // OMElement ret = stub.retObject(articleElement);
+        // assertNotNull(ret);
+        // assertEquals(ret.toString(), articleElement.toString());
     }
 
     /**

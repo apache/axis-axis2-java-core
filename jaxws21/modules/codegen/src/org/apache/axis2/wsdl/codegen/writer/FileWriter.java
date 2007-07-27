@@ -188,4 +188,12 @@ public abstract class FileWriter {
     public void setOverride(boolean override) {
         isOverride = override;
     }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
+    }
 }

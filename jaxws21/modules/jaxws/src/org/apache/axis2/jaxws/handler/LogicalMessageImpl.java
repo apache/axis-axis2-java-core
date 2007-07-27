@@ -18,10 +18,21 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -40,27 +51,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
-import javax.xml.ws.WebServiceException;
 
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFault;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.core.MEPContext;
-import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
-import org.apache.axis2.jaxws.message.factory.BlockFactory;
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 
 public class LogicalMessageImpl implements LogicalMessage {
 

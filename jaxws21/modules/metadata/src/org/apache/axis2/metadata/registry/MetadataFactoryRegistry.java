@@ -21,6 +21,7 @@ package org.apache.axis2.metadata.registry;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 
 public class MetadataFactoryRegistry {
@@ -28,6 +29,7 @@ public class MetadataFactoryRegistry {
         static {
                 table = new Hashtable<Class,Object>();
                 table.put(ResourceFinderFactory.class, new ResourceFinderFactory());
+                table.put(ClientConfigurationFactory.class, new ClientConfigurationFactory());
         }
         
         /**

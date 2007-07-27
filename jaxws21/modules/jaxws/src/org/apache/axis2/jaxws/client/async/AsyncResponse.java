@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
+import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -101,6 +102,12 @@ public abstract class AsyncResponse implements Response {
 
         response = mc;
         response.setEndpointDescription(endpointDescription);
+        
+        // Check for cached attachment file(s) if attachments exist. 
+        if(response.getAxisMessageContext().getAttachmentMap() != null){
+        	AttachmentUtils.findCachedAttachment(response.getAxisMessageContext().getAttachmentMap());
+        }
+        
         latch.countDown();
 
         if (log.isDebugEnabled()) {

@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.message.attachments;
 
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.CachedFileDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
@@ -28,7 +30,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /** A suite of utilities used for handling MTOM attachment data. */
@@ -177,6 +182,43 @@ public class AttachmentUtils {
         OMElement xop = factory.createOMElement(XOP_INCLUDE, null);
         xop.addAttribute("href", data.getContentID(), null);
         return xop;
+    }
+    
+    /**
+     * Process attachment's dataHandlers for CachedFileDataSource.
+     * If exist, execute file.deleteOnExit() request on the cached
+     * attachment file referenced by each CachedFileDataSource.
+     * This will delete the cached attachment file on JVM exit.
+     * 
+     * @param attachments
+     */
+    public static void findCachedAttachment(Attachments attachments){
+    	if(attachments == null){
+    		return;
+    	}
+    	
+    	String[] contentIds = attachments.getAllContentIDs();
+    	if(contentIds.length > 0){
+            if (log.isDebugEnabled()) {
+            	log.debug("Attachments exist....");
+            }
+        	for(int i=0; i < contentIds.length; i++){
+        		DataHandler dh = attachments.getDataHandler(contentIds[i]);
+        		if(dh != null){
+        			DataSource dataSource = dh.getDataSource();
+        			if(dh != null && dataSource instanceof CachedFileDataSource){
+        				if (log.isDebugEnabled()) {
+                        	log.debug("Attachment's DataHandler uses CachedFileDataSource...");
+                        }
+                    	File file = ((CachedFileDataSource)dataSource).getFile();
+                    	if (log.isDebugEnabled()) {
+                        	log.debug(" Making file.deleteOnExit() request on "+file.getAbsolutePath());
+                        }
+                    	file.deleteOnExit();
+                    }
+        		}
+        	}
+        }
     }
 
 }

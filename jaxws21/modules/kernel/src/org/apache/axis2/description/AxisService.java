@@ -1136,7 +1136,9 @@ public class AxisService extends AxisDescription {
                                  "set useOriginalwsdl as false in your services.xml</reason>";
             out.write(wsdlntfound.getBytes());
             if (e != null) {
-                e.printStackTrace(new PrintWriter(out));
+                PrintWriter pw = new PrintWriter(out);
+                e.printStackTrace(pw);
+                pw.flush();
             }
             out.write("</error>".getBytes());
             out.flush();
@@ -1146,10 +1148,22 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    //WSDL 2.0
+    /**
+     * Print the WSDL2.0 with a default URL. This will be called only during codegen time.
+     *
+     * @param out
+     * @throws AxisFault
+     */
     public void printWSDL2(OutputStream out) throws AxisFault {
+        printWSDL2(out, null);
+    }
+
+    public void printWSDL2(OutputStream out, String requestIP) throws AxisFault {
         AxisService2WSDL20 axisService2WSDL2 = new AxisService2WSDL20(this);
         try {
+            if(requestIP != null) {
+                axisService2WSDL2.setEPRs(calculateEPRs(requestIP));
+            }
             OMElement wsdlElement = axisService2WSDL2.generateOM();
             wsdlElement.serialize(out);
             out.flush();

@@ -57,6 +57,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -181,6 +182,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 }
             } finally {
                 closeStaxBuilder(msgContext);
+                TransportUtils.deleteAttachments(msgContext);
             }
         } else {
             if (!disableREST) {
@@ -219,6 +221,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
                 query.indexOf("policy") >= 0)) {
             // handling meta data exchange stuff
+            agent.initTransportListener(request);
             agent.processListService(request, response);
         } else if (requestURI.endsWith(".xsd") ||
                 requestURI.endsWith(".wsdl")) {
@@ -405,10 +408,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         super.init(config);
         try {
             this.servletConfig = config;
-            configContext = initConfigContext(config);
-
+            ServletContext servletContext = servletConfig.getServletContext();
+            this.configContext =
+                    (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
+            if(configContext == null){
+                configContext = initConfigContext(config);
+                config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
+            }
             axisConfiguration = configContext.getAxisConfiguration();
-            config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
 
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);

@@ -18,20 +18,40 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbers;
 
+import java.util.Map;
+
 import org.apache.axis2.jaxws.TestLogger;
 
+import javax.annotation.Resource;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType")
 public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 
+    @Resource
+    private WebServiceContext ctx;
+    
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType#addNumbers(int, int)
 	 */
 	public int addNumbers(int arg0, int arg1) throws AddNumbersFault_Exception {
         TestLogger.logger.debug(">> Received addNumbers request for " + arg0 + " and " + arg1);
+        
+        checkProperties();
+        
         return arg0+arg1;
+	}
+	
+	private void checkProperties() {
+	    MessageContext mc = ctx.getMessageContext();
+	    Map headers = (Map)mc.get(MessageContext.HTTP_REQUEST_HEADERS);
+	    // the map should contain some headers
+	    if (headers == null || headers.isEmpty()) {
+	        throw new RuntimeException("HTTP request headers map is null or empty!");
+	    }
 	}
 
 	/* (non-Javadoc)

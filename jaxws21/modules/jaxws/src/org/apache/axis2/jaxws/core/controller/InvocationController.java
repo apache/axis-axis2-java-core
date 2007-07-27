@@ -154,7 +154,7 @@ public abstract class InvocationController {
      *
      * @param ic
      */
-    public void invokeOneWay(InvocationContext ic) {
+    public void invokeOneWay(InvocationContext ic) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Invocation pattern: one-way");
         }
@@ -181,6 +181,13 @@ public abstract class InvocationController {
         if (success) {
             prepareRequest(request);
             doInvokeOneWay(request);
+        } else { // the outbound handler chain must have had a problem, and we've reversed directions
+            // check to see if problem is due to a handler throwing an exception.  If so, throw it,
+            // even in this oneWay invoke.
+            Exception e = request.getCausedByException();
+            if (e != null) {
+                throw (Exception)e.getCause();
+            }
         }
         return;
     }

@@ -38,22 +38,37 @@ public class SimpleExtensionTest extends TestCase {
         fullName.setMiddle("chinthaka");
         fullName.setLast("suriarachchi");
         fullName.setLanguage(new Language("singhala"));
-        fullName.setAttribute1(BaseType.Factory.fromString(BaseType._s1,""));
+        fullName.setAttribute1(BaseType.Factory.fromString(BaseType._s1, ""));
 
-        fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE",""));
+        fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE", ""));
 
-         try {
+        try {
             OMElement omElement = fullName.getOMElement(FullName.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
-            String omElementString = omElement.toStringWithConsume();
+            String omElementString;
+            XMLStreamReader xmlReader;
+            FullName newFullName;
+
+            omElementString = omElement.toStringWithConsume();
             System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            FullName newFullName = FullName.Factory.parse(xmlReader);
-            assertEquals(newFullName.getFirst(),"amila");
-            assertEquals(newFullName.getMiddle(),"chinthaka");
-            assertEquals(newFullName.getLast(),"suriarachchi");
-            assertEquals(newFullName.getLanguage().toString(),"singhala");
-            assertEquals(newFullName.getAttribute1().toString(),BaseType._s1);
-            assertEquals(newFullName.getAttribute2().toString(),"ATTRIBUTE");
+            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            newFullName = FullName.Factory.parse(xmlReader);
+            assertEquals(newFullName.getFirst(), "amila");
+            assertEquals(newFullName.getMiddle(), "chinthaka");
+            assertEquals(newFullName.getLast(), "suriarachchi");
+            assertEquals(newFullName.getLanguage().toString(), "singhala");
+            assertEquals(newFullName.getAttribute1().toString(), BaseType._s1);
+            assertEquals(newFullName.getAttribute2().toString(), "ATTRIBUTE");
+
+            omElementString = omElement.toString();
+            System.out.println("OM String ==> " + omElementString);
+            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            newFullName = FullName.Factory.parse(xmlReader);
+            assertEquals(newFullName.getFirst(), "amila");
+            assertEquals(newFullName.getMiddle(), "chinthaka");
+            assertEquals(newFullName.getLast(), "suriarachchi");
+            assertEquals(newFullName.getLanguage().toString(), "singhala");
+            assertEquals(newFullName.getAttribute1().toString(), BaseType._s1);
+            assertEquals(newFullName.getAttribute2().toString(), "ATTRIBUTE");
         } catch (Exception e) {
             assertFalse(true);
         }

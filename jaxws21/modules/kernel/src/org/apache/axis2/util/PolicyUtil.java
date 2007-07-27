@@ -45,6 +45,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 public class PolicyUtil {
 
     public static String getSafeString(String unsafeString) {
@@ -151,9 +153,10 @@ public class PolicyUtil {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Transformer tf;
         try {
-            tf = TransformerFactory.newInstance().newTransformer();
-            tf.transform(new DOMSource(element), new StreamResult(baos));
-            return new ByteArrayInputStream(baos.toByteArray());
+//            tf = TransformerFactory.newInstance().newTransformer();
+//            tf.transform(new DOMSource(element), new StreamResult(baos));
+            String nodeString =DOM2Writer.nodeToString(element);
+            return new ByteArrayInputStream(nodeString.getBytes());
         } catch (Exception e) {
             throw new RuntimeException("Unable to process policy");
         }

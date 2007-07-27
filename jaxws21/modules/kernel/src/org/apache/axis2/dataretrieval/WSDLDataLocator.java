@@ -58,6 +58,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
         log.trace("Default WSDL DataLocator getData starts");
 
         request_Identifier = request.getIdentifier();
+        serviceURL = msgContext.getTo().getAddress();
 
         OutputForm outputform = request.getOutputForm();
 
@@ -109,7 +110,8 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
         // (1) this is to support ?wsdl request; 
         // (2) Data for specified Identifier must be available to satisfy the GetMetadata request.
 
-        if (result.length == 0 && request_Identifier == null) {
+        if (result.length == 0) {
+            
             log.trace("Default WSDL DataLocator attempt to generates WSDL.");
 
             if (msgContext != null) {
@@ -119,24 +121,28 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
                 throw new DataRetrievalException("MessageContext was not set!");
             }
 
-            AxisService2WSDL11 axisService2WOM;
-            OMElement wsdlElement;
+            if (request_Identifier == null || request_Identifier.equals(theService.getTargetNamespace())) {
 
-            try {
-                axisService2WOM = new AxisService2WSDL11(theService);
-                wsdlElement = axisService2WOM.generateOM();
-            }
-            catch (Exception e) {
-                log.debug(e);
-                throw new DataRetrievalException(e);
-            }
+                AxisService2WSDL11 axisService2WOM;
+                OMElement wsdlElement;
 
-            if (wsdlElement != null) {
-                log.trace("Default WSDL DataLocator successfully generated WSDL.");
-                result = new Data[1];
-                result[0] = new Data(wsdlElement, null);
+                try {
+                    axisService2WOM = new AxisService2WSDL11(theService);
+                    wsdlElement = axisService2WOM.generateOM();
+                    
+                } catch (Exception e) {
+                    log.debug(e);
+                    throw new DataRetrievalException(e);
+                }
+
+                if (wsdlElement != null) {
+                    log.trace("Default WSDL DataLocator successfully generated WSDL.");
+                    result = new Data[1];
+                    result[0] = new Data(wsdlElement, null);
+                }
             }
         }
+        
         return result;
     }
 

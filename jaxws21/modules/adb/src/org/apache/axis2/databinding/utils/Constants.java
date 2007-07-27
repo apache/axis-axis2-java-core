@@ -27,6 +27,7 @@ public interface Constants {
     static String NIL = "nil";
     static String TRUE = "true";
     static String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+    static String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
 
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();

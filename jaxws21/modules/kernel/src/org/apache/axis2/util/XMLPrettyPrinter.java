@@ -21,7 +21,7 @@ package org.apache.axis2.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.description.java2wsdl.Java2WSDLUtils;
+import org.apache.axiom.attachments.utils.IOUtils;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactory;
@@ -36,58 +36,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Method;
 
 /**
- * An XML pretty printer based on jtidy (http://sourceforge.net/projects/jtidy)
- * The Jtidy jar needs to be in classpath for this to work and can be found at
- * http://sourceforge.net/project/showfiles.php?group_id=13153
+ * An XML pretty printer based on xsl stylesheets
  */
 public class XMLPrettyPrinter {
 
     private static final Log log = LogFactory.getLog(XMLPrettyPrinter.class);
-    private static final String PRETTIFIED_SUFFIX = ".prettyfied";
-
 
     /**
-     * Pretty prints contents of the java source file.
+     * Pretty prints contents of the xml file.
      *
      * @param file
      */
-    public static void prettify(File file) {
+    public static void prettify(File file) {                                                                                                                
         try {
-            //create the input stream
-            InputStream input = new FileInputStream(file);
+            InputStream inputStream = new ByteArrayInputStream(IOUtils.getStreamAsByteArray(new FileInputStream(file)));
 
-            //create a new file with "prettyfied"  attached
-            // to existing file name
-            String existingFileName = file.getAbsolutePath();
-            String tempFileName = existingFileName + PRETTIFIED_SUFFIX;
-
-            File tempFile = new File(tempFileName);
-            FileOutputStream tempFileOutputStream = new FileOutputStream(tempFile);
+            FileOutputStream outputStream = new FileOutputStream(file);
 
             Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
-            Source xmlSource = new StreamSource(input);
+            Source xmlSource = new StreamSource(inputStream);
 
             TransformerFactory tf = TransformerFactory.newInstance();
             Templates templates = tf.newTemplates(stylesheetSource);
             Transformer transformer = templates.newTransformer();
-            transformer.transform(xmlSource, new StreamResult(tempFileOutputStream));
+            transformer.transform(xmlSource, new StreamResult(outputStream));
 
-            //first close the streams. if not this may cause the
-            // files not to be renamed
-            input.close();
-            tempFileOutputStream.close();
-            //delete the original
-            file.delete();
-
-            if (!tempFile.renameTo(new File(existingFileName))) {
-                throw new Exception("File renaming failed!" + existingFileName);
-            }
+            inputStream.close();
+            outputStream.close();
             log.debug("Pretty printed file : " + file);
-        } catch (ClassNotFoundException e) {
-            log.debug("Tidy not found - unable to pretty print " + file);
         } catch (Exception e) {
             log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {

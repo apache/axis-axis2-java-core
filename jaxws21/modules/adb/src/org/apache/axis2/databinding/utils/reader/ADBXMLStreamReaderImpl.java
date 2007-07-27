@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.util.OMSerializerUtil;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 
 import javax.activation.DataHandler;
@@ -576,7 +577,12 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         if (state == DELEGATED_STATE) {
             return childReader.getText();
         } else if (state == TEXT_STATE) {
-            return (String)properties[currentPropertyIndex - 1];
+            Object property = properties[currentPropertyIndex - 1];
+            if (property instanceof DataHandler){
+                return ConverterUtil.getStringFromDatahandler((DataHandler)property);
+            } else {
+                return (String)properties[currentPropertyIndex - 1];
+            }
         } else {
             throw new IllegalStateException();
         }

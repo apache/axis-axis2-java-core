@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.converter.ConverterUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -90,7 +91,7 @@ class ParameterDescriptionImpl
                     getGenericParameterActualType((ParameterizedType)parameterGenericType);
         }
         findWebParamAnnotation(parameterAnnotations);
-        findXmlListAnnotation(parameterAnnotations);
+        this.isListType = ConverterUtils.hasXmlListAnnotation(parameterAnnotations);
     }
 
     ParameterDescriptionImpl(int parameterNumber, ParameterDescriptionComposite pdc,
@@ -120,18 +121,6 @@ class ParameterDescriptionImpl
             //         javadoc: "Note that an interface that manually extends this one does not define an annotation type."
             if (checkAnnotation.annotationType() == WebParam.class) {
                 webParamAnnotation = (WebParam)checkAnnotation;
-            }
-        }
-    }
-
-    /**
-     * This method will search array of parameter annotations for the presence of the @XmlList
-     * annotation.
-     */
-    private void findXmlListAnnotation(Annotation[] annotations) {
-    	for (Annotation checkAnnotation:annotations) {
-            if (checkAnnotation.annotationType() == XmlList.class) {
-                isListType = true;
             }
         }
     }

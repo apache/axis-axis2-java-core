@@ -24,19 +24,15 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 
 /** This class serves as a factory for ConfigurationContexts suitable in the client environment. */
 public class ClientConfigurationFactory {
 
-    private static ClientConfigurationFactory instance = new ClientConfigurationFactory();
-
-    protected ClientConfigurationFactory() {
-    }
-
     /** Returns a ClientConfigurationFactory object. */
     public static ClientConfigurationFactory newInstance() {
-        return instance;
+        return (ClientConfigurationFactory)MetadataFactoryRegistry.getFactory(ClientConfigurationFactory.class);       
     }
 
     /**

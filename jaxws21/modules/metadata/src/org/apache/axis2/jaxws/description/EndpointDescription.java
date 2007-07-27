@@ -66,6 +66,12 @@ public interface EndpointDescription {
             "org.apache.axis2.jaxws.description.EndpointDescription";
     public static final String DEFAULT_CLIENT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
 
+    /**
+     * Paramater set on AxisService which contains an ArrayList of SOAP header QNames
+     * of SOAPHandlers. 
+     */
+    public static final String HANDLER_PARAMETER_QNAMES = "org.apache.axis2.jaxws.description.EndpointDescription.handlerParameterQNames";
+        
     public abstract AxisService getAxisService();
 
     public abstract ServiceClient getServiceClient();

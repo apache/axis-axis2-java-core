@@ -383,7 +383,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
                     msgContext.setAxisMessage(inMessage);
                     opContext.addMessageContext(msgContext);
                     msgContext.setServiceContext(opContext.getServiceContext());
-                    return true;
                 }
             }
         }
@@ -393,9 +392,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
             SynchronousMailListener listener = (SynchronousMailListener) callBackTable.get(messageID);
             if(listener!=null){
                 listener.setInMessageContext(msgContext);
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void buildSOAPEnvelope(MimeMessage msg, MessageContext msgContext)

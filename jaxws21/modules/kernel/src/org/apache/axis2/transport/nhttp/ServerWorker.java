@@ -296,9 +296,11 @@ public class ServerWorker implements Runnable {
                 try {
                     response.addHeader(CONTENT_TYPE, TEXT_XML);
                     serverHandler.commitResponse(conn, response);
-                    service.printWSDL2(os);
-
+                    service.printWSDL2(os, getIpAddress());
                 } catch (AxisFault e) {
+                    handleException("Axis2 fault writing ?wsdl2 output", e);
+                    return;
+                } catch (SocketException e) {
                     handleException("Axis2 fault writing ?wsdl2 output", e);
                     return;
                 }
@@ -334,7 +336,14 @@ public class ServerWorker implements Runnable {
                     service.populateSchemaMappings();
                     //write out the correct schema
                     Map schemaTable = service.getSchemaMappingTable();
-                    final XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
+                    XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
+                    if (schema == null) {
+                        int dotIndex = schemaName.indexOf('.');
+                        if (dotIndex > 0) {
+                            String schemaKey = schemaName.substring(0,dotIndex);
+                            schema = (XmlSchema) schemaTable.get(schemaKey);
+                        }
+                    }
                     //schema found - write it to the stream
                     if (schema != null) {
                         response.addHeader(CONTENT_TYPE, TEXT_XML);

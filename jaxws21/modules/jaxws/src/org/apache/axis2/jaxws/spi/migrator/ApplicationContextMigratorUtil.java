@@ -20,24 +20,24 @@ package org.apache.axis2.jaxws.spi.migrator;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import javax.xml.ws.handler.MessageContext.Scope;
+
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import javax.xml.ws.handler.MessageContext.Scope;
 
 public class ApplicationContextMigratorUtil {
 

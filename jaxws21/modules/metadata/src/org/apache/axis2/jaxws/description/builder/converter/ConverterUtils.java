@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 
 import javax.jws.HandlerChain;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlList;
 import javax.xml.ws.WebServiceRef;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -231,5 +232,18 @@ public class ConverterUtils {
             paramType = getType(((GenericArrayType)type).getGenericComponentType(), paramType) + "[]";
         }
         return paramType;
+    }
+    
+    /**
+     * This method will search array of parameter annotations for the presence of the @XmlList
+     * annotation.
+     */
+    public static boolean hasXmlListAnnotation(Annotation[] annotations) {
+        for(Annotation annotation : annotations) {
+            if(annotation.annotationType() == XmlList.class) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -206,7 +206,7 @@ public class Phase implements Handler {
 
         // If we don't care where it goes, tack it on at the end
         if (beforeName == null && afterName == null) {
-            handlers.add(handler);
+            addHandler(handler);
             return;
         }
 

@@ -18,24 +18,8 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import org.apache.axis2.jaxws.core.MEPContext;
-import java.util.List;
-
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.soap.SOAPHandler;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
-import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
@@ -47,6 +31,20 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.LogicalHandler;
+import javax.xml.ws.handler.soap.SOAPHandler;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class HandlerChainProcessor {
 
@@ -279,11 +277,12 @@ public class HandlerChainProcessor {
                 } else {
                     callCloseHandlers(0, handlers.size() - 1, direction);
                 }
-                if (savedException != null) {
-                    // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw any
-                    // other runtime exception --> No response" case.
-                    throw savedException;
-                }
+            }
+            if (savedException != null) {
+                // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw 
+                // ProtocolException or any other runtime exception --> No 
+                // response" case.
+                throw savedException;
             }
         }
     }

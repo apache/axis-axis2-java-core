@@ -56,7 +56,14 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
         Boolean outbound = 
             (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outbound) {  // inbound response on the client
-
+            
+            // make sure standard property is available
+            
+            Object bob = messagecontext.get(LogicalMessageContext.HTTP_RESPONSE_CODE);
+            if (bob == null) {
+                throw new NullPointerException("bob is null");
+            }
+            
             // previously caused a NPE due to internal Properties.putAll(map);
             // where 'map' had a key/value pair with null value.  So, internally
             // we now use HashMap instead of Properties.

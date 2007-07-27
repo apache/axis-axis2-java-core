@@ -22,7 +22,6 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.Constants.Configuration;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -31,6 +30,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
+import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
@@ -598,8 +598,7 @@ public class MessageImpl implements Message {
             if (!isMTOMEnabled()) {
                 String[] cids = newMap.getAllContentIDs();
                 if (cids.length > 0) {
-                    Options opts = messageContext.getAxisMessageContext().getOptions();
-                    opts.setProperty(Configuration.ENABLE_SWA, "true");
+                    messageContext.setProperty(Configuration.ENABLE_SWA, "true");
                 }
             }
             if (log.isDebugEnabled()) {
@@ -609,6 +608,12 @@ public class MessageImpl implements Message {
             }
             attachments = newMap;
         }
+        
+        // Check for cached attachment file(s) if attachments exist.
+        if(attachments != null && !messageContext.getAxisMessageContext().isServerSide()){
+        	AttachmentUtils.findCachedAttachment(attachments);
+        }
+        
         this.messageContext = messageContext;
     }
     public void setDoingSWA(boolean value) {

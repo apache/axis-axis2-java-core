@@ -22,6 +22,8 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import test.axis2.apache.org.*;
 
 import javax.xml.stream.XMLStreamReader;
@@ -55,8 +57,9 @@ public class InnerChoiceTest extends TestCase {
 
             // writtig result back
             XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(System.out);
+            MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
             result.serialize(new javax.xml.namespace.QName("org.apache.axis2.test", "TestInnerSequence1", "foo")
-                    , OMAbstractFactory.getSOAP11Factory(), xmlStreamWriter);
+                    , OMAbstractFactory.getSOAP11Factory(), mtomAwareXMLStreamWriter);
             xmlStreamWriter.flush();
 
         } catch (Exception e) {

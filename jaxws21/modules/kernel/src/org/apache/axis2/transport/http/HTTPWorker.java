@@ -131,7 +131,7 @@ public class HTTPWorker implements Worker {
                 if (service != null) {
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL2(response.getOutputStream());
+                    service.printWSDL2(response.getOutputStream(), getHost(request));
                     return;
                 }
             }
@@ -142,7 +142,7 @@ public class HTTPWorker implements Worker {
                 if (service != null) {
                     response.setStatus(HttpStatus.SC_OK);
                     response.setContentType("text/xml");
-                    service.printWSDL(response.getOutputStream());
+                    service.printWSDL(response.getOutputStream(), getHost(request));
                     return;
                 }
             }
@@ -171,6 +171,13 @@ public class HTTPWorker implements Worker {
                     //write out the correct schema
                     Map schemaTable = service.getSchemaMappingTable();
                     XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
+                    if (schema == null) {
+                        int dotIndex = schemaName.indexOf('.');
+                        if (dotIndex > 0) {
+                            String schemaKey = schemaName.substring(0,dotIndex);
+                            schema = (XmlSchema) schemaTable.get(schemaKey);
+                        }
+                    }
                     //schema found - write it to the stream
                     if (schema != null) {
                         response.setStatus(HttpStatus.SC_OK);
@@ -329,17 +336,16 @@ public class HTTPWorker implements Worker {
 
     }
 
-    public String getHostAddress(AxisHttpRequest request) throws java.net.SocketException {
-        try {
-            Header hostHeader = request.getFirstHeader("host");
-            if (hostHeader != null) {
-                String host = hostHeader.getValue();
-                return new URI("http://" + host).getHost();
+    public String getHost(AxisHttpRequest request) throws java.net.SocketException {
+        String host = null;
+        Header hostHeader = request.getFirstHeader("host");
+        if (hostHeader != null) {
+            String parts[] = hostHeader.getValue().split("[:]");
+            if (parts.length > 0) {
+                host = parts[0].trim();
             }
-        } catch (Exception e) {
-
         }
-        return HttpUtils.getIpAddress();
+        return host;
     }
 
 }

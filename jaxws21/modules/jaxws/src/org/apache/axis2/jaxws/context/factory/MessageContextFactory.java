@@ -20,8 +20,8 @@ package org.apache.axis2.jaxws.context.factory;
 
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 
 import javax.xml.ws.WebServiceContext;

@@ -37,6 +37,8 @@ import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,8 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 
 public class ListingAgent extends AbstractAgent {
+
+    private static final Log log = LogFactory.getLog(ListingAgent.class);
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
             "listServices.jsp";
@@ -84,6 +88,23 @@ public class ListingAgent extends AbstractAgent {
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
+
+        initTransportListener(httpServletRequest);
+
+        String query = httpServletRequest.getQueryString();
+        if (query != null) {
+            if (query.indexOf("wsdl2") > 0 || query.indexOf("wsdl") > 0 ||
+                query.indexOf("xsd") > 0 || query.indexOf("policy") > 0) {
+                processListService(httpServletRequest, httpServletResponse);
+            } else {
+                super.handle(httpServletRequest, httpServletResponse);
+            }
+        } else {
+            super.handle(httpServletRequest, httpServletResponse);
+        }
+    }
+
+    protected void initTransportListener(HttpServletRequest httpServletRequest) {
         // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
         String filePart = httpServletRequest.getRequestURL().toString();
         int ipindex = filePart.indexOf("//");
@@ -97,19 +118,8 @@ public class ListingAgent extends AbstractAgent {
             try {
                 addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
-                //
+                log.debug(e.toString(), e);
             }
-        }
-        String query = httpServletRequest.getQueryString();
-        if (query != null) {
-            if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 ||
-                query.indexOf("?xsd") > 0) {
-                processListService(httpServletRequest, httpServletResponse);
-            } else {
-                super.handle(httpServletRequest, httpServletResponse);
-            }
-        } else {
-            super.handle(httpServletRequest, httpServletResponse);
         }
     }
 
@@ -209,13 +219,14 @@ public class ListingAgent extends AbstractAgent {
             if (serviceObj != null) {
                 boolean isHttp = "http".equals(req.getScheme());
                 if (wsdl2 >= 0) {
-                    OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
+                    String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl2");
-                    if (!"".equals(wsdlName)) {
+                    if (wsdlName != null && wsdlName.length()>0) {
                         InputStream in = ((AxisService) serviceObj).getClassLoader()
                                 .getResourceAsStream(DeploymentConstants.META_INF + "/" + wsdlName);
                         if (in != null) {
+                            OutputStream out = res.getOutputStream();
                             out.write(IOUtils.getStreamAsByteArray(in));
                             out.flush();
                             out.close();
@@ -223,8 +234,9 @@ public class ListingAgent extends AbstractAgent {
                             res.sendError(HttpServletResponse.SC_NOT_FOUND);
                         }
                     } else {
+                        OutputStream out = res.getOutputStream();
                         ((AxisService) serviceObj)
-                                .printWSDL2(out);
+                                .printWSDL2(out, ip);
                         out.flush();
                         out.close();
                     }
@@ -235,7 +247,7 @@ public class ListingAgent extends AbstractAgent {
                     String ip = extractHostAndPort(filePart, isHttp);
                     String wsdlName = req.getParameter("wsdl");
 
-                    if (!"".equals(wsdlName)) {
+                    if (wsdlName != null && wsdlName.length()>0) {
                         AxisService axisServce = (AxisService) serviceObj;
                         axisServce.printUserWSDL(out, wsdlName);
                         out.flush();
@@ -247,7 +259,6 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else if (xsd >= 0) {
-                    OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     AxisService axisService = (AxisService) serviceObj;
                     //call the populator
@@ -261,8 +272,16 @@ public class ListingAgent extends AbstractAgent {
                     if (!"".equals(xsds)) {
                         XmlSchema schema =
                                 (XmlSchema) schemaMappingtable.get(xsds);
+                        if (schema == null) {
+                            int dotIndex = xsds.indexOf('.');
+                            if (dotIndex > 0) {
+                                String schemaKey = xsds.substring(0,dotIndex);
+                                schema = (XmlSchema) schemaMappingtable.get(schemaKey);
+                            }
+                        }
                         if (schema != null) {
                             //schema is there - pump it outs
+                            OutputStream out = res.getOutputStream();
                             schema.write(new OutputStreamWriter(out, "UTF8"));
                             out.flush();
                             out.close();
@@ -270,6 +289,7 @@ public class ListingAgent extends AbstractAgent {
                             InputStream in = axisService.getClassLoader()
                                     .getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
                             if (in != null) {
+                                OutputStream out = res.getOutputStream();
                                 out.write(IOUtils.getStreamAsByteArray(in));
                                 out.flush();
                                 out.close();
@@ -290,6 +310,7 @@ public class ListingAgent extends AbstractAgent {
                         if (list.size() > 0) {
                             XmlSchema schema = axisService.getSchema(0);
                             if (schema != null) {
+                                OutputStream out = res.getOutputStream();
                                 schema.write(new OutputStreamWriter(out, "UTF8"));
                                 out.flush();
                                 out.close();
@@ -299,6 +320,7 @@ public class ListingAgent extends AbstractAgent {
                             String xsdNotFound = "<error>" +
                                     "<description>Unable to access schema for this service</description>" +
                                     "</error>";
+                            OutputStream out = res.getOutputStream();
                             out.write(xsdNotFound.getBytes());
                             out.flush();
                             out.close();
@@ -306,8 +328,6 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else if (policy >= 0) {
-
-                    OutputStream out = res.getOutputStream();
 
                     ExternalPolicySerializer serializer = new ExternalPolicySerializer();
                     serializer.setAssertionsToFilter(configContext
@@ -325,6 +345,7 @@ public class ListingAgent extends AbstractAgent {
                             XMLStreamWriter writer;
 
                             try {
+                                OutputStream out = res.getOutputStream();
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
@@ -345,6 +366,7 @@ public class ListingAgent extends AbstractAgent {
 
                         } else {
 
+                            OutputStream out = res.getOutputStream();
                             res.setContentType("text/html");
                             String outStr = "<b>No policy found for id="
                                             + idParam + "</b>";
@@ -360,6 +382,7 @@ public class ListingAgent extends AbstractAgent {
                             XMLStreamWriter writer;
 
                             try {
+                                OutputStream out = res.getOutputStream();
                                 writer = XMLOutputFactory.newInstance()
                                         .createXMLStreamWriter(out);
 
@@ -379,6 +402,7 @@ public class ListingAgent extends AbstractAgent {
                             }
                         } else {
 
+                            OutputStream out = res.getOutputStream();
                             res.setContentType("text/html");
                             String outStr = "<b>No effective policy for "
                                             + serviceName + " servcie</b>";
@@ -477,9 +501,11 @@ public class ListingAgent extends AbstractAgent {
 
         public EndpointReference[] getEPRsForService(String serviceName, String ip)
                 throws AxisFault {
-            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port +
-                                                                 "/" + axisConf.getServiceContextPath() + "/" +
-                                                                 serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+            String path = axisConf.getServiceContextPath() + "/" + serviceName;
+            if(path.charAt(0)!='/'){
+                path = '/' + path;
+            }
+            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path )};
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {

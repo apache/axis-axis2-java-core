@@ -36,9 +36,9 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -223,7 +223,7 @@ public class AxisInvocationController extends InvocationController {
         // Setup the client so that it knows whether the underlying call to
         // Axis2 knows whether or not to start a listening port for an
         // asynchronous response.
-        Boolean useAsyncMep = (Boolean)request.getProperties().get(Constants.USE_ASYNC_MEP);
+        Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
@@ -299,7 +299,7 @@ public class AxisInvocationController extends InvocationController {
         // Setup the client so that it knows whether the underlying call to
         // Axis2 knows whether or not to start a listening port for an
         // asynchronous response.
-        Boolean useAsyncMep = (Boolean)request.getProperties().get(Constants.USE_ASYNC_MEP);
+        Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
@@ -355,14 +355,6 @@ public class AxisInvocationController extends InvocationController {
                     axisRequestMsgCtx // Axis 2 MessageContext
             );
 
-            // For now, just take all of the properties that were in the 
-            // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-            axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
-                                          Boolean.TRUE);
-            Map props = axisRequestMsgCtx.getOptions().getProperties();
-            props.putAll(requestMsgCtx.getProperties());
-
-            axisRequestMsgCtx.getOptions().setProperties(props);
             if (log.isDebugEnabled()) {
                 log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
             }
@@ -385,7 +377,7 @@ public class AxisInvocationController extends InvocationController {
     
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
         org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
-        setupProperties(requestMsgCtx, axisRequest.getOptions());
+        setupProperties(requestMsgCtx);//, axisRequest.getOptions());
 
         if (opClient != null) {
             Options options = opClient.getOptions();
@@ -393,7 +385,7 @@ public class AxisInvocationController extends InvocationController {
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
             if (options.getTo() == null) {
-                String targetUrl = (String)requestMsgCtx.getProperties().get(
+                String targetUrl = (String)requestMsgCtx.getProperty(
                         BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
                 EndpointReference toEPR = new EndpointReference(targetUrl);
                 options.setTo(toEPR);
@@ -487,23 +479,18 @@ public class AxisInvocationController extends InvocationController {
     * moved over to when the property is set.  This should not be in the path
     * of performance.
     */
-    private void setupProperties(MessageContext mc, Options ops) {
+    private void setupProperties(MessageContext mc) {//, Options ops) {
         Map<String, Object> properties = mc.getProperties();
-        for (Iterator<String> it = properties.keySet().iterator(); it.hasNext();) {
-            String key = it.next();
-            Object value = properties.get(key);
-            ops.setProperty(key, value);
-        }
 
         // Enable MTOM
         Message msg = mc.getMessage();
         if (msg.isMTOMEnabled()) {
-            ops.setProperty(Configuration.ENABLE_MTOM, "true");
+            mc.setProperty(Configuration.ENABLE_MTOM, "true");
         }
 
         // Enable session management
         if (mc.isMaintainSession()) {
-            ops.setManageSession(true);
+            mc.getAxisMessageContext().getOptions().setManageSession(true);
         }
 
         // Check to see if BASIC_AUTH is enabled.  If so, make sure
@@ -540,7 +527,7 @@ public class AxisInvocationController extends InvocationController {
             basicAuthentication.setPort(url.getPort());
             basicAuthentication.setPreemptiveAuthentication(true);
 
-            ops.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
+            mc.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
         } else if ((!properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
                 properties.containsKey(BindingProvider.PASSWORD_PROPERTY)) ||
                 (properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&

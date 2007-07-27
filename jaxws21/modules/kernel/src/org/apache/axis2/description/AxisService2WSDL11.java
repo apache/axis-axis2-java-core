@@ -573,7 +573,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                                                       wsdl);
             binding.addChild(operation);
-            String soapAction = axisOperation.getInputAction();
+            String soapAction = axisOperation.getSoapAction();
             if (soapAction == null) {
                 soapAction = "";
             }
@@ -713,7 +713,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                                                       wsdl);
             binding.addChild(operation);
-            String soapAction = axisOperation.getInputAction();
+            String soapAction = axisOperation.getSoapAction();
             if (soapAction == null) {
                 soapAction = "";
             }

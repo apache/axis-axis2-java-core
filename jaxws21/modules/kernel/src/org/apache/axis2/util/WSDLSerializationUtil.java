@@ -258,13 +258,19 @@ public class WSDLSerializationUtil {
 private static void generateDefaultSOAPBindingOperations(AxisService axisService, OMFactory omFactory, OMElement binding, OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap) {        Iterator iterator = axisService.getChildren();
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
+            if (axisOperation.isControlOperation()) {
+                continue;
+            }
             OMElement opElement = omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
             binding.addChild(opElement);
             String name = axisOperation.getName().getLocalPart();
             opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
                                                          tns.getPrefix() + ":" + name));
-            opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
-                                                         axisOperation.getInputAction()));
+            String soapAction = axisOperation.getSoapAction();
+            if (soapAction != null) {
+                opElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ACTION, wsoap,
+                        soapAction));
+            }
         }
     }
 
@@ -282,9 +288,28 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
                                                    OMNamespace tns, AxisService axisService,
                                                    boolean disableREST)
             throws AxisFault {
-        String[] eprs = axisService.getEPRs();
-        if (eprs == null) {
-            eprs = new String[]{axisService.getName()};
+        return generateServiceElement(omFactory, wsdl, tns, axisService, disableREST, null);
+    }
+    
+    /**
+     * Generates a default service element
+     * @param omFactory - The OMFactory
+     * @param wsdl the WSDL namespace
+     * @param tns - The targetnamespace
+     * @param axisService - The AxisService
+     * @param disableREST only generate REST endpoint if this is false
+     * @return - The generated service element
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    public static OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
+                                                   OMNamespace tns, AxisService axisService,
+                                                   boolean disableREST, String[] eprs)
+            throws AxisFault {
+        if(eprs == null){
+            eprs = axisService.getEPRs();
+            if (eprs == null) {
+                eprs = new String[]{axisService.getName()};
+            }
         }
         OMElement serviceElement;
         serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);

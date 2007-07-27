@@ -34,8 +34,8 @@ import javax.xml.ws.handler.LogicalMessageContext;
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;

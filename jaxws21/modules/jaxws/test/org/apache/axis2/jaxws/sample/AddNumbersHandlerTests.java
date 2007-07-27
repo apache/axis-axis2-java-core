@@ -85,13 +85,12 @@ public class AddNumbersHandlerTests extends TestCase {
             TestLogger.logger.debug("test: " + getName());
 			
             AddNumbersHandlerService service = new AddNumbersHandlerService();
-			AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
 			
             BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                    axisEndpoint);	
-			int total = proxy.addNumbersHandler(10,10);
-			
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            int total = proxy.addNumbersHandler(10, 10);
+
             assertEquals("With handler manipulation, total should be 3 less than a proper sumation.", 17, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
             TestLogger.logger.debug("----------------------------------");
@@ -285,8 +284,6 @@ public class AddNumbersHandlerTests extends TestCase {
         }
     }
     
-    
-    // TODO: disabled until handler support is more complete
     public void testAddNumbersClientProtoAndLogicalHandler() {
         try{
             TestLogger.logger.debug("----------------------------------");
@@ -422,6 +419,38 @@ public class AddNumbersHandlerTests extends TestCase {
         }       
     }
     
+    public void testOneWayWithException() {
+        try {
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+
+            BindingProvider p = (BindingProvider) proxy;
+
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put("myClientKey", "myClientVal");
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
+            p.getBinding().setHandlerChain(handlers);
+            
+            BindingProvider bp = (BindingProvider) proxy;
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            // value 99 will trigger exception from AddNumbersClientLogicalHandler
+            proxy.oneWayInt(99);
+            fail("Should have got an exception, but did not.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertEquals(e.getMessage(), "I don't like the value 99");
+        }
+        TestLogger.logger.debug("----------------------------------");
+    }
+
     /*
      * A callback implementation that can be used to collect the exceptions
      */

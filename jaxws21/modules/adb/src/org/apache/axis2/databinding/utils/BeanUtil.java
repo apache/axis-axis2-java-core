@@ -149,8 +149,7 @@ public class BeanUtil {
                     Method readMethod = propDesc.getReadMethod();
                     Object value;
                     if(readMethod!=null){
-                      value = readMethod.invoke(beanObject,
-                                                                   null);
+                      value = readMethod.invoke(beanObject, null);
                     } else {
                         throw new AxisFault("can not find read method for : "  + propDesc.getName());
                     }
@@ -159,7 +158,6 @@ public class BeanUtil {
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
-
                         Method readMethod = propDesc.getReadMethod();
                         Object value;
                         if(readMethod!=null){
@@ -169,17 +167,21 @@ public class BeanUtil {
                             throw new AxisFault("can not find read method for : "  + propDesc.getName());
                         }
                         if (value != null) {
-                            int i1 = Array.getLength(value);
-                            for (int j = 0; j < i1; j++) {
-                                Object o = Array.get(value, j);
+                            if("byte".equals(ptype.getComponentType().getName())) {
                                 addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
-                                object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
+                                object.add(Base64.encode((byte[]) value));
+                            } else {
+                                int i1 = Array.getLength(value);
+                                for (int j = 0; j < i1; j++) {
+                                    Object o = Array.get(value, j);
+                                    addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
+                                    object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
+                                }
                             }
                         } else {
                             addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                             object.add(value);
                         }
-
                     } else {
                         Object value [] = (Object[])propDesc.getReadMethod().invoke(beanObject,
                                                                                     null);
@@ -302,25 +304,29 @@ public class BeanUtil {
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = beanClass.getComponentType();
-                Iterator parts = beanElement.getChildElements();
-                OMElement omElement;
-                while (parts.hasNext()) {
-                    Object objValue = parts.next();
-                    if (objValue instanceof OMElement) {
-                        omElement = (OMElement)objValue;
-                        if (!arrayLocalName.equals(omElement.getLocalName())) {
-                            continue;
-                        }
-                        Object obj = deserialize(arrayClassType,
-                                                 omElement,
-                                                 objectSupplier, null);
-                        if (obj != null) {
-                            valueList.add(obj);
+                if ("byte".equals(arrayClassType.getName())) {
+                    return Base64.decode(beanElement.getFirstElement().getText());
+                } else {
+                    Iterator parts = beanElement.getChildElements();
+                    OMElement omElement;
+                    while (parts.hasNext()) {
+                        Object objValue = parts.next();
+                        if (objValue instanceof OMElement) {
+                            omElement = (OMElement)objValue;
+                            if (!arrayLocalName.equals(omElement.getLocalName())) {
+                                continue;
+                            }
+                            Object obj = deserialize(arrayClassType,
+                                    omElement,
+                                    objectSupplier, null);
+                            if (obj != null) {
+                                valueList.add(obj);
+                            }
                         }
                     }
+                    return ConverterUtil.convertToArray(arrayClassType,
+                            valueList);
                 }
-                return ConverterUtil.convertToArray(arrayClassType,
-                                                    valueList);
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
                     return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
@@ -349,28 +355,35 @@ public class BeanUtil {
                     } else {
                         continue;
                     }
+                    OMAttribute attribute = parts.getAttribute(
+                            new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi"));
+
                     // if parts/@href != null then need to find element with id and deserialize.
                     // before that first check whether we already have it in the hashtable
                     String partsLocalName = parts.getLocalName();
-                    PropertyDescriptor prty = (PropertyDescriptor)properties.get(partsLocalName);
+                    PropertyDescriptor prty = (PropertyDescriptor)properties.remove(partsLocalName);
                     if (prty != null) {
                         Class parameters = prty.getPropertyType();
                         if (prty.equals("class"))
                             continue;
 
                         Object partObj;
-                        if (SimpleTypeMapper.isSimpleType(parameters)) {
-                            partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                        } else if (SimpleTypeMapper.isCollection(parameters)) {
-                            partObj = SimpleTypeMapper.getArrayList((OMElement)
-                                    parts.getParent(), prty.getName());
-                        } else if (SimpleTypeMapper.isDataHandler(parameters)){
-                            partObj = SimpleTypeMapper.getDataHandler(parts);
-                        } else if (parameters.isArray()) {
-                            partObj = deserialize(parameters, (OMElement)parts.getParent(),
-                                    objectSupplier, prty.getName());
+                        if (attribute != null) {
+                            partObj = null;
                         } else {
-                            partObj = deserialize(parameters, parts, objectSupplier, null);
+                            if (SimpleTypeMapper.isSimpleType(parameters)) {
+                                partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                            } else if (SimpleTypeMapper.isCollection(parameters)) {
+                                partObj = SimpleTypeMapper.getArrayList((OMElement)
+                                        parts.getParent(), prty.getName());
+                            } else if (SimpleTypeMapper.isDataHandler(parameters)){
+                                partObj = SimpleTypeMapper.getDataHandler(parts);
+                            } else if (parameters.isArray()) {
+                                partObj = deserialize(parameters, (OMElement)parts.getParent(),
+                                        objectSupplier, prty.getName());
+                            } else {
+                                partObj = deserialize(parameters, parts, objectSupplier, null);
+                            }
                         }
                         Object [] parms = new Object[] { partObj };
                         Method writeMethod = prty.getWriteMethod();

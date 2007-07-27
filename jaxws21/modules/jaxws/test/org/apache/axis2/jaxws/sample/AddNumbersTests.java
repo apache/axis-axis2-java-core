@@ -18,7 +18,10 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import java.util.Map;
+
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
@@ -29,25 +32,26 @@ public class AddNumbersTests extends TestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersService";
 	
-    public void testAddNumbers() {
-        try {
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
-        
+    public void testAddNumbers() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+
         AddNumbersService service = new AddNumbersService();
         AddNumbersPortType proxy = service.getAddNumbersPort();
-        
-        BindingProvider p =	(BindingProvider)proxy;
-        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
-                axisEndpoint);	
-        int total = proxy.addNumbers(10,10);
 
-            TestLogger.logger.debug("Total =" + total);
-            TestLogger.logger.debug("----------------------------------");
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        BindingProvider p = (BindingProvider) proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        int total = proxy.addNumbers(10, 10);
+
+        TestLogger.logger.debug("Total =" + total);
+        TestLogger.logger.debug("----------------------------------");
+
+        assertEquals("sum", 20, total);
+        assertEquals("http response code", 
+                     new Integer(200), p.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE));
+        Map headers = (Map) p.getResponseContext().get(MessageContext.HTTP_RESPONSE_HEADERS);
+        // the map should contain some headers
+        assertTrue("http response headers", headers != null && !headers.isEmpty());
     }
     
     public void testOneWay() {

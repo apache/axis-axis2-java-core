@@ -20,11 +20,9 @@ package org.apache.axis2.jaxws.handler;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.activation.DataHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +105,12 @@ public class TransportHeadersAdapter implements Map {
             tha.putAll((Map) map);
         }
         mc.setProperty(propertyName, tha);
+        
+        // If this is a response, then also set the property for the response code
+        if (!isRequest) {
+            Object value = mc.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+            mc.setProperty(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE, value);
+        }
     }
 
     /**
@@ -229,5 +233,9 @@ public class TransportHeadersAdapter implements Map {
         Map tempMap = new HashMap<String, List<String>>();
         tempMap.putAll(this);
         return tempMap.entrySet();
+    }
+    
+    public String toString() {
+        return "TransportHeadersAdapter: " + getDelegateMap(mc).toString();        
     }
 }

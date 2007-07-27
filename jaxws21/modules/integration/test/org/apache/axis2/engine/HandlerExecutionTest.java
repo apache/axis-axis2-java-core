@@ -263,7 +263,7 @@ public class HandlerExecutionTest extends LocalTestCase {
         }
         catch (AxisFault e) {
         }
-        List expectedExecutionState = Arrays.asList(new String[] { "In1", "kaboom", "FCIn1" });
+        List expectedExecutionState = Arrays.asList(new String[] {"In1", "kaboom","FCIn1"});
         assertEquals(expectedExecutionState, testResults);
         middleGlobalInHandler.shouldFail(false);
     }

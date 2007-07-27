@@ -22,7 +22,10 @@ import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
 
-@WebService(targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclitswa",wsdlLocation = "RPCLitSWA.wsdl",
+@WebService(targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclitswa",
+            wsdlLocation = "target/test-classes/services/RPCLitSWA/META-INF/RPCLitSWA.wsdl",
+            serviceName="RPCLitSWAService", 
+            portName="RPCLitSWA",
         endpointInterface="org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA")
 public class RPCLitSWAImpl implements RPCLitSWA {
 

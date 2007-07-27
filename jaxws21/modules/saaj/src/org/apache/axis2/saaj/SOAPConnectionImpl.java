@@ -30,8 +30,11 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
+import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
@@ -55,6 +58,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -105,11 +109,16 @@ public class SOAPConnectionImpl extends SOAPConnection {
         // initialize the Sender
         OperationClient opClient;
         try {
-            serviceClient = new ServiceClient();
+            serviceClient = new ServiceClient();   
+            disableMustUnderstandProcessing(serviceClient.getAxisConfiguration());            
             opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         } catch (AxisFault e) {
             throw new SOAPException(e);
         }
+
+        options.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, 
+                            request.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
+
         opClient.setOptions(options);
 
         if (request.countAttachments() != 0) { // SOAPMessage with attachments
@@ -121,6 +130,33 @@ public class SOAPConnectionImpl extends SOAPConnection {
         }
     }
 
+    /*
+     * Installs UnderstandAllHeadersHandler that marks all headers as processed 
+     * because MU validation should not be done for SAAJ clients.
+     */
+    private void disableMustUnderstandProcessing(AxisConfiguration config) {
+        DispatchPhase phase;
+        phase = getDispatchPhase(serviceClient.getAxisConfiguration().getInFlowPhases());
+        if (phase != null) {
+            phase.addHandler(new UnderstandAllHeadersHandler());
+        }
+        phase = getDispatchPhase(serviceClient.getAxisConfiguration().getInFaultFlowPhases());
+        if (phase != null) {
+            phase.addHandler(new UnderstandAllHeadersHandler());
+        }
+    }
+    
+    private static DispatchPhase getDispatchPhase(List phases) {
+        Iterator iter = phases.iterator();
+        while(iter.hasNext()) {
+            Object phase = iter.next();
+            if (phase instanceof DispatchPhase) {
+                return (DispatchPhase)phase;
+            }
+        }
+        return null;        
+    }
+    
     /**
      * Closes this <CODE>SOAPConnection</CODE> object.
      *
@@ -153,8 +189,8 @@ public class SOAPConnectionImpl extends SOAPConnection {
             MessageContext msgCtx =
                     opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             return getSOAPMessage(msgCtx.getEnvelope());
-        } catch (AxisFault e) {
-            throw new SOAPException(e.getMessage());
+        } catch (Exception e) {
+            throw new SOAPException(e.getMessage(), e);
         }
     }
 

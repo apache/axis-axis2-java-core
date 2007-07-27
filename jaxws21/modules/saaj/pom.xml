@@ -38,11 +38,35 @@
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-saaj-api</artifactId>
 			<version>${version}</version>
+			<exclusions>
+			    <exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-activation_1.1_spec</artifactId>
+			    </exclusion>
+			    <exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-javamail_1.4_spec</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
 			<version>${version}</version>
+			<exclusions>
+			    <exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-activation_1.1_spec</artifactId>
+			    </exclusion>
+			    <exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-javamail_1.4_spec</artifactId>
+			    </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -66,6 +90,13 @@
 				<directory>test-resources</directory>
 				<includes>
 					<include>**/*.*</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<targetPath></targetPath>
+				<directory>test-resources</directory>
+				<includes>
+					<include>**/*.properties</include>
 				</includes>
 			</testResource>
 		</testResources>

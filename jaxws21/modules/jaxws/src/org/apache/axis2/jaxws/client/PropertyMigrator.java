@@ -19,8 +19,8 @@
 package org.apache.axis2.jaxws.client;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

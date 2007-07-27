@@ -20,6 +20,8 @@
 
 package org.apache.axis2.transport;
 
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.CachedFileDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
@@ -44,8 +46,11 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataSource;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
+
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -455,5 +460,46 @@ public class TransportUtils {
            	return null;
            }
     }
-    
+       
+       /**
+        * Clean up cached attachment file 
+        * @param msgContext
+        */
+       public static void deleteAttachments(MessageContext msgContext) {
+       	if (log.isDebugEnabled()) {
+               log.debug("Entering deleteAttachments()");
+           }
+           
+       	Attachments attachments = msgContext.getAttachmentMap();
+           if (attachments != null) {
+               String [] keys = attachments.getAllContentIDs(); 
+               if (keys != null) {
+               	String key = null;
+               	File file = null;
+               	DataSource dataSource = null;
+                   for (int i = 0; i < keys.length; i++) {
+                       try {
+                           key = keys[i];
+                           dataSource = attachments.getDataHandler(key).getDataSource();
+                           if(dataSource instanceof CachedFileDataSource){
+                           	file = ((CachedFileDataSource)dataSource).getFile();
+                           	if (log.isDebugEnabled()) {
+                                   log.debug("Delete cache attachment file: "+file.getName());
+                               }
+                           	file.delete();
+                           }
+                       }
+                       catch (Exception e) {
+                           if (file != null) {
+                               file.deleteOnExit();                            
+                           }
+                       }
+                   }
+               }
+           }
+           
+           if (log.isDebugEnabled()) {
+               log.debug("Exiting deleteAttachments()");
+           }
+       }
 }

@@ -465,6 +465,17 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+                                <copy toDir="target/test-classes/services/SoapMessageMUProviderService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgmu">
+                                        <include name="META-INF/**"/>
+                                    </fileset>
+                                    <fileset dir="target/classes">
+                                        <include name="org/apache/axis2/jaxws/server/**"/>
+                                    </fileset>
+                                </copy>
 								<copy toDir="target/test-classes/services/JAXBProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
@@ -806,6 +817,7 @@
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
+										<include name="**/axis2.xml"/>
 									</fileset>
 								</copy>
 							</tasks>
@@ -866,6 +878,11 @@
 						<property>
 							<name>javax.xml.soap.MetaFactory</name>
 							<value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
+						</property>
+                        <!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->
+						<property>
+						    <name>org.apache.axis2.jaxws.config.path</name>
+						    <value>./target/test-classes/axis2.xml</value>
 						</property>
 					</systemProperties>
 				</configuration>

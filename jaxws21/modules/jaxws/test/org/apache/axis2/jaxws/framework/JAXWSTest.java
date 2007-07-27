@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.client.ClientConfigTests;
 import org.apache.axis2.jaxws.client.DispatchSoapActionTests;
 import org.apache.axis2.jaxws.client.PropertyValueTests;
 import org.apache.axis2.jaxws.client.ProxySoapActionTests;
+import org.apache.axis2.jaxws.core.MessageContextTests;
 import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProviderTests;
@@ -59,6 +60,7 @@ import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.JAXBProviderTests;
 import org.apache.axis2.jaxws.provider.SOAPFaultProviderTests;
 import org.apache.axis2.jaxws.provider.SoapMessageProviderTests;
+import org.apache.axis2.jaxws.provider.SoapMessageMUProviderTests;
 import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceProviderTests;
 import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
@@ -124,6 +126,7 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);
+        suite.addTestSuite(MessageContextTests.class);
         suite.addTestSuite(FaultTests.class);
         suite.addTestSuite(SAAJConverterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
@@ -156,6 +159,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SourceMessageProviderTests.class);
         // TODO FIXME: Test fails
         //suite.addTestSuite(SoapMessageProviderTests.class);
+        suite.addTestSuite(SoapMessageMUProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         //TODO: FIXME - Was working, now doesn't

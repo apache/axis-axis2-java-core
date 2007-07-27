@@ -22,6 +22,8 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
 import java.io.File;
+import java.util.List;
+import java.util.Iterator;
 
 public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerationExtension {
     /** If the extension for property file changes it might effect this as well !!! */
@@ -31,7 +33,7 @@ public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerat
 
         //recurse through the output files and prettify them
         File outputFolder = configuration.getOutputLocation();
-        prettify(outputFolder);
+        prettify(outputFolder,configuration);
 
 
     }
@@ -41,16 +43,13 @@ public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerat
      *
      * @param file
      */
-    protected void prettify(File file) {
-        if (file.isFile() &&
-                file.exists() &&
-                file.getName().toLowerCase().endsWith(fileExtension)) {
-            prettifyFile(file);
-        } else if (file.isDirectory()) {
-            File[] childFiles = file.listFiles();
-            for (int i = 0; i < childFiles.length; i++) {
-                prettify(childFiles[i]);
-            }
+    protected void prettify(File file, CodeGenConfiguration configuration) {
+
+        List xmlFileList = configuration.getOutputXmlFileNamesList();
+        String fileName = null;
+        for (Iterator iter = xmlFileList.iterator();iter.hasNext();){
+            fileName = (String) iter.next();
+            prettifyFile(new File(fileName));
         }
 
     }

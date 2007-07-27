@@ -53,14 +53,10 @@ public class ContextUtils {
      */
     public static void addProperties(SOAPMessageContext soapMessageContext,
                                      MessageContext jaxwsMessageContext) {
-        org.apache.axis2.context.MessageContext axisMsgContext =
-                jaxwsMessageContext.getAxisMessageContext();
 
-        // Copy Axis2 MessageContext options.  It's possible that some set of Axis2 handlers
-        // have run and placed some properties in the context that need to be visible.  
-        // We don't, however, want to expose the Axis2 Operation/ServiceContext properties.
-        Map props = axisMsgContext.getOptions().getProperties();
-        soapMessageContext.putAll(props);
+        // Copy Axis2 MessageContext properties.  It's possible that some set of Axis2 handlers
+        // have run and placed some properties in the context that need to be visible.
+        soapMessageContext.putAll(jaxwsMessageContext.getProperties());
 
         EndpointDescription description = jaxwsMessageContext.getEndpointDescription();
         if (description !=null) {
@@ -98,18 +94,19 @@ public class ContextUtils {
         // If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
         soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT,
-                               axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
+                               jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
         soapMessageContext
                 .setScope(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, Scope.APPLICATION);
+
         if (log.isDebugEnabled()) {
-            if (axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null) {
+            if (jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null) {
                 log.debug("Servlet Context Set");
             } else {
                 log.debug("Servlet Context not found");
             }
         }
 
-        HttpServletRequest req = (HttpServletRequest)axisMsgContext
+        HttpServletRequest req = (HttpServletRequest)jaxwsMessageContext
                 .getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
         if (req == null) {
             if (log.isDebugEnabled()) {
@@ -159,7 +156,7 @@ public class ContextUtils {
             }
 
         }
-        HttpServletResponse res = (HttpServletResponse)axisMsgContext
+        HttpServletResponse res = (HttpServletResponse)jaxwsMessageContext
                 .getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
         if (res == null) {
             if (log.isDebugEnabled()) {

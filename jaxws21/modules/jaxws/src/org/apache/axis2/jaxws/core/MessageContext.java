@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 
@@ -60,8 +61,8 @@ public class MessageContext {
     private boolean isOutbound;  // Outbound or inbound message context
     
     // TODO:  flag to set whether we delegate property setting up to the
-    // axis2 options objecct or keep it local
-    private boolean DELEGATE_TO_OPTIONS = true;
+    // axis2 message context object or keep it local
+    private boolean DELEGATE_TO_AXISMC = true;
     
     /*
      * JAXWS runtime uses a request and response mc, but we need to know the pair.
@@ -83,7 +84,7 @@ public class MessageContext {
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
         isOutbound = true;
-        if (!DELEGATE_TO_OPTIONS) {
+        if (!DELEGATE_TO_AXISMC) {
             properties = new HashMap<String, Object>();
         }
            
@@ -96,7 +97,7 @@ public class MessageContext {
      * @throws WebServiceException
      */
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
-        if (!DELEGATE_TO_OPTIONS) {
+        if (!DELEGATE_TO_AXISMC) {
             properties = new HashMap<String, Object>();
         }
         // Assume inbound (caller must setOutbound)
@@ -128,32 +129,61 @@ public class MessageContext {
     }
 
     public Map<String, Object> getProperties() {
-        if (DELEGATE_TO_OPTIONS) {
-            return new ReadOnlyProperties(axisMsgCtx.getOptions().getProperties());
+        if (DELEGATE_TO_AXISMC) {
+            // only use properties that are local to the axis2 MC,
+            // not the options bag.  See org.apache.axis2.context.AbstractContext
+            Iterator names = axisMsgCtx.getPropertyNames();
+            HashMap tempProps = new HashMap<String, Object>();
+            for (; names.hasNext();) {
+                String name = (String)names.next();
+                tempProps.put(name, axisMsgCtx.getProperty(name));
+            }
+            //return new ReadOnlyProperties(tempProps);
+            return tempProps;
         }
         return properties;
     }
     
     public void setProperties(Map<String, Object> _properties) {
-        if (DELEGATE_TO_OPTIONS) {
-            axisMsgCtx.getOptions().setProperties(_properties);
+        if (DELEGATE_TO_AXISMC) {
+            // make sure copy is made, not just reference:
+            _properties.put(org.apache.axis2.context.MessageContext.COPY_PROPERTIES, true);
+            axisMsgCtx.setProperties(_properties);
         } else {
             getProperties().putAll(_properties);
         }
     }
     
     public Object getProperty(String key) {
-        if (DELEGATE_TO_OPTIONS) {
-            return axisMsgCtx.getOptions().getProperty(key);
+        if (DELEGATE_TO_AXISMC) {
+            // only use properties that are local to the axis2 MC,
+            // not the options bag.  See org.apache.axis2.context.AbstractContext
+            Iterator names = axisMsgCtx.getPropertyNames();
+            for (; names.hasNext();) {
+                String name = (String)names.next();
+                if (name.equals(key)) {
+                    return axisMsgCtx.getProperty(key);
+                }
+            }
+            return null;
         }
         return getProperties().get(key);
     }
     
     // acts like Map.put(key, value)
     public Object setProperty(String key, Object value) {
-        if (DELEGATE_TO_OPTIONS) {
-            Object retval = axisMsgCtx.getOptions().getProperty(key);
-            axisMsgCtx.getOptions().setProperty(key, value);
+        if (DELEGATE_TO_AXISMC) {
+            // only use properties that are local to the axis2 MC,
+            // not the options bag.  See org.apache.axis2.context.AbstractContext
+            Object retval = null;
+            Iterator names = axisMsgCtx.getPropertyNames();
+            for (; names.hasNext();) {
+                String name = (String)names.next();
+                if (name.equals(key)) {
+                    retval = axisMsgCtx.getProperty(key);
+                }
+            }
+            axisMsgCtx.setProperty(key, value);
             return retval;
         } else {
             return getProperties().put(key, value);
@@ -223,7 +253,7 @@ public class MessageContext {
     public boolean isMaintainSession() {
         boolean maintainSession = false;
 
-        Boolean value = (Boolean) getProperties().get(BindingProvider.SESSION_MAINTAIN_PROPERTY);
+        Boolean value = (Boolean) getProperty(BindingProvider.SESSION_MAINTAIN_PROPERTY);
         if (value != null && value.booleanValue()) {
             maintainSession = true;
         }
@@ -304,195 +334,5 @@ public class MessageContext {
     public void setOutbound(boolean isOutbound) {
         this.isOutbound = isOutbound;
     }
-    
-    private class ReadOnlyProperties extends AbstractMap<String, Object> {
-        
-        private Map<String, Object> containedProps;
-        
-        public ReadOnlyProperties(Map containedProps) {
-            this.containedProps = containedProps;
-        }
 
-        @Override
-        public Set<Entry<String, Object>> entrySet() {
-            return new ReadOnlySet(containedProps.entrySet());
-        }
-
-        @Override
-        public Set<String> keySet() {
-            return new ReadOnlySet(containedProps.keySet());
-        }
-
-        @Override
-        public Object put(String key, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void putAll(Map<? extends String, ? extends Object> t) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object remove(Object key) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Collection<Object> values() {
-            return new ReadOnlyCollection(containedProps.values());
-        }
-        
-        /*
-         * nested classes to be used to enforce read-only Collection, Set, and Iterator for MEPContext
-         */
-        
-        class ReadOnlyCollection implements Collection {
-            
-            private Collection containedCollection;
-            
-            private ReadOnlyCollection(Collection containedCollection) {
-                this.containedCollection = containedCollection;
-            }
-            
-            public boolean add(Object o) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean addAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public void clear() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean contains(Object o) {
-                return containedCollection.contains(o);
-            }
-
-            public boolean containsAll(Collection c) {
-                return containedCollection.containsAll(c);
-            }
-
-            public boolean isEmpty() {
-                return containedCollection.isEmpty();
-            }
-
-            public Iterator iterator() {
-                return new ReadOnlyIterator(containedCollection.iterator());
-            }
-
-            public boolean remove(Object o) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean removeAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean retainAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public int size() {
-                return containedCollection.size();
-            }
-
-            public Object[] toArray() {
-                return containedCollection.toArray();
-            }
-
-            public Object[] toArray(Object[] a) {
-                return containedCollection.toArray(a);
-            }
-
-        }
-        
-        class ReadOnlyIterator implements Iterator {
-            
-            private Iterator containedIterator;
-            
-            private ReadOnlyIterator(Iterator containedIterator) {
-                this.containedIterator = containedIterator;
-            }
-            
-            // override remove() to make this Iterator class read-only
-            
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean hasNext() {
-                return containedIterator.hasNext();
-            }
-
-            public Object next() {
-                return containedIterator.next();
-            }
-        }
-        
-        class ReadOnlySet implements Set {
-
-            private Set containedSet;
-            
-            private ReadOnlySet(Set containedSet) {
-                this.containedSet = containedSet;
-            }
-            
-            public boolean add(Object o) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean addAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public void clear() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean contains(Object o) {
-                return containedSet.contains(o);
-            }
-
-            public boolean containsAll(Collection c) {
-                return containedSet.containsAll(c);
-            }
-
-            public boolean isEmpty() {
-                return containedSet.isEmpty();
-            }
-
-            public Iterator iterator() {
-                return new ReadOnlyIterator(containedSet.iterator());
-            }
-
-            public boolean remove(Object o) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean removeAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean retainAll(Collection c) {
-                throw new UnsupportedOperationException();
-            }
-
-            public int size() {
-                return containedSet.size();
-            }
-
-            public Object[] toArray() {
-                return containedSet.toArray();
-            }
-
-            public Object[] toArray(Object[] a) {
-                return containedSet.toArray(a);
-            }
-            
-        }
-        
-    }
 }

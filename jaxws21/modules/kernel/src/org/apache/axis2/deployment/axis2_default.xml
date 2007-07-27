@@ -179,38 +179,27 @@
                      class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
                 <order phase="Transport"/>
             </handler>
+         </phase>
+        <phase name="Addressing">
+            <handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+                <order phase="Addressing"/>
+            </handler>
         </phase>
         <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
-            <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher"/>
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
 
             <handler name="HTTPLocationBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
         <phase name="RMPhase"/>
         <!--  System pre defined phases       -->
@@ -228,36 +217,26 @@
         <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
+        <phase name="Addressing">
+             <handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+                 <order phase="Addressing"/>
+            </handler>
+        </phase>
+        <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
+                     class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher"/>
             <handler name="SOAPActionBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
-            <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher"/>
             <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
-
+                     class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher"/>
             <handler name="SOAPMessageBodyBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher"/>
 
             <handler name="HTTPLocationBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
+                     class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
         <phase name="RMPhase"/>
         <!--      user can add his own phases to this area  -->

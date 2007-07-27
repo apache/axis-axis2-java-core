@@ -62,9 +62,10 @@ public abstract class BindingImpl implements Binding {
         this.endpointDesc = endpointDesc;
         // client
         this.bindingId = endpointDesc.getClientBindingID();
-        if (this.bindingId == null)
+        if (this.bindingId == null) {
             // server
             this.bindingId = endpointDesc.getBindingType();
+	}
         
         framework = new ClientFramework();
         framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
@@ -72,22 +73,21 @@ public abstract class BindingImpl implements Binding {
 
     public List<Handler> getHandlerChain() {
         if (handlers == null) {
+            // non-null so client apps can manipulate
             handlers =
                     new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo());
-            if (handlers == null)
-            handlers = new ArrayList<Handler>(); // non-null so client
-                                                 // apps can manipulate
         }
         return handlers;
     }
 
     public void setHandlerChain(List<Handler> list) {
         // handlers cannot be null so a client app can request and manipulate it
-        if (list == null)
+        if (list == null) {
             handlers = new ArrayList<Handler>(); // non-null, but rather
                                                     // empty
-        else
+        } else {
             this.handlers = list;
+        }
     }
 
     /**
