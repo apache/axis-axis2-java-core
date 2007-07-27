@@ -101,8 +101,11 @@ public abstract class AbstractHTTPSender {
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
                                                MessageContext msgContext) throws AxisFault {
+        // Set RESPONSE properties onto the REQUEST message context.  They will need to be copied off the request context onto
+        // the response context elsewhere, for example in the OutInOperationClient.
         Map transportHeaders = new CommonsTransportHeaders(method.getResponseHeaders());
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, transportHeaders);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE, new Integer(method.getStatusCode()));
         Header header = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {

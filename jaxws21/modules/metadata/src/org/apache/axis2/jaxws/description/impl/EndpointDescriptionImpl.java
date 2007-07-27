@@ -296,18 +296,21 @@ class EndpointDescriptionImpl
         WsdlComposite wsdlComposite = null;
         
         String bindingType = getBindingType();
-        boolean isSOAP12 = (bindingType.equals( javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING) 
-                            || bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING)) 
-                            ? true : false;
 
-        //Determine if we need to generate WSDL
-        //First, make sure that this is not a SOAP 1.2 based binding, per JAXWS spec. we cannot 
-        //generate WSDL if the binding type is SOAP 1.2 based.
-        //Then, assuming the composite does not contain a 
-        //Wsdl Definition, go ahead and generate it
+        boolean isSOAP11 =
+                (bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING) || 
+                        bindingType.equals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING))
+                        ? true : false;
+
+
+        // Determine if we need to generate WSDL
+        // First, make sure that this is only a SOAP 1.1 based binding, per JAXWS spec. we cannot 
+        // generate WSDL if the binding type is not SOAP 1.1 based.
+        // Then, assuming the composite does not contain a 
+        // Wsdl Definition, go ahead and generate it
         // REVIEW: I think this should this be isSOAP11 so the generators are only called for 
         //         SOAP11; i.e. NOT for SOAP12 or XML/HTTP bindings.
-        if (!isSOAP12) {
+        if (isSOAP11){
             if (
                     (isEndpointBased() &&
                             DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface()))
@@ -341,7 +344,7 @@ class EndpointDescriptionImpl
                     + composite.getClassName());
         }
 
-        if (!isSOAP12) {
+        if (isSOAP11){
     
             //Save the WSDL Location and the WsdlDefinition, value depends on whether wsdl was generated
             Parameter wsdlLocationParameter = new Parameter();

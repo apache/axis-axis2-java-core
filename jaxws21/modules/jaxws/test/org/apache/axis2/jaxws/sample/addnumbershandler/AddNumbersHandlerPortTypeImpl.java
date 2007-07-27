@@ -40,6 +40,16 @@ public class AddNumbersHandlerPortTypeImpl implements AddNumbersHandlerPortType 
 	 */
 	public int addNumbersHandler(int arg0, int arg1) throws AddNumbersHandlerFault_Exception {
         
+	    HandlerTracker tracker = HandlerTracker.getHandlerTracker(AddNumbersProtocolHandler.class);
+	    if (!tracker.isCalled(HandlerTracker.Methods.HANDLE_MESSAGE)) {
+	        throw new RuntimeException("handleMessage() was not called on the handler");
+	    }
+	    /* FIXME: getHeaders() is currently not called
+	    if (!tracker.isCalled(HandlerTracker.Methods.GET_HEADERS)) {
+	        throw new RuntimeException("getHeaders() was not called on the handler");
+	    }
+	    */
+	    
         // for these properties tests to always pass, an inbound server-side handler must "put" them
         MessageContext mc = ctx.getMessageContext();
         String propKey1 = "AddNumbersLogicalHandlerInboundAppScopedProperty";

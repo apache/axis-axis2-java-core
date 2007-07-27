@@ -82,13 +82,10 @@ public class DescriptionTestUtils2 {
         // Need to get to the private Service._delegate field in order to get to the ServiceDescription to test
         ServiceDelegate returnServiceDelegate = null;
         try {
-            Field serviceDelgateField = service.getClass().getDeclaredField("_delegate");
+            Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
             serviceDelgateField.setAccessible(true);
             returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalAccessException e) {

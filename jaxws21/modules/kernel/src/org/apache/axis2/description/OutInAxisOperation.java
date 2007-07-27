@@ -36,6 +36,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -371,6 +372,13 @@ class OutInAxisOperationClient extends OperationClient {
         AxisEngine.send(msgContext);
 
         responseMessageContext.setDoingREST(msgContext.isDoingREST());
+
+        // Copy RESPONSE properties which the transport set onto the request message context when it processed
+        // the incoming response recieved in reply to an outgoing request.
+        responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS, 
+                                           msgContext.getProperty(MessageContext.TRANSPORT_HEADERS));
+        responseMessageContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
+                                           msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE));
 
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgContext
                 .getProperty(MessageContext.TRANSPORT_IN));

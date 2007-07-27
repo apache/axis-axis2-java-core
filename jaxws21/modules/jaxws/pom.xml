@@ -465,17 +465,6 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-                                <copy toDir="target/test-classes/services/SoapMessageMUProviderService/">
-                                    <fileset dir="target/test-classes">
-                                        <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
-                                    </fileset>
-                                    <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgmu">
-                                        <include name="META-INF/**"/>
-                                    </fileset>
-                                    <fileset dir="target/classes">
-                                        <include name="org/apache/axis2/jaxws/server/**"/>
-                                    </fileset>
-                                </copy>
 								<copy toDir="target/test-classes/services/JAXBProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
@@ -817,7 +806,6 @@
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
-										<include name="**/axis2.xml"/>
 									</fileset>
 								</copy>
 							</tasks>
@@ -852,7 +840,7 @@
 				<configuration>
 					<skip>false</skip>
 					<forkMode>once</forkMode>
-					<argLine>-Xms256m -Xmx512m</argLine>
+					<argLine>-Xms256m -Xmx512m -Djava.endorsed.dirs=${project.build.directory}/../../saaj-api/target/ </argLine>
 					<!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>
@@ -863,10 +851,21 @@
 							<name>build.repository</name>
 							<value>./target/test-classes</value>
 						</property>
-						<!-- Need this for the client side to pickup an axis2.xml to configure SoapMessageMUProviderChecker -->
 						<property>
-						    <name>org.apache.axis2.jaxws.config.path</name>
-						    <value>./target/test-classes/axis2.xml</value>
+							<name>javax.xml.soap.MessageFactory</name>
+							<value>org.apache.axis2.saaj.MessageFactoryImpl</value>
+						</property>
+						<property>
+							<name>javax.xml.soap.SOAPFactory</name>
+							<value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
+						</property>
+						<property>
+							<name>javax.xml.soap.SOAPConnectionFactory</name>
+							<value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
+						</property>
+						<property>
+							<name>javax.xml.soap.MetaFactory</name>
+							<value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
 						</property>
 					</systemProperties>
 				</configuration>

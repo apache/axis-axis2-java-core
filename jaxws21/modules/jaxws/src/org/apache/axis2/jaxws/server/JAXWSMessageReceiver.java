@@ -32,6 +32,8 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MEPContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.util.Constants;
@@ -96,7 +98,10 @@ public class JAXWSMessageReceiver implements MessageReceiver {
 
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
             requestMsgCtx.setMEPContext(new MEPContext(requestMsgCtx));
-
+            // The adapters need to be installed on the new request Message Context
+            AttachmentsAdapter.install(requestMsgCtx);
+            TransportHeadersAdapter.install(requestMsgCtx);
+            
             Binding binding = (Binding)axisRequestMsgCtx.getProperty(PARAM_BINDING);
             InvocationContext ic = InvocationContextFactory.createInvocationContext(binding);
             ic.setRequestMessageContext(requestMsgCtx);
@@ -133,10 +138,9 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                         faultToReturn = responseMsgCtx.getCausedByException();
                     else {
                         faultToReturn = new AxisFault("An error was detected during JAXWS processing",
-                                                                                 axisResponseMsgCtx);
-                        
+                                                          axisResponseMsgCtx);
                     }
-                                    } else {
+                } else {
                     //This assumes that we are on the ultimate execution thread
                     ThreadContextMigratorUtil.performMigrationToContext(
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);

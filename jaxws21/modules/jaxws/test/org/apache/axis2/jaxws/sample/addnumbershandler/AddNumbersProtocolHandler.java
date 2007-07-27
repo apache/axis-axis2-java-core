@@ -26,18 +26,24 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
+    HandlerTracker tracker = HandlerTracker.getHandlerTracker(AddNumbersProtocolHandler.class);
+    
     public void close(MessageContext messagecontext) {
+        tracker.close(messagecontext);
     }
 
     public Set<QName> getHeaders() {
+        tracker.getHeaders();
         return null;
     }
     
     public boolean handleFault(SOAPMessageContext messagecontext) {
+        tracker.handleFault(messagecontext);
         return true;
     }
 
     public boolean handleMessage(SOAPMessageContext messagecontext) {
+        tracker.handleMessage(messagecontext);
         return true;
     }
 
