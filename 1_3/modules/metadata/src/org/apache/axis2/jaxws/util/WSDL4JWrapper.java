@@ -87,10 +87,6 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     (url != null && "file".equals(url.getProtocol())) ? true : false;
             if (isFileProtocol) {
                 filePath = (url != null) ? url.getPath() : null;
-                URI uri = null;
-                if(url != null) {
-                    uri = url.toURI();
-                }
                 //Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
                 boolean isRelativePath =
                         (filePath != null && !new File(filePath).isAbsolute()) ? true : false;
@@ -115,7 +111,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     else {
                         if(log.isDebugEnabled()) {
                             log.debug("WSDL URL found for relative path: " + filePath + " scheme: " +
-                                    uri.getScheme());
+                                    url.getProtocol());
                         }
                     }
                 }
