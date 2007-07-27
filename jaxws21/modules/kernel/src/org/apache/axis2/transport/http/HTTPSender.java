@@ -262,10 +262,12 @@ public class HTTPSender extends AbstractHTTPSender {
     private void handleResponse(MessageContext msgContext,
                                 HttpMethodBase method) throws IOException {
 
-        if (method.getStatusCode() == HttpStatus.SC_OK) {
+        int statusCode = method.getStatusCode();
+        if (statusCode == HttpStatus.SC_OK) {
             processResponse(method, msgContext);
-        } else if (method.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-        } else if (method.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+        } else if (statusCode == HttpStatus.SC_ACCEPTED) {
+        } else if (statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR ||
+                statusCode == HttpStatus.SC_BAD_REQUEST) {
             Header contenttypeHeader =
                     method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
             String value = null;
@@ -289,12 +291,12 @@ public class HTTPSender extends AbstractHTTPSender {
             if (isTransportNonBlocking != null &&
                     ((Boolean) isTransportNonBlocking).booleanValue()) {
                 throw new AxisFault(Messages.getMessage("transportError",
-                        String.valueOf(method.getStatusCode()),
+                        String.valueOf(statusCode),
                         method.getStatusText()));
             }
         } else {
             throw new AxisFault(Messages.getMessage("transportError",
-                                                    String.valueOf(method.getStatusCode()),
+                                                    String.valueOf(statusCode),
                                                     method.getStatusText()));
         }
     }

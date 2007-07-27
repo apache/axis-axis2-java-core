@@ -49,7 +49,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 //import org.apache.log4j.BasicConfigurator;
+import java.util.Map;
 
 /** @see ../EndpointInterfaceDescription */
 class EndpointInterfaceDescriptionImpl
@@ -58,6 +60,7 @@ class EndpointInterfaceDescriptionImpl
     private EndpointDescriptionImpl parentEndpointDescription;
     private ArrayList<OperationDescription> operationDescriptions =
             new ArrayList<OperationDescription>();
+    private Map<QName, List<OperationDescription>> dispatchableOperations = new HashMap<QName, List<OperationDescription>>();
     // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
     // specify an @WebService.endpointInterface.
     private Class seiClass;
@@ -95,6 +98,15 @@ class EndpointInterfaceDescriptionImpl
 
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
+        
+        if (!operation.isJAXWSAsyncClientMethod()) {
+        	List<OperationDescription> operations = dispatchableOperations.get(operation.getName());
+        	if(operations==null) {
+        		operations = new ArrayList<OperationDescription>();
+        		dispatchableOperations.put(operation.getName(), operations);
+        	}
+        	operations.add(operation);
+        }
     }
 
     EndpointInterfaceDescriptionImpl(Class sei, EndpointDescriptionImpl parent) {
@@ -474,22 +486,14 @@ class EndpointInterfaceDescriptionImpl
     * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperation(QName operationQName)
     */
     public OperationDescription[] getDispatchableOperation(QName operationQName) {
-        OperationDescription[] returnOperations = null;
-        OperationDescription[] allMatchingOperations = getOperation(operationQName);
-        if (allMatchingOperations != null && allMatchingOperations.length > 0) {
-            ArrayList<OperationDescription> dispatchableOperations =
-                    new ArrayList<OperationDescription>();
-            for (OperationDescription operation : allMatchingOperations) {
-                if (!operation.isJAXWSAsyncClientMethod()) {
-                    dispatchableOperations.add(operation);
-                }
-            }
-
-            if (dispatchableOperations.size() > 0) {
-                returnOperations = dispatchableOperations.toArray(new OperationDescription[0]);
-            }
-        }
-        return returnOperations;
+    	//FIXME:OperationDescriptionImpl creates operation qname with empty namespace. Thus using localname
+    	//to read dispachable operation.
+    	QName key = new QName("",operationQName.getLocalPart());
+    	List<OperationDescription> operations = dispatchableOperations.get(key);
+    	if(operations!=null){
+    		return operations.toArray(new OperationDescription[operations.size()]);
+    	}
+    	return new OperationDescription[0];
     }
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperations()

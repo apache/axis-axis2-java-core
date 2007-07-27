@@ -50,6 +50,8 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private String locationUri;
     private String attrFormDefault = null;
     private String elementFormDefault = null;
+    private String wsdlVersion = null;
+    private String docLitBare = null;
 
     //names of java types not used in the service defn. directly, but for which schema must be generated
     private String[] extraClasses;
@@ -184,6 +186,14 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         addToOptionMap(optionMap,
                 Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
                 getSchemaGenClassName());
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.WSDL_VERSION_OPTION,
+                getWSDLVersion());
+
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.DOC_LIT_BARE,
+                getDocLitBare());
 
         loadPkg2NsMap();
         addToOptionMap(optionMap,
@@ -397,5 +407,20 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         mappings.addMappingSet(mappingset);
     }
 
+    public String getDocLitBare() {
+        return docLitBare;
+    }
+
+    public void setDocLitBare(String docLitBare) {
+        this.docLitBare = docLitBare;
+    }
+
+    public String getWSDLVersion() {
+        return wsdlVersion;
+    }
+
+    public void setWSDLVersion(String wsdlVersion) {
+        this.wsdlVersion = wsdlVersion;
+    }
 }
 

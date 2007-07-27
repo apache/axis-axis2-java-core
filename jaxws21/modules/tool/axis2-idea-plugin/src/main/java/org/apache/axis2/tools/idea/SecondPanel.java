@@ -58,7 +58,7 @@ public class SecondPanel  extends  WizardPanel {
     private CodegenBean codegenBean;
 
     public SecondPanel(WizardComponents wizardComponents,CodegenBean codegenBean) {
-        super(wizardComponents, "Option  was choosed");
+        super(wizardComponents, "Axis2 Idea Plugin WSDL2Java Wizards");
         this.codegenBean=codegenBean;
         setPanelTopTitle("Options");
         setPanelBottomTitle("Set the options for the code generator. If you wish to edit the codegen options, Select custom");
@@ -374,15 +374,15 @@ public class SecondPanel  extends  WizardPanel {
                 serviceXML.setEnabled(false);
                 serverSideInterface.setEnabled(false);
             }
-            if(!rdasync.isSelected()){
+            if(rdasync.isSelected()){
                 rdasync.setEnabled(true);
-                rdasync.setSelected(true);
+                rdasync.setSelected(false);
             }else{
                 rdasync.setEnabled(true);
             }
-            if(rdBoth.isSelected()){
+            if(!rdBoth.isSelected()){
                 rdBoth.setEnabled(true);
-                rdBoth.setSelected(false);
+                rdBoth.setSelected(true);
             }else{
                 rdBoth.setEnabled(true);
             }
@@ -492,7 +492,6 @@ public class SecondPanel  extends  WizardPanel {
                     //setComboBoxEnable(false);
                     // load the ports
                     loadPortNames();
-                    //Todo error message null
                 } else {
                     // service name list being empty means we are switching to
                     // the interface mode
@@ -501,7 +500,6 @@ public class SecondPanel  extends  WizardPanel {
                     // disable the combo's
                    // setComboBoxEnable(false);
                     //this is not an error
-                    //Todo error message null
 
                 }
 
@@ -513,12 +511,10 @@ public class SecondPanel  extends  WizardPanel {
         } catch (WSDLException e) {
             // disable the combo's
             setComboBoxEnable(false);
-            //Todo error message "Specified WSDL is invalid!, Please select a validated *.wsdl/*.xml file on previous page."
         }
         catch (Exception e) {
             // disable the combo's
             setComboBoxEnable(false);
-            //Todo error message "Specified WSDL is not found!, Please Check whether you have entered the correct path to a *.wsdl on previous page."
         }
 
     }

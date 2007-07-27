@@ -38,33 +38,11 @@ public class WSDL2Code {
 
     private static void printUsage() {
 
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg2"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg3"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg4"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg5"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg6"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg7"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg8"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg9"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg10"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg11"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg12"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg13"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg14"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg15"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg16"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg17"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg18"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg19"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg20"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg21"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg22"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg23"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg24"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg24"));
-        System.out.println(CodegenMessages.getMessage("wsdl2code.arg24"));
-
+        for (int i = 2; i <= 34; i++) {
+            System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
+        }
         System.exit(0);
     }
 

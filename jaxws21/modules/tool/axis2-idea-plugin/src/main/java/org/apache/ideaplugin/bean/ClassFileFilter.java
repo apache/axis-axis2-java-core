@@ -16,24 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.tools.idea;
-
+package org.apache.ideaplugin.bean;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
-/**
- * this class use for filter file
- */
-public class WSDLFileFilter extends FileFilter {
 
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
+public class ClassFileFilter extends FileFilter {
+
+    public boolean accept(File file) {
+        if (file .isDirectory()) {
             return true;
         }
-        String extension = getExtension(f);
+        String extension = getExtension(file );
         if (extension != null) {
-            return extension.equals("wsdl");
+            return extension.equals("class");
         }
 
         return false;
@@ -41,12 +38,12 @@ public class WSDLFileFilter extends FileFilter {
     }
 
     public String getDescription() {
-        return ".wsdl";
+        return ".class";
     }
 
-    private String getExtension(File f) {
+    private String getExtension(File file) {
         String ext = null;
-        String s = f.getName();
+        String s = file.getName();
         int i = s.lastIndexOf('.');
 
         if (i > 0 && i < s.length() - 1) {
@@ -54,5 +51,4 @@ public class WSDLFileFilter extends FileFilter {
         }
         return ext;
     }
-
 }

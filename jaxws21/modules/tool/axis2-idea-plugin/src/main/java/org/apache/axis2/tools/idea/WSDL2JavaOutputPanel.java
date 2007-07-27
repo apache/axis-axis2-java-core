@@ -83,10 +83,10 @@ public class WSDL2JavaOutputPanel extends WizardPanel {
 
 
     public WSDL2JavaOutputPanel(WizardComponents wizardComponents,CodegenBean codegenBean, Project project) {
-        super(wizardComponents, "Output");
+        super(wizardComponents, "Axis2 Idea Plugin WSDL2Java Wizards");
         this.codegenBean=codegenBean;
         this.project=project;
-        setPanelTopTitle("output");
+        setPanelTopTitle("Output");
         setPanelBottomTitle("set the out location for the generated code");
         init();
     }
@@ -128,9 +128,8 @@ public class WSDL2JavaOutputPanel extends WizardPanel {
         chbAddAxisCodegenJar =new JCheckBox("Add the Axis2 Codegen jars to the codegen resulted project");
         chbAddAxisLib =new JCheckBox(" Add Axis2 libraries to the codegen result project ");
         chbCreateJar=new JCheckBox(" Create a jar file of codegen result project and add to resulted project lib folder(Default :CodegenResults.jar)");
-        chbAddAxisLib.setEnabled(false);//Todo after writing include axis2 jar file it must remove
-        radCurrentProject =new JRadioButton("Browse and select a project on current idea workspace");
-        radCustomLocation =new JRadioButton("Browse and select location on local file system");
+        radCurrentProject =new JRadioButton("Browse and select a project on current idea workspace",false);
+        radCustomLocation =new JRadioButton("Browse and select location on local file system",true);
         ButtonGroup  buttonGroup= new  ButtonGroup();
         buttonGroup.add(radCurrentProject );
         buttonGroup.add(radCustomLocation);
@@ -341,7 +340,7 @@ public class WSDL2JavaOutputPanel extends WizardPanel {
                 new GridBagConstraints(0, 16, GridBagConstraints.REMAINDER, 1, 0.1, 1.0
                         , GridBagConstraints.NORTHWEST , GridBagConstraints.BOTH
                         , new Insets(10, 20, 0,0), 0, 0));
-
+        update();
     }
     public void back() {
         switchPanel(CodegenFrame.PANEL_OPTION_A );
@@ -352,8 +351,7 @@ public class WSDL2JavaOutputPanel extends WizardPanel {
     public void update(){
         setNextButtonEnabled(false);
         checkPageComlete();
-        setEnabledForAddAxisLib();
-
+        setEnabledForAddAxisLib();    
     }
     public void loadCmbCurrentProject() {
         Module modules[] = codegenBean .getModules();
@@ -571,26 +569,26 @@ public class WSDL2JavaOutputPanel extends WizardPanel {
     private void handleModifyEvent() {
         String text = this.txtoutput.getText();
         if ((text == null) || (text.trim().equals(""))) {
-            //Todo error message "output location needs to be specified"
+            // error message "output location needs to be specified"
 			return;
 		}
-		//Todo error message null
+		// error message null
 	}
 	private void handleAxisHomeModifyEvent() {
 		String text = this.txtaxisHome.getText();
 		if ((text == null) || (text.trim().equals(""))) {
-			//Todo error message "output location needs to be specified"
+			// error message "output location needs to be specified"
 			return;
 		}
-		//Todo error message null
+		// error message null
 	}
     private void handleJarNameModifyEvent() {
 		String text = this.txtjarFileName.getText();
 		if ((text == null) || (text.trim().equals(""))) {
-			//Todo error message "output location needs to be specified"
+			// error message "output location needs to be specified"
 			return;
 		}
-		//Todo error message null
+		// error message null
 	}
 }
 

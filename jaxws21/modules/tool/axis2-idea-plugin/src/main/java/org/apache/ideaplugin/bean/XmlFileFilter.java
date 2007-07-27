@@ -18,31 +18,34 @@
  */
 package org.apache.ideaplugin.bean;
 
-import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 17, 2005
- * Time: 11:40:12 PM
- */
 
-//to fill the bean
-public interface ObjectKeeper {
+public class XmlFileFilter extends FileFilter {
+     public boolean accept(File file) {
+        if(file.isDirectory() ){
+            return true;
+        }
+        String extension = getExtension(file);
+        if(extension != null){
+            return  extension .equals("xml");
+        }
+        return false;
+    }
 
-    void fillBean(ArchiveBean bean);
+    public String getDescription() {
+        return ".xml";
+    }
 
-    //to keep a refernce to next panel
-    void setNext(JPanel next);
+   private String getExtension(File file){
+        String ext = null;
+        String s = file.getName();
+        int i = s.lastIndexOf('.');
 
-    JPanel getNext();
-
-    //to keep a refernce to previous panel
-    void setPrivious(JPanel privious);
-
-    JPanel getPrivious();
-
-    String getTopLable();
-
-    String getLable();
-
+        if (i > 0 && i < s.length() - 1) {
+            ext = s.substring(i + 1).toLowerCase();
+        }
+        return ext;
+    }
 }

@@ -41,6 +41,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
+import org.apache.axis2.transport.http.XFormURLEncodedFormatter;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -278,7 +279,12 @@ public class TransportUtils {
 
             // If we are doing rest better default to Application/xml formatter
             if (msgContext.isDoingREST()) {
-                messageFormatter = new ApplicationXMLFormatter();
+                String httpMethod = (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
+                if (Constants.Configuration.HTTP_METHOD_GET.equals(httpMethod) ||
+                        Constants.Configuration.HTTP_METHOD_DELETE.equals(httpMethod)) {
+                    return new XFormURLEncodedFormatter();
+                }
+                return new ApplicationXMLFormatter();
             } else {
                 // Lets default to SOAP formatter
                 //TODO need to improve this to use the stateless nature

@@ -44,27 +44,28 @@ public class SrcCompiler extends Javac {
 
     public void compileSource(String tempPath) {
 
-        Path path;
-        File destDir = new File(tempPath + File.separator + "classes");
-        destDir.mkdir();
+          Path path;
+          File destDir = new File(tempPath + File.separator + "classes");
+          destDir.mkdir();
 
-        Path srcPath = new Path(project, tempPath + File.separator + "src");
-        this.setSrcdir(srcPath);
-        this.setDestdir(destDir);
-        this.setIncludes("**" + File.separator + "*.java, *.java");
-        URL url = getClass().getResource("/icons");
-        File lib = new File(url.getPath() + File.separator + ".." + File.separator + ".." + File.separator + "lib");
-        File[] files;
-        files = lib.listFiles();
+          Path srcPath = new Path(project, tempPath + File.separator + "src");
+          this.setSrcdir(srcPath);
+          this.setDestdir(destDir);
+          this.setIncludes("**" + File.separator + "*.java, *.java");
+          URL url = getClass().getResource("/icons");
+          File lib = new File(url.getPath() + File.separator + ".." + File.separator + ".." + File.separator + "lib");
+          File[] files;
+          files = lib.listFiles();
 
-        Path classpath = new Path(project);
-        for (int count = 0; count < files.length; count++) {
-            path = new Path(project, files[count].getAbsolutePath());
-            classpath.add(path);
-        }
-        this.setClasspath(classpath);
-       this.setFork(true);
-        this.perform();
+          Path classpath = new Path(project);
+          for (int count = 0; count < files.length; count++) {
+              path = new Path(project, files[count].getAbsolutePath());
+              classpath.add(path);
+          }
+          this.setClasspath(classpath);
+         this.setFork(true);
+          this.perform();
 
-    }
+      }
+
 }

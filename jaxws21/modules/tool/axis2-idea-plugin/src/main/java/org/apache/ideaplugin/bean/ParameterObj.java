@@ -16,43 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.tools.idea;
+package org.apache.ideaplugin.bean;
 
+public class ParameterObj {
 
-import javax.swing.filechooser.FileFilter;
-import java.io.File;
+    private String  paraName;
+    private String paraValue;
 
-/**
- * this class use for filter file
- */
-public class WSDLFileFilter extends FileFilter {
-
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
-            return true;
-        }
-        String extension = getExtension(f);
-        if (extension != null) {
-            return extension.equals("wsdl");
-        }
-
-        return false;
-
+    public ParameterObj(String name,String value){
+        this.paraName=name;
+        this.paraValue=value;
     }
 
-    public String getDescription() {
-        return ".wsdl";
+    public void setName(String name){
+        this.paraName=name;
     }
 
-    private String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
+    public void setValue(String value){
+        this.paraValue=value;
+    }
 
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        }
-        return ext;
+    public String  getName(){
+        return this.paraName;
+    }
+
+    public String  getValue(){
+        return this.paraValue;
     }
 
 }

@@ -69,7 +69,7 @@ public class MiddlePanel  extends WizardPanel {
      * @param wsdlgenBean
      */
     public MiddlePanel(WizardComponents wizardComponents ,WsdlgenBean wsdlgenBean) {
-        super(wizardComponents, "Java source / classpath selection");
+        super(wizardComponents, "Axis2 Idea Plugin Java2WSDL Wizards");
         setPanelTopTitle("Java source / classpath selection");
         setPanelBottomTitle("Select the classes and the libraries");
         this.wsdlgenBean=wsdlgenBean;
@@ -245,8 +245,10 @@ public class MiddlePanel  extends WizardPanel {
     public void next() {
         if(txtClass.getText()!=null && isPageComplete()){
             switchPanel(CodegenFrame.PANEL_OPTION_B );
-        } else
+        } else{
             switchPanel(CodegenFrame.PANEL_FIRST_B );
+            setNextButtonEnabled(false);
+        }
     }
     //back
     public void back() {

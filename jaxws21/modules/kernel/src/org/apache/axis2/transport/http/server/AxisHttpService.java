@@ -38,8 +38,11 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP11Constants;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -284,11 +287,26 @@ public class AxisHttpService {
                                            "basic realm=\"" + realm + "\"");
                     }
                 } else {
-                    response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+                    if (e instanceof AxisFault) {
+                        response.sendError(getStatusFromAxisFault((AxisFault)e), e.getMessage());
+                    } else {
+                        response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                                           "Internal server error");
+                    }
                 }
             }
             AxisEngine.sendFault(faultContext);
         }
+    }
+
+    public int getStatusFromAxisFault(AxisFault fault) {
+        QName faultCode = fault.getFaultCode();
+        if (SOAP12Constants.QNAME_SENDER_FAULTCODE.equals(faultCode) ||
+                SOAP11Constants.QNAME_SENDER_FAULTCODE.equals(faultCode)) {
+            return HttpServletResponse.SC_BAD_REQUEST;
+        }
+
+        return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {

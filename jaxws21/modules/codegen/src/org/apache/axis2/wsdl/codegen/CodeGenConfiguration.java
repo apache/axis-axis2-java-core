@@ -90,6 +90,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * Returns the xsdconfig file to use for XMLBeans data binding.
      *
      * @return Full path and name of XMLBeans xsdconfig file to use
+     * @deprecated
      */
     public String getXsdConfigFile() {
         return xsdConfigFile;
@@ -99,6 +100,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * Sets the xsdconfig file to use for XMLBeans data binding.
      *
      * @param xsdConfigFile Full path and name of XMLBeans xsdconfig file to use
+     * @deprecated
      */
     public void setXsdConfigFile(String xsdConfigFile) {
         this.xsdConfigFile = xsdConfigFile;

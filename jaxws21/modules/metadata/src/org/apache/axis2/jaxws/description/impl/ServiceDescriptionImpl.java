@@ -556,6 +556,10 @@ class ServiceDescriptionImpl
         return this.generatedWsdlWrapper;
     }
 
+    void setAxisConfigContext(ConfigurationContext config) {
+        this.configContext = config;
+    }
+    
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getAxisConfigContext()
     */

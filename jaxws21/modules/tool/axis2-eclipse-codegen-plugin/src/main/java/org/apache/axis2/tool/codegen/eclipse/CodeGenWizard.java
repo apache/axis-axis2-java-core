@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.wsdl.Definition;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage;
@@ -70,7 +71,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * The main wizard for the codegen wizard
  */
 
-public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptionConstants.Java2WSDLConstants {
+public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConstants {
     private ToolSelectionPage toolSelectionPage;
     
     private WSDLFileSelectionPage wsdlSelectionPage;

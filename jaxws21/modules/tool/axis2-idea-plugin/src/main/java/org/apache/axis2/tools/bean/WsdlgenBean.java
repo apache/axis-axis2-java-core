@@ -19,6 +19,7 @@
 package org.apache.axis2.tools.bean;
 
 import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import java.util.HashMap;
@@ -120,48 +121,48 @@ public class WsdlgenBean {
 
         Map optionMap = new HashMap();
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .CLASSNAME_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants.Java2WSDLConstants.CLASSNAME_OPTION ,
+        optionMap.put(Java2WSDLConstants .CLASSNAME_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants.CLASSNAME_OPTION ,
                         new String[]{getClassName() })
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .CLASSPATH_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .CLASSPATH_OPTION ,
+        optionMap.put(Java2WSDLConstants.CLASSPATH_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .CLASSPATH_OPTION ,
                         getClassPathList())
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .TARGET_NAMESPACE_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .TARGET_NAMESPACE_OPTION ,
+        optionMap.put(Java2WSDLConstants .TARGET_NAMESPACE_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .TARGET_NAMESPACE_OPTION ,
                         new String[]{getTargetNamespace() })
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .TARGET_NAMESPACE_PREFIX_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .TARGET_NAMESPACE_PREFIX_OPTION ,
+        optionMap.put(Java2WSDLConstants .TARGET_NAMESPACE_PREFIX_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .TARGET_NAMESPACE_PREFIX_OPTION ,
                         new String[]{getTargetNamespacePrefix()})
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_OPTION ,
+        optionMap.put(Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_OPTION ,
                         new String[]{getSchemaTargetNamespace() })
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .SERVICE_NAME_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .SERVICE_NAME_OPTION ,
+        optionMap.put(Java2WSDLConstants .SERVICE_NAME_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .SERVICE_NAME_OPTION ,
                         new String[]{getServiceName() })
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION ,
+        optionMap.put(Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION ,
                         new String[]{getSchemaTargetNamespacePrefix() })
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .OUTPUT_LOCATION_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .OUTPUT_LOCATION_OPTION ,
+        optionMap.put(Java2WSDLConstants .OUTPUT_LOCATION_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .OUTPUT_LOCATION_OPTION ,
                         new String[]{getOutputLocation()})
         );
 
-        optionMap.put(CommandLineOptionConstants.Java2WSDLConstants .OUTPUT_FILENAME_OPTION ,
-                new Java2WSDLCommandLineOption(CommandLineOptionConstants .Java2WSDLConstants .OUTPUT_FILENAME_OPTION ,
+        optionMap.put(Java2WSDLConstants .OUTPUT_FILENAME_OPTION ,
+                new Java2WSDLCommandLineOption(Java2WSDLConstants .OUTPUT_FILENAME_OPTION ,
                         new String[]{getOutputWSDLName()})
         );
 

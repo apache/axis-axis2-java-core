@@ -110,6 +110,7 @@ public class SchemaConstants {
         public static final String PACKAGE = "p";
         public static final String MAPPER_PACKAGE = "mp";
         public static final String HELPER_MODE = "h";
+        public static final String OFF_STRICT_VALIDATION = "osv";
 
     }
 

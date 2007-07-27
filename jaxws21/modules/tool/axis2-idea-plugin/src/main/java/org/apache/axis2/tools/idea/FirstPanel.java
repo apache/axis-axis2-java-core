@@ -52,7 +52,7 @@ public class FirstPanel extends WizardPanel {
     private CodegenBean codegenBean;
 
     public FirstPanel(WizardComponents wizardComponents,CodegenBean codegenBean) {
-        super(wizardComponents, "Option  was choosed");
+        super(wizardComponents, "Axis2 Idea Plugin WSDL2Java Wizards");
         this.codegenBean=codegenBean;
         setPanelTopTitle("WSDL selection page");
         setPanelBottomTitle("please Select the WSDl file location");
@@ -157,7 +157,6 @@ public class FirstPanel extends WizardPanel {
             setPageComplete(false);
         }
         setBackButtonEnabled(true);
-
     }
 
     public  int getPageType() {

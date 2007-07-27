@@ -21,10 +21,13 @@ package org.apache.axis2.tools.wizardframe;
 import org.apache.axis2.tools.component.*;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 import org.apache.axis2.tools.bean.CodegenBean;
+import org.apache.axis2.tools.bean.SrcCompiler;
 import org.apache.axis2.tools.idea.ProgressBarPanel;
 import org.apache.axis2.tools.idea.FirstPanel;
 import org.apache.axis2.tools.idea.SecondPanel;
 import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
+import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.JarFileWriter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,11 +51,10 @@ public class WizardFrame extends JFrame {
     private JLabel panelImageLabel;
     private JLabel panelTopTitleLabel;
     private JLabel panelBottomTitleLabel;
-    private JLabel errorLabel;
-    private JPanel errorPanel;
     private WizardComponents wizardComponents;
     protected WsdlgenBean wsdlgenBean;
     protected CodegenBean codegenBean;
+    protected ArchiveBean archiveBean;
     protected Project project;
     private ProgressBarPanel progress;
 
@@ -63,6 +65,10 @@ public class WizardFrame extends JFrame {
     private void init() {
 
         wizardComponents = new DefaultWizardComponents();
+        wsdlgenBean= new WsdlgenBean();
+        codegenBean = new CodegenBean();
+        archiveBean =new ArchiveBean();
+
 
         this.getContentPane().setLayout(new GridBagLayout());
         this.getContentPane().add(createTitlePanel()
@@ -96,8 +102,8 @@ public class WizardFrame extends JFrame {
                         ,GridBagConstraints.EAST, GridBagConstraints.NONE,
                         new Insets(10, 10, 10, 10), 0, 0));
 
-        ImageIcon  img=new ImageIcon("icons/icon.png");
-        this.setIconImage(img.getImage());
+        java.net.URL resource = WizardPanel.class.getResource("/icons/icon.png");           
+        this.setIconImage(new ImageIcon(resource).getImage());
         this.setFont(new Font("Helvetica", Font.PLAIN, 8));
 
         wizardComponents.addPropertyChangeListener(new PropertyChangeListener() {
@@ -105,8 +111,7 @@ public class WizardFrame extends JFrame {
                 setPanelTopTitle(((WizardPanel)event.getNewValue()).getPanelTopTitle());
                 setPanelTitleImage(((WizardPanel)event.getNewValue()).getPanelImage());
                 setPanelBottomTitle(((WizardPanel)event.getNewValue()).getPanelBottomTitle());
-                setErrorVisible(false
-                        ,((WizardPanel)event.getNewValue()).getError());
+                setTitle(((WizardPanel)event.getNewValue()).getFrameTitle());
             }
         });
         wizardComponents.setFinishAction(createFinishAction());
@@ -124,13 +129,9 @@ public class WizardFrame extends JFrame {
 
     public void show() {
         wizardComponents.updateComponents();
+        this.setSize(600,600);
+        Utilities.centerComponentOnScreen(this);
         super.show();
-    }
-      // set error message
-    protected void setErrorVisible(boolean flag ,String  error){
-        errorLabel.setText(error);
-        errorPanel.setVisible(flag);
-
     }
     protected void setBottomVisible(boolean flag){
         panelBottomTitleLabel.setVisible(flag);
@@ -158,21 +159,9 @@ public class WizardFrame extends JFrame {
         panelTopTitleLabel.setFont(new Font("Helvetica", Font.BOLD, 12));
 
         panelBottomTitleLabel=new JLabel();
+        panelBottomTitleLabel.setFont(new Font("Helvetica", Font.ITALIC, 10));
 
         panelImageLabel= new JLabel();
-
-        errorLabel = new JLabel();
-        errorLabel.setVisible(false);
-        errorLabel.setBackground(Color.blue);
-
-        errorPanel =new JPanel();
-        errorPanel .setLayout(new GridBagLayout());
-        errorPanel .setBorder(BorderFactory.createLineBorder(Color.black));
-
-        errorPanel.add(errorLabel,
-                new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-                , GridBagConstraints.CENTER, GridBagConstraints.BOTH
-                , new Insets(10, 10, 0, 10), 0, 0));
 
         panel.add(panelTopTitleLabel
                 , new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0
@@ -188,12 +177,6 @@ public class WizardFrame extends JFrame {
                 , new GridBagConstraints(1, 0, 1,2, 0.0, 0.0
                 , GridBagConstraints.CENTER, GridBagConstraints.BOTH
                 , new Insets(0, 0, 0, 0), 0, 0));
-
-
-        panel.add(errorPanel
-                , new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-                , GridBagConstraints.SOUTH, GridBagConstraints.BOTH
-                , new Insets(20, 0, 0, 0), 0, 0));
 
         return panel;
 
@@ -222,12 +205,17 @@ public class WizardFrame extends JFrame {
                             doFinishJava2WSDL();
                             System.out.println("FinishAction Java2WSDL performed");
                             break;
+                         case WizardPanel.SERVICE_ARCHIVE_TYPE:
+                            doFinishServiceArchive();
+                            System.out.println("FinishAction Servcie Archive performed");
+                            break;
                         case WizardPanel.UNSPECIFIED_TYPE:
                             break; //Do nothing
                         default:
                             throw new RuntimeException("Invalid state!");
                     }
                 } catch (Exception e) {
+                     wizardComponents.setCurrentIndex(CodegenFrame.PANEL_CHOOSER);
                      dispose();
                 }
 
@@ -238,6 +226,7 @@ public class WizardFrame extends JFrame {
     protected CancelAction createCancelAction() {
         return new CancelAction(wizardComponents) {
             public void performAction() {
+                wizardComponents.setCurrentIndex(CodegenFrame.PANEL_CHOOSER);
                 System.out.println("CancelAction performed");
                 dispose();
             }
@@ -245,6 +234,7 @@ public class WizardFrame extends JFrame {
     }
 
     protected void handleWindowClosing() {
+        wizardComponents.setCurrentIndex(CodegenFrame.PANEL_CHOOSER);
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -271,6 +261,7 @@ public class WizardFrame extends JFrame {
                 "Code genaration Successful !" + writer.toString(),
                 "Axis2 code generation",
                 JOptionPane.INFORMATION_MESSAGE );
+        wizardComponents.setCurrentIndex(CodegenFrame.PANEL_CHOOSER);
         dispose();
     }
 
@@ -351,8 +342,8 @@ public class WizardFrame extends JFrame {
     }
     protected void doFinishWSDL2Java(){
         handlePragress();
-        new java.util.Timer(true).schedule(new TimerTask() {
-            public void run() {
+       new java.util.Timer(true).schedule(new TimerTask() {
+           public void run() {
                 try {
                     FirstPanel  first=(FirstPanel)wizardComponents.getWizardPanel(1);
                     SecondPanel option=(SecondPanel)wizardComponents.getWizardPanel(3);
@@ -382,24 +373,81 @@ public class WizardFrame extends JFrame {
                     codegenBean.setOutput(output.getOutputLocation());
                     codegenBean.setNamespace2packageList(option.getNs2PkgMapping());
                     codegenBean.setWSDLFileName(first.getWSDLFileName());
-                    codegenBean.generate();
+                    codegenBean.generate();                      
+                     //Add the codegen libs that are coming with the plugin to the project lib that has been created
+                 if (output.getAxis2PluginLibCopyCheckBoxSelection()){
+                     java.net.URL resource = WizardPanel.class.getResource("/icons/icon.png");
+                     String path =new File(resource.getPath()).getParentFile().getParentFile().getParentFile().getPath();
+                     System.out.println(path);
+                     String pluginLibLocation = path+File.separator+"lib";
+                	 addLibsToProjectLib(pluginLibLocation, output.getOutputLocation());
+                 }
+
+                 //Add the libraries on the plugin lib directory to the created project lib
+                 if (output.getAxisLibCopyCheckBoxSelection() && output.oktoLoadLibs()){
+                	 String libDirectory = output.getAxisJarsLocation();
+                	 addLibsToProjectLib(libDirectory, output.getOutputLocation());
+                 }
+
+                 //This will Create a jar file from the codegen results and add to the output
+                 //locations lib directory
+                 if (output.getCreateJarCheckBoxSelection()){
+                     File tempClassFile=codegenBean.getTemp();
+                     tempClassFile.mkdir();
+                     File srcTemp=new File(tempClassFile.getPath()+File.separator+"src");
+                     srcTemp.mkdir();
+                     copyDirectory(new File(output.getOutputLocation()+File.separator+"src"),srcTemp);
+                     //Compile the source to another directory
+                	 SrcCompiler srcCompileTool = new SrcCompiler();
+                	 srcCompileTool.compileSource(tempClassFile.getPath());
+                     //create the jar file and add that to the lib directory
+                	 String projectLib = output.getOutputLocation()+File.separator+"lib";
+                	 JarFileWriter jarFileWriter = new JarFileWriter();
+                	 String jarFileName = "CodegenResults.jar";
+                	 if (!output.getJarFilename().equals("")){
+                		 jarFileName=output.getJarFilename();
+                	 }
+                	 output.setJarFileName(jarFileName);
+                      File tempClass = new File(tempClassFile.getPath()+File.separator+"classes");
+                     jarFileWriter.writeJarFile(new File(projectLib), jarFileName, tempClass);
+
+                	 //Delete the temp folders
+                	 deleteDir(tempClassFile );
+
+                 }
                     progress.setVisible(false);
                     handleSuccess();
                 }catch (Exception e1) {
+                    e1.printStackTrace();
                     progress.setVisible(false);
                     handleError();
                 }
             }
-        }, 1000);
+        }, 5000);
 
     }
 
     protected void doFinishJava2WSDL(){
         handlePragress();
         new java.util.Timer(true).schedule(new TimerTask() {
-            public void run() {
+           public void run() {
                 try {
                     wsdlgenBean.generate();
+                    progress.setVisible(false);
+                    handleSuccess();
+                } catch (Exception e1) {
+                    progress.setVisible(false);
+                    handleError();
+                }
+            }
+       }, 3100);
+    }
+     protected void doFinishServiceArchive(){
+       handlePragress();
+        new java.util.Timer(true).schedule(new TimerTask() {
+            public void run() {
+                 try {
+                    archiveBean.finsh();
                     progress.setVisible(false);
                     handleSuccess();
                 } catch (Exception e1) {

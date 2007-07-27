@@ -22,10 +22,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
-public class
-        ProgressBarPanel  extends JPanel {
+public class ProgressBarPanel  extends JPanel {
     private  volatile boolean stop = false;
-    private static int DELAY = 100;
+    private static int DELAY = 500;
     public volatile String val=null;
     private JLabel progressDescription;
     private JProgressBar progressSent;
@@ -65,7 +64,7 @@ public class
     public void aboutToDisplayPanel() {
 
         setProgressValue(0);
-        setProgressText("Connecting to Server...");
+       // setProgressText("Connecting to Server...");
 
     }
     public void displayingPanel() {
@@ -84,7 +83,7 @@ public class
                             int value = progressSent .getValue();
                             progressSent .setValue(value+4);
                             setProgressValue(value+4);
-                            progressDescription .setText("Genarate Code. Please wait.....");
+                          //  progressDescription .setText("Genarate Code. Please wait.....");
                         } else if(!stop){
                             progressSent .setIndeterminate(true);
 
