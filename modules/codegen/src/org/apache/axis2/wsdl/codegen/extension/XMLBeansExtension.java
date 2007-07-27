@@ -40,6 +40,9 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     /** Name of "extra" option used to supply package name for xsb files. */
     public static final String TYPESYSTEMNAME_OPTION = "typesystemname";
     public static final String SCHEMA_FOLDER = "schemas";
+    public static final String XSDCONFIG_OPTION = "xc";
+    public static final String XSDCONFIG_OPTION_LONG = "xsdconfig";
+        
 
     public static String MAPPINGS = "mappings";
     public static String MAPPING = "mapping";

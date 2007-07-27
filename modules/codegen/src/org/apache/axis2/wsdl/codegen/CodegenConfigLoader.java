@@ -21,6 +21,7 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -249,11 +250,12 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setSuppressPrefixesMode(true);
         }
 
-        commandLineOption = loadOption(WSDL2JavaConstants.XSDCONFIG_OPTION,
-                                       WSDL2JavaConstants.XSDCONFIG_OPTION_LONG,
+        commandLineOption = loadOption(XMLBeansExtension.XSDCONFIG_OPTION,
+                                       XMLBeansExtension.XSDCONFIG_OPTION_LONG,
                                        optionMap);
         if (commandLineOption != null) {
-            config.setXsdConfigFile(commandLineOption.getOptionValue());
+            config.getProperties().put(XMLBeansExtension.XSDCONFIG_OPTION, 
+                    commandLineOption.getOptionValue());
         }
 
         // setting the overrid and all ports options

@@ -30,9 +30,12 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
+import org.apache.tools.ant.types.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Iterator;
 
 public class AntCodegenTask extends Task {
 
@@ -52,6 +55,16 @@ public class AntCodegenTask extends Task {
     private boolean generateAllClasses = false;
     private boolean unpackClasses = false;
     private boolean serverSideInterface = false;
+
+    private boolean allPorts = false;
+    private boolean backwardCompatible = false;
+    private boolean flattenFiles = false;
+    private boolean skipMessageReceiver = false;
+    private boolean skipBuildXML = false;
+    private boolean skipWSDL = false;
+    private boolean overWrite = false;
+    private boolean suppressPrefixes = false;
+    private Properties props = new Properties();
 
     private String repositoryPath = null;
     private String externalMapping = null;
@@ -272,6 +285,82 @@ public class AntCodegenTask extends Task {
                             CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION,
                             new String[0]));
         }
+
+        if (allPorts) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.All_PORTS_OPTION,
+                            new String[0]));
+        }
+
+        if (backwardCompatible) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
+                            new String[0]));
+        }
+
+        if (flattenFiles) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+                            new String[0]));
+        }
+
+        if (skipMessageReceiver) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_MESSAGE_RECEIVER_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (skipBuildXML) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_BUILD_XML_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (skipWSDL) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.NO_WSDLS_OPTION_LONG,
+                            new String[0]));
+        }
+
+        if (overWrite) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.OVERRIDE_OPTION,
+                            new String[0]));
+        }
+
+        if (suppressPrefixes) {
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.SUPPRESS_PREFIXES_OPTION,
+                            new String[0]));
+        }
+
+        Iterator iterator = props.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
+            optionMap.put(
+                    key,
+                    new CommandLineOption(
+                            key,
+                            new String[]{(String) entry.getValue()}));
+        }
+
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                 new CommandLineOption(
@@ -431,5 +520,41 @@ public class AntCodegenTask extends Task {
 
     public void setNamespaceToPackages(String namespaceToPackages) {
         this.namespaceToPackages = namespaceToPackages;
+    }
+
+    public void addConfiguredParameter(Parameter prop) {
+        props.setProperty(prop.getName(), prop.getValue());
+    }
+
+    public void setSuppressPrefixes(boolean suppressPrefixes) {
+        this.suppressPrefixes = suppressPrefixes;
+    }
+
+    public void setOverWrite(boolean overWrite) {
+        this.overWrite = overWrite;
+    }
+
+    public void setSkipWSDL(boolean skipWSDL) {
+        this.skipWSDL = skipWSDL;
+    }
+
+    public void setSkipBuildXML(boolean skipBuildXML) {
+        this.skipBuildXML = skipBuildXML;
+    }
+
+    public void setSkipMessageReceiver(boolean skipMessageReceiver) {
+        this.skipMessageReceiver = skipMessageReceiver;
+    }
+
+    public void setFlattenFiles(boolean flattenFiles) {
+        this.flattenFiles = flattenFiles;
+    }
+
+    public void setBackwardCompatible(boolean backwardCompatible) {
+        this.backwardCompatible = backwardCompatible;
+    }
+
+    public void setAllPorts(boolean allPorts) {
+        this.allPorts = allPorts;
     }
 }
