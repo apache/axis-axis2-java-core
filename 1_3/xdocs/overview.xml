@@ -34,10 +34,11 @@ bugs/Request additional features</a></li>
 code. If this is the type of role you'd like to play, here are some
 steps (in addition to the ones above) to get you started:</p>
 <ul>
-<li><a href="guidelines.html">Read Guidelines</a></li>
-<li><a href="refLib.html">Review Reference Library</a></li>
+<li>Read our <a href="guidelines.html">developer guidelines</a> and <a
+href="release-process.html">release process</a></li>
+<li>Review the <a href="refLib.html">reference library</a></li>
 <li><a href=
-"http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN">
+"http://svn.apache.org/viewvc/webservices/axis2/">
 View the Source Code</a></li>
 <li><a href="svn.html">Access SVN Repository</a></li>
 </ul>

@@ -86,6 +86,18 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
+    //////////////////////////////////////////////////////////////////
+    // Standard Parameter names
+
+    /**
+     * If this param is true, and the service has exactly one AxisOperation,
+     * normal operation dispatch (via URI/soapAction/etc) will not be necessary,
+     * and we'll just default to funneling all messages to that op.  This is
+     * useful for passthrough/ESB/embedded applications.
+     */
+    public static final String SUPPORT_SINGLE_OP = "supportSingleOperation";
+    //////////////////////////////////////////////////////////////////
+
     public static final String IMPORT_TAG = "import";
     public static final String INCLUDE_TAG = "include";
     public static final String SCHEMA_LOCATION = "schemaLocation";
