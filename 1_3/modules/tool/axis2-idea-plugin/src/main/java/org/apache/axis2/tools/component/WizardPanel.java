@@ -32,11 +32,13 @@ public class WizardPanel extends JPanel {
     private ImageIcon panelImage;
     private String  panelBottomTitle;
     private String error;
+    private String frametitle;
     private boolean flag;
     private boolean progressFlag;
     public static final int WSDL_2_JAVA_TYPE = 1;
     public static final int JAVA_2_WSDL_TYPE = 2;
-    public static final int UNSPECIFIED_TYPE = 3;
+    public static final int SERVICE_ARCHIVE_TYPE=3;
+    public static final int UNSPECIFIED_TYPE = 4;
     private boolean isPageComplete = false;
 
     public WizardPanel(WizardComponents wizardComponents) {
@@ -45,7 +47,7 @@ public class WizardPanel extends JPanel {
 
     public WizardPanel(WizardComponents wizardComponents, String title) {
         this.wizardComponents = wizardComponents;
-        this.panelTopTitle = title;
+        this.frametitle = title;
         java.net.URL resource = WizardPanel.class.getResource("/icons/asf-feather.png");
         setPanelImage(new ImageIcon(resource));
     }
@@ -111,6 +113,13 @@ public class WizardPanel extends JPanel {
         return progressFlag;
     }
 
+    public String getFrameTitle(){
+         return this.frametitle;
+    }
+
+    public void setFrameTitle(String title){
+        this.frametitle=title;
+    }
     // next
     protected boolean goNext() {
         if (wizardComponents.getWizardPanelList().size() > wizardComponents.getCurrentIndex()+1 ) {
@@ -132,7 +141,7 @@ public class WizardPanel extends JPanel {
         }
     }
     
-    protected void switchPanel(int panelIndex) {
+    public void switchPanel(int panelIndex) {
         getWizardComponents().setCurrentIndex(panelIndex);
         getWizardComponents().updateComponents();
     }

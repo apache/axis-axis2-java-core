@@ -24,11 +24,14 @@ import org.apache.axis2.tools.idea.FirstPanel;
 import org.apache.axis2.tools.idea.ChooserPanel;
 import org.apache.axis2.tools.idea.SecondPanel;
 import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
+//import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
 import org.apache.axis2.tools.component.Utilities;
 import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.java2wsdl.MiddlePanel;
 import org.apache.axis2.tools.java2wsdl.OptionPanel;
 import org.apache.axis2.tools.java2wsdl.OutputPanel;
+import org.apache.ideaplugin.frames.*;
+import org.apache.ideaplugin.bean.ArchiveBean;
 import com.intellij.openapi.project.Project;
 
 /**
@@ -46,18 +49,21 @@ public class CodegenFrame extends WizardFrame{
     public static final int PANEL_OPTION_B = 4;
     public static final int PANEL_LAST_A = 5;
     public static final int PANEL_LAST_B = 6;
+    public static final int PANEL_FIRST_C=7;
+    public static final int PANEL_SECOND_C=8;
+    public static final int PANEL_THIRD_C=9;
+    public static final int PANEL_FOURTH_C=10;
+    public static final int PANEL_LOAD_C=11;
+    public static final int PANEL_OPTION_C=12;
+    public static final int PANEL_LAST_C=13;
 
     public CodegenFrame() {
         init();
     }
 
     private void init() {
-        this.setTitle("Axis2 Codegen Wizard");
-
+        this.setTitle("Axis2 Codegen Wizard"); 
         WizardPanel panel = null;
-
-        wsdlgenBean= new WsdlgenBean();
-        codegenBean = new CodegenBean();
 
         panel = new ChooserPanel(getWizardComponents());
         getWizardComponents().addWizardPanel(PANEL_CHOOSER , panel);
@@ -75,13 +81,31 @@ public class CodegenFrame extends WizardFrame{
         getWizardComponents().addWizardPanel(PANEL_OPTION_B , panel);
 
         panel = new WSDL2JavaOutputPanel(getWizardComponents(),codegenBean,project);
-        getWizardComponents().addWizardPanel(PANEL_LAST_A , panel);
+        getWizardComponents().addWizardPanel(PANEL_LAST_A , panel);      
 
         panel = new OutputPanel(getWizardComponents(),wsdlgenBean,project);
         getWizardComponents().addWizardPanel(PANEL_LAST_B , panel);
 
-        setSize(getPreferredSize());
-        Utilities.centerComponentOnScreen(this);
+        panel = new ClassFileLocationPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_FIRST_C , panel);
+
+        panel = new WSDLFileSelectionPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_SECOND_C , panel);
+
+        panel = new LibraryAddingPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_THIRD_C , panel);
+
+        panel = new ServiceXMLFileSelectionPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_FOURTH_C , panel);
+
+        panel = new ServiceXMLGenerationPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_LOAD_C , panel);
+
+        panel = new ServiceXMLEditPage(getWizardComponents(),archiveBean) ;
+        getWizardComponents().addWizardPanel(PANEL_OPTION_C , panel);
+
+        panel = new ServiceArchiveOutputLocationPage(getWizardComponents(),archiveBean);
+        getWizardComponents().addWizardPanel(PANEL_LAST_C , panel);
 
     }
 }
