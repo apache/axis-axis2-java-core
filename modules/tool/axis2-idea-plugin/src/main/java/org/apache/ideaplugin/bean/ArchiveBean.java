@@ -38,20 +38,15 @@ public class ArchiveBean {
     private File classLoc;
     private ClassLoader classLoader;
     private String ServiceXML;
-
     public String fileSeparator = System.getProperty("file.separator");
-
     private ArrayList libs = new ArrayList();
     private ArrayList tempLibs = new ArrayList();
     private ArrayList tempWsdls = new ArrayList();
-
-
     private ArrayList wsdls = new ArrayList();
-
     private String outPath;
     private String archiveName;
     private ArrayList servicelsit = new ArrayList();
-
+    private boolean includeClass=false;
 
     public ArrayList getTempWsdls() {
         return tempWsdls;
@@ -139,8 +134,8 @@ public class ArchiveBean {
         return wsdls;
     }
 
-    public void addWsdls(ArrayList wsdls) {
-        this.wsdls.addAll(wsdls);
+    public void addWsdls(File wsdl) {
+        this.wsdls.add(wsdl);
     }
 
     public String getOutPath() {
@@ -158,6 +153,13 @@ public class ArchiveBean {
     public void setArchiveName(String archiveName) {
         this.archiveName = archiveName;
     }
+    public void setIncludeClass(boolean includeClass){
+        this.includeClass=includeClass;
+    }
+    public boolean getIncludeClass(){
+        return this.includeClass;
+    }
+
 
     public void finsh() throws Exception {
         //Creating out File
@@ -181,9 +183,13 @@ public class ArchiveBean {
 
             //Coping class files
             FileCopier fc = new FileCopier();
-            for (int count=0;count<classLocation.size();count++)
-            fc.copyFiles((File)classLocation.get(count), tempfile, null);
-
+            if(includeClass){
+                for (int count=0;count<classLocation.size();count++)
+                    fc.copyFiles((File)classLocation.get(count), tempfile, ".class");
+            }else{
+                for (int count=0;count<classLocation.size();count++)
+                    fc.copyFiles((File)classLocation.get(count), tempfile, null);
+            }
             // Coping wsdl files
             File lib = new File(tempfile, "lib");
             if (!lib.exists()) {
@@ -192,16 +198,16 @@ public class ArchiveBean {
             if (libs!=null)
             {
             for (int i = 0; i < libs.size(); i++) {
-                String libname = (String) libs.get(i);
-                fc.copyFiles(new File(libname), lib, null);
+                      String libname = (String) libs.get(i);
+                      fc.copyFiles(new File(libname), lib, null);
             }
             }
 
             //coping wsdl files
             if (wsdls!=null)
             for (int i = 0; i < wsdls.size(); i++) {
-                String libname = (String) wsdls.get(i);
-                fc.copyFiles(new File(libname), metainf, null);
+                File libname = (File)wsdls.get(i);
+                fc.copyFiles(libname, metainf, null);
             }
 
             String arcivename = getArchiveName();
@@ -212,7 +218,6 @@ public class ArchiveBean {
             jwriter.writeJarFile(outFile, arcivename, tempfile);
             //craeting the jar file
             deleteDir(tempfile);
-//
 
         } catch (Exception e) {
             throw e;

@@ -41,10 +41,14 @@ public class OutputPanel extends WizardPanel {
     private JComboBox cmbModuleSrc;
     private JTextField txtLocation;
     private JTextField txtFileName;
+    private JLabel lblModule;
+    private JLabel lblDirect;
+    private JLabel lblOutput;
     private JButton btnBrowes;
     final JFileChooser DirChooser=new JFileChooser();
     private Project project;
     private WsdlgenBean wsdlgenBean;
+    private boolean flag = true;
 
     /**
      * Constructor
@@ -53,7 +57,7 @@ public class OutputPanel extends WizardPanel {
      * @param project
      */
     public OutputPanel(WizardComponents wizardComponents,WsdlgenBean wsdlgenBean, Project project){
-        super(wizardComponents, "Option  was choosed");
+        super(wizardComponents,  "Axis2 Idea Plugin Java2WSDL Wizards");
         setPanelTopTitle("WSDl file output location");
         setPanelBottomTitle("Select the location for the generated WSDL");
         this.wsdlgenBean=wsdlgenBean;
@@ -62,57 +66,75 @@ public class OutputPanel extends WizardPanel {
     }
     private void init(){
 
-        rbtnAdd =new JRadioButton("Browes and Add the WSDL to a project on current Idea workspace",false);
+        rbtnAdd =new JRadioButton("Browes and Add the WSDL to a project on current Idea workspace",true);
 
-        rbtnSave =new JRadioButton("Browes and Save the WSDL file on local file system",true);
+        rbtnSave =new JRadioButton("Browes and Save the WSDL file on local file system",false);
 
         cmbCurrentProject =new JComboBox();
-        cmbCurrentProject.setEnabled(false);
+        cmbCurrentProject.setEnabled(true);
         cmbModuleSrc=new JComboBox();
-        cmbModuleSrc.setEnabled(false);
+        cmbModuleSrc.setEnabled(true);
         ButtonGroup  buttonGroup= new  ButtonGroup();
         buttonGroup.add(rbtnAdd );
         buttonGroup.add(rbtnSave );
 
-        txtFileName =new JTextField();
+        txtFileName =new JTextField("service.wsdl");
 
         txtLocation=new JTextField();
 
         btnBrowes=new JButton("Browse..");
+        lblOutput=new JLabel("OutPut Location");
+        lblModule=new JLabel("Select the Module");
+        lblModule.setEnabled(false);
+        lblDirect=new JLabel("Select the Directory");
+        lblDirect.setEnabled(false);
 
         setBackButtonEnabled(true);
         setNextButtonEnabled(false);
         setFinishButtonEnabled(false);
         this.setLayout(new GridBagLayout());
 
+        this.add(new JLabel("OutPut File Name")
+                , new GridBagConstraints(0, 0, 1, 1, 0.1, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.NONE
+                , new Insets(5, 10, 0, 0), 0, 0));
+
+        this.add(txtFileName
+                , new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0
+                , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+                , new Insets(5, 10, 0, 0), 0, 0));
+
+
         this.add(new JLabel("Select the location where to put the output")
-        , new GridBagConstraints(0, 0, GridBagConstraints.REMAINDER, 1,  0.0, 0.0
+                , new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1,  0.0, 0.0
         , GridBagConstraints.WEST  , GridBagConstraints.NONE
         , new Insets(5, 10, 0, 10), 0, 0));
 
         this.add(rbtnAdd
-        , new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 0.0, 0.0
+        , new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0.0, 0.0
         , GridBagConstraints.WEST , GridBagConstraints.NONE
         , new Insets(5, 10, 0,10), 0, 0));
         rbtnAdd.addActionListener(new ActionListener()  {
             public void actionPerformed(ActionEvent e) {
-                loadCmbCurrentProject();
                 cmbCurrentProject.setEnabled(true);
                 cmbModuleSrc.setEnabled(true);
-                txtLocation.setEnabled(false);
+                lblModule.setEnabled(true);
+                txtLocation .setEnabled(false);
                 btnBrowes.setEnabled(false);
-               setFinishButtonEnabled(true);
+                loadCmbCurrentProject();
+                loadcmbModuleSrcProject();
+                setFinishButtonEnabled(true);
                 update();
             }
         });
 
-         this.add(new JLabel("Select the Module")
-        , new GridBagConstraints(0, 2, 1, 1,  0.1, 0.0
+         this.add(lblModule
+        , new GridBagConstraints(0, 3, 1, 1,  0.1, 0.0
         , GridBagConstraints.WEST  , GridBagConstraints.NONE
         , new Insets(5, 10, 0, 0), 0, 0));
 
         this.add(cmbCurrentProject
-        , new GridBagConstraints(1, 2, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
+        , new GridBagConstraints(1, 3, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
         , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
         , new Insets(5, 10, 0,0), 0, 0));
         cmbCurrentProject.addActionListener(new ActionListener()  {
@@ -121,47 +143,48 @@ public class OutputPanel extends WizardPanel {
                 update();
             }
         });
-         this.add(new JLabel("Select the Directory")
-        , new GridBagConstraints(0, 3, 1, 1,  0.1, 0.0
+         this.add(lblDirect
+        , new GridBagConstraints(0, 4, 1, 1,  0.1, 0.0
         , GridBagConstraints.WEST  , GridBagConstraints.NONE
         , new Insets(5, 10, 0, 0), 0, 0));
 
         this.add(cmbModuleSrc
-        , new GridBagConstraints(1, 3, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
+        , new GridBagConstraints(1, 4, GridBagConstraints.RELATIVE, 1, 1.0, 0.0
         , GridBagConstraints.WEST , GridBagConstraints.HORIZONTAL
         , new Insets(5, 10, 0,0), 0, 0));
         cmbModuleSrc.addActionListener(new ActionListener()  {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {                  
                 update();
             }
         });
 
         this.add(rbtnSave
-        , new GridBagConstraints(0, 4, GridBagConstraints.REMAINDER, 1, 0.0, 0.0
+        , new GridBagConstraints(0, 5, GridBagConstraints.REMAINDER, 1, 1.0, 0.0
         , GridBagConstraints.WEST  , GridBagConstraints.NONE
         , new Insets(5, 10, 0,0), 0, 0));
         rbtnSave.addActionListener(new ActionListener()  {
             public void actionPerformed(ActionEvent e) {
                 cmbCurrentProject.setEnabled(false);
                 cmbModuleSrc.setEnabled(false);
-                txtLocation.setEnabled(true);
+                txtLocation .setEnabled(true);
                 btnBrowes.setEnabled(true);
+                setEnabledForCustomProject();
                 update();
             }
         });
-        this.add(new JLabel("OutPut Location")
-        , new GridBagConstraints(0, 5, 1, 1, 0.1, 0.0
-        , GridBagConstraints.WEST  , GridBagConstraints.NONE
+        this.add(lblOutput
+        , new GridBagConstraints(0, 6, 1, 1, 0.1, 1.0
+        , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
         , new Insets(5, 10, 0,0), 0, 0));
 
          this.add(txtLocation
-        , new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0
-        , GridBagConstraints.WEST  , GridBagConstraints.HORIZONTAL
+        , new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0
+        , GridBagConstraints.NORTHWEST , GridBagConstraints.HORIZONTAL
         , new Insets(5, 10, 0, 0), 0, 0));
 
          this.add(btnBrowes
-        , new GridBagConstraints(2, 5, 1, 1, 0.1, 0.0
-        , GridBagConstraints.CENTER  , GridBagConstraints.NONE
+        , new GridBagConstraints(2, 6, 1, 1, 0.1, 1.0
+        , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
         , new Insets(5, 10, 0, 10), 0, 0));
 
         btnBrowes.addActionListener(new ActionListener()  {
@@ -177,16 +200,6 @@ public class OutputPanel extends WizardPanel {
             }
         });
 
-         this.add(new JLabel("OutPut File Name")
-        , new GridBagConstraints(0, 6, 1, 1, 0.1, 1.0
-        , GridBagConstraints.NORTHWEST  , GridBagConstraints.NONE
-        , new Insets(5, 10, 0, 0), 0, 0));
-
-         this.add(txtFileName
-        , new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0
-        , GridBagConstraints.NORTHWEST  , GridBagConstraints.HORIZONTAL
-        , new Insets(5, 10, 0, 0), 0, 0));
-
         wsdlgenBean.setProject(project);
     }
 
@@ -198,6 +211,7 @@ public class OutputPanel extends WizardPanel {
                 cmbCurrentProject.addItem(modules[count].getName());
             }
         }else{
+            rbtnSave.setSelected(true);
             rbtnAdd.setEnabled(false);
       }
     }
@@ -212,14 +226,19 @@ public class OutputPanel extends WizardPanel {
                 cmbModuleSrc.addItem(src[count]);
             }
             count = src.length;
-        }else{
-            rbtnAdd.setEnabled(false);
-            cmbCurrentProject.setEnabled(false);
-            cmbModuleSrc.setEnabled(false);
         }
-
-
+         if (flag)
+        {
+            if (count == 0) {
+                flag =false;
+                setEnabledForCustomProject();
+            }
+            else{
+                setEnabledForCurrentProject();
+            }
+        }
     }
+
      public void back() {
           switchPanel(CodegenFrame.PANEL_OPTION_B );
     }
@@ -259,6 +278,34 @@ public class OutputPanel extends WizardPanel {
     }
      public  int getPageType() {
         return  WizardPanel.JAVA_2_WSDL_TYPE;
+    }
+     private void setEnabledForCurrentProject(){
+        rbtnAdd.setSelected(true);
+        rbtnAdd.setEnabled(true);
+        cmbCurrentProject.setEnabled(true);
+        cmbModuleSrc.setEnabled(true);
+        lblDirect.setEnabled(true);
+        lblModule .setEnabled(true);
+        rbtnSave.setSelected(false);
+        txtLocation.setEnabled(false);
+        lblOutput .setEnabled(false);
+        btnBrowes.setEnabled(false);
+    }
+    private void setEnabledForCustomProject(){
+        if(flag){
+            rbtnAdd.setEnabled(false);
+            rbtnAdd.setSelected(false);
+        }else{
+            rbtnSave .setEnabled(true);
+            rbtnSave .setSelected(true);
+        }
+        cmbCurrentProject.setEnabled(false);
+        cmbModuleSrc.setEnabled(false);
+        lblDirect.setEnabled(false);
+        lblModule .setEnabled(false);
+        txtLocation .setEnabled(true);
+        lblOutput .setEnabled(true);
+        btnBrowes .setEnabled(true);
     }
 }
  

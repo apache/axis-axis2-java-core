@@ -30,8 +30,7 @@ import java.awt.*;
 /**
  * this is the first panel of java2wsdl wizard
  */
-public class
-        OptionPanel extends WizardPanel{
+public class OptionPanel extends WizardPanel{
     /**
      * variable
      */
@@ -48,7 +47,7 @@ public class
      * @param wsdlgenBean
      */
     public OptionPanel(WizardComponents wizardComponents,WsdlgenBean wsdlgenBean){
-        super(wizardComponents, "Option  was choosed");
+        super(wizardComponents,  "Axis2 Idea Plugin Java2WSDL Wizards");
         setPanelTopTitle("Java to WSDL Options");
         setPanelBottomTitle("Set the Option for the generation");
         this.wsdlgenBean=wsdlgenBean;
@@ -143,6 +142,8 @@ public class
             txtSchemaTargetNspPrefix.setText(wsdlgenBean.getSchemaTargetNamespacePrefix());
         if(wsdlgenBean.getServiceName()!=null )
             txtService.setText(wsdlgenBean.getServiceName());
+        ((OutputPanel)getWizardComponents().getWizardPanel(CodegenFrame.PANEL_LAST_B)).loadCmbCurrentProject();
+        ((OutputPanel)getWizardComponents().getWizardPanel(CodegenFrame.PANEL_LAST_B)).loadcmbModuleSrcProject();        
         setBackButtonEnabled(true);
         setNextButtonEnabled(true);
         setFinishButtonEnabled(false);

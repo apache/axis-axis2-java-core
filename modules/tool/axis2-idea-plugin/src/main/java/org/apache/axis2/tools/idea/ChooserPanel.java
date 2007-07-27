@@ -29,8 +29,9 @@ public class ChooserPanel  extends WizardPanel {
     private boolean flag=false;
     private JRadioButton optionJ2WRadioButton;
     private JRadioButton optionW2JRadioButton;
+    private JRadioButton optionServiceArchiverRadioButton;
     private ButtonGroup bg;
-    private char selectedOption = 'A'; // 'N' is no option selected  'A', 'B' & 'F' stands for options
+    private char selectedOption = 'A'; // 'N' is no option selected  'A', 'B','C' & 'F' stands for options
     final private String hint="You can generate java code from a WSDL or WSDL from a java source file.";
     /**
      * construct method for chooserPanel
@@ -39,7 +40,7 @@ public class ChooserPanel  extends WizardPanel {
 
     public ChooserPanel(WizardComponents wizardComponents){
 
-        super(wizardComponents, "ChooserPanel");
+        super(wizardComponents, "Axis2 Idea Plugin Wizards");
         setPanelTopTitle("Select the wizard");
         setPanelBottomTitle("Welcome to the Axis2 code generator wizard");
         init();
@@ -56,9 +57,11 @@ public class ChooserPanel  extends WizardPanel {
 
         optionW2JRadioButton = new JRadioButton("Generate java sorce code from a WSDl file.",true);
         optionJ2WRadioButton = new JRadioButton("Generate a WSDl from a java source file",false);
+        optionServiceArchiverRadioButton = new JRadioButton("Create Service Archiver",false);
         ButtonGroup bg = new ButtonGroup();
         bg.add(optionJ2WRadioButton);
         bg.add(optionW2JRadioButton);
+        bg.add(optionServiceArchiverRadioButton);
 
         this.setLayout(new GridBagLayout() );
 
@@ -97,11 +100,26 @@ public class ChooserPanel  extends WizardPanel {
                 }
             }
         });
+        // option button for service Archive
+
+            this.add(optionServiceArchiverRadioButton
+                    , new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0
+                    , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
+                    , new Insets(10, 20, 0,0), 0, 0));
+            optionServiceArchiverRadioButton .addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        selectedOption = 'C';
+                        update();
+                    }
+                }
+            });
+
 
         // hint button
 
         this.add(btnHint,
-                new GridBagConstraints(0,3, 1, 1, 1.0,0.0
+                new GridBagConstraints(0,4, 1, 1, 1.0,0.0
                         , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
                         , new Insets(10, 20, 0,0), 0, 0));
         btnHint.addActionListener(new ActionListener()  {
@@ -122,7 +140,7 @@ public class ChooserPanel  extends WizardPanel {
         // hint lable
 
         this.add(lblHint,
-                new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0
+                new GridBagConstraints(0, 5, 1, 1, 1.0, 1.0
                         , GridBagConstraints.NORTHWEST , GridBagConstraints.NONE
                         , new Insets(10, 20, 0,0), 0, 0));
 
@@ -136,10 +154,10 @@ public class ChooserPanel  extends WizardPanel {
      */
 
     public void update() {
-        setNextButtonEnabled((selectedOption == 'A') || (selectedOption == 'B') );
+        setNextButtonEnabled((selectedOption == 'A') || (selectedOption == 'B') ||(selectedOption == 'C'));
         setBackButtonEnabled(false); // there is no way back
         setProgressPanelVisible(false);
-        setPageComplete(true);
+        setPageComplete(true);          
     }
 
     /**
@@ -151,8 +169,11 @@ public class ChooserPanel  extends WizardPanel {
 
         } else if (selectedOption == 'B') {
             switchPanel(CodegenFrame.PANEL_FIRST_B );
-            setNextButtonEnabled(false);
         }
+        else if (selectedOption == 'C') {
+            switchPanel(CodegenFrame.PANEL_FIRST_C );
+        }
+        setNextButtonEnabled(false);
     }
 
     /**

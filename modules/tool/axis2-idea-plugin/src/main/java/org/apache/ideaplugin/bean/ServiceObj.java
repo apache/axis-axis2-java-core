@@ -50,18 +50,24 @@ public class ServiceObj {
 
     public String toString() {
         String serviceXML = "<service name=\"" + serviceName + "\" >\n" +
-                "<description>\n" +
-                "Please Type your service description here\n" +
-                "</description>\n" +
-                "<parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n";
+                "   <description>\n" +
+                "       Please Type your service description here\n" +
+                "   </description>\n" +
+                "   <messageReceivers>\n"+
+                "       <messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-only\" \n"+
+                "       class=\"org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver\" />\n "+
+                "       <messageReceiver mep=\"http://www.w3.org/2004/08/wsdl/in-out\"\n " +
+                "       class=\"org.apache.axis2.rpc.receivers.RPCMessageReceiver\" /> \n" +
+                "   </messageReceivers>\n "+
+                "   <parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n";
         if (operations.size() > 0) {
-            serviceXML = serviceXML + "<excludeOperations>\n";
+            serviceXML = serviceXML + " <excludeOperations>\n";
             for (int i = 0; i < operations.size(); i++) {
                 String s = (String) operations.get(i);
-                String op = "<operation>" + s + "</operation>\n";
+                String op = "       <operation>" + s + "</operation>\n";
                 serviceXML = serviceXML + op;
             }
-            serviceXML = serviceXML + "</excludeOperations>\n";
+            serviceXML = serviceXML + " </excludeOperations>\n";
         }
         serviceXML = serviceXML + "</service>\n";
         return serviceXML;
