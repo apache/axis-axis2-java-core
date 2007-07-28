@@ -65,8 +65,8 @@ Administrator's Guide</a></li>
 "mainFrame">Architecture Guide</a></li>
 <li><a href="pojoguide.html" target="mainFrame">POJO Guide</a></li>
 <li><a href="spring.html" target="mainFrame">Spring Guide</a></li>
-<li><a href="modules.html" target="mainFrame">Modules
-Guide</a></li>
+<li><a href="modules.html" target="mainFrame">ModulesGuide</a></li>
+<li><a href="clustering-guide.html" target="mainFrame">Clustering Guide</a></li>
 <li>ADB Data Binding
 <ul>
 <li>14.1 <a href="adb/adb-howto.html" target=

@@ -148,7 +148,10 @@ details on test cases and samples</li>
 <li><a href="ejb-provider.html">Guide to using EJB Provider in
 Axis2</a> - This guide explains how to use an EJB provider in Axis2
 using an example</li>
+<li><a href="clustering-guide.html">Clustering Guide</a> - This guide will show how you can leverage clustering support to improve Scalability, Failover and High Availability of your Web Services</li>
+
 </ul>
+
 <p><strong>Data Bindings:</strong></p>
 <ul>
 <li><a href="adb/adb-howto.html">ADB How-to</a> - A guide on the
