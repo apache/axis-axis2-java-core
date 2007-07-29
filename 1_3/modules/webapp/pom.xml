@@ -49,6 +49,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -71,6 +73,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -93,6 +97,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -114,6 +120,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -136,6 +144,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -158,6 +168,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -180,6 +192,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -202,6 +216,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -224,6 +240,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -246,6 +264,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -269,6 +289,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -292,6 +314,83 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>ping</artifactId>
+            <version>${version}</version>
+            <type>mar</type>
+            <exclusions>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant</artifactId></exclusion>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant-launcher</artifactId></exclusion>
+                <exclusion><groupId>aopalliance</groupId><artifactId>aopalliance</artifactId></exclusion>
+                <exclusion><groupId>org.apache.bcel</groupId><artifactId>bcel</artifactId></exclusion>
+                <exclusion><groupId>com.sun.xml.fastinfoset</groupId><artifactId>FastInfoset</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-activation_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-javamail_1.4_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-jms_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>jakarta-regexp</groupId><artifactId>jakarta-regexp</artifactId></exclusion>
+                <exclusion><groupId>javax.xml.bind</groupId><artifactId>jsr173_api</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-beans</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-context</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
+                <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>mex</artifactId>
+            <version>${version}</version>
+            <type>mar</type>
+            <exclusions>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant</artifactId></exclusion>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant-launcher</artifactId></exclusion>
+                <exclusion><groupId>aopalliance</groupId><artifactId>aopalliance</artifactId></exclusion>
+                <exclusion><groupId>org.apache.bcel</groupId><artifactId>bcel</artifactId></exclusion>
+                <exclusion><groupId>com.sun.xml.fastinfoset</groupId><artifactId>FastInfoset</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-activation_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-javamail_1.4_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-jms_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>jakarta-regexp</groupId><artifactId>jakarta-regexp</artifactId></exclusion>
+                <exclusion><groupId>javax.xml.bind</groupId><artifactId>jsr173_api</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-beans</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-context</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
+                <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-scripting</artifactId>
+            <version>${version}</version>
+            <type>mar</type>
+            <exclusions>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant</artifactId></exclusion>
+                <exclusion><groupId>org.apache.ant</groupId><artifactId>ant-launcher</artifactId></exclusion>
+                <exclusion><groupId>aopalliance</groupId><artifactId>aopalliance</artifactId></exclusion>
+                <exclusion><groupId>org.apache.bcel</groupId><artifactId>bcel</artifactId></exclusion>
+                <exclusion><groupId>com.sun.xml.fastinfoset</groupId><artifactId>FastInfoset</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-activation_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-javamail_1.4_spec</artifactId></exclusion>
+                <exclusion><groupId>org.apache.geronimo.specs</groupId><artifactId>geronimo-jms_1.1_spec</artifactId></exclusion>
+                <exclusion><groupId>jakarta-regexp</groupId><artifactId>jakarta-regexp</artifactId></exclusion>
+                <exclusion><groupId>javax.xml.bind</groupId><artifactId>jsr173_api</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-beans</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-context</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
+                <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
+                <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -315,6 +414,8 @@
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-core</artifactId></exclusion>
                 <exclusion><groupId>org.springframework</groupId><artifactId>spring-web</artifactId></exclusion>
                 <exclusion><groupId>xerces</groupId><artifactId>xmlParserAPIs</artifactId></exclusion>
+                <exclusion><groupId>rhino</groupId><artifactId>js</artifactId></exclusion>
+                <exclusion><groupId>bsf</groupId><artifactId>bsf</artifactId></exclusion>
             </exclusions>
         </dependency>
     </dependencies>
@@ -344,6 +445,27 @@
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>soapmonitor*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/../mex-mar/target</directory>
+                            <targetPath>WEB-INF/modules</targetPath>
+                            <includes>
+                                <include>mex*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/../ping/target</directory>
+                            <targetPath>WEB-INF/modules</targetPath>
+                            <includes>
+                                <include>ping*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/../scripting/target</directory>
+                            <targetPath>WEB-INF/modules</targetPath>
+                            <includes>
+                                <include>*scripting*.mar</include>
                             </includes>
                         </resource>
                         <resource>
