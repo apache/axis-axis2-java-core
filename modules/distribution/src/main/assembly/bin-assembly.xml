@@ -308,26 +308,17 @@
                  <exclude>mx4j:mx4j:jar</exclude>
                  <exclude>rome:rome:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-annotation_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
-                 <!--
-                 <exclude>org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar</exclude>
-                 -->
                  <exclude>org.apache.geronimo.specs:geronimo-jsp_2.0_spec:jar</exclude>
                  <exclude>org.apache.activemq:activemq-console:jar</exclude>
-
-		 <!-- TODO following line does not seem to have any effect -->
                  <exclude>org.apache.activemq:activemq-core:jar</exclude>
                  <exclude>org.apache.activemq:activemq-jaas:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-web:jar</exclude>
-		 <!--
-                 <exclude>org.apache.activemq:activemq:jar</exclude>
-		 -->
                  <exclude>org.apache.activemq:activemq-web-demo:war</exclude>
                  <exclude>xstream:xstream:jar</exclude>
                  <exclude>xom:xom:jar</exclude>
@@ -367,8 +358,7 @@
                  <exclude>activesoap:jaxp-api:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
                  <exclude>junit:junit:jar</exclude>
-		 <!-- need to fix this (sending version for exclusion) -->
-		 <!-- servlet-api-2.3 must be included & following must be excluded -->
+                 <exclude>javax.servlet:servlet-api</exclude>
                  <exclude>org.mortbay.jetty:servlet-api-2.5:jar:6.0.1</exclude>
             </excludes>
         </dependencySet>
