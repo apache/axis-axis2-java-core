@@ -83,10 +83,6 @@
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
@@ -140,10 +136,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-annotation_1.0_spec</artifactId>
         </dependency>
         <dependency>
@@ -153,10 +145,6 @@
         <dependency>
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -212,10 +200,6 @@
             <artifactId>bsf</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>apache-activemq</artifactId>
-        </dependency>
-        <dependency>
             <groupId>jalopy</groupId>
             <artifactId>jalopy</artifactId>
         </dependency>
@@ -268,6 +252,8 @@
 				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
 				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
 				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+				<copy file="../../modules/mex-mar/target/mex-${version}.mar" tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
+				<copy file="../../modules/scripting/target/axis2-scripting-${version}.mar" tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
 			
 				<!-- generate modules.list -->			        
 				<echo file="target/tmp-repository/modules/modules.list" append="false">
@@ -275,6 +261,7 @@
 				addressing-${addressing.mar.version}.mar
 				ping-${ping.mar.version}.mar
 				mex-${mex.mar.version}.mar
+scripting-${scripting.mar.version}.mar
 			        </echo>
 
 				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
