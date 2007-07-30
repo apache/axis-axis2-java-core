@@ -97,7 +97,7 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * Name of the service file, which is being generated.
-     * @parameter expression="${axis2.java2wsdl.outputFileName}" default-value="${project.build.outputDirectory}/generated-resources/java2wsdl/service.xml"
+     * @parameter expression="${axis2.java2wsdl.outputFileName}" default-value="${project.build.directory}/generated-resources/service.wsdl"
      */
     private String outputFileName;
 
@@ -213,8 +213,11 @@ public class Java2WSDLMojo extends AbstractMojo {
         addToOptionMap( optionMap,
                         Java2WSDLConstants.SERVICE_NAME_OPTION,
                         serviceName);
-        File f = new File(project.getBasedir(), outputFileName);
-        File dir = f.getParentFile();
+        File outputFile = new File(outputFileName);
+        if(!outputFile.isAbsolute()){
+            outputFile = new File(project.getBasedir(), outputFileName);
+        }
+        File dir = outputFile.getParentFile();
         if (!dir.isDirectory()) {
             dir.mkdirs();
         }
@@ -223,7 +226,7 @@ public class Java2WSDLMojo extends AbstractMojo {
                         dir.getPath() );
         addToOptionMap( optionMap,
                         Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
-                        f.getName() );
+                        outputFile.getName() );
 
         Set artifacts = project.getArtifacts();
         String[] artifactFileNames = new String[artifacts.size() + 1];
@@ -237,45 +240,65 @@ public class Java2WSDLMojo extends AbstractMojo {
                         Java2WSDLConstants.CLASSPATH_OPTION,
                         artifactFileNames);
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.STYLE_OPTION,
-                style);
+        if (style != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.STYLE_OPTION,
+                    style);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.USE_OPTION,
-                use);
+        if (use != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.USE_OPTION,
+                    use);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.WSDL_VERSION_OPTION,
-                wsdlVersion);
+        if (wsdlVersion != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.WSDL_VERSION_OPTION,
+                    wsdlVersion);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.DOC_LIT_BARE,
-                docLitBare);
+        if (docLitBare != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.DOC_LIT_BARE,
+                    docLitBare);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.LOCATION_OPTION,
-                locationUri);
+        if (locationUri != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.LOCATION_OPTION,
+                    locationUri);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
-                nsGenClassName);
+        if (nsGenClassName != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
+                    nsGenClassName);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
-                schemaGenClassName);
+        if (schemaGenClassName != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.SCHEMA_GENERATOR_OPTION,
+                    schemaGenClassName);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION,
-                attrFormDefault);
+        if (attrFormDefault != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION,
+                    attrFormDefault);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION,
-                elementFormDefault);
+        if (elementFormDefault != null) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION,
+                    elementFormDefault);
+        }
 
-        addToOptionMap(optionMap,
-                Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
-                extraClasses);
+        if (extraClasses != null && extraClasses.length > 0) {
+            addToOptionMap(optionMap,
+                    Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
+                    extraClasses);
+        }
 
         ArrayList list = new ArrayList();
         Iterator iterator = package2Namespace.entrySet().iterator();
