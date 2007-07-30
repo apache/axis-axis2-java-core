@@ -23,7 +23,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
@@ -34,19 +33,17 @@ import org.apache.axis2.tools.component.WizardPanel;
 
 import java.io.StringReader;
 
-
+/**
+ * this calss used for check service xml validation
+ */
 public class ValidateXMLFile {
 
-
-    /**
-     * this calss used for check service xml validation
-     */
-
+    public final String W3C_XML_SCHEMA_NS_URI = "http://www.w3.org/2001/XMLSchema";
 
     public  boolean Validate(String args) {
         try {
             // define the type of schema  get validation driver:
-            SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            SchemaFactory schemafactory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 
             // create schema by reading it from an XSD file:
             java.net.URL resource = WizardPanel.class.getResource("/resources/service.xsd");
