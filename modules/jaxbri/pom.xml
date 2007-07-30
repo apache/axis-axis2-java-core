@@ -100,6 +100,7 @@
                         <configuration>
                             <tasks>
                                 <property name="axis2.home" value="${basedir}/target"/>
+                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
                                 <!-- Theres got to be a better way to do this -->
                                 <property name="schema.source.dir" value="test-resources/xsd"/>
                                 <property name="wsdl.source.dir" value="test-resources/wsdl"/>
