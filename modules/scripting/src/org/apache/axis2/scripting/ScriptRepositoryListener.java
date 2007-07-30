@@ -47,7 +47,7 @@ public class ScriptRepositoryListener extends RepositoryListener {
             }
         }
 
-        wsInfoList.addWSInfoItem(null, deploymentEngine.getModuleDeployer(), WSInfo.TYPE_CUSTOM);
+//        wsInfoList.addWSInfoItem(null, deploymentEngine.getModuleDeployer(), WSInfo.TYPE_CUSTOM);
     }
 
     /*
