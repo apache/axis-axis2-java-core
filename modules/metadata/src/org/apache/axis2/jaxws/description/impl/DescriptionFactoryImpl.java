@@ -97,8 +97,11 @@ public class DescriptionFactoryImpl {
                     log.debug("ServiceDescription not found in the cache");
                     log.debug(" creating new ServiceDescriptionImpl");
                 }
+                
+                ServiceDescriptionImpl serviceDescImpl = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                serviceDescImpl.setAxisConfigContext(configContext);
 
-                serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                serviceDesc = serviceDescImpl;
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " +
                         serviceQName + "; Class: " + serviceClass);
