@@ -122,7 +122,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
             log.debug("contentType from the OMOutputFormat =" + contentType);
         }
          if (encoding != null && contentType != null &&
-        		!contentType.contains(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED)) {
+        		contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED)==-1) {
              contentType += "; charset=" + encoding;
          }
 
