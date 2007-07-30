@@ -87,6 +87,8 @@ public class SimpleAxis2Server extends AxisServer {
             repoLocation = repoOption.getOptionValue();
             log.info("[SimpleAxisServer] Using the Axis2 Repository"
                     + new File(repoLocation).getAbsolutePath());
+            System.out.println("[SimpleAxisServer] Using the Axis2 Repository"
+                    + new File(repoLocation).getAbsolutePath());
         }
         if (confOption != null) {
             confLocation = confOption.getOptionValue();
@@ -99,8 +101,10 @@ public class SimpleAxis2Server extends AxisServer {
             SimpleAxis2Server server = new SimpleAxis2Server(repoLocation, confLocation);
             server.start();
             log.info("[SimpleAxisServer] Started");
+            System.out.println("[SimpleAxisServer] Started");
         } catch (Throwable t) {
             log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);
+            System.err.println("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer");
         }
     }
 
