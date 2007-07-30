@@ -786,8 +786,64 @@
                             }
                             }
 
-                            public void onError(java.lang.Exception e) {
-                                callback.receiveError<xsl:value-of select="@name"/>(e);
+                            public void onError(java.lang.Exception error) {
+								if (error instanceof org.apache.axis2.AxisFault) {
+									org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault) error;
+									org.apache.axiom.om.OMElement faultElt = f.getDetail();
+									if (faultElt!=null){
+										if (faultExceptionNameMap.containsKey(faultElt.getQName())){
+											//make the fault by reflection
+											try{
+													java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(faultElt.getQName());
+													java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+													java.lang.Exception ex=
+														(java.lang.Exception) exceptionClass.newInstance();
+													//message class
+													java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
+														java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+													java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+													java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+															new java.lang.Class[]{messageClass});
+													m.invoke(ex,new java.lang.Object[]{messageObject});
+													<xsl:for-each select="fault/param">
+													if (ex instanceof <xsl:value-of select="@name"/>){
+														callback.receiveError<xsl:value-of select="$method-name"/>((<xsl:value-of select="@name"/>)ex);
+											            return;
+										            }
+										            </xsl:for-each>
+
+										            callback.receiveError<xsl:value-of select="@name"/>(new java.rmi.RemoteException(ex.getMessage(), ex));
+                                            } catch(java.lang.ClassCastException e){
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.ClassNotFoundException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.NoSuchMethodException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.reflect.InvocationTargetException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.IllegalAccessException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.InstantiationException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (org.apache.axis2.AxisFault e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            }
+									    } else {
+										    callback.receiveError<xsl:value-of select="@name"/>(f);
+									    }
+									} else {
+									    callback.receiveError<xsl:value-of select="@name"/>(f);
+									}
+								} else {
+								    callback.receiveError<xsl:value-of select="@name"/>(error);
+								}
                             }
 
                             public void onFault(org.apache.axis2.context.MessageContext faultContext) {
