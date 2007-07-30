@@ -35,9 +35,9 @@ just what the doctor ordered.</p>
 <p>If you have any other doubts/issues, e-mail your questions
 to:</p>
 <ul>
-<li>Developers - :<a href=
+<li>Developers : <a href=
 "mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></li>
-<li>Users - :<a href=
+<li>Users : <a href=
 "mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a></li>
 </ul>
 <p>Prefix subject with [Axis2]. <a href=
@@ -73,15 +73,6 @@ Addressing Modules must be engaged'</a></li>
 <li><a href="#c4">I have engaged addressing, and when I try to
 invoke a service I get an exception</a></li>
 <li><a href="#c5">What is Axis Repository?</a></li>
-</ul>
-</li>
-<li>Maven
-<ul>
-<li><a href="#d1">Error when trying to run maven on Axis2</a></li>
-<li><a href="#d2">I have problems building with maven 1.1</a></li>
-<li><a href="#d3">What versions of maven are supported?</a></li>
-<li><a href="#d4">What are the frequently used maven
-commands?</a></li>
 </ul>
 </li>
 <li>Services
@@ -254,168 +245,6 @@ folder. The following picture shows a sample repository.</p>
 automatically picked up by Axis2 when they are copied to
 corresponding folders.</p>
 </li>
-</ol>
-<h2>Maven</h2>
-<ol>
-<li><a name="d1" id="d1"></a><strong>I just installed Maven and it
-gives an error when I try to run Maven on Axis2.</strong>
-<p>Axis2 requires itest plugin to run some of the tests. Better get
-it using the following command.</p>
-<ul>
-<li>maven plugin:download -DgroupId=maven-itest-plugin
--DartifactId=maven-itest-plugin -Dversion=1.0
--Dmaven.repo.remote=http://ws.zones.apache.org/~dims/maven</li>
-</ul>
-</li>
-<li>
-<p><a name="d2" id="d2"></a><strong>I have problems building with
-Maven 1.1</strong></p>
-<p>It seems that Maven 1.1 doesn't come bundled with the required
-artifact plugin. Run the following command to get it
-updated<br /></p>
-<ul>
-<li>maven plugin:download -DgroupId=maven
--DartifactId=maven-artifact-plugin -Dversion=1.6</li>
-<li style="list-style: none; display: inline">
-<p>You may also need to update the itest plugin, using the above
-command in 1.</p>
-</li>
-</ul>
-</li>
-<li>
-<p><a name="d3" id="d3"></a><strong>What versions of Maven are
-supported?</strong></p>
-<p>Versions 1.0.2 and 1.1 are supported. Maven2 is not supported as
-yet.</p>
-<table border="1" align="center">
-<tbody>
-<tr>
-<th scope="col">
-<div align="left">Command</div>
-</th>
-<th scope="col">
-<div align="left">Description</div>
-</th>
-</tr>
-<tr>
-<td>
-<div align="left">maven</div>
-</td>
-<td>
-<div align="left">Downloads relevant jars if not available, and
-compiles and runs the tests in the system.</div>
-</td>
-</tr>
-<tr>
-<td>maven clean</td>
-<td>Cleans all the content built so far in the target folder. This
-will not clean the jar repository.</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven test</div>
-</td>
-<td>
-<div align="left">Runs only the tests. Performs automatic
-compilation of changed sources as well. This will not run SOAP
-interop tests</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven clean all-tests</div>
-</td>
-<td>
-<div align="left">Cleans up and runs all offline and online
-tests.</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven itest</div>
-</td>
-<td>
-<div align="left">To run the online-mode tests for say the
-modules/integration, run "maven itest" from
-modules/integration</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven test itest</div>
-</td>
-<td>
-<div align="left">To run all the tests for say the
-modules/integration, run "maven test itest" from
-modules/integration</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven -g</div>
-</td>
-<td>
-<div align="left">Lists all the commands available in Maven</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven multiproject</div>
-</td>
-<td>
-<div align="left">Generates the site.</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven idea:multiproject</div>
-</td>
-<td>
-<div align="left">Generates IDEA .ipr, .iml and .iws project
-files.</div>
-</td>
-</tr>
-<tr>
-<td>
-<div align="left">maven -Dmaven.test.skip=true</div>
-</td>
-<td>Builds Axis2 and skips all the tests.</td>
-</tr>
-<tr>
-<td>maven dist-min-bin</td>
-<td>Generates the binary version of Axis2 minimal distribution</td>
-</tr>
-<tr>
-<td>maven dist-min-src</td>
-<td>Generates the source version of Axis2 minimal distribution</td>
-</tr>
-<tr>
-<td>maven dist-std-bin</td>
-<td>Generates the binary version of Axis2 standard
-distribution</td>
-</tr>
-<tr>
-<td>maven dist-std-src</td>
-<td>Generates the source version of Axis2 standard
-distribution</td>
-</tr>
-<tr>
-<td>maven release</td>
-<td>Generates all the distributables for Axis2.</td>
-</tr>
-<tr>
-<td>maven clean jar -Dmaven.test.skip=true -o</td>
-<td>Cleans the content in the target folder and compiles your
-source, without running the tests or downloading snapshots of the
-dependancies. This is the quickest way of compiling Axis2 sources.
-However it is highly recommended to run the tests all the
-time.</td>
-</tr>
-</tbody>
-</table>
-<br /></li>
-<li><a name="d4" id="d4"></a><strong>What are the frequently used
-Maven commands?</strong></li>
 </ol>
 <h2>Services</h2>
 <ol>

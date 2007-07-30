@@ -109,8 +109,8 @@ Download</a> Documents Distribution</p>
 <h3>4. Source Distribution</h3>
 <p>This contains the sources of Axis2 standard distribution, and is
 mainly for the benefit of advanced users. One can generate a binary
-distribution using the source by typing <span class="style1">$maven
-dist-bin.</span> You need to set up the Axis2 environment before
+distribution using the source by typing <span class="style1">$mvn
+-Drelease install.</span> You need to set up the Axis2 environment before
 running this command. Step by step details on how to create the
 binary distribution is available in the <a href=
 "#advanced">Advanced</a> section.</p>
@@ -148,14 +148,14 @@ distribution.</p>
 </tr>
 <tr>
 <td><strong>Build Tool</strong>- <a href=
-"http://maven.apache.org/maven-1.x/">Apache Maven 1.x</a>
+"http://maven.apache.org/">Apache Maven 2.x</a>
 <p>Required <em>only</em> for building Axis2 from Source
 Distribution</p>
 </td>
-<td>1.0.2 or higher in Maven 1.x series (<a href=
-"http://maven.apache.org/maven-1.x/start/download.html">download</a>).
-<strong>Please download Maven 1.x version. Axis2 does not support
-Maven 2.</strong></td>
+<td>2.0.7 or higher in Maven 2.x series (<a href=
+"http://maven.apache.org/download.html">download</a>).
+<strong>Please download Maven 2.x version. Axis2 does not support
+Maven 1.x anymore.</strong></td>
 </tr>
 </tbody>
 </table>
@@ -365,20 +365,20 @@ distribution</a>) can be built using Maven commands.
 <p>Required jar files do not come with the distribution and they
 will also have to be built by running the maven command. Before we
 go any further, it is necessary to install <a href=
-"http://maven.apache.org/maven-1.x/" target="_blank">Maven</a> and
+"http://maven.apache.org/" target="_blank">Maven2</a> and
 set up its environment, as explained below.</p>
 <a name="env-src" id="env-src"></a>
 <h3>Setting Up the Environment and Tools</h3>
 <a name="maven" id="maven"></a>
 <h4>Maven</h4>
 <p>The Axis2 build is based on <a href=
-"http://maven.apache.org/maven-1.x/" target="_blank">Maven</a> .
+"http://maven.apache.org/" target="_blank">Maven2</a> .
 Hence the only prerequisite to build Axis2 from the source
 distribution is to have Maven installed. Extensive instruction
 guides are available at the Maven site. This guide however contains
 the easiest path for quick environment setting. Advanced users who
 wish to know more about Maven can visit <a href=
-"http://maven.apache.org/maven-1.x/start/index.html" target=
+"http://maven.apache.org/users/index.html" target=
 "_blank">this site.</a></p>
 <ul>
 <li>MS Windows</li>
@@ -387,10 +387,10 @@ wish to know more about Maven can visit <a href=
 <li>Download and run the Windows installer package for Maven.</li>
 <li>Set the 'Environment Variables' ( create system variable
 MAVEN_HOME and edit path. eg: "C:\Program Files\Apache Software
-Foundation\maven-1.0.2"; path %MAVEN_HOME%\bin)</li>
+Foundation\maven-2.0.7"; path %MAVEN_HOME%\bin)</li>
 <li>Make sure that the system variable JAVA_HOME is set to the
-location of your JDK, eg. C:\Program Files\Java\jdk1.5.0_02</li>
-<li>Run maven --version to verify that it is correctly
+location of your JDK, eg. C:\Program Files\Java\jdk1.5.0_11</li>
+<li>Run mvn -v to verify that it is correctly
 installed.</li>
 </ol>
 <p align="center"><img alt="clip_image002 (15K)" src=
@@ -402,7 +402,7 @@ installed.</li>
 archive is downloaded expand it to a directory of choice and set
 the environment variable MAVEN_HOME and add MAVEN_HOME/bin to the
 path as well. <a href=
-"http://maven.apache.org/download.html#Installation">More
+"http://maven.apache.org/download.html">More
 instructions</a> for installing Maven in Unix based operating
 systems.</p>
 <p>Once Maven is properly installed, you can start building
@@ -417,9 +417,7 @@ Distribution</h3>
 the necessary build scripts are included with the source
 distribution. Once the source archive is expanded into a directory
 of choice, moving to the particular directory and running
-<code>maven</code> command will build the Axis2 jar file.</p>
-<p align="center"><img alt="clip_image004 (43K)" src=
-"images/maven.png" /><br clear="all" /></p>
+<code>mvn install</code> command will build the Axis2 jar file.</p>
 <p>Once the command completes, the binaries (jar files in this
 case) can be found at a newly created "target" directory.</p>
 <p><strong>Note: For the first Maven build (if the maven repository
@@ -427,12 +425,7 @@ is not built first) it will take a while since the required jars
 need to be downloaded. However, this is a once only process and
 will not affect any successive builds.</strong></p>
 <a name="war" id="war"></a>
-<p>The default maven build will however build only the Axis2 jar
-file. To obtain a <strong>WAR (Web Archive)</strong>, <code>maven
-war</code> command should be issued. This will create a complete
-WAR with the name axis2.war inside the target directory.</p>
-<p>Once this build step is complete, the binaries are ready to be
-deployed.</p>
+<p>The default maven build will generate the war under modules/webapp/target directory</p>
 <a name="_Toc96698086"></a>
 </body>
 </html>

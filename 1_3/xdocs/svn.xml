@@ -38,7 +38,7 @@ build the project is also included here.</p>
 <ul>
 <li><a href="#svn">Working with Subversion (SVN)</a></li>
 <li><a href="#checkout">Checkout Axis2 from Subversion</a></li>
-<li><a href="#maven">Installing Maven 1</a></li>
+<li><a href="#maven">Installing Maven 2</a></li>
 <li><a href="#ide">Configuring your IDE</a></li>
 </ul>
 <a name="svn" id="svn"></a>
@@ -90,28 +90,14 @@ repository, execute the <strong>svn update</strong> command.</li>
 to the Axis2 JIRA issue tracker.</li>
 </ol>
 <a name="maven" id="maven"></a>
-<h2>Installing Maven 1</h2>
-<p>Axis2's build is based on Maven 1. Maven is a build system that
+<h2>Installing Maven 2</h2>
+<p>Axis2's build is based on Maven 2. Maven is a build system that
 allows for the reuse of common build projects across multiple
 projects. For information about obtaining, installing, and
-configuring Maven 1, please see the <a href=
+configuring Maven 2, please see the <a href=
 "http://maven.apache.org" target="_blank">Maven project page</a>.
-To use Maven to build the Axis2 project, follow these simple
-steps:</p>
-<ol type="1">
-<li>Install <a href="http://maven.apache.org/maven-1.x/" target=
-"_blank">Maven1</a>. Refer to the <a href=
-"http://maven.apache.org/maven-1.x/start/install.html">instructions</a>.
-<ul>
-<li>Create a MAVEN_HOME environment variable.</li>
-<li>Add MAVEN_HOME/bin to your PATH</li>
-</ul>
-</li>
-<li>Go to the axis2 folder in the command prompt and type
-<strong>maven</strong>.</li>
-<li>Maven will then automatically download all the jars, compile,
-test and build the Axis2 deliverables.</li>
-</ol>
+To use Maven to build the Axis2 project, Please install <a href="http://maven.apache.org/download.html" target=
+"_blank">Maven2</a> and follow instructions here -  <a href="maven-help.html">Quick Guide to Maven for Axis 2.0</a></p>.
 <a name="ide" id="ide"></a>
 <h2>Configuring your IDE</h2>
 <p>The Axis2 development team uses a variety of development tools
@@ -120,11 +106,10 @@ is not an endorsement of a specific set of tools, it is simply
 meant as a pointer to ease the process of getting started with
 Axis2 development.</p>
 <ul>
-<li><strong>Intellij IDEA-</strong> type <strong>maven
-idea:multiproject</strong>. Generates the necessary IDEA .ipr, .iml
+<li><strong>Intellij IDEA</strong> - type <strong>mvn
+idea:idea</strong>. Generates the necessary IDEA .ipr, .iml
 and .iws project files</li>
-<li><strong>eclipse</strong>- type <strong>maven multiproject:goal
--Dgoal=eclipse</strong> Then in Eclipse, setup a Classpath Variable
+<li><strong>Eclipse</strong>- type <strong>mvn eclipse:eclipse</strong>. Then in Eclipse, setup a Classpath Variable
 for MAVEN_REPO, and select File &gt; Import &gt; Existing Projects
 into Workspace &gt; Select root directory. Selecting the root of
 the Axis source discovers all the modules and allows them to be
