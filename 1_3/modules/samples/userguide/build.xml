@@ -25,6 +25,8 @@
         </fileset>
         <pathelement location="build/userguide.jar"/>
     </path>
+<mkdir dir="${basedir}/build/classes"/>
+
 
     <target name="run.client.all"
             depends="run.client.ping,run.client.blocking,run.client.blockingdual,run.client.nonblocking,run.client.nonblockingdual,run.client.servicewithmodule">
