@@ -23,6 +23,11 @@ import java.io.StringBufferInputStream;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -32,9 +37,14 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
+import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 
 /*
  * You can't actually specify whether a handler is for client or server,
@@ -128,6 +138,17 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
             String st = getStringFromSourcePayload(msg.getPayload());
             if (st.contains("<arg0>99</arg0>")) {
                 throw new ProtocolException("I don't like the value 99");
+            } else if (st.contains("<arg0>999</arg0>")) {
+                XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(new RuntimeException("I don't like the value 999"));
+                try {
+                    javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);
+                    SOAPMessage message = mf.createMessage();
+                    SOAPBody body = message.getSOAPBody();
+                    SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
+                    throw new SOAPFaultException(soapFault);
+                } catch (SOAPException soape) {
+                    throw new RuntimeException("Got SOAPException.  That's bad.");
+                }
             }
             
             // Check for the presences of the attachment property

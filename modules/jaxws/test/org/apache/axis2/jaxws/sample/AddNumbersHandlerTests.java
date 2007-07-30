@@ -419,7 +419,7 @@ public class AddNumbersHandlerTests extends TestCase {
         }       
     }
     
-    public void testOneWayWithException() {
+    public void testOneWayWithProtocolException() {
         try {
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -450,6 +450,39 @@ public class AddNumbersHandlerTests extends TestCase {
         }
         TestLogger.logger.debug("----------------------------------");
     }
+    
+    public void testOneWayWithRuntimeException() {
+        try {
+            TestLogger.logger.debug("----------------------------------");
+            TestLogger.logger.debug("test: " + getName());
+
+            AddNumbersHandlerService service = new AddNumbersHandlerService();
+            AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+
+            BindingProvider p = (BindingProvider) proxy;
+
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            p.getRequestContext().put("myClientKey", "myClientVal");
+
+            List<Handler> handlers = p.getBinding().getHandlerChain();
+            if (handlers == null)
+                handlers = new ArrayList<Handler>();
+            handlers.add(new AddNumbersClientLogicalHandler());
+            handlers.add(new AddNumbersClientProtocolHandler());
+            p.getBinding().setHandlerChain(handlers);
+            
+            BindingProvider bp = (BindingProvider) proxy;
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            // value 99 will trigger exception from AddNumbersClientLogicalHandler
+            proxy.oneWayInt(999);
+            fail("Should have got an exception, but did not.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertEquals(e.getMessage(), "I don't like the value 999");
+        }
+        TestLogger.logger.debug("----------------------------------");
+    }
+
 
     /*
      * A callback implementation that can be used to collect the exceptions
