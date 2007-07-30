@@ -89,11 +89,32 @@
                         <xsl:variable name="returnshorttype"><xsl:value-of select="output/param[@location='body']/@shorttype"/></xsl:variable>
                         <xsl:variable name="returnpartname"><xsl:value-of select="output/param[@location='body']/param/@partname"/></xsl:variable>
 
-                        <xsl:if test="string-length(normalize-space($returntype)) &gt; 0">
-                            <xsl:value-of select="$returntype"/>
-                            <xsl:text> </xsl:text>
-                            <xsl:value-of select="$returnvariable"/> = null;
-                        </xsl:if>
+						<xsl:choose>
+	                        <xsl:when test="$returntype = 'byte' or $returntype = 'short' or $returntype = 'int' or $returntype = 'long' or $returntype = 'float' or $returntype = 'double'">
+	                            <xsl:value-of select="$returntype"/>
+	                            <xsl:text> </xsl:text>
+	                            <xsl:value-of select="$returnvariable"/> = 0;
+	                        </xsl:when>	
+	                        
+	                        <xsl:when test="$returntype = 'boolean'">
+	                            <xsl:value-of select="$returntype"/>
+	                            <xsl:text> </xsl:text>
+	                            <xsl:value-of select="$returnvariable"/> = false;
+	                        </xsl:when>	                        					
+
+	                        <xsl:when test="$returntype = 'char'">
+	                            <xsl:value-of select="$returntype"/>
+	                            <xsl:text> </xsl:text>
+	                            <xsl:value-of select="$returnvariable"/> = '\u0000';
+	                        </xsl:when>	
+	                        						
+	                        <xsl:when test="string-length(normalize-space($returntype)) &gt; 0">
+	                            <xsl:value-of select="$returntype"/>
+	                            <xsl:text> </xsl:text>
+	                            <xsl:value-of select="$returnvariable"/> = null;
+	                        </xsl:when>
+						
+						</xsl:choose>
 
                         <xsl:choose>
                             <!-- We really don't need to make a difference between these-->

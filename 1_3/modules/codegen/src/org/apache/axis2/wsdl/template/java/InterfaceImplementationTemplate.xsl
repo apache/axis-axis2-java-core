@@ -482,6 +482,10 @@
                                 return toShort(_returnEnv.getBody().getFirstElement(),
                                                                  getEnvelopeNamespaces(_returnEnv));
                             </xsl:when>
+                            <xsl:when test="$outputtype='boolean'">
+                                return toBoolean(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>                            
                             <xsl:otherwise>
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
@@ -754,6 +758,10 @@
                                         callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
+                                    <xsl:when test="$outputtype='boolean'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toBoolean(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>                                    
                                     <xsl:otherwise>
                                         java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
                                                                          <xsl:value-of select="$outputtype"/>.class,
