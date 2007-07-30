@@ -29,10 +29,10 @@ media="all" />
 </head>
 <body>
 <h1>How to Build the Axis2 Project's Website</h1>
-<h2>Installing Maven</h2>
+<h2>Installing Maven2</h2>
 <p>The Axis 2.0 website build system solely depends on <a href=
-"http://maven.apache.org/">Maven</a>. The build has been
-specifically tested to work with Maven version 1.0.1. To install
+"http://maven.apache.org/">Maven2</a>. The build has been
+specifically tested to work with Maven version 2.0.7. To install
 Maven, download the distributions and follow the instructions in
 the documentation. Make sure you don't forget to put MAVEN_HOME/bin
 directory in the path.</p>
@@ -44,9 +44,9 @@ get a <a href=
 "https://svn.apache.org/repos/asf/webservices/axis2/trunk/java">commiter
 check out.</a></p>
 <h2>Building the Site</h2>
-<p>Type <i>maven multiproject</i> at the root of your project
+<p>Type <i>mvn site</i> at the root of your project
 folder. It will take some time to build the whole site. The built
-site will be available under targets/docs.</p>
+site will be available under targets/site.</p>
 <h2>FAQ</h2>
 <ol>
 <li>How can I update a document in the site ?<br />
