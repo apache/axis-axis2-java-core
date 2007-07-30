@@ -831,6 +831,9 @@
                                             } catch (java.lang.InstantiationException e) {
                                                 // we cannot intantiate the class - throw the original Axis fault
                                                 callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (org.apache.axis2.AxisFault e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
                                             }
 									    } else {
 										    callback.receiveError<xsl:value-of select="@name"/>(f);
