@@ -786,7 +786,7 @@
                             }
                             }
 
-                            public void onError(java.lang.Exception e) {
+                            public void onError(java.lang.Exception error) {
 								if (error instanceof org.apache.axis2.AxisFault) {
 									org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault) error;
 									org.apache.axiom.om.OMElement faultElt = f.getDetail();
