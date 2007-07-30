@@ -200,6 +200,21 @@
                             }
                         }
                     </xsl:when>
+                    <xsl:when test="$propertyType='boolean'">
+                        private boolean toBoolean (
+                            org.apache.axiom.om.OMElement param,
+                            java.util.Map extraNamespaces) throws org.apache.axis2.AxisFault{
+                            try {
+                                javax.xml.bind.JAXBContext context = _<xsl:value-of select="translate(@type,'.&gt;&lt;','___')"/>;
+                                javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+
+                                java.lang.Boolean ret = (java.lang.Boolean)unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), boolean.class).getValue();
+                                return ret.booleanValue();
+                            } catch (javax.xml.bind.JAXBException bex){
+                                throw org.apache.axis2.AxisFault.makeFault(bex);
+                            }
+                        }
+                    </xsl:when>                    
                 </xsl:choose>
             </xsl:if>
         </xsl:for-each>
