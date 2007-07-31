@@ -307,6 +307,9 @@
 				<include>yahoojsonsearch/**/*</include>
 				<include>yahoorestsearch/**/*</include>            
             </includes>
+            <excludes>
+                <exclude>**/*.iml</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     

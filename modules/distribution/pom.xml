@@ -257,17 +257,53 @@
 			
 				<!-- generate modules.list -->			        
 				<echo file="target/tmp-repository/modules/modules.list" append="false">
-				soapmonitor-${soapmonitor.mar.version}.mar
-				addressing-${addressing.mar.version}.mar
-				ping-${ping.mar.version}.mar
-				mex-${mex.mar.version}.mar
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+soapmonitor-${soapmonitor.mar.version}.mar
+addressing-${addressing.mar.version}.mar
+ping-${ping.mar.version}.mar
+mex-${mex.mar.version}.mar
 scripting-${scripting.mar.version}.mar
 			        </echo>
 
 				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
 				<!-- generate services.list -->			        
 			        <echo file="target/tmp-repository/services/services.list" append="false">
-				version.aar
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+version.aar
 			        </echo>
                             </tasks>
                         </configuration>
@@ -279,61 +315,4 @@ scripting-${scripting.mar.version}.mar
 	     </plugin>
         </plugins>
     </build>
-
-
-    <!--<profiles>
-        <profile>
-            <id>java15</id>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.1</version>
-                        <executions>
-                            <execution>
-                                <id>package</id>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <tasks>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxbri/target/axis2-jaxbri-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/metadata/target/axis2-metadata-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxws/target/axis2-jaxws-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxws-api/target/axis2-jaxws-api-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/saaj-api/target/axis2-saaj-api-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/saaj/target/axis2-saaj-${version}.jar"/>
-                                        </copy>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <activation>
-                <jdk>1.5</jdk>
-            </activation>
-        </profile>
-    </profiles>-->
 </project>
