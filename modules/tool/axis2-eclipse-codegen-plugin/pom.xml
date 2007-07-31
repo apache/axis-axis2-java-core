@@ -305,7 +305,6 @@
 
 								<unzip src="./target/axis2.eclipse.codegen.plugin-${pom.version}.jar" dest="./target/plugin/${codegen.plugin.version}"/>
 								<!-- Copy to the same position with the filtering on-->
-								<!-- Copy to the same position with the filtering on-->
 								<copy todir="./target/plugin/${codegen.plugin.version}" filtering="on">
 									<fileset dir="${codegen.resource.dir}">
 										<include name="plugin.xml"/>
@@ -327,6 +326,14 @@
 								<copy todir="./target/plugin/${codegen.plugin.version}/${icons.dir.name}">
 									<fileset dir="${codegen.resource.dir}/${icons.dir.name}"/>
 								</copy>
+								<!-- copy the lib files -->
+                                                                <mkdir dir="./target/plugin/temp"/>
+								<unzip src="./target/dist-axis2-eclipse-codege-plugin.zip" dest="./target/plugin/temp"/>
+                                                                <mkdir dir="./target/plugin/${codegen.plugin.version}/lib"/>
+                                                                <copy todir="./target/plugin/${codegen.plugin.version}/lib">
+                                                                        <fileset dir="./target/plugin/temp/lib"/>
+                                                                </copy>
+								<delete dir="./target/plugin/temp"/>
 								<!-- copy the other project files-->
 								<copy todir="./target/plugin/${codegen.plugin.version}">
 									<fileset file="${codegen.resource.dir}/${plugin.project.file.name}"/>

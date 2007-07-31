@@ -236,6 +236,18 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Sumedha Rubasinghe</name>
+            <id>sumedha</id>
+            <email>sumedha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Charitha Kamkanamge</name>
+            <id>charitha</id>
+            <email>charitha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
             <name>Srinath Perera</name>
             <id>hemapani</id>
             <email>hemapani AT apache.org</email>
@@ -346,6 +358,13 @@
             <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
+       
+<contributor>
+            <name>Shivantha Huruggamuwa</name>
+            <email>shivanthah AT gmail.com</email>
+            <organization>University Of Peradeniya , Sri Lanaka</organization>
+        </contributor>
+
     </contributors>
     <repositories>
         <!--

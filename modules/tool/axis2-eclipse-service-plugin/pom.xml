@@ -233,7 +233,7 @@
 								<filter token="version_number" value="${version_number}"/>
 								<filter token="ant.version" value="${ant.version}"/>
 								<filter token="commons.logging.version" value="${commons.logging.version}"/>
-								<filter token="log4j.version" value="1.2.14"/>
+								<filter token="log4j.version" value="${log4j.version}"/>
 								<delete dir="./target/plugin/${service.plugin.version}"/>
 								<mkdir dir="./target/plugin/${service.plugin.version}"/>
 								<delete dir="./target/dist"/>
@@ -261,6 +261,15 @@
 								<copy todir="./target/plugin/${service.plugin.version}/${icons.dir.name}">
 									<fileset dir="${service.resource.dir}/${icons.dir.name}"/>
 								</copy>
+                                                                <!-- copy the lib files -->
+                                                                <mkdir dir="./target/plugin/temp"/>
+                                                                <unzip src="./target/dist-axis2-eclipse-service-plugin.zip" dest="./target/plugin/temp"/>
+                                                                <mkdir dir="./target/plugin/${service.plugin.version}/lib"/>
+                                                                <copy todir="./target/plugin/${service.plugin.version}/lib">
+                                                                        <fileset dir="./target/plugin/temp/lib"/>
+                                                                </copy>
+                                                                <delete dir="./target/plugin/temp"/>
+							
 								<!-- copy the other project files-->
 								<copy todir="./target/plugin/${service.plugin.version}">
 									<fileset file="${service.resource.dir}/${plugin.project.file.name}"/>

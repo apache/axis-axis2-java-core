@@ -228,6 +228,7 @@
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/bin-assembly.xml</descriptor> 
+                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor> 
                             </descriptors>
                         </configuration>
                     </execution>
@@ -240,6 +241,34 @@
                 <version>1.1</version>
                 <inherited>false</inherited>
                 <executions>
+                    <execution>
+                      <id>package</id>
+                      <phase>package</phase>
+                      <configuration>
+                        <tasks>
+			   <!-- TODO : filtering is not working -->
+			   <filter filtersfile="../../modules/documentation/xdocs/dynamic-labels.properties" />
+                           <copy todir="target/xdocs" filtering="on">
+                              <fileset dir="../../modules/documentation/xdocs">
+			           <exclude name="**/*.gif"/>
+				   <exclude name="**/*.jpg"/>
+				   <exclude name="**/*.png"/>
+			      </fileset>
+                           </copy>
+			   <!-- copy images without filtering -->
+                           <copy todir="target/xdocs" >
+                              <fileset dir="../../modules/documentation/xdocs">
+			           <include name="**/*.gif"/>
+				   <include name="**/*.jpg"/>
+				   <include name="**/*.png"/>
+			      </fileset>
+                           </copy>
+                        </tasks>
+                       </configuration>
+                       <goals>
+                         <goal>run</goal>
+                       </goals>
+                    </execution>
                     <execution>
                         <id>service-module-list-generation</id>
                         <phase>package</phase>

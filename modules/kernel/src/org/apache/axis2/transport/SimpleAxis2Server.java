@@ -105,7 +105,6 @@ public class SimpleAxis2Server extends AxisServer {
         } catch (Throwable t) {
             log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);
             System.err.println("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer");
-            t.printStackTrace(System.out);
         }
     }
 

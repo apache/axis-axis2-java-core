@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 <assembly>
-    <id>axis2-service-codege-plugin</id>
+    <id>axis2-eclipse-service-plugin</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>zip</format>
