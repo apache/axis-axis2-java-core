@@ -264,6 +264,12 @@ class ServiceDescriptionImpl
                 break;
 
             case GET_PORT:
+                
+                // try to find existing endpointDesc by SEI class if portQName was not specified 
+                if (endpointDescription == null && portQName == null && sei != null) {
+                    endpointDescription = getEndpointDescriptionImpl(sei);
+                }
+                
                 // If an endpointDesc doesn't exist, and the port exists in the WSDL, create it
                 // If an endpointDesc already exists and has an associated SEI already, make sure they match
                 // If an endpointDesc already exists and was created for Dispatch (no SEI), update that with the SEI provided on the getPort
@@ -404,6 +410,21 @@ class ServiceDescriptionImpl
 
     EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName) {
         return (EndpointDescriptionImpl)getEndpointDescription(portQName);
+    }
+    
+    EndpointDescriptionImpl getEndpointDescriptionImpl(Class seiClass) {
+        for (EndpointDescription endpointDescription : endpointDescriptions.values()) {
+            EndpointInterfaceDescription endpointInterfaceDesc =
+                    endpointDescription.getEndpointInterfaceDescription();
+            // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
+            if (endpointInterfaceDesc != null) {
+                Class endpointSEIClass = endpointInterfaceDesc.getSEIClass();
+                if (endpointSEIClass != null && endpointSEIClass.equals(seiClass)) {
+                    return (EndpointDescriptionImpl)endpointDescription;
+                }
+            }
+        }
+        return null;
     }
 
     DescriptionBuilderComposite getDescriptionBuilderComposite() {
