@@ -447,7 +447,10 @@ public class Utils {
                     input = new BufferedReader(new InputStreamReader(in));
                     String line;
                     while ((line = input.readLine()) != null) {
-                        services.add(line);
+                        line = line.trim();
+                        if (line.length() > 0 && line.charAt(0)!='#') {
+                            services.add(line);
+                        }
                     }
                     input.close();
                 } catch (IOException ex) {
