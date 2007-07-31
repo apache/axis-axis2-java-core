@@ -1,0 +1,35 @@
+<assembly>
+    <id>docs</id>
+    <includeBaseDirectory>true</includeBaseDirectory> 
+    <baseDirectory>axis2-${version}</baseDirectory>
+    <formats>
+	<!--<format>tar.gz</format>  //uncomment,if tar.gz archive needed-->
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>target/xdocs</directory>
+            <outputDirectory>docs/xdocs</outputDirectory>
+            <excludes>
+                <exclude>.svn/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>../../modules/documentation/target/apidocs</directory>
+            <outputDirectory>docs/javadocs</outputDirectory>
+            <excludes>
+                <exclude>.svn/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>../..</directory>
+            <outputDirectory>docs</outputDirectory>
+            <includes>
+                <include>LICENSE.txt</include>
+                <include>README.txt</include>
+                <include>release-notes.html</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
