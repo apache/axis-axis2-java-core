@@ -47,8 +47,8 @@
     <property name="tool_docs_version" value="1_3"></property>
 
     <property name="service.resource.dir" value="../conf/service"></property>
-    <property name="service.help.resource.file" value="../../../xdocs/tools/${tool_docs_version}/eclipse/servicearchiver-plugin.html"></property>
-    <property name="service.help.images.dir" value="../../../xdocs/tools/${tool_docs_version}/eclipse/images"></property>
+    <property name="service.help.resource.file" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/servicearchiver-plugin.html"></property>
+    <property name="service.help.images.dir" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/images"></property>
     <property name="axis2.lib.dir" value="../../../target/lib"></property>
 
     <!--Filter tockens for the copy command to filter the versions of external dependencies -->
