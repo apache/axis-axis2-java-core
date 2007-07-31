@@ -692,7 +692,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             elt1.setMaxOccurs(Long.MAX_VALUE);
         }
         elt1.setMinOccurs(0);
-        elt1.setNillable(true);
+        if (!("int".equals(schemaTypeName.getLocalPart()) ||
+                "double".equals(schemaTypeName.getLocalPart()) ||
+                "long".equals(schemaTypeName.getLocalPart()) ||
+                "boolean".equals(schemaTypeName.getLocalPart()) ||
+                "short".equals(schemaTypeName.getLocalPart()) ||
+                "float".equals(schemaTypeName.getLocalPart()) )) {
+            elt1.setNillable(true);
+        }
     }
 
     private XmlSchemaComplexType createSchemaTypeForMethodPart(String localPartName) {
