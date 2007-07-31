@@ -27,35 +27,34 @@ public class JMSConstants {
      */
     public static final String JMS_PREFIX = "jms:/";
 
+    public static final String ACTIVEMQ_DYNAMIC_QUEUE = "dynamicQueues/";
+    public static final String ACTIVEMQ_DYNAMIC_TOPIC = "dynamicTopics/";
+
+    //------------------------------------ defaults ------------------------------------
+    /**
+     * The local (Axis2) JMS connection factory name of the default connection
+     * factory to be used, if a service does not explicitly state the connection
+     * factory it should be using by a Parameter named JMSConstants.CONFAC_PARAM
+     */
+    public static final String DEFAULT_CONFAC_NAME = "default";
+    /**
+     * The default JMS time out waiting for a reply
+     */
+    public static final long DEFAULT_JMS_TIMEOUT = Options.DEFAULT_TIMEOUT_MILLISECONDS;
+
+    //-------------------------- services.xml parameters --------------------------------
     /**
      * The Parameter name indicating a JMS destination for requests
      */
     public static final String DEST_PARAM = "transport.jms.Destination";
-
     /**
      * The Parameter name indicating the response JMS destination
      */
     public static final String REPLY_PARAM = "transport.jms.ReplyDestination";
-
-    /**
-     * The Parameter name indicating the JMS destination type
-     */
-    public static final String DEST_TYPE_PARAM = "transport.jms.DestinationType";
-
-    /**
-     * The Parameter name indicating the JMS destination type
-     */
-    public static final String DEST_TYPE_TOPIC = "Topic";
-
-    /**
-     * The Parameter name indicating the JMS destination type
-     */
-    public static final String DEST_TYPE_QUEUE = "Queue";
-
     /**
      * The Parameter name of an Axis2 service, indicating the JMS connection
      * factory which should be used to listen for messages for it. This is
-     * the local (Axis2) name of the connection factory and not a JNDI name
+     * the local (Axis2) name of the connection factory and not the JNDI name
      */
     public static final String CONFAC_PARAM = "transport.jms.ConnectionFactory";
     /**
@@ -63,32 +62,8 @@ public class JMSConstants {
      */
     public static final String CONFAC_JNDI_NAME_PARAM = "transport.jms.ConnectionFactoryJNDIName";
 
-    /**
-     * The Parameter name indicating the operation to dispatch non SOAP/XML messages
-     */
-    public static final String OPERATION_PARAM = "transport.jms.Operation";
-    /**
-     * The Parameter name indicating the wrapper element for non SOAP/XML messages
-     */
-    public static final String WRAPPER_PARAM = "transport.jms.Wrapper";
-    /**
-     * The default operation name to be used for non SOAP/XML messages
-     * if the operation cannot be determined
-     */
-    public static final QName DEFAULT_OPERATION = new QName("urn:mediate");
-    /**
-     * The name of the element which wraps non SOAP/XML content into a SOAP envelope
-     */
-    public static final QName DEFAULT_WRAPPER =
-            new QName(Constants.AXIS2_NAMESPACE_URI, "jmsMessage");
 
-    /**
-     * The local (Axis2) JMS connection factory name of the default connection
-     * factory to be used, if a service does not explicitly state the connection
-     * factory it should be using by a Parameter named JMSConstants.CONFAC_PARAM
-     */
-    public static final String DEFAULT_CONFAC_NAME = "default";
-
+    //------------ message context / transport header properties and client options ------------
     /**
      * A MessageContext property or client Option stating the JMS message type
      */
@@ -102,26 +77,47 @@ public class JMSConstants {
      */
     public static final String JMS_TEXT_MESSAGE = "JMS_TEXT_MESSAGE";
     /**
-     * A MessageContext property or client Option stating the JMS correlation id
-     */
-    public static final String JMS_COORELATION_ID = "JMS_COORELATION_ID";
-    /**
      * A MessageContext property or client Option stating the time to wait for a response JMS message
      */
     public static final String JMS_WAIT_REPLY = "JMS_WAIT_REPLY";
     /**
-     * The JMS message property specifying the SOAP Action
+     * A MessageContext property or client Option stating the JMS correlation id
      */
-    public static final String SOAPACTION = "SOAPAction";
+    public static final String JMS_COORELATION_ID = "JMS_COORELATION_ID";
     /**
-     * The JMS message property specifying the content type
+     * A MessageContext property or client Option stating the JMS message id
      */
-    public static final String CONTENT_TYPE = "contentType";
+    public static final String JMS_MESSAGE_ID = "JMS_MESSAGE_ID";
     /**
-     * The default JMS time out waiting for a reply
+     * A MessageContext property or client Option stating the JMS delivery mode
      */
-    public static final long DEFAULT_JMS_TIMEOUT = Options.DEFAULT_TIMEOUT_MILLISECONDS;
-
-    public static final String ACTIVEMQ_DYNAMIC_QUEUE = "dynamicQueues/";
-    public static final String ACTIVEMQ_DYNAMIC_TOPIC = "dynamicTopics/";
+    public static final String JMS_DELIVERY_MODE = "JMS_DELIVERY_MODE";
+    /**
+     * A MessageContext property or client Option stating the JMS destination
+     */
+    public static final String JMS_DESTINATION = "JMS_DESTINATION";
+    /**
+     * A MessageContext property or client Option stating the JMS expiration
+     */
+    public static final String JMS_EXPIRATION = "JMS_EXPIRATION";
+    /**
+     * A MessageContext property or client Option stating the JMS priority
+     */
+    public static final String JMS_PRIORITY = "JMS_PRIORITY";
+    /**
+     * A MessageContext property stating if the message is a redelivery
+     */
+    public static final String JMS_REDELIVERED = "JMS_REDELIVERED";
+    /**
+     * A MessageContext property or client Option stating the JMS replyTo
+     */
+    public static final String JMS_REPLY_TO = "JMS_REPLY_TO";
+    /**
+     * A MessageContext property or client Option stating the JMS timestamp
+     */
+    public static final String JMS_TIMESTAMP = "JMS_TIMESTAMP";
+    /**
+     * A MessageContext property or client Option stating the JMS type
+     */
+    public static final String JMS_TYPE = "JMS_TYPE";
 }

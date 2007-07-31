@@ -26,55 +26,81 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axis2.transport.base.BaseUtils;
+import org.apache.axis2.transport.base.BaseConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import javax.jms.*;
+import javax.jms.Queue;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
+import javax.naming.Context;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
-public class JMSUtils {
+/**
+ * Miscallaneous methods used for the JMS transport
+ */
+public class JMSUtils extends BaseUtils {
 
     private static final Log log = LogFactory.getLog(JMSUtils.class);
 
+    private static BaseUtils _instance = new JMSUtils();
+
+    public static BaseUtils getInstace() {
+        return _instance;
+    }
+
     /**
-     * Should this service be enabled on JMS transport?
+     * Create a JMS Queue using the given connection with the JNDI destination name, and return the
+     * JMS Destination name of the created queue
+     *
+     * @param con the JMS Connection to be used
+     * @param destinationJNDIName the JNDI name of the Queue to be created
+     * @return the JMS Destination name of the created Queue
+     * @throws JMSException on error
+     */
+    public static String createJMSQueue(Connection con, String destinationJNDIName) throws JMSException {
+        try {
+            Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue(destinationJNDIName);
+            log.info("JMS Destination with JNDI name : " + destinationJNDIName + " created");
+            return queue.getQueueName();
+
+        } finally {
+            try {
+                con.close();
+            } catch (JMSException ignore) {}
+        }
+    }
+
+    /**
+     * Should this service be enabled over the JMS transport?
      *
      * @param service the Axis service
      * @return true if JMS should be enabled
      */
     public static boolean isJMSService(AxisService service) {
-        boolean process = service.isEnableAllTransports();
-        if (process) {
+        if (service.isEnableAllTransports()) {
             return true;
 
         } else {
             List transports = service.getExposedTransports();
             for (int i = 0; i < transports.size(); i++) {
-                if (Constants.TRANSPORT_JMS.equals(transports.get(i))) {
+                if (JMSListener.TRANSPORT_NAME.equals(transports.get(i))) {
                     return true;
                 }
             }
@@ -88,19 +114,14 @@ public class JMSUtils {
      * @param service the Axis Service
      * @return the name of the JMS destination
      */
-    public static String getDestination(AxisService service) {
+    public static String getJNDIDestinationNameForService(AxisService service) {
         Parameter destParam = service.getParameter(JMSConstants.DEST_PARAM);
-
-        // validate destination
-        String destination = null;
         if (destParam != null) {
-            destination = (String) destParam.getValue();
+            return (String) destParam.getValue();
         } else {
-            destination = service.getName();
+            return service.getName();
         }
-        return destination;
     }
-
 
     /**
      * Extract connection factory properties from a given URL
@@ -127,72 +148,26 @@ public class JMSUtils {
     }
 
     /**
-     * Marks the given service as faulty with the given comment
+     * Get the EPR for the given JMS connection factory and destination
+     * the form of the URL is
+     * jms:/<destination>?[<key>=<value>&]*
      *
-     * @param serviceName service name
-     * @param msg         comment for being faulty
-     * @param axisCfg     configuration context
+     * @param cf          the Axis2 JMS connection factory
+     * @param destination the JNDI name of the destination
+     * @return the EPR as a String
      */
-    public static void markServiceAsFaulty(String serviceName, String msg,
-                                           AxisConfiguration axisCfg) {
-        if (serviceName != null) {
-            try {
-                AxisService service = axisCfg.getService(serviceName);
-                axisCfg.getFaultyServices().put(service.getName(), msg);
-
-            } catch (AxisFault axisFault) {
-                log.warn("Error marking service : " + serviceName +
-                        " as faulty due to : " + msg, axisFault);
-            }
+    static String getEPR(JMSConnectionFactory cf, String destination) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(JMSConstants.JMS_PREFIX).append(destination);
+        sb.append("?").append(JMSConstants.CONFAC_JNDI_NAME_PARAM).
+                append("=").append(cf.getConnFactoryJNDIName());
+        Iterator props = cf.getJndiProperties().keySet().iterator();
+        while (props.hasNext()) {
+            String key = (String) props.next();
+            String value = (String) cf.getJndiProperties().get(key);
+            sb.append("&").append(key).append("=").append(value);
         }
-    }
-
-    /**
-     * Get an InputStream to the message
-     *
-     * @param message the JMS message
-     * @return an InputStream
-     */
-    public static InputStream getInputStream(Message message) {
-
-        try {
-            // get the incoming msg content into a byte array
-            if (message instanceof BytesMessage) {
-                byte[] buffer = new byte[8 * 1024];
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-                BytesMessage byteMsg = (BytesMessage) message;
-                for (int bytesRead = byteMsg.readBytes(buffer); bytesRead != -1;
-                     bytesRead = byteMsg.readBytes(buffer)) {
-                    out.write(buffer, 0, bytesRead);
-                }
-                return new ByteArrayInputStream(out.toByteArray());
-
-            } else if (message instanceof TextMessage) {
-                TextMessage txtMsg = (TextMessage) message;
-                String contentType = message.getStringProperty(JMSConstants.CONTENT_TYPE);
-                if (contentType != null) {
-                    return
-                            new ByteArrayInputStream(
-                                    txtMsg.getText().getBytes(
-                                            BuilderUtil.getCharSetEncoding(contentType)));
-                } else {
-                    return
-                            new ByteArrayInputStream(txtMsg.getText().getBytes());
-                }
-
-            } else {
-                handleException("Unsupported JMS message type : " +
-                        message.getClass().getName());
-            }
-
-
-        } catch (JMSException e) {
-            handleException("JMS Exception getting InputStream into message", e);
-        } catch (UnsupportedEncodingException e) {
-            handleException("Encoding exception getting InputStream into message", e);
-        }
-        return null;
+        return sb.toString();
     }
 
     /**
@@ -202,81 +177,12 @@ public class JMSUtils {
      * @param property property name
      * @return property value
      */
-    public static String getProperty(Message message, String property) {
+    public String getProperty(Object message, String property) {
         try {
-            return message.getStringProperty(property);
+            return ((Message)message).getStringProperty(property);
         } catch (JMSException e) {
             return null;
         }
-    }
-
-    /**
-     * Get the context type from the Axis MessageContext
-     *
-     * @param msgCtx message context
-     * @return the content type
-     */
-    public static String getContentType(MessageContext msgCtx) {
-        OMOutputFormat format = new OMOutputFormat();
-        String soapActionString = getSOAPAction(msgCtx);
-        String charSetEnc = (String) msgCtx.getProperty(
-                Constants.Configuration.CHARACTER_SET_ENCODING);
-
-        if (charSetEnc != null) {
-            format.setCharSetEncoding(charSetEnc);
-        } else {
-            OperationContext opctx = msgCtx.getOperationContext();
-            if (opctx != null) {
-                charSetEnc = (String) opctx.getProperty(
-                        Constants.Configuration.CHARACTER_SET_ENCODING);
-            }
-        }
-
-        // If the char set enc is still not found use the default
-        if (charSetEnc == null) {
-            charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-        }
-
-        format.setSOAP11(msgCtx.isSOAP11());
-        format.setCharSetEncoding(charSetEnc);
-
-        String encoding = format.getCharSetEncoding();
-        String contentType = format.getContentType();
-
-        if (encoding != null) {
-            contentType += "; charset=" + encoding;
-        }
-
-        // action header is not mandated in SOAP 1.2. So putting it, if available
-        if (!msgCtx.isSOAP11() && soapActionString != null &&
-                !"".equals(soapActionString.trim())) {
-            contentType = contentType + ";action=\"" + soapActionString + "\";";
-        }
-
-        return contentType;
-    }
-
-    /**
-     * Get the SOAP Action from the message context
-     *
-     * @param msgCtx the MessageContext
-     * @return the SOAP Action as s String if present, or the WS-Action
-     */
-    private static String getSOAPAction(MessageContext msgCtx) {
-        String soapActionString = msgCtx.getSoapAction();
-
-        if (soapActionString == null || soapActionString.trim().length() == 0) {
-            soapActionString = msgCtx.getWSAAction();
-        }
-
-        Object disableSoapAction =
-                msgCtx.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
-
-        if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
-            soapActionString = "";
-        }
-
-        return soapActionString;
     }
 
     /**
@@ -297,167 +203,410 @@ public class JMSUtils {
     }
 
     /**
-     * Return a SOAPEnvelope created from the given JMS Message and Axis
-     * MessageContext, and the InputStream into the message
-     *
-     * @param message    the JMS Message
-     * @param msgContext the Axis MessageContext
-     * @param in         the InputStream into the message
-     * @return SOAPEnvelope for the message
-     * @throws javax.xml.stream.XMLStreamException
-     *
+     * Set JNDI properties and any other connection factory parameters to the connection factory
+     * passed in, looing at the parameter in axis2.xml
+     * @param param the axis parameter that holds the connection factory settings
+     * @param jmsConFactory the JMS connection factory to which the parameters should be applied
      */
-    public static SOAPEnvelope getSOAPEnvelope(
-            Message message, MessageContext msgContext, InputStream in)
-            throws XMLStreamException {
+    public static void setConnectionFactoryParameters(
+        Parameter param, JMSConnectionFactory jmsConFactory) {
 
-        SOAPEnvelope envelope = null;
-        StAXBuilder builder = null;
-        String contentType = JMSUtils.getProperty(message, JMSConstants.CONTENT_TYPE);
+        ParameterIncludeImpl pi = new ParameterIncludeImpl();
+        try {
+            pi.deserializeParameters((OMElement) param.getValue());
+        } catch (AxisFault axisFault) {
+            log.error("Error reading parameters for JMS connection factory" +
+                jmsConFactory.getName(), axisFault);
+        }
 
-        if (contentType != null) {
-            if (contentType.indexOf(
-                    HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-                builder = BuilderUtil.getAttachmentsBuilder(
-                        msgContext, in, contentType, true);
-                envelope = (SOAPEnvelope) builder.getDocumentElement();
-            } else {
-                String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
-                builder = BuilderUtil.getSOAPBuilder(in, charSetEnc);
+        Iterator params = pi.getParameters().iterator();
+        while (params.hasNext()) {
 
-                // Set the encoding scheme in the message context
-                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-                envelope = (SOAPEnvelope) builder.getDocumentElement();
+            Parameter p = (Parameter) params.next();
+
+            if (Context.INITIAL_CONTEXT_FACTORY.equals(p.getName())) {
+                jmsConFactory.addJNDIContextProperty(
+                    Context.INITIAL_CONTEXT_FACTORY, (String) p.getValue());
+            } else if (Context.PROVIDER_URL.equals(p.getName())) {
+                jmsConFactory.addJNDIContextProperty(
+                    Context.PROVIDER_URL, (String) p.getValue());
+            } else if (Context.SECURITY_PRINCIPAL.equals(p.getName())) {
+                jmsConFactory.addJNDIContextProperty(
+                    Context.SECURITY_PRINCIPAL, (String) p.getValue());
+            } else if (Context.SECURITY_CREDENTIALS.equals(p.getName())) {
+                jmsConFactory.addJNDIContextProperty(
+                    Context.SECURITY_CREDENTIALS, (String) p.getValue());
+            } else if (JMSConstants.CONFAC_JNDI_NAME_PARAM.equals(p.getName())) {
+                jmsConFactory.setConnFactoryJNDIName((String) p.getValue());
             }
         }
-
-        // handle pure plain vanilla POX and binary content (non SOAP)
-        if (builder == null) {
-            SOAPFactory soapFactory = new SOAP11Factory();
-            try {
-                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
-                    (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
-                // Set the encoding scheme in the message context
-                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                       MessageContext.DEFAULT_CHAR_SET_ENCODING);
-                builder = new StAXOMBuilder(xmlreader);
-                builder.setOMBuilderFactory(soapFactory);
-
-                String ns = builder.getDocumentElement().getNamespace().getNamespaceURI();
-                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
-                    envelope = getEnvelope(in, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
-                    envelope = getEnvelope(in, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                } else {
-                    // this is POX ... mark MC as REST
-                    msgContext.setDoingREST(true);
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(builder.getDocumentElement());
-                }
-            } catch (Exception e) {
-                log.debug("Non SOAP/XML JMS message received");
-
-                Parameter operationParam = msgContext.getAxisService().
-                    getParameter(JMSConstants.OPERATION_PARAM);
-                QName operationQName = (operationParam != null ?
-                    getQName(operationParam.getValue()) : JMSConstants.DEFAULT_OPERATION);
-
-                AxisOperation operation = msgContext.getAxisService().getOperation(operationQName);
-                if (operation != null) {
-                    msgContext.setAxisOperation(operation);
-                } else {
-                    handleException("Cannot find operation : " + operationQName + " on the service "
-                        + msgContext.getAxisService());
-                }
-
-                Parameter wrapperParam = msgContext.getAxisService().
-                    getParameter(JMSConstants.WRAPPER_PARAM);
-                QName wrapperQName = (wrapperParam != null ?
-                    getQName(wrapperParam.getValue()) : JMSConstants.DEFAULT_WRAPPER);
-
-                OMElement wrapper = soapFactory.createOMElement(wrapperQName, null);
-
-                try {
-                    if (message instanceof TextMessage) {
-                        OMTextImpl textData = (OMTextImpl) soapFactory.createOMText(
-                            ((TextMessage) message).getText());
-                        wrapper.addChild(textData);
-                    } else if (message instanceof BytesMessage) {
-                        BytesMessage bm = (BytesMessage) message;
-                        byte[] msgBytes = new byte[(int) bm.getBodyLength()];
-                        bm.reset();
-                        bm.readBytes(msgBytes);
-                        DataHandler dataHandler = new DataHandler(
-                            new ByteArrayDataSource(msgBytes));
-                        OMText textData = soapFactory.createOMText(dataHandler, true);
-                        wrapper.addChild(textData);
-                        msgContext.setDoingMTOM(true);
-                    } else {
-                        handleException("Unsupported JMS Message format : " + message.getJMSType());
-                    }
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(wrapper);
-
-                } catch (JMSException j) {
-                    handleException("Error wrapping JMS message into a SOAP envelope ", j);
-                }
-            }
-        }
-
-        String charEncOfMessage = builder == null ? null :
-            builder.getDocument() == null ? null : builder.getDocument().getCharsetEncoding();
-        String charEncOfTransport = ((String) msgContext.getProperty(
-                Constants.Configuration.CHARACTER_SET_ENCODING));
-
-        if (charEncOfMessage != null &&
-                !(charEncOfMessage.trim().length() == 0) &&
-                !charEncOfMessage.equalsIgnoreCase(charEncOfTransport)) {
-
-            handleException(
-                    "Character Set Encoding from transport information do not " +
-                            "match with character set encoding in the received " +
-                            "SOAP message");
-        }
-        return envelope;
     }
 
-    private static SOAPEnvelope getEnvelope(InputStream in, String namespace) throws XMLStreamException {
+    /**
+     * Get an InputStream to the JMS message payload
+     *
+     * @param message the JMS message
+     * @return an InputStream to the payload
+     */
+    public InputStream getInputStream(Object message) {
 
         try {
-            in.reset();
-        } catch (IOException e) {
-            throw new XMLStreamException("Error resetting message input stream", e);
+            if (message instanceof BytesMessage) {
+                byte[] buffer = new byte[1024];
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                BytesMessage byteMsg = (BytesMessage) message;
+                for (int bytesRead = byteMsg.readBytes(buffer); bytesRead != -1;
+                     bytesRead = byteMsg.readBytes(buffer)) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                return new ByteArrayInputStream(out.toByteArray());
+
+            } else if (message instanceof TextMessage) {
+                TextMessage txtMsg = (TextMessage) message;
+                String contentType = getProperty(txtMsg, BaseConstants.CONTENT_TYPE);
+                
+                if (contentType != null) {
+                    return new ByteArrayInputStream(
+                        txtMsg.getText().getBytes(BuilderUtil.getCharSetEncoding(contentType)));
+                } else {
+                    return new ByteArrayInputStream(txtMsg.getText().getBytes());
+                }
+
+            } else {
+                handleException("Unsupported JMS message type : " + message.getClass().getName());
+            }
+
+        } catch (JMSException e) {
+            handleException("JMS Exception reading message payload", e);
+        } catch (UnsupportedEncodingException e) {
+            handleException("Encoding exception getting InputStream into message", e);
         }
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
-            (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespace);
-        return (SOAPEnvelope) builder.getDocumentElement();
+        return null;
     }
 
-    private static QName getQName(Object obj) {
-        String value;
-        if (obj instanceof QName) {
-            return (QName) obj;
-        } else {
-            value = obj.toString();
+    /**
+     * Set the JMS ReplyTo for the message
+     *
+     * @param replyDestination the JMS Destination where the reply is expected
+     * @param session the session to use to create a temp Queue if a response is expected
+     * but a Destination has not been specified
+     * @param message the JMS message where the final Destinatio would be set as the JMS ReplyTo
+     * @return the JMS ReplyTo Destination for the message
+     */
+    public static Destination setReplyDestination(Destination replyDestination, Session session,
+        Message message) {
+        if (replyDestination == null) {
+           try {
+               // create temporary queue to receive the reply
+               replyDestination = session.createTemporaryQueue();
+           } catch (JMSException e) {
+               handleException("Error creating temporary queue for response");
+           }
         }
-        int open = value.indexOf('{');
-        int close = value.indexOf('}');
-        if (close > open && open > -1 && value.length() > close) {
-            return new QName(value.substring(open+1, close-open), value.substring(close+1));
-        } else {
-            return new QName(value);
+
+        try {
+            message.setJMSReplyTo(replyDestination);
+        } catch (JMSException e) {
+            log.warn("Error setting JMS ReplyTo destination to : " + replyDestination, e);
+        }
+
+        if (log.isDebugEnabled()) {
+            try {
+                log.debug("Expecting a response to JMS Destination : " +
+                    (replyDestination instanceof Queue ?
+                        ((Queue) replyDestination).getQueueName() :
+                        ((Topic) replyDestination).getTopicName()));
+            } catch (JMSException ignore) {}
+        }
+        return replyDestination;
+    }
+
+    /**
+     * When trying to send a message to a destination, if it does not exist, try to create it
+     *
+     * @param destination the JMS destination to send messages
+     * @param targetAddress the target JMS EPR to find the Destination to be created if required
+     * @param session the JMS session to use
+     * @return the JMS Destination where messages could be posted
+     * @throws AxisFault if the target Destination does not exist and cannot be created
+     */
+    public static Destination createDestinationIfRequired(Destination destination,
+        String targetAddress, Session session) throws AxisFault {
+        if (destination == null) {
+            if (targetAddress != null) {
+                String name = JMSUtils.getDestination(targetAddress);
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating JMS Destination : " + name);
+                }
+
+                try {
+                    destination = session.createQueue(name);
+                } catch (JMSException e) {
+                    handleException("Error creating destination Queue : " + name, e);
+                }
+            } else {
+                handleException("Cannot send reply to null JMS Destination");
+            }
+        }
+        return destination;
+    }
+
+    /**
+     * Send the given message to the Destination using the given session
+     * @param session the session to use to send
+     * @param destination the Destination
+     * @param message the JMS Message
+     * @throws AxisFault on error
+     */
+    public static void sendMessageToJMSDestination(Session session,
+        Destination destination, Message message) throws AxisFault {
+        MessageProducer producer = null;
+        try {
+            producer = session.createProducer(destination);
+            if (log.isDebugEnabled()) {
+                log.debug("Sending message to destination : " + destination);
+            }
+            producer.send(message);
+
+        } catch (JMSException e) {
+            handleException("Error creating a producer or sending to : " + destination, e);
+        } finally {
+            if (producer != null) {
+                try {
+                    producer.close();
+                } catch (JMSException ignore) {}
+            }
         }
     }
 
-    private static void handleException(String s) {
-        log.error(s);
-        throw new AxisJMSException(s);
+    /**
+     * Set transport headers from the axis message context, into the JMS message
+     *
+     * @param msgContext the axis message context
+     * @param message the JMS Message
+     * @throws JMSException on exception
+     */
+    public static void setTransportHeaders(MessageContext msgContext, Message message)
+        throws JMSException {
+
+        Map headerMap = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+
+        if (headerMap == null) {
+            return;
+        }
+        
+        Iterator iter = headerMap.keySet().iterator();
+        while (iter.hasNext()) {
+
+            String name = (String) iter.next();
+
+            if (JMSConstants.JMS_COORELATION_ID.equals(name)) {
+                message.setJMSCorrelationID((String) headerMap.get(JMSConstants.JMS_COORELATION_ID));
+            }
+            else if (JMSConstants.JMS_DELIVERY_MODE.equals(name)) {
+                Object o = headerMap.get(JMSConstants.JMS_DELIVERY_MODE);
+                if (o instanceof Integer) {
+                    message.setJMSDeliveryMode(((Integer) o).intValue());
+                } else if (o instanceof String) {
+                    try {
+                        message.setJMSDeliveryMode(Integer.parseInt((String) o));
+                    } catch (NumberFormatException nfe) {
+                        log.warn("Invalid delivery mode ignored : " + o, nfe);
+                    }
+                } else {
+                    log.warn("Invalid delivery mode ignored : " + o);
+                }
+            }
+            else if (JMSConstants.JMS_EXPIRATION.equals(name)) {
+                message.setJMSExpiration(
+                    Long.parseLong((String) headerMap.get(JMSConstants.JMS_EXPIRATION)));
+            }
+            else if (JMSConstants.JMS_MESSAGE_ID.equals(name)) {
+                message.setJMSMessageID((String) headerMap.get(JMSConstants.JMS_MESSAGE_ID));
+            }
+            else if (JMSConstants.JMS_PRIORITY.equals(name)) {
+                message.setJMSPriority(
+                    Integer.parseInt((String) headerMap.get(JMSConstants.JMS_PRIORITY)));
+            }
+            else if (JMSConstants.JMS_TIMESTAMP.equals(name)) {
+                message.setJMSTimestamp(
+                    Long.parseLong((String) headerMap.get(JMSConstants.JMS_TIMESTAMP)));
+            }
+            else if (JMSConstants.JMS_MESSAGE_TYPE.equals(name)) {
+                message.setJMSType((String) headerMap.get(JMSConstants.JMS_MESSAGE_TYPE));
+            }
+            else {
+                Object value = headerMap.get(name);
+                if (value instanceof String) {
+                    message.setStringProperty(name, (String) value);
+                } else if (value instanceof Boolean) {
+                    message.setBooleanProperty(name, ((Boolean) value).booleanValue());
+                } else if (value instanceof Integer) {
+                    message.setIntProperty(name, ((Integer) value).intValue());
+                } else if (value instanceof Long) {
+                    message.setLongProperty(name, ((Long) value).longValue());
+                } else if (value instanceof Double) {
+                    message.setDoubleProperty(name, ((Double) value).doubleValue());
+                } else if (value instanceof Float) {
+                    message.setFloatProperty(name, ((Float) value).floatValue());
+                }
+            }
+        }
     }
 
-    private static void handleException(String s, Exception e) {
-        log.error(s, e);
-        throw new AxisJMSException(s, e);
+    /**
+     * Read the transport headers from the JMS Message and set them to the axis2 message context
+     *
+     * @param message the JMS Message received
+     * @param responseMsgCtx the axis message context
+     * @throws AxisFault on error
+     */
+    public static void loadTransportHeaders(Message message, MessageContext responseMsgCtx)
+        throws AxisFault {
+        responseMsgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(message));
+    }
+
+    /**
+     * Extract transport level headers for JMS from the given message into a Map
+     *
+     * @param message the JMS message
+     * @return a Map of the transport headers
+     */
+    public static Map getTransportHeaders(Message message) {
+        // create a Map to hold transport headers
+        Map map = new HashMap();
+
+        // correlation ID
+        try {
+            if (message.getJMSCorrelationID() != null) {
+                map.put(JMSConstants.JMS_COORELATION_ID, message.getJMSCorrelationID());
+            }
+        } catch (JMSException ignore) {}
+
+        // set the delivery mode as persistent or not
+        try {
+            map.put(JMSConstants.JMS_DELIVERY_MODE, Integer.toString(message.getJMSDeliveryMode()));
+        } catch (JMSException ignore) {}
+
+        // destination name
+        try {
+            if (message.getJMSDestination() != null) {
+                Destination dest = message.getJMSDestination();
+                map.put(JMSConstants.JMS_DESTINATION,
+                    dest instanceof Queue ?
+                        ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
+            }
+        } catch (JMSException ignore) {}
+
+        // expiration
+        try {
+            map.put(JMSConstants.JMS_EXPIRATION, Long.toString(message.getJMSExpiration()));
+        } catch (JMSException ignore) {}
+
+        // if a JMS message ID is found
+        try {
+            if (message.getJMSMessageID() != null) {
+                map.put(JMSConstants.JMS_MESSAGE_ID, message.getJMSMessageID());
+            }
+        } catch (JMSException ignore) {}
+
+        // priority
+        try {
+            map.put(JMSConstants.JMS_PRIORITY, Long.toString(message.getJMSPriority()));
+        } catch (JMSException ignore) {}
+
+        // redelivered
+        try {
+            map.put(JMSConstants.JMS_REDELIVERED, Boolean.toString(message.getJMSRedelivered()));
+        } catch (JMSException ignore) {}
+
+        // replyto destination name
+        try {
+            if (message.getJMSReplyTo() != null) {
+                Destination dest = message.getJMSReplyTo();
+                map.put(JMSConstants.JMS_REPLY_TO,
+                    dest instanceof Queue ?
+                        ((Queue) dest).getQueueName() : ((Topic) dest).getTopicName());
+            }
+        } catch (JMSException ignore) {}
+
+        // priority
+        try {
+            map.put(JMSConstants.JMS_TIMESTAMP, Long.toString(message.getJMSTimestamp()));
+        } catch (JMSException ignore) {}
+
+        // message type
+        try {
+            if (message.getJMSType() != null) {
+                map.put(JMSConstants.JMS_TYPE, message.getJMSType());
+            }
+        } catch (JMSException ignore) {}
+
+        // any other transport properties / headers
+        Enumeration e = null;
+        try {
+            e = message.getPropertyNames();
+        } catch (JMSException ignore) {}
+
+        if (e != null) {
+            while (e.hasMoreElements()) {
+                String headerName = (String) e.nextElement();
+                try {
+                    map.put(headerName, message.getStringProperty(headerName));
+                    continue;
+                } catch (JMSException ignore) {}
+                try {
+                    map.put(headerName, Boolean.valueOf(message.getBooleanProperty(headerName)));
+                    continue;
+                } catch (JMSException ignore) {}
+                try {
+                    map.put(headerName, new Integer(message.getIntProperty(headerName)));
+                    continue;
+                } catch (JMSException ignore) {}
+                try {
+                    map.put(headerName, new Long(message.getLongProperty(headerName)));
+                    continue;
+                } catch (JMSException ignore) {}
+                try {
+                    map.put(headerName, new Double(message.getDoubleProperty(headerName)));
+                    continue;
+                } catch (JMSException ignore) {}
+                try {
+                    map.put(headerName, new Float(message.getFloatProperty(headerName)));
+                    continue;
+                } catch (JMSException ignore) {}
+            }
+        }
+
+        return map;
+    }
+
+
+    public String getMessageTextPayload(Object message) {
+        if (message instanceof TextMessage) {
+            try {
+                return ((TextMessage) message).getText();
+            } catch (JMSException e) {
+                handleException("Error reading JMS text message payload", e);
+            }
+        }
+        return null;
+    }
+
+    public byte[] getMessageBinaryPayload(Object message) {
+        if (message instanceof BytesMessage) {
+            BytesMessage bytesMessage = (BytesMessage) message;
+            byte[] msgBytes;
+            try {
+                msgBytes = new byte[(int) bytesMessage.getBodyLength()];
+                bytesMessage.reset();
+                bytesMessage.readBytes(msgBytes);
+
+            } catch (JMSException e) {
+                handleException("Error reading JMS binary message payload", e);
+            }
+        }
+        return null;
     }
 }

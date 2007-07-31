@@ -28,22 +28,38 @@ import javax.naming.NamingException;
 import java.util.Hashtable;
 
 /**
- * The JMS OutTransportInfo
+ * The JMS OutTransportInfo is a holder of information to send an outgoing message
+ * (e.g. a Response) to a JMS destination. Thus at a minimum a reference to a
+ * ConnectionFactory and a Destination are held
  */
 public class JMSOutTransportInfo implements OutTransportInfo {
 
     private static final Log log = LogFactory.getLog(JMSOutTransportInfo.class);
 
+    /**
+     * this is a reference to the underlying JMS connection factory when sending messages
+     * through connection factories not defined to the transport sender
+     */
     private ConnectionFactory connectionFactory = null;
+    /**
+     * this is a reference to a JMS Connection Factory instance, which has a reference
+     * to the underlying actual connection factory, an open connection to the JMS provider
+     * and optionally a session already available for use
+     */
+    private JMSConnectionFactory jmsConnectionFactory = null;
+    /** the Destination queue or topic for the outgoing message */
     private Destination destination = null;
-
+    /** the EPR properties when the out-transport info is generated from a target EPR */
+    private Hashtable properties = null;
+    /** the target EPR string where applicable */
+    private String targetEPR = null;
     private String contentType = null;
 
     /**
      * Creates an instance using the given connection factory and destination
      *
      * @param connectionFactory the connection factory
-     * @param dest              the destination
+     * @param dest the destination
      */
     JMSOutTransportInfo(ConnectionFactory connectionFactory, Destination dest) {
         this.connectionFactory = connectionFactory;
@@ -51,25 +67,44 @@ public class JMSOutTransportInfo implements OutTransportInfo {
     }
 
     /**
+     * Creates an instance using the given JMS connection factory and destination
+     *
+     * @param jmsConnectionFactory the JMS connection factory
+     * @param dest the destination
+     */
+    JMSOutTransportInfo(JMSConnectionFactory jmsConnectionFactory, Destination dest) {
+        this.jmsConnectionFactory = jmsConnectionFactory;
+        this.destination = dest;
+    }
+
+    /**
      * Creates and instance using the given URL
      *
-     * @param url the URL
+     * @param targetEPR the target EPR
      */
-    JMSOutTransportInfo(String url) {
-        if (!url.startsWith(JMSConstants.JMS_PREFIX)) {
-            handleException("Invalid JMS URL : " + url +
-                    " Must begin with the prefix " + JMSConstants.JMS_PREFIX);
+    JMSOutTransportInfo(String targetEPR) {
+        this.targetEPR = targetEPR;
+        if (!targetEPR.startsWith(JMSConstants.JMS_PREFIX)) {
+            handleException("Invalid prefix for a JMS EPR : " + targetEPR);
         } else {
-            Context context = null;
-            Hashtable props = JMSUtils.getProperties(url);
-            try {
-                context = new InitialContext(props);
-            } catch (NamingException e) {
-                handleException("Could not get the initial context", e);
-            }
+            properties = JMSUtils.getProperties(targetEPR);
+        }
+    }
 
-            connectionFactory = getConnectionFactory(context, props);
-            destination = getDestination(context, url);
+    /**
+     * Provides a lazy load when created with a target EPR. This method performs actual
+     * lookup for the connection factory and desination
+     */
+    public void loadConnectionFactoryFromProperies() {
+        if (properties != null) {
+            Context context = null;
+            try {
+                context = new InitialContext(properties);
+            } catch (NamingException e) {
+                handleException("Could not get an initial context using " + properties, e);
+            }
+            connectionFactory = getConnectionFactory(context, properties);
+            destination = getDestination(context, targetEPR);
         }
     }
 
@@ -87,11 +122,10 @@ public class JMSOutTransportInfo implements OutTransportInfo {
             if (conFacJndiName != null) {
                 return (ConnectionFactory) context.lookup(conFacJndiName);
             } else {
-                throw new NamingException(
-                        "JMS Connection Factory JNDI name cannot be determined from url");
+                handleException("Connection Factory JNDI name cannot be determined");
             }
         } catch (NamingException e) {
-            handleException("Cannot get JMS Connection factory with props : " + props, e);
+            handleException("Connection Factory JNDI name cannot be determined");
         }
         return null;
     }
@@ -107,14 +141,26 @@ public class JMSOutTransportInfo implements OutTransportInfo {
         String destinationName = JMSUtils.getDestination(url);
         try {
             return (Destination) context.lookup(destinationName);
-
         } catch (NameNotFoundException e) {
-            log.warn("Cannot get or lookup JMS destination : " + destinationName +
-                    " from url : " + url + " : " + e.getMessage());
-
+            log.debug("Cannot locate destination : " + destinationName + " using " + url, e);
         } catch (NamingException e) {
-            handleException("Cannot get JMS destination : " + destinationName +
-                    " from url : " + url, e);
+            handleException("Cannot locate destination : " + destinationName + " using " + url, e);
+        }
+        return null;
+    }
+
+    /**
+     * Look up for the given destination
+     * @param replyDest
+     * @return
+     */
+    public Destination getReplyDestination(String replyDest) {
+        try {
+            return (Destination) jmsConnectionFactory.getContext().lookup(replyDest);
+        } catch (NameNotFoundException e) {
+            log.debug("Cannot locate reply destination : " + replyDest, e);
+        } catch (NamingException e) {
+            handleException("Cannot locate reply destination : " + replyDest, e);
         }
         return null;
     }
@@ -138,7 +184,19 @@ public class JMSOutTransportInfo implements OutTransportInfo {
         return connectionFactory;
     }
 
+    public JMSConnectionFactory getJmsConnectionFactory() {
+        return jmsConnectionFactory;
+    }
+
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public Hashtable getProperties() {
+        return properties;
+    }
+
+    public String getTargetEPR() {
+        return targetEPR;
     }
 }
