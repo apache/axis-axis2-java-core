@@ -369,9 +369,8 @@ public class AxisEngine {
         ArrayList executionChain = operationContext.getAxisOperation().getPhasesOutFlow();
         //rather than having two steps added both oparation and global chain together
         ArrayList outPhases = new ArrayList();
-        outPhases.addAll((ArrayList) executionChain.clone());
-        outPhases.addAll((ArrayList) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getOutFlowPhases().clone());
+        outPhases.addAll(executionChain);
+        outPhases.addAll(msgContext.getConfigurationContext().getAxisConfiguration().getOutFlowPhases());
         msgContext.setExecutionChain(outPhases);
         msgContext.setFLOW(MessageContext.OUT_FLOW);
         try {
