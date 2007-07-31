@@ -528,7 +528,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    private Map getNewCopy(Map copyFormMap) {
+    public Map getNewCopy(Map copyFormMap) {
         Map copyToMap = new HashMap();
         Object key;
         for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();) {
@@ -538,7 +538,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return copyToMap;
     }
 
-    private void copyMap(Map copyFormMap, Map copyToMap) {
+    public void copyMap(Map copyFormMap, Map copyToMap) {
         Object key;
         for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();) {
             key = iter.next();
