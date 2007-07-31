@@ -261,7 +261,16 @@
 								<copy todir="./target/plugin/${service.plugin.version}/${icons.dir.name}">
 									<fileset dir="${service.resource.dir}/${icons.dir.name}"/>
 								</copy>
-								<!-- copy the other project files-->
+                                                                <!-- copy the lib files -->
+                                                                <mkdir dir="./target/plugin/temp"/>
+                                                                <unzip src="./target/dist-axis2-eclipse-service-plugin.zip" dest="./target/plugin/temp"/>
+                                                                <mkdir dir="./target/plugin/${service.plugin.version}/lib"/>
+                                                                <copy todir="./target/plugin/${service.plugin.version}/lib">
+                                                                        <fileset dir="./target/plugin/temp/lib"/>
+                                                                </copy>
+                                                                <delete dir="./target/plugin/temp"/>
+							
+                                                                <!-- copy the other project files-->
 								<copy todir="./target/plugin/${service.plugin.version}">
 									<fileset file="${service.resource.dir}/${plugin.project.file.name}"/>
 									<fileset file="${service.resource.dir}/${plugin.help.file.name}"/>
