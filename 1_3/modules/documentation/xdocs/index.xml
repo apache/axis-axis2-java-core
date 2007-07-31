@@ -76,7 +76,7 @@ architecture.</p>
 also has integrated support for the widely popular <a href=
 "http://www.xfront.com/REST-Web-Services.html">REST style of Web
 services</a>. The same business logic implementation can offer both
-a WS-* style interface as well as a REST style interface
+a WS-* style interface as well as a REST/POX style interface
 simultaneously.</p>
 <p>Apache Axis2 is more efficient, more modular and more
 XML-oriented than the older version. It is carefully designed to

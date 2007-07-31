@@ -50,10 +50,6 @@ mailing lists.<a href=
 <ul>
 <li><a href="#a1">I'm having a problem using Axis2. What should I
 do?</a></li>
-<!--li><a href="#a2">What is OMElement, What does it represent?</a></li-->
-<li><a href="#a3">Integration security tests fail with JDK
-1.5</a></li>
-<li><a href="#a4">Axis2 is not working with Java 6</a></li>
 </ul>
 </li>
 <li>Class Loading Issues
@@ -85,12 +81,6 @@ archive?</a></li>
 <ul>
 <li><a href="#f1">I see an internal server error page when I try to
 view the WSDL file.<br /></a></li>
-</ul>
-</li>
-<li>WSDL and Code Generation
-<ul>
-<li><a href="#g1">Given a WSDL 2.0 document with HTTP Binding to
-WSDL2Java, should it not be able to generate a client stub</a></li>
 </ul>
 </li>
 </ul>
@@ -134,30 +124,6 @@ the chances of your question being answered. Prefixing your mail
 subject with prefixes like "URGENT" will not help you in any means.
 Yes we also accept all the blames about Axis2 in these mailing
 lists, as those will definitely help us to improve Axis2 :) .</p>
-</li>
-<li><a name="a3" id="a3"></a><strong>Integration security tests
-fail with JDK 1.5</strong><br />
-<p>You have to add Bouncy Castle as a JCE provider. Add the
-following entry to java.security file of the appropriate JRE on
-your machine. This file is available in the lib\security\ directory
-within the JRE directory.</p>
-<p>
-security.provider.7=org.bouncycastle.jce.provider.BouncyCastleProvider</p>
-<p>security.provider.# will have to be decided depending on the
-existing entries in the java.security file</p>
-<p>NOTE: For Windows XP, the correct version can be found using
-'java -version'. The correct file is JRE (typically c:\Program
-Files\Java\jre&lt;version&gt;\lib\security\java.security.</p>
-</li>
-<li><a name="a4" id="a4"></a><strong>Axis2 is not working with Java
-6</strong><br />
-<p>You have to copy the stax-api jar in the Axis2 distribution into
-your JRE's endorsed directory (see info on endorsed directory here
-- <a href=
-"http://java.sun.com/j2se/1.4.2/docs/guide/standards/">http://java.sun.com/j2se/1.4.2/docs/guide/standards/</a>).</p>
-<p>This issue can also be resolved by copying the stax-api jar to
-Tomcat's common/endorsed folder, when deploying Axis2 in
-Tomcat.</p>
 </li>
 </ol>
 <h2>Class Loading Issues</h2>
@@ -288,24 +254,6 @@ transformer factory class. This can be solved simply by putting the
 <a href=
 "http://www.apache.org/dist/java-repository/xalan/jars/">xalan-2.7.0.jar</a>
 into the axis2/WEB-INF/lib directory</p>
-</li>
-</ol>
-<h2>WSDL and Code Generation</h2>
-<ol>
-<li><a name="g1" id="g1"></a><strong>Given a WSDL 2.0 document with
-HTTP Binding to WSDL2Java, should it not be able to generate a
-client stub similar to what happens given a WSDL 1.1 document with
-SOAP Binding?</strong></li>
-<li style="list-style: none; display: inline">
-<p>WSDL 2.0 is not supported yet. We do not have a working WSDL 2.0
-reader.</p>
-<p>However the codegen engine works off WOM (not WSDL4J). Hence if
-the WSDL 2.0 reader is done, we are all set to generate code for
-it.</p>
-<p>And yes, it is perfectly possible for the codegen to generate
-code for the HTTP binding. We already have the client API support
-for making the REST calls and it should be a matter of putting in a
-correct template.</p>
 </li>
 </ol>
 </body>

@@ -34,7 +34,7 @@ media="all" />
 "http://maven.apache.org/">Maven2</a>. The build has been
 specifically tested to work with Maven version 2.0.7. To install
 Maven, download the distributions and follow the instructions in
-the documentation. Make sure you don't forget to put MAVEN_HOME/bin
+the documentation. Make sure you don't forget to add MAVEN_HOME/bin
 directory in the path.</p>
 <h2>Checking out Axis 2.0</h2>
 <p>Checkout the <a href=
@@ -44,19 +44,18 @@ get a <a href=
 "https://svn.apache.org/repos/asf/webservices/axis2/trunk/java">commiter
 check out.</a></p>
 <h2>Building the Site</h2>
-<p>Type <i>mvn site</i> at the root of your project
-folder. It will take some time to build the whole site. The built
-site will be available under targets/site.</p>
+<p>cd to modules/documentation and type <i>mvn install</i> The built
+site will be available under target/site.</p>
 <h2>FAQ</h2>
 <ol>
 <li>How can I update a document in the site ?<br />
-Get a commiter check out. All the documents are in HTML format
-under the xdocs folder, and you can change only the documents found
-under this folder. Change the relevant file and run maven
-"html2xdoc:transform". New documentation will be available under
+Get a commiter check out. All the documents are in XHTML format
+under the modules/documentation/xdocs folder, and you can change only the documents found
+under this folder. Change the relevant file and run <i>mvn
+install</i>. New documentation will be available under
 the target folder.</li>
 <li>How can I add a new document?<br />
-Put the new document in the xdocs folder. Change the navigation.xml
+Add the new document in the xdocs folder. Change the navigation.xml
 found under the xdocs folder by adding a link to the newly added
 document. Re-generate the site.<br />
 Please make sure you have not included any of the illegal
