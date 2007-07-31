@@ -246,10 +246,22 @@
                       <phase>package</phase>
                       <configuration>
                         <tasks>
-			   <!-- TODO : filtering is not working, copy images with filtering off -->
+			   <!-- TODO : filtering is not working -->
 			   <filter filtersfile="../../modules/documentation/xdocs/dynamic-labels.properties" />
                            <copy todir="target/xdocs" filtering="on">
-                              <fileset dir="../../modules/documentation/xdocs"/>
+                              <fileset dir="../../modules/documentation/xdocs">
+			           <exclude name="**/*.gif"/>
+				   <exclude name="**/*.jpg"/>
+				   <exclude name="**/*.png"/>
+			      </fileset>
+                           </copy>
+			   <!-- copy images without filtering -->
+                           <copy todir="target/xdocs" >
+                              <fileset dir="../../modules/documentation/xdocs">
+			           <include name="**/*.gif"/>
+				   <include name="**/*.jpg"/>
+				   <include name="**/*.png"/>
+			      </fileset>
                            </copy>
                         </tasks>
                        </configuration>
