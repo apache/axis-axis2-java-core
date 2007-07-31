@@ -294,7 +294,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 String line;
                 while ((line = input.readLine()) != null) {
                     line = line.trim();
-                    if (line.length() > 0) {
+                    if (line.length() > 0 && line.charAt(0)!='#') {
                         line = metainf + "/" + line;
                         try {
                             List services = reader.getAxisServiceFromWsdl(
@@ -849,7 +849,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             String line;
             while ((line = input.readLine()) != null) {
                 line = line.trim();
-                if (line.length() > 0) {
+                if (line.length() > 0 && line.charAt(0)!='#') {
                     fileList.add(line);
                 }
             }
