@@ -51,7 +51,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
 
         AxisService axisService = messageContext.getAxisService();
-        if (axisService != null) {
+        if (axisService != null && messageContext.getTo() != null) {
             String uri = messageContext.getTo().getAddress();
             String httpLocation = parseRequestURL(uri, messageContext
                     .getConfigurationContext().getServiceContextPath());
