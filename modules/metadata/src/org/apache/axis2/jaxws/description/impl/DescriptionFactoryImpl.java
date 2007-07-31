@@ -121,7 +121,9 @@ public class DescriptionFactoryImpl {
      * 
      * <h4>Note</h4>     
      * This function might cause unpredictable results when configuration contexts are being reused
-     * and/or there are outstanding requests using the cached ServiceDescription objects.
+     * and/or there are outstanding requests using the cached ServiceDescription objects. Also, 
+     * in-flight requests (both client and server) using ServiceDelegates MUST be done and out of
+     * scope before this method is called.
      * 
      */
     public static void clearServiceDescriptionCache() {
@@ -135,7 +137,9 @@ public class DescriptionFactoryImpl {
      * <h4>Note</h4>
      * This function should only be used to clear the cache when the specified configuration context
      * will not be used anymore and there are no outstanding requests using the associated 
-     * ServiceDescription objects. Otherwise, it might cause unpredictable results.
+     * ServiceDescription objects. Also, in-flight requests (both client and server) using 
+     * ServiceDelegates MUST be done and out of scope before this method is called.      
+     * Otherwise, unpredictable results might occur.
      * 
      * @param configContext The configuration context associated with the ServiceDescription 
      *                      objects in the cache.
