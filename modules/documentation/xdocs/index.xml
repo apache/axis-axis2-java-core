@@ -36,7 +36,7 @@ Apache Axis2/C</p>
 here, you can visit the <a href=
 "http://ws.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
-<h2>27th April 2007 - Apache Axis2/Java Version 1.2 Released!</h2>
+<h2>03rd August 2007 - Apache Axis2/Java Version 1.3 Released!</h2>
 <p>[ <a href=
 "http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
 ] | [ <a href="1_2/index.html"><strong>Documents Home</strong></a>
@@ -214,8 +214,8 @@ participation.</p>
 "mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>". Make
 sure to prefix the subject of the mail with [Axis2].</p>
 <h2>Features of Axis2 Latest Version</h2>
-<p>Apache Axis2 Version 1.2 comes with performance improvements and
-bug fixes over the 1.1.1 release. Check out the complete list of
+<p>Apache Axis2 Version 1.3 comes with performance improvements and
+a number bug fixes over the 1.2 release. Check out the complete list of
 features below.</p>
 <h3>Programming Model</h3>
 <ul>
@@ -303,15 +303,6 @@ WS-Policy)</li>
 (Apache Axis2 comes built in with a module that supports
 WS-Addressing.)
 <h2>Known Issues and Limitations</h2>
-<ul>
-<li>Xml-beans databinding does not support response unwrapping</li>
-<li>ADB databinding does not support minOccurs and maxOccurs
-attributes in sequence and choice elements (i.e.,
-<code>&lt;sequence minOccurs="0"
-maxOccurs="unbounded"&gt;&lt;/sequence&gt;</code>)</li>
-<li>Unable to produce original WSDL in the case of WSDL 2.0,
-therefore the AxisService is serialized to produce ?wsdl2.</li>
-</ul>
 <h2>Archived News</h2>
 <p>For information on previous Axis2 releases running up to the
 current release see the <a href="archived_news.html" target=
