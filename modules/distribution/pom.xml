@@ -246,23 +246,41 @@
                       <phase>package</phase>
                       <configuration>
                         <tasks>
-			   <!-- TODO : filtering is not working -->
-			   <filter filtersfile="../../modules/documentation/xdocs/dynamic-labels.properties" />
-                           <copy todir="target/xdocs" filtering="on">
-                              <fileset dir="../../modules/documentation/xdocs">
-			           <exclude name="**/*.gif"/>
-				   <exclude name="**/*.jpg"/>
-				   <exclude name="**/*.png"/>
-			      </fileset>
-                           </copy>
-			   <!-- copy images without filtering -->
-                           <copy todir="target/xdocs" >
-                              <fileset dir="../../modules/documentation/xdocs">
-			           <include name="**/*.gif"/>
-				   <include name="**/*.jpg"/>
-				   <include name="**/*.png"/>
-			      </fileset>
-                           </copy>
+                            <copy toDir="target/xdocs/${docs.folder.version}">
+                                <fileset dir="../documentation/xdocs/@axis2_version_dir@">
+                                    <exclude name="**/*.xml"/>
+                                </fileset>
+                            </copy>
+
+                            <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
+
+                            <copy toDir="target/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
+                                <globmapper from="*.xml" to="*.html"/>
+                                <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
+                            </copy>
+
+                            <copy toDir="target/xdocs" filtering="on" overwrite="true">
+                                <globmapper from="*.xml" to="*.html"/>
+                                <fileset dir="../documentation/xdocs">
+                                    <exclude name="@axis2_version_dir@/**"/>
+                                    <exclude name="**/*.gif"/>
+                                    <exclude name="**/*.jpg"/>
+                                    <exclude name="**/*.png"/>
+                                </fileset>
+                            </copy>
+
+                            <copy toDir="target/xdocs" filtering="off" overwrite="true">
+                                <fileset dir="../documentation/xdocs">
+                                    <exclude name="@axis2_version_dir@/**"/>
+                                    <include name="**/*.gif"/>
+                                    <include name="**/*.jpg"/>
+                                    <include name="**/*.png"/>
+                                    <include name="**/*.css"/>
+                                    <include name="**/*.xsd"/>
+                                    <include name="**/*.cgi"/>
+                                    <include name="**/*.properties"/>
+                                </fileset>
+                            </copy>
                         </tasks>
                        </configuration>
                        <goals>
