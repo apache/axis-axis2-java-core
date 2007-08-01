@@ -155,6 +155,26 @@
 			<artifactId>axis2</artifactId>
 			<version>${version}</version>
 		</dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-codegen</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-kernel</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-adb</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-adb-codegen</artifactId>
+                        <version>${version}</version>
+                </dependency>
 		<dependency>
 			<groupId>${stax.impl.groupid}</groupId>
 			<artifactId>${stax.impl.artifactid}</artifactId>
