@@ -47,7 +47,11 @@
                 <include>org.apache.ws.commons.schema:XmlSchema:jar</include>
                 <include>log4j:log4j:jar</include>
                 <include>org.apache.woden:woden:jar</include>
-                <include>ant:ant:jar</include>
+                <include>commons-httpclient:commons-httpclient:jar</include>
+                <include>commons-codec:commons-codec:jar</include>
+                <include>jibx:jibx-bind:jar</include>
+                <include>jibx:jibx-run::jar</include>
+                <include>org.apache.ant:ant:jar</include>
             </includes>
         </dependencySet>
 	</dependencySets>

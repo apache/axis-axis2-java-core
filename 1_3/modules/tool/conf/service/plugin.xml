@@ -21,7 +21,7 @@
 <plugin
    id="Axis2_Service_Archiver"
    name="Axis2 Service Maker"
-   version="@version@"
+   version="@eclipse.plugins.version@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver">
 

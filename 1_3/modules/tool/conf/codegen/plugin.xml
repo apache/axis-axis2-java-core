@@ -21,7 +21,7 @@
 <plugin
    id="Axis2_Codegen_Wizard"
    name="Axis2 Codegen Wizard Plug-in"
-   version="@version@"
+   version="@eclipse.plugins.version@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin">
 
@@ -29,7 +29,7 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/geronimo.spec.activation-@geronimo.spec.activation.version@.jar">
+      <library name="lib/geronimo-activation_1.1_spec-@geronimo.spec.activation.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/annogen-@annogen.version@.jar">
