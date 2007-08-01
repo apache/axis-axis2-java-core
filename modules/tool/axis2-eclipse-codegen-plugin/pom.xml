@@ -152,27 +152,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
+			<artifactId>axis2</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
@@ -257,7 +237,7 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"/>
+								<property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_${version}"/>
 								<property name="codegen.plugin.zip.name" value="axis2-eclipse-codegen-wizard.zip"/>
 								<property name="codegen.plugin.jar.name" value="Axis2CodegenWizard.jar"/>
 								<property name="src" value="./src"/>
@@ -285,8 +265,8 @@
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								     <filter token="version_number" value="${version_number}" />
-								     <filter token="activation.version" value="${activation.version}" />
+								     <filter token="version" value="${version}" />
+								     <filter token="geronimo.spec.activation.version" value="${geronimo.spec.activation.version}" />
 								     <filter token="annogen.version" value="${annogen.version}" />
 								     <filter token="ant.version" value="${ant.version}" />
 								     <filter token="axiom.version" value="${axiom.version}" />
@@ -295,7 +275,7 @@
 								     <filter token="stax.api.version" value="${stax.api.version}" />
 								     <filter token="stax.impl.version" value="${stax.impl.version}" />
 								     <filter token="xbean.version" value="${xbean.version}" />
-								     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+								     <filter token="xmlschema.version" value="${xmlschema.version}" />
 								     <filter token="log4j.version" value="${log4j.version}" />
 								     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
 								     <filter token="woden.version" value="${woden.version}" />
