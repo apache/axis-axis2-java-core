@@ -499,6 +499,7 @@ class OutInAxisOperationClient extends OperationClient {
          * @param msgContext the MessageContext containing the fault.
          */
         public void onFault(MessageContext msgContext) {
+           error =Utils.getInboundFaultFromMessageContext(msgContext);
         }
 
         /**
