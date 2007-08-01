@@ -31,6 +31,9 @@
     <description>Apache Axis2 Distribution</description>
     <packaging>pom</packaging>
 
+    <properties>
+       <docs.folder.version>1_3</docs.folder.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -251,9 +254,7 @@
                                     <exclude name="**/*.xml"/>
                                 </fileset>
                             </copy>
-
                             <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
-
                             <copy toDir="target/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
                                 <globmapper from="*.xml" to="*.html"/>
                                 <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
