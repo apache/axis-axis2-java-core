@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -308,16 +309,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private void closeStaxBuilder(MessageContext messageContext) throws ServletException {
         if (closeReader && messageContext != null) {
             try {
-                StAXBuilder builder = (StAXBuilder) messageContext.getEnvelope().getBuilder();
-                if (builder != null) {
-                    builder.close();
+                SOAPEnvelope envelope = messageContext.getEnvelope();
+                if(envelope != null) {
+                    StAXBuilder builder = (StAXBuilder) envelope.getBuilder();
+                    if (builder != null) {
+                        builder.close();
+                    }
                 }
             } catch (Exception e) {
-                log.debug(e);
-                throw new ServletException(e);
+                log.debug(e.toString(), e);
             }
         }
-
     }
 
     /**
