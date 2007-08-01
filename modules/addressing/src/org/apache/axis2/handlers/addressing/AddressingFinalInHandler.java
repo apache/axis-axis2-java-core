@@ -83,19 +83,11 @@ public class AddressingFinalInHandler extends AddressingInHandler {
         //on the inbound response side of a synchronous request-response exchange.
         if (!alreadyFoundAddrHeader.contains(WSA_TO) && !messageContext.isServerSide()) {
             Options messageContextOptions = messageContext.getOptions();
-            EndpointReference epr = messageContextOptions.getTo();
-
-            if (epr == null) {
-                epr = new EndpointReference("");
-                messageContextOptions.setTo(epr);
-            }
-
             if (log.isTraceEnabled()) {
                 log.trace(messageContext.getLogIDString() +
                         " setDefaults: Setting WS-Addressing default value for the To property.");
             }
-
-            epr.setAddress(Final.WSA_ANONYMOUS_URL);
+            messageContextOptions.setTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
         }
 
         if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
