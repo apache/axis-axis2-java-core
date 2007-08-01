@@ -28,10 +28,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.neethi.Policy;
@@ -491,6 +488,10 @@ public class ListingAgent extends AbstractAgent {
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
             this.axisConf = axisConf;
+            Parameter param = transprtIn.getParameter(PARAM_PORT);
+            if (param != null) {
+                this.port = Integer.parseInt((String) param.getValue());
+            }
         }
 
         public void start() throws AxisFault {
