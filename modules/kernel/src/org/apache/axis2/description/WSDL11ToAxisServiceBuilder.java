@@ -294,6 +294,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private void processTypes(Definition wsdlDefinition, AxisService axisService)
             throws AxisFault {
+        processTypes(wsdlDefinition, axisService, new Stack());
+    }
+
+    private void processTypes(Definition wsdlDefinition, AxisService axisService, Stack stack)
+            throws AxisFault {
+        stack.push(wsdlDefinition);
         // process all the types in all the wsdls
         Types types = wsdlDefinition.getTypes();
         if (types != null) {
@@ -312,9 +318,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 // process the types recuresiveilt
-                processTypes(wsdlImport.getDefinition(), axisService);
+                Definition innerDefinition = wsdlImport.getDefinition();
+                if(!stack.contains(innerDefinition)){
+                    processTypes(innerDefinition, axisService, stack);
+                }
             }
         }
+        stack.pop();
     }
 
     private void addDocumentation(AxisDescription axisDescription, Element documentationElement) {
@@ -634,7 +644,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // setup the schemaMap
         this.schemaMap = new HashMap();
-        populateSchemaMap(wsdl4jDefinition);
+        populateSchemaMap(wsdl4jDefinition, new Stack());
 
         setPolicyRegistryFromService(axisService);
 
@@ -650,8 +660,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param definition
      */
 
-    private void populateSchemaMap(Definition definition) {
-
+    private void populateSchemaMap(Definition definition, Stack stack) {
+        stack.push(definition);
         Types types = definition.getTypes();
         Object extensibilityElement;
         if (types != null) {
@@ -673,9 +683,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             values = (Vector) iter.next();
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
-                populateSchemaMap(wsdlImport.getDefinition());
+                Definition innerDefinition = wsdlImport.getDefinition();
+                if(!stack.contains(innerDefinition)) {
+                    populateSchemaMap(innerDefinition, stack);
+                }
             }
         }
+        stack.pop();
     }
 
 
@@ -824,6 +838,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
 
     private PortType getPortType(QName portTypeQName, Definition definition) {
+        return getPortType(portTypeQName, definition, new Stack());
+    }
+
+    /**
+     * get the port type form all the imported documents
+     *
+     * @param portTypeQName
+     * @param definition
+     * @return portType
+     */
+
+    private PortType getPortType(QName portTypeQName, Definition definition, Stack stack) {
+        stack.push(definition);
         PortType portType = null;
         Iterator iter = definition.getImports().values().iterator();
         Vector values = null;
@@ -832,10 +859,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             values = (Vector) iter.next();
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
-                // find the binding recursively
-                portType = getPortType(portTypeQName, wsdlImport.getDefinition());
-                if (portType != null) {
-                    break;
+                Definition innerDefinition = wsdlImport.getDefinition();
+                if(stack.contains(innerDefinition)){
+                    // find the binding recursively
+                    portType = getPortType(portTypeQName, innerDefinition, stack);
+                    if (portType != null) {
+                        break;
+                    }
                 }
             }
             if (portType != null) {
@@ -847,7 +877,23 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // this can be in a imported wsdl
             portType = definition.getPortType(portTypeQName);
         }
+        stack.pop();
         return portType;
+    }
+
+    private Binding getBinding(QName bindingQName, Definition definition) {
+        ArrayList list = new ArrayList();
+        Binding binding = getBinding(bindingQName, definition, list);
+        if (binding == null) {
+            for(int i=0;i<list.size();i++){
+                Binding binding2 = definition.getBinding(bindingQName);
+                if(binding2 != null && binding2.getPortType() != null){
+                    binding = binding2;
+                    break;
+                }
+            }
+        }
+        return binding;
     }
 
     /**
@@ -859,8 +905,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @return binding
      */
 
-    private Binding getBinding(QName bindingQName, Definition definition) {
-
+    private Binding getBinding(QName bindingQName, Definition definition, ArrayList list) {
+        list.add(definition);
         Binding binding = null;
         //first try to find a binding in the upper inmport
         Iterator iter = definition.getImports().values().iterator();
@@ -870,19 +916,18 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             values = (Vector) iter.next();
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
-                // find the binding recursively
-                binding = getBinding(bindingQName, wsdlImport.getDefinition());
-                if (binding != null) {
-                    break;
+                Definition innerDefinition = wsdlImport.getDefinition();
+                if(!list.contains(innerDefinition)) {
+                    // find the binding recursively
+                    binding = getBinding(bindingQName, innerDefinition, list);
+                    if (binding != null) {
+                        break;
+                    }
                 }
             }
             if (binding != null) {
                 break;
             }
-        }
-
-        if (binding == null) {
-            binding = definition.getBinding(bindingQName);
         }
         return binding;
     }
@@ -2548,13 +2593,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
+    private void processPoliciesInDefintion(Definition definition) {
+    }
     /**
      * Process the policy definitions
      *
      * @param definition
      */
-    private void processPoliciesInDefintion(Definition definition) {
-
+    private void processPoliciesInDefintion(Definition definition, Stack stack) {
+        stack.push(definition);
         List extElements = definition.getExtensibilityElements();
         ExtensibilityElement extElement;
         UnknownExtensibilityElement unknown = null;
@@ -2585,10 +2632,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             values = (Vector) iter.next();
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
+                Definition innerDefinition = wsdlImport.getDefinition();
                 // find the binding recursively
-                processPoliciesInDefintion(wsdlImport.getDefinition());
+                if(!stack.contains(innerDefinition)) {
+                    processPoliciesInDefintion(innerDefinition, stack);
+                }
             }
         }
+        stack.pop();
     }
 
 
