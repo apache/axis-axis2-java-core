@@ -448,6 +448,13 @@
                             </includes>
                         </resource>
                         <resource>
+                            <directory>${basedir}/../soapmonitor/target</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>soapmonitor*.jar</include>
+                            </includes>
+                        </resource>
+                        <resource>
                             <directory>${basedir}/../mex-mar/target</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>

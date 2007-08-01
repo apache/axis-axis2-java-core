@@ -172,7 +172,7 @@
             <directory>../../modules/soapmonitor/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>axis2-soapmonitor-${version}.jar</include>
+                <include>soapmonitor-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
