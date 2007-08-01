@@ -2593,8 +2593,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
+    /**
+     * Process the policy definitions
+     *
+     * @param definition
+     */
     private void processPoliciesInDefintion(Definition definition) {
+        processPoliciesInDefintion(definition, new Stack());
     }
+
     /**
      * Process the policy definitions
      *
