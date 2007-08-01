@@ -211,6 +211,90 @@ the format of ns1=pkg1,ns2=pkg2.</td>
 skeleton.</td>
 <td></td>
 </tr>
+<tr>
+<td width="20%">-wv</td>
+<td width="20%">--wsdl-version</td>
+<td width="60%">WSDL Version. Valid Options : 2, 2.0, 1.1</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-S</td>
+<td width="20%">--source-folder</td>
+<td width="60%">Specify a directory path for generated source</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-R</td>
+<td width="20%">--resource-folder</td>
+<td width="60%">Specify a directory path for generated resources</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-em</td>
+<td width="20%">--external-mapping</td>
+<td width="60%">Specify an external mapping file</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-f</td>
+<td width="20%">--flatten-files</td>
+<td width="60%">Flattens the generated files</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-uw</td>
+<td width="20%">--unwrap-params</td>
+<td width="60%">Switch on un-wrapping</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-xsdconfig</td>
+<td width="20%"></td>
+<td width="60%">Use XMLBeans .xsdconfig file. Valid only with -d xmlbeans</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-ap</td>
+<td width="20%">--all-ports</td>
+<td width="60%">Generate code for all ports</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-or</td>
+<td width="20%">--over-ride</td>
+<td width="60%">Overwrite the existing classes</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-b</td>
+<td width="20%">--backword-compatible</td>
+<td width="60%">Generate Axis 1.x backword compatible code</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%">-sp</td>
+<td width="20%">--suppress-prefixes</td>
+<td width="60%">Suppress namespace prefixes (Optimzation that reduces size of soap request/response)</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%"></td>
+<td width="20%">--noBuildXML</td>
+<td width="60%">Don't generate the build.xml in the output directory</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%"></td>
+<td width="20%">--noWSDL</td>
+<td width="60%">Don't generate WSDL's in the resources directory</td>
+<td></td>
+</tr>
+<tr>
+<td width="20%"></td>
+<td width="20%">--noMessageReceiver</td>
+<td width="60%">Don't generate a MessageReceiver in the generated sources</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <p>Apart from these mentioned options one can pass extra options by
