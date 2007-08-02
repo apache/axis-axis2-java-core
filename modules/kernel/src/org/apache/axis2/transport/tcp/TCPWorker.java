@@ -91,6 +91,7 @@ public class TCPWorker implements Runnable {
                                                         Constants.TRANSPORT_TCP));
             }
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
 
@@ -103,7 +104,7 @@ public class TCPWorker implements Runnable {
                     engine.sendFault(faultContext);
                 }
             } catch (Exception e1) {
-                log.error(e);
+                log.error(e1.getMessage(), e1);
             }
         } finally {
             if (socket != null) {

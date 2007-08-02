@@ -190,9 +190,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 }
             }
         } catch (MalformedURLException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 

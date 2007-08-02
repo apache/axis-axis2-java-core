@@ -154,7 +154,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             try {
                 axisConfig.addParameter(param);
             } catch (AxisFault axisFault) {
-                log.error(axisFault);
+                log.error(axisFault.getMessage(), axisFault);
             }
 
             // when the module is an unpacked war file,
@@ -234,7 +234,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             }
 
         } catch (Exception ex) {
-            log.error(ex + ": loading repository from classpath");
+            log.error(ex + ": loading repository from classpath", ex);
             loadFromClassPath();
         }
         axisConfig.setConfigurator(this);
@@ -337,7 +337,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         try {
             configContext.getAxisConfiguration().addParameter(servletConfigParam);
         } catch (AxisFault axisFault) {
-            log.error(axisFault);
+            log.error(axisFault.getMessage(), axisFault);
         }
     }
 }

@@ -156,7 +156,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     throw new ServletException(e);
                 }
             } catch (Throwable t) {
-                log.error(t);
+                log.error(t.getMessage(), t);
                 try {
                     // If the fault is not going along the back channel we should be 202ing
                     if (AddressingHelper.isFaultRedirected(msgContext)) {

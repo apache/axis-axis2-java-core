@@ -303,11 +303,11 @@ public class POJODeployer implements Deployer {
                         operation.setMessageReceiver(inOutmessageReceiver);
                     }
                 } catch (ClassNotFoundException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 } catch (InstantiationException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 } catch (IllegalAccessException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }

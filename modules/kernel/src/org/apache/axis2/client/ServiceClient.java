@@ -362,7 +362,7 @@ public class ServiceClient {
             try {
                 axisService.disengageModule(module);
             } catch (AxisFault axisFault) {
-                log.error(axisFault);
+                log.error(axisFault.getMessage(), axisFault);
             }
         }
     }

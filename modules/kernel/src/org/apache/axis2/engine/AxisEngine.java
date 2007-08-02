@@ -173,7 +173,7 @@ public class AxisEngine {
             // Figure out where this goes
             sendFault(faultMC);
         } catch (AxisFault axisFault) {
-            log.error(axisFault);
+            log.error(axisFault.getMessage(), axisFault);
         }
     }
 
