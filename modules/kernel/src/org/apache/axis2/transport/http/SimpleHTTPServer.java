@@ -218,7 +218,7 @@ public class SimpleHTTPServer implements TransportListener {
             embedded.init();
             embedded.start();
         } catch (IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         }
     }
@@ -234,7 +234,7 @@ public class SimpleHTTPServer implements TransportListener {
             try {
                 embedded.destroy();
             } catch (Exception e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
             }
         }
     }

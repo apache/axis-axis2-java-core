@@ -247,7 +247,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             } catch (AxisFault e) {
                 // If we're IN-ONLY, swallow this.  Otherwise, send it.
                 if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
-                    log.debug(e);
+                    log.debug(e.getMessage(), e);
                 } else {
                     try {
                         MessageContext faultContext =
@@ -255,9 +255,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
                         AxisEngine.sendFault(faultContext);
                     } catch (AxisFault axisFault) {
-                        log.error(e);
+                        log.error(e.getMessage(), e);
                     }
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }
