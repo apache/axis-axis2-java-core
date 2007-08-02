@@ -748,13 +748,12 @@ public class BeanUtil {
                         OMElement wrappingElement;
                         if (partName == null) {
                             wrappingElement = fac.createOMElement("arg" + argCount, null);
-                            wrappingElement.addChild((OMElement)arg);
                         } else {
                             wrappingElement = fac.createOMElement(partName, null);
-                            wrappingElement.addChild((OMElement)arg);
                         }
                         OMText text = fac.createOMText(arg, true);
-                        objects.add(text);
+                        wrappingElement.addChild(text);
+                        objects.add(wrappingElement);
                     } else {
                         objects.add(arg);
                     }
