@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class WSDL11Writer {
 
@@ -76,7 +77,7 @@ public class WSDL11Writer {
     public void writeWSDL(AxisService axisService, Definition definition, Map changedMap) {
         try {
             if (axisService != null) {
-                writeWSDL(definition, axisService.getName(), changedMap);
+                writeWSDL(definition, axisService.getName(), changedMap, new Stack());
             }
         } catch (Exception e) {
             throw new RuntimeException("WSDL writing failed!", e);
@@ -85,7 +86,9 @@ public class WSDL11Writer {
 
     private void writeWSDL(Definition definition,
                            String serviceName,
-                           Map changedMap) throws Exception {
+                           Map changedMap,
+                           Stack stack) throws Exception {
+        stack.push(definition);
         // first process the imports and save them.
         Map imports = definition.getImports();
         if (imports != null && (imports.size() > 0)) {
@@ -98,13 +101,16 @@ public class WSDL11Writer {
                 for (Iterator importsIter = importsVector.iterator(); importsIter.hasNext();) {
                     wsdlImport = (Import)importsIter.next();
                     wsdlName = "wsdl_" + count++ + ".wsdl";
-                    writeWSDL(wsdlImport.getDefinition(), wsdlName, changedMap);
+                    Definition innerDefinition = wsdlImport.getDefinition();
+                    if(!stack.contains(innerDefinition)) {
+                        writeWSDL(innerDefinition, wsdlName, changedMap, stack);
+                    }
                     wsdlImport.setLocationURI(wsdlName);
                 }
             }
         }
         // change the locations on the imported schemas
-        adjustWSDLSchemaLocatins(definition, changedMap);
+        adjustWSDLSchemaLocations(definition, changedMap);
         // finally save the file
         WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
         File outputFile = FileWriter.createClassFile(baseFolder,
@@ -148,14 +154,25 @@ public class WSDL11Writer {
         }
         out.flush();
         out.close();
+        stack.pop();
+    }
+
+    /**
+     * @deprecated  please use adjustWSDLSchemaLocations
+     * @param definition
+     * @param changedSchemaLocations
+     */
+    public void adjustWSDLSchemaLocatins(Definition definition, Map changedSchemaLocations) {
+        adjustWSDLSchemaLocations(definition, changedSchemaLocations);
     }
 
     /**
      * adjust the schema locations in the original wsdl
      *
-     * @param changedScheamLocations
+     * @param definition
+     * @param changedSchemaLocations
      */
-    public void adjustWSDLSchemaLocatins(Definition definition, Map changedScheamLocations) {
+    public void adjustWSDLSchemaLocations(Definition definition, Map changedSchemaLocations) {
         Types wsdlTypes = definition.getTypes();
         if (wsdlTypes != null) {
             List extensibilityElements = wsdlTypes.getExtensibilityElements();
@@ -165,7 +182,7 @@ public class WSDL11Writer {
                 currentObject = iter.next();
                 if (currentObject instanceof Schema) {
                     schema = (Schema)currentObject;
-                    changeLocations(schema.getElement(), changedScheamLocations);
+                    changeLocations(schema.getElement(), changedSchemaLocations);
                 }
             }
         }

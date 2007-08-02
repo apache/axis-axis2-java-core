@@ -670,7 +670,8 @@ public class BuilderUtil {
         if ((charsetEncodingFromXML != null)
                 && !"".equals(charsetEncodingFromXML)
                 && (charsetEncodingFromTransport != null)
-                && !charsetEncodingFromXML.equalsIgnoreCase((String) charsetEncodingFromTransport))
+                && !charsetEncodingFromXML.equalsIgnoreCase(charsetEncodingFromTransport)
+                && !isValidPair(charsetEncodingFromXML, charsetEncodingFromTransport))
         {
             String faultCode;
 
@@ -681,8 +682,27 @@ public class BuilderUtil {
             }
 
             throw new AxisFault("Character Set Encoding from "
-                    + "transport information do not match with "
-                    + "character set encoding in the received SOAP message", faultCode);
+                    + "transport information [" + charsetEncodingFromTransport + "] does not match with "
+                    + "character set encoding in the received SOAP message [" + charsetEncodingFromXML + "]", faultCode);
         }
+    }
+
+    /**
+     * check if the pair is [UTF-16,UTF-16LE] [UTF-32, UTF-32LE],[UTF-16,UTF-16BE] [UTF-32, UTF-32BE] etc.
+     * 
+     * @param enc1
+     * @param enc2
+     * @return
+     */
+    private static boolean isValidPair(String enc1, String enc2) {
+        enc1 = enc1.toLowerCase();
+        enc2 = enc2.toLowerCase();
+        if (enc1.endsWith("be") || enc1.endsWith("le")) {
+            enc1 = enc1.substring(0, enc1.length() - 2);
+        }
+        if (enc2.endsWith("be") || enc2.endsWith("le")) {
+            enc2 = enc2.substring(0, enc2.length() - 2);
+        }
+        return enc1.equals(enc2);
     }
 }
