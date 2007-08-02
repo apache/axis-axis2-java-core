@@ -279,7 +279,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         
             axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
             if (axisBindingMessage != null) {
+                try {
                 return axisBindingMessage.getEffectivePolicy();
+                } catch (RuntimeException ex){
+                    System.out.println("ERROR: Ignoring policy - " + ex.getMessage());
+                    log.error(ex.getMessage(), ex);
+                }
             }
         }
         return null;
