@@ -61,6 +61,9 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -619,11 +622,7 @@ public class CodeGenerationUtility {
                             source.setSystemId(schema.getSourceURI());
                             return source;
                         } else {
-                            try {
-                                return new InputSource(getSchemaAsReader(schemas[i]));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                            return new InputSource(getSchemaAsInputStream(schemas[i]));
                         }
                     }
 
@@ -632,11 +631,7 @@ public class CodeGenerationUtility {
                     XmlSchema schema = schemas[i];
                     if (schema.getTargetNamespace() != null &&
                             schema.getTargetNamespace().equals(publicId)) {
-                        try {
-                            return new InputSource(getSchemaAsReader(schemas[i]));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        return new InputSource(getSchemaAsInputStream(schemas[i]));
                     }
                 }
                 if (systemId.indexOf(':') == -1) {
@@ -687,11 +682,10 @@ public class CodeGenerationUtility {
          *
          * @param schema
          */
-        private StringReader getSchemaAsReader(XmlSchema schema) throws IOException {
-            StringWriter writer = new StringWriter();
-            schema.write(writer);
-            writer.flush();
-            return new StringReader(writer.toString());
+        private InputStream getSchemaAsInputStream(XmlSchema schema){
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         schema.write(baos);
+         return new ByteArrayInputStream(baos.toByteArray());
         }
     }
 
