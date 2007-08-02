@@ -65,7 +65,7 @@
       <library name="lib/wsdl4j-@wsdl4j.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/wstx-@stax.impl.version@.jar">
+      <library name="lib/wstx-asl-@stax.impl.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/xbean-@xbean.version@.jar">
