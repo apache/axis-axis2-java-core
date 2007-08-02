@@ -221,7 +221,7 @@ public class ConverterUtils {
         return paramType;
 	}
     
-    private static String getType(Type type, String paramType) {
+    public static String getType(Type type, String paramType) {
         if (type instanceof Class) {
             paramType = paramType + ((Class)type).getName();
         } else if (type instanceof ParameterizedType) {
