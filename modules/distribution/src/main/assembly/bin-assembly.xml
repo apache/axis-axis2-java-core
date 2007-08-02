@@ -270,6 +270,15 @@
             </includes>
 	</fileSet>
 
+	<fileSet>
+            <directory>../../modules/kernel/conf</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>log4j.properties</include>
+                <include>commons-logging.properties</include>
+            </includes>
+	</fileSet>
+
 	<!-- TODO: Need to add filters to update the version strings within the files -->
 	<fileSet>
             <directory>../../</directory>
