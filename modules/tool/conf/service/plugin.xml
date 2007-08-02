@@ -21,7 +21,7 @@
 <plugin
    id="Axis2_Service_Archiver"
    name="Axis2 Service Maker"
-   version="@version_number@"
+   version="@eclipse.plugins.version@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver">
 
@@ -29,7 +29,7 @@
       <library name="Axis_Service_Archiver.jar">
          <export name="*"/>
       </library>
-       <library name="lib/axis2-@version_number@.jar">
+       <library name="lib/axis2-@version@.jar">
            <export name="*"/>
        </library>
        <library name="lib/commons-logging-@commons.logging.version@.jar">

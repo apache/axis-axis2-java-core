@@ -21,7 +21,7 @@
 <plugin
    id="Axis2_Codegen_Wizard"
    name="Axis2 Codegen Wizard Plug-in"
-   version="@version_number@"
+   version="@eclipse.plugins.version@"
    provider-name="Apache Software Foundation"
    class="org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin">
 
@@ -29,7 +29,7 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/activation-@activation.version@.jar">
+      <library name="lib/geronimo-activation_1.1_spec-@geronimo.spec.activation.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/annogen-@annogen.version@.jar">
@@ -50,7 +50,7 @@
       <library name="lib/commons-logging-@commons.logging.version@.jar">
          <export name="*"/>
       </library>
-       <library name="lib/axis2-@version_number@.jar">
+       <library name="lib/axis2-@version@.jar">
        <export name="*"/>
        </library>
        <library name="lib/log4j-@log4j.version@.jar">
@@ -71,7 +71,7 @@
       <library name="lib/xbean-@xbean.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/XmlSchema-@XmlSchema.version@.jar">
+      <library name="lib/XmlSchema-@xmlschema.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/woden-@woden.version@.jar">
@@ -81,9 +81,6 @@
          <export name="*"/>
       </library>
       <library name="lib/commons-codec-@commons.codec.version@.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-jibx-@version_number@.jar">
          <export name="*"/>
       </library>
       <library name="lib/jibx-bind-@jibx.version@.jar">

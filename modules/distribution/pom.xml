@@ -31,6 +31,9 @@
     <description>Apache Axis2 Distribution</description>
     <packaging>pom</packaging>
 
+    <properties>
+       <docs.folder.version>1_3</docs.folder.version>
+    </properties>
 
     <dependencies>
         <dependency>

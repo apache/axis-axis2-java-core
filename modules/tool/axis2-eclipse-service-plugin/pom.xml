@@ -32,22 +32,22 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
+			<artifactId>axis2</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-codegen</artifactId>
+                        <artifactId>axis2-java2wsdl</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb-codegen</artifactId>
+                        <artifactId>axis2-codegen</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
+                        <artifactId>axis2-kernel</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
@@ -55,6 +55,11 @@
 			<artifactId>axis2-adb</artifactId>
 			<version>${version}</version>
 		</dependency>
+		<dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-adb-codegen</artifactId>
+                        <version>${version}</version>
+                </dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -207,7 +212,8 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<property name="service.plugin.version" value="Axis2_Service_Archiver_1.0.0"/>
+                                                                <property name="eclipse.plugins.version" value="1.3.0"/>
+								<property name="service.plugin.version" value="Axis2_Service_Archiver_${eclipse.plugins.version}"/>
 								<property name="service.plugin.zip.name" value="axis2-eclipse-service-archiver-wizard.zip"/>
 								<property name="service.plugin.jar.name" value="Axis_Service_Archiver.jar"/>
 								<property name="src" value="./src"/>
@@ -230,7 +236,9 @@
 								<property name="service.help.images.dir" value="../../../modules/documentation/xdocs/tools/1_3/eclipse/images"/>
 								<property name="axis2.lib.dir" value="../../../target/lib"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								<filter token="version_number" value="${version_number}"/>
+								<filter token="version" value="${version}"/>
+								<filter token="eclipse.plugins.version" value="${eclipse.plugins.version}"/>
+                                                                <filter token="eclipse.plugins.version" value="${eclipse.plugins.version}"/>
 								<filter token="ant.version" value="${ant.version}"/>
 								<filter token="commons.logging.version" value="${commons.logging.version}"/>
 								<filter token="log4j.version" value="${log4j.version}"/>
@@ -238,7 +246,7 @@
 								<mkdir dir="./target/plugin/${service.plugin.version}"/>
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
-								<unzip src="./target/axis2.eclipse.service.plugin-${pom.version}.jar" dest="./target/plugin/${service.plugin.version}"/>
+								<unzip src="./target/axis2.eclipse.service.plugin-${version}.jar" dest="./target/plugin/${service.plugin.version}"/>
 								<!-- Copy to the same position with the filtering on-->
 								<copy todir="./target/plugin/${service.plugin.version}" filtering="on">
 									<fileset dir="${service.resource.dir}">
