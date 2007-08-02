@@ -45,16 +45,8 @@ public class JavaParamToPDCConverter {
         for (int i = 0; i < paramTypes.length; i++) {
             ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
             Type paramType = paramTypes[i];
-            if (paramType instanceof Class) {
-                Class paramClass = (Class)paramType;
-                String fullType = "";
-                pdc.setParameterType(paramClass.getName());
-            } else if (paramType instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType)paramType;
-                String fullType = "";
-                fullType = ConverterUtils.getFullType(pt, fullType);
-                pdc.setParameterType(fullType);
-            }
+            String fullType = ConverterUtils.getType(paramType, "");
+            pdc.setParameterType(fullType);
             pdc.setListOrder(i);
             attachWebParamAnnotation(pdc, i);
             pdcList.add(pdc);
