@@ -294,7 +294,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 messageFormatter.writeTo(msgContext, format, out, false);
             }
         } catch (AxisFault axisFault) {
-            log.error(axisFault);
+            log.error(axisFault.getMessage(), axisFault);
         }
     }
 

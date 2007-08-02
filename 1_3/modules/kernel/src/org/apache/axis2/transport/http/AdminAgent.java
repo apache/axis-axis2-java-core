@@ -93,9 +93,9 @@ public class AdminAgent extends AbstractAgent {
                 }
             }
         } catch (Exception e) {
-            log.info(e);
+            log.info(e.getMessage(), e);
         } catch (Throwable e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 

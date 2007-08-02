@@ -1593,16 +1593,16 @@ public class AxisService extends AxisDescription {
             Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
             return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         } catch (ParserConfigurationException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         } catch (SAXException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         } catch (WSDLException e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         }
     }
