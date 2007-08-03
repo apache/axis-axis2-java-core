@@ -45,6 +45,8 @@ as the transport mechanism.</p>
   <li><a href="#version_config">HTTP Version Configuration</a></li>
   <li><a href="#auth">Proxy Authentication</a></li>
   <li><a href="#preemptive_auth">Basic, Digest and NTLM Authentication</a></li>
+  <li><a href="#reusing_httpclient_object">Reusing the httpclient object</a></li>
+  <li><a href="#setting_cached_httpclient_object">Setting the cached httpclient object</a></li>
 </ul>
 <a name="CommonsHTTPTransportSender"></a>
 
@@ -74,6 +76,14 @@ chunking support is available only for HTTP/1.1. Thus, even if "chunked" is spec
 as a parameter, if the HTTP version is 1.0, this setting will be
 ignored by the transport framework. Also, KeepAlive is enabled by default in
 HTTP/1.1.</p>
+<p>If you use HTTP1.1 for its Keep-Alive ability, but you need to disable
+chunking at runtime (some servers don't allow chunked requests to
+prevent denial of service), you can do so in the Stub:
+</p>
+    
+<pre>
+options.setProperty(HTTPConstants.CHUNKED, "false");
+</pre>
 
 <p>Some absolute properties are provided at runtime instead.  For example, character
 encoding style (UTF-8, UTF-16, etc.) is provided via MessageContext.</p>
@@ -89,9 +99,16 @@ CommonsHTTPTransportSender can be also used to communicate over https.
    &lt;/transportSender&gt;
 </pre>
 
-<p>Please note that HTTPS works only when the server does not expect to
-authenticate the clients and where the server has the clients' public keys in
-its trust store.</p>
+<p>Please note that by default HTTPS works only when the server does not
+expect to authenticate the clients (1-way SSL only) and where the
+server has the clients' public keys in its trust store.
+
+If you want to perform SSL client authentication (2-way SSL), you may
+use the Protocol.registerProtocol feature of HttpClient. You can
+overwrite the "https" protocol, or use a different protocol for your
+SSL client authentication communications if you don't want to mess
+with regular https. Find more information at
+<a href="http://jakarta.apache.org/commons/httpclient/sslguide.html">http://jakarta.apache.org/commons/httpclient/sslguide.html</a></p>
 <a name="timeout_config"></a>
 
 <h2>Timeout Configuration</h2>
@@ -241,5 +258,42 @@ auth.setPassword("password");
 options.setProperty(org.apache.axis2.transport.http.HTTPConstants.AUTHENTICATE, auth);
 ...
 </pre>
-</source></body>
+</source>
+<a name="reusing_httpclient_object"></a>
+<h2>Reusing the httpclient object</h2>
+
+<p>By default, a new httpclient object is created for each send. It may
+be worthwhile to reuse the same httpclient object to take advantage of
+HTTP1.1 Keep-Alive, especially in HTTPS environment, where the SSL
+handshake may not be of negligible cost. To reuse the same httpclient
+object, you can set the relevant property in the Stub:
+</p>
+
+    <source>
+        <pre>
+            options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, "true");
+        </pre>
+    </source>
+
+    <a name="setting_cached_httpclient_object"></a>
+<h2>Setting the cached httpclient object</h2>
+
+To control the max connections per host attempted in parallel by a
+reused httpclient (this can be worthwhile as the default value is 2
+connections per host), or any other advanced parameters, you need to
+set the cached httpclient object when your application starts up
+(before any actual axis request). You can set the relevant property in
+the Stub:
+
+    <source>
+    <pre>
+MultiThreadedHttpConnectionManager conmgr = new
+MultiThreadedHttpConnectionManager();
+conmgr.getParams().setDefaultMaxConnectionsPerHost(10);
+HttpClient client = new HttpClient(conmgr);
+configurationContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, client);
+</pre>
+    </source>
+    
+</body>
 </html>
