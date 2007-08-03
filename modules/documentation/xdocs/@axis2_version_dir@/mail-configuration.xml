@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 
-<!-- saved from url=(0022)http://internet.e-mail -->
+<!-- saved from url=(0022)http://internet.e-mail --> 
 <html>
 <head>
   <meta http-equiv="content-type" content=""/>
@@ -78,35 +78,87 @@ been mapped to a Parameter object. Mapping has been done as follows,</p>
 </ul>
 
 <p>For a non-SSL connection, as an example, the mail transport sender can be
-activated by adding the following entry to the axis2.xml file.</p>
-<source><pre>   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="mail.smtp.host"&gt;localhost&lt;/parameter&gt;
-        &lt;parameter name="mail.smtp.user"&gt;mary&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password"&gt;mary&lt;/parameter&gt;
+activated by adding the following entry to the server axis2.xml file.(Or look for and uncomment and modify the following
+in the default axis2.xml)</p>
+<source><pre>   &lt;transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
+        &lt;parameter name="mail.smtp.host"&gt;hostname&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user"&gt;username&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password"&gt;password&lt;/parameter&gt;
    &lt;/transportSender&gt;
   </pre>
 </source>
+and
+<source>
+<pre>
+&lt;transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
+        &lt;parameter name="mail.pop3.host"&gt;mailhost&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user"&gt;username&lt;/parameter&gt;
+        &lt;parameter name="mail.store.protocol"&gt;pop3&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress"&gt;server_emailaddress&lt;/parameter&gt;
+        &lt;parameter name="transport.listener.interval"&gt;3000&lt;/parameter&gt;
+    &lt;/transportReceiver&gt;
+</pre></source>
+
+and the following to the client axis2.xml
+
+<source><pre>   &lt;transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
+        &lt;parameter name="mail.smtp.host"&gt;hostname&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user"&gt;username&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.from"&gt;client_email_address&lt;/parameter&gt;
+   &lt;/transportSender&gt;
+  </pre>
+</source>
+and
+<source><pre>
+&lt;transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
+        &lt;parameter name="mail.pop3.host"&gt;mailhost&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user"&gt;username&lt;/parameter&gt;
+        &lt;parameter name="mail.store.protocol"&gt;pop3&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress"&gt;client_emailaddress&lt;/parameter&gt;
+        &lt;parameter name="transport.listener.interval"&gt;3000&lt;/parameter&gt;
+    &lt;/transportReceiver&gt;</pre></source>
+
+
 <p>At runtime, tuning a client to set the mail transport is as easy as
 follows:</p>
-<source><pre>...
+Set the end point reference to use mail transport. Say for a service named <i>SampleService</i> with
+a server email address of <i>test@mail.com</i>
+<source><pre>
+private static EndpointReference targetEPR = 
+             new EndpointReference(
+               "mailto:test@mail.com?x-service-path=/axis2/services/SampleService");
+</pre></source>
 
-Options options =  new Options();
-HttpTransportProperties.MailProperties mailProps 
-                    = new HttpTransportProperties.MailProperties();
-mailProps.addProperty("mail.smtp.host","localhost");
-mailProps.addProperty("mail.smtp.user","mary");
-mailProps.setPassword("mary");
+and <source><pre>...
 
-options.setProperty(HTTPConstants.MAIL_SMTP,mailProps);
+ ConfigurationContext ct = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                repository_path, axis2.xml_path);
+ ServiceClient sender = new ServiceClient(ct, null);
+ Options options = new Options();
+ options.setTo(targetEPR);
+ options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);        
+ options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
+ options.setAction("urn:SampleService");
+ sender.setOptions(options);                
+ sender.engageModule("addressing");
 
 ...</pre>
-</source>Thus, a user who is familiar with setting up an SSL connection,
-should easily do it with the MailProperties object. For example, tuning the
-sender to talk to the gmail account. This configuration should also be done
-with &lt;parameter/&gt; in axis2.xml. <source>
+</source>
+
+Also add the parameter
+<actionMapping>urn:SampleService</actionMapping> inside the operation element of the services.xml file of the service, assuming the service name is SampleService.
+<p>
+Thus, a user who is familiar with setting up an SSL connection2,
+could easily do it with a Properties object. For example, tuning the
+sender to talk to the gmail account. This configuration could also be done
+with &lt;parameter/&gt; in axis2.xml as shown in the <a href="http://wso2.org/library/2537">Axis2 Mail Transport</a> document.</p>. Configure the options object as above and,
+<source>
 <pre>...
-HttpTransportProperties.MailProperties props = 
-                  new HttpTransportProperties.MailProperties();
+Properties props = 
+                  new Properties();
         props.put("mail.smtp.user", "address@gmail.com");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "465");
@@ -116,20 +168,27 @@ HttpTransportProperties.MailProperties props =
         props.put("mail.smtp.socketFactory.port", "465");
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.socketFactory.fallback", "false");
-        props.setPassword("password");
+		props.put("transport.mail.smtp.password", "password");
+		
+		//then set the Properties object in the Option object.
+		options.set(org.apache.axis2.transport.mail.Constants.MAILTO, props);
 
 ...</pre>
 </source><a name="receiver"></a>
+<p><i>Please note that according to the mail transport specification, only SOAP 1.2 is supported.</i></p>
 
 <h2>Transport Receiver</h2>
 
 <p>For a non-SSL connection, as an example, the mail Listener can be
-activated by adding the following entry to the axis2.xml file.</p>
-<source><pre>   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
-        &lt;parameter name="mail.pop3.host"&gt;localhost&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.user"&gt;bob&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password"&gt;bob&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress"&gt;bob@localhost&lt;/parameter&gt;
+activated by adding the following entry to the server axis2.xml file.(or look for and uncomment
+the section)</p>
+<source><pre>   &lt;transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
+        &lt;parameter name="mail.pop3.host"&gt;hostname&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user"&gt;username&lt;/parameter&gt;
+	&lt;parameter name="mail.store.protocol"&gt;pop3&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress"&gt;email_address&lt;/parameter&gt;
+	&lt;parameter name="transport.listener.interval"&gt;3000&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
 </source>
@@ -138,7 +197,7 @@ parameter. It supplies the Endpoint reference to the listener.</p>
 
 <p>For an advanced user, this can be set to an SSL connection. For example,
 let's use this transport listener to pop from a specified gmail account.</p>
-<source><pre>&lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
+<source><pre>&lt;transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
         &lt;parameter name="mail.pop3.host"&gt;pop.gmail.com&lt;/parameter&gt;
         &lt;parameter name="mail.pop3.user"&gt;address@gmail.com&lt;/parameter&gt;
         &lt;parameter name="mail.pop3.socketFactory.class"&gt;javax.net.ssl.SSLSocketFactory&lt;/parameter&gt;
@@ -165,21 +224,26 @@ message using the mail transport. This needs the Transport Sender to be
 configured.</p>
 <source><pre>        
         OMElement payload = ....
-        String targetEPR = "mail:axis2@localhost/axis2/services/Foo";
+        String targetEPR = "mailto:user@mailhost.com?x-service-path=/axis2/services/Foo";
 
         ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
-                axis2XML);
+                axis2XML_location);
 
         ServiceClient servicClient = new ServiceClient(configurationContext, null);
 
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
-
-        servicClient.setOptions(options);
-
-        servicClient.sendRobust(payload);</pre>
-</source><a name="james"></a>
+	options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);        
+	options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
+	options.setAction("urn:SampleService");
+        servicClient.setOptions(options);		
+		sender.engageModule("addressing");
+		
+        servicClient.fireAndForget(payload);</pre>
+</source>
+<p>For further reading, please refer to <a href="http://wso2.org/library/2537">Axis2 Mail Transport</a> document.</p>
+<a name="james"></a>
 
 <h2>Configuring James as an SMTP and POP Server</h2>
 
