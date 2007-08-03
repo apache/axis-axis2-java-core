@@ -110,8 +110,12 @@ public class ListingAgent extends AbstractAgent {
             ip = filePart.substring(ipindex + 2, filePart.length());
             int seperatorIndex = ip.indexOf(":");
             int slashIndex = ip.indexOf("/");
-            String portstr = ip.substring(seperatorIndex + 1,
-                                          slashIndex);
+            String portstr;
+            if (seperatorIndex >= 0) {
+                portstr = ip.substring(seperatorIndex + 1, slashIndex);
+            } else {
+                portstr = "80";
+            }
             try {
                 addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
