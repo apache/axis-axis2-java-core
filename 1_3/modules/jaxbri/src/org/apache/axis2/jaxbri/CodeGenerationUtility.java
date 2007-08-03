@@ -142,8 +142,8 @@ public class CodeGenerationUtility {
                         log.debug(saxParseException.getMessage(), saxParseException);
                     }
                 });
-                Document document = schema.getAllSchemas()[0];
-                sc.parseSchema(schema.getTargetNamespace(), document.getDocumentElement());
+
+                sc.parseSchema((InputSource) xmlObjectsVector.get(i));
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
