@@ -168,11 +168,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                                 (AxisBindingOperation) msgContext
                                         .getProperty(Constants.AXIS_BINDING_OPERATION);
                         if (axisBindingOperation != null) {
-                            Integer code = (Integer) axisBindingOperation.getFault(
-                                    (String) msgContext.getProperty(Constants.FAULT_NAME))
-                                    .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
-                            if (code != null) {
-                                response.setStatus(code.intValue());
+                            AxisBindingMessage axisBindingMessage = axisBindingOperation.getFault(
+                                    (String) msgContext.getProperty(Constants.FAULT_NAME));
+                            if(axisBindingMessage != null){
+                                Integer code = (Integer) axisBindingMessage
+                                        .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                if (code != null) {
+                                    response.setStatus(code.intValue());
+                                }
                             }
                         }
                     }
