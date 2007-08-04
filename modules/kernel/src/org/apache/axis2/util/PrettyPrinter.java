@@ -79,15 +79,9 @@ public class PrettyPrinter {
             Object settings = instance.invoke(null, new Object[]{});
 
             Class clazz3 = Loader.loadClass("de.hunsicker.jalopy.storage.ConventionKeys");
-            Field field = clazz3.getField("COMMENT_JAVADOC_PARSE");
+            Field field = clazz3.getField("COMMENT_FORMAT_MULTI_LINE");
             Object key = field.get(null);
-
             Method put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
-            put.invoke(settings, new Object[]{key, "true"});
-
-            field = clazz3.getField("COMMENT_FORMAT_MULTI_LINE");
-            key = field.get(null);
-            put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
             put.invoke(settings, new Object[]{key, "true"});
 
             // format and overwrite the given input file

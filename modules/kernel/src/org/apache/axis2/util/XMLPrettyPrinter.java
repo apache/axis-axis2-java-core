@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * An XML pretty printer based on xsl stylesheets
@@ -52,10 +53,13 @@ public class XMLPrettyPrinter {
      * @param file
      */
     public static void prettify(final File file) {
+        InputStream inputStream = null;
+        FileOutputStream outputStream = null;
+        byte[] byteArray = null;
         try {
-            InputStream inputStream = new ByteArrayInputStream(IOUtils.getStreamAsByteArray(new FileInputStream(file)));
-
-            FileOutputStream outputStream = new FileOutputStream(file);
+            byteArray = IOUtils.getStreamAsByteArray(new FileInputStream(file));
+            inputStream = new ByteArrayInputStream(byteArray);
+            outputStream = new FileOutputStream(file);
 
             Source stylesheetSource = new StreamSource(new ByteArrayInputStream(prettyPrintStylesheet.getBytes()));
             Source xmlSource = new StreamSource(inputStream);
@@ -81,12 +85,32 @@ public class XMLPrettyPrinter {
             inputStream.close();
             outputStream.close();
             log.debug("Pretty printed file : " + file);
-        } catch (Exception e) {
-            log.warn("Exception occurred while trying to pretty print file " + file, e);
         } catch (Throwable t) {
             log.debug("Exception occurred while trying to pretty print file " + file, t);
+            try {
+                if (byteArray != null) {
+                    outputStream = new FileOutputStream(file);
+                    outputStream.write(byteArray);
+                }
+            } catch (IOException e) {
+                log.debug(e.getMessage(), e);
+            }
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.debug(e.getMessage(), e);
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    log.debug(e.getMessage(), e);
+                }
+            }
         }
-
     }
 
 
