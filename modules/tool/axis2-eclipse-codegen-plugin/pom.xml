@@ -295,7 +295,6 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-                                                                <property name="eclipse.plugins.version" value="1.3.0"/>
 								<property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_${eclipse.plugins.version}"/>
 								<property name="codegen.plugin.zip.name" value="axis2-eclipse-codegen-wizard.zip"/>
 								<property name="codegen.plugin.jar.name" value="Axis2CodegenWizard.jar"/>
