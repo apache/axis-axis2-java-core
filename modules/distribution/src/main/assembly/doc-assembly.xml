@@ -9,7 +9,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>target/xdocs</directory>
+            <directory>target/tmp-doc-distro/xdocs</directory>
             <outputDirectory>docs/xdocs</outputDirectory>
             <excludes>
                 <exclude>.svn/**</exclude>
@@ -23,7 +23,7 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>../..</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory>docs</outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
