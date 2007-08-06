@@ -81,7 +81,7 @@
 	    </excludes>
         </fileSet>
         <fileSet>
-            <directory>../..</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>NOTICE.txt</include>
@@ -92,7 +92,7 @@
 	<!-- TODO : (end) copy following files with filtering on -->
 
         <fileSet>
-            <directory>../..</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>

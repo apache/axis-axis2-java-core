@@ -221,7 +221,7 @@
                 <executions>
                     <execution>
                         <id>distribution-package</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -246,21 +246,34 @@
                 <executions>
                     <execution>
                       <id>package</id>
-                      <phase>package</phase>
+                      <phase>process-resources</phase>
                       <configuration>
                         <tasks>
-                            <copy toDir="target/xdocs/${docs.folder.version}">
+                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
                                 <fileset dir="../documentation/xdocs/@axis2_version_dir@">
                                     <exclude name="**/*.xml"/>
                                 </fileset>
                             </copy>
                             <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
-                            <copy toDir="target/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
+                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
                                 <globmapper from="*.xml" to="*.html"/>
                                 <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
                             </copy>
+                            
+			    <filter token="axisVersion" value="${version}"/>
+                            <tstamp>	
+                               <format property="TODAY" pattern="dd-MM-yyyy"/>
+                            </tstamp>
+  	                    <filter token="TODAY" value="${TODAY}"/>
+                            <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
+                                <fileset dir="../..">
+                                    <include name="LICENSE.txt"/>
+		                    <include name="README.txt"/>
+				    <include name="release-notes.html"/>
+                                </fileset>
+			    </copy>
 
-                            <copy toDir="target/xdocs" filtering="on" overwrite="true">
+			    <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
                                 <globmapper from="*.xml" to="*.html"/>
                                 <fileset dir="../documentation/xdocs">
                                     <exclude name="@axis2_version_dir@/**"/>
@@ -270,7 +283,7 @@
                                 </fileset>
                             </copy>
 
-                            <copy toDir="target/xdocs" filtering="off" overwrite="true">
+                            <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
                                 <fileset dir="../documentation/xdocs">
                                     <exclude name="@axis2_version_dir@/**"/>
                                     <include name="**/*.gif"/>
@@ -290,7 +303,7 @@
                     </execution>
                     <execution>
                         <id>service-module-list-generation</id>
-                        <phase>package</phase>
+                        <phase>process-resources</phase>
                         <configuration>
                             <tasks>
 				<mkdir dir="target/tmp-repository"/>
