@@ -218,6 +218,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>../../modules/clustering/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-clustering-${version}.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>../../modules/saaj/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
