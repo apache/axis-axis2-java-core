@@ -31,6 +31,8 @@ import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
+import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
@@ -331,15 +333,24 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
             if (TAG_SERVICE.equals(elementName)) {
                 AxisService axisService = null;
+                String wsdlLocation =  "META-INF/service.wsdl";
                 InputStream wsdlStream =
-                        serviceClassLoader.getResourceAsStream(metainf + "/service.wsdl");
+                        serviceClassLoader.getResourceAsStream(wsdlLocation);
                 if (wsdlStream == null) {
+                    wsdlLocation =  "META-INF/" + serviceName + ".wsdl";
                     wsdlStream = serviceClassLoader
-                            .getResourceAsStream(metainf + "/" + serviceName + ".wsdl");
+                            .getResourceAsStream(wsdlLocation);
                 }
                 if (wsdlStream != null) {
                     WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
                             new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
+                    File file = Utils.toFile(servicesURL);
+                    if(file != null && file.exists()){
+                        wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
+                                    new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
+                        wsdl2AxisServiceBuilder.setCustomResolver(
+                                new AARFileBasedURIResolver(file));
+                    }
                     axisService = wsdl2AxisServiceBuilder.populateService();
                     axisService.setWsdlFound(true);
                     axisService.setCustomWsdl(true);
@@ -365,26 +376,35 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 Iterator serviceIterator = servicList.iterator();
                 while (serviceIterator.hasNext()) {
                     AxisService axisService = (AxisService) serviceIterator.next();
+                    String wsdlLocation =  "META-INF/service.wsdl";
                     InputStream wsdlStream =
-                            serviceClassLoader.getResourceAsStream(metainf + "/service.wsdl");
+                            serviceClassLoader.getResourceAsStream(wsdlLocation);
                     if (wsdlStream == null) {
+                        wsdlLocation =  "META-INF/" + serviceName + ".wsdl";
                         wsdlStream = serviceClassLoader
-                                .getResourceAsStream(metainf + "/" + serviceName + ".wsdl");
-                        if (wsdlStream != null) {
-                            WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
-                                    new WSDL11ToAxisServiceBuilder(wsdlStream, axisService);
-                            axisService = wsdl2AxisServiceBuilder.populateService();
-                            axisService.setWsdlFound(true);
-                            axisService.setCustomWsdl(true);
-                            // Set the default message receiver for the operations that were
-                            // not listed in the services.xml
-                            Iterator operations = axisService.getOperations();
-                            while (operations.hasNext()) {
-                                AxisOperation operation = (AxisOperation) operations.next();
-                                if (operation.getMessageReceiver() == null) {
-                                    operation.setMessageReceiver(loadDefaultMessageReceiver(
-                                            operation.getMessageExchangePattern(), axisService));
-                                }
+                                .getResourceAsStream(wsdlLocation);
+                    }
+                    if (wsdlStream != null) {
+                        WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
+                                new WSDL11ToAxisServiceBuilder(wsdlStream, axisService);
+                        File file = Utils.toFile(servicesURL);
+                        if(file != null && file.exists()){
+                            wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
+                                        new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
+                            wsdl2AxisServiceBuilder.setCustomResolver(
+                                    new AARFileBasedURIResolver(file));
+                        }
+                        axisService = wsdl2AxisServiceBuilder.populateService();
+                        axisService.setWsdlFound(true);
+                        axisService.setCustomWsdl(true);
+                        // Set the default message receiver for the operations that were
+                        // not listed in the services.xml
+                        Iterator operations = axisService.getOperations();
+                        while (operations.hasNext()) {
+                            AxisOperation operation = (AxisOperation) operations.next();
+                            if (operation.getMessageReceiver() == null) {
+                                operation.setMessageReceiver(loadDefaultMessageReceiver(
+                                        operation.getMessageExchangePattern(), axisService));
                             }
                         }
                     }
