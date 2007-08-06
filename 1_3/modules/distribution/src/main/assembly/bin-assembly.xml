@@ -263,7 +263,7 @@
 
 	<!-- TODO: Need to rename this file to INSTALL.txt -->
 	<fileSet>
-            <directory>../../release-docs/readme-files/</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
