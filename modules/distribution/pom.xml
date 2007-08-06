@@ -271,6 +271,9 @@
 		                    <include name="README.txt"/>
 				    <include name="release-notes.html"/>
                                 </fileset>
+                                <fileset dir="../../release-docs/readme-files">
+                                    <include name="*.txt"/>
+                                </fileset>
 			    </copy>
 
 			    <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">

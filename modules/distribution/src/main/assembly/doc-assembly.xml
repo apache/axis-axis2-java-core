@@ -31,5 +31,12 @@
                 <include>release-notes.html</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>target/tmp-doc-distro/docs</directory>
+	    <outputDirectory></outputDirectory>
+	    <includes>
+	       <include>README-docs.txt</include>
+	    </includes>
+	</fileSet>
     </fileSets>
 </assembly>

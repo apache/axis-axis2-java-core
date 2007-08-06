@@ -119,7 +119,13 @@
             <excludes>
                 <exclude>.svn/**</exclude>
             </excludes>
-
+        </fileSet>
+        <fileSet>
+            <directory>target/tmp-doc-distro/docs</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>README-std-src.txt</include>
+            </includes>
         </fileSet>
     </fileSets>
 </assembly>
