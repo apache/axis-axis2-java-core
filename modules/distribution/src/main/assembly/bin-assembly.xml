@@ -218,6 +218,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>../../modules/clustering/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-clustering-${version}.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>../../modules/saaj/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -263,7 +270,7 @@
 
 	<!-- TODO: Need to rename this file to INSTALL.txt -->
 	<fileSet>
-            <directory>../../release-docs/readme-files/</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
@@ -279,9 +286,8 @@
             </includes>
 	</fileSet>
 
-	<!-- TODO: Need to add filters to update the version strings within the files -->
 	<fileSet>
-            <directory>../../</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
@@ -325,7 +331,6 @@
       <dependencySets>
         <dependencySet>
           <outputDirectory>lib</outputDirectory>
-	    <!-- TODO - incorrect xercesImpl version(2.6.2) is being copied. -->	
             <excludes>
                  <exclude>mx4j:mx4j-jmx:jar</exclude>
                  <exclude>mx4j:mx4j-impl:jar</exclude>
