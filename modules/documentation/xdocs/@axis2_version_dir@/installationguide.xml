@@ -390,11 +390,11 @@ MAVEN_HOME and edit path. eg: "C:\Program Files\Apache Software
 Foundation\maven-2.0.7"; path %MAVEN_HOME%\bin)</li>
 <li>Make sure that the system variable JAVA_HOME is set to the
 location of your JDK, eg. C:\Program Files\Java\jdk1.5.0_11</li>
-<li>Run mvn -v to verify that it is correctly
-installed.</li>
+<li>Run mvn -v or mvn -version to verify that it is correctly
+ installed.</li>
 </ol>
 <p align="center"><img alt="clip_image002 (15K)" src=
-"images/clip_image002.jpg" height="211" width="477" /></p>
+"images/clip_image002.jpg" /></p>
 <ul>
 <li>Unix based OS (Linux etc)</li>
 </ul>
