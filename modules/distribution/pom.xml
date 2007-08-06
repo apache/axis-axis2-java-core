@@ -372,6 +372,20 @@ version.aar
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+		        <id>delete-temporary-files</id>
+			<phase>install</phase>
+			<configuration>
+			   <tasks>
+			     <delete dir="target/tmp-doc-distro"/>
+			     <delete dir="target/tmp-repository"/>
+			     <delete dir="target/archive-tmp"/>
+			   </tasks>
+		        </configuration>
+		        <goals>
+		            <goal>run</goal>
+		        </goals>
+	            </execution>
                 </executions>
 	     </plugin>
         </plugins>
