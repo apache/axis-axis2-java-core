@@ -69,7 +69,6 @@
         </fileSet>
 
 
-	<!-- TODO : (start) copy following files with filtering on -->
         <fileSet>
             <directory>../../etc</directory>
             <outputDirectory>etc</outputDirectory>
@@ -87,9 +86,6 @@
                 <include>NOTICE.txt</include>
             </includes>
         </fileSet>
-	<!-- TODO : Copy the release documents -->
-
-	<!-- TODO : (end) copy following files with filtering on -->
 
         <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
