@@ -57,12 +57,14 @@ public class ScriptModule implements Module {
         log.debug("script services init");
 
         AxisConfiguration axisConfig = configContext.getAxisConfiguration();
-
-        File scriptServicesDirectory = getScriptServicesDirectory(axisConfig);
-        ScriptDeploymentEngine deploymentEngine = new ScriptDeploymentEngine(axisConfig);
-        deploymentEngine.loadRepository(scriptServicesDirectory);
-        deploymentEngine.loadServices();
-
+        if(axisConfig.getRepository() == null) {
+            log.error("AxisConfiguration getRepository returns null, cannot deploy scripts");
+        } else {
+            File scriptServicesDirectory = getScriptServicesDirectory(axisConfig);
+            ScriptDeploymentEngine deploymentEngine = new ScriptDeploymentEngine(axisConfig);
+            deploymentEngine.loadRepository(scriptServicesDirectory);
+            deploymentEngine.loadServices();
+        }
         log.info("script module activated");
     }
 
