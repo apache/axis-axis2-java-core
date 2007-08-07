@@ -19,9 +19,10 @@ To deploy a new Web service in Axis2 the following three steps must
 be performed:
   1) Create the Web service implementation class, supporting classes 
      and the services.xml file, 
-  2) Archive the class files into a jar with the services.xml file in 
-     the META-INF directory
-  3) Drop the jar file to the $AXIS2_HOME/WEB-INF/services directory
+  2) Create the service archive. I.e. archive the class files using the 
+     jar tool with the services.xml file in the META-INF directory. The
+     archive should have the extension .aar.
+  3) Drop the aar file to the $AXIS2_HOME/WEB-INF/services directory
      where $AXIS2_HOME represents the install directory of your Axis2 
      runtime. (In the case of a servelet container this would be the
      "axis2" directory inside "webapps".)
