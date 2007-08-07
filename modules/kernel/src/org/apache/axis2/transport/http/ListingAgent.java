@@ -441,6 +441,7 @@ public class ListingAgent extends AbstractAgent {
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
+                res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
         }
 
