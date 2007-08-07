@@ -64,8 +64,11 @@ can define a ServiceObjectSupplier that will supply the Object.</p>
 
 <p>This guide describes how to use two separate ServiceObjectSupplier classes
 that are a part of the Axis2 standard distribution - one for use with a
-ServletContext, and one without. Once configured, the Web service itself acts
-like any other Spring wired bean. These Spring beans can be loaded any way
+ServletContext, and one without. Configuring Axis2 with a ServletContext is 
+simpler than without, and is recommended for most use cases. Without a 
+ServletContext, ie, Spring inside the AAR, requires an extra Spring bean 
+and is considered an advanced use case. Once configured, the Web service itself 
+acts like any other Spring wired bean. These Spring beans can be loaded any way
 desired as Axis2 has no configuration file dependencies from Spring. Spring
 versions 1.2.6, 1.2.8 and 2.0 have been tested, but probably any version
 would work as only the core functionality is required.</p>
@@ -471,18 +474,29 @@ an initContext.lookup() handle inside the AAR. Spring users typically have
 little desire to use initContext.lookup(), as they get their Datasources via
 org.springframework.jdbc.datasource.DriverManagerDataSource in an XML file or
 with annotations. For EJB home references and the like, Spring provides
-JndiObjectFactoryBean. While fully testing JndiObjectFactoryBean with EJB has
-not been done yet (if you do, please send a message to the axis users list)
-Datasources via Spring inside the AAR have been tested. Basically it works as
-typically done with Spring, though if you are passing Hibernate XML files you
-need to put them in a place where Spring will find them. The most flexible
-way is as follows, using logging in DEBUG mode to see where Spring will look
-in your jar / class locations:</p>
-<source><pre>    &lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
+JndiObjectFactoryBean. </p>
+
+<p>A common requirement is to run Hibernate along with Spring with Axis2 web services.
+It is easier to run Hibernate as well as Spring outside the AAR as shown in the 
+ServletContext example, ie, place the Spring and Hibernate jars in WEB-INF/lib and 
+the hibernate config files under WEB-INF/classes. With that advisement, Spring provides
+an API that allows Spring to load Hibernate under the contraints of an AAR. </p>
+
+<p>Hibernate by default looks for its config files in the classpath. By running Hibernate
+inside the AAR, Hibernate won't be able to find its config files. The way to get 
+around this limitation is either to expand the AAR or place the hibernate config
+files in a specific directory under WEB-INF/classes - and then use 
+<a href="http://www.springframework.org/docs/api/org/springframework/orm/hibernate/LocalSessionFactoryBean.html#setMappingDirectoryLocations(org.springframework.core.io.Resource[])">Spring's setMappingDirectoryLocations</a> for several options.  </p>
+
+<p>By placing Spring into DEBUG mode you can look at the logs to see where Spring will look
+for your jar / class locations. Use the wildcards in the following example to list your mapping 
+locations as shown:  </p>
+
+<source><pre>&lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
                 &lt;property name="mappingLocations"&gt;
                    &lt;value&gt;classpath*:**/MyEntity.hbm.xml&lt;/value&gt;
                 &lt;/property&gt;
                 ...
-    &lt;/bean&gt; </pre>
+&lt;/bean&gt; </pre>
 </source></body>
 </html>
