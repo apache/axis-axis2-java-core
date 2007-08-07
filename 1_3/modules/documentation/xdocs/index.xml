@@ -302,7 +302,34 @@ WS-Policy)</li>
 </ul>
 (Apache Axis2 comes built in with a module that supports
 WS-Addressing.)
-<h2>Known Issues and Limitations</h2>
+<h3>Major Changes Since 1.2</h3>
+<ul>
+<li>Moved to maven2 from maven1</li>
+<li>Significantly improved documentation</li>
+<li>Significantly improved support for POJO services and clients</li>
+<li>Significantly improved Deployment module and custom deployers</li>
+<li>Significantly improved support for Spring services</li>
+<li>Significantly improved Axis Data Binding (ADB) to increase schema
+  coverage and overall stability</li>
+<li>Improved handler and module interfaces</li>
+<li>Improved Eclipse and Idea plugins</li>
+<li>Fixed tons of small and not-so-small bugs</li>
+<li>Major code cleanup and improved exception handling</li>
+<li>All the asynchronous MessageReceivers have been deprecated</li>
+<li>Deprecating the introspection to find init()/destroy() methods on service classes.</li>
+<li>Deprecated the Callback interface [http://wiki.apache.org/ws/FrontPage/Axis2/changesfrom1.2to1.3]</li>
+<li>Added a new phase called "Addressing" and moved all the addressing handlers into that phase</li>
+<li>Name of the wsdl2java generated Exception classes changed. </li>
+<li>Earlier it had the Exception suffix and from Axis2 1.3 it has been removed</li>
+<li>Interface changed in ADB Datasource class</li>
+<li>Classpath module loading support</li>
+</ul>
+<h2>Known Issues and Limitations in @axisVersion@ Release:</h2>
+<ul>
+<li>Java2WSDL and runtime WSDL generation only support doc-lit/bare and doc-lit/wrapped</li>
+<li>Custom deployers only work in file system based repository.</li>
+<li>POJO does not support HasMap , Hastable and Vectors.</li>
+</ul>
 <h2>Archived News</h2>
 <p>For information on previous Axis2 releases running up to the
 current release see the <a href="archived_news.html" target=
