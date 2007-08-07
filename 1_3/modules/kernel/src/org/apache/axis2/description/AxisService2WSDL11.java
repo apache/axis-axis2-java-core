@@ -348,6 +348,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
             operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
             addPolicyAsExtElement(PolicyInclude.OPERATION_POLICY, axisOperation
                     .getPolicyInclude(), operation);
+            addPolicyAsExtElement(PolicyInclude.AXIS_OPERATION_POLICY, axisOperation
+                    .getPolicyInclude(), operation);
 
             String MEP = axisOperation.getMessageExchangePattern();
             if (WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)
@@ -371,6 +373,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                             + ":" + inaxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.INPUT_POLICY,
                                           inaxisMessage.getPolicyInclude(), input);
+                    addPolicyAsExtElement(PolicyInclude.AXIS_MESSAGE_POLICY,
+                                          inaxisMessage.getPolicyInclude(), input);
+                    
                     WSDLSerializationUtil.addWSAWActionAttribute(input, axisOperation
                             .getInputAction(),wsaw);
                     operation.addChild(input);
@@ -398,6 +403,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                             + ":" + outAxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.OUTPUT_POLICY,
                                           outAxisMessage.getPolicyInclude(), output);
+                    addPolicyAsExtElement(PolicyInclude.AXIS_MESSAGE_POLICY,
+                            outAxisMessage.getPolicyInclude(), output);
                     WSDLSerializationUtil.addWSAWActionAttribute(output, axisOperation
                             .getOutputAction(),wsaw);
                     operation.addChild(output);
@@ -444,6 +451,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
         addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
                 .getPolicyInclude(), service);
+        addPolicyAsExtElement(PolicyInclude.AXIS_SERVICE_POLICY, axisService.
+                getPolicyInclude(), service);
+        
         if (!disableREST) {
             generateHTTPPorts(fac, service);
         }
@@ -538,8 +548,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         binding.addAttribute("type", tns.getPrefix() + ":"
                 + axisService.getName() + PORT_TYPE_SUFFIX, null);
 
-        addPolicyAsExtElement(PolicyInclude.AXIS_SERVICE_POLICY, axisService
-                .getPolicyInclude(), binding);
         addPolicyAsExtElement(PolicyInclude.BINDING_POLICY, axisService
                 .getPolicyInclude(), binding);
 
@@ -580,8 +588,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                                 SOAP_ACTION, soapAction, STYLE, style, soap);
 
             addPolicyAsExtElement(PolicyInclude.BINDING_OPERATION_POLICY,
-                                  axisOperation.getPolicyInclude(), operation);
-            addPolicyAsExtElement(PolicyInclude.AXIS_OPERATION_POLICY,
                                   axisOperation.getPolicyInclude(), operation);
 
             String MEP = axisOperation.getMessageExchangePattern();
@@ -674,8 +680,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         binding.addAttribute("type", tns.getPrefix() + ":"
                 + axisService.getName() + PORT_TYPE_SUFFIX, null);
 
-        addPolicyAsExtElement(PolicyInclude.AXIS_SERVICE_POLICY, axisService
-                .getPolicyInclude(), binding);
         addPolicyAsExtElement(PolicyInclude.BINDING_POLICY, axisService
                 .getPolicyInclude(), binding);
 
@@ -717,8 +721,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
             addPolicyAsExtElement(PolicyInclude.BINDING_OPERATION_POLICY,
                                   axisOperation.getPolicyInclude(), operation);
-            addPolicyAsExtElement(PolicyInclude.AXIS_OPERATION_POLICY,
-                                  axisOperation.getPolicyInclude(), operation);
+
 
             String MEP = axisOperation.getMessageExchangePattern();
 
@@ -926,7 +929,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         }
     }
 
-    private void addPolicyAsExtElement(int type, PolicyInclude policyInclude, OMElement element)
+    private void addPolicyAsExtElement(int type, PolicyInclude policyInclude, OMElement parentElement)
             throws Exception {
         ArrayList elementList = policyInclude.getPolicyElements(type);
 
@@ -934,14 +937,28 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
             Object policyElement = iterator.next();
 
             if (policyElement instanceof Policy) {
-                element.addChild(PolicyUtil.getPolicyComponentAsOMElement(
-                        (PolicyComponent) policyElement, serializer));
+                OMElement child = PolicyUtil.getPolicyComponentAsOMElement(
+                        (PolicyComponent) policyElement, serializer);
+                
+                OMNode firstChildElem = parentElement.getFirstElement();
+                
+                if (firstChildElem == null) {
+                    parentElement.addChild(child);
+                } else {
+                    firstChildElem.insertSiblingBefore(child);
+                }
 
             } else if (policyElement instanceof PolicyReference) {
-                element
-                        .addChild(PolicyUtil
-                                .getPolicyComponentAsOMElement((PolicyComponent) policyElement));
-
+                OMElement child = PolicyUtil
+                                .getPolicyComponentAsOMElement((PolicyComponent) policyElement);
+                OMElement firstChildElem = parentElement.getFirstElement();
+                
+                if (firstChildElem == null) {
+                    parentElement.addChild(child);
+                } else {
+                    firstChildElem.insertSiblingBefore(child);
+                }
+                
                 PolicyRegistry reg = policyInclude.getPolicyRegistry();
                 String key = ((PolicyReference) policyElement).getURI();
 
