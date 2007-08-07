@@ -80,6 +80,11 @@ public class POJODeployer implements Deployer {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");
+
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
+                                                 className,
+                                                 deploymentFileData.getFile().getAbsolutePath()));
+
                     JamServiceFactory factory = JamServiceFactory.getInstance();
                     JamServiceParams jam_service_parms = factory.createServiceParams();
                     jam_service_parms.addClassLoader(classLoader);

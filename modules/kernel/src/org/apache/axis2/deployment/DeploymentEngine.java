@@ -188,7 +188,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
                     log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                                 org.apache.axis2.util.Utils.getModuleName(serviceGroup.getServiceGroupName())));
+                                                 org.apache.axis2.util.Utils.getModuleName(serviceGroup.getServiceGroupName()),
+                                                 servicesURL.toString()));
                 }
             }
         } catch (MalformedURLException e) {
@@ -236,7 +237,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     addNewModule(module, axisConfig);
                     log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                                  org.apache.axis2.util.Utils.getModuleName(module.getName(),
-                                                                                           module.getVersion())));
+                                                                                           module.getVersion()),
+                                                 moduleurl.toString()));
                 }
             }
             org.apache.axis2.util.Utils.
