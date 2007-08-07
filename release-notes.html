@@ -27,7 +27,7 @@
 
 <h3>@TODAY@</h3>
 
-<pre>Just over 6 months since the original 1.0 release, we are very proud to
+<pre>Just over 4 months since the original 1.2 release, we are very proud to
 announce the release of Apache Axis2 version @axisVersion@.
 
 Downloads are available at:
@@ -44,29 +44,34 @@ WS-Trust (Apache Rahas), WS-Reliable Messaging (Apache Sandesha) and
 WS-Eventing (Apache Savan) will be available soon after the Apache Axis2
 @axisVersion@ release. Please see these projects' own sites for further information.
 
-Major Changes Since 1.0:
+Major Changes Since 1.2:
+- Moved to maven2 from maven1
 - Significantly improved documentation
 - Significantly improved support for POJO services and clients
+- Significantly improved Deployment module and custom deployers
 - Significantly improved support for Spring services
 - Significantly improved Axis Data Binding (ADB) to increase schema
   coverage and overall stability
-- Improved service lifecycle model
-- Improved JMS support
 - Improved handler and module interfaces
 - Improved Eclipse and Idea plugins
-- New Attachments API for sending & receiving MTOM and SwA attachments
-- Built in support for WS-Policy via Apache Neethi
-- Added support for unwrapping Web service requests
 - Fixed tons of small and not-so-small bugs
-- Major refactoring of release structure to make usage easy
+- Major code cleanup and improved exception handling
+- All the asynchronous MessageReceivers have been deprecated
+- Deprecating the introspection to find init()/destroy() methods on service classes.
+- Deprecated the Callback interface [http://wiki.apache.org/ws/FrontPage/Axis2/changesfrom1.2to1.3]
+- Added a new phase called "Addressing" and moved all the addressing handlers into that phase
+- Name of the wsdl2java generated Exception classes changed. 
+  Earlier it had the Exception suffix and from Axis2 1.3 it has been removed
+- Interface changed in ADB Datasource class
+- Classpath module loading support
 
 Known Issues and Limitations in @axisVersion@ Release:
-- Unwrapping of response messages (coming in 1.2)
-- JSR @axisVersion@/183 Annotation support (coming in 1.2)
-- JaxMe and JAXBRI data binding support is experimental
-- Simple Axis Server does not support POX/REST
+ - Java2WSDL and runtime WSDL generation only support doc-lit/bare and doc-lit/wrapped
+ - Custom deployers only work in file system based repository.
+ - POJO does not support HasMap , Hastable and Vectors.
+ 
 
-Apache Axis2 @axisVersion@ is a major new release compared to Axis2 1.0. We are
+Apache Axis2 @axisVersion@ is a major new release compared to Axis2 1.2. We are
 striving for a simple and happy first time user experience as well as a
 satisfying experienced user experience with this release. We welcome any
 and all feedback at:
@@ -85,32 +90,37 @@ Features of Apache Axis2:
 
 Programming Model
    - Simple XML-centric client API with full WSDL and policy support
-   - Support for POJO and Spring services and clients
+   - Support for easy deployemnt of POJO with or without annotation
+   - Support for Spring services and clients
    - Support for any message exchange pattern (MEP)
-   - Synchronous and asynchronous programming model
-   - Archived service deployment model supporting full service
-     encapsulation with versioning support
+   - Synchronous and asynchronous programming model (both in client side and server side)
+   - Archived based service deployment model supporting full service
+     encapsulation 
+   - Directory based service deployment support
    - Archived module deployment model supporting controlled
      extensibility with versioning support
-   - Hot deployment
+   - Hot deployment and Hot update suport for services
    - WS-Policy driven code generation extensions
-   - Flexible service life cycle model
+   - Flexible service life cycle model and session managment
    - Automatic support for POX (REST) style invocation of services
    - Support for querying service's WSDL (with ?wsdl), schema (with
      ?xsd) and policies (with ?policy)
+   - Java2WSDL support for both doclit/bare and doclit/wrapped
+   - Support for custom deployers
+   - Classpath module loading support
 
 Supported Specifications
    - SOAP 1.1 and 1.2
    - Message Transmission Optimization Mechanism (MTOM)
    - XML Optimized Packaging (XOP)
    - SOAP with Attachments
-   - WSDL 1.1, including both SOAP and HTTP bindings
+   - WSDL 1.1 and WSDL 2.0, including both SOAP and HTTP bindings
    - WS-Addressing submission and 1.0
    - WS-Policy
    - SAAJ 1.1
 
 Transports
-   - HTTP
+   - HTTP/HTTPS
    - SMTP
    - JMS
    - TCP
