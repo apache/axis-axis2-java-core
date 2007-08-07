@@ -259,6 +259,13 @@
                 <include>mex-impl-${version}.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+	    <directory>../../modules/mtompolicy/target</directory>
+	    <outputDirectory>lib</outputDirectory>
+	    <includes>
+	         <include>axis2-mtompolicy-${version}.jar</include>
+	    </includes>
+        </fileSet>
 
         <fileSet>
             <directory>../../legal</directory>
