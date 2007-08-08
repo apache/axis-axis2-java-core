@@ -113,6 +113,8 @@
                 return NULL;
             }
 
+            memset(<xsl:value-of select="$name"/>, 0, sizeof(<xsl:value-of select="$axis2_name"/>_t));
+
             <xsl:for-each select="property">
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
                 <xsl:choose>
