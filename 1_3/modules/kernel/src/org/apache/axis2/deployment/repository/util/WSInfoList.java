@@ -175,7 +175,12 @@ public class WSInfoList implements DeploymentConstants {
                 return false;
             }
         } else {
-            return (wsInfo.getLastModifiedDate() != file.lastModified());
+            if(wsInfo.getLastModifiedDate() != file.lastModified()) {
+                wsInfo.setLastModifiedDate(file.lastModified());
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
