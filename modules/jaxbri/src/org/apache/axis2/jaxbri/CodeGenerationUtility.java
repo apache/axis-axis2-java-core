@@ -26,6 +26,7 @@ import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.api.Property;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XMLUtils;
@@ -33,6 +34,12 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -182,6 +189,89 @@ public class CodeGenerationUtility {
                     String typeName = mapping.getType().getTypeClass().fullName();
 
                     mapper.addTypeMappingName(qn, typeName);
+                }
+
+                //process the unwrapped parameters
+                if (!cgconfig.isParametersWrapped()) {
+                    //figure out the unwrapped operations
+                    List axisServices = cgconfig.getAxisServices();
+                    for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+                        AxisService axisService = (AxisService)servicesIter.next();
+                        for (Iterator operations = axisService.getOperations();
+                             operations.hasNext();) {
+                            AxisOperation op = (AxisOperation)operations.next();
+
+                            if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                                AxisMessage message = op.getMessage(
+                                        WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                                if (message != null &&
+                                        message.getParameter(Constants.UNWRAPPED_KEY) != null) {
+
+                                    Mapping mapping = jaxbModel.get(message.getElementQName());
+                                    List elementProperties = mapping.getWrapperStyleDrilldown();
+                                    for(int j = 0; j < elementProperties.size(); j++){
+                                        Property elementProperty = (Property) elementProperties.get(j);
+
+                                        QName partQName =
+                                                    WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                                                          WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                                          elementProperty.elementName().getLocalPart());
+                                        //this type is based on a primitive type- use the
+                                        //primitive type name in this case
+                                        String fullJaveName =
+                                                elementProperty.type().fullName();
+                                        if (elementProperty.type().isArray()) {
+                                            fullJaveName = fullJaveName.concat("[]");
+                                        }
+                                        mapper.addTypeMappingName(partQName, fullJaveName);
+
+                                        if (elementProperty.type().isPrimitive()) {
+                                            mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                        }
+                                        if (elementProperty.type().isArray()) {
+                                            mapper.addTypeMappingStatus(partQName,
+                                                                        Constants.ARRAY_TYPE);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                                AxisMessage message = op.getMessage(
+                                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                                if (message != null &&
+                                        message.getParameter(Constants.UNWRAPPED_KEY) != null) {
+
+                                    Mapping mapping = jaxbModel.get(message.getElementQName());
+                                    List elementProperties = mapping.getWrapperStyleDrilldown();
+                                    for(int j = 0; j < elementProperties.size(); j++){
+                                        Property elementProperty = (Property) elementProperties.get(j);
+
+                                        QName partQName =
+                                                    WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                                                          WSDLConstants.OUTPUT_PART_QNAME_SUFFIX,
+                                                                          elementProperty.elementName().getLocalPart());
+                                        //this type is based on a primitive type- use the
+                                        //primitive type name in this case
+                                        String fullJaveName =
+                                                elementProperty.type().fullName();
+                                        if (elementProperty.type().isArray()) {
+                                            fullJaveName = fullJaveName.concat("[]");
+                                        }
+                                        mapper.addTypeMappingName(partQName, fullJaveName);
+
+                                        if (elementProperty.type().isPrimitive()) {
+                                            mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                        }
+                                        if (elementProperty.type().isArray()) {
+                                            mapper.addTypeMappingStatus(partQName,
+                                                                        Constants.ARRAY_TYPE);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
