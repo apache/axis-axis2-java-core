@@ -54,9 +54,18 @@
          axis2_svc_t *svc = NULL;
          axis2_op_t *op = NULL;
 
+	 axis2_phases_info_t *info = NULL;
+	 axis2_svc_ctx_t *svc_ctx = NULL;
+	 axis2_conf_ctx_t *conf_ctx = NULL;
+	 axis2_conf_t *conf = NULL;
+
          /* Modifying the Service */
          svc_client = axis2_stub_get_svc_client (stub, env );
          svc = (axis2_svc_t*)axis2_svc_client_get_svc( svc_client, env );
+	 svc_ctx = axis2_svc_client_get_svc_ctx(svc_client, env);
+	 conf_ctx = axis2_svc_ctx_get_conf_ctx(svc_ctx, env);
+	 conf = axis2_conf_ctx_get_conf(conf_ctx, env);
+	 info = axis2_conf_get_phases_info(conf, env);
          axutil_qname_create(env,"<xsl:value-of select="@servicename"/>" ,NULL, NULL);
          axis2_svc_set_qname (svc, env, svc_qname);
 
@@ -77,6 +86,7 @@
                axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_IN);
              </xsl:otherwise>
            </xsl:choose>
+	   axis2_phases_info_set_op_phases(info, env, op);
            axis2_svc_add_op(svc, env, op);
 
          </xsl:for-each>
