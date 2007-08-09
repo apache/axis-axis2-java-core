@@ -172,7 +172,7 @@
             <directory>../../modules/soapmonitor/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>axis2-soapmonitor-${version}.jar</include>
+                <include>soapmonitor-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -204,10 +204,24 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>../../modules/jws-api/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-jws-api-${version}.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>../../modules/metadata/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-metadata-${version}.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../../modules/clustering/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-clustering-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -238,6 +252,13 @@
                 <include>axis2-ant-plugin-${version}.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>../../modules/mex/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>mex-impl-${version}.jar</include>
+            </includes>
+        </fileSet>
 
         <fileSet>
             <directory>../../legal</directory>
@@ -249,16 +270,24 @@
 
 	<!-- TODO: Need to rename this file to INSTALL.txt -->
 	<fileSet>
-            <directory>../../release-docs/readme-files/</directory>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>installation-std-bin.txt</include>
             </includes>
 	</fileSet>
 
-	<!-- TODO: Need to add filters to update the version strings within the files -->
 	<fileSet>
-            <directory>../../</directory>
+            <directory>../../modules/kernel/conf</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>log4j.properties</include>
+                <include>commons-logging.properties</include>
+            </includes>
+	</fileSet>
+
+	<fileSet>
+            <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
@@ -293,13 +322,15 @@
 				<include>yahoojsonsearch/**/*</include>
 				<include>yahoorestsearch/**/*</include>            
             </includes>
+            <excludes>
+                <exclude>**/*.iml</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     
       <dependencySets>
         <dependencySet>
           <outputDirectory>lib</outputDirectory>
-	    <!-- TODO - incorrect xercesImpl version(2.6.2) is being copied. -->	
             <excludes>
                  <exclude>mx4j:mx4j-jmx:jar</exclude>
                  <exclude>mx4j:mx4j-impl:jar</exclude>
@@ -308,26 +339,17 @@
                  <exclude>mx4j:mx4j:jar</exclude>
                  <exclude>rome:rome:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</exclude>
-                 <exclude>org.apache.geronimo.specs:geronimo-annotation_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec:jar</exclude>
                  <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:jar</exclude>
-                 <!--
-                 <exclude>org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar</exclude>
-                 -->
                  <exclude>org.apache.geronimo.specs:geronimo-jsp_2.0_spec:jar</exclude>
                  <exclude>org.apache.activemq:activemq-console:jar</exclude>
-
-		 <!-- TODO following line does not seem to have any effect -->
                  <exclude>org.apache.activemq:activemq-core:jar</exclude>
                  <exclude>org.apache.activemq:activemq-jaas:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-optional:jar</exclude>
                  <exclude>org.apache.activemq:activemq-web:jar</exclude>
-		 <!--
-                 <exclude>org.apache.activemq:activemq:jar</exclude>
-		 -->
                  <exclude>org.apache.activemq:activemq-web-demo:war</exclude>
                  <exclude>xstream:xstream:jar</exclude>
                  <exclude>xom:xom:jar</exclude>
@@ -367,8 +389,7 @@
                  <exclude>activesoap:jaxp-api:jar</exclude>
                  <exclude>rhino:js:jar</exclude>
                  <exclude>junit:junit:jar</exclude>
-		 <!-- need to fix this (sending version for exclusion) -->
-		 <!-- servlet-api-2.3 must be included & following must be excluded -->
+                 <exclude>javax.servlet:servlet-api</exclude>
                  <exclude>org.mortbay.jetty:servlet-api-2.5:jar:6.0.1</exclude>
             </excludes>
         </dependencySet>

@@ -172,6 +172,31 @@ public class CallbackFuture extends Callback {
                 if (log.isDebugEnabled()) {
                     log.debug("Task submitted to Executor");
                 }
+                
+                /*
+                 * TODO:  review
+                 * A thread switch will occur immediately after going out of scope
+                 * on this method.  This is ok, except on some platforms this will
+                 * prompt the JVM to clean up the old thread, thus cleaning up any
+                 * InputStreams there.  If that's the case, and we have not fully
+                 * read the InputStreams, we will likely get a NullPointerException
+                 * coming from the parser, which has a reference to the InputStream
+                 * that got nulled out from under it.  Make sure to do the
+                 * cft.notifyAll() in the right place.  CallbackFutureTask.call()
+                 * is the right place since at that point, the parser has fully read
+                 * the InputStream.
+                 */
+                try {
+                    synchronized (cft) {
+                        cft.wait(180000);  // 3 minutes
+                    }
+                } catch (InterruptedException e) {
+                    if (debug) {
+                        log.debug("cft.wait() was interrupted");
+                        log.debug("Exception: " + e.getMessage());
+                    }
+                }
+                
             } else {
                 if (log.isDebugEnabled()) {
                     log.info(
@@ -239,6 +264,10 @@ class CallbackFutureTask implements Callable {
             if (debug) {
                 log.debug("An error occured while invoking the callback object.");
                 log.debug("Error: " + t.getMessage());
+            }
+        } finally {
+            synchronized(this) {
+                this.notifyAll();
             }
         }
 

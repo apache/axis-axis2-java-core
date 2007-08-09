@@ -228,6 +228,8 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
             } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
+                //cleaning the session
+                cleanupServiceGroupContexts();
                 String serviceGroupContextId = messageContext.getServiceGroupContextId();
                 if (serviceGroupContextId != null) {
                     serviceGroupContext =
@@ -454,14 +456,17 @@ public class ConfigurationContext extends AbstractContext {
 
     public ServiceGroupContext getServiceGroupContextFromSoapSessionTable(
             String serviceGroupContextId,
-            MessageContext msgContext) {
+            MessageContext msgContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext =
                 (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
 
         if (serviceGroupContext != null) {
             serviceGroupContext.touch();
+            return serviceGroupContext;
+        } else {
+            throw new AxisFault("Unable to find corresponding context" +
+                    " for the serviceGroupId: " + serviceGroupContextId);
         }
-        return serviceGroupContext;
     }
 
 

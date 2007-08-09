@@ -192,7 +192,7 @@ public abstract class AxisOperation extends AxisDescription
             disengageModule(module);
         } catch (AxisFault axisFault) {
             // Can't do much here...
-            log.error(axisFault);
+            log.error(axisFault.getMessage(), axisFault);
         }
     }
 

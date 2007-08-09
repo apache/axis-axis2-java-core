@@ -80,6 +80,11 @@ public class POJODeployer implements Deployer {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");
+
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
+                                                 className,
+                                                 deploymentFileData.getFile().getAbsolutePath()));
+
                     JamServiceFactory factory = JamServiceFactory.getInstance();
                     JamServiceParams jam_service_parms = factory.createServiceParams();
                     jam_service_parms.addClassLoader(classLoader);
@@ -303,11 +308,11 @@ public class POJODeployer implements Deployer {
                         operation.setMessageReceiver(inOutmessageReceiver);
                     }
                 } catch (ClassNotFoundException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 } catch (InstantiationException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 } catch (IllegalAccessException e) {
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }

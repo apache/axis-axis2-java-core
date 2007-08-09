@@ -43,6 +43,6 @@ public interface UIConstants {
 	public static final String LIB = "lib" ;
 	public static final String TARGET = "target" ;
 	public static final String PLUGINS = "plugins" ;
-	public static final String AXIS_CODEGEN_PLUGIN_FOLDER = "Axis2_Codegen_Wizard_1.2.0" ;
+	public static final String AXIS_CODEGEN_PLUGIN_FOLDER = "Axis2_Codegen_Wizard_1.3.0" ;
 	
 }

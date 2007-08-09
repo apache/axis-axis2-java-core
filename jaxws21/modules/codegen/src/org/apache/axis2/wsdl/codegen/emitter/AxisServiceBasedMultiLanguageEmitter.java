@@ -279,7 +279,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         
             axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
             if (axisBindingMessage != null) {
-                return axisBindingMessage.getEffectivePolicy();
+                try {
+                    return axisBindingMessage.getEffectivePolicy();
+                } catch (RuntimeException ex){
+                    System.out.println("ERROR: Ignoring policy - " + ex.getMessage());
+                    log.error(ex.getMessage(), ex);
+                }
             }
         }
         return null;
@@ -528,7 +533,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    private Map getNewCopy(Map copyFormMap) {
+    public Map getNewCopy(Map copyFormMap) {
         Map copyToMap = new HashMap();
         Object key;
         for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();) {
@@ -538,7 +543,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return copyToMap;
     }
 
-    private void copyMap(Map copyFormMap, Map copyToMap) {
+    public void copyMap(Map copyFormMap, Map copyToMap) {
         Object key;
         for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();) {
             key = iter.next();

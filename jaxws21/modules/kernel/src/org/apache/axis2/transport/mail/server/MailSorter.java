@@ -142,7 +142,7 @@ public class MailSorter {
                     engine.sendFault(faultContext);
                 }
             } catch (Exception e1) {
-                log.error(e);
+                log.error(e.getMessage(), e);
             }
         }
     }

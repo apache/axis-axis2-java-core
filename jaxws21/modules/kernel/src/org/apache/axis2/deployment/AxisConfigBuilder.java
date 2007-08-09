@@ -272,7 +272,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Class deployerClass = Loader.loadClass(deployerClassName);
                 deployer = (Deployer) deployerClass.newInstance();
             } catch (Exception e) {
-                log.error(e);
+                log.error(e.getMessage(), e);
                 return;
             }
             deployer.setDirectory(directory);

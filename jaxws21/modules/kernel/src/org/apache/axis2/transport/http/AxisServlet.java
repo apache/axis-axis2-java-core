@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -155,7 +156,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     throw new ServletException(e);
                 }
             } catch (Throwable t) {
-                log.error(t);
+                log.error(t.getMessage(), t);
                 try {
                     // If the fault is not going along the back channel we should be 202ing
                     if (AddressingHelper.isFaultRedirected(msgContext)) {
@@ -167,11 +168,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                                 (AxisBindingOperation) msgContext
                                         .getProperty(Constants.AXIS_BINDING_OPERATION);
                         if (axisBindingOperation != null) {
-                            Integer code = (Integer) axisBindingOperation.getFault(
-                                    (String) msgContext.getProperty(Constants.FAULT_NAME))
-                                    .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
-                            if (code != null) {
-                                response.setStatus(code.intValue());
+                            AxisBindingMessage axisBindingMessage = axisBindingOperation.getFault(
+                                    (String) msgContext.getProperty(Constants.FAULT_NAME));
+                            if(axisBindingMessage != null){
+                                Integer code = (Integer) axisBindingMessage
+                                        .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                if (code != null) {
+                                    response.setStatus(code.intValue());
+                                }
                             }
                         }
                     }
@@ -308,16 +312,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private void closeStaxBuilder(MessageContext messageContext) throws ServletException {
         if (closeReader && messageContext != null) {
             try {
-                StAXBuilder builder = (StAXBuilder) messageContext.getEnvelope().getBuilder();
-                if (builder != null) {
-                    builder.close();
+                SOAPEnvelope envelope = messageContext.getEnvelope();
+                if(envelope != null) {
+                    StAXBuilder builder = (StAXBuilder) envelope.getBuilder();
+                    if (builder != null) {
+                        builder.close();
+                    }
                 }
             } catch (Exception e) {
-                log.debug(e);
-                throw new ServletException(e);
+                log.debug(e.toString(), e);
             }
         }
-
     }
 
     /**

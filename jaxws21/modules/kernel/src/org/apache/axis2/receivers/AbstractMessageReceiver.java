@@ -34,6 +34,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.AxisEngine;
@@ -95,7 +96,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             invokeBusinessLogic(messageCtx);
         } catch (AxisFault fault) {
             // If we're in-only, eat this.  Otherwise, toss it upwards!
-            if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
+            if ((messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) &&
+                    !WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageCtx.getAxisOperation().getMessageExchangePattern())) {
                 log.error(fault);
             } else {
                 throw fault;
@@ -245,7 +247,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             } catch (AxisFault e) {
                 // If we're IN-ONLY, swallow this.  Otherwise, send it.
                 if (messageCtx.getAxisOperation() instanceof InOnlyAxisOperation) {
-                    log.debug(e);
+                    log.debug(e.getMessage(), e);
                 } else {
                     try {
                         MessageContext faultContext =
@@ -253,9 +255,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
                         AxisEngine.sendFault(faultContext);
                     } catch (AxisFault axisFault) {
-                        log.error(e);
+                        log.error(e.getMessage(), e);
                     }
-                    log.error(e);
+                    log.error(e.getMessage(), e);
                 }
             }
         }

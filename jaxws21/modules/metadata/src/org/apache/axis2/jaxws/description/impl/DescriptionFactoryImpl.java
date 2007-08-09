@@ -120,6 +120,51 @@ public class DescriptionFactoryImpl {
     }
 
     /**
+     * Clears the entire ServiceDescription cache.
+     * 
+     * <h4>Note</h4>     
+     * This function might cause unpredictable results when configuration contexts are being reused
+     * and/or there are outstanding requests using the cached ServiceDescription objects. Also, 
+     * in-flight requests (both client and server) using ServiceDelegates MUST be done and out of
+     * scope before this method is called.
+     * 
+     */
+    public static void clearServiceDescriptionCache() {
+        cache.clear();
+    }
+    
+    /**
+     * Clears all the ServiceDescription objects in the cache associated with the specified 
+     * configuration context.
+     * 
+     * <h4>Note</h4>
+     * This function should only be used to clear the cache when the specified configuration context
+     * will not be used anymore and there are no outstanding requests using the associated 
+     * ServiceDescription objects. Also, in-flight requests (both client and server) using 
+     * ServiceDelegates MUST be done and out of scope before this method is called.      
+     * Otherwise, unpredictable results might occur.
+     * 
+     * @param configContext The configuration context associated with the ServiceDescription 
+     *                      objects in the cache.
+     */
+    public static void clearServiceDescriptionCache(ConfigurationContext configContext) {
+        if (configContext == null) {
+            return;
+        }
+        synchronized (configContext) {
+            synchronized (cache) {
+                Iterator<DescriptionKey> iter = cache.keySet().iterator();
+                while (iter.hasNext()) {
+                    DescriptionKey key = iter.next();
+                    if (key.getConfigContext() == configContext) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }    
+    
+    /**
      * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromServiceImpl(Class,
      *      AxisService)
      * @deprecated

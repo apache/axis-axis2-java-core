@@ -993,7 +993,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         if (axisOperation != null) {
             QName qname = axisOperation.getName();
             if (qname != null) {
-                opName = qname.toString();
+                opName = qname.getLocalPart();
             }
         }
 

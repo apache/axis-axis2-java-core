@@ -31,6 +31,9 @@
     <description>Apache Axis2 Distribution</description>
     <packaging>pom</packaging>
 
+    <properties>
+       <docs.folder.version>1_3</docs.folder.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -81,10 +84,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
@@ -140,10 +139,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-annotation_1.0_spec</artifactId>
         </dependency>
         <dependency>
@@ -153,10 +148,6 @@
         <dependency>
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -212,10 +203,6 @@
             <artifactId>bsf</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>apache-activemq</artifactId>
-        </dependency>
-        <dependency>
             <groupId>jalopy</groupId>
             <artifactId>jalopy</artifactId>
         </dependency>
@@ -234,7 +221,7 @@
                 <executions>
                     <execution>
                         <id>distribution-package</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -244,6 +231,7 @@
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/src-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/bin-assembly.xml</descriptor> 
+                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor> 
                             </descriptors>
                         </configuration>
                     </execution>
@@ -257,8 +245,69 @@
                 <inherited>false</inherited>
                 <executions>
                     <execution>
+                      <id>package</id>
+                      <phase>process-resources</phase>
+                      <configuration>
+                        <tasks>
+                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
+                                <fileset dir="../documentation/xdocs/@axis2_version_dir@">
+                                    <exclude name="**/*.xml"/>
+                                </fileset>
+                            </copy>
+
+                            <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
+                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
+                                <globmapper from="*.xml" to="*.html"/>
+                                <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
+                            </copy>
+
+			    <filter token="axisVersion" value="${version}"/>
+                            <tstamp>	
+                               <format property="TODAY" pattern="dd-MM-yyyy"/>
+                            </tstamp>
+  	                    <filter token="TODAY" value="${TODAY}"/>
+                            <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
+                                <fileset dir="../..">
+                                    <include name="LICENSE.txt"/>
+		                    <include name="README.txt"/>
+				    <include name="release-notes.html"/>
+                                </fileset>
+                                <fileset dir="../../release-docs/readme-files">
+                                    <include name="*.txt"/>
+                                </fileset>
+			    </copy>
+
+			    <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
+                                <globmapper from="*.xml" to="*.html"/>
+                                <fileset dir="../documentation/xdocs">
+                                    <exclude name="@axis2_version_dir@/**"/>
+                                    <exclude name="**/*.gif"/>
+                                    <exclude name="**/*.jpg"/>
+                                    <exclude name="**/*.png"/>
+                                </fileset>
+                            </copy>
+
+                            <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
+                                <fileset dir="../documentation/xdocs">
+                                    <exclude name="@axis2_version_dir@/**"/>
+                                    <include name="**/*.gif"/>
+                                    <include name="**/*.jpg"/>
+                                    <include name="**/*.png"/>
+                                    <include name="**/*.css"/>
+                                    <include name="**/*.xsd"/>
+                                    <include name="**/*.cgi"/>
+                                    <include name="**/*.properties"/>
+                                </fileset>
+                            </copy>
+                        </tasks>
+                       </configuration>
+                       <goals>
+                         <goal>run</goal>
+                       </goals>
+                    </execution>
+                    <execution>
                         <id>service-module-list-generation</id>
-                        <phase>package</phase>
+                        <phase>process-resources</phase>
                         <configuration>
                             <tasks>
 				<mkdir dir="target/tmp-repository"/>
@@ -268,19 +317,58 @@
 				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
 				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
 				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+				<copy file="../../modules/mex-mar/target/mex-${version}.mar" tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
+				<copy file="../../modules/scripting/target/axis2-scripting-${version}.mar" tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
 			
 				<!-- generate modules.list -->			        
 				<echo file="target/tmp-repository/modules/modules.list" append="false">
-				soapmonitor-${soapmonitor.mar.version}.mar
-				addressing-${addressing.mar.version}.mar
-				ping-${ping.mar.version}.mar
-				mex-${mex.mar.version}.mar
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+soapmonitor-${soapmonitor.mar.version}.mar
+addressing-${addressing.mar.version}.mar
+ping-${ping.mar.version}.mar
+mex-${mex.mar.version}.mar
+scripting-${scripting.mar.version}.mar
 			        </echo>
 
 				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
 				<!-- generate services.list -->			        
 			        <echo file="target/tmp-repository/services/services.list" append="false">
-				version.aar
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+version.aar
 			        </echo>
                             </tasks>
                         </configuration>
@@ -288,65 +376,22 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+		        <id>delete-temporary-files</id>
+			<phase>install</phase>
+			<configuration>
+			   <tasks>
+			     <delete dir="target/tmp-doc-distro"/>
+			     <delete dir="target/tmp-repository"/>
+			     <delete dir="target/archive-tmp"/>
+			   </tasks>
+		        </configuration>
+		        <goals>
+		            <goal>run</goal>
+		        </goals>
+	            </execution>
                 </executions>
 	     </plugin>
         </plugins>
     </build>
-
-
-    <!--<profiles>
-        <profile>
-            <id>java15</id>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.1</version>
-                        <executions>
-                            <execution>
-                                <id>package</id>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <tasks>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxbri/target/axis2-jaxbri-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/metadata/target/axis2-metadata-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxws/target/axis2-jaxws-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/jaxws-api/target/axis2-jaxws-api-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/saaj-api/target/axis2-saaj-api-${version}.jar"/>
-                                        </copy>
-                                        <copy toDir="target/bin/jdk1.5-modules">
-                                            <fileset
-                                                    file="../../modules/saaj/target/axis2-saaj-${version}.jar"/>
-                                        </copy>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <activation>
-                <jdk>1.5</jdk>
-            </activation>
-        </profile>
-    </profiles>-->
 </project>

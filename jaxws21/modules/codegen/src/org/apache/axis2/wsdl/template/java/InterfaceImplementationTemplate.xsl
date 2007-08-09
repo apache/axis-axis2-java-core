@@ -385,14 +385,11 @@
                                             <xsl:choose>
                                                 <xsl:when test="@mustUnderstand = 'true'">
                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.setMustUnderstand(true);
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                    addHeader(omElement<xsl:value-of select="@name"/>,env,true);
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                    addHeader(omElement<xsl:value-of select="@name"/>,env);
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         }
@@ -482,6 +479,10 @@
                                 return toShort(_returnEnv.getBody().getFirstElement(),
                                                                  getEnvelopeNamespaces(_returnEnv));
                             </xsl:when>
+                            <xsl:when test="$outputtype='boolean'">
+                                return toBoolean(_returnEnv.getBody().getFirstElement(),
+                                                                 getEnvelopeNamespaces(_returnEnv));
+                            </xsl:when>                            
                             <xsl:otherwise>
                                 java.lang.Object object = fromOM(
                                              _returnEnv.getBody().getFirstElement() ,
@@ -662,14 +663,11 @@
                                            <xsl:choose>
                                                 <xsl:when test="@mustUnderstand = 'true'">
                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.setMustUnderstand(true);
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                    addHeader(omElement<xsl:value-of select="@name"/>,env,true);
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                    addHeader(omElement<xsl:value-of select="@name"/>,env);
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                         }
@@ -754,6 +752,10 @@
                                         callback.receiveResult<xsl:value-of select="@name"/>(toShort(resultEnv.getBody().getFirstElement(),
                                                                          getEnvelopeNamespaces(resultEnv)));
                                     </xsl:when>
+                                    <xsl:when test="$outputtype='boolean'">
+                                        callback.receiveResult<xsl:value-of select="@name"/>(toBoolean(resultEnv.getBody().getFirstElement(),
+                                                                         getEnvelopeNamespaces(resultEnv)));
+                                    </xsl:when>                                    
                                     <xsl:otherwise>
                                         java.lang.Object object = fromOM(resultEnv.getBody().getFirstElement(),
                                                                          <xsl:value-of select="$outputtype"/>.class,
@@ -778,8 +780,64 @@
                             }
                             }
 
-                            public void onError(java.lang.Exception e) {
-                                callback.receiveError<xsl:value-of select="@name"/>(e);
+                            public void onError(java.lang.Exception error) {
+								if (error instanceof org.apache.axis2.AxisFault) {
+									org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault) error;
+									org.apache.axiom.om.OMElement faultElt = f.getDetail();
+									if (faultElt!=null){
+										if (faultExceptionNameMap.containsKey(faultElt.getQName())){
+											//make the fault by reflection
+											try{
+													java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(faultElt.getQName());
+													java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+													java.lang.Exception ex=
+														(java.lang.Exception) exceptionClass.newInstance();
+													//message class
+													java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
+														java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+													java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+													java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+															new java.lang.Class[]{messageClass});
+													m.invoke(ex,new java.lang.Object[]{messageObject});
+													<xsl:for-each select="fault/param">
+													if (ex instanceof <xsl:value-of select="@name"/>){
+														callback.receiveError<xsl:value-of select="$method-name"/>((<xsl:value-of select="@name"/>)ex);
+											            return;
+										            }
+										            </xsl:for-each>
+					
+										            callback.receiveError<xsl:value-of select="@name"/>(new java.rmi.RemoteException(ex.getMessage(), ex));
+                                            } catch(java.lang.ClassCastException e){
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.ClassNotFoundException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.NoSuchMethodException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.reflect.InvocationTargetException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.IllegalAccessException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (java.lang.InstantiationException e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            } catch (org.apache.axis2.AxisFault e) {
+                                                // we cannot intantiate the class - throw the original Axis fault
+                                                callback.receiveError<xsl:value-of select="@name"/>(f);
+                                            }
+									    } else {
+										    callback.receiveError<xsl:value-of select="@name"/>(f);
+									    }
+									} else {
+									    callback.receiveError<xsl:value-of select="@name"/>(f);
+									}
+								} else {
+								    callback.receiveError<xsl:value-of select="@name"/>(error);
+								}
                             }
 
                             public void onFault(org.apache.axis2.context.MessageContext faultContext) {
@@ -911,14 +969,11 @@
                                                             <xsl:choose>
                                                                 <xsl:when test="@mustUnderstand = 'true'">
                                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                                    soapHeaderBlock<xsl:value-of select="@name"/>.setMustUnderstand(true);
-                                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                                    addHeader(omElement<xsl:value-of select="@name"/>,env,true);
                                                                 </xsl:when>
                                                                 <xsl:otherwise>
                                                                     org.apache.axiom.om.OMElement omElement<xsl:value-of select="@name"/> = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                                                                    org.apache.axiom.soap.SOAPHeaderBlock soapHeaderBlock<xsl:value-of select="@name"/> = env.getHeader().addHeaderBlock(omElement<xsl:value-of select="@name"/>.getLocalName(),omElement<xsl:value-of select="@name"/>.getNamespace());
-                                                                    soapHeaderBlock<xsl:value-of select="@name"/>.addChild(omElement<xsl:value-of select="@name"/>.getFirstElement());
+                                                                    addHeader(omElement<xsl:value-of select="@name"/>,env);
                                                                 </xsl:otherwise>
                                                             </xsl:choose>
                                                         }

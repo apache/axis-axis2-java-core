@@ -30,15 +30,16 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.ExternalPolicySerializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ListingAgent extends AbstractAgent {
 
@@ -113,8 +118,12 @@ public class ListingAgent extends AbstractAgent {
             ip = filePart.substring(ipindex + 2, filePart.length());
             int seperatorIndex = ip.indexOf(":");
             int slashIndex = ip.indexOf("/");
-            String portstr = ip.substring(seperatorIndex + 1,
-                                          slashIndex);
+            String portstr;
+            if (seperatorIndex >= 0) {
+                portstr = ip.substring(seperatorIndex + 1, slashIndex);
+            } else {
+                portstr = "80";
+            }
             try {
                 addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
@@ -200,13 +209,28 @@ public class ListingAgent extends AbstractAgent {
         }
     }
 
+    public String extractServiceName(String urlString) {
+        int n = urlString.indexOf(configContext.getServiceContextPath());
+        if (n != -1) {
+            String serviceName = urlString.substring(n + configContext.getServiceContextPath().length(),
+                    urlString.length());
+            if (serviceName.length() > 0) {
+                if(serviceName.charAt(0)=='/'){
+                    serviceName = serviceName.substring(1);
+                }
+                return serviceName;
+            }
+        }
+        return urlString.substring(urlString.lastIndexOf("/") + 1,
+                urlString.length());
+    }
+
     public void processListService(HttpServletRequest req,
                                    HttpServletResponse res)
             throws IOException, ServletException {
 
-        String filePart = req.getRequestURL().toString();
-        String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
-                                                filePart.length());
+        String url = req.getRequestURL().toString();
+        String serviceName = extractServiceName(url);
         HashMap services = configContext.getAxisConfiguration().getServices();
         String query = req.getQueryString();
         int wsdl2 = query.indexOf("wsdl2");
@@ -220,7 +244,7 @@ public class ListingAgent extends AbstractAgent {
                 boolean isHttp = "http".equals(req.getScheme());
                 if (wsdl2 >= 0) {
                     res.setContentType("text/xml");
-                    String ip = extractHostAndPort(filePart, isHttp);
+                    String ip = extractHostAndPort(url, isHttp);
                     String wsdlName = req.getParameter("wsdl2");
                     if (wsdlName != null && wsdlName.length()>0) {
                         InputStream in = ((AxisService) serviceObj).getClassLoader()
@@ -244,7 +268,7 @@ public class ListingAgent extends AbstractAgent {
                 } else if (wsdl >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-                    String ip = extractHostAndPort(filePart, isHttp);
+                    String ip = extractHostAndPort(url, isHttp);
                     String wsdlName = req.getParameter("wsdl");
 
                     if (wsdlName != null && wsdlName.length()>0) {
@@ -417,6 +441,7 @@ public class ListingAgent extends AbstractAgent {
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
+                res.sendError(HttpServletResponse.SC_NOT_FOUND, url);
             }
         }
 
@@ -491,6 +516,10 @@ public class ListingAgent extends AbstractAgent {
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
             this.axisConf = axisConf;
+            Parameter param = transprtIn.getParameter(PARAM_PORT);
+            if (param != null) {
+                this.port = Integer.parseInt((String) param.getValue());
+            }
         }
 
         public void start() throws AxisFault {

@@ -19,6 +19,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.util.PrettyPrinter;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 import java.io.File;
 
@@ -31,6 +32,24 @@ public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
         * well !!!
         */
         fileExtension = ".java";
+    }
+
+    /**
+     * Recursive procedure to prettify the files
+     *
+     * @param file
+     */
+    protected void prettify(File file, CodeGenConfiguration configuration) {
+        if (file.isFile() &&
+                file.exists() &&
+                file.getName().toLowerCase().endsWith(fileExtension)) {
+            prettifyFile(file);
+        } else if (file.isDirectory()) {
+            File[] childFiles = file.listFiles();
+            for (int i = 0; i < childFiles.length; i++) {
+                prettify(childFiles[i], configuration);
+            }
+        }
     }
 
     /**

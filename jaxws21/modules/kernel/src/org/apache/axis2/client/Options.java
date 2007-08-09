@@ -193,6 +193,10 @@ public class Options implements Externalizable {
     //This property can be used to specify to call the auto transport clean up
     private transient boolean callTransportCleanup ;
 
+
+    private transient String userName;
+    private transient String password;
+
     //----------------------------------------------------------------
     // end MetaData section
     //----------------------------------------------------------------
@@ -1658,5 +1662,28 @@ public class Options implements Externalizable {
 
     public void setCallTransportCleanup(boolean callTransportCleanup) {
         this.callTransportCleanup = callTransportCleanup;
+    }
+
+
+    public String getUserName() {
+        if (userName == null && parent != null) {
+            return parent.getUserName();
+        }
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        if (password == null && parent != null) {
+            return parent.getPassword();
+        }
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

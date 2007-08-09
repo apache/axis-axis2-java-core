@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ModuleDeployer implements Deployer {
 
@@ -67,11 +68,13 @@ public class ModuleDeployer implements Deployer {
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
             archiveReader.readModuleArchive(deploymentFileData, metaData, isDirectory, axisConfig);
-            metaData.setFileName(deploymentFileData.getFile().toURL());
+            URL url = deploymentFileData.getFile().toURL();
+            metaData.setFileName(url);
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                          Utils.getModuleName(metaData.getName(),
-                                                             metaData.getVersion())));
+                                                             metaData.getVersion()),
+                                         url.toString()));
         } catch (DeploymentException e) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
                                           deploymentFileData.getName(),

@@ -84,6 +84,7 @@
 	<soapmonitor.mar.version>SNAPSHOT</soapmonitor.mar.version>
 	<mex.mar.version>SNAPSHOT</mex.mar.version>
 	<ping.mar.version>SNAPSHOT</ping.mar.version>
+	<scripting.mar.version>SNAPSHOT</scripting.mar.version>
         <annogen.version>0.1.0</annogen.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.4</antlr.version>
@@ -98,6 +99,7 @@
         <commons.io.version>1.2</commons.io.version>
         <commons.logging.version>1.1</commons.logging.version>
         <eclipse.version>3.2.0</eclipse.version>
+	<eclipse.plugins.version>1.3.0</eclipse.plugins.version>
         <fi.version>1.2.1</fi.version>
         <geronimo.spec.activation.version>1.0-M1</geronimo.spec.activation.version>
         <geronimo.spec.javamail.version>1.0-M1</geronimo.spec.javamail.version>
@@ -235,6 +237,18 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Sumedha Rubasinghe</name>
+            <id>sumedha</id>
+            <email>sumedha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Charitha Kamkanamge</name>
+            <id>charitha</id>
+            <email>charitha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
             <name>Srinath Perera</name>
             <id>hemapani</id>
             <email>hemapani AT apache.org</email>
@@ -345,6 +359,13 @@
             <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
+       
+<contributor>
+            <name>Shivantha Huruggamuwa</name>
+            <email>shivanthah AT gmail.com</email>
+            <organization>University Of Peradeniya , Sri Lanaka</organization>
+        </contributor>
+
     </contributors>
     <repositories>
         <!--

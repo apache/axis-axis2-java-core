@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.net.URL;
 
 public class ServiceDeployer implements Deployer {
     private static final Log log = LogFactory.getLog(ServiceDeployer.class);
@@ -79,13 +80,15 @@ public class ServiceDeployer implements Deployer {
                     deploymentFileData.getAbsolutePath(), deploymentFileData,
                     serviceGroup, isDirectory, wsdlservice,
                     configCtx);
+            URL location = deploymentFileData.getFile().toURL();
             DeploymentEngine.addServiceGroup(serviceGroup,
                                              serviceList,
-                                             deploymentFileData.getFile().toURL(),
+                                             location,
                                              deploymentFileData,
                                              axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                         deploymentFileData.getName()));
+                                         deploymentFileData.getName(),
+                                         location.toString()));
         } catch (DeploymentException de) {
             de.printStackTrace();
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,

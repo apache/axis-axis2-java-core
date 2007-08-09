@@ -34,6 +34,11 @@
          #include "<xsl:value-of select="$inputtype"/>.h"
         </xsl:for-each>
        </xsl:for-each>
+
+	#ifdef __cplusplus
+	extern "C" {
+	#endif
+
         /* function prototypes - for header file*/
         /**
          * <xsl:value-of select="$method-prefix"/>_create
@@ -113,5 +118,9 @@
         </xsl:if>  <!--close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out'"-->
         </xsl:for-each>
         </xsl:if>  <!--close for  test="$isAsync='1'-->
+
+	#ifdef __cplusplus
+	}
+	#endif
    </xsl:template>
 </xsl:stylesheet>

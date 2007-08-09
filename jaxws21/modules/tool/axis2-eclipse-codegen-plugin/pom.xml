@@ -141,72 +141,110 @@
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-javamail_1.4_spec</artifactId>
+			<version>${geronimo.spec.activation.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>annogen</groupId>
 			<artifactId>annogen</artifactId>
+			<version>${annogen.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
+			<artifactId>axis2</artifactId>
 			<version>${version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
-			<version>${version}</version>
-		</dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-codegen</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-kernel</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-adb</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-adb-codegen</artifactId>
+                        <version>${version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>org.apache.axis2</groupId>
+                        <artifactId>axis2-java2wsdl</artifactId>
+                        <version>${version}</version>
+                </dependency>
 		<dependency>
 			<groupId>${stax.impl.groupid}</groupId>
 			<artifactId>${stax.impl.artifactid}</artifactId>
+			<version>${stax.impl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.neethi</groupId>
 			<artifactId>neethi</artifactId>
+			<version>${neethi.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
+			<version>${wsdl4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>xmlbeans</groupId>
 			<artifactId>xbean</artifactId>
+			<version>${xbean.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.schema</groupId>
 			<artifactId>XmlSchema</artifactId>
+			<version>${xmlschema.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
+			<version>${ant.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.woden</groupId>
 			<artifactId>woden</artifactId>
+			<version>${woden.version}</version>
 		</dependency>
+
+                <dependency>
+                        <groupId>commons-httpclient</groupId>
+                        <artifactId>commons-httpclient</artifactId>
+                        <version>${commons.httpclient.version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                        <version>${commons.codec.version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>jibx</groupId>
+                        <artifactId>jibx-bind</artifactId>
+                        <version>${jibx.version}</version>
+                </dependency>
+                <dependency>
+                        <groupId>jibx</groupId>
+                        <artifactId>jibx-run</artifactId>
+                        <version>${jibx.version}</version>
+                </dependency>
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
@@ -257,7 +295,7 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"/>
+								<property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_${eclipse.plugins.version}"/>
 								<property name="codegen.plugin.zip.name" value="axis2-eclipse-codegen-wizard.zip"/>
 								<property name="codegen.plugin.jar.name" value="Axis2CodegenWizard.jar"/>
 								<property name="src" value="./src"/>
@@ -276,8 +314,8 @@
 								<property name="plugin.classpath.file.name" value=".classpath"/>
 								<property name="plugin.help.file.name" value="help_toc.xml"/>
 								<property name="codegen.resource.dir" value="../conf/codegen"/>
-								<property name="codegen.help.resource.file" value="../../../xdocs/tools/1_3/eclipse/wsdl2java-plugin.html"/>
-								<property name="codegen.help.images.dir" value="../../../xdocs/tools/1_3/eclipse/images"/>
+								<property name="codegen.help.resource.file" value="../../../modules/documentation/xdocs/tools/1_3/eclipse/wsdl2java-plugin.html"/>
+								<property name="codegen.help.images.dir" value="../../../modules/documentation/xdocs/tools/1_3/eclipse/images"/>
 								<property name="axis2.lib.dir" value="../../../target/lib"/>
 								<property name="codegen.resource.dir" value="../conf/codegen"/>
 								<delete dir="./target/plugin/${codegen.plugin.version}"/>
@@ -285,8 +323,9 @@
 								<delete dir="./target/dist"/>
 								<mkdir dir="./target/dist"/>
 								<!--Filter tockens for the copy command to filter the versions of external dependencies -->
-								     <filter token="version_number" value="${version_number}" />
-								     <filter token="activation.version" value="${activation.version}" />
+								     <filter token="eclipse.plugins.version" value="${eclipse.plugins.version}" />
+								     <filter token="version" value="${version}" />
+								     <filter token="geronimo.spec.activation.version" value="${geronimo.spec.activation.version}" />
 								     <filter token="annogen.version" value="${annogen.version}" />
 								     <filter token="ant.version" value="${ant.version}" />
 								     <filter token="axiom.version" value="${axiom.version}" />
@@ -295,7 +334,7 @@
 								     <filter token="stax.api.version" value="${stax.api.version}" />
 								     <filter token="stax.impl.version" value="${stax.impl.version}" />
 								     <filter token="xbean.version" value="${xbean.version}" />
-								     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+								     <filter token="xmlschema.version" value="${xmlschema.version}" />
 								     <filter token="log4j.version" value="${log4j.version}" />
 								     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
 								     <filter token="woden.version" value="${woden.version}" />
@@ -304,8 +343,7 @@
 								     <filter token="jibx.version" value="${jibx.version}" />
 
 								<unzip src="./target/axis2.eclipse.codegen.plugin-${pom.version}.jar" dest="./target/plugin/${codegen.plugin.version}"/>
-								<!-- Copy to the same position with the filtering on-->
-								<!-- Copy to the same position with the filtering on-->
+                                                                <!-- Copy to the same position with the filtering on-->
 								<copy todir="./target/plugin/${codegen.plugin.version}" filtering="on">
 									<fileset dir="${codegen.resource.dir}">
 										<include name="plugin.xml"/>
@@ -327,6 +365,14 @@
 								<copy todir="./target/plugin/${codegen.plugin.version}/${icons.dir.name}">
 									<fileset dir="${codegen.resource.dir}/${icons.dir.name}"/>
 								</copy>
+								<!-- copy the lib files -->
+                                                                <mkdir dir="./target/plugin/temp"/>
+								<unzip src="./target/dist-axis2-eclipse-codege-plugin.zip" dest="./target/plugin/temp"/>
+                                                                <mkdir dir="./target/plugin/${codegen.plugin.version}/lib"/>
+                                                                <copy todir="./target/plugin/${codegen.plugin.version}/lib">
+                                                                        <fileset dir="./target/plugin/temp/lib"/>
+                                                                </copy>
+								<delete dir="./target/plugin/temp"/>
 								<!-- copy the other project files-->
 								<copy todir="./target/plugin/${codegen.plugin.version}">
 									<fileset file="${codegen.resource.dir}/${plugin.project.file.name}"/>

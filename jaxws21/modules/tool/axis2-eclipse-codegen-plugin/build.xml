@@ -47,8 +47,8 @@
     <property name="tool_docs_version" value="1_3"></property>
 
     <property name="codegen.resource.dir" value="../conf/codegen"></property>
-    <property name="codegen.help.resource.file" value="../../../xdocs/tools/${tool_docs_version}/eclipse/wsdl2java-plugin.html"></property>
-    <property name="codegen.help.images.dir" value="../../../xdocs/tools/${tool_docs_version}/eclipse/images"></property>
+    <property name="codegen.help.resource.file" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/wsdl2java-plugin.html"></property>
+    <property name="codegen.help.images.dir" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/images"></property>
     <property name="axis2.lib.dir" value="../../../target/lib"></property>
 
     <!--Filter tockens for the copy command to filter the versions of external dependencies -->

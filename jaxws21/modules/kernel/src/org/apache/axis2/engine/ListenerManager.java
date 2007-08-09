@@ -243,7 +243,7 @@ public class ListenerManager {
                     listenerManager.stop();
                 }
             } catch (AxisFault axisFault) {
-                log.error(axisFault);
+                log.error(axisFault.getMessage(), axisFault);
             }
         }
     }

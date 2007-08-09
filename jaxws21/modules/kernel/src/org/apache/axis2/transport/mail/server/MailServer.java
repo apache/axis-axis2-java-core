@@ -45,7 +45,7 @@ public class MailServer {
             log.info("Sleeping for a bit to let the mail server start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
-            log.error(e1);
+            log.error(e1.getMessage(), e1);
         }
     }
 
@@ -73,14 +73,14 @@ public class MailServer {
             configurationContext =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null);
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
 
         try {
             log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
-            log.error(e1);
+            log.error(e1.getMessage(), e1);
         }
 
         st = new Storage();
@@ -94,7 +94,7 @@ public class MailServer {
             log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
-            log.error(e1);
+            log.error(e1.getMessage(), e1);
         }
     }
 
@@ -128,7 +128,7 @@ public class MailServer {
             log.info("Giving some time for the sockets to close.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
-            log.error(e1);
+            log.error(e1.getMessage(), e1);
         }
     }
 }

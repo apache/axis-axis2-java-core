@@ -173,7 +173,7 @@ public class POP3Worker extends Thread {
 
             socket.close();
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getMessage(), e);
         }
     }
 }

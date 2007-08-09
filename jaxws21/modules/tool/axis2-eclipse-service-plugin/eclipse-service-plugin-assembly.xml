@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 <assembly>
-    <id>axis2-service-codege-plugin</id>
+    <id>axis2-eclipse-service-plugin</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>zip</format>
@@ -35,7 +35,7 @@
                 <include>commons-logging:commons-logging:jar</include>
                 <include>org.apache.axis2:axis2:jar</include>
                 <include>log4j:log4j:jar</include>
-                <include>ant:ant:jar</include>
+                <include>org.apache.ant:ant:jar</include>
             </includes>
         </dependencySet>
 	</dependencySets>
