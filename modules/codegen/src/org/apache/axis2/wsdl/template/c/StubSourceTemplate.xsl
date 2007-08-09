@@ -19,6 +19,7 @@
        */
 
       #include "<xsl:value-of select="@name"/>.h"
+      #include &lt;axis2_msg.h&gt;
 
       /**
        * <xsl:value-of select="@name"/> C implementation
@@ -53,19 +54,23 @@
          axutil_qname_t *op_qname =  NULL;
          axis2_svc_t *svc = NULL;
          axis2_op_t *op = NULL;
+         axis2_op_t *annon_op = NULL;
+         axis2_msg_t *msg_out = NULL;
+         axis2_msg_t *msg_in = NULL;
+         axis2_msg_t *msg_out_fault = NULL;
+         axis2_msg_t *msg_in_fault = NULL;
 
-	 axis2_phases_info_t *info = NULL;
-	 axis2_svc_ctx_t *svc_ctx = NULL;
-	 axis2_conf_ctx_t *conf_ctx = NULL;
-	 axis2_conf_t *conf = NULL;
 
          /* Modifying the Service */
          svc_client = axis2_stub_get_svc_client (stub, env );
          svc = (axis2_svc_t*)axis2_svc_client_get_svc( svc_client, env );
-	 svc_ctx = axis2_svc_client_get_svc_ctx(svc_client, env);
-	 conf_ctx = axis2_svc_ctx_get_conf_ctx(svc_ctx, env);
-	 conf = axis2_conf_ctx_get_conf(conf_ctx, env);
-	 info = axis2_conf_get_phases_info(conf, env);
+
+         annon_op = axis2_svc_get_op_with_name(svc, env, AXIS2_ANON_OUT_IN_OP);
+         msg_out = axis2_op_get_msg(annon_op, env, AXIS2_MSG_OUT);
+         msg_in = axis2_op_get_msg(annon_op, env, AXIS2_MSG_IN);
+         msg_out_fault = axis2_op_get_msg(annon_op, env, AXIS2_MSG_OUT_FAULT);
+         msg_in_fault = axis2_op_get_msg(annon_op, env, AXIS2_MSG_IN_FAULT);
+
          axutil_qname_create(env,"<xsl:value-of select="@servicename"/>" ,NULL, NULL);
          axis2_svc_set_qname (svc, env, svc_qname);
 
@@ -86,7 +91,15 @@
                axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_IN);
              </xsl:otherwise>
            </xsl:choose>
-	   axis2_phases_info_set_op_phases(info, env, op);
+           axis2_msg_increment_ref(msg_out, env);
+           axis2_msg_increment_ref(msg_in, env);
+           axis2_msg_increment_ref(msg_out_fault, env);
+           axis2_msg_increment_ref(msg_in_fault, env);
+           axis2_op_add_msg(op, env, AXIS2_MSG_OUT, msg_out);
+           axis2_op_add_msg(op, env, AXIS2_MSG_IN, msg_in);
+           axis2_op_add_msg(op, env, AXIS2_MSG_OUT_FAULT, msg_out);
+           axis2_op_add_msg(op, env, AXIS2_MSG_IN_FAULT, msg_in);
+           
            axis2_svc_add_op(svc, env, op);
 
          </xsl:for-each>
@@ -165,7 +178,7 @@
             axutil_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
             <xsl:if test="$style='doc'">
-            const axutil_string_t *soap_act = NULL;
+            axutil_string_t *soap_act = NULL;
             </xsl:if>    
             <xsl:if test="output/param/@ours">
            	    <!-- this means data binding is enable -->
