@@ -91,7 +91,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      *
      * @param servletConfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
      */
-    public WarBasedAxisConfigurator(ServletConfig servletConfig) {
+    public WarBasedAxisConfigurator(ServletConfig servletConfig) throws DeploymentException {
         try {
             this.config = servletConfig;
             InputStream axis2Stream = null;
@@ -170,6 +170,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
 
         } catch (DeploymentException e) {
             log.error(e.getMessage(), e);
+            throw e;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
