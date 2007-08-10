@@ -69,6 +69,8 @@ import org.xml.sax.SAXException;
 import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -1105,8 +1107,20 @@ public class AxisService extends AxisDescription {
                         } else {
                             ((SOAPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
                         }
-                        //TODO : change the Endpoint refrence addess as well.
+                    } else if (extensibilityEle instanceof SOAP12Address){
+                        if (requestIP == null) {
+                            ((SOAP12Address) extensibilityEle).setLocationURI(getEPRs()[0]);
+                        } else {
+                            ((SOAP12Address) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                        }
+                    } else if (extensibilityEle instanceof HTTPAddress){
+                        if (requestIP == null) {
+                            ((HTTPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                        } else {
+                            ((HTTPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                        }
                     }
+                    //TODO : change the Endpoint refrence addess as well.
                 }
             }
         }
