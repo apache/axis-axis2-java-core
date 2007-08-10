@@ -680,6 +680,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected boolean isDataHandler(JClass clazz){
+        if(clazz == null ){
+            return false;
+        }
         String classType = clazz.getQualifiedName();
         if("java.lang.Object".equals(classType)){
             return false;
