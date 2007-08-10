@@ -17,7 +17,7 @@
 		<directory>target/tmp-doc-distro/docs</directory>
 		<outputDirectory></outputDirectory>
 		<includes>
-			<include>README.txt</include>
+			<include>README-war.txt</include>
 			<include>NOTICE.txt</include>
 			<include>LICENSE.txt</include>
 		</includes>
