@@ -97,8 +97,8 @@
            axis2_msg_increment_ref(msg_in_fault, env);
            axis2_op_add_msg(op, env, AXIS2_MSG_OUT, msg_out);
            axis2_op_add_msg(op, env, AXIS2_MSG_IN, msg_in);
-           axis2_op_add_msg(op, env, AXIS2_MSG_OUT_FAULT, msg_out);
-           axis2_op_add_msg(op, env, AXIS2_MSG_IN_FAULT, msg_in);
+           axis2_op_add_msg(op, env, AXIS2_MSG_OUT_FAULT, msg_out_fault);
+           axis2_op_add_msg(op, env, AXIS2_MSG_IN_FAULT, msg_in_fault);
            
            axis2_svc_add_op(svc, env, op);
 
