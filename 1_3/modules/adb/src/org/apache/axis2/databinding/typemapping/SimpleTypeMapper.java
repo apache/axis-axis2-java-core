@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.TimeZone;
 
@@ -48,7 +47,6 @@ public class SimpleTypeMapper {
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALENDAR = "java.util.Calendar";
     private static final String W_DATE = "java.util.Date";
-    private static final String W_DATA_HANDLER = "javax.activation.DataHandler";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -201,7 +199,7 @@ public class SimpleTypeMapper {
     }
 
     public static boolean isDataHandler(Class obj) {
-        return "javax.activation.DataHandler".equals(obj.getName());
+       return obj.isAssignableFrom(DataHandler.class);
     }
 
     public static boolean isCollection(Class obj) {

@@ -34,6 +34,7 @@ import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
 import java.util.*;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
@@ -581,7 +582,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArryType && "byte".equals(propertyName)) {
             propertyName = "base64Binary";
         }
-        if ("javax.activation.DataHandler".equals(propertyName)) {
+        if (isDataHandler(type)) {
             propertyName = "base64Binary";
         }
 
@@ -653,7 +654,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             classTypeName = "base64Binary";
             isArrayType = false;
         }
-        if ("javax.activation.DataHandler".equals(classTypeName)) {
+
+        if (isDataHandler(type)) {
             classTypeName = "base64Binary";
         }
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
@@ -675,6 +677,23 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
 
         return schemaTypeName;
+    }
+
+    protected boolean isDataHandler(JClass clazz){
+        String classType = clazz.getQualifiedName();
+        if("java.lang.Object".equals(classType)){
+            return false;
+        }
+        if ("javax.activation.DataHandler".equals(classType)) {
+            return true;
+        } else {
+            JClass supuerClass = clazz.getSuperclass();
+            if (supuerClass != null) {
+                return isDataHandler(supuerClass);
+            } else {
+                return false;
+            }
+        }
     }
 
     protected void addContentToMethodSchemaType(XmlSchemaSequence sequence,
