@@ -259,7 +259,13 @@
                 <include>mex-impl-${version}.jar</include>
             </includes>
         </fileSet>
-
+        <fileSet>
+            <directory>../../modules/rmi/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-rmi-${version}.jar</include>
+            </includes>
+        </fileSet>
         <fileSet>
             <directory>../../legal</directory>
             <outputDirectory>lib</outputDirectory>
@@ -321,6 +327,7 @@
 				<include>wsdl/**/*</include>
 				<include>yahoojsonsearch/**/*</include>
 				<include>yahoorestsearch/**/*</include>            
+				<include>rmi/**/*</include>            
             </includes>
             <excludes>
                 <exclude>**/*.iml</exclude>

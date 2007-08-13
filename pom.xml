@@ -59,7 +59,8 @@
 		<module>modules/webapp</module>
 		<module>modules/xmlbeans</module>
 		<module>modules/samples</module>
-	    <module>modules/scripting</module>
+	        <module>modules/scripting</module>
+	        <module>modules/rmi</module>
 	</modules>
  	<profiles>
 	   <profile>
