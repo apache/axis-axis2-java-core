@@ -32,6 +32,7 @@ import org.apache.axis2.databinding.types.*;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -1129,6 +1130,10 @@ public class ConverterUtil {
     public static Object getAnyTypeObject(XMLStreamReader xmlStreamReader) throws XMLStreamException {
         Object returnObject = null;
 
+        // make sure reader is at the first element.
+        while(!xmlStreamReader.isStartElement()){
+            xmlStreamReader.next();
+        }
         // first check whether this element is null or not
         String nillableValue = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "nil");
         if ("true".equals(nillableValue) || "1".equals(nillableValue)){
@@ -1139,7 +1144,10 @@ public class ConverterUtil {
                 if (attributeType.indexOf(":") > -1) {
                     attributeType = attributeType.substring(attributeType.indexOf(":") + 1);
                 }
-                String attribValue = xmlStreamReader.getElementText();
+                NamespaceContext namespaceContext = xmlStreamReader.getNamespaceContext();
+                xmlStreamReader.next();
+
+                String attribValue = xmlStreamReader.getText();
                 if (attribValue != null){
                     if (attributeType.equals("string")) {
                         returnObject = attribValue;
@@ -1151,7 +1159,7 @@ public class ConverterUtil {
                         if (attribValue.indexOf(":") > -1){
                             namespacePrefix = attribValue.substring(0,attribValue.indexOf(":"));
                             localPart = attribValue.substring(attribValue.indexOf(":") + 1);
-                            returnObject = new QName(xmlStreamReader.getNamespaceURI(namespacePrefix),localPart);
+                            returnObject = new QName(namespaceContext.getNamespaceURI(namespacePrefix),localPart);
                         }
                     } else if ("boolean".equals(attributeType)) {
                         returnObject = new Boolean(attribValue);
