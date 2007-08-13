@@ -1,9 +1,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
-
     <xsl:variable name="targetNs" select="/javaConstruct/@targetNamespace"/>
-
     <xsl:template match="javaConstruct">package <xsl:value-of select="@package"/>;
 <xsl:for-each select="importList/import">
 import <xsl:value-of select="@value"/>;</xsl:for-each>
@@ -36,24 +34,50 @@ public interface <xsl:value-of select="@name"/>{
 
     <xsl:template match="method">
     <xsl:variable name="outparamcount" select="count(output/param)"/>
+    <xsl:variable name="parameterstyle" select="@parameterstyle"/>
+    <xsl:variable name="useholder" select="@useholder"/>
+    <xsl:variable name="style" select="@style"/>    
     /**<xsl:for-each select="input/param">
     * @param <xsl:value-of select="@name"/></xsl:for-each><xsl:if test="$outparamcount != 0">
     * @return
     *    <xsl:value-of select="output/param/@shorttype"/></xsl:if><xsl:for-each select="fault/param[@type!='']">
     * @throws <xsl:value-of select="@name"/></xsl:for-each>
     */
-    @javax.jws.WebMethod
-    <xsl:choose>
-        <xsl:when test="$outparamcount = 0">@javax.jws.Oneway</xsl:when>
-        <xsl:otherwise>@javax.jws.WebResult(targetNamespace = "<xsl:value-of select="$targetNs"/>")</xsl:otherwise>
+    @javax.jws.WebMethod<xsl:choose>
+        <xsl:when test="$outparamcount = 0"><xsl:text>
+    </xsl:text>@javax.jws.Oneway</xsl:when>
+        <xsl:when test="$useholder = 'true'"></xsl:when>
+        <xsl:otherwise><xsl:text>
+    </xsl:text>@javax.jws.WebResult(targetNamespace = "<xsl:value-of select="$targetNs"/>"<xsl:choose>
+                <xsl:when test="$parameterstyle = 'BARE'">, partName = "<xsl:value-of select="output/param/@partname"/>"</xsl:when></xsl:choose>)</xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="$parameterstyle = 'BARE'">
+    @javax.jws.soap.SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)</xsl:if>
     public <xsl:choose>
                 <xsl:when test="$outparamcount = 0">void </xsl:when>
+                <xsl:when test="$useholder = 'true'">void </xsl:when>
                 <xsl:otherwise><xsl:value-of select="output/param/@type"/><xsl:text> </xsl:text></xsl:otherwise>
            </xsl:choose>
     <xsl:value-of select="@name"/>(<xsl:variable name="inparamcount" select="count(input/param)"/>
+    <xsl:choose>
+        <xsl:when test="$useholder = 'true'">
     <xsl:for-each select="input/param">
-        @javax.jws.WebParam(name = "<xsl:value-of select="@name"/>", targetNamespace = "<xsl:value-of select="$targetNs"/>")
+        @javax.jws.WebParam(name = "<xsl:value-of select="@name"/>", targetNamespace = "<xsl:value-of select="$targetNs"/>", mode = javax.jws.WebParam.Mode.INOUT<xsl:choose>
+                <xsl:when test="$parameterstyle = 'BARE'">, partName = "<xsl:value-of select="@partname"/>"</xsl:when></xsl:choose>)
+        <xsl:choose>
+            <xsl:when test="$inparamcount = position()">javax.xml.ws.Holder&lt;<xsl:value-of select="@type"/>
+                <xsl:text>&gt; </xsl:text>
+                <xsl:value-of select="@name"/>
+            </xsl:when>
+            <xsl:otherwise>javax.xml.ws.Holder&lt;<xsl:value-of select="@type"/>
+                <xsl:text>&gt; </xsl:text>
+                <xsl:value-of select="@name"/>,<xsl:text> </xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each></xsl:when>
+        <xsl:otherwise><xsl:for-each select="input/param">
+        @javax.jws.WebParam(name = "<xsl:value-of select="@name"/>", targetNamespace = "<xsl:value-of select="$targetNs"/>"<xsl:choose>
+                <xsl:when test="$parameterstyle = 'BARE'">, partName = "<xsl:value-of select="@partname"/>"</xsl:when></xsl:choose>)
         <xsl:choose>
             <xsl:when test="$inparamcount = position()">
                 <xsl:value-of select="@type"/>
@@ -66,7 +90,8 @@ public interface <xsl:value-of select="@name"/>{
                 <xsl:value-of select="@name"/>,<xsl:text> </xsl:text>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:for-each>)<!--<xsl:for-each select="fault/param[@type!='']">
+    </xsl:for-each></xsl:otherwise>
+    </xsl:choose>)<!--<xsl:for-each select="fault/param[@type!='']">
                <xsl:if test="position()=1">
         throws </xsl:if>
                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>

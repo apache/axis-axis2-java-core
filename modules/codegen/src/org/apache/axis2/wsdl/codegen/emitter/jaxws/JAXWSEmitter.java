@@ -8,14 +8,10 @@ import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis2.wsdl.codegen.emitter.AxisServiceBasedMultiLanguageEmitter;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
-
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter {
 

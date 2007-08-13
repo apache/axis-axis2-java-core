@@ -2148,7 +2148,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return generated element
      * @throws DOMException
      */
-    private Element generateMethodElement(Document doc, String endpointName,
+    protected Element generateMethodElement(Document doc, String endpointName,
                                           AxisOperation axisOperation) throws DOMException {
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
@@ -2160,6 +2160,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
                 WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
+        addAttribute(doc, "parameterstyle", (axisOperation.getParameter(
+                Constants.UNWRAPPED_KEY) != null)?"WRAPPPED":"BARE", methodElement);
         addAttribute(doc, "dbsupportname",
                 endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
@@ -2195,6 +2197,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getInputElement(doc,
                     axisOperation, soapHeaderInputParameterList));
+            if("jax-ws".equals(codeGenConfiguration.getOutputLanguage())){
+                AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
+                    AxisMessage outMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if(inMessage.getName().equals(outMessage.getName())){
+                        // in/out message
+                        addAttribute(doc, "useholder", "true", methodElement);
+                    }
+                }
+            }
         }
         if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getOutputElement(doc,
@@ -2831,7 +2843,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     this.mapper.getTypeMappingName(
                             inputMessage.getElementQName()),
                     operation.getName(),
-                    inputMessage.getElementQName()
+                    inputMessage.getElementQName(),
+                    inputMessage.getPartName(),
+                    false,false
             );
 
             paramElementList.add(mainParameter);
@@ -2987,12 +3001,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "localname", paramQName.getLocalPart(), qNameElement);
             paramElement.appendChild(qNameElement);
         }
+
         if (partName != null) {
             String javaName = null;
             if (JavaUtils.isJavaKeyword(partName)) {
                 javaName = JavaUtils.makeNonJavaKeyword(partName);
             } else {
-                javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));
+                if (codeGenConfiguration.getOutputLanguage().equals("jax-ws")) {
+                    javaName = JavaUtils.xmlNameToJavaIdentifier(JavaUtils.xmlNameToJava(partName));
+                } else {
+                    javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));   
+                }
             }
             addAttribute(doc, "partname", javaName, paramElement);
         }
@@ -3013,7 +3032,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param operation
      * @return Returns Element.
      */
-    protected Element getOutputParamElement(Document doc, AxisOperation operation) {
+    protected Element   getOutputParamElement(Document doc, AxisOperation operation) {
         Element paramElement = doc.createElement("param");
         AxisMessage outputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
         String typeMappingStr;
@@ -3055,6 +3074,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 Parameter parameter = outputMessage.getParameter(Constants.COMPLEX_TYPE);
                 addAttribute(doc, "complextype", (String) parameter.getValue(), paramElement);
             }
+        }
+        String partName = outputMessage.getPartName();
+        if (partName != null && codeGenConfiguration.getOutputLanguage().equals("jax-ws")) {
+            String javaName = null;
+            if (JavaUtils.isJavaKeyword(partName)) {
+                javaName = JavaUtils.makeNonJavaKeyword(partName);
+            } else {
+                javaName = JavaUtils.xmlNameToJavaIdentifier(JavaUtils.xmlNameToJava(partName));   
+            }
+            addAttribute(doc, "partname", javaName, paramElement);
         }
 
         // this message has been unwrapped - find the correct references of the
