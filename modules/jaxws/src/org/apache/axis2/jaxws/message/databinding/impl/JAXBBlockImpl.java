@@ -250,31 +250,35 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param m Marshaller
      * @param writer XMLStreamWriter
      */
-    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer,
-                                         boolean optimize) throws WebServiceException {
-        // Marshalling directly to the output stream is faster than marshalling through the
-        // XMLStreamWriter. Take advantage of this optimization if there is an output stream.
-        try {
-            OutputStream os = (optimize) ? getOutputStream(writer) : null;
-            if (os != null) {
-                if (DEBUG_ENABLED) {
-                    log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. " +
-                                "Object is "
-                            + getDebugName(b));
+    private static void marshalByElement(final Object b, final Marshaller m, final XMLStreamWriter writer,
+                                         final boolean optimize) throws WebServiceException {
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                // Marshalling directly to the output stream is faster than marshalling through the
+                // XMLStreamWriter. Take advantage of this optimization if there is an output stream.
+                try {
+                    OutputStream os = (optimize) ? getOutputStream(writer) : null;
+                    if (os != null) {
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. " +
+                                      "Object is "
+                                      + getDebugName(b));
+                        }
+                        writer.flush();
+                        m.marshal(b, os);
+                    } else {
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. " +
+                                      "Object is "
+                                      + getDebugName(b));
+                        }
+                        m.marshal(b, writer);
+                    }
+                } catch (Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
                 }
-                writer.flush();
-                m.marshal(b, os);
-            } else {
-                if (DEBUG_ENABLED) {
-                    log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. " +
-                                "Object is "
-                            + getDebugName(b));
-                }
-                m.marshal(b, writer);
-            }
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+                return null;
+            }});
     }
 
     /**
