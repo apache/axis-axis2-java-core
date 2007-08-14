@@ -16,11 +16,8 @@
 package sample.rmi.client;
 
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.client.RMIClient;
-import sample.rmi.server.Service1;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.axis2.rmi.client.RMIClientProxy;
+import sample.rmi.server.Service1Interface;
 
 
 public class TestService1 {
@@ -36,28 +33,28 @@ public class TestService1 {
 
     public void testMethod1() {
         try {
-            RMIClient rmiClient = new RMIClient(Service1.class, this.configurator, "http://localhost:8080/axis2/services/Service1");
-            List inputObjects = new ArrayList();
-            inputObjects.add("Hellow");
-            inputObjects.add(" World");
-            String result = (String) rmiClient.invokeMethod("method1", inputObjects);
+            Service1Interface proxy =
+                    (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service1");
+            String result = proxy.method1("Hellow"," World");
             System.out.println("Result ==> " + result);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 
     public void testMethod2() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service1.class, configurator, "http://localhost:8080/axis2/services/Service1");
-            List inputObjects = new ArrayList();
-            inputObjects.add(new Integer(5));
-            inputObjects.add(new Integer(15));
-            Integer result = (Integer) rmiClient.invokeMethod("method2", inputObjects);
+            Service1Interface proxy =
+                    (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service1");
+            Integer result = proxy.method2(new Integer(5),new Integer(15));
             System.out.println("Result ==> " + result);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 

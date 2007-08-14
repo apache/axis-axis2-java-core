@@ -19,7 +19,7 @@ import sample.rmi.server.exception.Exception1;
 import sample.rmi.server.exception.Exception2;
 import sample.rmi.server.exception.Exception3;
 
-public class Service3 {
+public class Service3 implements Service3Interface {
 
     public void method1() throws Exception1 {
         throw new Exception1("Test Exception1");

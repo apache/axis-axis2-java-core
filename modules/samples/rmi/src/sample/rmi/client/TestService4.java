@@ -16,10 +16,13 @@
 package sample.rmi.client;
 
 import sample.rmi.server.Service4;
+import sample.rmi.server.Service3Interface;
+import sample.rmi.server.Service4Interface;
 import sample.rmi.server.dto.ChildClass;
 import sample.rmi.server.dto.ParentClass;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.client.RMIClient;
+import org.apache.axis2.rmi.client.RMIClientProxy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,30 +44,25 @@ public class TestService4 {
     public void testMethod11() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
-            inputObjects.add(null);
-            Object result = rmiClient.invokeMethod("method1", inputObjects);
+            Service4Interface proxy =
+                    (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service4");
+            Object result = proxy.method1(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
-            Object result = rmiClient.invokeMethod("method1", inputObjects);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void testMethod12() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
-            inputObjects.add("test string");
-            Object result = rmiClient.invokeMethod("method1", inputObjects);
+            Service4Interface proxy =
+                    (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service4");
+            Object result = proxy.method1("test string");
             System.out.println("Got the string " + result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,13 +72,15 @@ public class TestService4 {
     public void testMethod13() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
+            Service4Interface proxy =
+                    (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service4");
+
             ParentClass parentClass = new ParentClass();
             parentClass.setParam1("test string");
             parentClass.setParam2(3);
-            inputObjects.add(parentClass);
-            ParentClass result = (ParentClass) rmiClient.invokeMethod("method1", inputObjects);
+            ParentClass result = (ParentClass) proxy.method1(parentClass);
             System.out.println("Param 1 ==>" + result.getParam1());
             System.out.println("Param 2 ==>" + result.getParam2());
         } catch (Exception e) {
@@ -90,12 +90,11 @@ public class TestService4 {
 
     public void testMethod3() {
         try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
-            inputObjects.add("Param1");
-            inputObjects.add("Param2");
-            inputObjects.add("Param3");
-            String[] result = (String[]) rmiClient.invokeMethod("method3", inputObjects);
+            Service4Interface proxy =
+                    (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service4");
+            String[] result = proxy.method3("Param1","Param2","Param3");
             System.out.println("Object 1 ==>" + result[0]);
             System.out.println("Object 2 ==>" + result[1]);
             System.out.println("Object 3 ==>" + result[2]);
@@ -107,8 +106,10 @@ public class TestService4 {
 
     public void testMethod2() {
         try {
-            RMIClient rmiClient = new RMIClient(Service4.class, this.configurator, "http://localhost:8080/axis2/services/Service4");
-            List inputObjects = new ArrayList();
+             Service4Interface proxy =
+                    (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service4");
 
             List param1 = new ArrayList();
             param1.add(new ChildClass());
@@ -118,10 +119,7 @@ public class TestService4 {
             param2.add(new ParentClass());
             param2.add(new Float(2.34f));
 
-            inputObjects.add(param1);
-            inputObjects.add(param2);
-
-            List result = (List) rmiClient.invokeMethod("method2", inputObjects);
+            List result = proxy.method2(param1,param2);
             System.out.println("Object 1 ==>" + result.get(1));
             System.out.println("Object 3 ==>" + result.get(3));
 

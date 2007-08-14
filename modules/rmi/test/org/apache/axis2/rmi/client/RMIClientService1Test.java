@@ -16,6 +16,7 @@
 package org.apache.axis2.rmi.client;
 
 import org.apache.axis2.rmi.server.services.Service1;
+import org.apache.axis2.rmi.server.services.Service1Interface;
 import org.apache.axis2.AxisFault;
 
 import java.util.List;
@@ -26,31 +27,42 @@ import junit.framework.TestCase;
 
 public class RMIClientService1Test extends TestCase {
 
-    public void testMethod11(){
-
+    public void testMethod11() {
         try {
-            RMIClient rmiClient = new RMIClient(Service1.class,
+            Service1Interface proxy = (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
                     "http://localhost:8085/axis2/services/Service1");
-            List inputObject = new ArrayList();
-            inputObject.add("Hellow world");
-            String returnString = (String) rmiClient.invokeMethod("method1",inputObject);
-            assertEquals(returnString,"Hellow world");
-        } catch (Exception e) {
-            fail();
+            String result = proxy.method1("Hellow world");
+            assertEquals(result, "Hellow world");
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
         }
+
     }
 
-    public void testMethod12(){
+    public void testMethod12() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service1.class,
+            Service1Interface proxy = (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
                     "http://localhost:8085/axis2/services/Service1");
-            List inputObject = new ArrayList();
-            inputObject.add(null);
-            String returnString = (String) rmiClient.invokeMethod("method1",inputObject);
-            assertNull(returnString);
-        } catch (Exception e) {
-            fail();
+            String result = proxy.method1(null);
+            assertEquals(result, null);
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
         }
+
+    }
+
+    public void testMethod2() {
+
+        try {
+            Service1Interface proxy = (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                    "http://localhost:8085/axis2/services/Service1");
+            String[] result = proxy.method2(new String[]{"param1","param2"});
+            assertEquals(result[0], "param1");
+            assertEquals(result[1], "param2");
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        }
+
     }
 }

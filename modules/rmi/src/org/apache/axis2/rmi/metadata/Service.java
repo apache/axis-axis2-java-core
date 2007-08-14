@@ -123,8 +123,8 @@ public class Service {
             javaMethod = javaMethods[i];
             // we generate oprations only from the public methods
             //TODO : remove overload methods
-            if (Modifier.isPublic(javaMethod.getModifiers()) &&
-                    !Modifier.isAbstract(javaMethod.getModifiers())) {
+            if (this.javaClass.isInterface() || (Modifier.isPublic(javaMethod.getModifiers()) &&
+                    !Modifier.isAbstract(javaMethod.getModifiers()))) {
                 operation = new Operation(javaMethod);
                 operation.setNamespace(this.namespace);
                 operation.populateMetaData(configurator, this.processedTypeMap, this.exceptionClassToParameterMap);

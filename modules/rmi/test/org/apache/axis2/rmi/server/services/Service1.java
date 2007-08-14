@@ -16,7 +16,7 @@
 package org.apache.axis2.rmi.server.services;
 
 
-public class Service1 {
+public class Service1 implements Service1Interface {
 
     public String method1(String param1) {
         return param1;

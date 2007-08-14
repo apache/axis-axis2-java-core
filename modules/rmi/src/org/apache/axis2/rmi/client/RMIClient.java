@@ -102,7 +102,7 @@ public class RMIClient extends ServiceClient {
     }
 
     public Object invokeMethod(String operationName,
-                               List inputObjects) throws Exception {
+                               Object[] inputObjects) throws Exception {
 
         Operation operation = this.service.getOperation(operationName);
         OMElement inputOMElement = getInputOMElement(inputObjects,
@@ -140,7 +140,7 @@ public class RMIClient extends ServiceClient {
         return returnObject;
     }
 
-    private OMElement getInputOMElement(final List inputObjects,
+    private OMElement getInputOMElement(final Object[] inputObjects,
                                         final Operation operation,
                                         final JavaObjectSerializer javaObjectSerializer,
                                         OMFactory omFactory) {

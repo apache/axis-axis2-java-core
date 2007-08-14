@@ -19,7 +19,7 @@ import sample.rmi.server.dto.ParentClass;
 import sample.rmi.server.dto.TestClass1;
 
 
-public class Service2 {
+public class Service2 implements Service2Interface {
     
     public ParentClass method1(ParentClass param1){
         return param1;

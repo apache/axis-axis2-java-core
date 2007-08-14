@@ -36,8 +36,8 @@ import java.io.IOException;
 
 public class ServerTest {
 
-    public static final String AXIS2_CONFIG_FILE = "conf/axis2.xml";
-    public static final String AXIS2_REPOSITORY_LOCATION = "repository";
+    public static final String AXIS2_CONFIG_FILE = "modules/rmi/conf/axis2.xml";
+    public static final String AXIS2_REPOSITORY_LOCATION = "modules/rmi/repository";
 
     public void deployAndStartService() {
         try {

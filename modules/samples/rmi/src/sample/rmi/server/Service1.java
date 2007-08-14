@@ -15,7 +15,7 @@
  */
 package sample.rmi.server;
 
-public class Service1 {
+public class Service1 implements Service1Interface {
 
     public String method1(String param1, String param2){
         return param1 + param2;

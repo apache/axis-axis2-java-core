@@ -18,7 +18,7 @@ package sample.rmi.server;
 import java.util.List;
 
 
-public class Service4 {
+public class Service4 implements Service4Interface {
 
     public Object method1(Object param1){
         return param1;

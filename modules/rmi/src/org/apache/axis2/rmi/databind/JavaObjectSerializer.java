@@ -67,7 +67,7 @@ public class JavaObjectSerializer {
      * @throws XmlSerializingException
      */
 
-    public void serializeInputElement(List objects,
+    public void serializeInputElement(Object[] objects,
                                       XmlElement inputXmlElement,
                                       List inputParameters,
                                       XMLStreamWriter writer) throws XMLStreamException,
@@ -77,12 +77,16 @@ public class JavaObjectSerializer {
                 inputXmlElement.getNamespace(),
                 inputXmlElement.getName(),
                 namespacePrefix);
-        for (int i = 0; i < objects.size(); i++) {
-            serializeParameter(objects.get(i),
-                    (Parameter) inputParameters.get(i),
-                    writer,
-                    namespacePrefix);
+        // input objects null means no parameters
+        if (objects != null) {
+            for (int i = 0; i < objects.length; i++) {
+                serializeParameter(objects[i],
+                        (Parameter) inputParameters.get(i),
+                        writer,
+                        namespacePrefix);
+            }
         }
+
         writer.writeEndElement();
     }
 

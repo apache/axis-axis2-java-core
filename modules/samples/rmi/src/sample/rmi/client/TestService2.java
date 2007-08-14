@@ -17,7 +17,10 @@ package sample.rmi.client;
 
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.client.RMIClient;
+import org.apache.axis2.rmi.client.RMIClientProxy;
 import sample.rmi.server.Service2;
+import sample.rmi.server.Service1Interface;
+import sample.rmi.server.Service2Interface;
 import sample.rmi.server.dto.ChildClass;
 import sample.rmi.server.dto.ParentClass;
 import sample.rmi.server.dto.TestClass1;
@@ -41,14 +44,14 @@ public class TestService2 {
     public void testMethod11() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service2.class, configurator, "http://localhost:8080/axis2/services/Service2");
-            List inputObjects = new ArrayList();
-
+            Service2Interface proxy =
+                    (Service2Interface) RMIClientProxy.createProxy(Service2Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service2");
             ParentClass parentClass = new ParentClass();
             parentClass.setParam1("test param1");
             parentClass.setParam2(10);
-            inputObjects.add(parentClass);
-            ParentClass result = (ParentClass) rmiClient.invokeMethod("method1", inputObjects);
+            ParentClass result = proxy.method1(parentClass);
             System.out.println("Result param 1 ==> " + result.getParam1());
             System.out.println("Result param 2 ==> " + result.getParam2());
         } catch (Exception e) {
@@ -59,16 +62,16 @@ public class TestService2 {
     public void testMethod12() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service2.class, configurator, "http://localhost:8080/axis2/services/Service2");
-            List inputObjects = new ArrayList();
-
+            Service2Interface proxy =
+                    (Service2Interface) RMIClientProxy.createProxy(Service2Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service2");
             ChildClass childClass = new ChildClass();
             childClass.setParam1("test param1");
             childClass.setParam2(10);
             childClass.setParam3("test param3");
             childClass.setParam4(new Integer(12));
-            inputObjects.add(childClass);
-            ChildClass result = (ChildClass) rmiClient.invokeMethod("method1", inputObjects);
+            ChildClass result = (ChildClass) proxy.method1(childClass);
             System.out.println("Result param 1 ==> " + result.getParam1());
             System.out.println("Result param 2 ==> " + result.getParam2());
             System.out.println("Result param 3 ==> " + result.getParam3());
@@ -82,14 +85,14 @@ public class TestService2 {
     public void testMethod2() {
 
         try {
-            RMIClient rmiClient = new RMIClient(Service2.class, configurator, "http://localhost:8080/axis2/services/Service2");
-            List inputObjects = new ArrayList();
-
+            Service2Interface proxy =
+                    (Service2Interface) RMIClientProxy.createProxy(Service2Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service2");
             TestClass1 testClass1 = new TestClass1();
             testClass1.setParam1("test param1");
             testClass1.setParma2("test param2");
-            inputObjects.add(testClass1);
-            TestClass1 result = (TestClass1) rmiClient.invokeMethod("method2", inputObjects);
+            TestClass1 result = proxy.method2(testClass1);
             System.out.println("Result param 1 ==> " + result.getParam1());
             System.out.println("Result param 2 ==> " + result.getParma2());
         } catch (Exception e) {

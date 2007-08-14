@@ -53,7 +53,7 @@ public class RequestResponseTest extends DataBindTest {
               throws XMLStreamException, XmlSerializingException, XmlParsingException {
           StringWriter inputStringWriter = new StringWriter();
           XMLStreamWriter inputXmlStreamWriter = StAXUtils.createXMLStreamWriter(inputStringWriter);
-          this.javaObjectSerializer.serializeInputElement(inputObjects,
+          this.javaObjectSerializer.serializeInputElement(inputObjects.toArray(),
                   operation.getInputElement(),
                   operation.getInputParameters(),
                   inputXmlStreamWriter);
