@@ -22,7 +22,8 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3</version>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <groupId>org.apache.axis2</groupId>
@@ -31,7 +32,10 @@
     <description>Apache Axis2 Documentation</description>
     <packaging>pom</packaging>
 
-
+    <properties>
+	    <docs.folder.version>1_3</docs.folder.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.fastinfoset</groupId>
@@ -215,12 +219,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
-                    <xdocDirectory>${basedir}/xdocs</xdocDirectory>
-                    <resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
+                    <xdocDirectory>${basedir}/target/xdocs-changed</xdocDirectory>
+                    <resourcesDirectory>${basedir}/target/xdocs-changed/resources</resourcesDirectory>
                 </configuration>
    	                                 <executions>
  	                                        <execution>
- 	                                                <phase>install</phase>
+ 	                                                <phase>package</phase>
  	                                                <goals>
  	                                                        <goal>site</goal>
  	                                                </goals>
@@ -233,7 +237,7 @@
                 <version>1.1</version>
                 <inherited>false</inherited>
                 <executions>
-                    <execution>
+	                    <execution>
                         <id>service-module-list-generation</id>
                         <phase>package</phase>
                         <configuration>
@@ -369,6 +373,81 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+		    <execution>
+			    <id>package</id>
+			    <phase>process-resources</phase>
+			    <configuration>
+				    <tasks>
+					    <copy toDir="target/xdocs-changed/${docs.folder.version}">
+						    <fileset dir="xdocs/@axis2_version_dir@">
+							    <exclude name="**/*.xml"/>
+						    </fileset>
+					    </copy>
+					    <filter filtersfile="xdocs/dynamic-labels.properties"/>
+					    <copy toDir="target/xdocs-changed/${docs.folder.version}" filtering="on" overwrite="true">
+						    <globmapper from="*.xml" to="*.xml"/>
+						    <fileset dir="xdocs/@axis2_version_dir@"/>
+					    </copy>
+					    
+					    <copy toDir="target/xdocs-changed" filtering="on" overwrite="true">
+						    <globmapper from="*.xml" to="*.xml"/>
+						    <fileset dir="xdocs">
+							    <exclude name="@axis2_version_dir@/**"/>
+							    <exclude name="**/*.gif"/>
+							    <exclude name="**/*.jpg"/>
+							    <exclude name="**/*.png"/>
+						    </fileset>
+					    </copy>
+					    
+					    <copy toDir="target/xdocs-changed" filtering="off" overwrite="true">
+						    <fileset dir="xdocs">
+							    <exclude name="@axis2_version_dir@/**"/>
+							    <include name="**/*.gif"/>
+							    <include name="**/*.jpg"/>
+							    <include name="**/*.png"/>
+							    <include name="**/*.css"/>
+							    <include name="**/*.xsd"/>
+							    <include name="**/*.cgi"/>
+							    <include name="**/*.properties"/>
+						    </fileset>
+					    </copy>
+				    </tasks>
+			    </configuration>
+			    <goals>
+				    <goal>run</goal>
+			    </goals>
+		    </execution>
+		    <execution>
+			    <id>rename-site</id>
+			    <phase>install</phase>
+			    <configuration>
+				    <tasks>
+					<filter filtersfile="xdocs/dynamic-labels.properties"/>
+					<copy toDir="target/site2" filtering="on" overwrite="true">
+						<globmapper from="*.html" to="*.html"/>
+						<fileset dir="target/site">
+							<include name="**/*.html"/>
+						</fileset>
+					</copy>
+					<copy toDir="target/site2" filtering="off" overwrite="true">
+						<fileset dir="target/site">
+							<exclude name="**/*.html"/>
+						</fileset>
+					</copy>	
+					<delete dir="target/site"/>
+					<mkdir dir="target/site"/>
+					<copy toDir="target/site" filtering="off" overwrite="true">
+						<fileset dir="target/site2"/>
+					</copy>	
+					<delete dir="target/site2"/>
+					<delete dir="target/xdocs-changed"/>
+					
+				    </tasks>
+				</configuration>
+				<goals>
+					<goal>run</goal>
+				</goals>
+		    </execution>
                 </executions>
 	     </plugin>
         </plugins>

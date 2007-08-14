@@ -21,7 +21,7 @@
 	<groupId>org.apache.axis2.samples</groupId>
 	<artifactId>jaxws-calculator</artifactId>
 	<packaging>aar</packaging>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<name>JAXWS Calculator Service</name>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
