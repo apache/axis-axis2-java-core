@@ -50,7 +50,9 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
@@ -181,7 +183,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
 
-    @Override
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
@@ -561,6 +562,48 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     public boolean isElementData() {
         return true;
+    }
+    
+    public void close() {
+        return; // Nothing to close
+    }
+
+    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
+        try {
+            byte[] bytes= _getBytesFromBO(
+                                          getBusinessObject(false), 
+                                          busContext, 
+                                          encoding);
+            return new ByteArrayInputStream(bytes);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public Object getObject() {
+        try {
+            return getBusinessObject(false);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public boolean isDestructiveRead() {
+        return false;
+    }
+
+    public boolean isDestructiveWrite() {
+        return false;
+    }
+
+    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        try {
+            return _getBytesFromBO(getBusinessObject(false), 
+                                   busContext, 
+                                   encoding);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 
     /**
