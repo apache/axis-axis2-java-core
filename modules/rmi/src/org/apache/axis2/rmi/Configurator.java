@@ -16,6 +16,8 @@
 package org.apache.axis2.rmi;
 
 import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.databind.SimpleTypeHandler;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -31,16 +33,19 @@ public class Configurator {
     private boolean isBare;
     private List extensionClasses;
     private Map packageToNamespaceMap;
+    private SimpleTypeHandler simpleTypeHandler;
 
     public Configurator() {
         this.extensionClasses = new ArrayList();
         this.packageToNamespaceMap = new HashMap();
+
         populateDefualtValues();
     }
 
     private void populateDefualtValues(){
         // we want to keep key and value attributes in null names pace.
         this.packageToNamespaceMap.put("org.apache.axis2.rmi.types", Constants.RMI_TYPE_NAMSPACE);
+        this.simpleTypeHandler = new SimpleTypeHandler();
     }
 
     public String getNamespace(String packageName){
@@ -74,5 +79,13 @@ public class Configurator {
 
     public void setExtensionClasses(List extensionClasses) {
         this.extensionClasses = extensionClasses;
+    }
+
+    public SimpleTypeHandler getSimpleTypeHandler() {
+        return simpleTypeHandler;
+    }
+
+    public void setSimpleTypeHandler(SimpleTypeHandler simpleTypeHandler) {
+        this.simpleTypeHandler = simpleTypeHandler;
     }
 }

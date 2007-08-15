@@ -15,21 +15,15 @@
  */
 package org.apache.axis2.rmi.metadata;
 
+import junit.framework.TestCase;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.metadata.service.FaultService;
 import org.apache.axis2.rmi.metadata.service.MapService;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 
 import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLWriter;
 import java.io.IOException;
-import java.io.FileWriter;
-
-import junit.framework.TestCase;
 
 
 public class MapServiceTest extends TestCase {

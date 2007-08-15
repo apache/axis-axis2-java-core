@@ -63,6 +63,7 @@ public class ConfigObjectTest extends DataBindTest {
         packageToNamespaceMaps[1].setPackageName("package2");
         packageToNamespaceMapings.setPackageToNamespaceMap(packageToNamespaceMaps);
         config.setPackageToNamespaceMapings(packageToNamespaceMapings);
+        config.setSimpleDataHandlerClass("test");
 
 
         Parameter parameter = new Parameter(Config.class, "config");
@@ -81,6 +82,7 @@ public class ConfigObjectTest extends DataBindTest {
             writer.flush();
 
             String configXmlString = configXmlWriter.toString();
+            System.out.println("config ==> " + configXmlString);
 
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(configXmlString.getBytes()));
             XmlStreamParser xmlStreamParser = new XmlStreamParser(this.processedMap, this.configurator, this.schemaMap);

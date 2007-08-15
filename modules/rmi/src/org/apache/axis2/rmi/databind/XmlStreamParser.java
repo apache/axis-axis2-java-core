@@ -41,11 +41,15 @@ public class XmlStreamParser {
 
     private Configurator configurator;
     private Map qNameToTypeMap;
+    private SimpleTypeHandler simpleTypeHandler;
+    private Class simpleTypeHandlerClass;
 
     public XmlStreamParser(Map processedTypeMap,
                            Configurator configurator,
                            Map schemaMap) {
         this.configurator = configurator;
+        this.simpleTypeHandler = this.configurator.getSimpleTypeHandler();
+        this.simpleTypeHandlerClass = this.simpleTypeHandler.getClass();
         try {
             populateQNameToTypeMap(processedTypeMap, schemaMap);
         } catch (MetaDataPopulateException e) {
@@ -196,8 +200,8 @@ public class XmlStreamParser {
                     String methodName = null;
                     try {
                         methodName = getMethodName(type.getJavaClass().getName());
-                        Method  methodToInvoke = ConverterUtil.class.getMethod(methodName,new Class[]{String.class});
-                        returnObject = methodToInvoke.invoke(null,new Object[]{reader.getText()});
+                        Method  methodToInvoke = this.simpleTypeHandlerClass.getMethod(methodName,new Class[]{String.class});
+                        returnObject = methodToInvoke.invoke(this.simpleTypeHandler,new Object[]{reader.getText()});
                     } catch (NoSuchMethodException e) {
                         throw new XmlParsingException("Can not invoke the converter util class method " + methodName, e);
                     }

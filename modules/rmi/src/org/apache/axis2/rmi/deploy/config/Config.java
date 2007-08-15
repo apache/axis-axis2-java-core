@@ -20,6 +20,7 @@ public class Config {
    private Services services;
    private ExtensionClasses extensionClasses;
    private PackageToNamespaceMapings packageToNamespaceMapings;
+   private String simpleDataHandlerClass;
 
     public Services getServices() {
         return services;
@@ -43,6 +44,14 @@ public class Config {
 
     public void setPackageToNamespaceMapings(PackageToNamespaceMapings packageToNamespaceMapings) {
         this.packageToNamespaceMapings = packageToNamespaceMapings;
+    }
+
+    public String getSimpleDataHandlerClass() {
+        return simpleDataHandlerClass;
+    }
+
+    public void setSimpleDataHandlerClass(String simpleDataHandlerClass) {
+        this.simpleDataHandlerClass = simpleDataHandlerClass;
     }
 
 }

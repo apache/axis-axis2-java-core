@@ -18,11 +18,9 @@ package org.apache.axis2.rmi.client;
 import org.apache.axis2.rmi.server.services.Service1;
 import org.apache.axis2.rmi.server.services.Service1Interface;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -82,6 +80,19 @@ public class RMIClientService1Test extends TestCase {
             assertEquals(result.get("key2"), "value2");
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public void testMethod6(){
+        try {
+            Service1Interface proxy = (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                       "http://localhost:8085/axis2/services/Service1");
+
+            Date date = new Date();
+            Date result = proxy.method6(date);
+            assertEquals(date.getDate(), result.getDate());
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
         }
     }
 }

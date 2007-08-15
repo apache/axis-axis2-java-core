@@ -49,6 +49,8 @@ public class JavaObjectSerializer {
     private Map processedTypeMap;
     private Configurator configurator;
     private Map schemaMap;
+    private SimpleTypeHandler simpleTypeHandler;
+    private Class simpleTypeHandlerClass;
 
     public JavaObjectSerializer(Map processedTypeMap,
                                 Configurator configurator,
@@ -56,6 +58,8 @@ public class JavaObjectSerializer {
         this.processedTypeMap = processedTypeMap;
         this.configurator = configurator;
         this.schemaMap = schemaMap;
+        this.simpleTypeHandler = this.configurator.getSimpleTypeHandler();
+        this.simpleTypeHandlerClass = this.simpleTypeHandler.getClass();
     }
 
     /**
@@ -261,10 +265,9 @@ public class JavaObjectSerializer {
                 // this is a know type for us
                 // get the string represenation of this object using converter util class.
                 try {
-                    Class converterUtilClass = ConverterUtil.class;
-                    Method methodToInvoke = converterUtilClass.getMethod("convertToString", new Class[]{type.getJavaClass()});
+                    Method methodToInvoke = this.simpleTypeHandlerClass.getMethod("convertToString", new Class[]{type.getJavaClass()});
                     // these methods are static so use null as the object argument
-                    String stringValue = (String) methodToInvoke.invoke(null, new Object[]{object});
+                    String stringValue = (String) methodToInvoke.invoke(this.simpleTypeHandler, new Object[]{object});
                     if (!type.getJavaClass().equals(Object.class)) {
                         writer.writeCharacters(stringValue);
                     }

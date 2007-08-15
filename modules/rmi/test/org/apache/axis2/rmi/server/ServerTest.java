@@ -19,6 +19,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.databind.util.CustomSimpleTypeHandler;
 import org.apache.axis2.rmi.deploy.ClassDeployer;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
@@ -45,7 +46,9 @@ public class ServerTest {
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                             AXIS2_REPOSITORY_LOCATION, AXIS2_CONFIG_FILE);
             // add the service
-//            ClassDeployer classDeployer = new ClassDeployer(confContext);
+//            Configurator configurator = new Configurator();
+//            configurator.setSimpleTypeHandler(new CustomSimpleTypeHandler());
+//            ClassDeployer classDeployer = new ClassDeployer(confContext, configurator);
 //            classDeployer.deployClass(Service1.class);
 
             SimpleHTTPServer simpleHttpServer = new SimpleHTTPServer(confContext, 5555);

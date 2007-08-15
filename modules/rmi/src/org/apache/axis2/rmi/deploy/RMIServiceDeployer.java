@@ -27,6 +27,7 @@ import org.apache.axis2.rmi.deploy.config.Service;
 import org.apache.axis2.rmi.deploy.config.PackageToNamespaceMap;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.databind.XmlStreamParser;
+import org.apache.axis2.rmi.databind.SimpleTypeHandler;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.exception.ConfigFileReadingException;
@@ -91,6 +92,21 @@ public class RMIServiceDeployer implements Deployer {
                         configurator.addPackageToNamespaceMaping(packageToNamespaceMapings[i].getPackageName(),
                                 packageToNamespaceMapings[i].getNamespace());
                     }
+                }
+            }
+
+            // set the simple type data handler if it is set
+            if ((configObject.getSimpleDataHandlerClass() != null)
+                    && (configObject.getSimpleDataHandlerClass().trim().length() > 0)){
+                Class simpleTypeHandlerClass =
+                        Loader.loadClass(deploymentClassLoader,configObject.getSimpleDataHandlerClass());
+                try {
+                    SimpleTypeHandler simpleTypeHandler = (SimpleTypeHandler) simpleTypeHandlerClass.newInstance();
+                    configurator.setSimpleTypeHandler(simpleTypeHandler);
+                } catch (InstantiationException e) {
+                    throw new DeploymentException("Can not instantiate simple type handler",e);
+                } catch (IllegalAccessException e) {
+                    throw new DeploymentException("Can not instantiate simple type handler",e);
                 }
             }
 

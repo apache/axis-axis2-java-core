@@ -1,6 +1,7 @@
 package org.apache.axis2.rmi.server.services;
 
 import java.util.Map;
+import java.util.Date;
 
 public interface Service1Interface {
 
@@ -13,4 +14,6 @@ public interface Service1Interface {
     public int[] mehtod4(int[] param1);
 
     public Map method5(Map param1);
+
+    public Date method6(Date param1);
 }
