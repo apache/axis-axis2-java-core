@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.rmi;
 
+import org.apache.axis2.rmi.util.Constants;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -33,6 +35,12 @@ public class Configurator {
     public Configurator() {
         this.extensionClasses = new ArrayList();
         this.packageToNamespaceMap = new HashMap();
+        populateDefualtValues();
+    }
+
+    private void populateDefualtValues(){
+        // we want to keep key and value attributes in null names pace.
+        this.packageToNamespaceMap.put("org.apache.axis2.rmi.types", Constants.RMI_TYPE_NAMSPACE);
     }
 
     public String getNamespace(String packageName){

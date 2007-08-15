@@ -25,6 +25,7 @@ import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import javax.xml.stream.XMLStreamReader;
@@ -418,7 +419,6 @@ public class XmlStreamParser {
                 // they can not have null values so if array then we have to return the
                 // array object is null
                 // for other also it is covenient to assume like that.
-                // TODO: dissable nillable true for primitives
                 if ((Constants.OTHER_TYPE & classType) == Constants.OTHER_TYPE){
                     // i.e this is not a collection type
                     List objectsList = (List) objectsCollection;
@@ -442,8 +442,35 @@ public class XmlStreamParser {
                      }
 
                 } else if ((Constants.MAP_TYPE & classType) == Constants.MAP_TYPE){
-                     // TODO : handle maps
-                    return null;
+
+                    if ((objectsCollection.size() == 0) ||
+                            ((objectsCollection.size() == 1) && (objectsCollection.iterator().next() == null))) {
+                        return null;
+
+                    } else {
+                        List mapObjectsList = (List) objectsCollection;
+                        MapType mapType = null;
+                        Map mapObject = null;
+                        if (javaClass.isInterface()) {
+                            mapObject = new HashMap();
+                        } else {
+                            try {
+                                mapObject = (Map) javaClass.newInstance();
+                            } catch (InstantiationException e) {
+                                throw new XmlParsingException("Can not instantiate the java class " + javaClass.getName(), e);
+                            } catch (IllegalAccessException e) {
+                                throw new XmlParsingException("Can not instantiate the java class " + javaClass.getName(), e);
+                            }
+
+                        }
+                        for (Iterator iter = mapObjectsList.iterator(); iter.hasNext();) {
+                            mapType = (MapType) iter.next();
+                            mapObject.put(mapType.getKey(), mapType.getValue());
+                        }
+
+                        return mapObject;
+                    }
+
                 } else {
                     throw new XmlParsingException("Unknow class type " + classType);
                 }
@@ -508,13 +535,13 @@ public class XmlStreamParser {
                     } else if ((Constants.COLLECTION_TYPE & classType) == Constants.COLLECTION_TYPE) {
                        objectsCollection = new ArrayList();
                     } else if ((Constants.MAP_TYPE & classType) == Constants.MAP_TYPE) {
-                       // TODO : handle maps
+                       objectsCollection = new ArrayList();
                     }
                 } else {
                     if ((Constants.COLLECTION_TYPE & classType) == Constants.COLLECTION_TYPE) {
                         objectsCollection = (Collection) javaClass.newInstance();
                     } else if ((Constants.MAP_TYPE & classType) == Constants.MAP_TYPE) {
-                        // TODO: handle maps
+                        objectsCollection = new ArrayList();
                     }
                 }
             }

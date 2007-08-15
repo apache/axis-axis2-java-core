@@ -16,6 +16,7 @@
 package org.apache.axis2.rmi.metadata;
 
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.metadata.xml.XmlElement;
@@ -99,7 +100,10 @@ public class Parameter {
                 // i.e this is a collection class
                 this.isArray = true;
                 baseClass = Object.class;
-                //TODO: handle map type
+            } else if ((this.classType & Constants.MAP_TYPE) == Constants.MAP_TYPE) {
+                // if the attribute is mep type we set a custom type for it.
+                this.isArray = true;
+                baseClass = MapType.class;
             } else {
                 // populate the type for this parameter
                 this.isArray = this.javaClass.isArray();

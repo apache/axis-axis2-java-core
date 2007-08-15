@@ -16,6 +16,7 @@
 package org.apache.axis2.rmi.metadata;
 
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.metadata.xml.XmlElement;
@@ -97,7 +98,13 @@ public class Attribute {
     public Attribute(PropertyDescriptor propertyDescriptor,
                      String namespace) {
         this.propertyDescriptor = propertyDescriptor;
-        this.namespace = namespace;
+        if (Constants.RMI_TYPE_NAMSPACE.equals(namespace)){
+            // for rmi defined type elements we keep attributes as unqualified
+            this.namespace = null;
+        } else {
+           this.namespace = namespace;
+        }
+
     }
 
     public void populateMetaData(Configurator configurator,
@@ -106,7 +113,7 @@ public class Attribute {
         this.name = this.propertyDescriptor.getName();
         this.getterMethod = this.propertyDescriptor.getReadMethod();
         this.setterMethod = this.propertyDescriptor.getWriteMethod();
-        Class baseClass;
+        Class baseClass = null;
         try {
             this.classType = Util.getClassType(this.propertyDescriptor.getPropertyType());
 
@@ -114,7 +121,10 @@ public class Attribute {
                // i.e. if this is collection type
                this.isArray = true;
                baseClass = Object.class;
-            // TODO : handle maps
+            } else if ((this.classType & Constants.MAP_TYPE) == Constants.MAP_TYPE){
+               // if the attribute is mep type we set a custom type for it.
+               this.isArray = true;
+               baseClass = MapType.class;
             } else {
                 this.isArray = this.propertyDescriptor.getPropertyType().isArray();
                 if (this.isArray) {

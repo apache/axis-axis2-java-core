@@ -13,31 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.rmi.server.services;
+package org.apache.axis2.rmi.metadata.service;
 
 import java.util.Map;
 
 
-public class Service1 implements Service1Interface {
+public class MapService {
 
-    public String method1(String param1) {
-        return param1;
+    public void method1(Map param1){
+
     }
-
-    public String[] method2(String[] param1) {
-        return param1;
-    }
-
-    public int mehtod3(int param1) {
-        return param1;
-    }
-
-    public int[] mehtod4(int[] param1) {
-        return param1;
-    }
-
-    public Map method5(Map param1) {
-        return param1;
-    }
-
 }

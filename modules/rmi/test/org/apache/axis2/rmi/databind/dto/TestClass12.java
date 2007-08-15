@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.rmi.server.services;
+package org.apache.axis2.rmi.databind.dto;
 
 import java.util.Map;
+import java.util.Hashtable;
 
 
-public class Service1 implements Service1Interface {
+public class TestClass12 {
 
-    public String method1(String param1) {
+    private Map param1;
+    private Hashtable param2;
+
+    public Map getParam1() {
         return param1;
     }
 
-    public String[] method2(String[] param1) {
-        return param1;
+    public void setParam1(Map param1) {
+        this.param1 = param1;
     }
 
-    public int mehtod3(int param1) {
-        return param1;
+    public Hashtable getParam2() {
+        return param2;
     }
 
-    public int[] mehtod4(int[] param1) {
-        return param1;
-    }
-
-    public Map method5(Map param1) {
-        return param1;
+    public void setParam2(Hashtable param2) {
+        this.param2 = param2;
     }
 
 }

@@ -40,4 +40,7 @@ public interface Constants {
     public static final int MAP_TYPE = 0x0008;
     public static final int OTHER_TYPE = 0x0010;
 
+    //rmi namespaces
+    public static final String RMI_TYPE_NAMSPACE = "http://ws.apache.org/rmi/types";
+
 }

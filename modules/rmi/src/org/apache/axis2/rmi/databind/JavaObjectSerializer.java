@@ -26,6 +26,7 @@ import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -174,21 +175,40 @@ public class JavaObjectSerializer {
                     namespacePrefix);
         } else {
 
-            // if this is a List we convert this to an Object array
-            if ((classType & Constants.COLLECTION_TYPE) == Constants.COLLECTION_TYPE) {
-                elementValue = ((Collection) elementValue).toArray();
+            if ((classType & Constants.MAP_TYPE) == Constants.MAP_TYPE) {
+                Map elementMap = (Map) elementValue;
+                Object key = null;
+                for (Iterator iter = elementMap.keySet().iterator(); iter.hasNext();) {
+                    key = iter.next();
+                    serialize(new MapType(key, elementMap.get(key)),
+                            elementQName,
+                            elementType,
+                            writer,
+                            namespacePrefix);
+                }
+            } else if ((classType & Constants.COLLECTION_TYPE) == Constants.COLLECTION_TYPE) {
+                // if this is a List we convert this to an Object array
+                Collection elementCollection = (Collection) elementValue;
+                for (Iterator iter = elementCollection.iterator(); iter.hasNext();) {
+                    serialize(iter.next(),
+                            elementQName,
+                            elementType,
+                            writer,
+                            namespacePrefix);
+                }
+            } else {
+                int length = Array.getLength(elementValue);
+                Object object;
+                for (int i = 0; i < length; i++) {
+                    object = Array.get(elementValue, i);
+                    serialize(object,
+                            elementQName,
+                            elementType,
+                            writer,
+                            namespacePrefix);
+                }
             }
-            // TODO: handle maps properly
-            int length = Array.getLength(elementValue);
-            Object object;
-            for (int i = 0; i < length; i++) {
-                object = Array.get(elementValue, i);
-                serialize(object,
-                        elementQName,
-                        elementType,
-                        writer,
-                        namespacePrefix);
-            }
+
         }
     }
 

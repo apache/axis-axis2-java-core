@@ -13,31 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.rmi.server.services;
+package org.apache.axis2.rmi.types;
 
-import java.util.Map;
+/**
+ * this class is uesd to represent a map type attribute
+ */
+public class MapType {
 
+    public Object key;
+    public Object value;
 
-public class Service1 implements Service1Interface {
-
-    public String method1(String param1) {
-        return param1;
+    public MapType() {
     }
 
-    public String[] method2(String[] param1) {
-        return param1;
+    public MapType(Object key, Object value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public int mehtod3(int param1) {
-        return param1;
+    public Object getKey() {
+        return key;
     }
 
-    public int[] mehtod4(int[] param1) {
-        return param1;
+    public void setKey(Object key) {
+        this.key = key;
     }
 
-    public Map method5(Map param1) {
-        return param1;
+    public Object getValue() {
+        return value;
     }
 
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

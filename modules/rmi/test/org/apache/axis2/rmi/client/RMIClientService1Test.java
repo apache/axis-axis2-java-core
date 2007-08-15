@@ -21,6 +21,8 @@ import org.apache.axis2.AxisFault;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
@@ -64,5 +66,22 @@ public class RMIClientService1Test extends TestCase {
             axisFault.printStackTrace();
         }
 
+    }
+
+    public void testMethod5() {
+        try {
+            Service1Interface proxy = (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                    "http://localhost:8085/axis2/services/Service1");
+            Map param1 = new HashMap();
+            param1.put("key1", "value1");
+            param1.put("key2", "value2");
+            Map result = proxy.method5(param1);
+            assertTrue(result.containsKey("key1"));
+            assertTrue(result.containsKey("key2"));
+            assertEquals(result.get("key1"), "value1");
+            assertEquals(result.get("key2"), "value2");
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 }
