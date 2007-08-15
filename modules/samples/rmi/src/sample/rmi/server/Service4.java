@@ -16,6 +16,7 @@
 package sample.rmi.server;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class Service4 implements Service4Interface {
@@ -44,4 +45,10 @@ public class Service4 implements Service4Interface {
         returnArray[2] = param3;
         return returnArray;
     }
+
+    public Map method4(Map param1) {
+        return param1;
+    }
+
+
 }

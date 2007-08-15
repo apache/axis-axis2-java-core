@@ -15,17 +15,17 @@
  */
 package sample.rmi.client;
 
-import sample.rmi.server.Service4;
-import sample.rmi.server.Service3Interface;
 import sample.rmi.server.Service4Interface;
 import sample.rmi.server.dto.ChildClass;
 import sample.rmi.server.dto.ParentClass;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.client.RMIClient;
 import org.apache.axis2.rmi.client.RMIClientProxy;
+import org.apache.axis2.AxisFault;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 
 public class TestService4 {
@@ -128,6 +128,34 @@ public class TestService4 {
         }
     }
 
+    public void testMethod4(){
+
+        try {
+            Service4Interface proxy =
+                      (Service4Interface) RMIClientProxy.createProxy(Service4Interface.class,
+                              this.configurator,
+                              "http://localhost:8080/axis2/services/Service4");
+            Map param1 = new HashMap();
+            ParentClass parent = new ParentClass();
+            parent.setParam1("param1");
+            parent.setParam2(5);
+            param1.put("key1",parent);
+            param1.put("key2","value2");
+            param1.put("key3",new Integer(6));
+
+            Map result = proxy.method4(param1);
+            ParentClass resultParent = (ParentClass) result.get("key1");
+            System.out.println("Parent param1 ==> " + resultParent.getParam1());
+            System.out.println("Parent param2 ==> " + resultParent.getParam2());
+            System.out.println("Key 2 ==> " + result.get("key2"));
+            System.out.println("Key 3 ==> " + result.get("key3"));
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        }
+
+
+    }
+
     public static void main(String[] args) {
 
         TestService4 testService4 = new TestService4();
@@ -136,5 +164,6 @@ public class TestService4 {
         testService4.testMethod13();
         testService4.testMethod2();
         testService4.testMethod3();
+        testService4.testMethod4();
     }
 }
