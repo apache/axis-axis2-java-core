@@ -30,4 +30,5 @@
             <serviceClass>sample.rmi.server.Service4</serviceClass>
         </service>
     </services>
+    <simpleDataHandlerClass>sample.rmi.server.databind.CustomSimpleTypeHandler</simpleDataHandlerClass>
 </config>

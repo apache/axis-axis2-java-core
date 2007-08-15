@@ -19,6 +19,8 @@ import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.client.RMIClientProxy;
 import sample.rmi.server.Service1Interface;
 
+import java.util.Date;
+
 
 public class TestService1 {
 
@@ -58,9 +60,23 @@ public class TestService1 {
         }
     }
 
+    public void testMethod3(){
+         try {
+            Service1Interface proxy =
+                    (Service1Interface) RMIClientProxy.createProxy(Service1Interface.class,
+                            this.configurator,
+                            "http://localhost:8080/axis2/services/Service1");
+            Date result = proxy.method3(new Date());
+            System.out.println("Result ==> " + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         TestService1 testService1 = new TestService1();
         testService1.testMethod1();
         testService1.testMethod2();
+        testService1.testMethod3();
     }
 }

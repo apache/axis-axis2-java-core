@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.rmi.server;
+package sample.rmi.server.databind;
+
+import org.apache.axis2.rmi.databind.SimpleTypeHandler;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
-public class Service1 implements Service1Interface {
 
-    public String method1(String param1, String param2){
-        return param1 + param2;
-    }
-
-    public int method2(int param1, int param2){
-        return param1 + param2;
-    }
-
-    public Date method3(Date param1) {
-        return param1;
+public class CustomSimpleTypeHandler extends SimpleTypeHandler {
+    public String convertToString(Date value) {
+        System.out.println("Converting date ==> " + value);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+        return simpleDateFormat.format(value);
     }
 }
