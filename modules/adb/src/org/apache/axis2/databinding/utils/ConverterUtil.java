@@ -373,9 +373,7 @@ public class ConverterUtil {
                     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
                     // this is a specific time format string
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddz");
-                    // have to add the GMT part to process the message
-                    source = source.substring(0, 10) + "GMT" + restpart;
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
                 } else {
                     throw new RuntimeException("In valid string sufix");
                 }
