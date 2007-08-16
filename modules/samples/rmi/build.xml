@@ -8,7 +8,7 @@
         <property name="lib_dir" value="${axis2.home}/lib"/>
         <property name="dist_dir" value="${axis2.home}/dist"/>
         <property name="deploy_dir" value="${sample_home}/deploy"/>
-        <property name="service_file" value="${axis2.home}/repository/rmiservices/rmiservice.rsa"/>
+        <property name="service_file" value="${axis2.home}/repository/rmiservices/rmiservice.jsa"/>
 
         <path id="client.class.path">
             <fileset dir="${axis2.home}/lib">
