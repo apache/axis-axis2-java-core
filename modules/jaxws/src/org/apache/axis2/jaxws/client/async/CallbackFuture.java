@@ -29,7 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.WebServiceException;
 
+import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
+import org.apache.axis2.java.security.AccessController;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -220,12 +222,17 @@ class CallbackFutureTask implements Callable {
     MessageContext msgCtx;
     AsyncHandler handler;
     Exception error;
+    boolean done = false;
 
     CallbackFutureTask(AsyncResponse r, AsyncHandler h) {
         response = r;
         handler = h;
     }
-
+    
+    protected AsyncHandler getHandler() {
+        return handler;
+    }
+    
     void setMessageContext(MessageContext mc) {
         msgCtx = mc;
     }
@@ -236,37 +243,43 @@ class CallbackFutureTask implements Callable {
 
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
-        // Set the response or fault content on the AsyncResponse object
-        // so that it can be collected inside the Executor thread and processed.
-        if (error != null) {
-            response.onError(error, msgCtx);
-        } else {
-            response.onComplete(msgCtx);
-        }
-
-        // Now that the content is available, call the JAX-WS AsyncHandler class
-        // to deliver the response to the user.
-        try {
+    	try {
+            ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    return handler.getClass().getClassLoader();
+                }
+            });
+            
+            // Set the response or fault content on the AsyncResponse object
+            // so that it can be collected inside the Executor thread and processed.
+            if (error != null) {
+                response.onError(error, msgCtx, classLoader);
+            } else {
+                response.onComplete(msgCtx, classLoader);
+            }
+            
+            // Now that the content is available, call the JAX-WS AsyncHandler class
+            // to deliver the response to the user.
             ClassLoader cl = handler.getClass().getClassLoader();
         	if (log.isDebugEnabled()) {
         		log.debug("Setting up the thread's ClassLoader");
         		log.debug(cl.toString());
         	}
         	Thread.currentThread().setContextClassLoader(cl);
-            
-            if (debug) {
+        	
+        	if (debug) {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");
                 log.debug("AyncHandler class: " + handler.getClass());
             }
             handler.handleResponse(response);
-        }
-        catch (Throwable t) {
+    	} catch (Throwable t) {
             if (debug) {
                 log.debug("An error occured while invoking the callback object.");
                 log.debug("Error: " + t.getMessage());
             }
-        } finally {
+    	} finally {
             synchronized(this) {
+                done = true;
                 this.notifyAll();
             }
         }
