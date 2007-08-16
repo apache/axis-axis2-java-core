@@ -22,6 +22,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.Operation;
@@ -67,8 +68,9 @@ public class ClassDeployer {
         Service service = new Service(serviceClass, this.configurator);
         try {
             service.populateMetaData();
-            service.generateWSDL();
-            Definition definition = service.getWsdlDefinition();
+            service.generateSchema();
+            WSDL11DefinitionBuilder definitionBuilder = new WSDL11DefinitionBuilder(service);
+            Definition definition = definitionBuilder.generateWSDL();
 
             WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(definition, null, null);
             AxisService axisService = builder.populateService();

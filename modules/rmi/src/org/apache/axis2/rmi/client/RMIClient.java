@@ -80,7 +80,7 @@ public class RMIClient extends ServiceClient {
         this.setTargetEPR(new EndpointReference(epr));
         try {
             this.service.populateMetaData();
-            this.service.generateWSDL();
+            this.service.generateSchema();
             this.javaObjectSerializer = new JavaObjectSerializer(
                     this.service.getProcessedTypeMap(),
                     configurator,

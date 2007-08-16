@@ -17,6 +17,7 @@ package org.apache.axis2.rmi.metadata;
 
 import junit.framework.TestCase;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.service.BasicService;
@@ -40,8 +41,9 @@ public class ExtensionServiceTest extends TestCase {
         Service service = new Service(ExtensionService.class, configurator);
         try {
             service.populateMetaData();
-            service.generateWSDL();
-            Definition definition = service.getWsdlDefinition();
+            service.generateSchema();
+            WSDL11DefinitionBuilder definitionBuilder = new WSDL11DefinitionBuilder(service);
+            Definition definition = definitionBuilder.generateWSDL();
 
             WSDL11ToAxisServiceBuilder bulder = new WSDL11ToAxisServiceBuilder(definition, null, null);
             bulder.populateService();

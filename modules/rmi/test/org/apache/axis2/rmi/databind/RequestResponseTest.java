@@ -39,7 +39,7 @@ public class RequestResponseTest extends DataBindTest {
         super.setUp();
         this.service = new Service(this.serviceClass,this.configurator);
         this.service.populateMetaData();
-        this.service.generateWSDL();
+        this.service.generateSchema();
         this.javaObjectSerializer = new JavaObjectSerializer(service.getProcessedTypeMap(),
                 this.service.getConfigurator(),
                 this.service.getSchemaMap());

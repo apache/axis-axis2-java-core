@@ -19,6 +19,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.rmi.databind.util.CustomSimpleTypeHandler;
 import org.apache.axis2.rmi.deploy.ClassDeployer;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
@@ -69,8 +70,9 @@ public class ServerTest {
         Service service = new Service(Service1.class, configurator);
         try {
             service.populateMetaData();
-            service.generateWSDL();
-            Definition definition = service.getWsdlDefinition();
+            service.generateSchema();
+            WSDL11DefinitionBuilder definitionBuilder = new WSDL11DefinitionBuilder(service);
+            Definition definition = definitionBuilder.generateWSDL();
 
             WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
             FileWriter fileWriter = new FileWriter("test.wsdl");

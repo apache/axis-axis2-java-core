@@ -52,22 +52,9 @@ public class Service {
      */
     private List operations;
 
-    /**
-     * wsdl definition for this service
-     */
-    private Definition wsdlDefinition;
-
     private Map processedTypeMap;
     private Configurator configurator;
     private Map schemaMap;
-
-    private PortType portType;
-    private Binding httpSoapBinding;
-    private javax.wsdl.Service wsdlService;
-
-
-    //TODO: generate code for this binding.
-    private Binding httpSoap12Binding;
 
     /**
      * this map keeps the exception class name and exception relavent parameter
@@ -145,7 +132,7 @@ public class Service {
         }
     }
 
-    private void generateSchema() throws SchemaGenerationException {
+    public void generateSchema() throws SchemaGenerationException {
         //first we have to generate the input and output elements
         // to operations
 
@@ -172,15 +159,6 @@ public class Service {
             if (!extensionType.isSchemaGenerated()) {
                 extensionType.generateSchema(this.configurator, this.schemaMap);
             }
-        }
-
-        Types types = this.wsdlDefinition.createTypes();
-        this.wsdlDefinition.setTypes(types);
-        XmlSchema xmlSchema;
-        for (Iterator iter = this.schemaMap.values().iterator(); iter.hasNext();) {
-            xmlSchema = (XmlSchema) iter.next();
-            xmlSchema.generateWSDLSchema();
-            types.addExtensibilityElement(xmlSchema.getWsdlSchema());
         }
 
     }
@@ -212,162 +190,36 @@ public class Service {
         }
     }
 
-    public void generateWSDL() throws SchemaGenerationException {
-        try {
-            this.wsdlDefinition = WSDLFactory.newInstance().newDefinition();
-            //TODO: keep the namespace prefix map if needed
-            this.wsdlDefinition.addNamespace(Util.getNextNamespacePrefix(),this.namespace);
-            this.wsdlDefinition.addNamespace(Util.getNextNamespacePrefix(),"http://schemas.xmlsoap.org/wsdl/soap/");
-            this.wsdlDefinition.setTargetNamespace(this.namespace);
-            // first generate the schemas
-            generateSchema();
-            generatePortType();
-            generateBindings();
-            generateService();
-            generateOperationsAndMessages();
-        } catch (WSDLException e) {
-            throw new SchemaGenerationException("Error in creating a new wsdl definition",e);
-        }
-    }
-
-    private void generatePortType(){
-        this.portType = this.wsdlDefinition.createPortType();
-        this.portType.setUndefined(false);
-        this.portType.setQName(new QName(this.namespace, this.name + "PortType"));
-        this.wsdlDefinition.addPortType(portType);
-    }
-
-    private void generateBindings() throws SchemaGenerationException {
-        this.httpSoapBinding = this.wsdlDefinition.createBinding();
-        this.httpSoapBinding.setUndefined(false);
-        this.httpSoapBinding.setQName(new QName(this.namespace, this.name + "HttpSoapBinding"));
-        this.httpSoapBinding.setPortType(this.portType);
-        // add soap transport parts
-        ExtensionRegistry extensionRegistry = null;
-        try {
-            extensionRegistry = WSDLFactory.newInstance().newPopulatedExtensionRegistry();
-            SOAPBinding soapBinding = (SOAPBinding)extensionRegistry.createExtension(
-                    Binding.class,new QName("http://schemas.xmlsoap.org/wsdl/soap/","binding"));
-            soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
-            soapBinding.setStyle("document");
-            this.httpSoapBinding.addExtensibilityElement(soapBinding);
-        } catch (WSDLException e) {
-            throw new SchemaGenerationException("Can not crete a wsdl factory");
-        }
-        this.wsdlDefinition.addBinding(this.httpSoapBinding);
-        this.wsdlDefinition.getBindings().put(this.httpSoapBinding.getQName(),
-                this.httpSoapBinding);
-    }
-
-    private void generateService()
-            throws SchemaGenerationException {
-        // now add the binding portType and messages corresponding to every operation
-        javax.wsdl.Service service = this.wsdlDefinition.createService();
-        service.setQName(new QName(this.namespace,this.name));
-
-        Port port = this.wsdlDefinition.createPort();
-        port.setName(this.name + "HttpSoapPort");
-        port.setBinding(this.httpSoapBinding);
-        ExtensionRegistry extensionRegistry = null;
-        try {
-            extensionRegistry = WSDLFactory.newInstance().newPopulatedExtensionRegistry();
-            SOAPAddress soapAddress = (SOAPAddress)extensionRegistry.createExtension(
-                    Port.class,new QName("http://schemas.xmlsoap.org/wsdl/soap/","address"));
-            soapAddress.setLocationURI("http://localhost:8080/axis2/services/" + this.name);
-            port.addExtensibilityElement(soapAddress);
-        } catch (WSDLException e) {
-            throw new SchemaGenerationException("Can not crete a wsdl factory");
-        }
-        service.addPort(port);
-        this.wsdlDefinition.addService(service);
-    }
-
-    private void generateOperationsAndMessages()
-            throws SchemaGenerationException {
-        Operation operation;
-        Message inputMessage;
-        Message outputMessage;
-        javax.wsdl.Operation wsdlOperation;
-        BindingOperation bindingOperation;
-
-        //generate messages for exceptions
-        Map exceptionMessagesMap = new HashMap();
-        Class exceptionClass;
-        Parameter parameter;
-        Message faultMessage;
-        String messageName;
-        Part part;
-
-        for (Iterator iter = this.exceptionClassToParameterMap.keySet().iterator(); iter.hasNext();) {
-            exceptionClass = (Class) iter.next();
-            parameter = (Parameter) this.exceptionClassToParameterMap.get(exceptionClass);
-            messageName = exceptionClass.getName();
-            messageName = messageName.substring(messageName.lastIndexOf(".") + 1);
-            faultMessage = this.wsdlDefinition.createMessage();
-            faultMessage.setUndefined(false);
-            faultMessage.setQName(new QName(this.namespace, messageName));
-
-            part = this.wsdlDefinition.createPart();
-            part.setName("fault");
-            // add this element namespace to the definition
-            if (this.wsdlDefinition.getPrefix(parameter.getElement().getNamespace()) == null){
-                this.wsdlDefinition.addNamespace(Util.getNextNamespacePrefix(), parameter.getElement().getNamespace());
-            }
-            part.setElementName(parameter.getElement().getType().getQname());
-            faultMessage.addPart(part);
-            exceptionMessagesMap.put(exceptionClass,faultMessage);
-            this.wsdlDefinition.addMessage(faultMessage);
-        }
-
-        for (Iterator iter = this.operations.iterator(); iter.hasNext();) {
-            operation = (Operation) iter.next();
-            // add input and out put messages
-            inputMessage = operation.getWSDLInputMessage(this.wsdlDefinition);
-            outputMessage = operation.getWSDLOutputMessage(this.wsdlDefinition);
-            this.wsdlDefinition.addMessage(inputMessage);
-            this.wsdlDefinition.addMessage(outputMessage);
-
-            wsdlOperation = operation.getWSDLOperation(this.wsdlDefinition,
-                                                       inputMessage,
-                                                       outputMessage,
-                                                       exceptionMessagesMap);
-            this.portType.addOperation(wsdlOperation);
-            bindingOperation = operation.getWSDLBindingOperation(
-                    this.wsdlDefinition,wsdlOperation);
-            this.httpSoapBinding.addBindingOperation(bindingOperation);
-
-        }
-    }
-
     /**
      * this method returns the operation for the given name if found
      * otherwise return null
+     *
      * @param operationName
      * @return operation
      */
 
-    public Operation getOperation(String operationName){
+    public Operation getOperation(String operationName) {
         Operation operation = null;
         boolean operationFound = false;
-        for (Iterator iter = this.operations.iterator();iter.hasNext();){
+        for (Iterator iter = this.operations.iterator(); iter.hasNext();) {
             operation = (Operation) iter.next();
-            if (operation.getName().equals(operationName)){
+            if (operation.getName().equals(operationName)) {
                 operationFound = true;
                 break;
             }
         }
-        if (operationFound){
+        if (operationFound) {
             return operation;
         } else {
             return null;
         }
     }
 
-    public Parameter getExceptionParameter(Class exceptionClass){
+    public Parameter getExceptionParameter(Class exceptionClass) {
         return (Parameter) this.exceptionClassToParameterMap.get(exceptionClass);
     }
 
-    public Parameter getExceptionParameter(QName exceptionElementQname){
+    public Parameter getExceptionParameter(QName exceptionElementQname) {
         return (Parameter) this.exceptionQNameToParameterMap.get(exceptionElementQname);
     }
 
@@ -403,14 +255,6 @@ public class Service {
         this.operations = operations;
     }
 
-    public Definition getWsdlDefinition() {
-        return wsdlDefinition;
-    }
-
-    public void setWsdlDefinition(Definition wsdlDefinition) {
-        this.wsdlDefinition = wsdlDefinition;
-    }
-
     public Map getProcessedTypeMap() {
         return processedTypeMap;
     }
@@ -433,6 +277,14 @@ public class Service {
 
     public void setSchemaMap(Map schemaMap) {
         this.schemaMap = schemaMap;
+    }
+
+    public Map getExceptionClassToParameterMap() {
+        return exceptionClassToParameterMap;
+    }
+
+    public void setExceptionClassToParameterMap(Map exceptionClassToParameterMap) {
+        this.exceptionClassToParameterMap = exceptionClassToParameterMap;
     }
 
 
