@@ -126,10 +126,6 @@ public interface Handler {
             this.description = description;
         }
 
-        public boolean equals(InvocationResponse instruction) {
-            return this.instructionID == instruction.instructionID;
-        }
-
         public int hashCode() {
             return instructionID;
         }
