@@ -21,18 +21,14 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisModule;
@@ -45,21 +41,22 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.engine.AxisError;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
+import org.apache.axis2.util.MessageExternalizeUtils;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.util.SelfManagedDataHolder;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
@@ -2113,128 +2110,35 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         ObjectStateUtils.writeString(out, this.getLogCorrelationID(), "logCorrelationID");
 
-        boolean persistWithOptimizedMTOM = (getProperty(MTOMConstants.ATTACHMENTS) != null);
-        out.writeBoolean(persistWithOptimizedMTOM);
-
-        //---------------------------------------------------------
-        // message
-        //---------------------------------------------------------
-
-        // Just in case anything else is added here, notice that in the case
-        // of MTOM, something is written to the stream in middle of the envelope
-        // serialization logic below
-
-        // make sure message attachments are handled
-
-        if (envelope != null) {
-            String msgClass = envelope.getClass().getName();
-
-            ByteArrayOutputStream msgBuffer = new ByteArrayOutputStream();
-
-            try {
-                // use a non-destructive method on the soap message
-
-                // We don't need to write to a separate byte array
-                // unless we want to log the message
-                ByteArrayOutputStream msgData = new ByteArrayOutputStream();
-
-                OMOutputFormat outputFormat = new OMOutputFormat();
-                outputFormat.setAutoCloseWriter(true);
-
-                outputFormat.setSOAP11(isSOAP11);
-
-                if (persistWithOptimizedMTOM) {
-                    outputFormat.setDoOptimize(true);
-
-                    //Notice that we're writing this next bit out to the
-                    //serialized stream and not the baos
-                    out.writeUTF(outputFormat.getContentType());
-                }
-
-                // this will be expensive because it builds the OM tree
-                envelope.serialize(msgData, outputFormat);
-
-                msgBuffer.write(msgData.toByteArray(), 0, msgData.size());
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString + ":writeExternal(): msg data [" + msgData +
-                            "]");
-                }
-
-            }
-            catch (Exception e) {
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString +
-                        ":writeExternal(): can not serialize the SOAP message ***Exception***  [" +
-                        e.getClass().getName() + " : " + e.getMessage() + "]");
-                }
-            }
-
-            //---------------------------------------------
-            // get the character encoding for the message
-            //---------------------------------------------
-            String charSetEnc = (String) getProperty(MessageContext.CHARACTER_SET_ENCODING);
-
-            if (charSetEnc == null) {
-                OperationContext opContext = getOperationContext();
-                if (opContext != null) {
-                    charSetEnc =
-                            (String) opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-                }
-            }
-
-            if (charSetEnc == null) {
-                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-            }
-
-            //---------------------------------------------
-            // get the soap namespace uri
-            //---------------------------------------------
-            String namespaceURI = envelope.getNamespace().getNamespaceURI();
-
-            // write out the following information, IN ORDER:
-            //           the class name
-            //           the active or empty flag
-            //           the data length
-            //           the data
-            out.writeUTF(msgClass);
-
-            int msgSize = msgBuffer.size();
-
-            if (msgSize != 0) {
-                out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-                out.writeUTF(charSetEnc);
-                out.writeUTF(namespaceURI);
-                out.writeInt(msgSize);
-                out.write(msgBuffer.toByteArray());
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString + ":writeExternal(): msg  charSetEnc=[" +
-                            charSetEnc + "]  namespaceURI=[" + namespaceURI + "]  msgSize=[" +
-                            msgSize + "]");
-                }
-            } else {
-                // the envelope is null
-                out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString + ":writeExternal(): msg  is Empty");
-                }
-            }
-
-            // close out internal stream
-            msgBuffer.close();
-        } else {
-            // the envelope is null
-            out.writeUTF("MessageContext.envelope");
-            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString + ":writeExternal(): msg  is Empty");
+        //-----------------------------------------------------------------------
+        // Create and initialize the OMOutputFormat for Message Externalization
+        //-----------------------------------------------------------------------
+        
+        OMOutputFormat outputFormat= new OMOutputFormat();
+        outputFormat.setSOAP11(isSOAP11);
+        boolean persistOptimized = getPersistOptimized();
+        if (persistOptimized) {
+            outputFormat.setDoOptimize(true);
+        }
+        String charSetEnc = (String) getProperty(MessageContext.CHARACTER_SET_ENCODING);
+        if (charSetEnc == null) {
+            OperationContext opContext = getOperationContext();
+            if (opContext != null) {
+                charSetEnc =
+                        (String) opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
             }
         }
+        if (charSetEnc == null) {
+            charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+        outputFormat.setCharSetEncoding(charSetEnc);
 
-        //---------------------------------------------------------
+        // ----------------------------------------------------------
+        // Externalize the Message
+        // ----------------------------------------------------------
+        MessageExternalizeUtils.writeExternal(out, this, logCorrelationIDString, outputFormat);
+
+        // ---------------------------------------------------------
         // ArrayList executionChain
         //     handler and phase related data
         //---------------------------------------------------------
@@ -2775,6 +2679,41 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
     }
+    
+    /**
+     * @return true if the data should be persisted as optimized attachments
+     */
+    private boolean getPersistOptimized() {
+        boolean persistOptimized = false;
+        if (attachments != null && attachments.getContentIDList().size() > 1) {
+            persistOptimized = true;
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+                log.trace(logCorrelationIDString
+                        + ":getPersistOptimized(): attachments present; persist optimized");
+        }
+        if (!persistOptimized) {
+            Object property = getProperty(Configuration.ENABLE_MTOM);
+            if (property != null && JavaUtils.isTrueExplicitly(property)) {
+                persistOptimized = true;
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+                    log.trace(logCorrelationIDString
+                            + ":getPersistOptimized(): ENBABLE_MTOM is set; persist optimized");
+            }
+        }
+        if (!persistOptimized) {
+            Object property = getProperty(Configuration.ENABLE_SWA);
+            if (property != null && JavaUtils.isTrueExplicitly(property)) {
+                persistOptimized = true;
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+                    log.trace(logCorrelationIDString
+                            + ":getPersistOptimized(): ENBABLE_SWA is set; persist optimized");
+            }
+        }
+        if (!persistOptimized && LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+            log.trace(logCorrelationIDString
+                    + ":getPersistOptimized(): No attachments or attachment settings; persist non-optimized");
+        return persistOptimized;
+    }
 
 
     /**
@@ -2852,121 +2791,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
                     logCorrelationIDString);
         }
 
-        boolean persistedWithOptimizedMTOM = in.readBoolean();
-
-        String contentType = null;
-        if (persistedWithOptimizedMTOM) {
-            contentType = in.readUTF();
-        }
-
         //---------------------------------------------------------
-        // message
+        // Message
+        // Read the message and attachments
         //---------------------------------------------------------
-
-        in.readUTF();
-        boolean gotMsg = in.readBoolean();
-
-        if (gotMsg == ObjectStateUtils.ACTIVE_OBJECT) {
-            String charSetEnc = in.readUTF();
-            String namespaceURI = in.readUTF();
-
-            int msgSize = in.readInt();
-            byte[] buffer = new byte[msgSize];
-
-            int bytesRead = 0;
-            int numberOfBytesLastRead;
-
-            while (bytesRead < msgSize) {
-                numberOfBytesLastRead = in.read(buffer, bytesRead, msgSize - bytesRead);
-
-                if (numberOfBytesLastRead == -1) {
-                    // TODO: What should we do if the reconstitution fails?
-                    // For now, log the event
-                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                        log.trace(logCorrelationIDString +
-                                ":readExternal(): ***WARNING*** unexpected end to message   bytesRead [" +
-                                bytesRead + "]    msgSize [" + msgSize + "]");
-                    }
-                    break;
-                }
-
-                bytesRead += numberOfBytesLastRead;
-            }
-
-
-            String tmpMsg = new String(buffer);
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString + ":readExternal(): msg  charSetEnc=[" +
-                        charSetEnc + "]  namespaceURI=[" + namespaceURI + "]  msgSize=[" + msgSize +
-                        "]   bytesRead [" + bytesRead + "]");
-                log.trace(logCorrelationIDString + ":readExternal(): msg  [" + tmpMsg + "]");
-            }
-
-            ByteArrayInputStream msgBuffer;
-
-            if (bytesRead > 0) {
-                msgBuffer = new ByteArrayInputStream(buffer);
-
-                // convert what was saved into the soap envelope
-
-                XMLStreamReader xmlreader = null;
-
-                try {
-                    if (persistedWithOptimizedMTOM) {
-                        boolean isSOAP = true;
-                        StAXBuilder builder = BuilderUtil
-                                .getAttachmentsBuilder(this, msgBuffer, contentType, isSOAP);
-                        envelope = (SOAPEnvelope) builder.getDocumentElement();
-                        // build the OM in order to free the input stream
-                        envelope.buildWithAttachments();
-                    } else {
-                        xmlreader = StAXUtils.createXMLStreamReader(msgBuffer, charSetEnc);
-                        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespaceURI);
-                        envelope = (SOAPEnvelope) builder.getDocumentElement();
-                        // build the OM in order to free the input stream
-                        envelope.build();
-                    }
-                }
-                catch (Exception ex) {
-                    // TODO: what to do if can't get the XML stream reader
-                    // For now, log the event
-                    log.error(logCorrelationIDString +
-                            ":readExternal(): Error when deserializing persisted envelope: [" +
-                            ex.getClass().getName() + " : " + ex.getLocalizedMessage() + "]", ex);
-                    envelope = null;
-                }
-
-                if (xmlreader != null) {
-                    try {
-                        xmlreader.close();
-                    } catch (Exception xmlex) {
-                        // Can't close down the xml stream reader
-                        log.error(logCorrelationIDString+
-                                ":readExternal(): Error when closing XMLStreamReader for envelope: ["
-                                + xmlex.getClass().getName() + " : " + xmlex.getLocalizedMessage() + "]", xmlex);
-                    }
-                }
-
-                msgBuffer.close();
-            } else {
-                // no message
-                envelope = null;
-
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace(logCorrelationIDString +
-                            ":readExternal(): no message from the input stream");
-                }
-            }
-
-        } else {
-            // no message
-            envelope = null;
-
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(logCorrelationIDString + ":readExternal(): no message present");
-            }
-        }
+        envelope = MessageExternalizeUtils.readExternal(in, this, logCorrelationIDString);
 
         //---------------------------------------------------------
         // ArrayList executionChain
