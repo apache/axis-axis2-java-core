@@ -1380,6 +1380,15 @@ class EndpointDescriptionImpl
                     break;
                 }
             }
+            // We need to convert the wsdl-based SOAP and HTTP namespace into the expected namespace for 
+            //SOAPBindings or HTTPBindings
+            if (SOAP11_WSDL_BINDING.equals(wsdlBindingType)) {
+                wsdlBindingType = SOAPBinding.SOAP11HTTP_BINDING;
+            } else if (SOAP12_WSDL_BINDING.equals(wsdlBindingType)) {
+                wsdlBindingType = SOAPBinding.SOAP12HTTP_BINDING; 
+            } else if (HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
+                wsdlBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
+            }
         }
         return wsdlBindingType;
     }
@@ -1428,6 +1437,9 @@ class EndpointDescriptionImpl
         if (clientBindingID == null) {
             if (getWSDLDefinition() != null) {
                 clientBindingID = getWSDLBindingType();
+                if (clientBindingID == null) {
+                    clientBindingID = DEFAULT_CLIENT_BINDING_ID;
+                }
             } else {
                 clientBindingID = DEFAULT_CLIENT_BINDING_ID;
             }

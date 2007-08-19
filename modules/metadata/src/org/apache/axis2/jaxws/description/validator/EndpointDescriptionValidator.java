@@ -68,6 +68,8 @@ public class EndpointDescriptionValidator extends Validator {
     private boolean validateWSDLBindingType() {
         boolean isBindingValid = false;
         String bindingType = endpointDesc.getBindingType();
+        //The wsdl binding type that we now receive has been previously mapped to the expected
+        //SOAP and HTTP bindings. So, there is now limited validation to perform
         String wsdlBindingType = endpointDescWSDL.getWSDLBindingType();
         if (bindingType == null) {
             // I don't think this can happen; the Description layer should provide a default
@@ -90,27 +92,27 @@ public class EndpointDescriptionValidator extends Validator {
             isBindingValid = true;
         }
         // Validate that the WSDL value is valid
-        else if (!EndpointDescriptionWSDL.SOAP11_WSDL_BINDING.equals(wsdlBindingType) &&
-                !EndpointDescriptionWSDL.SOAP12_WSDL_BINDING.equals(wsdlBindingType) &&
-                !EndpointDescriptionWSDL.HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
+        else if (!SOAPBinding.SOAP11HTTP_BINDING.equals(wsdlBindingType)
+                && !SOAPBinding.SOAP12HTTP_BINDING.equals(wsdlBindingType)
+                && !javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)) {
             addValidationFailure(this, "Invalid wsdl binding value specified: " + wsdlBindingType);
             isBindingValid = false;
         }
         // Validate that the WSDL and annotations values indicate the same type of binding
-        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.SOAP11_WSDL_BINDING)
+        else if (wsdlBindingType.equals(SOAPBinding.SOAP11HTTP_BINDING)
                 && (bindingType.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
                 bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING))) {
             isBindingValid = true;
-        } else if (wsdlBindingType.equals(EndpointDescriptionWSDL.SOAP12_WSDL_BINDING)
+        } else if (wsdlBindingType.equals(SOAPBinding.SOAP12HTTP_BINDING)
                 && (bindingType.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
                 bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
             isBindingValid = true;
-        } else if (wsdlBindingType.equals(EndpointDescriptionWSDL.HTTP_WSDL_BINDING) &&
-                bindingType.equals(HTTPBinding.HTTP_BINDING)) {
+        } else if (wsdlBindingType.equals(HTTPBinding.HTTP_BINDING)
+                 && bindingType.equals(HTTPBinding.HTTP_BINDING)) {
             isBindingValid = true;
         }
         // The HTTP binding is not valid on a Java Bean SEI-based endpoint; only on a Provider based one.
-        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.HTTP_WSDL_BINDING) &&
+        else if (wsdlBindingType.equals(HTTPBinding.HTTP_BINDING) &&
                 endpointDesc.isEndpointBased()) {
             addValidationFailure(this,
                                  "The HTTPBinding can not be specified for SEI-based endpoints");
