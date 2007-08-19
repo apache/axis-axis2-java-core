@@ -36,6 +36,8 @@
         <xsl:variable name="originalName"><xsl:value-of select="@originalName"/></xsl:variable>
         <xsl:variable name="nsuri"><xsl:value-of select="@nsuri"/></xsl:variable>
         <xsl:variable name="nsprefix"><xsl:value-of select="@nsprefix"/></xsl:variable>
+        <xsl:variable name="anon"><xsl:value-of select="@anon"/></xsl:variable>
+        <xsl:variable name="ordered"><xsl:value-of select="@anon"/></xsl:variable>
        /**
         * <xsl:value-of select="$axis2_name"/>.h
         *
@@ -367,7 +369,7 @@
             <xsl:if test="property and (not(@type) or @type='' or property/@attribute)">
                axis2_qname_t *qname = NULL;
             </xsl:if>-->
-            <xsl:if test="not(property/@attribute) and (not(@ordered) or @ordered='' or property/@isarray)">
+            <xsl:if test="not(property/@attribute) and (not(@ordered or not($anon or $istype)) or @ordered='' or property/@isarray)">
               axutil_qname_t *element_qname = NULL;
             </xsl:if>
             <xsl:for-each select="property">
@@ -407,11 +409,22 @@
                     qname = axiom_element_get_qname( current_element, env, parent);
                     if ( axutil_qname_equals( qname, env, <xsl:value-of select="$name"/>-> qname ) )
                     {
-                        first_node = axiom_node_get_first_child( parent, env);
+                        <xsl:choose>
+                          <xsl:when test="$anon">
+                          first_node = axiom_node_get_first_child( parent, env);
+                          </xsl:when>
+                          <xsl:otherwise>
+                          first_node = parent;
+                          </xsl:otherwise>
+                        </xsl:choose>
                     }
                     else
                     {
-                        first_node = parent;
+                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
+                              "Failed in building adb object for <xsl:value-of select="$originalName"/> : "
+                              "Wrong XML to deserialize");
+                        <!-- TODO: ADB specific error should be defiend and set here -->
+                        return AXIS2_FAILURE;
                     }
                  </xsl:if>
                 </xsl:for-each>
@@ -636,7 +649,7 @@
                      <xsl:choose>
                        <xsl:when test="not(@isarray)">  <!--not an array so continue normal -->
                            <xsl:choose>
-                             <xsl:when test="../@ordered">
+                             <xsl:when test="../@ordered or not($anon or $istype)"> <!-- since non-anon has just only one sub element-->
                                <xsl:choose>
                                  <xsl:when test="position()=1">
                                    current_node = first_node;
@@ -675,13 +688,21 @@
                            </xsl:choose>
                            if ( current_node != NULL)
                            {
-                              <xsl:if test="../@ordered">current_element = axiom_node_get_data_element( current_node, env);</xsl:if>
+                              <xsl:if test="../@ordered or not($anon or $istype)">current_element = axiom_node_get_data_element( current_node, env);</xsl:if>
                               <!-- changes to following choose tag should be changed in another 2 places -->
                                  <xsl:choose>
                                     <xsl:when test="@ours">
                                       element = (void*)adb_<xsl:value-of select="@type"/>_create( env);
+                                      if(axiom_node_get_first_child(current_node, env)==NULL)
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
+                                                "Failed in building adb object for <xsl:value-of select="$propertyName"/> : "
+                                                "Wrong XML to deserialize");
+                                          <!-- TODO: ADB specific error should be defiend and set here -->
+                                          return AXIS2_FAILURE;
+                                      }
                                       status =  adb_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                             axiom_node_get_first_child(current_node, env)==NULL?current_node:axiom_node_get_first_child(current_node, env));
+                                                                             axiom_node_get_first_child(current_node, env));
                                       if( AXIS2_FAILURE ==  status)
                                       {
                                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
@@ -928,7 +949,7 @@
                         </xsl:when>
                         <xsl:otherwise> <!-- when it is all the way an array -->
                            <xsl:choose>
-                             <xsl:when test="../@ordered"> <!-- all the elements should follow this -->
+                             <xsl:when test="../@ordered or not($anon or $istype)"> <!-- all the elements should follow this -->
                                element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
                                                                    <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
@@ -955,8 +976,17 @@
                                      <xsl:choose>
                                         <xsl:when test="@ours">
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create( env);
+                                          if(axiom_node_get_first_child(current_node, env)==NULL)
+                                          {
+                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
+                                                    "Failed in building adb object for <xsl:value-of select="$propertyName"/> : "
+                                                    "Wrong XML to deserialize");
+                                              <!-- TODO: ADB specific error should be defiend and set here -->
+                                              return AXIS2_FAILURE;
+                                          }
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                             axiom_node_get_first_child(current_node, env)==NULL?current_node:axiom_node_get_first_child(current_node, env));
+                                                                                 axiom_node_get_first_child(current_node, env));
+                                          
                                           if( AXIS2_FAILURE ==  status)
                                           {
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
@@ -1089,7 +1119,7 @@
                                                                    arr_list);
 
                              </xsl:when>
-                             <xsl:otherwise> <!-- otherwse for "../@ordered" -->
+                             <xsl:otherwise> <!-- otherwse for "../@ordered or not($anon or $istype)" -->
                                  element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
                                                                    <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
@@ -1110,8 +1140,16 @@
                                      <xsl:choose>
                                         <xsl:when test="@ours">
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create( env);
+                                          if(axiom_node_get_first_child(current_node, env)==NULL)
+                                          {
+                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
+                                                    "Failed in building adb object for <xsl:value-of select="$propertyName"/> : "
+                                                    "Wrong XML to deserialize");
+                                              <!-- TODO: ADB specific error should be defiend and set here -->
+                                              return AXIS2_FAILURE;
+                                          }
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize( ( <xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                             axiom_node_get_first_child(current_node, env)==NULL?current_node:axiom_node_get_first_child(current_node, env));
+                                                                                 axiom_node_get_first_child(current_node, env));
                                           if( AXIS2_FAILURE ==  status)
                                           {
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
@@ -1237,8 +1275,8 @@
                                }
                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>( <xsl:value-of select="$name"/>, env,
                                                                    arr_list);
-                             </xsl:otherwise> <!--closing otherwise for "../@ordered" -->
-                           </xsl:choose> <!-- chooses for ordered or not ordered -->
+                             </xsl:otherwise> <!--closing otherwise for "../@ordered  or not($anon or $istype)" -->
+                           </xsl:choose> <!-- chooses for ordered or not @ordered or not($anon or $istype)-->
                         </xsl:otherwise> <!-- closing when it is all the way an array -->
                       </xsl:choose> <!-- check array or not -->
                    </xsl:otherwise> <!-- closing when it is an element not(@attribute) -->
@@ -1572,11 +1610,13 @@
 
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            if(has_parent)
-                                axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                            <xsl:if test="$anon or $istype">
+                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                            </xsl:if>
                             adb_<xsl:value-of select="@type"/>_serialize( <xsl:value-of select="$attriName"/>, env, current_node, AXIS2_TRUE);
-                            if(has_parent)
-                                axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                            <xsl:if test="$anon or $istype">
+                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                            </xsl:if>
                         </xsl:when>
 
 
