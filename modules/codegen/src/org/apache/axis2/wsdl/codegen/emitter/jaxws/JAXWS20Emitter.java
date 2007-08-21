@@ -3,9 +3,7 @@ package org.apache.axis2.wsdl.codegen.emitter.jaxws;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.woden.internal.util.dom.DOM2Writer;
-
+import org.apache.axis2.AxisFault;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
@@ -16,14 +14,18 @@ public class JAXWS20Emitter extends JAXWSEmitter {
      *
      * @return DOM Document
      */
-    protected Document createDOMDocumentForSEI() {
+    protected Document createDOMDocumentForSEI() throws AxisFault {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("javaConstruct");
 
         Element importList = doc.createElement("importList");
         rootElement.appendChild(importList);
 
+        String packageName = codeGenConfiguration.getPackageName();
+        String targetNS = codeGenConfiguration.getTargetNamespace();
+        String portTypeName = (String) axisService.getParameterValue(WSDL2Constants.INTERFACE_LOCAL_NAME);
         portTypeName = resolveNameCollision(portTypeName, packageName, TYPE_SUFFIX);
+        this.axisService.addParameter(JAXWS_PORT_TYPE_NAME, portTypeName);
 
         addAttribute(doc, "package", packageName, rootElement);
         addAttribute(doc, "targetNamespace", targetNS, rootElement);
@@ -31,6 +33,45 @@ public class JAXWS20Emitter extends JAXWSEmitter {
 
         Element annotationElement = AnnotationElementBuilder.buildWebServiceAnnotationElement(portTypeName, targetNS,
                 "", doc);
+        rootElement.appendChild(annotationElement);
+
+        loadOperations(doc, rootElement, null);
+
+        //attach a list of faults
+        rootElement.appendChild(getUniqueListofFaults(doc));
+        doc.appendChild(rootElement);
+        //////////////////////////////////////////////////////////
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        ////////////////////////////////////////////////////////////
+        return doc;
+
+    }
+
+    /**
+     * Creates the XML model for the Service Endpoint interface
+     *
+     * @return DOM Document
+     */
+    protected Document createDOMDocumentForSEIImpl() throws AxisFault {
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("javaConstruct");
+
+        //Element importList = doc.createElement("importList");
+        //rootElement.appendChild(importList);
+
+        String packageName = codeGenConfiguration.getPackageName();
+        String targetNS = codeGenConfiguration.getTargetNamespace();
+        String portTypeName = (String) axisService.getParameterValue(WSDL2Constants.INTERFACE_LOCAL_NAME);
+        portTypeName = resolveNameCollision(portTypeName, packageName, TYPE_SUFFIX);
+        this.axisService.addParameter(JAXWS_PORT_TYPE_NAME, portTypeName);
+
+        addAttribute(doc, "package", packageName, rootElement);
+        addAttribute(doc, "targetNamespace", targetNS, rootElement);
+        addAttribute(doc, "name", axisService.getParameter(JAXWS_PORT_TYPE_NAME).getValue() + JAXWS_IMPL_SUFFIX,
+                rootElement);
+
+        Element annotationElement = AnnotationElementBuilder.buildWebServiceAnnotationElement(
+               packageName +"." +axisService.getParameter(JAXWS_PORT_TYPE_NAME).getValue(), doc);
         rootElement.appendChild(annotationElement);
 
         loadOperations(doc, rootElement, null);
@@ -57,8 +98,11 @@ public class JAXWS20Emitter extends JAXWSEmitter {
         Element importList = doc.createElement("importList");
         rootElement.appendChild(importList);
 
+        String serviceName = axisService.getName();
         String capitalizedServiceName = serviceName.toUpperCase();
         String wsdlLocation = "Needs to be fixed";
+        String packageName = codeGenConfiguration.getPackageName();
+        String targetNS = codeGenConfiguration.getTargetNamespace();
 
         serviceName = resolveNameCollision(serviceName, packageName, TYPE_SUFFIX);
 
@@ -67,12 +111,6 @@ public class JAXWS20Emitter extends JAXWSEmitter {
         addAttribute(doc, "name", serviceName, rootElement);
         addAttribute(doc, "wsdlLocation", wsdlLocation, rootElement);
         addAttribute(doc, "capitalizedServiceName", capitalizedServiceName, rootElement);
-
-        //Adding annotations -- tempory solution  hardcoded solution
-//        Element importElement;
-//        importElement = doc.createElement("import");
-//        addAttribute(doc, "value", "java.net.URL", importElement);
-//        importList.appendChild(importElement);
 
         Element annotationElement = AnnotationElementBuilder.buildWebServiceClientAnnotationElement(serviceName,
                 targetNS, wsdlLocation, doc);
@@ -84,7 +122,8 @@ public class JAXWS20Emitter extends JAXWSEmitter {
 
             Element portElement = doc.createElement("port");
             addAttribute(doc, "portName", portName, portElement);
-            addAttribute(doc, "portTypeName", portTypeName, portElement);
+            addAttribute(doc, "portTypeName", (String) this.axisService.getParameter(JAXWS_PORT_TYPE_NAME).getValue(),
+                    portElement);
 
             Element endPointAnnoElement = AnnotationElementBuilder.buildWebEndPointAnnotationElement(portName, doc);
             portElement.appendChild(endPointAnnoElement);
@@ -115,18 +154,20 @@ public class JAXWS20Emitter extends JAXWSEmitter {
         Element importList = doc.createElement("importList");
         faultElement.appendChild(importList);
 
+        String packageName = codeGenConfiguration.getPackageName();
+        String targetNS = codeGenConfiguration.getTargetNamespace();
+
         addAttribute(doc, "package", packageName, faultElement);
         addAttribute(doc, "targetNamespace", targetNS, faultElement);
 
         String exceptionClassName = (String) faultClassNameMap.get(key);
-        exceptionClassName = resolveNameCollision(exceptionClassName, packageName, EXCEPTION_SUFFIX);
-        addAttribute(doc, "name",exceptionClassName, faultElement);
-//            addAttribute(doc, "shortName",
-//                    (String) faultClassNameMap.get(key) + "Exception",
-//                    faultElement);
+        String resolvedExpClass = resolveNameCollision(exceptionClassName, packageName, EXCEPTION_SUFFIX);
 
-        //the type represents the type that will be wrapped by this
-        //name
+        if (!resolvedExpClass.equals(exceptionClassName))
+            faultClassNameMap.put(key, resolvedExpClass);
+
+        addAttribute(doc, "name", resolvedExpClass, faultElement);
+
         String typeMapping =
                 this.mapper.getTypeMappingName((QName) faultElementQNameMap.get(key));
         String shortType = extratClassName(typeMapping);
@@ -144,14 +185,6 @@ public class JAXWS20Emitter extends JAXWSEmitter {
         addAttribute(doc, "value", typeMapping, importElement);
         importList.appendChild(importElement);
 
-//            String attribValue = (String) instantiatableMessageClassNames.
-//                    get(key);
-//            addAttribute(doc, "instantiatableType",
-//                    attribValue == null ? "" : attribValue,
-//                    faultElement);
-
-        // add an extra attribute to say whether the type mapping is
-        // the default
         if (mapper.getDefaultMappingName().equals(typeMapping)) {
             addAttribute(doc, "default", "yes", faultElement);
         }

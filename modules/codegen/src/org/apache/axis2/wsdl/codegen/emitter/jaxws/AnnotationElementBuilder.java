@@ -25,6 +25,19 @@ public class AnnotationElementBuilder {
         return annotationElement;
     }
 
+    static Element buildWebServiceAnnotationElement(String endpointInterface, Document doc) {
+
+        Element annotationElement = doc.createElement("annotation");
+        XSLTUtils.addAttribute(doc, "name", "javax.jws.WebService", annotationElement);
+
+        Element paramElement = doc.createElement("param");
+        XSLTUtils.addAttribute(doc, "type", "endpointInterface", paramElement);
+        XSLTUtils.addAttribute(doc, "value", endpointInterface, paramElement);
+        annotationElement.appendChild(paramElement);
+
+        return annotationElement;
+    }
+
     static Element buildWebFaultAnnotationElement(String name, String targetNS, Document doc) {
         Element annotationElement = doc.createElement("annotation");
         XSLTUtils.addAttribute(doc, "name", "javax.xml.ws.WebFault", annotationElement);

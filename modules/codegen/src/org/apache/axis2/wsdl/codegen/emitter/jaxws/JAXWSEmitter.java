@@ -1,15 +1,14 @@
 package org.apache.axis2.wsdl.codegen.emitter.jaxws;
 
 import org.w3c.dom.Document;
-import org.apache.axis2.wsdl.codegen.writer.FileWriter;
-import org.apache.axis2.wsdl.codegen.writer.SkeletonInterfaceWriter;
-import org.apache.axis2.wsdl.codegen.writer.ExceptionWriter;
-import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
+import org.w3c.dom.Element;
+import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.codegen.emitter.AxisServiceBasedMultiLanguageEmitter;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.AxisFault;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,18 +17,11 @@ public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter 
     protected final static String TYPE_SUFFIX = "Type";
     protected final static String SERVICE_SUFFIX = "Service";
     protected final static String EXCEPTION_SUFFIX = "Exception";
-
-    protected String portTypeName;
-    protected String serviceName;
-    protected String packageName;
-    protected String targetNS;
+    protected final static String JAXWS_PORT_TYPE_NAME = "JaxwsPortTypeName";
+    protected final static String JAXWS_IMPL_SUFFIX = "Impl";
 
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         super.setCodeGenConfiguration(configuration);
-        portTypeName = (String) axisService.getParameterValue(WSDL2Constants.INTERFACE_LOCAL_NAME);
-        serviceName = axisService.getName();
-        targetNS = codeGenConfiguration.getTargetNamespace();
-        packageName = codeGenConfiguration.getPackageName();
     }
 
     public void emitSkeleton() throws CodeGenerationException {
@@ -56,11 +48,14 @@ public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter 
                 //handle faults
                 generateAndPopulateFaultNames();
 
+                //write the Exceptions
+                writeExceptions();
+
                 //write the Service Endpoint Interface
                 writeServiceEndpointInterface();
 
-                //write the Exceptions
-                writeExceptions();
+                //write the Service Endpoint Interface
+                writeServiceEndpointInterfaceImpl();
 
                 //write the Service Class
                 writeServiceClass();
@@ -110,6 +105,19 @@ public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter 
         writeFile(skeletonModel, skeletonInterfaceWriter);
     }
 
+    protected void writeServiceEndpointInterfaceImpl() throws Exception {
+        Document skeletonModel = createDOMDocumentForSEIImpl();
+        debugLogDocument("Document for Service Endpoint Interface:", skeletonModel);
+        FileWriter interfaceImplementationWriter = new InterfaceImplementationWriter(
+                codeGenConfiguration.isFlattenFiles() ?
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                codeGenConfiguration.getSourceLocation())
+                , this.codeGenConfiguration.getOutputLanguage());
+
+        writeFile(skeletonModel, interfaceImplementationWriter);
+    }
+
     /**
      * Writes the exception calsses.
      */
@@ -153,12 +161,37 @@ public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter 
         writeFile(skeletonModel, skeletonInterfaceWriter);
     }
 
+    protected Document createDOMDocumentForServiceXML() {
+        Document doc = getEmptyDocument();
+        String className = null;
+        String serviceName = null;
+        Element rootElement = doc.createElement("interfaces");
+        doc.appendChild(rootElement);
+
+        for (Iterator iter = this.axisServices.iterator(); iter.hasNext();) {
+            this.axisService = (AxisService) iter.next();
+            this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
+            serviceName = axisService.getName();
+            className = (String)axisService.getParameter(JAXWS_PORT_TYPE_NAME).getValue() + JAXWS_IMPL_SUFFIX;
+            rootElement.appendChild(getServiceElement(serviceName, className, doc));
+        }
+
+        return doc;
+    }
+
     /**
      * Creates the XML model for the Service Endpoint interface
      *
      * @return DOM Document
      */
-    protected abstract Document createDOMDocumentForSEI();
+    protected abstract Document createDOMDocumentForSEI() throws AxisFault;
+
+     /**
+     * Creates the XML model for the Service Endpoint interface Implementation class
+     *
+     * @return DOM Document
+     */
+    protected abstract Document createDOMDocumentForSEIImpl() throws AxisFault;
 
     /**
      * Creates the XML model for the Service Class
@@ -174,6 +207,48 @@ public abstract class JAXWSEmitter extends AxisServiceBasedMultiLanguageEmitter 
      * @return DOM Document
      */
     protected abstract Document createDOMDocumentForException(String key);
+
+    /**
+     * A resusable method to return the service element for creating the service xml
+     *
+     * @param serviceName
+     * @param className
+     * @param doc
+     * @return DOM Element
+     */
+    protected Element getServiceElement(String serviceName, String className, Document doc) {
+
+        if (allServiceInfoHolder.get(serviceName) != null) {
+            this.infoHolder = (Map) allServiceInfoHolder.get(serviceName);
+        }
+        Element rootElement = doc.createElement("interface");
+
+        addAttribute(doc, "package", "", rootElement);
+        addAttribute(doc, "classpackage", codeGenConfiguration.getPackageName(), rootElement);
+        addAttribute(doc, "name", className, rootElement);
+
+        if (!codeGenConfiguration.isWriteTestCase()) {
+            addAttribute(doc, "testOmit", "true", rootElement);
+        }
+        addAttribute(doc, "servicename", serviceName, rootElement);
+
+        Iterator it = mepToClassMap.keySet().iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+
+            if (Boolean.TRUE.equals(infoHolder.get(key))) {
+                Element elt = addElement(doc, "messagereceiver",
+                        makeJavaClassName(serviceName) + mepToSuffixMap.get(key),
+                        rootElement);
+                addAttribute(doc, "mepURI", key.toString(), elt);
+            }
+
+        }
+
+        loadOperations(doc, rootElement, null);
+
+        return rootElement;
+    }
 
     //Util methods
     public String extratClassName(String fullyQualifiedName) {

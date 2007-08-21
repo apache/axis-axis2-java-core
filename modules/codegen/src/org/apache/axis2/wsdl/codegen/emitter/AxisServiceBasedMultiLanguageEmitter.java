@@ -207,6 +207,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected static final String TEST_SRC_DIR_NAME = "test";
 
+    protected boolean useHolderClass_jaxws = false;
+    protected boolean wrapped_jaxws = false;
+
 
     /**
      * default constructor - builds
@@ -2160,12 +2163,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
                 WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
-        addAttribute(doc, "parameterstyle", (axisOperation.getParameter(
-                Constants.UNWRAPPED_KEY) != null)?"WRAPPPED":"BARE", methodElement);
+
+        String messageExchangePattern = axisOperation.getMessageExchangePattern();
+        
+        //Jaxws Specific
+        if("jax-ws".equals(codeGenConfiguration.getOutputLanguage())){
+            boolean wrapped = false;
+            if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
+                AxisMessage msg = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if(msg.getParameter(Constants.UNWRAPPED_KEY) != null){
+                    wrapped = true;
+                }
+            }
+            addAttribute(doc, "parameterstyle", (wrapped)?"WRAPPPED":"BARE", methodElement);
+        }
+
+        
         addAttribute(doc, "dbsupportname",
                 endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
-        String messageExchangePattern = axisOperation.getMessageExchangePattern();
         addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(messageExchangePattern) + "",
                 methodElement);
         addAttribute(doc, "mepURI", messageExchangePattern, methodElement);
@@ -2195,18 +2211,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         
 
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
-            methodElement.appendChild(getInputElement(doc,
-                    axisOperation, soapHeaderInputParameterList));
             if("jax-ws".equals(codeGenConfiguration.getOutputLanguage())){
+                useHolderClass_jaxws = false;
                 AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
                     AxisMessage outMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if(inMessage.getName().equals(outMessage.getName())){
                         // in/out message
+                        useHolderClass_jaxws = true;
                         addAttribute(doc, "useholder", "true", methodElement);
                     }
                 }
             }
+            methodElement.appendChild(getInputElement(doc,
+                    axisOperation, soapHeaderInputParameterList));
         }
         if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getOutputElement(doc,
@@ -2872,7 +2890,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 MessagePartInformationHolder infoHolder =
                         (MessagePartInformationHolder) detailsParameter.getValue();
                 List partsList = infoHolder.getPartsList();
-
+                wrapped_jaxws = true;
                 //populate the parts list - this list is needed to generate multiple
                 //parameters in the signatures
                 for (int i = 0; i < partsList.size(); i++) {
@@ -2974,6 +2992,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element paramElement = doc.createElement("param");
         addAttribute(doc, "name",
                 paramName, paramElement);
+
+        if (codeGenConfiguration.getOutputLanguage().equals("jax-ws") && useHolderClass_jaxws) {
+            Class primitive = JavaUtils.getWrapperClass(paramType);
+            if(primitive != null){
+                paramType = primitive.getName();    
+            }
+        }
 
         addAttribute(doc, "type",
                 (paramType == null) ? "" : paramType,
