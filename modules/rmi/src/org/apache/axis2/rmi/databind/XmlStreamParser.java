@@ -33,7 +33,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import com.sun.org.apache.xerces.internal.xni.parser.XMLParseException;
 
 
 public class XmlStreamParser {
