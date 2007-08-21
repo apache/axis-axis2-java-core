@@ -16,35 +16,43 @@
 package org.apache.axis2.rmi.metadata;
 
 import junit.framework.TestCase;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
+import org.apache.axis2.rmi.config.ClassInfo;
+import org.apache.axis2.rmi.config.FieldInfo;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.metadata.service.BasicService;
-import org.apache.axis2.rmi.metadata.service.ExtensionService;
-import org.apache.axis2.rmi.metadata.service.dto.ChildClass2;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.rmi.metadata.service.CustomMappingService;
+import org.apache.axis2.rmi.metadata.service.dto.ComplexType3;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 
 
-public class ExtensionServiceTest extends TestCase {
+public class CustomMappingServiceTest extends TestCase {
 
     public void testGenerateSchema() {
+
         Configurator configurator = new Configurator();
-        configurator.addExtension(ChildClass2.class);
-        Service service = new Service(ExtensionService.class, configurator);
+
+        ClassInfo classInfo = new ClassInfo(ComplexType3.class);
+        FieldInfo fieldInfo = new FieldInfo("param1","xmlparam1",false);
+        classInfo.addFieldInfo(fieldInfo);
+        configurator.addClassInfo(classInfo);
+
+        Service service = new Service(CustomMappingService.class, configurator);
         try {
             service.populateMetaData();
             service.generateSchema();
-            
             WSDL11DefinitionBuilder definitionBuilder = new WSDL11DefinitionBuilder(service);
             Definition definition = definitionBuilder.generateWSDL();
+
+//            WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
+//            wsdlWriter.writeWSDL(definition, System.out);
 
             WSDL11ToAxisServiceBuilder bulder = new WSDL11ToAxisServiceBuilder(definition, null, null);
             bulder.populateService();
@@ -57,4 +65,5 @@ public class ExtensionServiceTest extends TestCase {
             fail();
         }
     }
+
 }

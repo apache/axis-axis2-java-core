@@ -131,7 +131,7 @@ public class XmlSchema {
                  xmlType = (XmlType) iter.next();
                  if (!xmlType.isAnonymous() && !xmlType.isSimpleType()){
                      xmlType.generateWSDLSchema(document, namespacesToPrefixMap);
-                     schemaElement.appendChild(xmlType.getComplexElement());
+                     schemaElement.appendChild(xmlType.getTypeElement());
                  }
             }
 

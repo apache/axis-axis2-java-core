@@ -13,40 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.rmi.server.services;
-
-import org.apache.axis2.rmi.databind.dto.TestRestrictionBean;
-
-import java.util.Map;
-import java.util.Date;
+package org.apache.axis2.rmi.deploy.config;
 
 
-public class Service1 implements Service1Interface {
+public class CustomClassInfo {
 
-    public String method1(String param1) {
-        return param1;
+    private ClassInfo[] classInfo;
+
+    public ClassInfo[] getClassInfo() {
+        return classInfo;
     }
 
-    public String[] method2(String[] param1) {
-        return param1;
+    public void setClassInfo(ClassInfo[] classInfo) {
+        this.classInfo = classInfo;
     }
-
-    public int mehtod3(int param1) {
-        return param1;
-    }
-
-    public int[] mehtod4(int[] param1) {
-        return param1;
-    }
-
-    public Map method5(Map param1) {
-        return param1;
-    }
-
-    public Date method6(Date param1){
-        return param1;
-    }
-
-    
 
 }

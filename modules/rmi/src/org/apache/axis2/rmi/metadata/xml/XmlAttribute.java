@@ -18,11 +18,13 @@ package org.apache.axis2.rmi.metadata.xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.util.Constants;
 
 import java.util.Map;
 
-public interface XmlElement {
+/**
+ * this class represents and xml attribute
+ */
+public interface XmlAttribute {
 
     public void generateWSDLSchema(Document document, Map namespacesToPrefixMap) throws SchemaGenerationException;
 
@@ -30,17 +32,9 @@ public interface XmlElement {
 
     public void setNamespace(String namespace);
 
-    public boolean isNillable();
+    public boolean isRequired();
 
-    public void setNillable(boolean nillable);
-
-    public boolean isArray();
-
-    public void setArray(boolean array);
-
-    public boolean isTopElement();
-
-    public void setTopElement(boolean topElement);
+    public void setRequired(boolean required);
 
     public XmlType getType();
 
@@ -50,12 +44,8 @@ public interface XmlElement {
 
     public void setName(String name);
 
-    public Element getElement();
+    public Element getAttribute();
 
-    public void setElement(Element element);
-
-    public boolean isMinOccurs0();
-
-    public void setMinOccurs0(boolean minOccurs0);
+    public void setAttribute(Element attribute);
 
 }

@@ -27,43 +27,11 @@ import java.util.Map;
 import java.util.Iterator;
 
 
-public class XmlType {
+public interface XmlType {
 
-    /**
-     * Qualified name of the xmlType
-     */
-    private QName qname;
+    public void addElement(XmlElement xmlElement);
 
-    /**
-     * is this an anAnonymous type this case qname can be null
-     */
-    private boolean isAnonymous;
-
-    /**
-     *  is this is a basic type
-     */
-    private boolean isSimpleType;
-
-    /**
-     * list of child elements
-     */
-    private List elements;
-
-    /**
-     * complex type element for this XmlType
-     */
-    private Element complexElement;
-
-    /**
-     * parent type for this xml type if it is an extension
-     *
-     */
-    private XmlType parentType;
-
-
-    public void addElement(XmlElement xmlElement){
-        this.elements.add(xmlElement);
-    }
+    public void addAttribute(XmlAttribute xmlAttribute);
 
     /**
      * this generates the complex type only if it is annonymous and
@@ -72,111 +40,34 @@ public class XmlType {
      * @param namespacesToPrefixMap
      * @throws SchemaGenerationException
      */
-    public void generateWSDLSchema(Document document,
-                                   Map namespacesToPrefixMap)
-                                   throws SchemaGenerationException {
-        // here we have to generate the complex type element for this xmlType
-        if (!this.isSimpleType){
-            String xsdPrefix = (String) namespacesToPrefixMap.get(Constants.URI_2001_SCHEMA_XSD);
-            this.complexElement = document.createElementNS(Constants.URI_2001_SCHEMA_XSD,"complexType");
-            this.complexElement.setPrefix(xsdPrefix);
-            if (!this.isAnonymous){
-               this.complexElement.setAttribute("name", this.qname.getLocalPart());
-            }
+    public void generateWSDLSchema(Document document, Map namespacesToPrefixMap) throws SchemaGenerationException;
 
-            Element sequenceElement = document.createElementNS(Constants.URI_2001_SCHEMA_XSD,"sequence");
-            sequenceElement.setPrefix(xsdPrefix);
+    public QName getQname();
 
-            // set the extension details if there are
-            if (this.parentType != null){
+    public void setQname(QName qname);
 
-                // i.e this is an extension type
-                Element complexContent = document.createElementNS(Constants.URI_2001_SCHEMA_XSD,"complexContent");
-                complexContent.setPrefix(xsdPrefix);
-                this.complexElement.appendChild(complexContent);
+    public boolean isAnonymous();
 
-                Element extension = document.createElementNS(Constants.URI_2001_SCHEMA_XSD,"extension");
-                extension.setPrefix(xsdPrefix);
-                complexContent.appendChild(extension);
+    public void setAnonymous(boolean anonymous);
 
-                String extensionPrefix =
-                        (String) namespacesToPrefixMap.get(this.parentType.getQname().getNamespaceURI());
-                String localPart = this.parentType.getQname().getLocalPart();
-                if ((extensionPrefix == null) || extensionPrefix.equals("")){
-                    extension.setAttribute("base",localPart);
-                } else {
-                    extension.setAttribute("base",extensionPrefix + ":" + localPart);
-                }
-               extension.appendChild(sequenceElement);
-            } else {
-               this.complexElement.appendChild(sequenceElement);
-            }
+    public boolean isSimpleType();
 
-            // add the other element children
-            XmlElement xmlElement;
-            for (Iterator iter = this.elements.iterator();iter.hasNext();){
-                xmlElement = (XmlElement) iter.next();
-                xmlElement.generateWSDLSchema(document,namespacesToPrefixMap);
-                sequenceElement.appendChild(xmlElement.getElement());
-            }
-        }
-    }
+    public void setSimpleType(boolean simpleType);
 
-    public XmlType() {
-        this.elements = new ArrayList();
-    }
+    public List getElements();
 
-    public XmlType(QName qname) {
-        this();
-        this.qname = qname;
-    }
+    public void setElements(List elements);
 
-    public QName getQname() {
-        return qname;
-    }
+    public Element getTypeElement();
 
-    public void setQname(QName qname) {
-        this.qname = qname;
-    }
+    public void setTypeElement(Element typeElement);
 
-    public boolean isAnonymous() {
-        return isAnonymous;
-    }
+    public XmlType getParentType();
 
-    public void setAnonymous(boolean anonymous) {
-        isAnonymous = anonymous;
-    }
+    public void setParentType(XmlType parentType);
 
-    public boolean isSimpleType() {
-        return isSimpleType;
-    }
+    public List getAttributes();
 
-    public void setSimpleType(boolean simpleType) {
-        isSimpleType = simpleType;
-    }
-
-    public List getElements() {
-        return elements;
-    }
-
-    public void setElements(List elements) {
-        this.elements = elements;
-    }
-
-    public Element getComplexElement() {
-        return complexElement;
-    }
-
-    public void setComplexElement(Element complexElement) {
-        this.complexElement = complexElement;
-    }
-
-    public XmlType getParentType() {
-        return parentType;
-    }
-
-    public void setParentType(XmlType parentType) {
-        this.parentType = parentType;
-    }
-
+    public void setAttributes(List attributes);
+    
 }

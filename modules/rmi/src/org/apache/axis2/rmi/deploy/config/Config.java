@@ -21,6 +21,7 @@ public class Config {
    private ExtensionClasses extensionClasses;
    private PackageToNamespaceMapings packageToNamespaceMapings;
    private String simpleDataHandlerClass;
+   private CustomClassInfo customClassInfo;
 
     public Services getServices() {
         return services;
@@ -52,6 +53,14 @@ public class Config {
 
     public void setSimpleDataHandlerClass(String simpleDataHandlerClass) {
         this.simpleDataHandlerClass = simpleDataHandlerClass;
+    }
+
+    public CustomClassInfo getCustomClassInfo() {
+        return customClassInfo;
+    }
+
+    public void setCustomClassInfo(CustomClassInfo customClassInfo) {
+        this.customClassInfo = customClassInfo;
     }
 
 }

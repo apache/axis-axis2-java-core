@@ -15,63 +15,50 @@
  */
 package org.apache.axis2.rmi.metadata;
 
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.types.MapType;
-import org.apache.axis2.rmi.util.Util;
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 
-import java.lang.reflect.Method;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.List;
 
-public class Attribute {
+
+public abstract class Field {
 
     /**
      * property descriptor for this attribute
      */
-    private PropertyDescriptor propertyDescriptor;
+    protected PropertyDescriptor propertyDescriptor;
     /**
      * name of the attribute this is the name of the XmlElement as well
      */
-    private String name;
+    protected String name;
 
     /**
      * namespce of this attribute
      * this is always the namespace of the parent type
      */
-    private String namespace;
+    protected String namespace;
 
     /**
      * getter method of the attribute
      */
-    private Method getterMethod;
+    protected Method getterMethod;
 
     /**
      * setter method of the attribute
      */
-    private Method setterMethod;
+    protected Method setterMethod;
 
     /**
      * attribute metadata type
      */
-    private Type type;
-
-    /**
-     * is this attribute an array
-     */
-    private boolean isArray;
-
-    /**
-     * schmema element corresponding to this attribute
-     * always an attribute refer to and schema XmlElement
-     */
-    private XmlElement element;
+    protected Type type;
 
     /**
      * boolean variable to check to see whether we generated the
@@ -79,17 +66,12 @@ public class Attribute {
      * although we can check for null value of the element we prefer
      * to keep a seperate variable.
      */
-    private boolean isSchemaGenerated;
-
-    /**
-     * class type of the attribute class
-     */
-    private int classType;
+    protected boolean isSchemaGenerated;
 
     /**
      * default constructor
      */
-    public Attribute() {
+    public Field() {
     }
 
     /**
@@ -97,14 +79,14 @@ public class Attribute {
      *
      * @param propertyDescriptor
      */
-    public Attribute(PropertyDescriptor propertyDescriptor,
-                     String namespace) {
+    public Field(PropertyDescriptor propertyDescriptor,
+                 String namespace) {
         this.propertyDescriptor = propertyDescriptor;
-        if (Constants.RMI_TYPE_NAMSPACE.equals(namespace)){
+        if (Constants.RMI_TYPE_NAMSPACE.equals(namespace)) {
             // for rmi defined type elements we keep attributes as unqualified
             this.namespace = null;
         } else {
-           this.namespace = namespace;
+            this.namespace = namespace;
         }
 
     }
@@ -115,41 +97,6 @@ public class Attribute {
         this.name = this.propertyDescriptor.getName();
         this.getterMethod = this.propertyDescriptor.getReadMethod();
         this.setterMethod = this.propertyDescriptor.getWriteMethod();
-        Class baseClass = null;
-        try {
-            this.classType = Util.getClassType(this.propertyDescriptor.getPropertyType());
-
-            if ((this.classType & Constants.COLLECTION_TYPE) == Constants.COLLECTION_TYPE){
-               // i.e. if this is collection type
-               this.isArray = true;
-               baseClass = Object.class;
-            } else if ((this.classType & Constants.MAP_TYPE) == Constants.MAP_TYPE){
-               // if the attribute is mep type we set a custom type for it.
-               this.isArray = true;
-               baseClass = MapType.class;
-            } else {
-                this.isArray = this.propertyDescriptor.getPropertyType().isArray();
-                if (this.isArray) {
-                    baseClass = this.propertyDescriptor.getPropertyType().getComponentType();
-                } else {
-                    baseClass = this.propertyDescriptor.getPropertyType();
-                }
-            }
-
-            if (processedTypeMap.containsKey(baseClass)){
-                this.type = (Type) processedTypeMap.get(baseClass);
-            } else {
-                this.type = new TypeImpl(baseClass);
-                processedTypeMap.put(baseClass, this.type);
-                this.type.populateMetaData(configurator, processedTypeMap);
-            }
-        } catch (IllegalAccessException e) {
-            throw new MetaDataPopulateException("Can not instataite class "
-                    + this.propertyDescriptor.getPropertyType().getName(), e);
-        } catch (InstantiationException e) {
-            throw new MetaDataPopulateException("Can not instataite class "
-                    + this.propertyDescriptor.getPropertyType().getName(), e);
-        }
 
     }
 
@@ -157,25 +104,21 @@ public class Attribute {
     /**
      * this method sets the XMLElement correctly. this method should be called only
      * if this is not processed
+     *
      * @param configurator
      * @param schemaMap
-     * @throws SchemaGenerationException
+     * @throws org.apache.axis2.rmi.exception.SchemaGenerationException
+     *
      */
     public void generateSchema(Configurator configurator,
                                Map schemaMap)
             throws SchemaGenerationException {
         // here we have to send the XmlElement correctly
-       this.isSchemaGenerated = true;
-       this.element = new XmlElementImpl(!this.isArray && this.type.getJavaClass().isPrimitive());
-       this.element.setName(this.name);
-       this.element.setNamespace(this.namespace);
-       this.element.setTopElement(false);
+        this.isSchemaGenerated = true;
 
-       if (!this.type.isSchemaGenerated()){
-          this.type.generateSchema(configurator,schemaMap);
-       }
-       this.element.setType(this.type.getXmlType());
-       this.element.setArray(this.isArray);
+        if (!this.type.isSchemaGenerated()) {
+            this.type.generateSchema(configurator, schemaMap);
+        }
 
     }
 
@@ -219,22 +162,6 @@ public class Attribute {
         this.type = type;
     }
 
-    public boolean isArray() {
-        return isArray;
-    }
-
-    public void setArray(boolean array) {
-        isArray = array;
-    }
-
-    public XmlElement getElement() {
-        return element;
-    }
-
-    public void setElement(XmlElement element) {
-        this.element = element;
-    }
-
     public boolean isSchemaGenerated() {
         return isSchemaGenerated;
     }
@@ -249,14 +176,6 @@ public class Attribute {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
-    }
-
-    public int getClassType() {
-        return classType;
-    }
-
-    public void setClassType(int classType) {
-        this.classType = classType;
     }
 
 }

@@ -16,12 +16,16 @@
 package org.apache.axis2.rmi.databind;
 
 import org.apache.axis2.rmi.deploy.config.*;
+import org.apache.axis2.rmi.deploy.config.ClassInfo;
+import org.apache.axis2.rmi.deploy.config.FieldInfo;
 import org.apache.axis2.rmi.metadata.Parameter;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.util.NamespacePrefix;
+import org.apache.axis2.rmi.config.*;
+import org.apache.axis2.rmi.databind.dto.TestClass2;
 import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -35,6 +39,19 @@ public class ConfigObjectTest extends DataBindTest {
     public void testConfigObject() {
 
         Config config = new Config();
+
+        // adding ustom mappings
+        org.apache.axis2.rmi.config.ClassInfo classInfo = new org.apache.axis2.rmi.config.ClassInfo(FieldInfo.class);
+        classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("javaName",null,false));
+        classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("xmlName",null,false));
+        classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("element","isElement",false));
+        configurator.addClassInfo(classInfo);
+
+        classInfo = new org.apache.axis2.rmi.config.ClassInfo(ClassInfo.class);
+        classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("className",null,false));
+        configurator.addClassInfo(classInfo);
+
+
 
         Service[] services = new Service[2];
         services[0] = new Service();
@@ -64,6 +81,26 @@ public class ConfigObjectTest extends DataBindTest {
         packageToNamespaceMapings.setPackageToNamespaceMap(packageToNamespaceMaps);
         config.setPackageToNamespaceMapings(packageToNamespaceMapings);
         config.setSimpleDataHandlerClass("test");
+
+        //adding customclass info
+        CustomClassInfo customClassInfo = new CustomClassInfo();
+        ClassInfo[] classInfos = new ClassInfo[1];
+        classInfos[0] = new ClassInfo();
+
+        FieldInfo[] filedInfos = new FieldInfo[1];
+        filedInfos[0] = new FieldInfo();
+        filedInfos[0].setElement(false);
+        filedInfos[0].setJavaName("param1");
+        filedInfos[0].setXmlName("xmlParam1");
+
+        classInfos[0].setFieldInfo(filedInfos);
+        classInfos[0].setClassName("test");
+
+        customClassInfo.setClassInfo(classInfos);
+
+        config.setCustomClassInfo(customClassInfo);
+
+
 
 
         Parameter parameter = new Parameter(Config.class, "config");

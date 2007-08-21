@@ -26,6 +26,7 @@ import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.Service;
 import org.apache.axis2.rmi.server.services.Service1;
+import org.apache.axis2.rmi.server.services.Service2;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.wsdl.Definition;
@@ -48,9 +49,8 @@ public class ServerTest {
                             AXIS2_REPOSITORY_LOCATION, AXIS2_CONFIG_FILE);
             // add the service
 //            Configurator configurator = new Configurator();
-//            configurator.setSimpleTypeHandler(new CustomSimpleTypeHandler());
 //            ClassDeployer classDeployer = new ClassDeployer(confContext, configurator);
-//            classDeployer.deployClass(Service1.class);
+//            classDeployer.deployClass(Service2.class);
 
             SimpleHTTPServer simpleHttpServer = new SimpleHTTPServer(confContext, 5555);
             simpleHttpServer.start();

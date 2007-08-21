@@ -19,6 +19,8 @@ import org.apache.axis2.rmi.metadata.xml.XmlElement;
 import org.apache.axis2.rmi.metadata.xml.XmlSchema;
 import org.apache.axis2.rmi.metadata.xml.XmlImport;
 import org.apache.axis2.rmi.metadata.xml.XmlType;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlTypeImpl;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
@@ -150,14 +152,14 @@ public class Operation {
         if (!configurator.isBare()) {
 
             // generating the input element
-            this.inputElement = new XmlElement(false);
+            this.inputElement = new XmlElementImpl(false);
             this.inputElement.setName(this.name);
             this.inputElement.setNamespace(this.namespace);
             this.inputElement.setTopElement(true);
             xmlSchema.addElement(this.inputElement);
 
             // set the complex type for this element
-            XmlType xmlType = new XmlType();
+            XmlType xmlType = new XmlTypeImpl();
             xmlType.setAnonymous(true);
             xmlType.setSimpleType(false);
 
@@ -183,13 +185,13 @@ public class Operation {
             this.inputElement.setType(xmlType);
 
             // generate the output Element
-            this.outPutElement = new XmlElement(false);
+            this.outPutElement = new XmlElementImpl(false);
             this.outPutElement.setName(this.name + "Response");
             this.outPutElement.setNamespace(this.namespace);
             this.outPutElement.setTopElement(true);
             xmlSchema.addElement(this.outPutElement);
 
-            xmlType = new XmlType();
+            xmlType = new XmlTypeImpl();
             xmlType.setAnonymous(true);
             xmlType.setSimpleType(false);
             if (this.outputParameter != null) {

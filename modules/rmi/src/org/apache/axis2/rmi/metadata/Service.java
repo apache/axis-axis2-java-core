@@ -20,6 +20,7 @@ import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.metadata.xml.XmlSchema;
 import org.apache.axis2.rmi.metadata.xml.XmlImport;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 
@@ -125,7 +126,7 @@ public class Service {
         for (Iterator iter = this.configurator.getExtensionClasses().iterator(); iter.hasNext();) {
             extensionClass = (Class) iter.next();
             if (!this.processedTypeMap.containsKey(extensionClass)) {
-                extensionType = new Type(extensionClass);
+                extensionType = new TypeImpl(extensionClass);
                 this.processedTypeMap.put(extensionClass, extensionType);
                 extensionType.populateMetaData(this.configurator, this.processedTypeMap);
             }

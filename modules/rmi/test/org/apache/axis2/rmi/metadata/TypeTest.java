@@ -16,6 +16,7 @@
 package org.apache.axis2.rmi.metadata;
 
 import org.apache.axis2.rmi.metadata.service.dto.ChildClass;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 
@@ -32,7 +33,7 @@ public class TypeTest extends TestCase {
         Configurator configurator = new Configurator();
         Map processedTypeMap = new HashMap();
 
-        Type type = new Type(ChildClass.class);
+        Type type = new TypeImpl(ChildClass.class);
         try {
             type.populateMetaData(configurator,processedTypeMap);
         } catch (MetaDataPopulateException e) {

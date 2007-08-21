@@ -15,94 +15,59 @@
  */
 package org.apache.axis2.rmi.metadata;
 
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.databind.RMIBean;
 import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 
+import java.beans.PropertyDescriptor;
 import java.util.Map;
-import java.util.List;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * this class is used to keep the Parameter details of a java method
- */
-public class Parameter {
+
+public class ElementField extends Field {
 
     /**
-     * java class represents this parameter
+     * is this attribute an array
      */
-    private Class javaClass;
-    /**
-     * parameter name
-     */
-    private String name;
+    protected boolean isArray;
 
     /**
-     * namespace of this parameter
-     * this should always null. i.e no namespace for an parameter
+     * class type of the attribute class
      */
-    private String namespace;
+    protected int classType;
 
     /**
-     * XmlType of the parameter
+     * schmema element corresponding to this attribute
+     * always an attribute refer to and schema XmlElement
      */
-    private Type type;
-
-    /**
-     * is this parameter is array type
-     */
-    private boolean isArray;
-
-    /**
-     * xml Element corresponding to this parameter
-     */
-    private XmlElement element;
-
-    /**
-     * whether the schema is generated or not
-     */
-    private boolean isSchemaGenerated;
-
-    /**
-     * type of the parameter class
-     */
-    private int classType;
+    protected XmlElement element;
 
 
-    /**
-     * default constructor
-     */
-    public Parameter() {
+    public ElementField() {
     }
 
-    public Parameter(Class javaClass, String name, String namespace) {
-        this.javaClass = javaClass;
-        this.name = name;
-        this.namespace = namespace;
-    }
-
-
-    public Parameter(Class javaClass, String name) {
-        this(javaClass, name, null);
+    public ElementField(PropertyDescriptor propertyDescriptor, String namespace) {
+        super(propertyDescriptor, namespace);
     }
 
     public void populateMetaData(Configurator configurator,
                                  Map processedTypeMap)
             throws MetaDataPopulateException {
-
-        Class baseClass;
+        super.populateMetaData(configurator, processedTypeMap);
+        Class baseClass = null;
         try {
-            this.classType = Util.getClassType(this.javaClass);
+            this.classType = Util.getClassType(this.propertyDescriptor.getPropertyType());
+
             if ((this.classType & Constants.COLLECTION_TYPE) == Constants.COLLECTION_TYPE) {
-                // i.e this is a collection class
+                // i.e. if this is collection type
                 this.isArray = true;
                 baseClass = Object.class;
             } else if ((this.classType & Constants.MAP_TYPE) == Constants.MAP_TYPE) {
@@ -110,20 +75,17 @@ public class Parameter {
                 this.isArray = true;
                 baseClass = MapType.class;
             } else {
-                // populate the type for this parameter
-                this.isArray = this.javaClass.isArray();
-
+                this.isArray = this.propertyDescriptor.getPropertyType().isArray();
                 if (this.isArray) {
-                    baseClass = this.javaClass.getComponentType();
+                    baseClass = this.propertyDescriptor.getPropertyType().getComponentType();
                 } else {
-                    baseClass = this.javaClass;
+                    baseClass = this.propertyDescriptor.getPropertyType();
                 }
             }
 
             if (processedTypeMap.containsKey(baseClass)) {
-                // i.e we have already process this type
                 this.type = (Type) processedTypeMap.get(baseClass);
-            } else if (RMIBean.class.isAssignableFrom(baseClass)) {
+            } else if (RMIBean.class.isAssignableFrom(baseClass)){
                 // if this bean is an RMIBean we have to use the type return
                 // from that bean.
                 try {
@@ -139,77 +101,35 @@ public class Parameter {
                     }
                 } catch (NoSuchMethodException e) {
                     throw new MetaDataPopulateException("No getBeanClass method is not defined for " +
-                            " rmi bean class " + baseClass.getName());
+                    " rmi bean class " + baseClass.getName());
                 } catch (InvocationTargetException e) {
                     throw new MetaDataPopulateException("No getBeanClass method is not defined for " +
-                            " rmi bean class " + baseClass.getName());
+                    " rmi bean class " + baseClass.getName());
                 }
+
             } else {
                 this.type = new TypeImpl(baseClass);
-                // we have to do this before calling to populate meta data
-                // to avoid cirecular references
                 processedTypeMap.put(baseClass, this.type);
                 this.type.populateMetaData(configurator, processedTypeMap);
             }
         } catch (IllegalAccessException e) {
             throw new MetaDataPopulateException("Can not instataite class "
-                    + this.javaClass.getName(), e);
+                    + this.propertyDescriptor.getPropertyType().getName(), e);
         } catch (InstantiationException e) {
             throw new MetaDataPopulateException("Can not instataite class "
-                    + this.javaClass.getName(), e);
+                    + this.propertyDescriptor.getPropertyType().getName(), e);
         }
     }
 
-    /**
-     * this method sets the XMLElement correctly. this method should be called only
-     * if this is not processed
-     *
-     * @param configurator
-     * @param schemaMap
-     * @throws org.apache.axis2.rmi.exception.SchemaGenerationException
-     *
-     */
-    public void generateSchema(Configurator configurator,
-                               Map schemaMap)
-            throws SchemaGenerationException {
-        // here we have to send the XmlElement correctly
-
-        this.isSchemaGenerated = true;
-
-        if (!this.type.isSchemaGenerated()) {
-            this.type.generateSchema(configurator, schemaMap);
-        }
-
+    public void generateSchema(Configurator configurator, Map schemaMap) throws SchemaGenerationException {
+        super.generateSchema(configurator, schemaMap);
         this.element = new XmlElementImpl(!this.isArray && this.type.getJavaClass().isPrimitive());
         this.element.setName(this.name);
         this.element.setNamespace(this.namespace);
+        this.element.setTopElement(false);
         this.element.setType(this.type.getXmlType());
         this.element.setArray(this.isArray);
 
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public Class getJavaClass() {
-        return javaClass;
-    }
-
-    public void setJavaClass(Class javaClass) {
-        this.javaClass = javaClass;
     }
 
     public boolean isArray() {
@@ -228,22 +148,6 @@ public class Parameter {
         this.element = element;
     }
 
-    public boolean isSchemaGenerated() {
-        return isSchemaGenerated;
-    }
-
-    public void setSchemaGenerated(boolean schemaGenerated) {
-        isSchemaGenerated = schemaGenerated;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-
     public int getClassType() {
         return classType;
     }
@@ -251,4 +155,5 @@ public class Parameter {
     public void setClassType(int classType) {
         this.classType = classType;
     }
+
 }

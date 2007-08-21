@@ -16,18 +16,18 @@
 package org.apache.axis2.rmi.databind;
 
 import org.apache.axis2.rmi.metadata.Type;
-import org.apache.axis2.rmi.metadata.Attribute;
 import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.metadata.ElementField;
+import org.apache.axis2.rmi.metadata.AttributeField;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.metadata.xml.XmlElement;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.util.NamespacePrefix;
-import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
 import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.types.MapType;
-import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
@@ -233,107 +233,136 @@ public class JavaObjectSerializer {
             throws XMLStreamException,
             XmlSerializingException {
 
-        // first write the start element
-        writeStartElement(writer,
-                parentQName.getNamespaceURI(),
-                parentQName.getLocalPart(),
-                namespacePrefix);
-        if (object == null) {
-            writeNullAttribute(writer, namespacePrefix);
+        if (object instanceof RMIBean) {
+            RMIBean rmiBean = (RMIBean) object;
+            rmiBean.serialize(writer, this, parentQName, namespacePrefix);
         } else {
-            // handle extensions here.
-            // primitive can not have excented types
-            if (!object.getClass().equals(type.getJavaClass()) && !type.getJavaClass().isPrimitive()) {
-                // i.e this is an extension
-                if (!processedTypeMap.containsKey(object.getClass())) {
-                    Type newType = new Type(object.getClass());
-                    processedTypeMap.put(object.getClass(), newType);
-                    try {
-                        newType.populateMetaData(this.configurator, this.processedTypeMap);
-                        newType.generateSchema(this.configurator, this.schemaMap);
-                    } catch (MetaDataPopulateException e) {
-                        new XmlSerializingException("Problem in processing new type", e);
-                    } catch (SchemaGenerationException e) {
-                        new XmlSerializingException("Problem in processing new type", e);
-                    }
-                }
-                type = (Type) processedTypeMap.get(object.getClass());
-                writeTypeAttribute(writer, type.getXmlType().getQname(), namespacePrefix);
-            }
-
-            if (type.getXmlType().isSimpleType()) {
-                // this is a know type for us
-                // get the string represenation of this object using converter util class.
-                try {
-                    Method methodToInvoke = this.simpleTypeHandlerClass.getMethod("convertToString", new Class[]{type.getJavaClass()});
-                    // these methods are static so use null as the object argument
-                    String stringValue = (String) methodToInvoke.invoke(this.simpleTypeHandler, new Object[]{object});
-                    if (!type.getJavaClass().equals(Object.class)) {
-                        writer.writeCharacters(stringValue);
-                    }
-                } catch (NoSuchMethodException e) {
-                    new XmlSerializingException("Can not invoke converter util method convertToString for class "
-                            + type.getJavaClass().getName(), e);
-                } catch (IllegalAccessException e) {
-                    new XmlSerializingException("Can not invoke converter util method convertToString for class "
-                            + type.getJavaClass().getName(), e);
-                } catch (InvocationTargetException e) {
-                    new XmlSerializingException("Can not invoke converter util method convertToString for class "
-                            + type.getJavaClass().getName(), e);
-                }
-
+            // first write the start element
+            writeStartElement(writer,
+                    parentQName.getNamespaceURI(),
+                    parentQName.getLocalPart(),
+                    namespacePrefix);
+            if (object == null) {
+                writeNullAttribute(writer, namespacePrefix);
             } else {
-                // this is a complex type
-                try {
-                    // write the attributes
-                    Attribute attribute;
-                    Method getterMethod;
-                    Object attributeValue;
-                    QName attributeQName;
-                    for (Iterator iter = type.getAllAttributes().iterator(); iter.hasNext();) {
-                        attribute = (Attribute) iter.next();
-                        getterMethod = attribute.getGetterMethod();
-                        attributeValue = getterMethod.invoke(object, new Object[]{});
-                        serializeAttribute(attributeValue,
-                                attribute,
-                                writer,
-                                namespacePrefix);
-
+                // handle extensions here.
+                // primitive can not have excented types
+                if (!object.getClass().equals(type.getJavaClass()) && !type.getJavaClass().isPrimitive()) {
+                    // i.e this is an extension
+                    if (!processedTypeMap.containsKey(object.getClass())) {
+                        Type newType = new TypeImpl(object.getClass());
+                        processedTypeMap.put(object.getClass(), newType);
+                        try {
+                            newType.populateMetaData(this.configurator, this.processedTypeMap);
+                            newType.generateSchema(this.configurator, this.schemaMap);
+                        } catch (MetaDataPopulateException e) {
+                            new XmlSerializingException("Problem in processing new type", e);
+                        } catch (SchemaGenerationException e) {
+                            new XmlSerializingException("Problem in processing new type", e);
+                        }
                     }
-                } catch (IllegalAccessException e) {
-                    throw new XmlSerializingException("problem with method inovocation " + type.getName());
-                } catch (InvocationTargetException e) {
-                    throw new XmlSerializingException("problem with method inovocation " + type.getName());
+                    type = (Type) processedTypeMap.get(object.getClass());
+                    writeTypeAttribute(writer, type.getXmlType().getQname(), namespacePrefix);
                 }
 
+                if (type.getXmlType().isSimpleType()) {
+                    // this is a know type for us
+                    // get the string represenation of this object using converter util class.
+                    if (!type.getJavaClass().equals(Object.class)) {
+                        writer.writeCharacters(getSimpleTypeStringValue(type, object));
+                    }
+
+                } else {
+                    // this is a complex type
+                    try {
+
+                        AttributeField attributeField;
+                        Method getterMethod;
+                        Object attributeFieldValue;
+                        QName attributeQName;
+                        for (Iterator iter = type.getAllAttributeFields().iterator(); iter.hasNext();) {
+                            attributeField = (AttributeField) iter.next();
+                            getterMethod = attributeField.getGetterMethod();
+                            attributeFieldValue = getterMethod.invoke(object, new Object[]{});
+                            attributeQName = new QName(attributeField.getNamespace(), attributeField.getName());
+                            // calls to write attribute. for attributes we can have only simple types
+                            if (attributeFieldValue != null) {
+                                writeAttribute(writer,
+                                        getSimpleTypeStringValue(attributeField.getType(), attributeFieldValue),
+                                        attributeQName,
+                                        namespacePrefix);
+                            } else if (attributeField.isRequried()) {
+                                throw new XmlSerializingException("Attribute value for attribute "
+                                        + attributeField.getName() + " is required");
+                            }
+
+                        }
+
+                        // write the element fields
+                        ElementField elementField;
+                        Object elementFieldValue;
+                        for (Iterator iter = type.getAllElementFields().iterator(); iter.hasNext();) {
+                            elementField = (ElementField) iter.next();
+                            getterMethod = elementField.getGetterMethod();
+                            elementFieldValue = getterMethod.invoke(object, new Object[]{});
+                            serializeElementField(elementFieldValue,
+                                    elementField,
+                                    writer,
+                                    namespacePrefix);
+
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new XmlSerializingException("problem with method inovocation " + type.getName());
+                    } catch (InvocationTargetException e) {
+                        throw new XmlSerializingException("problem with method inovocation " + type.getName());
+                    }
+
+                }
             }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
+    }
+
+    private String getSimpleTypeStringValue(Type type, Object object) throws XmlSerializingException {
+        try {
+            Method methodToInvoke = this.simpleTypeHandlerClass.getMethod("convertToString", new Class[]{type.getJavaClass()});
+            // these methods are static so use null as the object argument
+            return (String) methodToInvoke.invoke(this.simpleTypeHandler, new Object[]{object});
+        } catch (NoSuchMethodException e) {
+            throw new XmlSerializingException("Can not invoke converter util method convertToString for class "
+                    + type.getJavaClass().getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new XmlSerializingException("Can not invoke converter util method convertToString for class "
+                    + type.getJavaClass().getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new XmlSerializingException("Can not invoke converter util method convertToString for class "
+                    + type.getJavaClass().getName(), e);
+        }
     }
 
     /**
      * this method serializes the attributes by calling to serialize element method.
      *
-     * @param attributeValue
-     * @param attribute
+     * @param elementFieldValue
+     * @param elementField
      * @param writer
      * @param namespacePrefix
      */
-    private void serializeAttribute(Object attributeValue,
-                                    Attribute attribute,
-                                    XMLStreamWriter writer,
-                                    NamespacePrefix namespacePrefix)
+    private void serializeElementField(Object elementFieldValue,
+                                       ElementField elementField,
+                                       XMLStreamWriter writer,
+                                       NamespacePrefix namespacePrefix)
             throws XmlSerializingException, XMLStreamException {
 
-        QName attribueQName = new QName(attribute.getElement().getNamespace(),
-                attribute.getElement().getName());
-        serializeElement(attributeValue,
-                attribueQName,
-                attribute.getType(),
+        QName elementFieldQName = new QName(elementField.getElement().getNamespace(),
+                elementField.getElement().getName());
+                serializeElement(elementFieldValue,
+                elementFieldQName,
+                elementField.getType(),
                 writer,
                 namespacePrefix,
-                attribute.isArray(),
-                attribute.getClassType());
+                elementField.isArray(),
+                elementField.getClassType());
 
     }
 
@@ -386,12 +415,36 @@ public class JavaObjectSerializer {
     private void writeNullAttribute(XMLStreamWriter writer,
                                     NamespacePrefix namespacePrefix)
             throws XMLStreamException {
-        String prefix = writer.getPrefix(Constants.URI_DEFAULT_SCHEMA_XSI);
-        if (prefix == null) {
-            prefix = "ns" + namespacePrefix.getNamesapcePrefix();
-            writer.writeNamespace(prefix, Constants.URI_DEFAULT_SCHEMA_XSI);
-            writer.setPrefix(prefix, Constants.URI_DEFAULT_SCHEMA_XSI);
+        QName attributeQName = new QName(Constants.URI_DEFAULT_SCHEMA_XSI,"nil");
+        writeAttribute(writer,"1",attributeQName,namespacePrefix);
+    }
+
+    /**
+     * this method wrtes the simple attribute to the writer.
+     * @param writer
+     * @param attributeValue
+     * @param attributeQName
+     * @param namespacePrefix
+     * @throws XMLStreamException
+     */
+    private void writeAttribute(XMLStreamWriter writer,
+                                String attributeValue,
+                                QName attributeQName,
+                                NamespacePrefix namespacePrefix) throws XMLStreamException {
+        if ((attributeQName.getNamespaceURI() != null) && !attributeQName.getNamespaceURI().trim().equals("")){
+            String prefix = writer.getPrefix(attributeQName.getNamespaceURI());
+            if (prefix == null){
+                prefix = "ns" + namespacePrefix.getNamesapcePrefix();
+                writer.writeNamespace(prefix, attributeQName.getNamespaceURI());
+                writer.setPrefix(prefix, attributeQName.getNamespaceURI());
+            }
+            writer.writeAttribute(attributeQName.getNamespaceURI(),
+                    attributeQName.getLocalPart(),
+                    attributeValue);
+
+        } else {
+            writer.writeAttribute(attributeQName.getLocalPart(),attributeValue);
         }
-        writer.writeAttribute(Constants.URI_DEFAULT_SCHEMA_XSI, "nil", "1");
+
     }
 }

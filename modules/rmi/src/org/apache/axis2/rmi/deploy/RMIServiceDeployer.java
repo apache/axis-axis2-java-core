@@ -22,10 +22,11 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.deploy.config.Config;
-import org.apache.axis2.rmi.deploy.config.Service;
-import org.apache.axis2.rmi.deploy.config.PackageToNamespaceMap;
+import org.apache.axis2.rmi.deploy.config.*;
+import org.apache.axis2.rmi.deploy.config.ClassInfo;
+import org.apache.axis2.rmi.deploy.config.FieldInfo;
 import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.config.*;
 import org.apache.axis2.rmi.databind.XmlStreamParser;
 import org.apache.axis2.rmi.databind.SimpleTypeHandler;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
@@ -71,44 +72,7 @@ public class RMIServiceDeployer implements Deployer {
             // gettting the file reader for zipinput stream
             Config configObject = getConfig(absolutePath);
 
-            Configurator configurator = new Configurator();
-
-            if (configObject.getExtensionClasses() != null) {
-                String[] extensionClasses = configObject.getExtensionClasses().getExtensionClass();
-                if (extensionClasses != null) {
-                    Class extensionClass;
-                    for (int i = 0; i < extensionClasses.length; i++) {
-                        extensionClass = Loader.loadClass(deploymentClassLoader, extensionClasses[i]);
-                        configurator.addExtension(extensionClass);
-                    }
-                }
-            }
-
-            if (configObject.getPackageToNamespaceMapings() != null) {
-                PackageToNamespaceMap[] packageToNamespaceMapings =
-                        configObject.getPackageToNamespaceMapings().getPackageToNamespaceMap();
-                if (packageToNamespaceMapings != null) {
-                    for (int i = 0; i < packageToNamespaceMapings.length; i++) {
-                        configurator.addPackageToNamespaceMaping(packageToNamespaceMapings[i].getPackageName(),
-                                packageToNamespaceMapings[i].getNamespace());
-                    }
-                }
-            }
-
-            // set the simple type data handler if it is set
-            if ((configObject.getSimpleDataHandlerClass() != null)
-                    && (configObject.getSimpleDataHandlerClass().trim().length() > 0)){
-                Class simpleTypeHandlerClass =
-                        Loader.loadClass(deploymentClassLoader,configObject.getSimpleDataHandlerClass());
-                try {
-                    SimpleTypeHandler simpleTypeHandler = (SimpleTypeHandler) simpleTypeHandlerClass.newInstance();
-                    configurator.setSimpleTypeHandler(simpleTypeHandler);
-                } catch (InstantiationException e) {
-                    throw new DeploymentException("Can not instantiate simple type handler",e);
-                } catch (IllegalAccessException e) {
-                    throw new DeploymentException("Can not instantiate simple type handler",e);
-                }
-            }
+            Configurator configurator = getConfigurator(configObject, deploymentClassLoader);
 
             Service[] services = configObject.getServices().getService();
             ClassDeployer classDeployer =
@@ -133,6 +97,78 @@ public class RMIServiceDeployer implements Deployer {
         }
     }
 
+    private Configurator getConfigurator(Config configObject, DeploymentClassLoader deploymentClassLoader)
+            throws ClassNotFoundException, DeploymentException {
+        Configurator configurator = new Configurator();
+
+        if (configObject.getExtensionClasses() != null) {
+            String[] extensionClasses = configObject.getExtensionClasses().getExtensionClass();
+            if (extensionClasses != null) {
+                Class extensionClass;
+                for (int i = 0; i < extensionClasses.length; i++) {
+                    extensionClass = Loader.loadClass(deploymentClassLoader, extensionClasses[i]);
+                    configurator.addExtension(extensionClass);
+                }
+            }
+        }
+
+        if (configObject.getPackageToNamespaceMapings() != null) {
+            PackageToNamespaceMap[] packageToNamespaceMapings =
+                    configObject.getPackageToNamespaceMapings().getPackageToNamespaceMap();
+            if (packageToNamespaceMapings != null) {
+                for (int i = 0; i < packageToNamespaceMapings.length; i++) {
+                    configurator.addPackageToNamespaceMaping(packageToNamespaceMapings[i].getPackageName(),
+                            packageToNamespaceMapings[i].getNamespace());
+                }
+            }
+        }
+
+        // set the simple type data handler if it is set
+        if ((configObject.getSimpleDataHandlerClass() != null)
+                && (configObject.getSimpleDataHandlerClass().trim().length() > 0)){
+            Class simpleTypeHandlerClass =
+                    Loader.loadClass(deploymentClassLoader,configObject.getSimpleDataHandlerClass());
+            try {
+                SimpleTypeHandler simpleTypeHandler = (SimpleTypeHandler) simpleTypeHandlerClass.newInstance();
+                configurator.setSimpleTypeHandler(simpleTypeHandler);
+            } catch (InstantiationException e) {
+                throw new DeploymentException("Can not instantiate simple type handler",e);
+            } catch (IllegalAccessException e) {
+                throw new DeploymentException("Can not instantiate simple type handler",e);
+            }
+        }
+
+        // setting the custom class info
+        ClassInfo[] classInfos = null;
+        FieldInfo[] filsInfos = null;
+        org.apache.axis2.rmi.config.ClassInfo classInfo;
+        Class customClass = null;
+        if (configObject.getCustomClassInfo() != null) {
+            CustomClassInfo customClassInfo = configObject.getCustomClassInfo();
+            if ((customClassInfo.getClassInfo() != null) && (customClassInfo.getClassInfo().length > 0)) {
+                classInfos = customClassInfo.getClassInfo();
+                for (int i = 0; i < classInfos.length; i++) {
+
+                    if ((classInfos[i].getFieldInfo() != null) &&
+                            (classInfos[i].getFieldInfo().length > 0)){
+                        customClass = Loader.loadClass(deploymentClassLoader,classInfos[i].getClassName());
+                        classInfo = new org.apache.axis2.rmi.config.ClassInfo(customClass);
+                        filsInfos = classInfos[i].getFieldInfo();
+                        for (int j = 0; j < filsInfos.length; j++) {
+                           classInfo.addFieldInfo(
+                                   new org.apache.axis2.rmi.config.FieldInfo(
+                                           filsInfos[j].getJavaName(),
+                                           filsInfos[j].getXmlName(),
+                                           filsInfos[j].isElement()));
+                        }
+                        configurator.addClassInfo(classInfo);
+                    }
+                }
+            }
+        }
+        return configurator;
+    }
+
     private Config getConfig(String zipFilePath) throws ConfigFileReadingException {
         try {
             InputStream configFileInputStream = getConfigFileInputStream(zipFilePath);
@@ -141,6 +177,19 @@ public class RMIServiceDeployer implements Deployer {
             Configurator configurator = new Configurator();
             configurator.addPackageToNamespaceMaping("org.apache.axis2.rmi.deploy.config",
                     "http://ws.apache.org/axis2/rmi");
+
+            // add configurator details to handle custom class info
+            org.apache.axis2.rmi.config.ClassInfo classInfo = new org.apache.axis2.rmi.config.ClassInfo(FieldInfo.class);
+            classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("javaName", null, false));
+            classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("xmlName", null, false));
+            classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("element", "isElement", false));
+            configurator.addClassInfo(classInfo);
+
+            classInfo = new org.apache.axis2.rmi.config.ClassInfo(ClassInfo.class);
+            classInfo.addFieldInfo(new org.apache.axis2.rmi.config.FieldInfo("className", null, false));
+            configurator.addClassInfo(classInfo);
+
+
             Map processedTypeMap = new HashMap();
             Map processedSchemaMap = new HashMap();
             Parameter parameter = new Parameter(Config.class, "config");

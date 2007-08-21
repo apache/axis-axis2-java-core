@@ -15,10 +15,8 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.Attribute;
-import org.apache.axis2.rmi.metadata.Type;
-import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.metadata.Operation;
+import org.apache.axis2.rmi.metadata.*;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
@@ -26,7 +24,6 @@ import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.types.MapType;
-import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
@@ -35,6 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import com.sun.org.apache.xerces.internal.xni.parser.XMLParseException;
 
 
 public class XmlStreamParser {
@@ -68,7 +67,7 @@ public class XmlStreamParser {
         for (Iterator iter = defaultTypeMapKeys.iterator(); iter.hasNext();) {
             typeClass = (Class) iter.next();
             if (!processedTypeMap.containsKey(typeClass)) {
-                Type newType = new Type(typeClass);
+                Type newType = new TypeImpl(typeClass);
                 processedTypeMap.put(typeClass, newType);
                 newType.populateMetaData(this.configurator, processedTypeMap);
                 newType.generateSchema(this.configurator, schemaMap);
@@ -197,14 +196,7 @@ public class XmlStreamParser {
                     returnObject = new Object();
                 } else {
                     // find the object for this string using converter util classs
-                    String methodName = null;
-                    try {
-                        methodName = getMethodName(type.getJavaClass().getName());
-                        Method  methodToInvoke = this.simpleTypeHandlerClass.getMethod(methodName,new Class[]{String.class});
-                        returnObject = methodToInvoke.invoke(this.simpleTypeHandler,new Object[]{reader.getText()});
-                    } catch (NoSuchMethodException e) {
-                        throw new XmlParsingException("Can not invoke the converter util class method " + methodName, e);
-                    }
+                    returnObject = getSimpleTypeObject(type, reader, reader.getText());
                 }
             } else {
                 // first we have to point to the reader to the begining for the element
@@ -213,22 +205,22 @@ public class XmlStreamParser {
                 }
                 // this is a complex type
                 returnObject = type.getJavaClass().newInstance();
-                // we have to get all the attribute and populate them
-                List attributes = type.getAllAttributes();
-                Attribute attribute;
-                Object attributeObject;
-                QName attributeQName = null;
+                // we have to get all the elementField and populate them
+                List elementFields = type.getAllElementFields();
+                ElementField elementField;
+                Object elementFieldObject;
+                QName elementFieldQName = null;
 
-                for (Iterator iter = attributes.iterator(); iter.hasNext();) {
-                    attribute = (Attribute) iter.next();
-                    attributeObject = getObjectForAttribute(reader, attribute);
-                    attributeQName = new QName(attribute.getNamespace(), attribute.getName());
-                    if (attributeObject != null) {
-                        attribute.getSetterMethod().invoke(returnObject, new Object[]{attributeObject});
+                for (Iterator iter = elementFields.iterator(); iter.hasNext();) {
+                    elementField = (ElementField) iter.next();
+                    elementFieldObject = getObjectForElementField(reader, elementField);
+                    elementFieldQName = new QName(elementField.getNamespace(), elementField.getName());
+                    if (elementFieldObject != null) {
+                        elementField.getSetterMethod().invoke(returnObject, new Object[]{elementFieldObject});
                     }
-                    // if the reader is at the end of this attribute
+                    // if the reader is at the end of this elementField
                     // then we move it to next element.
-                    if (reader.isEndElement() && reader.getName().equals(attributeQName)){
+                    if (reader.isEndElement() && reader.getName().equals(elementFieldQName)){
                         reader.next();
                     }
 
@@ -245,6 +237,24 @@ public class XmlStreamParser {
             throw new XmlParsingException("Constructor invoking exception for type " + type.getName());
         }
 
+    }
+
+    private Object getSimpleTypeObject(Type type, XMLStreamReader reader, String value)
+            throws  XmlParsingException {
+        Object returnObject;
+        String methodName = null;
+        try {
+            methodName = getMethodName(type.getJavaClass().getName());
+            Method  methodToInvoke = this.simpleTypeHandlerClass.getMethod(methodName,new Class[]{String.class});
+            returnObject = methodToInvoke.invoke(this.simpleTypeHandler,new Object[]{value});
+        } catch (NoSuchMethodException e) {
+            throw new XmlParsingException("Can not invoke the converter util class method " + methodName, e);
+        } catch (IllegalAccessException e) {
+            throw new XmlParsingException("Can not invoke the converter util class method " + methodName, e);
+        } catch (InvocationTargetException e) {
+            throw new XmlParsingException("Can not invoke the converter util class method " + methodName, e);
+        }
+        return returnObject;
     }
 
     private String getMethodName(String className) {
@@ -265,28 +275,28 @@ public class XmlStreamParser {
     }
 
     /**
-     * give the relavent object for attribute.
+     * give the relavent object for elementField.
      *
      * @param reader
-     * @param attribute
+     * @param elementField
      * @return
      * @throws XMLStreamException
      * @throws XmlParsingException
      */
 
-    private Object getObjectForAttribute(XMLStreamReader reader,
-                                         Attribute attribute)
+    private Object getObjectForElementField(XMLStreamReader reader,
+                                            ElementField elementField)
             throws XMLStreamException,
             XmlParsingException {
-        QName attributeQName = new QName(attribute.getNamespace(), attribute.getName());
+        QName elementFieldQName = new QName(elementField.getNamespace(), elementField.getName());
         return getObjectForElement(reader,
-                attributeQName,
-                attribute.getType(),
-                attribute.isArray(),
-                attribute.getElement().isNillable(),
-                attribute.getElement().isMinOccurs0(),
-                attribute.getClassType(),
-                attribute.getPropertyDescriptor().getPropertyType());
+                elementFieldQName,
+                elementField.getType(),
+                elementField.isArray(),
+                elementField.getElement().isNillable(),
+                elementField.getElement().isMinOccurs0(),
+                elementField.getClassType(),
+                elementField.getPropertyDescriptor().getPropertyType());
 
     }
 
@@ -355,8 +365,9 @@ public class XmlStreamParser {
                     }
 
                 } else {
-                    reader.next();
-                    objectsCollection.add(getObjectForType(reader, actualElementType));
+
+                    Object returnObject = getElementObjectFromReader(actualElementType, reader);
+                    objectsCollection.add(returnObject);
 
                     // we have to move the cursor until the end element of this attribute
                     while (!reader.isEndElement() || !reader.getName().equals(elementQName)) {
@@ -405,8 +416,9 @@ public class XmlStreamParser {
                                     throw new XmlParsingException("Element " + elementQName + " can not be null");
                                 }
                             } else {
-                                reader.next();
-                                objectsCollection.add(getObjectForType(reader, actualElementType));
+                                Object returnObject = getElementObjectFromReader(actualElementType, reader);
+                                objectsCollection.add(returnObject);
+
                                 // we have to move the cursor until the end element of this attribute
                                 while (!reader.isEndElement() || !reader.getName().equals(elementQName)) {
                                     reader.next();
@@ -493,9 +505,8 @@ public class XmlStreamParser {
                     }
 
                 } else {
-                    reader.next();
-                    Object returnObject = getObjectForType(reader, actualElementType);
 
+                    Object returnObject = getElementObjectFromReader(actualElementType, reader);
                     // we have to move the cursor until the end element of this attribute
                     while (!reader.isEndElement() || !reader.getName().equals(elementQName)) {
                         reader.next();
@@ -511,6 +522,72 @@ public class XmlStreamParser {
                         "expected " + elementQName.getLocalPart());
             }
         }
+    }
+
+    private Object getElementObjectFromReader(Type elementType,
+                                              XMLStreamReader reader)
+            throws XmlParsingException, XMLStreamException {
+        Object returnObject = null;
+        if (RMIBean.class.isAssignableFrom(elementType.getJavaClass())) {
+            // this is an rmi bean
+            // so invoke the static parse method
+            try {
+                Method parseMethod = elementType.getJavaClass().getMethod("parse", new Class[]{XMLStreamReader.class, XmlStreamParser.class});
+                returnObject = parseMethod.invoke(null, new Object[]{reader, this});
+            } catch (NoSuchMethodException e) {
+                throw new XmlParsingException("parse method has not been implemented correctly for the rmi bean "
+                        + elementType.getJavaClass().getName(), e);
+            } catch (IllegalAccessException e) {
+                throw new XmlParsingException("can not access parse method of the rmi bean "
+                        + elementType.getJavaClass().getName(), e);
+            } catch (InvocationTargetException e) {
+                throw new XmlParsingException("can not invoke parse method of the rmi bean "
+                        + elementType.getJavaClass().getName(), e);
+            }
+        } else {
+            // read the attributes.
+            Map javaMethodToValueMap = getJavaMethodValueHashMap(elementType, reader);
+            reader.next();
+            returnObject = getObjectForType(reader, elementType);
+            populateObjectAttributes(javaMethodToValueMap, returnObject);
+        }
+
+        return returnObject;
+    }
+
+    private void populateObjectAttributes(Map javaMethodToValueMap, Object returnObject) throws XmlParsingException {
+        Method javaMehtod;
+        try {
+            for (Iterator iter = javaMethodToValueMap.keySet().iterator();iter.hasNext();){
+                javaMehtod = (Method) iter.next();
+                javaMehtod.invoke(returnObject,new Object[]{javaMethodToValueMap.get(javaMehtod)});
+            }
+        } catch (IllegalAccessException e) {
+            throw new XmlParsingException("Can not set the attribute value");
+        } catch (InvocationTargetException e) {
+            throw new XmlParsingException("Can not set the attribute value");
+        }
+    }
+
+    private Map getJavaMethodValueHashMap(Type actualElementType, XMLStreamReader reader)
+            throws XmlParsingException {
+        AttributeField attributeField;
+        String attributeVlaue;
+        Object attributeObject;
+        Map javaMethodToValueMap = new HashMap();
+        for (Iterator iter = actualElementType.getAllAttributeFields().iterator();iter.hasNext();){
+            attributeField = (AttributeField) iter.next();
+            attributeVlaue = reader.getAttributeValue(attributeField.getNamespace(),
+                                                    attributeField.getName());
+            if (attributeVlaue != null) {
+                attributeObject = getSimpleTypeObject(attributeField.getType(), reader, attributeVlaue);
+                javaMethodToValueMap.put(attributeField.getSetterMethod(), attributeObject);
+            } else if (attributeField.isRequried()){
+                throw new XmlParsingException("Required attribute " + attributeField.getName() + " is missing");
+            }
+
+        }
+        return javaMethodToValueMap;
     }
 
     /**

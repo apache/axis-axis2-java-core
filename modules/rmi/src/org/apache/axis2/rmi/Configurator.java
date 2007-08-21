@@ -17,6 +17,7 @@ package org.apache.axis2.rmi;
 
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.databind.SimpleTypeHandler;
+import org.apache.axis2.rmi.config.ClassInfo;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 
 import java.util.List;
@@ -34,10 +35,15 @@ public class Configurator {
     private List extensionClasses;
     private Map packageToNamespaceMap;
     private SimpleTypeHandler simpleTypeHandler;
+    /**
+     * this map contains custom details of the classes
+     */
+    private Map classInfoMap;
 
     public Configurator() {
         this.extensionClasses = new ArrayList();
         this.packageToNamespaceMap = new HashMap();
+        this.classInfoMap = new HashMap();
 
         populateDefualtValues();
     }
@@ -63,6 +69,14 @@ public class Configurator {
     public void addPackageToNamespaceMaping(String packageName,
                                             String namespace){
         this.packageToNamespaceMap.put(packageName,namespace);
+    }
+
+    public void addClassInfo(ClassInfo classInfo){
+        this.classInfoMap.put(classInfo.getJavaClass(),classInfo);
+    }
+
+    public ClassInfo getClassInfo(Class javaClass){
+        return (ClassInfo) this.classInfoMap.get(javaClass);
     }
 
     public boolean isBare() {
