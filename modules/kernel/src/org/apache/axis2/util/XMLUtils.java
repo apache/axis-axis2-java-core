@@ -507,13 +507,24 @@ public class XMLUtils {
     }
 
     /**
-     * Converts a given DOM Element to an OMElement.
-     *
-     * @param element
-     * @return Returns OMElement.
+     * Convert DOM Element into a fully built OMElement
+     * @param element dom Element
+     * @return OMElement
      * @throws Exception
      */
     public static OMElement toOM(Element element) throws Exception {
+        return toOM(element, true);
+    }
+    
+    /**
+     * Convert DOM Element into a fully built OMElement
+     * @param element
+     * @param buildAll if true, full OM tree is immediately built. if false, caller is responsible 
+     * for building the tree and closing the parser.
+     * @return
+     * @throws Exception
+     */
+    public static OMElement toOM(Element element, boolean buildAll) throws Exception {
 
         Source source = new DOMSource(element);
 
@@ -529,8 +540,14 @@ public class XMLUtils {
 
         StAXOMBuilder builder = new StAXOMBuilder(reader);
         builder.setCache(true);
+        builder.releaseParserOnClose(true);
 
-        return builder.getDocumentElement();
+        OMElement omElement = builder.getDocumentElement();
+        if (buildAll) {
+            omElement.build();
+            builder.close();
+        }
+        return omElement;
     }
 
 
@@ -554,32 +571,81 @@ public class XMLUtils {
 
     /**
      * Converts a given inputstream to an OMNode
+     * The reurned OMNode is fully built.
      *
      * @param inputStream
-     * @return
+     * @return OMNode
      * @throws javax.xml.stream.XMLStreamException
      *
      */
     public static OMNode toOM(InputStream inputStream) throws XMLStreamException {
+        return toOM(inputStream, true);
+    }
+    
+    /**
+     * Converts a given inputstream to an OMNode
+     * The reurned OMNode is fully built if buildAll is true.
+     * If buildAll is false, the caller is responsible for closing the parser.
+     *
+     * @param inputStream
+     * @param buildAll
+     * @return OMNode
+     * @throws javax.xml.stream.XMLStreamException
+     *
+     */
+    public static OMNode toOM(InputStream inputStream, boolean buildAll) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils
                 .createXMLStreamReader(inputStream);
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        return staxOMBuilder.getDocumentElement();
+        StAXOMBuilder builder = new StAXOMBuilder(fac, xmlReader);
+        builder.setCache(true);
+        builder.releaseParserOnClose(true);
+        OMNode omNode = builder.getDocumentElement();
+        
+        if (buildAll) {
+            omNode.build();
+            builder.close();
+        }
+        
+        return omNode;
     }
 
     /**
-     * Converts a given Reader to an OMNode
+     * Converts a given Reader to an OMNode.
+     * The reurned OMNode is fully built.
      *
      * @param reader
      * @return
      * @throws XMLStreamException
      */
     public static OMNode toOM(Reader reader) throws XMLStreamException {
+        return toOM(reader, true);
+    }
+    
+    /**
+     * Converts a given Reader to an OMNode.
+     * The reurned OMNode is fully built if buildAll is true.
+     * If buildAll is false, the caller is responsible for closing the parser.
+     *
+     * @param reader
+     * @param buildAll
+     * @return OMNode
+     * @throws XMLStreamException
+     */
+    public static OMNode toOM(Reader reader, boolean buildAll) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils
                 .createXMLStreamReader(reader);
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        return staxOMBuilder.getDocumentElement();
+        StAXOMBuilder builder = new StAXOMBuilder(fac, xmlReader);
+        builder.setCache(true);
+        builder.releaseParserOnClose(true);
+        OMNode omNode = builder.getDocumentElement();
+        
+        if (buildAll) {
+            omNode.build();
+            builder.close();
+        }
+        
+        return omNode;
     }
 }
