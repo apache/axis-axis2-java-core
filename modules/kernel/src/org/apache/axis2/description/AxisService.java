@@ -1986,8 +1986,17 @@ public class AxisService extends AxisDescription {
      * @param s
      */
     private void insertIntoNameTable(Hashtable nameTable, XmlSchema s) {
+        String sourceURI = s.getSourceURI();
+        sourceURI = sourceURI.substring(sourceURI.lastIndexOf(File.separator) + 1);
+        //remove the .xsd extention
+        sourceURI = sourceURI.substring(0,sourceURI.indexOf("."));
+        // make it unique
+        while(nameTable.containsValue(sourceURI)){
+            sourceURI = sourceURI + count++;
+        }
+
         nameTable.put(s,
-                      ("xsd" + count++)
+                      (sourceURI)
                       + (customSchemaNameSuffix != null ?
                          customSchemaNameSuffix :
                          ""));
