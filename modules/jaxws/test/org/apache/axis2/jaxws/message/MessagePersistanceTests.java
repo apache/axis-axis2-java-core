@@ -19,6 +19,8 @@ import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.ds.ByteArrayDataSource;
+import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants.Configuration;
@@ -209,6 +211,100 @@ public class MessagePersistanceTests extends TestCase {
         
     }
     
+    /**
+     * Create a JAXBBlock containing a JAX-B business object and simulate a normal Dispatch<Object>
+     * output flow
+     * 
+     * @throws Exception
+     */
+    public void testPersist_InMemory() throws Exception {
+        
+        // Create the JAX-B object that is typical from a JAX-WS app
+        String sampleJAXBText = "sample return value";
+        ObjectFactory of = new ObjectFactory();
+        EchoStringResponse obj = of.createEchoStringResponse();
+        obj.setEchoStringReturn("sample return value");
+        
+        // The JAXB object is stored in the Axiom tree as an OMSourcedElement.
+        // The typical structure is
+        //   OM SOAPEnvelope
+        //   OM SOAPBody
+        //   OMSourcedElement that is sourced by a JAXBBlockImpl which is backecd by a JAXB Object.
+        Message m = createMessage(obj);
+        
+        // The Message is set on the JAXWS MessageContext
+        MessageContext jaxwsMC = new MessageContext();
+        jaxwsMC.setMessage(m);
+        
+        // Check to see if the message is a fault. The engine will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                   "SPINE".equals(m.getXMLPartContentType()));
+        
+        // The JAX-WS MessageContext is converted into an Axis2 MessageContext
+        org.apache.axis2.context.MessageContext axisMC = jaxwsMC.getAxisMessageContext();
+        MessageUtils.putMessageOnMessageContext(m, jaxwsMC.getAxisMessageContext());
+        
+        // Make sure the Axiom structure is intact
+        SOAPEnvelope env = axisMC.getEnvelope();
+        SOAPBody body = env.getBody();
+        OMElement child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        OMSourcedElement omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        OMDataSource ds = omse.getDataSource();
+        assertTrue(ds instanceof JAXBBlockImpl);
+        
+        // Now simulate persisting the message in memory
+        SOAPEnvelope env2 = CopyUtils.copy(env);
+        
+        // Make sure the Axiom structure is intact.  
+        env = axisMC.getEnvelope();
+        body = env.getBody();
+        child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        ds = omse.getDataSource();
+        assertTrue(ds instanceof JAXBBlockImpl);
+        
+        // Simulate transport
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        env.serializeAndConsume(baos, new OMOutputFormat());
+
+        // To check that the output is correct, get the String contents of the
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains(sampleJAXBText));
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+        
+        
+        // Now check the copied envelope
+        body = env2.getBody();
+        child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        ds = omse.getDataSource();
+        assertTrue(ds instanceof ByteArrayDataSource);
+        
+        // Simulate transport
+        baos = new ByteArrayOutputStream();
+        env2.serializeAndConsume(baos, new OMOutputFormat());
+        String restoredText = baos.toString();
+        System.out.println(restoredText);
+        assertTrue(restoredText.contains(sampleJAXBText));
+        assertTrue(restoredText.contains("soap"));
+        assertTrue(restoredText.contains("Envelope"));
+        assertTrue(restoredText.contains("Body"));
+        assertTrue(restoredText.equals(newText));
+        
+    }
     
     /**
      * Create a JAXBBlock containing a JAX-B business object and simulate a normal Dispatch<Object>
@@ -357,6 +453,118 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(restoredText.indexOf("MIMEBoundary_Axis2Rocks") > 0);
         assertTrue(restoredText.indexOf(sampleText) > 0);
         assertTrue(restoredText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);
+        
+    }
+    
+    /**
+     * Create a JAXBBlock containing a JAX-B business object and simulate a normal Dispatch<Object>
+     * output flow
+     * 
+     * @throws Exception
+     */
+    public void testPersist_Attachments_InMemory() throws Exception {
+        
+        // TODO Add a SWARef and a raw attachment
+        
+        // Create the JAX-B object with an attachment
+        // Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(stringDS);
+
+        //Store the data handler in ImageDepot bean
+        org.test.mtom.ObjectFactory of = new org.test.mtom.ObjectFactory();
+        ImageDepot imageDepot = new org.test.mtom.ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        SendImage obj = of.createSendImage();
+        obj.setInput(imageDepot);
+        
+        // The JAXB object is stored in the Axiom tree as an OMSourcedElement.
+        // The typical structure is
+        //   OM SOAPEnvelope
+        //   OM SOAPBody
+        //   OMSourcedElement that is sourced by a JAXBBlockImpl which is backecd by a JAXB Object.
+        Message m = createMessage(obj);
+        m.setMTOMEnabled(true);
+        
+        // The Message is set on the JAXWS MessageContext
+        MessageContext jaxwsMC = new MessageContext();
+        jaxwsMC.setMessage(m);
+        
+        // Check to see if the message is a fault. The engine will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                   "SPINE".equals(m.getXMLPartContentType()));
+        
+        // The JAX-WS MessageContext is converted into an Axis2 MessageContext
+        org.apache.axis2.context.MessageContext axisMC = jaxwsMC.getAxisMessageContext();
+        MessageUtils.putMessageOnMessageContext(m, jaxwsMC.getAxisMessageContext());
+        axisMC.setProperty(Configuration.ENABLE_MTOM, "true");
+        
+        // Make sure the Axiom structure is intact
+        SOAPEnvelope env = axisMC.getEnvelope();
+        SOAPBody body = env.getBody();
+        OMElement child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        OMSourcedElement omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        OMDataSource ds = omse.getDataSource();
+        assertTrue(ds instanceof JAXBBlockImpl);
+        
+        // Now simulate persisting the message in memory
+        SOAPEnvelope env2 = CopyUtils.copy(env);
+        
+        // Make sure the Axiom structure is intact.  
+        env = axisMC.getEnvelope();
+        body = env.getBody();
+        child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        ds = omse.getDataSource();
+        assertTrue(ds instanceof JAXBBlockImpl);
+        
+        // Simulate transport
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputFormat outputFormat = new OMOutputFormat();
+        outputFormat.setDoOptimize(true);
+        outputFormat.setMimeBoundary("MIMEBoundary_Axis2Rocks");
+        env.serializeAndConsume(baos, outputFormat);
+
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+        assertTrue(newText.indexOf("MIMEBoundary_Axis2Rocks") > 0);
+        assertTrue(newText.indexOf(sampleText) > 0);
+        assertTrue(newText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);     
+        
+        // Now check the copied envelope
+        body = env2.getBody();
+        child = body.getFirstElement();
+        assertTrue(child instanceof OMSourcedElement);
+        omse = (OMSourcedElement) child;
+        assertTrue(!omse.isExpanded());
+        ds = omse.getDataSource();
+        assertTrue(ds instanceof ByteArrayDataSource);
+        
+        // Simulate transport on the copied message
+        baos = new ByteArrayOutputStream();
+        outputFormat = new OMOutputFormat();
+        outputFormat.setDoOptimize(true);
+        outputFormat.setMimeBoundary("MIMEBoundary_Axis2Rocks");
+        env2.serializeAndConsume(baos, outputFormat);
+        String restoredText = baos.toString();
+        System.out.println(restoredText);
+        assertTrue(restoredText.contains("soap"));
+        assertTrue(restoredText.contains("Envelope"));
+        assertTrue(restoredText.contains("Body"));
+        assertTrue(restoredText.indexOf("MIMEBoundary_Axis2Rocks") > 0);
+        
+        // TODO Currently the attachments are inlined when the JAXBBlock is copied.  
+        //assertTrue(restoredText.indexOf(sampleText) > 0);
+        //assertTrue(restoredText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);
         
     }
     
