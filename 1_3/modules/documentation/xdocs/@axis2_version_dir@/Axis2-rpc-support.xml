@@ -38,7 +38,7 @@ tricky and confusing at first glance. However, Axis2 RPC strategy
 is based on a set of well defined rules. This document aims to
 drill down to the details of the strategy and resolve most of the
 unknown bits and pieces. Note that Axis2 currently does not support
-the rpc/encoded style fully. Its main support is for the rpc/lit
+the rpc/encoded style. But it fully support for the rpc/lit
 style.</p>
 <p>We will discuss the Axis2 RPC strategy in the following
 steps</p>
@@ -89,11 +89,8 @@ WSDL.)</li>
 <li>The children of this element are non namespace qualified
 elements with the part names as local names (referred to as
 <strong>part element</strong>)</li>
-<li>In case the part refers to a standard type like the example
-WSDL, the content of the part element would be of that type. If the
-part refers to a complex type defined in the schema, the content of
-the part element becomes of that type. Having an element reference
-in the part when the binding is rpc is invalid.</li>
+<li>In this case part element should always have a type attribute which referes
+to an valid xml type.</li>
 </ol>
 <p>For example, the input wire message for the echo operation
 mentioned in the above WSDL fragment would look like this:</p>
