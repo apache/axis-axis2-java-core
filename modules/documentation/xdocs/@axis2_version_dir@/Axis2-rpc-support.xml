@@ -38,7 +38,7 @@ tricky and confusing at first glance. However, Axis2 RPC strategy
 is based on a set of well defined rules. This document aims to
 drill down to the details of the strategy and resolve most of the
 unknown bits and pieces. Note that Axis2 currently does not support
-the rpc/encoded style fully. Its main support is for the rpc/lit
+the rpc/encoded style. But it fully supports the rpc/literal 
 style.</p>
 <p>We will discuss the Axis2 RPC strategy in the following
 steps</p>
