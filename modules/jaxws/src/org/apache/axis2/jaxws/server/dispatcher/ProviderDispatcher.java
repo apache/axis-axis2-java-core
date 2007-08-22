@@ -352,9 +352,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             try {
                 paramType = (ParameterizedType)giType;
             } catch (ClassCastException e) {
-                //TODO NLS
-                throw new Exception(
-                        "Provider based SEI Class has to implement javax.xml.ws.Provider as javax.xml.ws.Provider<String>, javax.xml.ws.Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or javax.xml.ws.Provider<JAXBContext>");
+                // this may not be a parameterized interface
+                continue;
             }
             Class interfaceName = (Class)paramType.getRawType();
 
@@ -365,7 +364,14 @@ public class ProviderDispatcher extends JavaDispatcher {
                             "Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
                 }
                 providerType = (Class)paramType.getActualTypeArguments()[0];
+                break;
             }
+        }
+        if(providerType == null) {
+            throw new Exception("Provider based SEI Class has to implement javax.xml.ws." +
+                        "Provider as javax.xml.ws.Provider<String>, javax.xml.ws." +
+                        "Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or " +
+                        "javax.xml.ws.Provider<JAXBContext>");
         }
         return providerType;
     }
