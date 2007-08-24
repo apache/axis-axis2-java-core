@@ -21,10 +21,7 @@ package org.apache.axis2.schema.writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
-import org.apache.axis2.schema.CompilerOptions;
-import org.apache.axis2.schema.SchemaCompilationException;
-import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
-import org.apache.axis2.schema.SchemaCompiler;
+import org.apache.axis2.schema.*;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
 import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
@@ -235,6 +232,9 @@ public class CStructWriter implements BeanWriter {
         try {
             //determine the package for this type.
             QName qName = simpleType.getQName();
+            if (qName == null) {
+                qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
+            }
             return process(qName, metainf, typeMap, false);
 
         } catch (SchemaCompilationException e) {
