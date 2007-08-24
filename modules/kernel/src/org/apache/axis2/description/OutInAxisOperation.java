@@ -227,16 +227,21 @@ class OutInAxisOperationClient extends OperationClient {
          * We are following the async path. If the user hasn't set a callback object then we must
          * block until the whole MEP is complete, as they have no other way to get their reply message.
          */
+        // THREADSAFE issue: Multiple threads could be trying to initialize the callback receiver
+        // so it is synchronized.  It is not done within the else clause to avoid the 
+        // double-checked lock antipattern.
         CallbackReceiver callbackReceiver;
-        if (axisOp.getMessageReceiver() != null &&
-                axisOp.getMessageReceiver() instanceof CallbackReceiver) {
-            callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Creating new callback receiver");
+        synchronized (axisOp) {
+            if (axisOp.getMessageReceiver() != null &&
+                    axisOp.getMessageReceiver() instanceof CallbackReceiver) {
+                callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating new callback receiver");
+                }
+                callbackReceiver = new CallbackReceiver();
+                axisOp.setMessageReceiver(callbackReceiver);
             }
-            callbackReceiver = new CallbackReceiver();
-            axisOp.setMessageReceiver(callbackReceiver);
         }
 
         SyncCallBack internalCallback = null;
