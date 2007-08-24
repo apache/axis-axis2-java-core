@@ -119,9 +119,17 @@ public class AxisService extends AxisDescription {
     // Maps httpLocations to corresponding operations. Used to dispatch rest messages.
     private HashMap httpLocationDispatcherMap = null;
 
-    /**
-     * Map from String(action URI) -> AxisOperation
-     */
+    // A map of (String alias, AxisOperation operation).  The aliases might include: SOAPAction,
+    // WS-Addressing action, the operation name, the AxisInputMessage name.  See:
+    // - invalidOperationsAliases
+    // - mapActionToOperatoin()
+    // - getOperationByAction()
+    // REVIEW: This really should be seperate maps for the different types of aliases so they don't
+    // conflict with each other.  For example, so that an identical operation name and soap action
+    // on different operatoins don't cause a collision; the following can't be routed because 
+    // "foo" is not unique across different operations:
+    //   operation 1: action = foo, name = bar
+    //   operation 2: action = bar, name = foo
     private HashMap operationsAliasesMap = null;
 
     // Collection of aliases that are invalid for this service because they are duplicated across
@@ -691,9 +699,10 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Maps an action (a SOAPAction or WSA action) to the given operation. This is used by
-     * dispatching (both SOAPAction- and WSAddressing- based dispatching) to figure out which
-     * operation a given message is for.  Some notes on restrictions of "action"
+     * Maps an alias (such as a SOAPAction, WSA action, or an operation name) to the given 
+     * AxisOperation. This is used by dispatching (both SOAPAction- and WSAddressing- 
+     * based dispatching) to figure out which operation a given message is for.  
+     * Some notes on restrictions of "action"
      * - A null or empty action will be ignored
      * - An action that is a duplicate and references an idential operation is allowed
      * - An acton that is a duplicate and references a different operation is NOT allowed.  In this
@@ -701,7 +710,11 @@ public class AxisService extends AxisDescription {
      * the ability to route based on this action.  This is necessary to prevent mis-directing
      * incoming message to the wrong operation based on SOAPAction.
      *
-     * @param action        the action key
+     * Note that an alias could be a SOAPAction, WS-Addressing Action, the operation name, or some
+     * other alias.   
+     *   @see #getOperationByAction(String)
+     *
+     * @param action        the alias key
      * @param axisOperation the operation to map to
      */
     public void mapActionToOperation(String action, AxisOperation axisOperation) {
@@ -1278,9 +1291,11 @@ public class AxisService extends AxisDescription {
 
 
     /**
-     * Returns the AxisOperation which has been mapped to the given action.
+     * Returns the AxisOperation which has been mapped to the given alias.
      *
-     * @param action the action key
+     * @see #mapActionToOperation(String, AxisOperation)
+     * 
+     * @param action the alias key
      * @return Returns the corresponding AxisOperation or null if it isn't found.
      */
     public AxisOperation getOperationByAction(String action) {
@@ -1293,7 +1308,8 @@ public class AxisService extends AxisDescription {
      * this Service. If more than one Endpoint exists, one of them will be
      * picked. If more than one Operation is found with the given SOAP Action;
      * null will be returned. If no particular Operation is found with the given
-     * SOAP Action; null will be returned.
+     * SOAP Action; null will be returned.  If the action is in the list of invaliad aliases,
+     * which means it did not uniquely identify an operation, a null will be returned.
      *
      * @param soapAction SOAP Action defined for the particular Operation
      * @return Returns an AxisOperation if a unique Operation can be found with the given
@@ -1301,6 +1317,11 @@ public class AxisService extends AxisDescription {
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
         if ((soapAction == null) || soapAction.length() == 0) {
+            return null;
+        }
+        // If the action maps to an alais that is not unique, then it can't be used to map to 
+        // an operation.
+        if (invalidOperationsAliases.contains(soapAction)) {
             return null;
         }
 
