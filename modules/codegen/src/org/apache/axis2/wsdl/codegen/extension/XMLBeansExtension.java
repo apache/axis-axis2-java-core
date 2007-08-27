@@ -20,7 +20,9 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.schema.AxisServiceTopElementSchemaGenerator;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
@@ -36,13 +38,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
     /** Name of "extra" option used to supply package name for xsb files. */
     public static final String TYPESYSTEMNAME_OPTION = "typesystemname";
     public static final String SCHEMA_FOLDER = "schemas";
     public static final String XSDCONFIG_OPTION = "xc";
     public static final String XSDCONFIG_OPTION_LONG = "xsdconfig";
-        
+
 
     public static String MAPPINGS = "mappings";
     public static String MAPPING = "mapping";
@@ -94,9 +97,18 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             List schemas = new ArrayList();
             List axisServices = configuration.getAxisServices();
             AxisService axisService = null;
+            AxisServiceTopElementSchemaGenerator schemaGenerator = null;
             for (Iterator iter = axisServices.iterator(); iter.hasNext();) {
                 axisService = (AxisService)iter.next();
-                schemas.addAll(axisService.getSchema());
+                if (configuration.getProperties().containsKey(
+                        CommandLineOptionConstants.ExtensionArguments.WITHOUT_DATABIND_CODE)){
+                    // use the dummy code
+                    schemaGenerator = new AxisServiceTopElementSchemaGenerator(axisService);
+                    schemas.addAll(schemaGenerator.getDummySchemaList());
+                } else {
+                    schemas.addAll(axisService.getSchema());
+                }
+
             }
 
             Element[] additionalSchemas = loadAdditionalSchemas();

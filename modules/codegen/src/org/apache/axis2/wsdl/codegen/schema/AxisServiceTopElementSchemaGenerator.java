@@ -146,11 +146,12 @@ public class AxisServiceTopElementSchemaGenerator {
 
         for (Iterator operationIter = axisService.getOperations(); operationIter.hasNext();) {
             axisOperation = (AxisOperation) operationIter.next();
-            for (Iterator messageIter = axisOperation.getMessages(); operationIter.hasNext();) {
+            for (Iterator messageIter = axisOperation.getMessages(); messageIter.hasNext();) {
                 axisMessage = (AxisMessage) messageIter.next();
                 topElement = new TopElement(axisMessage.getElementQName());
                 xmlSchemaElement = axisMessage.getSchemaElement();
                 topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
+                topSchemaElements.add(topElement);
             }
         }
         return topSchemaElements;

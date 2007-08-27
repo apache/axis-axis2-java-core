@@ -40,18 +40,80 @@
 
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent)
             throws org.apache.axis2.AxisFault{
-            org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
-            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
-            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
 
-            <xsl:if test="$base64">
-                if (optimizeContent) {
-                optimizeContent(documentElement,qNameArray);
+            <xsl:choose>
+                <xsl:when test="$base64">
+                     if (optimizeContent) {
+                        org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder
+                        (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
+                        org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
+                        optimizeContent(documentElement,qNameArray);
+                        ((org.apache.axiom.om.impl.OMNodeEx)documentElement).setParent(null);
+                        return documentElement;
+                     } else {
+                        return toOM(param);
+                     }
+                </xsl:when>
+                <xsl:otherwise>
+                    return toOM(param);
+                </xsl:otherwise>
+            </xsl:choose>
+
+            }
+
+            private org.apache.axiom.om.OMElement toOM(final <xsl:value-of select="@type"/> param)
+                    throws org.apache.axis2.AxisFault {
+
+                final javax.xml.stream.XMLStreamReader xmlReader = param.newXMLStreamReader();
+                while (!xmlReader.isEndElement()) {
+                    try {
+                        xmlReader.next();
+                    } catch (javax.xml.stream.XMLStreamException e) {
+                        throw org.apache.axis2.AxisFault.makeFault(e);
+                    }
                 }
-            </xsl:if>
 
-            ((org.apache.axiom.om.impl.OMNodeEx)documentElement).setParent(null);
-            return documentElement;
+                org.apache.axiom.om.OMDataSource omDataSource = new org.apache.axiom.om.OMDataSource() {
+
+                    public void serialize(java.io.OutputStream outputStream, org.apache.axiom.om.OMOutputFormat omOutputFormat)
+                            throws javax.xml.stream.XMLStreamException {
+                        try {
+                            param.save(outputStream);
+                        } catch (java.io.IOException e) {
+                            throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
+                        }
+                    }
+
+                    public void serialize(java.io.Writer writer, org.apache.axiom.om.OMOutputFormat omOutputFormat)
+                            throws javax.xml.stream.XMLStreamException {
+                        try {
+                            param.save(writer);
+                        } catch (java.io.IOException e) {
+                            throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
+                        }
+                    }
+
+                    public void serialize(javax.xml.stream.XMLStreamWriter xmlStreamWriter)
+                            throws javax.xml.stream.XMLStreamException {
+                        org.apache.axiom.om.impl.MTOMXMLStreamWriter mtomxmlStreamWriter =
+                                                        (org.apache.axiom.om.impl.MTOMXMLStreamWriter) xmlStreamWriter;
+                        try {
+                            param.save(mtomxmlStreamWriter.getOutputStream());
+                            mtomxmlStreamWriter.getOutputStream().flush();
+                        } catch (java.io.IOException e) {
+                            throw new javax.xml.stream.XMLStreamException("Problem with saving document", e);
+                        }
+                    }
+
+                    public javax.xml.stream.XMLStreamReader getReader()
+                            throws javax.xml.stream.XMLStreamException {
+                        return param.newXMLStreamReader();
+                    }
+                };
+            
+                return  new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(xmlReader.getName(),
+                        org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
+                        omDataSource);
             }
         </xsl:for-each>
 
