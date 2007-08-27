@@ -133,6 +133,23 @@ class TestServletRequest implements HttpServletRequest {
         headers.put("header3", "h3Value");
     }
 
+
+    public int getRemotePort() {
+        return 0;
+    }
+
+    public String getLocalAddr() {
+        return null;
+    }
+
+    public String getLocalName() {
+        return null;
+    }
+
+    public int getLocalPort() {
+        return 0;
+    }
+
     public String getAuthType() {
         return null;
     }

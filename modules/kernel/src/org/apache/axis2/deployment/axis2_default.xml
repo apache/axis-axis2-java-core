@@ -165,6 +165,8 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
+    <!--<transportSender name="java"-->
+                     <!--class="org.apache.axis2.transport.java.JavaTransportSender"/>-->
 
     <!-- ================================================= -->
     <!-- Phases  -->
