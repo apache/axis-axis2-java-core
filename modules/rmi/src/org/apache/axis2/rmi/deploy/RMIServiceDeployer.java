@@ -21,6 +21,7 @@ import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.rmi.metadata.Parameter;
 import org.apache.axis2.rmi.deploy.config.*;
 import org.apache.axis2.rmi.deploy.config.ClassInfo;
@@ -36,6 +37,8 @@ import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
@@ -50,6 +53,7 @@ import java.util.zip.ZipEntry;
 
 public class RMIServiceDeployer implements Deployer {
 
+    private static Log log = LogFactory.getLog(RMIServiceDeployer.class);
     private ConfigurationContext configurationContext;
     private AxisConfiguration axisConfiguration;
 
@@ -60,13 +64,13 @@ public class RMIServiceDeployer implements Deployer {
     }
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
-
+        boolean isDirectory = deploymentFileData.getFile().isDirectory();
         try {
+            deploymentFileData.setClassLoader(isDirectory,
+                                              this.axisConfiguration.getServiceClassLoader(),
+                    (File)this.axisConfiguration.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
 
-            DeploymentClassLoader deploymentClassLoader =
-                    new DeploymentClassLoader(new URL[]{deploymentFileData.getFile().toURL()}, null,
-                            Thread.currentThread().getContextClassLoader());
-            deploymentFileData.setClassLoader(deploymentClassLoader);
+            ClassLoader deploymentClassLoader = deploymentFileData.getClassLoader();
             String absolutePath = deploymentFileData.getFile().getAbsolutePath();
 
             // gettting the file reader for zipinput stream
@@ -83,13 +87,12 @@ public class RMIServiceDeployer implements Deployer {
                 serviceClass = Loader.loadClass(deploymentClassLoader, services[i].getServiceClass());
                 classDeployer.deployClass(serviceClass);
             }
+            log.info("Deployed RMI Services with deployment file " + deploymentFileData.getName());
 
         } catch (ClassNotFoundException e) {
             throw new DeploymentException("Service class not found", e);
         } catch (AxisFault axisFault) {
             throw new DeploymentException("axis fault", axisFault);
-        } catch (MalformedURLException e) {
-            throw new DeploymentException("zip file url is not correct", e);
         } catch (IOException e) {
             throw new DeploymentException("zip file not found", e);
         } catch (ConfigFileReadingException e) {
@@ -97,7 +100,7 @@ public class RMIServiceDeployer implements Deployer {
         }
     }
 
-    private Configurator getConfigurator(Config configObject, DeploymentClassLoader deploymentClassLoader)
+    private Configurator getConfigurator(Config configObject, ClassLoader deploymentClassLoader)
             throws ClassNotFoundException, DeploymentException {
         Configurator configurator = new Configurator();
 
@@ -231,14 +234,14 @@ public class RMIServiceDeployer implements Deployer {
     }
 
     public void setDirectory(String directory) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     public void setExtension(String extension) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     public void unDeploy(String fileName) throws DeploymentException {
-        //To change body of implemented methods use File | Settings | File Templates.
+       //TODO: implement undeploy
     }
 }
