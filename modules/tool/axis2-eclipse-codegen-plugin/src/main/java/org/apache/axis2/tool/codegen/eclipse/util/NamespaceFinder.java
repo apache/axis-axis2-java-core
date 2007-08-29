@@ -22,7 +22,6 @@ package org.apache.axis2.tool.codegen.eclipse.util;
 public class NamespaceFinder {
 	
 	private static String NS_PREFIX = "http://";
-	private static String SCHEMA_NS_SUFFIX = "/xsd";
 	private static String SCHEMA_NS_DEFAULT_PREFIX = "xsd";
 	private static String NS_DEFAULT_PREFIX = "ns";
 	
@@ -36,13 +35,12 @@ public class NamespaceFinder {
 			nsUri = nsUri + classNameParts[i] + (i==0?"":".");
 		}
 		
-		return NS_PREFIX + nsUri;
-		
+		return NS_PREFIX + nsUri;	
 		
 	}
 	
 	public static String getSchemaTargetNamespaceFromClass(String fullyQualifiedClassName){
-		return getTargetNamespaceFromClass(fullyQualifiedClassName) +SCHEMA_NS_SUFFIX;
+		return getTargetNamespaceFromClass(fullyQualifiedClassName);
 	}
 
 	public static String getDefaultSchemaNamespacePrefix(){
