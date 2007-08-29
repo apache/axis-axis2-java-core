@@ -112,4 +112,40 @@ public abstract class AbstractRMIBean implements RMIBean {
             writer.writeAttribute(attributeQName.getLocalPart(), attributeValue);
         }
     }
+
+    protected void writeAttribute(XMLStreamWriter writer,
+                                  QName attributeValue,
+                                  QName attributeQName,
+                                  NamespacePrefix namespacePrefix)
+            throws XMLStreamException {
+
+        String attributeStringVaule = attributeValue.getLocalPart();
+        if ((attributeValue.getNamespaceURI() != null) && (attributeValue.getNamespaceURI().trim().equals(""))){
+            // i.e. this is a qname
+            String prefix = writer.getPrefix(attributeValue.getNamespaceURI());
+            if (prefix == null){
+                prefix = "ns" + namespacePrefix.getNamesapcePrefix();
+                writer.writeNamespace(prefix,attributeValue.getNamespaceURI());
+                writer.setPrefix(prefix,attributeValue.getNamespaceURI());
+            }
+           if (!"".equals(prefix)){
+              attributeStringVaule = prefix + ":" + attributeStringVaule;
+           }
+        }
+
+        if ((attributeQName.getNamespaceURI() != null) && !attributeQName.getNamespaceURI().trim().equals("")) {
+            String prefix = writer.getPrefix(attributeQName.getNamespaceURI());
+            if (prefix == null) {
+                prefix = "ns" + namespacePrefix.getNamesapcePrefix();
+                writer.writeNamespace(prefix, attributeQName.getNamespaceURI());
+                writer.setPrefix(prefix, attributeQName.getNamespaceURI());
+            }
+            writer.writeAttribute(attributeQName.getNamespaceURI(),
+                    attributeQName.getLocalPart(),
+                    attributeStringVaule);
+
+        } else {
+            writer.writeAttribute(attributeQName.getLocalPart(), attributeStringVaule);
+        }
+    }
 }
