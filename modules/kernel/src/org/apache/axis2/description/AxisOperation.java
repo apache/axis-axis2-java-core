@@ -497,6 +497,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public void setFaultMessages(AxisMessage faultMessage) {
+        faultMessage.setParent(this);
         faultMessages.add(faultMessage);
         if(getFaultAction(faultMessage.getName())==null){
             addFaultAction(faultMessage.getName(),"urn:" + name.getLocalPart()
