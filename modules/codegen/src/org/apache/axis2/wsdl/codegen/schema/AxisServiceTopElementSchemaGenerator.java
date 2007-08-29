@@ -20,14 +20,15 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.codegen.schema.exception.DummySchemaGenerationException;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.ws.commons.schema.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.QName;
 import java.util.*;
 
 /**
@@ -93,8 +94,8 @@ public class AxisServiceTopElementSchemaGenerator {
                     // then we have an element with a complex type.
                     // first creates the complex type if it is note exists
                     XmlSchema complexElementSchema =
-                            getXmlScheamForNamespace(topElement.getTypeQName().getNamespaceURI(),schemaMap);
-                    if (!complexElementSchema.isComplexTypeExists(topElement.getTypeQName().getLocalPart())){
+                            getXmlScheamForNamespace(topElement.getTypeQName().getNamespaceURI(), schemaMap);
+                    if (!complexElementSchema.isComplexTypeExists(topElement.getTypeQName().getLocalPart())) {
                         XmlComplexType xmlComplexType = new XmlComplexType();
                         xmlComplexType.setName(topElement.getTypeQName().getLocalPart());
                         xmlComplexType.setNamespace(topElement.getTypeQName().getNamespaceURI());
@@ -103,7 +104,7 @@ public class AxisServiceTopElementSchemaGenerator {
 
                     // adding the namesapce if not exists.
                     if (!xmlSchema.getNamespacesPrefixMap()
-                            .containsKey(topElement.getTypeQName().getNamespaceURI())){
+                            .containsKey(topElement.getTypeQName().getNamespaceURI())) {
                         xmlSchema.getNamespacesPrefixMap().put(
                                 topElement.getTypeQName().getNamespaceURI(),
                                 namespacePrefix.getNextNamespacePrefix());
@@ -120,7 +121,7 @@ public class AxisServiceTopElementSchemaGenerator {
         return schemaMap;
     }
 
-    private XmlElement getXmlElement(TopElement topElement){
+    private XmlElement getXmlElement(TopElement topElement) {
         XmlElement xmlElement = new XmlElement();
         xmlElement.setName(topElement.getElementQName().getLocalPart());
         xmlElement.setNamespace(topElement.getElementQName().getNamespaceURI());
@@ -128,10 +129,10 @@ public class AxisServiceTopElementSchemaGenerator {
         return xmlElement;
     }
 
-    private XmlSchema getXmlScheamForNamespace(String targetNamespace,Map scheamMap){
-        if (!scheamMap.containsKey(targetNamespace)){
+    private XmlSchema getXmlScheamForNamespace(String targetNamespace, Map scheamMap) {
+        if (!scheamMap.containsKey(targetNamespace)) {
             XmlSchema xmlSchema = new XmlSchema(targetNamespace);
-            scheamMap.put(targetNamespace,xmlSchema);
+            scheamMap.put(targetNamespace, xmlSchema);
         }
         return (XmlSchema) scheamMap.get(targetNamespace);
     }
@@ -143,6 +144,7 @@ public class AxisServiceTopElementSchemaGenerator {
         AxisMessage axisMessage;
         TopElement topElement;
         XmlSchemaElement xmlSchemaElement;
+        SOAPHeaderMessage soapHeaderMessage;
 
         for (Iterator operationIter = axisService.getOperations(); operationIter.hasNext();) {
             axisOperation = (AxisOperation) operationIter.next();
@@ -152,8 +154,72 @@ public class AxisServiceTopElementSchemaGenerator {
                 xmlSchemaElement = axisMessage.getSchemaElement();
                 topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
                 topSchemaElements.add(topElement);
+                // adding header messages
+                for (Iterator soapHeaderIter = axisMessage.getSoapHeaders().iterator(); soapHeaderIter.hasNext();) {
+                    soapHeaderMessage = (SOAPHeaderMessage) soapHeaderIter.next();
+                    topElement = new TopElement(soapHeaderMessage.getElement());
+                    topSchemaElements.add(topElement);
+                    xmlSchemaElement = getSchemaElement(soapHeaderMessage.getElement());
+                    topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
+                    topSchemaElements.add(topElement);
+                }
+            }
+
+            for (Iterator faultMessagesIter = axisOperation.getFaultMessages().iterator();
+                 faultMessagesIter.hasNext();) {
+                axisMessage = (AxisMessage) faultMessagesIter.next();
+                topElement = new TopElement(axisMessage.getElementQName());
+                xmlSchemaElement = axisMessage.getSchemaElement();
+                topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
+                topSchemaElements.add(topElement);
             }
         }
         return topSchemaElements;
+    }
+
+    public XmlSchemaElement getSchemaElement(QName elementQName) {
+        XmlSchemaElement xmlSchemaElement = null;
+        ArrayList schemas = this.axisService.getSchema();
+        for (Iterator schemaIter = schemas.iterator(); schemaIter.hasNext();){
+            xmlSchemaElement = getSchemaElement(
+                    (org.apache.ws.commons.schema.XmlSchema)schemaIter.next(),elementQName);
+            if (xmlSchemaElement != null){
+                break;
+            }
+        }
+        return xmlSchemaElement;
+    }
+
+    private XmlSchemaElement getSchemaElement(org.apache.ws.commons.schema.XmlSchema schema,
+                                              QName elementQName) {
+        XmlSchemaElement xmlSchemaElement = null;
+        if (schema != null) {
+            xmlSchemaElement = schema.getElementByName(elementQName);
+            if (xmlSchemaElement == null) {
+                // try to find in an import or an include
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator includesIter = includes.getIterator();
+                    Object object;
+                    while (includesIter.hasNext()) {
+                        object = includesIter.next();
+                        if (object instanceof XmlSchemaImport) {
+                            org.apache.ws.commons.schema.XmlSchema schema1 =
+                                    ((XmlSchemaImport) object).getSchema();
+                            xmlSchemaElement = getSchemaElement(schema1,elementQName);
+                        }
+                        if (object instanceof XmlSchemaInclude) {
+                            org.apache.ws.commons.schema.XmlSchema schema1 =
+                                    ((XmlSchemaInclude) object).getSchema();
+                            xmlSchemaElement = getSchemaElement(schema1,elementQName);
+                        }
+                        if (xmlSchemaElement != null){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return xmlSchemaElement;
     }
 }
