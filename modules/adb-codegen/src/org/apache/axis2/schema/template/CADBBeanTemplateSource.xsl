@@ -1316,6 +1316,7 @@
                 <xsl:choose>
                     <xsl:when test="not(@type) or (@ours='yes' and (@type='uri' or @type='qname' or @type='date_time' or @type='base64_binary' or @type='char')) or @type='char' or @type='axis2_char_t*' or @type='axutil_base64_binary_t*' or @type='axutil_date_time_t*' or @type='axiom_node_t*' or @type='axutil_uri_t*' or @type='axutil_qname_t*'">
                     axis2_char_t *text_value_<xsl:value-of select="$position"/>;
+                    axis2_char_t *text_value_<xsl:value-of select="$position"/>_temp;
                     </xsl:when>
                     <xsl:otherwise>
                     axis2_char_t text_value_<xsl:value-of select="$position"/>[64];
@@ -1787,7 +1788,17 @@
                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                            text_value_<xsl:value-of select="$position"/> = <xsl:value-of select="$attriName"/>;
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                            
+                           text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
+                           if (text_value_2_temp)
+                           {
+                               axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>_temp, axutil_strlen(text_value_<xsl:value-of select="$position"/>_temp));
+                               AXIS2_FREE(env->allocator, text_value_<xsl:value-of select="$position"/>_temp);
+                           }
+                           else
+                           {
+                               axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           }
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
                         </xsl:when>
 
