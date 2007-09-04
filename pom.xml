@@ -61,6 +61,7 @@
 		<module>modules/samples</module>
 	        <module>modules/scripting</module>
 	        <module>modules/rmi</module>
+		<module>modules/corba</module>
 	</modules>
  	<profiles>
 	   <profile>

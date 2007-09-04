@@ -361,7 +361,11 @@
 								<packageset dir="../../modules/xmlbeans/src" defaultexcludes="yes">    
 								  <include name="org/apache/axis2/**"/>
 								  <include name="javax/**"/>
-								</packageset>    
+								</packageset>  
+                                                 <packageset dir="../../modules/corba/src" defaultexcludes="yes">    
+								  <include name="org/apache/axis2/**"/>
+								  <include name="javax/**"/>
+								</packageset>      
 							</javadoc>
                             </tasks>
                         </configuration>

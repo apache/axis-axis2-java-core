@@ -2008,7 +2008,7 @@ public class AxisService extends AxisDescription {
      */
     private void insertIntoNameTable(Hashtable nameTable, XmlSchema s) {
         String sourceURI = s.getSourceURI();
-        sourceURI = sourceURI.substring(sourceURI.lastIndexOf(File.separator) + 1);
+        sourceURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
         //remove the .xsd extention
         sourceURI = sourceURI.substring(0,sourceURI.indexOf("."));
         // make it unique

@@ -101,7 +101,7 @@ public class WSDL11Writer {
                     wsdlLocation = wsdlImport.getDefinition().getDocumentBaseURI();
                     // we have to process this wsdl file only if it has not been processed earlier
                     if (!baseURIwsdlNameMap.containsKey(wsdlLocation)) {
-                        wsdlName = wsdlLocation.substring(wsdlLocation.lastIndexOf(File.separator) + 1);
+                        wsdlName = wsdlLocation.substring(wsdlLocation.lastIndexOf('/') + 1);
 
                         //trim the wsdl part
                         wsdlName = wsdlName.substring(0, wsdlName.indexOf(".wsdl"));
