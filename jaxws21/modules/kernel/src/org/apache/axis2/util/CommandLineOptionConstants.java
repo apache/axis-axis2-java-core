@@ -87,5 +87,9 @@ public interface CommandLineOptionConstants {
         String WSDL_VERSION_1 = "1.1";
     }
 
+    interface ExtensionArguments {
+        String WITHOUT_DATABIND_CODE = "wdc";
+    }
+
     public static final String SOLE_INPUT = "SOLE_INPUT";
 }

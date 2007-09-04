@@ -52,10 +52,13 @@ Copyright Notice
 Copyright 2001, 2002 BEA Systems and IBM Corporation and Microsoft Corporation. All rights reserved.
 -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsat="http://schemas.xmlsoap.org/ws/2003/09/wsat" targetNamespace="http://schemas.xmlsoap.org/ws/2003/09/wsat">
-	<wsdl:import namespace="http://schemas.xmlsoap.org/ws/2003/09/wsat" location="wsat.xsd"/>
-	<!-- location="http://schemas.xmlsoap.org/ws/2003/09/wsat" -->
 	<!-- Messages -->
-	<wsdl:message name="Prepare">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://schemas.xmlsoap.org/ws/2003/09/wsat">
+            <xsd:include schemaLocation="wsat.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="Prepare">
 		<wsdl:part name="parameters" element="wsat:Prepare"/>
 	</wsdl:message>
 	<wsdl:message name="Prepared">

@@ -173,6 +173,10 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Jeff Barrett</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Eran Chinthaka</name>
             <id>chinthaka</id>
             <email>chinthaka AT wso2.com</email>
@@ -184,6 +188,12 @@
             <id>gdaniels</id>
             <email>gdaniels AT apache.org</email>
             <organization>Sonic Software</organization>
+        </developer>
+        <developer>
+            <name>Brian DePradine</name>
+            <id>pradine</id>
+            <email>pradine AT uk.ibm.com</email>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Jaliya Ekanayake</name>
@@ -199,6 +209,10 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Nicholas Gallardo</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
             <email>thilina AT opensource.lk</email>
@@ -210,6 +224,12 @@
             <email>chathura AT opensource.lk</email>
             <organization>Indiana University, USA</organization>
             <url>www.apache.org/~chathura</url>
+        </developer>
+        <developer>
+            <name>David Illsley</name>
+            <id>davidillsley</id>
+            <organization>IBM</organization>
+            <url>http://www.illsley.org</url>
         </developer>
         <developer>
             <name>Deepal Jayasinghe</name>
@@ -229,6 +249,10 @@
             <id>stevel</id>
             <email>stevel AT apache.org</email>
             <organization>HP labs</organization>
+        </developer>
+        <developer>
+            <name>Bill Nagy</name>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Chatra Nakkawita</name>
@@ -269,10 +293,24 @@
             <organization>Computer Associates</organization>
         </developer>
         <developer>
+            <name>Michael Rheinheimer</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Ann Robinson</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Sanka Samaranayake</name>
             <id>sanka</id>
             <email>sanka AT wso2.com</email>
             <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Rich Scheuerle</name>
+            <id>scheu</id>
+            <email>scheu AT us.ibm.com</email>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Ashutosh Shahi</name>
@@ -303,6 +341,10 @@
             <id>jaya</id>
             <email>jayachandra AT gmail.com</email>
             <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Nikhil Thaker</name>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Chamil Thanthrimudalige</name>

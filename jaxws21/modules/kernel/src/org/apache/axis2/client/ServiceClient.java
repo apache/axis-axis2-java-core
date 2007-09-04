@@ -37,13 +37,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -216,6 +210,17 @@ public class ServiceClient {
                                                                                       wsdlServiceName,
                                                                                       portName,
                                                                                       options));
+        Parameter transportName = axisService.getParameter("TRANSPORT_NAME");
+        if(transportName != null ) {
+            TransportOutDescription transportOut = configContext.getAxisConfiguration().getTransportOut(
+                    transportName.getValue().toString());
+            if (transportOut == null) {
+                throw new AxisFault("Cannot load transport from binding, either defin in Axis2.config " +
+                        "or set it explicitely in ServiceClinet.Options");
+            } else {
+                options.setTransportOut(transportOut);
+            }
+        }
     }
 
     /**

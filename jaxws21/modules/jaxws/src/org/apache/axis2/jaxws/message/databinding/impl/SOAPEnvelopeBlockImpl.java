@@ -23,6 +23,8 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -38,6 +40,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 
@@ -119,5 +127,45 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 
     public boolean isElementData() {
         return true;
+    }
+    
+    public void close() {
+        return; // Nothing to close
+    }
+
+    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
+        byte[] bytes = getXMLBytes(encoding);
+        return new ByteArrayInputStream(bytes);
+    }
+
+    public Object getObject() {
+        try {
+            return getBusinessObject(false);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public boolean isDestructiveRead() {
+        return false;
+    }
+
+    public boolean isDestructiveWrite() {
+        return false;
+    }
+
+    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputFormat format = new OMOutputFormat();
+        format.setCharSetEncoding(encoding);
+        try {
+            serialize(baos, format);
+            baos.flush();
+            return baos.toByteArray();
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (IOException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 }

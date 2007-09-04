@@ -18,8 +18,11 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.ds.ByteArrayDataSource;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
@@ -41,6 +44,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 /**
@@ -232,6 +236,16 @@ public abstract class BlockImpl implements Block {
         MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(output, format);
         serialize(writer);
         writer.flush();
+        try {
+            writer.close();
+        } catch (XMLStreamException e) {
+            // An exception can occur if nothing is written to the 
+            // writer.  This is possible if the underlying data source
+            // writers to the output stream directly.
+            if (log.isDebugEnabled()) {
+                log.debug("Catching and swallowing exception " + e);
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -243,13 +257,14 @@ public abstract class BlockImpl implements Block {
         writer.setOutputFormat(format);
         serialize(writer);
         writer.flush();
+        writer.close();
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
       */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        outputTo(writer, true);
+        outputTo(writer, isDestructiveWrite());
     }
 
     public OMElement getOMElement() throws XMLStreamException, WebServiceException {
@@ -433,6 +448,21 @@ public abstract class BlockImpl implements Block {
             throws XMLStreamException {
         Reader2Writer r2w = new Reader2Writer(reader);
         r2w.outputTo(writer);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axiom.om.OMDataSourceExt#copy()
+     */
+    public OMDataSourceExt copy() throws OMException {
+        // TODO: This is a default implementation.  Much
+        // more refactoring needs to occur to account for attachments.
+        try {
+            String encoding = "utf-8"; // Choose a common encoding
+            byte[] bytes = this.getXMLBytes(encoding);
+            return new ByteArrayDataSource(bytes, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new OMException(e);
+        }
     }
 
     /**

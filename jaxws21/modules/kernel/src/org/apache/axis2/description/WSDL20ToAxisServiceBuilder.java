@@ -34,6 +34,7 @@ import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
+import org.apache.woden.XMLElement;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
@@ -1116,7 +1117,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         StringBuffer x;
         for (int i = 0; i < documentationElements.length; i++) {
             DocumentationElement documentationElement = documentationElements[i];
-            Element content = (Element) documentationElement.getContent();
+            XMLElement contentElement = documentationElement.getContent();
+            Element content = (Element)contentElement.getSource();
             if (content != null) {
                 documentation = documentation + DOM2Writer.nodeToString(content.getFirstChild());
             }

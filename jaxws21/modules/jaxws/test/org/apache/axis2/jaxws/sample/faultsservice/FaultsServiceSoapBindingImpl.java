@@ -16,20 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-//
-// IBM Confidential OCO Source Material
-// (C) COPYRIGHT International Business Machines Corp. 2006
-// The source code for this program is not published or otherwise divested
-// of its trade secrets, irrespective of what has been deposited with the
-// U.S. Copyright Office.
-//
-// Change History:
-// Date        UserId         Defect            Description
-// ----------------------------------------------------------------------------
-// 08/28/2006  mzheng         LIDB3296-46.01    New File
-//
-
 package org.apache.axis2.jaxws.sample.faultsservice;
 
 import javax.annotation.PostConstruct;

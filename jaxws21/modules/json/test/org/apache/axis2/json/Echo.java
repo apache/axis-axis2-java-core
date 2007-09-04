@@ -18,17 +18,16 @@
  */
 package org.apache.axis2.json;
 
+import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 public class Echo {
-    private static final Log log = LogFactory.getLog(Echo.class);
 
     public Echo() {
     }
@@ -45,6 +44,9 @@ public class Echo {
         } else if (messageType.indexOf("json") < 0) {
             throw new AxisFault("Type of the Received Message is not JSON");
         }
+        OMDataSource omdataOSuce = ((OMSourcedElement) omEle).getDataSource();
+        OMElement newOmEle = (OMElement) omEle.detach();
+        ((OMSourcedElement) newOmEle).setDataSource(omdataOSuce);
         return omEle;
     }
 }

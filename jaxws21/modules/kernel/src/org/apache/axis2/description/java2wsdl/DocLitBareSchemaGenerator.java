@@ -262,7 +262,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             classTypeName = "base64Binary";
             isArrayType = false;
         }
-        if ("javax.activation.DataHandler".equals(classTypeName)) {
+        if (isDataHandler(type)) {
             classTypeName = "base64Binary";
         }
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);

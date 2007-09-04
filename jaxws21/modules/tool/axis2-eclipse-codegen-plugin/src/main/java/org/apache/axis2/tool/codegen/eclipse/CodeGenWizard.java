@@ -439,7 +439,7 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
                     
                     
                 } catch (Throwable e) {
-                	
+                		e.printStackTrace();
                 	    throw new RuntimeException(e);
                 }
 

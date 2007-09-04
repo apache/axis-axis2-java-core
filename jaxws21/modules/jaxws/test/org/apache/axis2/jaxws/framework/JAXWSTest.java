@@ -50,6 +50,7 @@ import org.apache.axis2.jaxws.injection.ResourceInjectionTests;
 import org.apache.axis2.jaxws.lifecycle.EndpointLifecycleTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.FaultTests;
+import org.apache.axis2.jaxws.message.MessagePersistanceTests;
 import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
@@ -126,6 +127,7 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);
+        suite.addTestSuite(MessagePersistanceTests.class);
         suite.addTestSuite(MessageContextTests.class);
         suite.addTestSuite(FaultTests.class);
         suite.addTestSuite(SAAJConverterTests.class);

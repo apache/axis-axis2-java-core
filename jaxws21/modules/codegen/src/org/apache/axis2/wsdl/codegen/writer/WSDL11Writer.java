@@ -34,12 +34,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 public class WSDL11Writer {
 
@@ -77,7 +72,10 @@ public class WSDL11Writer {
     public void writeWSDL(AxisService axisService, Definition definition, Map changedMap) {
         try {
             if (axisService != null) {
-                writeWSDL(definition, axisService.getName(), changedMap, new Stack());
+                Map baseURIwsdlNameMap = new HashMap();
+                // add the initial definition to the map
+                baseURIwsdlNameMap.put(definition.getDocumentBaseURI(),axisService.getName());
+                writeWSDL(definition, axisService.getName(), changedMap, baseURIwsdlNameMap);
             }
         } catch (Exception e) {
             throw new RuntimeException("WSDL writing failed!", e);
@@ -87,25 +85,35 @@ public class WSDL11Writer {
     private void writeWSDL(Definition definition,
                            String serviceName,
                            Map changedMap,
-                           Stack stack) throws Exception {
-        stack.push(definition);
+                           Map baseURIwsdlNameMap) throws Exception {
         // first process the imports and save them.
         Map imports = definition.getImports();
         if (imports != null && (imports.size() > 0)) {
             Vector importsVector = null;
             Import wsdlImport = null;
             String wsdlName = null;
+            String wsdlLocation = null;
             for (Iterator improtsVectorIter = imports.values().iterator();
                  improtsVectorIter.hasNext();) {
                 importsVector = (Vector)improtsVectorIter.next();
                 for (Iterator importsIter = importsVector.iterator(); importsIter.hasNext();) {
                     wsdlImport = (Import)importsIter.next();
-                    wsdlName = "wsdl_" + count++ + ".wsdl";
-                    Definition innerDefinition = wsdlImport.getDefinition();
-                    if(!stack.contains(innerDefinition)) {
-                        writeWSDL(innerDefinition, wsdlName, changedMap, stack);
+                    wsdlLocation = wsdlImport.getDefinition().getDocumentBaseURI();
+                    // we have to process this wsdl file only if it has not been processed earlier
+                    if (!baseURIwsdlNameMap.containsKey(wsdlLocation)) {
+                        wsdlName = wsdlLocation.substring(wsdlLocation.lastIndexOf('/') + 1);
+
+                        //trim the wsdl part
+                        wsdlName = wsdlName.substring(0, wsdlName.indexOf(".wsdl"));
+                        while (baseURIwsdlNameMap.containsValue(wsdlName)) {
+                            wsdlName = wsdlName + count++;
+                        }
+                        baseURIwsdlNameMap.put(wsdlLocation, wsdlName);
+                        Definition innerDefinition = wsdlImport.getDefinition();
+                        writeWSDL(innerDefinition, wsdlName, changedMap, baseURIwsdlNameMap);
                     }
-                    wsdlImport.setLocationURI(wsdlName);
+
+                    wsdlImport.setLocationURI(baseURIwsdlNameMap.get(wsdlLocation) + ".wsdl");
                 }
             }
         }
@@ -154,7 +162,6 @@ public class WSDL11Writer {
         }
         out.flush();
         out.close();
-        stack.pop();
     }
 
     /**
@@ -165,7 +172,7 @@ public class WSDL11Writer {
     public void adjustWSDLSchemaLocatins(Definition definition, Map changedSchemaLocations) {
         adjustWSDLSchemaLocations(definition, changedSchemaLocations);
     }
-    
+
     /**
      * adjust the schema locations in the original wsdl
      *

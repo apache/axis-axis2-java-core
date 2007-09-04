@@ -50,7 +50,9 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
@@ -181,7 +183,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
     }
 
-    @Override
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
@@ -249,31 +250,35 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param m Marshaller
      * @param writer XMLStreamWriter
      */
-    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer,
-                                         boolean optimize) throws WebServiceException {
-        // Marshalling directly to the output stream is faster than marshalling through the
-        // XMLStreamWriter. Take advantage of this optimization if there is an output stream.
-        try {
-            OutputStream os = (optimize) ? getOutputStream(writer) : null;
-            if (os != null) {
-                if (DEBUG_ENABLED) {
-                    log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. " +
-                                "Object is "
-                            + getDebugName(b));
+    private static void marshalByElement(final Object b, final Marshaller m, final XMLStreamWriter writer,
+                                         final boolean optimize) throws WebServiceException {
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                // Marshalling directly to the output stream is faster than marshalling through the
+                // XMLStreamWriter. Take advantage of this optimization if there is an output stream.
+                try {
+                    OutputStream os = (optimize) ? getOutputStream(writer) : null;
+                    if (os != null) {
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. " +
+                                      "Object is "
+                                      + getDebugName(b));
+                        }
+                        writer.flush();
+                        m.marshal(b, os);
+                    } else {
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. " +
+                                      "Object is "
+                                      + getDebugName(b));
+                        }
+                        m.marshal(b, writer);
+                    }
+                } catch (Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
                 }
-                writer.flush();
-                m.marshal(b, os);
-            } else {
-                if (DEBUG_ENABLED) {
-                    log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. " +
-                                "Object is "
-                            + getDebugName(b));
-                }
-                m.marshal(b, writer);
-            }
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+                return null;
+            }});
     }
 
     /**
@@ -561,6 +566,48 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     public boolean isElementData() {
         return true;
+    }
+    
+    public void close() {
+        return; // Nothing to close
+    }
+
+    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
+        try {
+            byte[] bytes= _getBytesFromBO(
+                                          getBusinessObject(false), 
+                                          busContext, 
+                                          encoding);
+            return new ByteArrayInputStream(bytes);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public Object getObject() {
+        try {
+            return getBusinessObject(false);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public boolean isDestructiveRead() {
+        return false;
+    }
+
+    public boolean isDestructiveWrite() {
+        return false;
+    }
+
+    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        try {
+            return _getBytesFromBO(getBusinessObject(false), 
+                                   busContext, 
+                                   encoding);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 
     /**

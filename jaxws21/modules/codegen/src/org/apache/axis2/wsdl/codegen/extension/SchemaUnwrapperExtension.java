@@ -61,7 +61,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         this.codeGenConfiguration = configuration;
 
-        if (!configuration.isParametersWrapped()) {
+        if (!configuration.isParametersWrapped() && !codeGenConfiguration.getOutputLanguage().equals("jax-ws")) {
 
             // A check to avoid nasty surprises - Since unwrapping is not
             // supported by all frameworks, we check the framework name to be

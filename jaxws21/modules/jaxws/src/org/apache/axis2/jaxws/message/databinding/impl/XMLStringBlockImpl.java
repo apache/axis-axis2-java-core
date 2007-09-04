@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
@@ -29,7 +30,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 /**
  * XMLStringBlock
@@ -90,5 +95,43 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
 
     public boolean isElementData() {
         return false;  // The text could be element or text or something else
+    }
+    
+    public void close() {
+        return; // Nothing to close
+    }
+
+    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
+        try {
+            byte[] bytes = ((String) getBusinessObject(false)).getBytes(encoding);
+            return new ByteArrayInputStream(bytes);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public Object getObject() {
+        try {
+            return getBusinessObject(false);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public boolean isDestructiveRead() {
+        return false;
+    }
+
+    public boolean isDestructiveWrite() {
+        return false;
+    }
+
+
+    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        try {
+            return ((String) getBusinessObject(false)).getBytes(encoding);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 }

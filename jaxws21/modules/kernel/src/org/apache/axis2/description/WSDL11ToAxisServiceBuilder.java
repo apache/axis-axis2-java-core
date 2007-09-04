@@ -38,9 +38,7 @@ import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.*;
@@ -1372,6 +1370,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         while (faultKeyIterator.hasNext()) {
             Fault fault = (Fault) faults.get(faultKeyIterator.next());
             AxisMessage axisFaultMessage = new AxisMessage();
+
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 axisFaultMessage
@@ -2150,8 +2149,51 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                     axisOperation, anonymousValue);
                         }
                     }
+                }    else if (wsdl4jExtensibilityElement.getElementType() != null &&
+                        wsdl4jExtensibilityElement.getElementType().getNamespaceURI().equals(
+                                org.apache.axis2.namespace.Constants.FORMAT_BINDING)) {
+                    Element typeMapping = unknown.getElement();
+                    NodeList typeMaps = typeMapping.getElementsByTagNameNS(
+                            org.apache.axis2.namespace.Constants.FORMAT_BINDING,
+                            "typeMap");
+                    int count = typeMaps.getLength();
+                    HashMap typeMapper = new HashMap();
+                    for (int index = 0; index < count; index++) {
+                        Node node = typeMaps.item(index);
+                        NamedNodeMap attributes = node.getAttributes();
+                        Node typeName = attributes.getNamedItem("typeName");
 
-                } else {
+                        if (typeName != null) {
+                            String prefix = getPrefix(typeName.getNodeValue());
+
+                            if (prefix != null) {
+                                String ns = (String) wsdl4jDefinition.getNamespaces().get(prefix);
+                                if (ns != null) {
+                                    Node formatType = attributes.getNamedItem("formatType");
+                                    typeMapper.put(new QName(ns, getTypeName(
+                                            typeName.getNodeValue())), formatType.getNodeValue());
+                                }
+
+                            }
+                        }
+                    }
+                } else if (wsdl4jExtensibilityElement.getElementType() != null &&
+                        wsdl4jExtensibilityElement.getElementType().getNamespaceURI().equals(
+                                org.apache.axis2.namespace.Constants.JAVA_NS)) {
+                    Element unknowJavaElement = unknown.getElement();
+                    if (unknowJavaElement.getLocalName().equals("address") ) {
+                        NamedNodeMap nameAttributes = unknowJavaElement.getAttributes();
+                        Node node = nameAttributes.getNamedItem("className");
+                        Parameter serviceClass = new Parameter();
+                        serviceClass.setName("className");
+                        serviceClass.setValue(node.getNodeValue());
+                        axisService.addParameter(serviceClass);
+                        Parameter transportName = new Parameter();
+                        transportName.setName("TRANSPORT_NAME");
+                        transportName.setValue("java");
+                        axisService.addParameter(transportName);
+                    }
+                }  else {
                     // Ignore this element - it is a totally unknown element
                     if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: Unknown Extensibility Element found " +
@@ -2695,4 +2737,34 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //            }
 //        }
 //    }
+
+    /**
+     * This method is to split attribute like abc:cde and get the prefix part of it
+     * so the method will retuen abc if the ":" is present in the the string else it
+     * will return null
+     *
+     * @param attributeValue  : String
+     * @return String
+     */
+    public static String getPrefix(String attributeValue) {
+        if (attributeValue != null) {
+            int splitIdex = attributeValue.indexOf(':');
+            if (splitIdex > 0) {
+                return attributeValue.substring(0, splitIdex);
+            }
+        }
+        return null;
+    }
+
+    public static String getTypeName(String attributeValue) {
+        if (attributeValue != null) {
+            int splitIdex = attributeValue.indexOf(':');
+            if (splitIdex > 0) {
+                return attributeValue.substring(splitIdex + 1);
+            } else {
+                return attributeValue;
+            }
+        }
+        return null;
+    }
 }

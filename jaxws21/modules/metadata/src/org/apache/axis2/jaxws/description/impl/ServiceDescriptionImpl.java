@@ -1353,6 +1353,28 @@ class ServiceDescriptionImpl
                                     .getMessage("serverSideAsync", mdc.getDeclaringClass(), mdc
                                                     .getMethodName()));
                 }
+                // Verify that the SOAPBinding annotation values are supported.
+                if (mdc.getSoapBindingAnnot() != null) {
+
+                    // For this JAXWS engine, SOAPBinding.Use = ENCODED is unsupported
+                    if (mdc.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+                        throw ExceptionFactory.
+                          makeWebServiceException(Messages.getMessage("soapBindingUseEncoded",
+                                                                      mdc.getDeclaringClass(),
+                                                                      mdc.getMethodName()));
+
+                    }
+
+                    // Verify that, if a SOAPBinding annotation exists, that its style be set to
+                    // only DOCUMENT JSR181-Sec 4.7.1
+                    if (mdc.getSoapBindingAnnot().style() == javax.jws.soap.SOAPBinding.Style.RPC) {
+                        throw ExceptionFactory.
+                          makeWebServiceException(Messages.getMessage("soapBindingStyle",
+                                                                      mdc.getDeclaringClass(),
+                                                                      mdc.getMethodName()));
+                    }
+
+                } 
             }
         }
         // TODO: Fill this out to validate all MethodDescriptionComposite (and

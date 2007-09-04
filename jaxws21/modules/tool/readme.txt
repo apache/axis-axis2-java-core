@@ -13,9 +13,9 @@ Maven2 Build
 	* To build the eclipse plugin type "mvn clean install -Dmaven.test.skip=true" command in the
 	  tools/axis2-eclipse-<name>-plugin directory
 	* If you have already downloaded the maven artifacts you can invoke a local build by
-      same directory"mvn clean install -Dmaven.test.skip=true -o"
-    * After the successful build the zip version of the plugin will be available at
-       tools/axis2-eclipse-<name>-plugin/target/dist directory
+          same directory"mvn clean install -Dmaven.test.skip=true -o"
+        * After the successful build the zip version of the plugin will be available at
+          tools/axis2-eclipse-<name>-plugin/target/dist directory
 	* To run the plugin you need please refer to,
 	   - Tools Page On Apache Axis 2 Documentation  http://ws.apache.org/axis2/tools/
 

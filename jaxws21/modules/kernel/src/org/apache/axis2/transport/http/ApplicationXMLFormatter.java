@@ -45,15 +45,35 @@ import java.net.URL;
 public class ApplicationXMLFormatter implements MessageFormatter {
 
     private static final Log log = LogFactory.getLog(ApplicationXMLFormatter.class);
-    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format) throws AxisFault {
+    public byte[] getBytes(MessageContext 
+                           messageContext, 
+                           OMOutputFormat format) throws AxisFault {
+        return getBytes(messageContext, format, false);
+    }
+    
+    /**
+     * Get the bytes for this message
+     * @param messageContext
+     * @param format
+     * @param preserve (indicates if the OM should be preserved or consumed)
+     * @return
+     * @throws AxisFault
+     */
+    public byte[] getBytes(MessageContext messageContext, 
+                           OMOutputFormat format, 
+                           boolean preserve) throws AxisFault {
 
         if (log.isDebugEnabled()) {
             log.debug("start getBytes()");
-            log.debug("  fault flow=" + (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW));
+            log.debug("  fault flow=" + 
+                      (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW));
         }
         try {
             OMElement omElement;
 
+            // Find the correct element to serialize.  Normally it is the first element
+            // in the body.  But if this is a fault, use the detail entry element or the 
+            // fault reason.
             if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
                 SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
                 SOAPFaultDetail soapFaultDetail = fault.getDetail();
@@ -64,6 +84,7 @@ public class ApplicationXMLFormatter implements MessageFormatter {
                 }
 
             } else {
+                // Normal case: The xml payload is the first element in the body.
                 omElement = messageContext.getEnvelope().getBody().getFirstElement();
             }
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
@@ -71,7 +92,11 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             if (omElement != null) {
 
                 try {
-                    omElement.serializeAndConsume(bytesOut, format);
+                    if (preserve) {
+                        omElement.serialize(bytesOut, format);
+                    } else {
+                        omElement.serializeAndConsume(bytesOut, format);
+                    }
                 } catch (XMLStreamException e) {
                     throw AxisFault.makeFault(e);
                 }
@@ -111,7 +136,11 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             }
             if (omElement != null) {
                 try {
-                    omElement.serializeAndConsume(outputStream, format);
+                    if (preserve) {
+                        omElement.serialize(outputStream, format);
+                    } else {
+                        omElement.serializeAndConsume(outputStream, format);
+                    }
                 } catch (XMLStreamException e) {
                     throw AxisFault.makeFault(e);
                 }
@@ -166,7 +195,9 @@ public class ApplicationXMLFormatter implements MessageFormatter {
         return contentType;
     }
 
-    public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format, URL targetURL)
+    public URL getTargetAddress(MessageContext messageContext, 
+                                OMOutputFormat format, 
+                                URL targetURL)
             throws AxisFault {
 
         // Check whether there is a template in the URL, if so we have to replace then with data
@@ -186,7 +217,8 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             return true;
         }
         // search for "type=text/xml"
-        else if (JavaUtils.indexOfIgnoreCase(contentType, SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+        else if (JavaUtils.indexOfIgnoreCase(contentType, 
+                                             SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
             return true;
         }
         return false;

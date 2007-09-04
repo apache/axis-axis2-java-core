@@ -1,0 +1,31 @@
+<config xmlns="http://ws.apache.org/axis2/rmi">
+    <customClassInfo>
+        <classInfo className="sample.rmi.server.dto.TestClass1">
+            <fieldInfo isElement="false" javaName="param1" xmlName="xmlParam1"/>
+            <fieldInfo isElement="false" javaName="param3" xmlName="xmlParam3"/>
+        </classInfo>
+        <classInfo className="sample.rmi.server.dto.TestClass2">
+            <fieldInfo isElement="false" javaName="param1" xmlName="xmlParam1"/>
+            <fieldInfo isElement="false" javaName="param2" xmlName="xmlParam2"/>
+            <fieldInfo isElement="true" javaName="param3" xmlName="xmlParam3"/>
+        </classInfo>
+    </customClassInfo>
+    <packageToNamespaceMapings>
+        <packageToNamespaceMap>
+            <namespace>http://sample/service</namespace>
+            <packageName>sample.rmi.server</packageName>
+        </packageToNamespaceMap>
+        <packageToNamespaceMap>
+            <namespace>http://sample/service/types</namespace>
+            <packageName>sample.rmi.server.dto</packageName>
+        </packageToNamespaceMap>
+    </packageToNamespaceMapings>
+    <services>
+        <service>
+            <serviceClass>sample.rmi.server.Service1</serviceClass>
+        </service>
+        <service>
+            <serviceClass>sample.rmi.server.Service2</serviceClass>
+        </service>
+    </services>
+</config>

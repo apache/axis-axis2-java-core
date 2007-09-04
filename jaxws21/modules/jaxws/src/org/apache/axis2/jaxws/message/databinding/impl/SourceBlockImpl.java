@@ -46,7 +46,9 @@ import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -303,5 +305,45 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
         Object newBusObject = busObject;
         setConsumed(consume);
         return newBusObject;
+    }
+    
+    public void close() {
+        return; // Nothing to close
+    }
+
+    public InputStream getXMLInputStream(String encoding) throws UnsupportedEncodingException {
+        try {
+            byte[] bytes = (byte[]) 
+                ConvertUtils.convert(getBusinessObject(false), byte[].class);
+            return new ByteArrayInputStream(bytes);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public Object getObject() {
+        try {
+            return getBusinessObject(false);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+
+    public boolean isDestructiveRead() {
+        return true;
+    }
+
+    public boolean isDestructiveWrite() {
+        return true;
+    }
+
+
+    public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        try {
+            return (byte[]) 
+                ConvertUtils.convert(getBusinessObject(false), byte[].class);
+        } catch (XMLStreamException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 }

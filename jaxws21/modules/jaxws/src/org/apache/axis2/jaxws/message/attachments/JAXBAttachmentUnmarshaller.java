@@ -110,17 +110,21 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
      * @return cid with translated characters
      */
     private String getNewCID(String cid) {
-        // TODO This method only converts : and /
-        // A more complete fix is needed.
         String cid2 = cid;
-        cid2 = JavaUtils.replace(cid2, "%3A", ":");
-        cid2 = JavaUtils.replace(cid2, "%2F", "/");
+
+        try {
+            cid2 = java.net.URLDecoder.decode(cid, "UTF-8");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("getNewCID decoding " + cid + " as UTF-8 decoding error: " + e);
+            }
+        }
         return cid2;
     }
 
     /**
      * Read the bytes from the DataHandler
-     *
+     * 
      * @param dh
      * @return byte[]
      * @throws IOException

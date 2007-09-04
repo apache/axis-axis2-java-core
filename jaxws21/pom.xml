@@ -59,7 +59,9 @@
 		<module>modules/webapp</module>
 		<module>modules/xmlbeans</module>
 		<module>modules/samples</module>
-		<module>modules/scripting</module>
+	        <module>modules/scripting</module>
+	        <module>modules/rmi</module>
+		<module>modules/corba</module>
 	</modules>
  	<profiles>
 	   <profile>
@@ -168,7 +170,7 @@
 				<module>modules/metadata</module>
 				<module>modules/saaj-api</module>
 				<module>modules/saaj</module>
-                                <module>modules/jws-api</module>
+                <module>modules/jws-api</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
 				<module>modules/clustering</module>

@@ -30,12 +30,14 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -149,6 +151,20 @@ public class AxisEngine {
                 return pi;
             } else if (pi.equals(InvocationResponse.ABORT)) {
                 flowComplete(msgContext);
+                // Undo any partial work.
+                // Remove the incoming message context
+                if (log.isDebugEnabled()) {
+                    log.debug("InvocationResponse is aborted.  " +
+                                "The incoming MessageContext is removed, " +
+                                "and the OperationContext is marked as incomplete");
+                }
+                String mepURI  = msgContext.getAxisOperation().getMessageExchangePattern();
+                if (WSDL2Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+                    OperationContext opCtx = msgContext.getOperationContext();
+                    if (opCtx != null) {
+                        opCtx.removeMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    }
+                }
                 return pi;
             } else {
                 String errorMsg =

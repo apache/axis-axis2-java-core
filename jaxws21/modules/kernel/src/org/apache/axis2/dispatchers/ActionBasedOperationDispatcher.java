@@ -44,6 +44,12 @@ public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher 
                     action);
         }
         if (action != null) {
+            // REVIEW: Should we FIRST try to find an operation that explicitly mapped this 
+            // SOAPAction as an alias by calling: 
+            // AxisOperation op = service.getOperationByAction(action);
+            // And THEN, if we didn't find an explicit mapping of this action, see if there's an 
+            // operation that has the same name as the action, and route to that by calling:
+            // service.getOperationBySOAPAction(action);
             AxisOperation op = service.getOperationBySOAPAction(action);
             if (op == null) {
                 op = service.getOperationByAction(action);

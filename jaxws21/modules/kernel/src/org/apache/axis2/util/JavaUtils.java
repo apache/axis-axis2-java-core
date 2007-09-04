@@ -455,6 +455,28 @@ public class JavaUtils {
         return null;
     }
 
+    public static Class getWrapperClass(String primitive) {
+        if (primitive.equals("int")) {
+            return java.lang.Integer.class;
+        } else if (primitive.equals("short")) {
+            return java.lang.Short.class;
+        } else if (primitive.equals("boolean")) {
+            return java.lang.Boolean.class;
+        } else if (primitive.equals("byte")) {
+            return java.lang.Byte.class;
+        } else if (primitive.equals("long")) {
+            return java.lang.Long.class;
+        } else if (primitive.equals("double")) {
+            return java.lang.Double.class;
+        } else if (primitive.equals("float")) {
+            return java.lang.Float.class;
+        } else if (primitive.equals("char")) {
+            return java.lang.Character.class;
+        }
+
+        return null;
+    }
+
     /**
      * Scans the parameter string for the parameter search ignoring case when
      * comparing characters.

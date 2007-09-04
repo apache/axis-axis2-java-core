@@ -272,6 +272,24 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
     }
 
+    /**
+     * Remove the indicated message context.
+     * Example Usage: The exchange is aborted and we need to 
+     * undo the work and free resources.
+     * @param label
+     * @throws AxisFault
+     */
+    public void removeMessageContext(String label) throws AxisFault {
+
+        MessageContext mc = getMessageContext(label);
+        if (mc != null) {
+            messageContexts.remove(mc);
+            setComplete(false); 
+            touch();
+        }
+    }
+        
+
     public HashMap getMessageContexts() {
         return messageContexts;
     }

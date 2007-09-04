@@ -75,6 +75,8 @@
 
     <!--POJO deployer , this will alow users to drop .class file and make that into a service-->
     <deployer extension=".class" directory="pojo" class="org.apache.axis2.deployment.POJODeployer"/>
+    <deployer extension=".jsa" directory="rmiservices" class="org.apache.axis2.rmi.deploy.RMIServiceDeployer"/>
+    
 
     <!-- Following parameter will set the host name for the epr-->
     <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
@@ -267,6 +269,9 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
+    <transportSender name="java"
+                     class="org.apache.axis2.transport.java.JavaTransportSender"/>
+
     <!--<transportSender name="jms"-->
                      <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
 
