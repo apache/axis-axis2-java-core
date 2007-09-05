@@ -190,7 +190,9 @@ public class CallbackFuture extends Callback {
                  */
                 try {
                     synchronized (cft) {
-                        cft.wait(180000);  // 3 minutes
+                        if(!cft.done) {
+                            cft.wait(180000);  // 3 minutes
+                        }
                     }
                 } catch (InterruptedException e) {
                     if (debug) {
@@ -261,13 +263,13 @@ class CallbackFutureTask implements Callable {
             // Now that the content is available, call the JAX-WS AsyncHandler class
             // to deliver the response to the user.
             ClassLoader cl = handler.getClass().getClassLoader();
-        	if (log.isDebugEnabled()) {
-        		log.debug("Setting up the thread's ClassLoader");
-        		log.debug(cl.toString());
-        	}
-        	Thread.currentThread().setContextClassLoader(cl);
-        	
-        	if (debug) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting up the thread's ClassLoader");
+                log.debug(cl.toString());
+            }
+            Thread.currentThread().setContextClassLoader(cl);
+
+            if (debug) {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");
                 log.debug("AyncHandler class: " + handler.getClass());
             }
