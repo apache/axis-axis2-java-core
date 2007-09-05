@@ -686,7 +686,10 @@
                                }
                              </xsl:otherwise>
                            </xsl:choose>
-                           if ( current_node != NULL)
+                           
+                           if (current_node <xsl:if test="(@minOccurs=0)"> &amp;&amp; axiom_node_get_data_element( current_node, env) &amp;&amp; !axis2_strcmp(&quot;<xsl:value-of select="$propertyName"/>&quot;, 
+                           axiom_element_get_localname(axiom_node_get_data_element( current_node, env), env))
+                           </xsl:if>)
                            {
                               <xsl:if test="../@ordered or not($anon or $istype)">current_element = axiom_node_get_data_element( current_node, env);</xsl:if>
                               <!-- changes to following choose tag should be changed in another 2 places -->
