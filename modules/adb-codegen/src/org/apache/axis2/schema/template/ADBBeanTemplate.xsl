@@ -86,7 +86,7 @@
             */
         </xsl:if>
 
-        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> <xsl:if test="@isAbstract">abstract</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
+        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> <xsl:if test="@isAbstract and @unwrapped and not(@skip-write)">abstract</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
         <xsl:if test="$union and not($restriction) and not($extension)"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
