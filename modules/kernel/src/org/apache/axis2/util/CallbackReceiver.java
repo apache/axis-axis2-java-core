@@ -19,17 +19,19 @@
 
 package org.apache.axis2.util;
 
+import java.util.Map;
+
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.client.async.AxisCallback;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.MessageReceiver;
 
-import java.util.HashMap;
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is a MessageReceiver which is used on the client side to accept the
@@ -38,10 +40,10 @@ import java.util.HashMap;
  */
 public class CallbackReceiver implements MessageReceiver {
     public static String SERVICE_NAME = "ClientService";
-    private HashMap callbackStore;
+    private ConcurrentHashMap callbackStore;
 
     public CallbackReceiver() {
-        callbackStore = new HashMap();
+        callbackStore = new ConcurrentHashMap();
     }
 
     public void addCallback(String MsgID, Callback callback) {
@@ -112,7 +114,7 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     //to get the pending request
-    public HashMap getCallbackStore() {
+    public Map getCallbackStore() {
         return callbackStore;
     }
 }
