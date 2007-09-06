@@ -53,10 +53,15 @@ public class PropertyMigrator implements ApplicationContextMigrator {
 
     public void migratePropertiesToMessageContext(Map<String, Object> userContext,
                                                   MessageContext messageContext) {
-        
+
         // Avoid using putAll as this causes copies of the propery set
         if (userContext != null) {
-            for (String key: userContext.keySet()) {
+            // should not use iterator here because this map may be modified
+            // on different threads by the user or other JAX-WS code
+            String[] keys = new String[userContext.keySet().size()];
+            keys = userContext.keySet().toArray(keys);
+            for(int i=0; i < keys.length; i++) {
+                String key = keys[i];
                 Object value = userContext.get(key);
                 // Make sure mtom state in the user context, the message context, 
                 // the MEP context are the same.
