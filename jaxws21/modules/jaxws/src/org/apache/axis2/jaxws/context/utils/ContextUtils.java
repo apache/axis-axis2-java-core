@@ -18,7 +18,10 @@
  */
 package org.apache.axis2.jaxws.context.utils;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -26,8 +29,10 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,12 +43,15 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
 public class ContextUtils {
     private static final Log log = LogFactory.getLog(ContextUtils.class);
     private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
+    private static final OMElement[] ZERO_LENGTH_ARRAY = new OMElement[0];
 
     /**
      * Adds the appropriate properties to the MessageContext that the user will see
@@ -91,6 +99,43 @@ public class ContextUtils {
             }
         }
 
+        //Retrieve any reference parameters from the axis2 message context, and set
+        //them on the soap message context.
+        org.apache.axis2.context.MessageContext msgContext =
+            jaxwsMessageContext.getAxisMessageContext();
+        EndpointReference epr = msgContext.getTo();
+        Map<String, OMElement> referenceParameters = epr.getAllReferenceParameters();
+        
+        if (referenceParameters != null) {
+        	OMElement[] omElements = referenceParameters.values().toArray(ZERO_LENGTH_ARRAY);
+        	List<Element> list = new ArrayList<Element>();
+        	
+        	try {
+        		for (OMElement omElement : omElements) {
+        			Element element = XMLUtils.toDOM(omElement);
+        			list.add(element);
+        		}
+        	}
+        	catch (Exception e) {
+                //TODO NLS enable.
+                throw ExceptionFactory.makeWebServiceException("Error during processing of reference parameters.", e);
+        	}
+        	            
+            soapMessageContext
+                    .put(javax.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, list);
+            soapMessageContext
+                    .setScope(javax.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, Scope.APPLICATION);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Reference Parameters set.");
+            }
+        }
+        else {
+        	if (log.isDebugEnabled()) {
+      			log.debug("No Reference Parameters found.");
+        	}
+        }
+        
         // If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
         soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT,
