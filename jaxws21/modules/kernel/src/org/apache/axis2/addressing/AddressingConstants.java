@@ -44,6 +44,7 @@ public interface AddressingConstants {
     static final String PARAM_SERVICE_GROUP_CONTEXT_ID =
             "ServiceGroupContextIdFromAddressing";
     static final String IS_ADDR_INFO_ALREADY_PROCESSED = "IsAddressingProcessed";
+    static final String DISABLE_ADDRESSING_HANDLERS = "disableAddressingHandlers";
     static final String ADDR_VALIDATE_ACTION = "addressing.validateAction";
 
     // ====================== WSDL Binding Constants ========================

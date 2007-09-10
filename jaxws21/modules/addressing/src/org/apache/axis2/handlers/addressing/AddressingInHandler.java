@@ -31,8 +31,11 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,6 +51,18 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+    	//Determine if we want to ignore addressing headers.
+    	Parameter disableParam = msgContext.getParameter(DISABLE_ADDRESSING_HANDLERS);
+        String value = Utils.getParameterValue(disableParam);
+        if (JavaUtils.isTrueExplicitly(value)) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(
+                        "The handler has been disabled. No further processing will take place.");
+            }
+            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            return InvocationResponse.CONTINUE;        	
+        }
+
         // if another handler has already processed the addressing headers, do not do anything here.
         if (msgContext.isPropertyTrue(IS_ADDR_INFO_ALREADY_PROCESSED)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
@@ -58,18 +73,24 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         // check whether someone has explicitly set which addressing handler should run.
-        String namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
+    	Parameter namespaceParam = msgContext.getParameter(WS_ADDRESSING_VERSION);
+        String namespace = Utils.getParameterValue(namespaceParam);
         if (namespace == null) {
-            namespace = addressingNamespace;
-        } else if (!namespace.equals(addressingNamespace)) {
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("This addressing handler does not match the specified namespace, " +
-                        namespace);
-            }
-
-            return InvocationResponse.CONTINUE;
+        	namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
+        	if (namespace == null) {
+        		namespace = addressingNamespace;
+        	}
         }
-
+        
+        if (!namespace.equals(addressingNamespace)) {
+    		if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+    			log.debug("This addressing handler does not match the specified namespace, " +
+    					namespace);
+    		}
+    		
+    		return InvocationResponse.CONTINUE;
+    	}
+        
         SOAPHeader header = msgContext.getEnvelope().getHeader();
 
         // if there are not headers put a flag to disable addressing temporary
