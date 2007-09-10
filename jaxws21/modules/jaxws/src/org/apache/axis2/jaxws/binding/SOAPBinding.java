@@ -20,10 +20,10 @@ package org.apache.axis2.jaxws.binding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
+import org.apache.axis2.jaxws.client.config.AddressingConfigurator;
+import org.apache.axis2.jaxws.client.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
-import org.apache.axis2.jaxws.feature.config.MTOMConfigurator;
-import org.apache.axis2.jaxws.feature.config.AddressingConfigurator;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

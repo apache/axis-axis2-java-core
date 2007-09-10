@@ -18,35 +18,66 @@
  */
 package org.apache.axis2.jaxws.feature;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
-import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
+import java.lang.annotation.Annotation;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public class ServerFramework extends ConfigFramework {
+public class ServerFramework {
+    private static final Annotation[] ZERO_LENGTH_ARRAY = new Annotation[0];
+
     private Map<String, ServerConfigurator> configuratorMap;
+    private Map<String, Annotation> annotationMap;
     
     public ServerFramework() {
     	super();
         configuratorMap = new IdentityHashMap<String, ServerConfigurator>();
+        annotationMap = new IdentityHashMap<String, Annotation>();
     }
     
     public void addConfigurator(String id, ServerConfigurator configurator) {
         configuratorMap.put(id, configurator);
     }
     
-    public boolean isValid(WebServiceFeature feature) {
-        if (feature == null)
+    public boolean isValid(Annotation annotation) {
+        if (annotation == null)
             return false;
         
-        return configuratorMap.containsKey(feature.getID());
+        WebServiceFeatureAnnotation wsfAnnotation =
+        	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
+        
+        return configuratorMap.containsKey(wsfAnnotation != null ? wsfAnnotation.id() : null);
+    }
+    
+    public void addAnnotation(Annotation annotation) {
+        //TODO NLS enable.
+        if (!isValid(annotation))
+            throw ExceptionFactory.makeWebServiceException("Invalid or unsupported WebServiceFeature annotation, " + annotation);
+        
+        WebServiceFeatureAnnotation wsfAnnotation =
+        	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
+
+        annotationMap.put(wsfAnnotation.id(), annotation);
+    }
+    
+    public Annotation getAnnotation(String id) {
+        return annotationMap.get(id);
+    }
+    
+    public Annotation[] getAllAnnotations() {
+        return annotationMap.values().toArray(ZERO_LENGTH_ARRAY);
     }
     
     public void configure(EndpointDescription endpointDescription) {
-        for (WebServiceFeature feature : getAllFeatures()) {
-            ServerConfigurator configurator = configuratorMap.get(feature.getID());
+        for (Annotation annotation : getAllAnnotations()) {
+            WebServiceFeatureAnnotation wsfAnnotation =
+            	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
+            
+            ServerConfigurator configurator = configuratorMap.get(wsfAnnotation.id());
             configurator.configure(endpointDescription);
         }
     }

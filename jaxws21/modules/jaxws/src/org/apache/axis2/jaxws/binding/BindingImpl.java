@@ -26,11 +26,11 @@ import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.Handler;
 
+import org.apache.axis2.jaxws.client.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.feature.ClientFramework;
-import org.apache.axis2.jaxws.feature.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;

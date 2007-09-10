@@ -16,46 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.feature.config;
+package org.apache.axis2.jaxws.server.config;
 
+import javax.xml.ws.RespectBinding;
 import javax.xml.ws.RespectBindingFeature;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
-import org.apache.axis2.jaxws.spi.Binding;
-import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
  *
  */
-public class RespectBindingConfigurator implements ClientConfigurator, ServerConfigurator {
-
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
-     */
-    public void configure(MessageContext messageContext, BindingProvider provider) {
-        Binding bnd = (Binding) provider.getBinding();
-        RespectBindingFeature respectBindingFeature =
-            (RespectBindingFeature) bnd.getWebServiceFeature(RespectBindingFeature.ID);
-        
-        if (respectBindingFeature == null)
-            throw ExceptionFactory.makeWebServiceException("The respect binding features was unspecified.");
-        
-        if (respectBindingFeature.isEnabled()) {
-            //TODO Implementation required.
-        }
-    }
+public class RespectBindingConfigurator implements ServerConfigurator {
 
     /*
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
-        // TODO Auto-generated method stub
-        
+    	RespectBinding mtomAnnoation =
+    		(RespectBinding) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(RespectBindingFeature.ID);
+    	AxisService service = endpointDescription.getAxisService();
     }
 }

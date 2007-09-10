@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.security.PrivilegedAction;
 import java.util.Iterator;
 import java.util.List;
@@ -37,11 +38,15 @@ import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
+import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
@@ -56,6 +61,7 @@ import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
@@ -66,7 +72,12 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.feature.ServerFramework;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.server.config.AddressingConfigurator;
+import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
+import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -82,6 +93,12 @@ import org.apache.commons.logging.LogFactory;
  */
 class EndpointDescriptionImpl
         implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
+	private static final ServerConfigurator RESPECT_BINDING_CONFIGURATOR =
+        new RespectBindingConfigurator();
+	private static final ServerConfigurator ADDRESSING_CONFIGURATOR =
+        new AddressingConfigurator();
+	private static final ServerConfigurator MTOM_CONFIGURATOR =
+        new MTOMConfigurator();
 
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
@@ -167,6 +184,10 @@ class EndpointDescriptionImpl
     public static final String BindingType_DEFAULT =
             javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
 
+    // Supports WebServiceFeatureAnnotations
+    private ServerFramework framework = new ServerFramework();
+
+    
     /**
      * Create an EndpointDescription based on the WSDL port.  Note that per the JAX-WS Spec (Final
      * Release, 4/19/2006 Section 4.2.3 Proxies, page 55)the "namespace component of the port is the
@@ -431,6 +452,8 @@ class EndpointDescriptionImpl
         addToAxisService();
 
         buildEndpointDescriptionFromAnnotations();
+        
+        configureWebServiceFeatures();
 
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -1320,6 +1343,38 @@ class EndpointDescriptionImpl
 
         return handlerChainAnnotation;
     }
+
+    // Get the specified WebServiceFeatureAnnotation
+    public Annotation getAnnoFeature(String id) {
+        return framework.getAnnotation(id);
+    }
+    
+    //The WebServiceFeatures should be configued last so that any other
+    //configuration can be overridden. Should only be called on the
+    //server side.
+    private void configureWebServiceFeatures() {
+    	framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
+    	
+    	String binding = getBindingType();
+    	
+    	if (isSOAPBinding(binding)) {
+    		framework.addConfigurator(AddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+    		framework.addConfigurator(SubmissionAddressingFeature.ID, ADDRESSING_CONFIGURATOR);
+    		framework.addConfigurator(MTOMFeature.ID, MTOM_CONFIGURATOR);
+    	}
+    	
+    	//TODO: Need to add support for the DescriptionBuilderComposite?
+    	Annotation[] annotations = implOrSEIClass.getAnnotations();
+    	
+    	if (annotations != null) {
+    		for (Annotation annotation : annotations) {
+    			if (annotation.annotationType().isAnnotationPresent(WebServiceFeatureAnnotation.class))
+    				framework.addAnnotation(annotation);
+    		}
+        	
+        	framework.configure(this);
+    	}
+    }
     
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL)getServiceDescription()).getWSDLDefinition();
@@ -1418,6 +1473,16 @@ class EndpointDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("addPortErr0", getPortQName().toString()));
         }
+    }
+    
+    public static boolean isSOAPBinding(String url) {
+        if (url != null && (url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+                url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                url.equals(SOAPBinding.SOAP12HTTP_BINDING)|| 
+                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
+            return true;
+        }
+        return false;
     }
 
     private boolean validateClientBindingID(String bindingId) {

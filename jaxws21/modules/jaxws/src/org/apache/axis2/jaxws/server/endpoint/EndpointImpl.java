@@ -223,6 +223,8 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         QName portName = endpointDesc.getPortQName();
         URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
         
+        //TODO: Need to understand how the binding can influence the behaviour of this method.
+        
         org.apache.axis2.addressing.EndpointReference axis2EPR =
         	new EndpointReferenceBuilder().createEndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
         

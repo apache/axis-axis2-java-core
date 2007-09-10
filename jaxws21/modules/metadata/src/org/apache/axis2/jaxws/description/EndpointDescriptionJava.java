@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import java.lang.annotation.Annotation;
+
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
@@ -52,4 +54,6 @@ public interface EndpointDescriptionJava {
     public ServiceMode getAnnoServiceMode();
 
     public Service.Mode getAnnoServiceModeValue();
+    
+    public Annotation getAnnoFeature(String id);
 }

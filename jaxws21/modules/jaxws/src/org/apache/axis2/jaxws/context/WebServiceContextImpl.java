@@ -112,6 +112,8 @@ public class WebServiceContextImpl implements WebServiceContext {
         EndpointReference jaxwsEPR = null;
         String addressingNamespace = getAddressingNamespace(clazz);
         
+        //TODO: Need to understand how the binding can influence the behaviour of this method.
+        
         if (soapMessageContext != null) {
             QName service = (QName) soapMessageContext.get(MessageContext.WSDL_SERVICE);
             QName endpoint = (QName) soapMessageContext.get(MessageContext.WSDL_PORT);

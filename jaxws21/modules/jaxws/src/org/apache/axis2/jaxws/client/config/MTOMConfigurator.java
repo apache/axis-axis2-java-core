@@ -16,15 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.feature.config;
+package org.apache.axis2.jaxws.client.config;
 
+import java.io.InputStream;
+import java.util.List;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
-import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
@@ -32,7 +35,7 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
 /**
  *
  */
-public class MTOMConfigurator implements ClientConfigurator, ServerConfigurator {
+public class MTOMConfigurator implements ClientConfigurator {
 
     /*
      *  (non-Javadoc)
@@ -43,26 +46,54 @@ public class MTOMConfigurator implements ClientConfigurator, ServerConfigurator 
         MTOMFeature mtomFeature = (MTOMFeature) bnd.getWebServiceFeature(MTOMFeature.ID);
         Message requestMsg = messageContext.getMessage();
         
+        //Disable MTOM.
+        requestMsg.setMTOMEnabled(false);
+                
+//      TODO NLS enable.
         if (mtomFeature == null)
             throw ExceptionFactory.makeWebServiceException("The MTOM features was unspecified.");
-        
+
+        //Enable MTOM if specified.
         if (mtomFeature.isEnabled()) {
-            requestMsg.setMTOMEnabled(true);
-            
-            //TODO: Make use of the threshold somehow.
             int threshold = mtomFeature.getThreshold();
+            List<String> attachmentIDs = requestMsg.getAttachmentIDs();
+            
+            if (attachmentIDs != null) {
+            	long size = 0L;
+            	
+        		for (String attachmentID : attachmentIDs) {
+        			DataHandler dh = requestMsg.getDataHandler(attachmentID);
+        			
+        			if (dh != null) {
+        				DataSource ds = dh.getDataSource();
+                    	InputStream is = null;
+                    	
+        				try {
+        					is = ds.getInputStream();
+        					size += is.available();
+        				}
+                    	catch (Exception e) {
+//                    		TODO NLS enable.
+                    		throw ExceptionFactory.makeWebServiceException("Unable to determine the size of the attachment(s).", e);
+                    	}
+                    	finally {
+                    		try {
+                    			if (is != null)
+                    				is.close();
+                    		}
+                    		catch (Exception e) {
+                    			//Nothing to do.
+                    		}
+                    	}
+        			}
+        		}
+            	
+            	if (size > threshold)
+                    requestMsg.setMTOMEnabled(true);
+            }
         }
         else {
-            requestMsg.setMTOMEnabled(false);
+        	
         }
     }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
-     */
-    public void configure(EndpointDescription endpointDescription) {
-        // TODO Auto-generated method stub
-        
-    }    
 }

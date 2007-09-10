@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.feature;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
@@ -26,12 +27,16 @@ import javax.xml.ws.WebServiceFeature;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public class ClientFramework extends ConfigFramework {
+public class ClientFramework {
+    private static final WebServiceFeature[] ZERO_LENGTH_ARRAY = new WebServiceFeature[0];
+    
     private Map<String, ClientConfigurator> configuratorMap;
+    private Map<String, WebServiceFeature> featureMap;
     
     public ClientFramework() {
     	super();
         configuratorMap = new IdentityHashMap<String, ClientConfigurator>();
+        featureMap = new IdentityHashMap<String, WebServiceFeature>();
     }
     
     public void addConfigurator(String id, ClientConfigurator configurator) {
@@ -43,6 +48,22 @@ public class ClientFramework extends ConfigFramework {
             return false;
         
         return configuratorMap.containsKey(feature.getID());
+    }
+    
+    public void addFeature(WebServiceFeature feature) {
+        //TODO NLS enable.
+        if (!isValid(feature))
+            throw ExceptionFactory.makeWebServiceException("Invalid or unsupported WebServiceFeature " + feature.getID());
+        
+        featureMap.put(feature.getID(), feature);
+    }
+    
+    public WebServiceFeature getFeature(String id) {
+        return featureMap.get(id);
+    }
+    
+    public WebServiceFeature[] getAllFeatures() {
+        return featureMap.values().toArray(ZERO_LENGTH_ARRAY);
     }
     
     public void configure(MessageContext messageContext, BindingProvider provider) {
