@@ -319,7 +319,7 @@ public class EndpointController {
             axisSvc = ed.getAxisService();
             
             try {
-                new EndpointReferenceBuilder().addAddress(service, endpoint, axisSvc.getEPRs()[0]);
+                EndpointReferenceBuilder.addAddress(service, endpoint, axisSvc.getEPRs()[0]);
             }
             catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException(e);

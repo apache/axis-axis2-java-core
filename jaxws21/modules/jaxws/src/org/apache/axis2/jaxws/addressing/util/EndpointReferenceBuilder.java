@@ -27,7 +27,6 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -36,10 +35,11 @@ public final class EndpointReferenceBuilder {
     private static final EndpointMap map =
         (EndpointMap) FactoryRegistry.getFactory(EndpointMap.class);
     
-    public EndpointReferenceBuilder() {
+    //Prevent instantiation
+    private EndpointReferenceBuilder() {
     }
     
-    public void addAddress(QName serviceName, QName endpoint, String address) {
+    public static void addAddress(QName serviceName, QName endpoint, String address) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
         
         if (address == null || "".equals(address))
@@ -48,21 +48,21 @@ public final class EndpointReferenceBuilder {
         map.put(key, address);
     }
     
-    public EndpointReference createEndpointReference(String address) {
+    public static EndpointReference createEndpointReference(String address) {
         if (address == null || "".equals(address))
             throw new IllegalStateException("The specified address is not a valid value: " + address);
 
         return new EndpointReference(address);
     }
     
-    public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
+    public static EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
         String address = map.get(key);
         
         return createEndpointReference(address);
     }
     
-    public EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
+    public static EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
         EndpointReference axis2EPR = null;
         
         if (address != null) {
@@ -81,6 +81,14 @@ public final class EndpointReferenceBuilder {
         }
         
         try {
+            //TODO If no service name and port name are specified, but the wsdl location is
+            //specified, and the WSDL only contains one service and one port then maybe we
+            //should simply use those.
+            if (serviceName != null && portName != null) {
+                ServiceName service = new ServiceName(serviceName, portName.getLocalPart());
+                EndpointReferenceHelper.setServiceNameMetadata(axis2EPR, addressingNamespace, service);
+            }
+
             if (wsdlDocumentLocation != null) {
             	URL wsdlURL = new URL(wsdlDocumentLocation);
             	WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL);
@@ -112,14 +120,6 @@ public final class EndpointReferenceBuilder {
             	
                 WSDLLocation wsdlLocation = new WSDLLocation(portName.getNamespaceURI(), wsdlDocumentLocation);
                 EndpointReferenceHelper.setWSDLLocationMetadata(axis2EPR, addressingNamespace, wsdlLocation);
-            }
-            
-            //TODO If no service name and port name are specified, but the wsdl location is
-            //specified, and the WSDL only contains one service and one port then maybe we
-            //should simply use those.
-            if (serviceName != null && portName != null) {
-                ServiceName service = new ServiceName(serviceName, portName.getLocalPart());
-                EndpointReferenceHelper.setServiceNameMetadata(axis2EPR, addressingNamespace, service);
             }
         }
         catch (IllegalStateException ise) {

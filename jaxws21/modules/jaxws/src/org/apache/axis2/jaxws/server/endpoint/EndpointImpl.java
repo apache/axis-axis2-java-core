@@ -226,7 +226,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         //TODO: Need to understand how the binding can influence the behaviour of this method.
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	new EndpointReferenceBuilder().createEndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
+        	EndpointReferenceBuilder.createEndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
         
         try {
             if (referenceParameters != null) {

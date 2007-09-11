@@ -77,7 +77,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
             List<Element> referenceParameters) {
         String addressingNamespace = getAddressingNamespace(W3CEndpointReference.class);    	
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	new EndpointReferenceBuilder().createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
+        	EndpointReferenceBuilder.createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
         
         W3CEndpointReference w3cEPR = null;
         
@@ -157,7 +157,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
             org.apache.axis2.addressing.EndpointReference axis2EPR =
-                new EndpointReferenceBuilder().createEndpointReference("");
+                EndpointReferenceBuilder.createEndpointReference("");
             String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
             
             jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);

@@ -256,7 +256,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             QName port = endpointDesc.getPortQName();
             URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
 
-            epr = new EndpointReferenceBuilder().createEndpointReference(address, service, port, wsdlURL.toString(), addressingNamespace);
+            epr = EndpointReferenceBuilder.createEndpointReference(address, service, port, wsdlURL.toString(), addressingNamespace);
         }
         
         return epr;

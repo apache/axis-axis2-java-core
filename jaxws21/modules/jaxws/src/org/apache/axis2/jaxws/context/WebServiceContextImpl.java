@@ -120,7 +120,7 @@ public class WebServiceContextImpl implements WebServiceContext {
             URI wsdlURI = (URI) soapMessageContext.get(MessageContext.WSDL_DESCRIPTION);
             
             org.apache.axis2.addressing.EndpointReference axis2EPR =
-                new EndpointReferenceBuilder().createEndpointReference(null, service, endpoint, wsdlURI.toString(), addressingNamespace);
+                EndpointReferenceBuilder.createEndpointReference(null, service, endpoint, wsdlURI.toString(), addressingNamespace);
             
             try {
                 if (referenceParameters != null) {
