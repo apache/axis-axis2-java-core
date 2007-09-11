@@ -803,10 +803,11 @@ class EndpointDescriptionImpl
             } else {
                 implClassName = (implOrSEIClass != null) ? implOrSEIClass.getName() : null;
             }
-            log.warn(
-                    "The WSDL file could not be used due to an exception.  The WSDL will be ignored and annotations will be used.  Implementaiton class: "
-                            + implClassName + "; WSDL Location: " + wsdlLocation + "; Exception: " +
-                            e.toString(), e);
+            log.warn("The WSDL file could not be used due to an exception.  The WSDL will be ignored and annotations will be used.  Implementation class: "
+                             + implClassName
+                             + "; WSDL Location: "
+                             + wsdlLocation);
+
             isBuiltFromWSDL = false;
             return isBuiltFromWSDL;
         }
