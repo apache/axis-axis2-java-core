@@ -65,6 +65,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
     private static final String myClassName = "OperationContext";
 
+    private boolean debugEnabled = log.isDebugEnabled();
+
     /**
      * An ID which can be used to correlate operations on an instance of
      * this object in the log files
@@ -237,8 +239,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * @return Returns the axisOperation.
      */
     public AxisOperation getAxisOperation() {
-        if (needsToBeReconciled && !suppressWarnings) {
-            log.warn(logCorrelationIDString +
+        if (needsToBeReconciled && !suppressWarnings && debugEnabled) {
+            log.debug(logCorrelationIDString +
                     ":getAxisOperation(): ****WARNING**** OperationContext.activate(configurationContext) needs to be invoked.");
         }
 
@@ -931,8 +933,10 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // see if the activation has been done
         if (needsToBeReconciled) {
             // nope, need to do the activation first
-            log.trace(logCorrelationIDString +
-                    ":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
+            if (debugEnabled) {
+                log.debug(logCorrelationIDString +
+                          ":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
+            }
 
             return;
         }
@@ -944,9 +948,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
         String msgID = msg.getMessageID();
 
         if (msgID == null) {
-            // can't identify message context
-            log.trace(logCorrelationIDString +
-                    ":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
+            if (debugEnabled) {
+                // can't identify message context
+                log.debug(logCorrelationIDString +
+                        ":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
+            }
             return;
         }
 
