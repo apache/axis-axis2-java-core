@@ -354,53 +354,6 @@ class OperationDescriptionImpl
         //          AxisOperation.setPolicyInclude()
         //          AxisOperation.setFaultMessages()
 
-        // If this is a DOC/LIT/BARE operation, then set the QName of the input AxisMessage to the 
-        // part for the first IN or IN/OUT non-header parameter.  If there are no parameters, then don't set
-        // anything.  The AxisMessage name is used to do SOAP-body based routing of DOC/LIT/BARE
-        // incoming messages.
-        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
-                && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
-                && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.BARE) {
-            ParameterDescription[] paramDescs = getParameterDescriptions();
-            if (paramDescs != null && paramDescs.length > 0) {
-                for (ParameterDescription paramDesc : paramDescs) {
-                    WebParam.Mode paramMode = paramDesc.getMode();
-                    if (!paramDesc.isHeader()
-                            && (paramMode == WebParam.Mode.IN || paramMode == WebParam.Mode.INOUT)) {
-                        // We've found the first IN or INOUT non-header parameter, so set the AxisMessage
-                        // QName based on this parameter then break out of the loop.
-                        AxisMessage axisMessage =
-                                newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        String elementName = paramDesc.getParameterName();
-                        String partNamespace = paramDesc.getTargetNamespace();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Setting up annotation based Doc/Lit/Bare operation: "
-                                    + newAxisOperation.getName() + "; axisMessage: " + axisMessage
-                                    + "; name: " + elementName + "; partTNS: " + partNamespace);
-                        }
-                        if (axisMessage == null) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because input message is null");
-                        } else if (DescriptionUtils.isEmpty(partNamespace)) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because part namespace is empty");
-                        } else if (DescriptionUtils.isEmpty(elementName)) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because name is empty");
-                        } else {
-                            QName partQName = new QName(partNamespace, elementName);
-                            if (log.isDebugEnabled()) {
-                                log.debug("Setting AxisMessage element QName for bare mapping: "
-                                        + partQName);
-                            }
-                            axisMessage.setElementQName(partQName);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
         getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().addOperation(newAxisOperation);
         
         return newAxisOperation;
@@ -436,12 +389,7 @@ class OperationDescriptionImpl
                     .makeWebServiceException("Caught exception trying to create AxisOperation", e);
         }
 
-        if (!getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription().isServerSide()) {
-            newAxisOperation.setName(determineOperationQName(seiMethod));
-        } else {
-            newAxisOperation.setName(determineOperationQName(this.methodComposite));            
-        }
-        
+        newAxisOperation.setName(determineOperationQName(this.methodComposite));
         newAxisOperation.setSoapAction(this.getAction());
 
         //*************************************************************************************
