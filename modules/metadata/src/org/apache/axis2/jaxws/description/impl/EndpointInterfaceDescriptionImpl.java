@@ -668,24 +668,12 @@ class EndpointInterfaceDescriptionImpl
                             "EndpointInterfaceDescriptionImpl: cannot find super class that was specified for this class");
                 }
 
+                //If the superclass contains a WebService annotation then retrieve its methods
+                //as we would for the impl class, otherwise ignore the methods of this
+                //superclass
                 if (superDBC.getWebServiceAnnot() != null) {
                     //Now, gather the list of Methods just like we do for the lowest subclass
                     retrieveList.addAll(retrieveImplicitSEIMethods(superDBC));
-                } else {
-                    //This superclass does not contain a WebService annotation, add only the
-                    //methods that are annotated with WebMethod
-
-                    Iterator<MethodDescriptionComposite> iterMethod =
-                            dbc.getMethodDescriptionsList().iterator();
-
-                    while (iterMethod.hasNext()) {
-                        MethodDescriptionComposite mdc = iterMethod.next();
-
-                        if (!DescriptionUtils.isExcludeTrue(mdc)) {
-                            mdc.setDeclaringClass(superDBC.getClassName());
-                            retrieveList.add(mdc);
-                        }
-                    }
                 }
                 tempDBC = superDBC;
             } //Done with implied SEI's superclasses
