@@ -284,7 +284,7 @@ class OperationDescriptionImpl
         
         String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
-        String portTypeName = getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getName();
+        String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
         ArrayList inputActions = new ArrayList();
          
         //We don't have a name at this point, shouldn't matter if we have the MEP
@@ -399,7 +399,7 @@ class OperationDescriptionImpl
         
         String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
-        String portTypeName = getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getName();
+        String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
         ArrayList inputActions = new ArrayList();
          
         //We don't have a name at this point, shouldn't matter if we have the MEP
