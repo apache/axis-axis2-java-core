@@ -274,6 +274,8 @@ public class WSDL11DefaultActionPatternHelper {
             outputName = operationName;
             if (messageExchangePattern.indexOf("in-out") >= 0) {
                 outputName += RESPONSE;
+            } else if (messageExchangePattern.indexOf("out-in") >= 0) {
+                outputName += REQUEST;
             }
         }
 
