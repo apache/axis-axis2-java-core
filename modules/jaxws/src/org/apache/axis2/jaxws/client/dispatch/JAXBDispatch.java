@@ -171,6 +171,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
+        } finally {
+            message.close();
         }
 
         return value;

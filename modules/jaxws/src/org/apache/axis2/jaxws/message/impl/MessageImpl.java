@@ -623,4 +623,11 @@ public class MessageImpl implements Message {
     public boolean isDoingSWA() {
         return doingSWA;
     }
+    
+    public void close() {
+        if (xmlPart != null) {
+              xmlPart.close();
+        }
+     }
+
 }
