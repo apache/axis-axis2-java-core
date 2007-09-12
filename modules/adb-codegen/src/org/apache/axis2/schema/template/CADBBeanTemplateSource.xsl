@@ -240,7 +240,7 @@
               </xsl:if>
 
               <!-- the following element can be inside array or independent one -->
-                 <xsl:if test="$nativePropertyType!='axis2_char_t*'">
+                 <!--xsl:if test="$nativePropertyType!='axis2_char_t*'"-->
               if( <xsl:value-of select="$justAttriName"/> != NULL)
               {
                  <!-- how to free all the ours things -->
@@ -294,7 +294,7 @@
                  <xsl:value-of select="$justAttriName"/> = NULL;
               }
 
-              </xsl:if>
+              <!--/xsl:if-->
               <!-- close tags arrays -->
               <xsl:if test="@isarray">
                     }
@@ -1945,7 +1945,14 @@
                       return AXIS2_FAILURE;
                   }
                 </xsl:if>
-                <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
+                <xsl:choose>
+                    <xsl:when test="@type='axis2_char_t*'">
+                        <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> = axutil_strdup(env, param_<xsl:value-of select="$CName"/>);
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
+                    </xsl:otherwise>
+                </xsl:choose>
                 return AXIS2_SUCCESS;
              }
 
