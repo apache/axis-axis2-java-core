@@ -301,11 +301,16 @@ public class HTTPWorker implements Worker {
         // Finalize response
         OperationContext operationContext = msgContext.getOperationContext();
         Object isTwoChannel = null;
+        RequestResponseTransport requestResponseTransportControl = 
+            (RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
         if (operationContext != null) {
             isTwoChannel = operationContext.getProperty(Constants.DIFFERENT_EPR);
         }
 
-        if (TransportUtils.isResponseWritten(msgContext)) {
+        if (TransportUtils.isResponseWritten(msgContext) || 
+                ((requestResponseTransportControl != null) &&
+                  requestResponseTransportControl.getStatus().
+                    equals(RequestResponseTransport.RequestResponseTransportStatus.SIGNALLED))) {
             if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
                 response.setStatus(HttpStatus.SC_ACCEPTED);
             }

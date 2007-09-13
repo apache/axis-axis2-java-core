@@ -112,10 +112,15 @@ public interface RequestResponseTransport {
                 new RequestResponseTransportStatus(2);
 
         /**
+         * acknowledgeMessage has been called.
+         */
+        public static RequestResponseTransportStatus ACKED = 
+                new RequestResponseTransportStatus (3);
+        /**
          * 'signalResponseReady' has been called.
          */
         public static RequestResponseTransportStatus SIGNALLED =
-                new RequestResponseTransportStatus(3);
+                new RequestResponseTransportStatus(4);
 
         private int value;
 
