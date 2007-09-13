@@ -258,7 +258,7 @@
                    </xsl:when>
 
                    <!-- free axis2_char_t s -->
-                   <xsl:when test="$nativePropertyType='axis2_char_t*'">
+                   <xsl:when test="$nativePropertyType='axis2_char_t*' and not(@isarray)">
                       AXIS2_FREE( env-> allocator, <xsl:value-of select="$attriName"/>);
                    </xsl:when>
 
@@ -1793,7 +1793,7 @@
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                             
                            text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
-                           if (text_value_2_temp)
+                           if (text_value_<xsl:value-of select="$position"/>_temp)
                            {
                                axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>_temp, axutil_strlen(text_value_<xsl:value-of select="$position"/>_temp));
                                AXIS2_FREE(env->allocator, text_value_<xsl:value-of select="$position"/>_temp);
@@ -1946,7 +1946,7 @@
                   }
                 </xsl:if>
                 <xsl:choose>
-                    <xsl:when test="@type='axis2_char_t*'">
+                    <xsl:when test="@type='axis2_char_t*' and not(@isarray)">
                         <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> = axutil_strdup(env, param_<xsl:value-of select="$CName"/>);
                     </xsl:when>
                     <xsl:otherwise>
