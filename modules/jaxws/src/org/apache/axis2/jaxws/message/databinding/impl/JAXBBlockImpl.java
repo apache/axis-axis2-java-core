@@ -32,6 +32,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
+import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -158,12 +159,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         throws XMLStreamException, WebServiceException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(baos, encoding);
-
-        // Since we are writing just the xml,
-        // The writer will be a normal writer.
-        // All mtom objects will be inlined.
-        // writer = new MTOMXMLStreamWriter(writer);
+        // Exposes getOutputStream, which allows faster writes.
+        XMLStreamWriterWithOS writer = new XMLStreamWriterWithOS(baos, encoding);
 
         // Write the business object to the writer
         _outputFromBO(busObj, busContext, writer);
@@ -250,17 +247,20 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param m Marshaller
      * @param writer XMLStreamWriter
      */
-    private static void marshalByElement(final Object b, final Marshaller m, final XMLStreamWriter writer,
+    private static void marshalByElement(final Object b, final Marshaller m, 
+                                         final XMLStreamWriter writer,
                                          final boolean optimize) throws WebServiceException {
         AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 // Marshalling directly to the output stream is faster than marshalling through the
-                // XMLStreamWriter. Take advantage of this optimization if there is an output stream.
+                // XMLStreamWriter. 
+                // Take advantage of this optimization if there is an output stream.
                 try {
                     OutputStream os = (optimize) ? getOutputStream(writer) : null;
                     if (os != null) {
                         if (DEBUG_ENABLED) {
-                            log.debug("Invoking marshalByElement.  Marshaling to an OutputStream. " +
+                            log.debug("Invoking marshalByElement.  " +
+                                        "Marshaling to an OutputStream. " +
                                       "Object is "
                                       + getDebugName(b));
                         }
@@ -268,7 +268,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                         m.marshal(b, os);
                     } else {
                         if (DEBUG_ENABLED) {
-                            log.debug("Invoking marshalByElement.  Marshaling to an XMLStreamWriter. " +
+                            log.debug("Invoking marshalByElement.  " +
+                                        "Marshaling to an XMLStreamWriter. " +
                                       "Object is "
                                       + getDebugName(b));
                         }
@@ -638,6 +639,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     private static OutputStream getOutputStream(XMLStreamWriter writer) throws XMLStreamException {
         if (writer.getClass() == MTOMXMLStreamWriter.class) {
             return ((MTOMXMLStreamWriter) writer).getOutputStream();
+        }
+        if (writer.getClass() == XMLStreamWriterWithOS.class) {
+            return ((XMLStreamWriterWithOS) writer).getOutputStream();
         }
         return null;
     }
