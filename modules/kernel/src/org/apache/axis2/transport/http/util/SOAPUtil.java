@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
@@ -64,7 +65,7 @@ public class SOAPUtil {
             }
             String soapAction = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, request.getContentType());
-            HTTPTransportUtils.processHTTPPostRequest(msgContext,
+            InvocationResponse ir = HTTPTransportUtils.processHTTPPostRequest(msgContext,
                                                       request.getInputStream(),
                                                       response.getOutputStream(),
                                                       request.getContentType(),
@@ -89,7 +90,7 @@ public class SOAPUtil {
             if (parameter != null) {
                 closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
             }
-            if (closeReader) {
+            if (closeReader && !InvocationResponse.SUSPEND.equals(ir)) {
                 try {
                     ((StAXBuilder) msgContext.getEnvelope().getBuilder()).close();
                 } catch (Exception e) {
