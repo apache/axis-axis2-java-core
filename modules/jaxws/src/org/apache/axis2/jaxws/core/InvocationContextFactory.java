@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.core;
 
+import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.EndpointInvocationContextImpl;
+
 import javax.xml.ws.Binding;
 
 /** The InvocationContextFactory is used to create instances of an InvocationContext. */
@@ -31,5 +34,15 @@ public class InvocationContextFactory {
         }
 
         return ic;
+    }
+    
+    public static EndpointInvocationContext createEndpointInvocationContext(Binding binding) {
+        EndpointInvocationContext eic = new EndpointInvocationContextImpl();
+        
+        if (binding != null) {
+            eic.setHandlers(binding.getHandlerChain());
+        }
+        
+        return eic;
     }
 }

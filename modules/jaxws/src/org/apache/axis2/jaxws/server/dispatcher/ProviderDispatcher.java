@@ -34,21 +34,28 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.server.EndpointController;
+import org.apache.axis2.jaxws.server.EndpointCallback;
+import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
+
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Executor;
+import java.util.concurrent.FutureTask;
 
 /**
  * The ProviderDispatcher is used to invoke instances of a target endpoint that implement the {@link
@@ -71,6 +78,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     private Message message = null;
     private Protocol messageProtocol;
 
+    private EndpointDescription endpointDesc;
 
     /**
      * Constructor
@@ -85,24 +93,141 @@ public class ProviderDispatcher extends JavaDispatcher {
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.server.EndpointDispatcher#execute()
     */
-    public MessageContext invoke(final MessageContext mc) throws Exception {
+    public MessageContext invoke(MessageContext request) throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Invocation pattern: two way, sync");
         }
 
         providerInstance = getProviderInstance();
 
+        Object param = createRequestParameters(request);
+
+        if (log.isDebugEnabled()) {
+            final Object input = providerType.cast(param);
+            log.debug("Invoking Provider<" + providerType.getName() + ">");
+            if (input != null) {
+                log.debug("Parameter type: " + input.getClass().getName());
+            }
+            else {
+                log.debug("Parameter is NULL");
+            }
+        }
+
+        // Invoke the actual Provider.invoke() method
+        boolean faultThrown = false;
+        Throwable fault = null;
+        Object[] input = new Object[] {param};
+        Object responseParamValue = null;
+        try {
+            responseParamValue = invokeTargetOperation(getJavaMethod(), input);
+        } catch (Throwable e) {
+            fault = ClassUtils.getRootCause(e);
+            faultThrown = true;
+        }
+
+        // TODO (NLG): Need to find a better way to sync this across both Dispatchers.
+        endpointDesc = request.getEndpointDescription();
+        
+        // Create the response MessageContext
+        MessageContext responseMsgCtx = null;
+        if (faultThrown) {
+            // If a fault was thrown, we need to create a slightly different
+            // MessageContext, than in the response path.
+            responseMsgCtx = createFaultResponse(request, fault);
+        } else {
+            responseMsgCtx = createResponse(request, input, responseParamValue);
+        }
+
+        return responseMsgCtx;
+    }
+    
+    public void invokeOneWay(MessageContext request) {
+        if (log.isDebugEnabled()) {
+            log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Invocation pattern: one way");
+        }
+        
+        providerInstance = getProviderInstance();
+
+        Object param = createRequestParameters(request);
+
+        if (log.isDebugEnabled()) {
+            final Object input = providerType.cast(param);
+            log.debug("Invoking Provider<" + providerType.getName() + ">");
+            if (input != null) {
+                log.debug("Parameter type: " + input.getClass().getName());
+            }
+            else {
+                log.debug("Parameter is NULL");
+            }
+        }
+
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance();
+        
+        Method m = getJavaMethod();
+        Object[] params = new Object[] {param};
+        
+        EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
+        AsyncInvocationWorker worker = new AsyncInvocationWorker(m, params, cl, eic);
+        FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
+        executor.execute(task);
+        
+        return;
+    }
+    
+    public void invokeAsync(MessageContext request, EndpointCallback callback) {
+        if (log.isDebugEnabled()) {
+            log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
+            log.debug("Invocation pattern: two way, async");
+        }
+        
+        providerInstance = getProviderInstance();
+
+        Object param = createRequestParameters(request);
+
+        if (log.isDebugEnabled()) {
+            final Object input = providerType.cast(param);
+            log.debug("Invoking Provider<" + providerType.getName() + ">");
+            if (input != null) {
+                log.debug("Parameter type: " + input.getClass().getName());
+            }
+            else {
+                log.debug("Parameter is NULL");
+            }
+        }
+
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance();
+        
+        Method m = getJavaMethod();
+        Object[] params = new Object[] {param};
+        
+        EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
+        AsyncInvocationWorker worker = new AsyncInvocationWorker(m, params, cl, eic);
+        FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
+        executor.execute(task);
+        
+        return;
+    }
+    
+    public Object createRequestParameters(MessageContext request) {
         // First we need to know what kind of Provider instance we're going
         // to be invoking against
         providerType = getProviderType();
 
         // REVIEW: This assumes there is only one endpoint description on the service.  Is that always the case?
-        EndpointDescription endpointDesc = mc.getEndpointDescription();
+        EndpointDescription endpointDesc = request.getEndpointDescription();
 
         // Now that we know what kind of Provider we have, we can create the 
         // right type of Block for the request parameter data
         Object requestParamValue = null;
-        Message message = mc.getMessage();
+        Message message = request.getMessage();
         if (message != null) {
             
             // Enable MTOM if indicated by the binding
@@ -142,7 +267,13 @@ public class ProviderDispatcher extends JavaDispatcher {
                 // If it is not MESSAGE, then it is PAYLOAD (which is the default); only work with the body 
                 Block block = message.getBodyBlock(null, factory);
                 if (block != null) {
-                    requestParamValue = block.getBusinessObject(true);
+                    try {
+                        requestParamValue = block.getBusinessObject(true);
+                    } catch (WebServiceException e) {
+                        throw ExceptionFactory.makeWebServiceException(e);
+                    } catch (XMLStreamException e) {
+                        throw ExceptionFactory.makeWebServiceException(e);
+                    }
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug(
@@ -152,81 +283,47 @@ public class ProviderDispatcher extends JavaDispatcher {
                 }
             }
         }
-
-        if (log.isDebugEnabled())
-            log.debug(
-                    "Provider Type = " + providerType + "; parameter type = " + requestParamValue);
-
-        final Object input = providerType.cast(requestParamValue);
-        if (input != null && log.isDebugEnabled()) {
-            log.debug("Invoking Provider<" + providerType.getName() + "> with " +
-                    "parameter of type " + input.getClass().getName());
-        }
-        if (input == null && log.isDebugEnabled()) {
-            log.debug("Invoking Provider<" + providerType.getName() + "> with " +
-                    "NULL input parameter");
-        }
-
-        // Invoke the actual Provider.invoke() method
-        boolean faultThrown = false;
-        XMLFault fault = null;
-        Object responseParamValue = null;
-        Throwable t = null;
-        try {
-            responseParamValue = (Object)org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedExceptionAction() {
-                        public Object run() throws Exception {
-                            return invokeProvider(mc, providerInstance, input);
-                        }
-                    });
-        } catch (Exception e) {
-            t = ClassUtils.getRootCause(e);
-            faultThrown = true;
-            fault = MethodMarshallerUtils.createXMLFaultFromSystemException(t);
-
-            if (log.isDebugEnabled()) {
-                log.debug("Marshal Throwable =" + e.getClass().getName());
-                log.debug("  rootCause =" + t.getClass().getName());
-                log.debug("  exception=" + t.toString());
-            }
-        }
-
-        // Create the response MessageContext
-        MessageContext responseMsgCtx = null;
-        if (!EndpointController.isOneWay(mc.getAxisMessageContext())) {
-            if (faultThrown) {
-                // If a fault was thrown, we need to create a slightly different
-                // MessageContext, than in the response path.
-                Message responseMsg = createMessageFromValue(fault);
-                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
-                responseMsgCtx.setMessage(responseMsg);
-            } else {
-                Message responseMsg = createMessageFromValue(responseParamValue);
-
-                // Enable MTOM if indicated by the binding
-                String bindingType = endpointDesc.getBindingType();
-                if (bindingType != null) {
-                    if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                            bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                        responseMsg.setMTOMEnabled(true);
-                    }
-                }
-
-                responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);
-                responseMsgCtx.setMessage(responseMsg);
-            }
-        } else {
-            // If we have a one-way operation, then we cannot create a MessageContext for the response.
-            return null;
-        }
-
-        return responseMsgCtx;
+        
+        
+        return requestParamValue;
     }
+    
+    public MessageContext createResponse(MessageContext request, Object[] input, Object output) {
+        Message m;
+        try {
+            m = createMessageFromValue(output);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
 
-    protected Object invokeProvider(MessageContext ctx,
-                                    Provider provider,
-                                    Object input) throws Exception {
-        return provider.invoke(input);
+        // Enable MTOM if indicated by the binding
+        String bindingType = endpointDesc.getBindingType();
+        if (bindingType != null) {
+            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                m.setMTOMEnabled(true);
+            }
+        }
+
+        MessageContext response = MessageContextUtils.createResponseMessageContext(request);
+        response.setMessage(m);
+        
+        return response;
+    }
+    
+    public MessageContext createFaultResponse(MessageContext request, Throwable fault) {
+        Message m;
+        try {
+            XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(fault);
+            m = createMessageFromValue(xmlFault);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
+        MessageContext response = MessageContextUtils.createFaultMessageContext(request);
+        response.setMessage(m);
+        
+        return response;
     }
     
     /**
@@ -311,12 +408,12 @@ public class ProviderDispatcher extends JavaDispatcher {
     /*
       * Determine the Provider type for this instance
       */
-    private Provider getProviderInstance() throws Exception {
+    private Provider getProviderInstance() {
         Class<?> clazz = getProviderType();
 
         if (!isValidProviderType(clazz)) {
-            //TODO This will change once deployment code it in place
-            throw new Exception(Messages.getMessage("InvalidProvider", clazz.getName()));
+            // TODO This will change once deployment code it in place
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidProvider", clazz.getName()));
         }
 
         Provider provider = null;
@@ -340,9 +437,9 @@ public class ProviderDispatcher extends JavaDispatcher {
     }
 
     /*
-    * Get the provider type from a given implemention class instance
-    */
-    private Class<?> getProviderType() throws Exception {
+     * Get the provider type from a given implemention class instance
+     */
+    private Class<?> getProviderType() {
 
         Class providerType = null;
 
@@ -360,18 +457,10 @@ public class ProviderDispatcher extends JavaDispatcher {
             if (interfaceName == javax.xml.ws.Provider.class) {
                 if (paramType.getActualTypeArguments().length > 1) {
                     //TODO NLS
-                    throw new Exception(
-                            "Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
+                    throw ExceptionFactory.makeWebServiceException("Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
                 }
                 providerType = (Class)paramType.getActualTypeArguments()[0];
-                break;
             }
-        }
-        if(providerType == null) {
-            throw new Exception("Provider based SEI Class has to implement javax.xml.ws." +
-                        "Provider as javax.xml.ws.Provider<String>, javax.xml.ws." +
-                        "Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or " +
-                        "javax.xml.ws.Provider<JAXBContext>");
         }
         return providerType;
     }
@@ -427,4 +516,17 @@ public class ProviderDispatcher extends JavaDispatcher {
         return blockFactory;
     }
     
+    protected Method getJavaMethod() {
+        Method m = null;
+        try {
+            m = providerInstance.getClass().getMethod("invoke", new Class[] {getProviderType()});
+        } catch (SecurityException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (NoSuchMethodException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
+        return m;
+    }
+
 }
