@@ -687,7 +687,7 @@
                              </xsl:otherwise>
                            </xsl:choose>
                            
-                           if (current_node <xsl:if test="(@minOccurs=0)"> &amp;&amp; axiom_node_get_data_element( current_node, env) &amp;&amp; !axis2_strcmp(&quot;<xsl:value-of select="$propertyName"/>&quot;, 
+                           if (current_node <xsl:if test="(@minOccurs=0)"> &amp;&amp; axiom_node_get_data_element( current_node, env) &amp;&amp; !axutil_strcmp(&quot;<xsl:value-of select="$propertyName"/>&quot;, 
                            axiom_element_get_localname(axiom_node_get_data_element( current_node, env), env))
                            </xsl:if>)
                            {
