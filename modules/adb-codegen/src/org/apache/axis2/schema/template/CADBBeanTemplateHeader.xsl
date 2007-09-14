@@ -86,7 +86,7 @@
 
         #include &lt;stdio.h&gt;
         #include &lt;axiom.h&gt;
-        #include &lt;axutil_utils.h&gt;
+        #include &lt;axis2_util.h&gt;
         #include &lt;axiom_soap.h&gt;
         #include &lt;axis2_client.h&gt;
 
