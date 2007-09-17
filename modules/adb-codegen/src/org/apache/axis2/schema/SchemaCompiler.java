@@ -1619,9 +1619,7 @@ public class SchemaCompiler {
                     if (type instanceof XmlSchemaSimpleType) {
                         XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
 
-                        if ((simpleType != null) &&
-                                (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction)) {
-                            // we only support simple type restriction
+                        if (simpleType != null) {
                             if (!isAlreadyProcessed(schemaTypeName)) {
                                 //process simple type
                                 processSimpleSchemaType(simpleType, null, parentSchema, null);

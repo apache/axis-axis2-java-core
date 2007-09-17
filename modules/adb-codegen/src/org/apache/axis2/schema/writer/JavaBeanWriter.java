@@ -51,7 +51,7 @@ import com.ibm.wsdl.util.xml.DOM2Writer;
  */
 public class JavaBeanWriter implements BeanWriter {
 
-    private static final Log log = LogFactory.getLog(JavaBeanWriter .class);
+    private static final Log log = LogFactory.getLog(JavaBeanWriter.class);
 
     public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
 
@@ -602,7 +602,7 @@ public class JavaBeanWriter implements BeanWriter {
                                       Map typeMap) {
         Map memberTypes = metainf.getMemberTypes();
         QName memberQName;
-        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = metainf.getMemberTypesKeys().iterator(); iter.hasNext();) {
             memberQName = (QName) iter.next();
             String memberClass = (String) memberTypes.get(memberQName);
             if (PrimitiveTypeFinder.isPrimitive(memberClass)) {
@@ -740,6 +740,13 @@ public class JavaBeanWriter implements BeanWriter {
             // set the is particle class
             if (metainf.getParticleTypeStatusForQName(name)){
                 XSLTUtils.addAttribute(model, "particleClassType", "yes", property);
+            }
+
+            // if we have an particle class in a extension class then we have
+            // to consider the whole class has a particle type.
+
+            if (metainf.isHasParticleType()) {
+                XSLTUtils.addAttribute(model, "hasParticleType", "yes", rootElt);
             }
 
             // what happed if this contain attributes

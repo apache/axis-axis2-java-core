@@ -1,0 +1,28 @@
+<s:schema elementFormDefault="qualified"
+          xmlns:s="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:tns="http://tempuri.org/innerparticalextension"
+          targetNamespace="http://tempuri.org/innerparticalextension">
+
+    <s:complexType name="ParentType">
+        <s:choice minOccurs="0" maxOccurs="unbounded">
+            <s:element name="param1" type="s:string"/>
+            <s:element name="param2" type="s:string"/>
+        </s:choice>
+    </s:complexType>
+    <s:element name="TestElement">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="ChildElement" maxOccurs="unbounded">
+                    <s:complexType>
+                        <s:complexContent>
+                            <s:extension base="tns:ParentType">
+                                <s:attribute name="testAttribute" type="s:string"/>
+                            </s:extension>
+                        </s:complexContent>
+                    </s:complexType>
+                </s:element>
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+</s:schema>
