@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.addressing.util;
+package org.apache.axis2.jaxws.addressing.factory;
 
 import java.net.URL;
 
@@ -27,42 +27,42 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.addressing.util.EndpointKey;
+import org.apache.axis2.jaxws.addressing.util.EndpointMap;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
-public final class EndpointReferenceBuilder {
-    private static final EndpointMap map =
-        (EndpointMap) FactoryRegistry.getFactory(EndpointMap.class);
+public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReferenceFactory {
+    private final EndpointMap map = new EndpointMap();
     
-    //Prevent instantiation
-    private EndpointReferenceBuilder() {
+    public Axis2EndpointReferenceFactoryImpl() {
+    	super();
     }
     
-    public static void addAddress(QName serviceName, QName endpoint, String address) {
+    public void addAddress(QName serviceName, QName endpoint, String address) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
         
-        if (address == null || "".equals(address))
+        if (address == null)
             throw new IllegalStateException("The specified address is not a valid value: " + address);
         
         map.put(key, address);
     }
     
-    public static EndpointReference createEndpointReference(String address) {
-        if (address == null || "".equals(address))
+    public EndpointReference createEndpointReference(String address) {
+        if (address == null)
             throw new IllegalStateException("The specified address is not a valid value: " + address);
 
         return new EndpointReference(address);
     }
     
-    public static EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
+    public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
         String address = map.get(key);
         
         return createEndpointReference(address);
     }
     
-    public static EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
+    public EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
         EndpointReference axis2EPR = null;
         
         if (address != null) {

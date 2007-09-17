@@ -24,8 +24,7 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
 import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
@@ -155,15 +154,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         
         org.apache.axis2.addressing.EndpointReference axis2EPR = null;
         try {
-            axis2EPR = EndpointReferenceConverter.convertToAxis2(jaxwsEPR);
+            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
-
+        String addressingNamespace =
+        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
                                                   addressingNamespace,
@@ -199,15 +198,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         org.apache.axis2.addressing.EndpointReference axis2EPR = null;
         try {
-            axis2EPR = EndpointReferenceConverter.convertToAxis2(jaxwsEPR);
+            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
-
+        String addressingNamespace =
+        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
                                                   addressingNamespace,
@@ -348,14 +347,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         org.apache.axis2.addressing.EndpointReference axis2EPR = null;
         try {
-            axis2EPR = EndpointReferenceConverter.convertToAxis2(jaxwsEPR);
+            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
+        String addressingNamespace =
+        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
 
         return getPort(axis2EPR, addressingNamespace, sei, features);
     }
@@ -545,12 +545,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
                 ExecutorFactory.class);
         return executorFactory.getExecutorInstance();
-    }
-
-    private String getAddressingNamespace(Class clazz) {
-        EndpointReferenceFactory eprFactory =
-            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
-        return eprFactory.getAddressingNamespace(clazz);
     }
 
     private boolean isValidServiceName() {

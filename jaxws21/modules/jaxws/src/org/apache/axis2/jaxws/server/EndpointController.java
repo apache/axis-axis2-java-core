@@ -25,7 +25,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -36,7 +37,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
-import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -319,7 +319,9 @@ public class EndpointController {
             axisSvc = ed.getAxisService();
             
             try {
-                EndpointReferenceBuilder.addAddress(service, endpoint, axisSvc.getEPRs()[0]);
+                Axis2EndpointReferenceFactoryImpl axis2EPRFactory =
+                	(Axis2EndpointReferenceFactoryImpl) FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
+                axis2EPRFactory.addAddress(service, endpoint, axisSvc.getEPRs()[0]);
             }
             catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException(e);

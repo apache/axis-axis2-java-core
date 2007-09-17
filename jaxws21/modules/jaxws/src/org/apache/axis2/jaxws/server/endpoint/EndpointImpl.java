@@ -18,24 +18,19 @@
  */
 package org.apache.axis2.jaxws.server.endpoint;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.WorkerFactory;
-import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -217,26 +212,21 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     @Override
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
         EndpointReference jaxwsEPR = null;
-        String addressingNamespace = getAddressingNamespace(clazz);
+        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
         URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
         
-        //TODO: Need to understand how the binding can influence the behaviour of this method.
+        if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
+            throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	EndpointReferenceBuilder.createEndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
         
         try {
-            if (referenceParameters != null) {
-                for (Element element : referenceParameters) {
-                    OMElement omElement = XMLUtils.toOM(element);
-                    axis2EPR.addReferenceParameter(omElement);
-                }            
-            }
-            
-            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
+        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
+            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -249,11 +239,5 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     @Override
     public EndpointReference getEndpointReference(Element... referenceParameters) {
         return getEndpointReference(W3CEndpointReference.class, referenceParameters);
-    }
-
-    private String getAddressingNamespace(Class clazz) {
-        EndpointReferenceFactory eprFactory =
-            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
-        return eprFactory.getAddressingNamespace(clazz);
     }
 }

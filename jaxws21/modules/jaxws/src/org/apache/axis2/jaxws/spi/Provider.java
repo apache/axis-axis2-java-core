@@ -35,11 +35,8 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
 import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
@@ -50,6 +47,7 @@ import java.net.URL;
 import java.util.List;
 
 public class Provider extends javax.xml.ws.spi.Provider {
+	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];
 
     @Override
     public Endpoint createAndPublishEndpoint(String s, Object obj) {
@@ -75,29 +73,19 @@ public class Provider extends javax.xml.ws.spi.Provider {
             List<Element> metadata,
             String wsdlDocumentLocation,
             List<Element> referenceParameters) {
-        String addressingNamespace = getAddressingNamespace(W3CEndpointReference.class);    	
+        String addressingNamespace =
+        	EndpointReferenceUtils.getAddressingNamespace(W3CEndpointReference.class);    	
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	EndpointReferenceBuilder.createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
         
         W3CEndpointReference w3cEPR = null;
         
         try {
-            if (metadata != null) {
-                for (Element element : metadata) {
-                    OMElement omElement = XMLUtils.toOM(element);
-                    axis2EPR.addMetaData(omElement);
-                }
-            }
-            
-            if (referenceParameters != null) {
-                for (Element element : referenceParameters) {
-                    OMElement omElement = XMLUtils.toOM(element);
-                    axis2EPR.addReferenceParameter(omElement);
-                }            
-            }
-            
+        	EndpointReferenceUtils.addMetadata(axis2EPR, metadata.toArray(ZERO_LENGTH_ARRAY));
+        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
+        	
             w3cEPR =
-                (W3CEndpointReference) EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
+                (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -121,14 +109,14 @@ public class Provider extends javax.xml.ws.spi.Provider {
 
         org.apache.axis2.addressing.EndpointReference axis2EPR = null;
         try {
-            axis2EPR = EndpointReferenceConverter.convertToAxis2(jaxwsEPR);
+            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = getAddressingNamespace(jaxwsEPR.getClass());
+        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
         
         try {
@@ -157,10 +145,10 @@ public class Provider extends javax.xml.ws.spi.Provider {
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
             org.apache.axis2.addressing.EndpointReference axis2EPR =
-                EndpointReferenceBuilder.createEndpointReference("");
+                EndpointReferenceUtils.createAxis2EndpointReference("");
             String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
             
-            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(axis2EPR, addressingNamespace);
+            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -168,11 +156,5 @@ public class Provider extends javax.xml.ws.spi.Provider {
         }
         
         return jaxwsEPR;
-    }
-
-    private String getAddressingNamespace(Class clazz) {
-        EndpointReferenceFactory eprFactory =
-            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
-        return eprFactory.getAddressingNamespace(clazz);
     }
 }

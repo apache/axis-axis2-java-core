@@ -27,8 +27,8 @@ import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 
-public class EndpointReferenceFactoryImpl implements EndpointReferenceFactory {
-    public EndpointReferenceFactoryImpl() {
+public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReferenceFactory {
+    public JAXWSEndpointReferenceFactoryImpl() {
         super();
     }
     

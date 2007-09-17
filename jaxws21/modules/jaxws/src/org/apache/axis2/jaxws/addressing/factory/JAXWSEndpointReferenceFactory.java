@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.addressing.factory;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 
-public interface EndpointReferenceFactory {
+public interface JAXWSEndpointReferenceFactory {
     public EndpointReference createEndpointReference(Source eprInfoset, String addressingNamespace);
     
     public String getAddressingNamespace(Class clazz);

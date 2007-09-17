@@ -30,12 +30,7 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.metadata.ServiceName;
-import org.apache.axis2.addressing.metadata.WSDLLocation;
-import org.apache.axis2.jaxws.addressing.factory.EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceBuilder;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceConverter;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
@@ -44,7 +39,6 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
@@ -229,7 +223,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
         EndpointReference jaxwsEPR = null;
-        String addressingNamespace = getAddressingNamespace(clazz);
+        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
         
         if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
             throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
@@ -237,7 +231,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         try {
             org.apache.axis2.addressing.EndpointReference epr =
                 getAxis2EndpointReference(addressingNamespace);
-            jaxwsEPR = EndpointReferenceConverter.convertFromAxis2(epr, addressingNamespace);
+            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(epr, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.
@@ -256,7 +250,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             QName port = endpointDesc.getPortQName();
             URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
 
-            epr = EndpointReferenceBuilder.createEndpointReference(address, service, port, wsdlURL.toString(), addressingNamespace);
+            epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlURL.toString(), addressingNamespace);
         }
         
         return epr;
@@ -264,12 +258,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     
     public String getAddressingNamespace() {
         return addressingNamespace;
-    }
-
-    private String getAddressingNamespace(Class clazz) {
-        EndpointReferenceFactory eprFactory =
-            (EndpointReferenceFactory) FactoryRegistry.getFactory(EndpointReferenceFactory.class);
-        return eprFactory.getAddressingNamespace(clazz);
     }
     
     /*

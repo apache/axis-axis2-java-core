@@ -49,8 +49,8 @@ public class AddressingConfigurator implements ServerConfigurator {
     	SubmissionAddressing submissionAddressing =
     		(SubmissionAddressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(SubmissionAddressingFeature.ID);
     	AxisService service = endpointDescription.getAxisService();
-    	Parameter namespace = new Parameter("addressingNamespace", null);
-    	Parameter disable = new Parameter("disableAddressingHandlers", Boolean.FALSE);
+    	Parameter namespace = new Parameter(AddressingConstants.WS_ADDRESSING_VERSION, null);
+    	Parameter disable = new Parameter(AddressingConstants.DISABLE_ADDRESSING_HANDLERS, Boolean.FALSE);
     	String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
     	
     	if (addressing != null && submissionAddressing != null) {
@@ -123,10 +123,12 @@ public class AddressingConfigurator implements ServerConfigurator {
     		service.addParameter(disable);
     		service.setWSAddressingFlag(addressingRequired);
             
-            ServiceDescription sd = endpointDescription.getServiceDescription();
-            AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();
-            if (!axisConfig.isEngaged(Constants.MODULE_ADDRESSING))
-                axisConfig.engageModule(Constants.MODULE_ADDRESSING);
+    		if (!(Boolean)disable.getValue()) {
+    			ServiceDescription sd = endpointDescription.getServiceDescription();
+    			AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();
+    			if (!axisConfig.isEngaged(Constants.MODULE_ADDRESSING))
+    				axisConfig.engageModule(Constants.MODULE_ADDRESSING);
+    		}
     	}
     	catch (Exception e) {
             //TODO NLS enable.
