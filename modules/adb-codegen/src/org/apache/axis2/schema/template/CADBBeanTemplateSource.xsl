@@ -635,9 +635,7 @@
                     /**
                      * building <xsl:value-of select="$CName"/> array
                      */
-                     <xsl:if test="position()=1">
                        arr_list = axutil_array_list_create( env, 10);
-                     </xsl:if>
                    </xsl:if>
 
                      <!-- for each non attribute properties there will always be an element-->
