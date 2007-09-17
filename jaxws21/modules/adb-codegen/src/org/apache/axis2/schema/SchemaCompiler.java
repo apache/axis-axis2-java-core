@@ -1619,9 +1619,7 @@ public class SchemaCompiler {
                     if (type instanceof XmlSchemaSimpleType) {
                         XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
 
-                        if ((simpleType != null) &&
-                                (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction)) {
-                            // we only support simple type restriction
+                        if (simpleType != null) {
                             if (!isAlreadyProcessed(schemaTypeName)) {
                                 //process simple type
                                 processSimpleSchemaType(simpleType, null, parentSchema, null);
@@ -1991,34 +1989,6 @@ public class SchemaCompiler {
                 } else {
                     throw new SchemaCompilationException("Referenced name is null");
                 }
-
-            } else if (order && (item instanceof XmlSchemaChoice)) {
-
-                // this is a tempory patch for process only inner sequence choices
-                // but we have do this with a proper design
-                XmlSchemaChoice choice = (XmlSchemaChoice) item;
-                XmlSchemaObject choiceChild;
-                XmlSchemaObjectCollection schemaItems = choice.getItems();
-                for (int j = 0; j < schemaItems.getCount(); j++) {
-                   choiceChild = schemaItems.getItem(j);
-                   if (choiceChild instanceof XmlSchemaElement){
-                       // i.e this is an inner choice element
-                       //recursively process the element
-                        XmlSchemaElement xsElt = (XmlSchemaElement) choiceChild;
-
-                        boolean isArray = isArray(xsElt);
-                        processElement(xsElt, processedElementTypeMap, localNillableList, parentSchema); //we know for sure this is not an outer type
-                        processedElementArrayStatusMap.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
-                        if (order) {
-                            //we need to keep the order of the elements. So push the elements to another
-                            //hashmap with the order number
-                            elementOrderMap.put(xsElt, new Integer(sequenceCounter));
-                            sequenceCounter++;
-                        }
-                       innerChoiceElementList.add(xsElt.getQName());
-                   }
-                }
-
             } else {
                 //there may be other types to be handled here. Add them
                 //when we are ready

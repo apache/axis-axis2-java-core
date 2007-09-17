@@ -639,18 +639,31 @@ public class MethodMarshallerUtils {
             context.setIsxmlList(isList);
         }
         Block block = null;
+        boolean isBody = false;
         if (isHeader) {
             block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
         } else {
             if (hasOutputBodyParams) {
                 block = message.getBodyBlock(0, context, factory);
+                isBody = true;
             } else {
                 // If there is only 1 block, we can use the get body block method
                 // that streams the whole block content.
                 block = message.getBodyBlock(context, factory);
+                //We look for body block only when the return type associated with operation is not void.
+                //If a null body block is returned in response on a operation that is not void, its a user error.               
+                isBody = true;
             }
         }
-
+        //We look for body block only when the return type associated with operation is not void.
+        //If a null body block is returned in response on a operation that has non void return type, its a user error.
+        if(isBody && block == null){
+           	if(log.isDebugEnabled()){
+           		log.debug("Empty Body Block Found in response Message for wsdl Operation defintion that expects an Output");
+           		log.debug("Return type associated with SEI operation is not void, Body Block cannot be null");
+           	}
+           	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerUtilErr1"));	
+        }
         // Get the business object.  We want to return the object that represents the type.
         Element returnElement = new Element(block.getBusinessObject(true), block.getQName());
         return returnElement;

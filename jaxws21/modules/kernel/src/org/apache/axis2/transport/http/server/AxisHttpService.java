@@ -29,6 +29,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.RequestResponseTransport;
+import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
@@ -318,7 +319,8 @@ public class AxisHttpService {
 
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
-            signalResponseReady();
+            status = RequestResponseTransportStatus.ACKED;
+            responseReadySignal.countDown();
         }
 
         public void awaitResponse() throws InterruptedException, AxisFault {

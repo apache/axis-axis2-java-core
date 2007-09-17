@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.server.EndpointCallback;
 
 /**
  * The EndpointDispatcher is an abstraction for the object that will be doing the invocation of an
@@ -33,7 +34,10 @@ public interface EndpointDispatcher {
      * @param mc
      * @return
      */
-    public MessageContext invoke(MessageContext mc)
-            throws Exception;
+    public MessageContext invoke(MessageContext request) throws Exception;
+    
+    public void invokeOneWay(MessageContext request);
+    
+    public void invokeAsync(MessageContext request, EndpointCallback callback);
 
 }

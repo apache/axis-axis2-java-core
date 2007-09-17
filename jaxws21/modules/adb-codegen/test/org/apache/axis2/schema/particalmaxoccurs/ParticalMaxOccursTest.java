@@ -346,8 +346,10 @@ public class ParticalMaxOccursTest extends TestCase {
             assertEquals(resultChoices[0].getParm1(), "Param11");
             assertEquals(resultChoices[1].getParm2(), "Param12");
         } catch (XMLStreamException e) {
+           e.printStackTrace();
             fail();
         } catch (Exception e) {
+           e.printStackTrace();
             fail();
         }
     }

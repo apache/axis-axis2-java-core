@@ -49,6 +49,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -713,7 +714,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 throw new AxisFault("Error sending acknowledgement", e);
             }
 
-            signalResponseReady();
+            status = RequestResponseTransportStatus.ACKED;
+            responseReadySignal.countDown();
         }
 
         public void awaitResponse()

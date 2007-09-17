@@ -34,6 +34,9 @@
     </xsl:for-each>
    </xsl:for-each>
 
+	#ifdef __cplusplus
+	extern "C" {
+	#endif
 
      <xsl:for-each select="method">
          <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
@@ -66,5 +69,8 @@
                                           </xsl:for-each> );
      </xsl:for-each>
 
+	#ifdef __cplusplus
+	}
+	#endif
     </xsl:template>
  </xsl:stylesheet>

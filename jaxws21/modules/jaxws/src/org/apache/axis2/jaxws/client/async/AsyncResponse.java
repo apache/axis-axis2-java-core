@@ -63,14 +63,12 @@ public abstract class AsyncResponse implements Response {
     private EndpointDescription endpointDescription;
     private Map<String, Object> responseContext;
 
-    /* 
-     * CountDownLatch is used to track whether we've received and
-     * processed the async response.  For example, the client app
-     * could be polling on 30 second intervals, and we don't receive
-     * the async response until the 1:15 mark.  In that case, the
-     * first few polls calling the .get() would hit the latch.await()
-     * which blocks the thread if the latch count > 0
-     */
+    // CountDownLatch is used to track whether we've received and
+    // processed the async response.  For example, the client app
+    // could be polling on 30 second intervals, and we don't receive
+    // the async response until the 1:15 mark.  In that case, the
+    // first few polls calling the .get() would hit the latch.await()
+    // which blocks the thread if the latch count > 0
     private CountDownLatch latch;
     private boolean cacheValid = false;
     private Object cachedObject = null;
@@ -80,9 +78,11 @@ public abstract class AsyncResponse implements Response {
     // This object is just a cache object.
     private ClassLoader classLoader = null;
     
-    // the object to be returned
-    private Object obj = null;
-    // we need to save an exception if processResponse fails
+    // The response business object to be returned
+    private Object responseObject = null;
+    
+    // The exception to be returned in the event of a fault or failure in 
+    // processing the response content.
     private ExecutionException savedException = null;
     
     protected AsyncResponse(EndpointDescription ed) {
@@ -103,7 +103,7 @@ public abstract class AsyncResponse implements Response {
     
     protected void onError(Throwable flt, MessageContext faultCtx) {
         if (log.isDebugEnabled()) {
-            log.debug("AsyncResponse received a fault.  Counting down latch.");
+            log.debug("AsyncResponse received a fault.");
         }
 
         fault = flt;
@@ -116,12 +116,15 @@ public abstract class AsyncResponse implements Response {
 
         Throwable t = processFaultResponse();
         
+        // JAXWS 4.3.3 conformance bullet says to throw an ExecutionException from here
+        savedException = new ExecutionException(t);
+         
+        // Countdown so that the Future object will know that procesing is complete.
+        latch.countDown();
+        
         if (log.isDebugEnabled()) {
             log.debug("New latch count = [" + latch.getCount() + "]");
         }
-        
-        // JAXWS 4.3.3 conformance bullet says to throw an ExecutionException from here
-        savedException = new ExecutionException(t);
     }
     
     private void setThreadClassLoader(final ClassLoader cl) {
@@ -160,7 +163,7 @@ public abstract class AsyncResponse implements Response {
 
     protected void onComplete(MessageContext mc) {
         if (log.isDebugEnabled()) {
-            log.debug("AsyncResponse received a MessageContext. Counting down latch.");
+            log.debug("AsyncResponse received a MessageContext.");
         }
 
         // A new message context invalidates the cached object retrieved
@@ -174,26 +177,25 @@ public abstract class AsyncResponse implements Response {
         response.setEndpointDescription(endpointDescription);
         
         // Check for cached attachment file(s) if attachments exist. 
-        if(response.getAxisMessageContext().getAttachmentMap() != null){
-        	AttachmentUtils.findCachedAttachment(response.getAxisMessageContext().getAttachmentMap());
+        if (response.getAxisMessageContext().getAttachmentMap() != null){
+            AttachmentUtils.findCachedAttachment(response.getAxisMessageContext().getAttachmentMap());
         }
         
-        /*
-         * TODO: review?
-         * We need to process the response right when we get it, instead of
-         * caching it away for processing when the client poller calls .get().
-         * Reason for this is that some platforms (or web containers) will close
-         * down their threads immediately after "dropping off" the async response.
-         * If those threads disappear, the underlying input stream object may also
-         * disappear, thus causing a NullPointerException later when we try to .get().
-         * The NPE would manifest itself way down in the parser.
-         */
+        // Process the response as soon as it is available.  This means making sure that
+        // no content is left unread in the response stream.  Leaving content there could
+        // result in an error if the runtime is greedy about cleaning up.
         try {
-            obj = processResponse();
+            responseObject = processResponse();
         } catch (ExecutionException e) {
             savedException = e;
+            if (log.isDebugEnabled()) {
+                log.debug("An error occurred while processing the response: " + e.getCause());
+            }
+            latch.countDown();
         }
 
+        // Countdown so that the Future object will know that procesing is complete.
+        latch.countDown();
         if (log.isDebugEnabled()) {
             log.debug("New latch count = [" + latch.getCount() + "]");
         }
@@ -236,7 +238,7 @@ public abstract class AsyncResponse implements Response {
             throw savedException;
         }
         
-        return obj;
+        return responseObject;
     }
 
     public Object get(long timeout, TimeUnit unit)
@@ -266,7 +268,7 @@ public abstract class AsyncResponse implements Response {
                     "The client timed out while waiting for an asynchronous response");
         }
 
-        return obj;
+        return responseObject;
     }
 
     public boolean isCancelled() {
@@ -282,15 +284,10 @@ public abstract class AsyncResponse implements Response {
     }
 
     private Object processResponse() throws ExecutionException {
-        /*
-         * note the latch.countDown() here.  We have to make sure the countdown
-         * occurs everywhere we might leave the method, which could be a return
-         * or throw.
-         */
     	
         // If we don't have a fault, then we have to have a MessageContext for the response.
         if (response == null) {
-        	latch.countDown();
+            latch.countDown();
             throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
         }
 
@@ -300,15 +297,12 @@ public abstract class AsyncResponse implements Response {
             if (log.isDebugEnabled()) {
                 log.debug("Return object cached from last get()");
             }
-            latch.countDown();
             return cachedObject;
         }
 
         Object obj = null;
         try {
-            // TODO: IMPORTANT: this is the right call here, but beware that the messagecontext may be turned into
-            // a fault context with a fault message.  We need to check for this and, if necessary, make an exception and throw it.
-            // Invoke inbound handlers.
+            // Install the adapters and invoke inbound handlers.
             TransportHeadersAdapter.install(response);
             AttachmentsAdapter.install(response);
             HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
@@ -316,20 +310,23 @@ public abstract class AsyncResponse implements Response {
                                                       HandlerChainProcessor.MEP.RESPONSE,
                                                       false);
 
-            // TODO: Check the type of the object to make sure it corresponds with
-            // the parameterized generic type.
+            // TODO: IMPORTANT: this is the right call here, but beware that the 
+            // messagecontext may be turned into a fault context with a fault message.  
+            // We need to check for this and, if necessary, make an exception and throw it.
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshalling the async response message.");
             }
             
+            // Do the real work to unmarshall the response.
             obj = getResponseValueObject(response);
-            // Cache the object in case it is required again
-            cacheValid = true;
-            cachedObject = obj;
             
             if (log.isDebugEnabled() && obj != null) {
                 log.debug("Unmarshalled response object of type: " + obj.getClass());
             }
+            
+            // Cache the object in case it is required again
+            cacheValid = true;
+            cachedObject = obj;
 
             responseContext = new HashMap<String, Object>();
 
@@ -338,12 +335,7 @@ public abstract class AsyncResponse implements Response {
             ApplicationContextMigratorUtil.performMigrationFromMessageContext(Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                                                                               responseContext,
                                                                               response);
-            latch.countDown();
         } catch (Throwable t) {
-            if (log.isDebugEnabled()) {
-                log.debug("An error occurred while processing the response");
-            }
-            latch.countDown();
             throw new ExecutionException(ExceptionFactory.makeWebServiceException(t));
         }
 
@@ -363,26 +355,33 @@ public abstract class AsyncResponse implements Response {
                 // AttachmentsAdapter.install(faultMessageContext);
             	try {
                     // Invoke inbound handlers.
+            	    if (log.isDebugEnabled()) {
+            	        log.debug("Invoking the JAX-WS handler chain for the fault response.");
+            	    }
                     HandlerInvokerUtils.invokeInboundHandlers(faultMessageContext.getMEPContext(),
                                                           faultMessageContext.getInvocationContext()
                                                                              .getHandlers(),
                                                           HandlerChainProcessor.MEP.RESPONSE,
                                                           false);
             	} catch (Throwable t) {
-            		throwable = t;
+            	    if (log.isDebugEnabled()) {
+            	        log.debug("An error occurred (" + t.getClass() + " while processing " +
+            	        "the fault response handler chain.");
+            	    }
+            	    throwable = t;
             	}
             }
             if (throwable == null) {
+                // Do the real work to unmarshal the fault response.
                 throwable = getFaultResponse(faultMessageContext);
             }
-            latch.countDown();
+            
             if (throwable != null) {
                 return throwable;
             } else {
                 return ExceptionFactory.makeWebServiceException(fault);
             }
         } else {
-        	latch.countDown();
             return ExceptionFactory.makeWebServiceException(fault);
         }
     }

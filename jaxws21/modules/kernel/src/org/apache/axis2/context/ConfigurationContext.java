@@ -37,6 +37,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -63,6 +65,7 @@ import java.util.Map;
  */
 public class ConfigurationContext extends AbstractContext {
 
+    private static final Log log = LogFactory.getLog(ConfigurationContext.class);
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
@@ -277,23 +280,49 @@ public class ConfigurationContext extends AbstractContext {
      * If the given message id already has a registered operation context,
      * no change is made and the methid resturns false.
      *
-     * @param messageID  the message-id to register
-     * @param mepContext the OperationContext for the specified message-id
-     * @return true if we added a new context, false if the messageID was already there and we did
-     *         nothing
+     * @param messageID
+     * @param mepContext
      */
-    public boolean registerOperationContext(String messageID,
+    public boolean registerOperationContext(String messageID, 
                                             OperationContext mepContext) {
-        mepContext.setKey(messageID);  // TODO: Doing this here seems dangerous....
+        return registerOperationContext(messageID, mepContext, false);
+    }
+    
+    /**
+     * Registers a OperationContext with a given message ID.
+     * If the given message id already has a registered operation context,
+     * no change is made unless the override flag is set. 
+     *
+     * @param messageID
+     * @param mepContext
+     * @param override
+     */
+    public boolean registerOperationContext(String messageID, 
+                                            OperationContext mepContext, 
+                                            boolean override) {
+        boolean alreadyInMap;
+        mepContext.setKey(messageID);
         synchronized (operationContextMap) {
-            if (!operationContextMap.containsKey(messageID)) {
+            alreadyInMap = operationContextMap.containsKey(messageID);
+            if (!alreadyInMap || override) {
                 this.operationContextMap.put(messageID, mepContext);
-                return true;
+            }
+
+            if (log.isDebugEnabled())
+            {
+                log.debug("registerOperationContext ("+override+"): "+
+                          mepContext+" with key: "+messageID);
+                HashMap msgContextMap = mepContext.getMessageContexts();
+                Iterator msgContextIterator = msgContextMap.values().iterator();
+                while (msgContextIterator.hasNext())
+                {
+                    MessageContext msgContext = (MessageContext)msgContextIterator.next();
+                    log.debug("msgContext: "+msgContext+" action: "+msgContext.getWSAAction());
+                }
             }
         }
-        return false;
+        return (!alreadyInMap || override);
     }
-
     /**
      * Unregisters the operation context associated with the given messageID
      *

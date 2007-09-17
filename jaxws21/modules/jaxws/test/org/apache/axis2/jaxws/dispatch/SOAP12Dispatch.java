@@ -96,6 +96,8 @@ public class SOAP12Dispatch extends TestCase {
         
         // Send the SOAP 1.2 request
         Source response = dispatch.invoke(request);
+
+        assertTrue("The response was null.  We expected content to be returned.", response != null);
         
         // Convert the response to a more consumable format
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

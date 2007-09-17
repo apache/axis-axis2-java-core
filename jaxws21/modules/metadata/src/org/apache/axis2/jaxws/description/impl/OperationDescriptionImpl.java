@@ -114,8 +114,8 @@ class OperationDescriptionImpl
     private Boolean onewayIsOneway;
 
     // ANNOTATION: @XmlList
-    private boolean 			isListType = false;
-    
+    private boolean isListType = false;
+
     // ANNOTATION: @RequestWrapper
     private RequestWrapper requestWrapperAnnotation;
     private String requestWrapperTargetNamespace;
@@ -274,7 +274,86 @@ class OperationDescriptionImpl
         }
 
         newAxisOperation.setName(determineOperationQName(seiMethod));
+
+        newAxisOperation.setSoapAction(this.getAction());
         
+        //*************************************************************************************
+        //NOTE: assumption here is that all info. need to generate the actions will have to come
+        //      from annotations (or default values)
+        //*************************************************************************************
+        
+        String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
+        String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
+        String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
+        ArrayList inputActions = new ArrayList();
+         
+        //We don't have a name at this point, shouldn't matter if we have the MEP
+        //String inputName = newAxisOperation.getName().getLocalPart();
+        String inputName = null;
+        String inputAction = 
+                WSDL11ActionHelper.getInputActionFromStringInformation( messageExchangePattern, 
+                                                                        targetNS, 
+                                                                        portTypeName, 
+                                                                        newAxisOperation.getName().getLocalPart(), 
+                                                                        inputName);
+                
+        if (inputAction != null) {
+            inputActions.add(inputAction);
+                newAxisOperation.setWsamappingList(inputActions);
+        }
+        
+        
+        //set the OUTPUT ACTION
+
+        //We don't have a name at this point, shouldn't matter if we have the MEP
+        //String outputName = newAxisOperation.getName().getLocalPart();  //REVIEW:
+        String outputName = null;
+        String outputAction = 
+                WSDL11ActionHelper.getOutputActionFromStringInformation( messageExchangePattern, 
+                                                                         targetNS, 
+                                                                         portTypeName, 
+                                                                         newAxisOperation.getName().getLocalPart(), 
+                                                                         outputName);
+        
+        if (outputAction != null) {
+                newAxisOperation.setOutputAction(outputAction);
+        }
+        
+        
+        //Map the action to the operation on the actual axisService
+        //TODO: Determine whether this should be done at a higher level in the 
+        //      description hierarchy
+        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().mapActionToOperation(outputAction, newAxisOperation);
+
+        //Set the FAULT ACTION
+        // Walk the fault information
+        FaultDescription[] faultDescs = getFaultDescriptions();
+        if (faultDescs != null) {
+            for (int i=0; i <faultDescs.length; i++) {
+        
+                AxisMessage faultMessage = new AxisMessage();
+                String faultName = faultDescs[i].getName();
+                faultMessage.setName(faultName);
+                
+                String faultAction = 
+                        WSDL11ActionHelper.getFaultActionFromStringInformation( messageExchangePattern, 
+                                        portTypeName, 
+                                        newAxisOperation.getName().getLocalPart(), 
+                                        faultMessage.getName());
+                
+                if (faultAction != null) {
+                        newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
+                }
+                newAxisOperation.setFaultMessages(faultMessage);
+            }
+        }
+         
+        //REVIEW: Determine if other axisOperation values may need to be set
+        //      Currently, the following values are being set on AxisOperation in 
+        //      ServiceBuilder.populateService which we are not setting:
+        //          AxisOperation.setPolicyInclude()
+        //          AxisOperation.setFaultMessages()
+
         getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().addOperation(newAxisOperation);
         
         return newAxisOperation;
@@ -320,7 +399,7 @@ class OperationDescriptionImpl
         
         String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
-        String portTypeName = getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getName();
+        String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
         ArrayList inputActions = new ArrayList();
          
         //We don't have a name at this point, shouldn't matter if we have the MEP

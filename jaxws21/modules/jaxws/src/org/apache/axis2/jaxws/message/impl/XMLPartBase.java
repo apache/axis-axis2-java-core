@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -673,6 +675,20 @@ public abstract class XMLPartBase implements XMLPart {
             consumed = false;
 		}
 	}
+    
+    public void close() {
+        OMElement om = getContentAsOMElement();
+        if (om !=null) {
+            OMXMLParserWrapper builder = om.getBuilder();
+            if (builder instanceof StAXBuilder) {
+                 StAXBuilder staxBuilder = (StAXBuilder) builder;
+                 staxBuilder.releaseParserOnClose(true);
+                 if (!staxBuilder.isClosed()) {
+                     staxBuilder.close();
+                 }
+            }
+        }
+     }
 	
 	
 }

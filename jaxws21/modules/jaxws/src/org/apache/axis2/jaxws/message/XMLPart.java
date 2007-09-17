@@ -317,4 +317,9 @@ public interface XMLPart {
      * @return String
      */
     public String getXMLPartContentType();
+
+    /**    
+     * Used primarily to ensure the parser is forwarded to the end so it can be closed.
+     */
+    public void close();
 }   

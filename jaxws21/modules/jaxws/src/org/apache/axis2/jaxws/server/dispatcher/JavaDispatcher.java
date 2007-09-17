@@ -19,12 +19,15 @@
 
 package org.apache.axis2.jaxws.server.dispatcher;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.server.EndpointCallback;
+import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 /**
  * JavaDispatcher is an abstract class that can be extended to implement an EndpointDispatcher to a
  * Java object.
@@ -41,35 +44,136 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         this.serviceInstance = serviceInstance;
     }
 
-    public abstract MessageContext invoke(MessageContext mc)
-            throws Exception;
+    public abstract MessageContext invoke(MessageContext request) throws Exception;
+    
+    public abstract void invokeOneWay(MessageContext request);
+    
+    public abstract void invokeAsync(MessageContext request, EndpointCallback callback);
 
+    protected abstract MessageContext createResponse(MessageContext request, Object[] input, Object output);
+    
+    protected abstract MessageContext createFaultResponse(MessageContext request, Throwable fault);
+    
+    
     public Class getServiceImplementationClass() {
         return serviceImplClass;
     }
-
-    protected Object createServiceInstance() {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating new instance of service endpoint");
-        }
-
-        if (serviceImplClass == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "JavaDispErr1"));
-        }
-
-        Object instance = null;
+    
+    protected Object invokeTargetOperation(Method method, Object[] params) throws Exception {
+        Object output = null;
         try {
-            instance = serviceImplClass.newInstance();
-        } catch (IllegalAccessException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "JavaDispErr2", serviceImplClass.getName()));
-        } catch (InstantiationException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "JavaDispErr2", serviceImplClass.getName()));
+            output = method.invoke(serviceInstance, params);
+        } catch (Exception t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception invoking a method of " + serviceImplClass.toString()
+                        + " of instance " + serviceInstance.toString());
+                log.debug("Exception type thrown: " + t.getClass().getName());
+                log.debug("Method = " + method.toGenericString());
+                for (int i = 0; i < params.length; i++) {
+                    String value =
+                            (params[i] == null) ? "null"
+                                    : params[i].getClass().toString();
+                    log.debug(" Argument[" + i + "] is " + value);
+                }
+            }
+            
+            throw t;
         }
+        
+        return output;
+    }
+    
+    
+    protected class AsyncInvocationWorker implements Callable {
+        
+        private Method method;
+        private Object[] params;
+        private ClassLoader classLoader;
+        private EndpointInvocationContext eic;
+        
+        public AsyncInvocationWorker(Method m, Object[] p, ClassLoader cl, EndpointInvocationContext ctx) {
+            method = m;
+            params = p;
+            classLoader = cl;
+            eic = ctx;
+        }
+        
+        public Object call() throws Exception {
+            if (log.isDebugEnabled()) {
+                log.debug("Invoking target endpoint via the async worker.");
+            }
+            
+            // Set the proper class loader so that we can properly marshall the
+            // outbound response.
+            ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
+            if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                if (log.isDebugEnabled()) {
+                    log.debug("Context ClassLoader set to:" + classLoader);
+                }
+            }
+            
+            // We have the method that is going to be invoked and the parameter data to invoke it 
+            // with, so just invoke the operation.
+            Object output = null;
+            boolean faultThrown = false;
+            Throwable fault = null;
+            try {
+                output = invokeTargetOperation(method, params);
+            } 
+            catch (Exception e) {
+                fault = ClassUtils.getRootCause(e);
+                faultThrown = true;
+            }
+            
+            // If this is a one way invocation, we are done and just need to return.
+            if (eic.isOneWay()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Invocation pattern was one way, work complete.");
+                    return null;
+                }
+            }
+            
+            // Create the response MessageContext
+            MessageContext request = eic.getRequestMessageContext();
+            MessageContext response = null;
+            if (faultThrown) {
+                // If a fault was thrown, we need to create a slightly different
+                // MessageContext, than in the response path.
+                response = createFaultResponse(request, fault);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Async invocation of the endpoint was successful.  Creating response message.");
+                }
+                response = createResponse(request, params, output);
+            }
 
-        return instance;
+            EndpointInvocationContext eic = null;
+            if (request.getInvocationContext() != null) {
+                eic = (EndpointInvocationContext) request.getInvocationContext();
+                eic.setResponseMessageContext(response);                
+            }
+            
+            EndpointCallback callback = eic.getCallback();
+            boolean handleFault = response.getMessage().isFault();
+            if (!handleFault) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No fault detected in response message, sending back application response.");
+                }
+                callback.handleResponse(eic);
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("A fault was detected.  Sending back a fault response.");
+                }
+                callback.handleFaultResponse(eic);
+            }
+            
+            // Set the thread's ClassLoader back to what it originally was.
+            Thread.currentThread().setContextClassLoader(currentLoader);
+            
+            return null;
+        }
     }
 
 }

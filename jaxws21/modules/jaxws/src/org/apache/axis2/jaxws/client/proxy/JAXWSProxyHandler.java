@@ -365,24 +365,29 @@ public class JAXWSProxyHandler extends BindingProvider implements
     protected Object createResponse(Method method, Object[] args, MessageContext responseContext,
                                     OperationDescription operationDesc) throws Throwable {
         Message responseMsg = responseContext.getMessage();
+        try {
 
-        if (log.isDebugEnabled()) {
-            log.debug("Processing the response Message to create the return value(s).");
-        }
+            if (log.isDebugEnabled()) {
+                log.debug("Processing the response Message to create the return value(s).");
+            }
 
-        // Find out if there was a fault on the response and create the appropriate 
-        // exception type.
-        if (hasFaultResponse(responseContext)) {
-            Throwable t = getFaultResponse(responseContext, operationDesc);
-            throw t;
-        }
+            // Find out if there was a fault on the response and create the appropriate 
+            // exception type.
+            if (hasFaultResponse(responseContext)) {
+                Throwable t = getFaultResponse(responseContext, operationDesc);
+                throw t;
+            }
 
-        Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false)
-                .demarshalResponse(responseMsg, args, operationDesc);
-        if (log.isDebugEnabled()) {
-            log.debug("The response was processed and the return value created successfully.");
+            Object object =
+                    MethodMarshallerFactory.getMarshaller(operationDesc, true)
+                                       .demarshalResponse(responseMsg, args, operationDesc);
+            if (log.isDebugEnabled()) {
+                log.debug("The response was processed and the return value created successfully.");
+            }
+            return object;
+        } finally {
+            responseMsg.close();
         }
-        return object;
     }
 
     protected static Throwable getFaultResponse(MessageContext msgCtx,

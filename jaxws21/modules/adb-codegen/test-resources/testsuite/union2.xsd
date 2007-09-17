@@ -1,0 +1,34 @@
+<s:schema elementFormDefault="qualified"
+          xmlns:s="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:tns="http://tempuri.org/union2"
+          targetNamespace="http://tempuri.org/union2">
+
+    <s:simpleType name="TestUnion1">
+        <s:union memberTypes="s:string s:boolean tns:TestRestriction"/>
+    </s:simpleType>
+    <s:simpleType name="TestRestriction">
+        <s:restriction base="s:string">
+        </s:restriction>
+    </s:simpleType>
+    <s:element name="TestUnionElement1" type="tns:TestUnion1"/>
+    <s:element name="TestUnionElement2">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="param1" type="tns:TestUnion1"/>
+            </s:sequence>
+            <s:attribute name="attribute1" type="tns:TestUnion1"/>
+        </s:complexType>
+    </s:element>
+    <s:simpleType name="TestList1">
+        <s:list itemType="s:string"/>
+    </s:simpleType>
+    <s:element name="TestListElement1">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="param1" type="tns:TestList1"/>
+            </s:sequence>
+            <s:attribute name="attribute1" type="tns:TestList1"/>
+        </s:complexType>
+    </s:element>
+</s:schema>

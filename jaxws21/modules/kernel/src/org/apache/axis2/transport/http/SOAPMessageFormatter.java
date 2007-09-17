@@ -133,6 +133,16 @@ public class SOAPMessageFormatter implements MessageFormatter {
                 && !"\"\"".equals(soapActionString.trim())) {
             contentType = contentType + "; action=\"" + soapActionString+ "\"";
         }
+        
+        // This is a quick safety catch.  Prior versions of SOAPFormatter
+        // placed a ';' at the end of the content-type.  Many vendors ignore this
+        // last ';'.  However it is not legal and some vendors report an error.
+        // To increase interoperability, the ';' is stripped off.
+        contentType = contentType.trim();
+        if (contentType.lastIndexOf(";") == (contentType.length()-1)) {
+            contentType = contentType.substring(0, contentType.length()-1);
+        }
+        
         if (log.isDebugEnabled()) {
             log.debug("contentType returned =" + contentType);
         }

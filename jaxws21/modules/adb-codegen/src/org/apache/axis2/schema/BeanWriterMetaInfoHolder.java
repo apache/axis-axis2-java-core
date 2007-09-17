@@ -61,6 +61,8 @@ public class BeanWriterMetaInfoHolder {
     protected String minInclusiveFacet = null;
 
     protected Map memberTypes = new HashMap();
+    protected List memberTypesKeys = new ArrayList();
+
     protected QName itemTypeQName;
     protected String itemTypeClassName;
     protected boolean isUnion;
@@ -809,8 +811,17 @@ public class BeanWriterMetaInfoHolder {
         this.memberTypes = memberTypes;
     }
 
+    public List getMemberTypesKeys() {
+        return memberTypesKeys;
+    }
+
+    public void setMemberTypesKeys(List memberTypesKeys) {
+        this.memberTypesKeys = memberTypesKeys;
+    }
+
     public void addMemberType(QName qname,String className){
         this.memberTypes.put(qname,className);
+        this.memberTypesKeys.add(qname);
     }
 
     public boolean isList() {

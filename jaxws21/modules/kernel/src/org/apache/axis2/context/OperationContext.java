@@ -27,6 +27,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,6 +64,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
     private static final Log log = LogFactory.getLog(OperationContext.class);
 
     private static final String myClassName = "OperationContext";
+
+    private boolean debugEnabled = log.isDebugEnabled();
 
     /**
      * An ID which can be used to correlate operations on an instance of
@@ -235,8 +239,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * @return Returns the axisOperation.
      */
     public AxisOperation getAxisOperation() {
-        if (needsToBeReconciled && !suppressWarnings) {
-            log.warn(logCorrelationIDString +
+        if (needsToBeReconciled && !suppressWarnings && debugEnabled) {
+            log.debug(logCorrelationIDString +
                     ":getAxisOperation(): ****WARNING**** OperationContext.activate(configurationContext) needs to be invoked.");
         }
 
@@ -759,14 +763,23 @@ public class OperationContext extends AbstractContext implements Externalizable 
         }
 
         if (key != null) {
-            // make sure this OperationContext object is registered in the
-            // list maintained by the ConfigurationContext object
-            boolean registrationSuceeded = activeCC.registerOperationContext(key, this);
-            if (!registrationSuceeded) {
-                // trace point
-                log.trace(logCorrelationIDString + ":activate():  OperationContext key [" + key +
-                        "] already exists in ConfigurationContext map.  This OperationContext [" +
-                        this.toString() + "] was not added to the table.");
+            // We only want to (re)register this if it's an outbound message
+            String mepString = getAxisOperation().getMessageExchangePattern();
+            if (mepString.equals(WSDL20_2006Constants.MEP_URI_OUT_ONLY)
+                || mepString.equals(WSDL20_2004_Constants.MEP_URI_OUT_ONLY)
+                || ((mepString.equals(WSDL20_2006Constants.MEP_URI_OUT_IN)
+                    || mepString.equals(WSDL20_2004_Constants.MEP_URI_OUT_IN))
+                    && !isComplete)) {
+                    
+                // make sure this OperationContext object is registered in the 
+                // list maintained by the ConfigurationContext object
+                boolean registrationSuceeded = activeCC.registerOperationContext(key, this, true);
+                if (!registrationSuceeded) {
+                    // trace point
+                    log.trace(logCorrelationIDString + ":activate():  OperationContext key [" + key
+                              + "] already exists in ConfigurationContext map.  This OperationContext ["
+                              + this.toString() + "] was not added to the table.");
+                }
             }
         }
 
@@ -920,8 +933,10 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // see if the activation has been done
         if (needsToBeReconciled) {
             // nope, need to do the activation first
-            log.trace(logCorrelationIDString +
-                    ":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
+            if (debugEnabled) {
+                log.debug(logCorrelationIDString +
+                          ":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
+            }
 
             return;
         }
@@ -933,9 +948,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
         String msgID = msg.getMessageID();
 
         if (msgID == null) {
-            // can't identify message context
-            log.trace(logCorrelationIDString +
-                    ":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
+            if (debugEnabled) {
+                // can't identify message context
+                log.debug(logCorrelationIDString +
+                        ":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
+            }
             return;
         }
 

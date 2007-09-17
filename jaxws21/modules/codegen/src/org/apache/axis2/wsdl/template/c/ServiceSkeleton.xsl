@@ -70,7 +70,7 @@
 	{
 	    axis2_svc_skeleton_t *svc_skeleton = NULL;
         /* Allocate memory for the structs */
-        svc_skeleton = AXIS2_MALLOC(env->allocator,
+        svc_skeleton = (axis2_svc_skeleton_t *)AXIS2_MALLOC(env->allocator,
             sizeof(axis2_svc_skeleton_t));
 
         svc_skeleton->ops = &amp;<xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var;

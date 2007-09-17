@@ -18,28 +18,16 @@
  */
 package org.apache.axis2.jaxws.server.dispatcher.factory;
 
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
-import org.apache.axis2.jaxws.server.dispatcher.JavaBeanDispatcher;
-import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
 
-import javax.xml.ws.Provider;
 
-public class EndpointDispatcherFactory {
+public interface EndpointDispatcherFactory {
 
-    public EndpointDispatcherFactory() {
-        super();
-    }
-
-    public EndpointDispatcher createEndpointDispatcher(Class serviceImplClass,
-                                                       Object serviceInstance) {
-        //		 TODO:  This check should be based on the EndpointDescription processing of annotations
-        //        It is left this way for now because some tests have an @WebService annotation on
-        //        Provider-based endpoints as a pre-existing workaround.
-        if (Provider.class.isAssignableFrom(serviceImplClass)) {
-            return new ProviderDispatcher(serviceImplClass, serviceInstance);
-        } else {
-            return new JavaBeanDispatcher(serviceImplClass, serviceInstance);
-        }
-    }
+    public EndpointDispatcher createEndpointDispatcher(Class serviceImpl, 
+        Object serviceInstance);
+    
+    public EndpointDispatcher createEndpointDispatcher(MessageContext mc, 
+        Class serviceImpl, Object serviceInstance);
 
 }

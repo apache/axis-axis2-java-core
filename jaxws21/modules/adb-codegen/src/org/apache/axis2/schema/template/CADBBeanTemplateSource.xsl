@@ -240,7 +240,7 @@
               </xsl:if>
 
               <!-- the following element can be inside array or independent one -->
-                 <xsl:if test="$nativePropertyType!='axis2_char_t*'">
+                 <!--xsl:if test="$nativePropertyType!='axis2_char_t*'"-->
               if( <xsl:value-of select="$justAttriName"/> != NULL)
               {
                  <!-- how to free all the ours things -->
@@ -258,7 +258,7 @@
                    </xsl:when>
 
                    <!-- free axis2_char_t s -->
-                   <xsl:when test="$nativePropertyType='axis2_char_t*'">
+                   <xsl:when test="$nativePropertyType='axis2_char_t*' and not(@isarray)">
                       AXIS2_FREE( env-> allocator, <xsl:value-of select="$attriName"/>);
                    </xsl:when>
 
@@ -294,7 +294,7 @@
                  <xsl:value-of select="$justAttriName"/> = NULL;
               }
 
-              </xsl:if>
+              <!--/xsl:if-->
               <!-- close tags arrays -->
               <xsl:if test="@isarray">
                     }
@@ -405,7 +405,7 @@
               <xsl:when test="not(@type)">
                 <xsl:for-each select="property">
                  <xsl:if test="position()=1">
-                    current_element = axiom_node_get_data_element( parent, env);
+                    current_element = (axiom_element_t *)axiom_node_get_data_element( parent, env);
                     qname = axiom_element_get_qname( current_element, env, parent);
                     if ( axutil_qname_equals( qname, env, <xsl:value-of select="$name"/>-> qname ) )
                     {
@@ -436,7 +436,7 @@
 
             <xsl:for-each select="property/@attribute">
              <xsl:if test="position()=1">
-                 parent_element = axiom_node_get_data_element( parent, env);
+                 parent_element = (axiom_element_t *)axiom_node_get_data_element( parent, env);
              </xsl:if>
             </xsl:for-each>
 
@@ -635,9 +635,7 @@
                     /**
                      * building <xsl:value-of select="$CName"/> array
                      */
-                     <xsl:if test="position()=1">
                        arr_list = axutil_array_list_create( env, 10);
-                     </xsl:if>
                    </xsl:if>
 
                      <!-- for each non attribute properties there will always be an element-->
@@ -673,7 +671,7 @@
                                for ( current_node = first_node; current_node != NULL;
                                              current_node = axiom_node_get_next_sibling( current_node, env))
                                {
-                                  current_element = axiom_node_get_data_element( current_node, env);
+                                  current_element = (axiom_element_t *)axiom_node_get_data_element( current_node, env);
                                   qname = axiom_element_get_qname( current_element, env, current_node);
                                   element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>", "<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
@@ -686,9 +684,12 @@
                                }
                              </xsl:otherwise>
                            </xsl:choose>
-                           if ( current_node != NULL)
+                           
+                           if (current_node <xsl:if test="(@minOccurs=0)"> &amp;&amp; axiom_node_get_data_element( current_node, env) &amp;&amp; !axutil_strcmp(&quot;<xsl:value-of select="$propertyName"/>&quot;, 
+                           axiom_element_get_localname((axiom_element_t *)axiom_node_get_data_element( current_node, env), env))
+                           </xsl:if>)
                            {
-                              <xsl:if test="../@ordered or not($anon or $istype)">current_element = axiom_node_get_data_element( current_node, env);</xsl:if>
+                              <xsl:if test="../@ordered or not($anon or $istype)">current_element = (axiom_element_t *)axiom_node_get_data_element( current_node, env);</xsl:if>
                               <!-- changes to following choose tag should be changed in another 2 places -->
                                  <xsl:choose>
                                     <xsl:when test="@ours">
@@ -957,7 +958,7 @@
                                              <xsl:when test="position()=1">first_node</xsl:when>
                                              <xsl:otherwise>axiom_node_get_next_sibling( current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; current_node = axiom_node_get_next_sibling( current_node, env))
                                {
-                                  current_element = axiom_node_get_data_element( current_node, env);
+                                  current_element = (axiom_element_t *)axiom_node_get_data_element( current_node, env);
                                   qname = axiom_element_get_qname( current_element, env, current_node);
 
                                   if ( axutil_qname_equals( element_qname, env, qname) )
@@ -1129,7 +1130,7 @@
                                  */
                                for ( i = 0, current_node = first_node; current_node != NULL; current_node = axiom_node_get_next_sibling( current_node, env))
                                {
-                                  current_element = axiom_node_get_data_element( current_node, env);
+                                  current_element = (axiom_element_t *)axiom_node_get_data_element( current_node, env);
                                   qname = axiom_element_get_qname( current_element, env, current_node);
 
                                   if ( axutil_qname_equals( element_qname, env, qname)
@@ -1373,13 +1374,13 @@
             </xsl:if>
             <xsl:for-each select="property/@attribute">
              <xsl:if test="position()=1">
-                 parent_element = axiom_node_get_data_element( parent, env);
+                 parent_element = (axiom_element_t *)axiom_node_get_data_element( parent, env);
              </xsl:if>
             </xsl:for-each>
             <xsl:if test="property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)">
                 if(has_parent)
                 {
-                    data_source = axiom_node_get_data_element(parent, env);
+                    data_source = (axiom_data_source_t *)axiom_node_get_data_element(parent, env);
                     if (!data_source)
                         return NULL;
                     stream = axiom_data_source_get_stream(data_source, env); /* assume parent is of type data source */
@@ -1790,7 +1791,7 @@
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
                             
                            text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
-                           if (text_value_2_temp)
+                           if (text_value_<xsl:value-of select="$position"/>_temp)
                            {
                                axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>_temp, axutil_strlen(text_value_<xsl:value-of select="$position"/>_temp));
                                AXIS2_FREE(env->allocator, text_value_<xsl:value-of select="$position"/>_temp);
@@ -1942,7 +1943,14 @@
                       return AXIS2_FAILURE;
                   }
                 </xsl:if>
-                <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
+                <xsl:choose>
+                    <xsl:when test="@type='axis2_char_t*' and not(@isarray)">
+                        <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> = (axis2_char_t *)axutil_strdup(env, param_<xsl:value-of select="$CName"/>);
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
+                    </xsl:otherwise>
+                </xsl:choose>
                 return AXIS2_SUCCESS;
              }
 

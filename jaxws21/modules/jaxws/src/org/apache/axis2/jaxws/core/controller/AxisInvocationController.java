@@ -81,6 +81,8 @@ public class AxisInvocationController extends InvocationController {
     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invoke(org.apache.axis2.jaxws.core.InvocationContext)
     */
     public MessageContext doInvoke(MessageContext request) {
+        
+        
         // We need the qname of the operation being invoked to know which 
         // AxisOperation the OperationClient should be based on.
         // Note that the OperationDesc is only set through use of the Proxy. Dispatch
@@ -109,6 +111,9 @@ public class AxisInvocationController extends InvocationController {
         try {
             execute(opClient, true, axisRequestMsgCtx);
         } catch (AxisFault af) {
+            // If an AxisFault was thrown, we need to cleanup the original OperationContext.
+            // Failure to do so results in a memory leak.
+            opClient.getOperationContext().cleanup();
             // save the fault in case it didn't come from the endpoint, and thus
             // there would be no message on the MessageContext
             faultexception = af;

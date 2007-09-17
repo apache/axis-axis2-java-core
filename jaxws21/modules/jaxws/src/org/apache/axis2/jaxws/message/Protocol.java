@@ -24,6 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Protocol Each message has a protocol (soap11, soap12, rest) This enum represents the protocol
  * within the Message sub-component
@@ -33,11 +37,39 @@ public enum Protocol {
 
     private static final Log log = LogFactory.getLog(Protocol.class);
 
+    private static Map<String, Protocol> protocolMappings; 
+    
     // These namespaces are used in the WSDL document to indentify a 
     // SOAP 1.1 vs. a SOAP 1.2 binding
     private static final String SOAP11_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap";
     private static final String SOAP12_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap12";
 
+    static {
+        // Normally a static HashMap can cause concurrency issues.
+        // However, if the HashMap is only queried (never modified) then 
+        // access by multiple theads is safe.
+        protocolMappings = new HashMap<String, Protocol>();
+        
+        protocolMappings.put(Protocol.SOAP11_WSDL_BINDING, Protocol.soap11);
+        protocolMappings.put(SOAPBinding.SOAP11HTTP_BINDING, Protocol.soap11);
+        protocolMappings.put(SOAPBinding.SOAP11HTTP_MTOM_BINDING, Protocol.soap11);
+        protocolMappings.put(Protocol.SOAP12_WSDL_BINDING, Protocol.soap12);
+        protocolMappings.put(SOAPBinding.SOAP12HTTP_BINDING, Protocol.soap12);
+        protocolMappings.put(SOAPBinding.SOAP12HTTP_MTOM_BINDING, Protocol.soap12);
+        protocolMappings.put(HTTPBinding.HTTP_BINDING, Protocol.rest);
+        
+        // Add each of the URLs with a "/" at the end for flexibility
+        Map<String, Protocol> updates = new HashMap<String, Protocol>();
+        Iterator<String> keys = protocolMappings.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (!key.endsWith("/")) {
+                updates.put(key + "/", protocolMappings.get(key));    
+            }
+        }
+        protocolMappings.putAll(updates);
+    }
+    
     /**
      * Return the right value for the Protocol based on the binding URL that was passed in.
      *
@@ -50,44 +82,17 @@ public enum Protocol {
             log.debug("Configuring message protocol for binding [" + url + "]");
         }
 
-        if (namespaceEquals(Protocol.SOAP11_WSDL_BINDING, url) ||
-                namespaceEquals(SOAPBinding.SOAP11HTTP_BINDING, url) ||
-                namespaceEquals(SOAPBinding.SOAP11HTTP_MTOM_BINDING, url)) {
-            if (debug) {
-                log.debug("SOAP 1.1 protocol configured for message");
+        Protocol proto = protocolMappings.get(url);
+        if (proto != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found protocol mapping: " + proto);
             }
-            return Protocol.soap11;
-        } else if (namespaceEquals(Protocol.SOAP12_WSDL_BINDING, url) ||
-                namespaceEquals(SOAPBinding.SOAP12HTTP_BINDING, url) ||
-                namespaceEquals(SOAPBinding.SOAP12HTTP_MTOM_BINDING, url)) {
-            if (debug) {
-                log.debug("SOAP 1.2 protocol configured for message");
-            }
-            return Protocol.soap12;
-        } else if (namespaceEquals(HTTPBinding.HTTP_BINDING, url)) {
-            if (debug) {
-                log.debug("XML/HTTP protocol configured for message");
-            }
-            return Protocol.rest;
+            return proto;
         } else {
             if (debug) {
                 log.debug("Protocol was not found for:" + url);
             }
             return null;
         }
-    }
-
-    /*
-    * Check to see if the two strings (namespaces) passed in are the same, but
-    * also accounts for any trailing "/" characters in the string.
-    */
-    private static boolean namespaceEquals(String target, String input) {
-        if (target.equals(input)) {
-            return true;
-        } else if ((target + "/").equals(input)) {
-            return true;
-        }
-
-        return false;
     }
 }
