@@ -171,7 +171,8 @@
                                      <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:if>
                                  </xsl:otherwise>
                              </xsl:choose>
-                        </xsl:for-each>,
+                        </xsl:for-each>
+                     <xsl:if test="count(input/param[@type!='']) > 0">,</xsl:if>
                     new <xsl:value-of select="$tempCallbackName"/>()
                 );
               </xsl:when>
