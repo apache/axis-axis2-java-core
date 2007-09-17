@@ -194,7 +194,7 @@ to the Axis2 classpath.</p>
 <h3>2. Starting up Axis2 Standalone Server</h3>
 <p>The standalone Axis2 server can be started by executing the
 following commands:<br />
-$AXIS2_HOME\bin\axis2server.bat (Windows)<br />
+%AXIS2_HOME%\bin\axis2server.bat (Windows)<br />
 $AXIS2_HOME/bin/axis2server.sh (Unix)</p>
 <p>After startup, the default web services included with Axis2 will
 be available by visiting http://localhost:8080/axis2/services/</p>
@@ -207,17 +207,17 @@ according to the instructions included with the Ant release.</p>
 <p>Locate the Ant build file (build.xml) inside the webapp
 directory, which resides in your Axis2 home directory (i.e:-
 $AXIS_HOME/webapp)". Run the Ant build by executing "ant
-create.war" inside the $AXIS2_HOME/webapps folder. You can find the
-generated axis2.war inside the $AXIS2_HOME/dist directory. All the
+create.war" inside the AXIS2_HOME/webapps folder. You can find the
+generated axis2.war inside the AXIS2_HOME/dist directory. All the
 services and modules that are present in the AXIS2_HOME/repository
 will be packed into the created axis2.war together with the Axis2
-configuration found at $AXIS2_HOME/conf/axis2.xml.</p>
+configuration found at AXIS2_HOME/conf/axis2.xml.</p>
 <p>Read <a href="#servlet_container">Installing Axis2 in a Servlet
 Container</a> to find out how to deploy the Axis2 Web application
 in a servlet container.</p>
 <a name="standalone4" id="standalone4"></a>
 <h3>4. Getting Familiar with the Convenient Axis2 Scripts</h3>
-<p>It is advised to add the $AXIS2_HOME/bin to the PATH, so that
+<p>It is advised to add the AXIS2_HOME/bin to the PATH, so that
 you'll be able to run the following scripts from anywhere.</p>
 <table border="1">
 <tbody>
