@@ -2453,6 +2453,7 @@ public class SchemaCompiler {
             } else {
                 fakeQname = qname;
                 simpleType.setName(fakeQname.getLocalPart());
+                changedSimpleTypeSet.add(simpleType);
                 simpleType.setSourceURI(fakeQname.getNamespaceURI());
             }
             simpleTypesMap.put(fakeQname, fullyQualifiedClassName);
