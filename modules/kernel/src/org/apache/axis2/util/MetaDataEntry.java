@@ -19,6 +19,10 @@
 
 package org.apache.axis2.util;
 
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
+
 import javax.xml.namespace.QName;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,14 +35,14 @@ import java.util.ArrayList;
  * An internal class for holding a set of information
  * about an object.
  */
-public class MetaDataEntry implements Externalizable {
+public class MetaDataEntry implements Externalizable, SafeSerializable {
     // serialization identifier
     private static final long serialVersionUID = 8978361069526299875L;
 
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
     // data to keep on an object
 
@@ -252,7 +256,8 @@ public class MetaDataEntry implements Externalizable {
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -269,10 +274,10 @@ public class MetaDataEntry implements Externalizable {
         //---------------------------------------------------------
         // various simple fields
         //---------------------------------------------------------
-        ObjectStateUtils.writeString(out, className, "MetaDataEntry.className");
-        ObjectStateUtils.writeString(out, qnameAsString, "MetaDataEntry.qnameAsString");
-        ObjectStateUtils.writeString(out, extraName, "MetaDataEntry.extraName");
-        ObjectStateUtils.writeArrayList(out, children, "MetaDataEntry.list");
+        out.writeObject(className);
+        out.writeObject(qnameAsString);
+        out.writeObject(extraName);
+        out.writeList(children);
 
     }
 
@@ -288,7 +293,8 @@ public class MetaDataEntry implements Externalizable {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
 
         // serialization version ID
         long suid = in.readLong();
@@ -302,7 +308,7 @@ public class MetaDataEntry implements Externalizable {
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
+        if (revID != REVISION_2) {
             throw new ClassNotFoundException(UNSUPPORTED_REVID);
         }
 
@@ -310,10 +316,10 @@ public class MetaDataEntry implements Externalizable {
         // various simple fields
         //---------------------------------------------------------
 
-        className = ObjectStateUtils.readString(in, "MetaDataEntry.className");
-        qnameAsString = ObjectStateUtils.readString(in, "MetaDataEntry.qnameAsString");
-        extraName = ObjectStateUtils.readString(in, "MetaDataEntry.extraName");
-        children = ObjectStateUtils.readArrayList(in, "MetaDataEntry.list");
+        className = (String) in.readObject();
+        qnameAsString = (String) in.readObject();
+        extraName = (String) in.readObject();
+        children = in.readArrayList();
 
     }
 

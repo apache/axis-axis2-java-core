@@ -20,7 +20,10 @@
 
 package org.apache.axis2.addressing;
 
-import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,7 +36,7 @@ import java.util.ArrayList;
 /**
  * Class RelatesTo
  */
-public class RelatesTo implements Externalizable {
+public class RelatesTo implements Externalizable, SafeSerializable {
 
     /*
      * setup for logging
@@ -61,9 +64,9 @@ public class RelatesTo implements Externalizable {
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
 
     /**
@@ -169,7 +172,8 @@ public class RelatesTo implements Externalizable {
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         // write out contents of this object
 
         // NOTES: For each item, where appropriate,
@@ -195,17 +199,15 @@ public class RelatesTo implements Externalizable {
         //---------------------------------------------------------
 
         // String relationshipType
-        ObjectStateUtils.writeString(out, relationshipType, "RelatesTo.relationshipType");
+        out.writeObject(relationshipType);
 
         // String value
-        ObjectStateUtils.writeString(out, value, "RelatesTo.value");
+        out.writeObject(value);
 
         //---------------------------------------------------------
         // collections and lists
         //---------------------------------------------------------
-
-        ObjectStateUtils
-                .writeArrayList(out, extensibilityAttributes, "RelatesTo.extensibilityAttributes");
+        out.writeList(extensibilityAttributes);
 
     }
 
@@ -222,7 +224,8 @@ public class RelatesTo implements Externalizable {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // serialization version ID
         long suid = in.readLong();
 
@@ -231,12 +234,12 @@ public class RelatesTo implements Externalizable {
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
 
         //---------------------------------------------------------
@@ -244,23 +247,17 @@ public class RelatesTo implements Externalizable {
         //---------------------------------------------------------
 
         // String relationshipType
-        relationshipType = ObjectStateUtils.readString(in, "RelatesTo.relationshipType");
+        relationshipType = (String)in.readObject();
 
         // String value
-        value = ObjectStateUtils.readString(in, "RelatesTo.value");
+        value = (String) in.readObject();
 
         //---------------------------------------------------------
         // collections and lists
         //---------------------------------------------------------
 
         // ArrayList extensibilityAttributes
-        ArrayList tmpAL2 = ObjectStateUtils.readArrayList(in, "RelatesTo.extensibilityAttributes");
-        if (tmpAL2 != null) {
-            extensibilityAttributes = new ArrayList(tmpAL2);
-        } else {
-            extensibilityAttributes = null;
-        }
-
+        extensibilityAttributes = in.readArrayList();
     }
 
 }

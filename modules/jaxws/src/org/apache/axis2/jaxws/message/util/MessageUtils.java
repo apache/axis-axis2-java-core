@@ -34,7 +34,9 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
@@ -51,13 +53,17 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -312,5 +318,77 @@ public class MessageUtils {
                 }
             }
         } 
+    }
+    
+    /**
+     * This is for debug purposes only
+     * @param mc
+     */
+    private static void persistMessageContext(MessageContext mc) {
+        try {
+            ConfigurationContext cc = mc.getConfigurationContext();
+            OperationContext op = mc.getOperationContext();
+            if (cc == null && op != null) {
+                cc = op.getConfigurationContext();
+            }
+            
+            File theFile = null;
+            theFile = File.createTempFile("DebugPersist", null);
+            
+            // Setup an output stream to a physical file
+            FileOutputStream outStream = new FileOutputStream(theFile);
+
+            // Attach a stream capable of writing objects to the 
+            // stream connected to the file
+            ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
+
+            // Try to save the message context
+            outObjStream.writeObject(mc);
+            outObjStream.flush();
+            outObjStream.close();
+            outStream.flush();
+            outStream.close();
+            
+            // Now read in the persisted message
+            // Setup an input stream to the file
+            FileInputStream inStream = new FileInputStream(theFile);
+            
+            // attach a stream capable of reading objects from the 
+            // stream connected to the file
+            ObjectInputStream inObjStream = new ObjectInputStream(inStream);
+
+            org.apache.axis2.context.MessageContext restoredMC = 
+                (org.apache.axis2.context.MessageContext) inObjStream.readObject();
+            inObjStream.close();
+            inStream.close();
+            if (cc == null && op == null) {
+                return;
+            }
+            
+            if (cc != null) {
+                restoredMC.activate(cc);
+            } else {
+                restoredMC.activateWithOperationContext(op);
+            }
+            if (restoredMC.getServiceContext() == null) {
+                throw ExceptionFactory.makeWebServiceException("No Service Group!");
+            }
+            if (cc != null) {
+                mc.activate(cc);
+            } else {
+                mc.activateWithOperationContext(op);
+            }
+            if (mc.getOperationContext() == null) {
+                throw new RuntimeException("No Operation Context");
+            }
+            if (mc.getOperationContext().getServiceContext() == null) {
+                throw new RuntimeException("No Service Context");
+            }
+            return;
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
+        }
+        return;
     }
 }

@@ -35,7 +35,7 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("java.lang.String", "logCorrelationIDString"),
             new FieldDescription("java.lang.String", "myClassName"),
             new FieldDescription("long", "serialVersionUID"),
-            new FieldDescription("int", "REVISION_1"),
+            new FieldDescription("int", "REVISION_2"),
             new FieldDescription("int", "revisionID"),
             new FieldDescription("java.lang.ThreadLocal", "currentMessageContext"),
             new FieldDescription("org.apache.axis2.client.Options", "options"),

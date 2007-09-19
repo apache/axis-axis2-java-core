@@ -18,12 +18,16 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,7 +38,7 @@ import java.io.ObjectOutput;
 /**
  * Class Parameter
  */
-public class Parameter implements Externalizable {
+public class Parameter implements Externalizable, SafeSerializable {
 
     /*
      * setup for logging
@@ -62,9 +66,9 @@ public class Parameter implements Externalizable {
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
 
     /**
@@ -261,7 +265,8 @@ public class Parameter implements Externalizable {
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -281,8 +286,7 @@ public class Parameter implements Externalizable {
 
         out.writeInt(type);
         out.writeBoolean(locked);
-
-        ObjectStateUtils.writeString(out, name, "Parameter.name");
+        out.writeObject(name);
 
         //---------------------------------------------------------
         // object fields
@@ -297,13 +301,8 @@ public class Parameter implements Externalizable {
         if (parameterElement != null) {
             tmp = parameterElement.toString();
         }
-
-        // treat as an object, don't do UTF
-        ObjectStateUtils.writeObject(out, tmp, "Parameter.parameterElement");
-
-        // TODO: error handling if this can't be serialized
-        ObjectStateUtils.writeObject(out, value, "Parameter.value");
-
+        out.writeObject(tmp); // parameterElement
+        out.writeObject(value);
     }
 
 
@@ -318,7 +317,8 @@ public class Parameter implements Externalizable {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // trace point
         if (log.isTraceEnabled()) {
             log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
@@ -333,12 +333,12 @@ public class Parameter implements Externalizable {
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
 
         //---------------------------------------------------------
@@ -347,8 +347,7 @@ public class Parameter implements Externalizable {
 
         type = in.readInt();
         locked = in.readBoolean();
-
-        name = ObjectStateUtils.readString(in, "Parameter.name");
+        name = (String) in.readObject();
 
         //---------------------------------------------------------
         // object fields
@@ -359,7 +358,7 @@ public class Parameter implements Externalizable {
         // to a String but will build the OMTree in the memory
 
         // treat as an object, don't do UTF
-        String tmp = (String) ObjectStateUtils.readObject(in, "Parameter.parameterElement");
+        String tmp = (String) in.readObject();
 
         // convert to an OMElement
         if (tmp != null) {
@@ -389,7 +388,7 @@ public class Parameter implements Externalizable {
         }
 
         // TODO: error handling if this can't be serialized
-        value = ObjectStateUtils.readObject(in, "Parameter.value");
+        value = in.readObject();
 
         //---------------------------------------------------------
         // done

@@ -25,14 +25,15 @@ import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigrator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * The PropertyMigrator implements the ApplicationContextMigrator in order to perform the necessary
  * manipulations of properties during a request or response flow.
  */
-public class PropertyMigrator implements ApplicationContextMigrator {
-	private static final Log log = LogFactory.getLog(PropertyMigrator.class);
+public class PropertyMigrator implements ApplicationContextMigrator, Serializable {
+    private static final Log log = LogFactory.getLog(PropertyMigrator.class);
     public void migratePropertiesFromMessageContext(Map<String, Object> userContext,
                                                     MessageContext messageContext) {
 

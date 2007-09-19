@@ -23,6 +23,11 @@ package org.apache.axis2.context;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.externalize.ActivateUtils;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
@@ -31,23 +36,23 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Well this is never clearly defined, what it does or the life-cycle.
  * So do NOT use this as it might not live up to your expectation.
  */
-public class ServiceContext extends AbstractContext implements Externalizable {
+public class ServiceContext extends AbstractContext 
+    implements Externalizable, SafeSerializable {
 
     /*
      * setup for logging
@@ -60,7 +65,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * An ID which can be used to correlate operations on an instance of
      * this object in the log files
      */
-    private String logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+    private String logCorrelationIDString = null;
 
 
     /**
@@ -82,9 +87,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
 
     public static final String SERVICE_OBJECT = "serviceObject";
@@ -313,7 +318,8 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         //---------------------------------------------------------
         // in order to handle future changes to the message 
         // context definition, be sure to maintain the 
@@ -330,75 +336,34 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
 
         out.writeLong(getLastTouchedTime());
-
         out.writeBoolean(cachingOperationContext);
+        out.writeObject(getLogCorrelationIDString());
 
-        ObjectStateUtils.writeString(out, logCorrelationIDString,
-                                     logCorrelationIDString + ".logCorrelationIDString");
-
-        // put some try..catch blocks around the following objects
-        // so that the writing to the output stream continues
-        // even if one of the objects can't be serialized
-
-        try {
-            // EndpointReference targetEPR
-            ObjectStateUtils.writeObject(out, targetEPR, "ServiceContext.targetEPR");
-        }
-        catch (Exception e1) {
-            // note that the utility class will provide the trace for the 
-            // exception so we won't have to
-            // so just consume the exception for now
-        }
-
-
-        try {
-            // EndpointReference myEPR
-            ObjectStateUtils.writeObject(out, myEPR, "ServiceContext.myEPR");
-        }
-        catch (Exception e2) {
-            // note that the utility class will provide the trace for the 
-            // exception so we won't have to
-            // so just consume the exception for now
-        }
-
+        // EndpointReference targetEPR
+        out.writeObject(targetEPR);
+       
+        // EndpointReference myEPR
+        out.writeObject(myEPR);
+        
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        Map tmpMap = getProperties();
-
-        HashMap tmpHashMap = null;
-
-        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
-            tmpHashMap = new HashMap(tmpMap);
-        }
-
-        ObjectStateUtils.writeHashMap(out, tmpHashMap, "ServiceContext.properties");
-
+        out.writeMap(getProperties());
+        
         //---------------------------------------------------------
         // AxisService
         //---------------------------------------------------------
-
-        String axisServMarker = "ServiceContext.metaAxisService";
-        ObjectStateUtils.writeString(out, axisServMarker, axisServMarker);
-
-        if (axisService == null) {
-            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        } else {
-            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+        metaAxisService = null;
+        if (axisService != null) {
             metaAxisService =
                     new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
-            ObjectStateUtils.writeObject(out, metaAxisService, "ServiceContext.metaAxisService");
         }
+        out.writeObject(metaAxisService);
 
         //---------------------------------------------------------
         // parent 
         //---------------------------------------------------------
-        // ServiceGroupContext serviceGroupContext;
-
-        ServiceGroupContext myParent = (ServiceGroupContext) getParent();
-
-        ObjectStateUtils.writeObject(out, myParent, "ServiceContext.parent ServiceGroupContext");
-
+        out.writeObject(getParent());
     }
 
 
@@ -413,7 +378,8 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references 
         // to be reconciled with the current engine setup
@@ -437,12 +403,12 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
 
         //---------------------------------------------------------
@@ -451,60 +417,39 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         long time = in.readLong();
         setLastTouchedTime(time);
-
         cachingOperationContext = in.readBoolean();
-
-        logCorrelationIDString =
-                ObjectStateUtils.readString(in, myClassName + ".logCorrelationIDString");
+        logCorrelationIDString = (String) in.readObject();
 
         // trace point
         if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace(myClassName + ":readExternal():  reading input stream for [" +
-                logCorrelationIDString + "]  ");
+                      getLogCorrelationIDString()+ "]  ");
         }
 
         // EndpointReference targetEPR
-        targetEPR = (EndpointReference) ObjectStateUtils.readObject(in, "ServiceContext.targetEPR");
+        targetEPR = (EndpointReference) in.readObject();
 
         // EndpointReference myEPR
-        myEPR = (EndpointReference) ObjectStateUtils.readObject(in, "ServiceContext.myEPR");
+        myEPR = (EndpointReference) in.readObject();
 
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-
-        HashMap tmpHashMap = ObjectStateUtils.readHashMap(in, "ServiceContext.properties");
-
-        properties = new HashMap();
-        if (tmpHashMap != null) {
-            setProperties(tmpHashMap);
-        }
+        properties = in.readHashMap();
 
         //---------------------------------------------------------
         // AxisService
         //---------------------------------------------------------
 
         // axisService is not usable until the meta data has been reconciled
-
-        ObjectStateUtils.readString(in, "ServiceContext.axisService");
-
-        boolean metaAxisServiceIsActive = in.readBoolean();
-
-        if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
-            metaAxisService = (MetaDataEntry) ObjectStateUtils
-                    .readObject(in, "ServiceContext.metaAxisService");
-        } else {
-            metaAxisService = null;
-        }
+        metaAxisService = (MetaDataEntry) in.readObject();
 
         //---------------------------------------------------------
         // parent 
         //---------------------------------------------------------
 
         // ServiceGroupContext is not usable until it has been activated 
-
-        metaParent = (ServiceGroupContext) ObjectStateUtils
-                .readObject(in, "ServiceContext.parent ServiceGroupContext");
+        metaParent = (ServiceGroupContext) in.readObject();
 
         //---------------------------------------------------------
         // other
@@ -547,7 +492,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         axisService = null;
 
         if (metaAxisService != null) {
-            axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(),
+            axisService = ActivateUtils.findService(axisConfig, metaAxisService.getClassName(),
                                                        metaAxisService.getQNameAsString());
         }
 
@@ -714,6 +659,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      *         entries.
      */
     public String getLogCorrelationIDString() {
+        if (logCorrelationIDString == null) {
+            logCorrelationIDString = myClassName + "@" + UUIDGenerator.getUUID();
+        }
         return logCorrelationIDString;
     }
 
@@ -727,7 +675,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(logCorrelationIDString + ":" + methodname + "(): ****WARNING**** "
+                log.debug(getLogCorrelationIDString()+ ":" + methodname + "(): ****WARNING**** "
                         + myClassName + ".activate(configurationContext) needs to be invoked.");
             }
         }
