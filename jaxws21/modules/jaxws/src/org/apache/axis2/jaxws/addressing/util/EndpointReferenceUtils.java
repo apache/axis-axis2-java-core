@@ -33,6 +33,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.metadata.InterfaceName;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -120,5 +121,14 @@ public final class EndpointReferenceUtils {
                 axis2EPR.addMetaData(omElement);
             }
         }
+    }
+    
+    public static void addInterface(EndpointReference axis2EPR, QName portType, QName interfaceType)
+    throws Exception {
+    	if (portType != null) {
+    		InterfaceName interfaceName = new InterfaceName(portType);
+    		OMElement omElement = interfaceName.toOM(interfaceType);
+    		axis2EPR.addExtensibleElement(omElement);
+    	}
     }
 }
