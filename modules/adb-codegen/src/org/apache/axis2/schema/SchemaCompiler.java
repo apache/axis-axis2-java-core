@@ -2489,7 +2489,9 @@ public class SchemaCompiler {
 
                     processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     //process facets
-                    processFacets(restriction, metaInfHolder, parentSchema);
+                    if (!SchemaConstants.XSD_BOOLEAN.equals(baseTypeName)){
+                        processFacets(restriction, metaInfHolder, parentSchema);
+                    }
                 } else {
                     //recurse
                     // this must be a xmlschema bug
