@@ -65,7 +65,7 @@
                     throws org.apache.axis2.AxisFault {
 
                 final javax.xml.stream.XMLStreamReader xmlReader = param.newXMLStreamReader();
-                while (!xmlReader.isEndElement()) {
+                while (!xmlReader.isStartElement()) {
                     try {
                         xmlReader.next();
                     } catch (javax.xml.stream.XMLStreamException e) {
