@@ -2591,6 +2591,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         // Write out the local properties on the MessageContext
         // Don't write out the properties from other hierarchical layers.
+        // (i.e. don't use getProperties())
         out.writeUTF("properties"); // write marker
         out.writeMap(properties);
 
@@ -3116,6 +3117,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
+        // read local properties
         in.readUTF(); // Read marker
         properties  = in.readHashMap();
 
@@ -3931,7 +3933,8 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        copy.setProperties(getProperties());
+        // Only set the local properties (i.e. don't use getProperties())
+        copy.setProperties(properties);
 
         //---------------------------------------------------------
         // special data
