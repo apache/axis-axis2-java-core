@@ -13,7 +13,7 @@
         * <xsl:value-of select="$axis2_name"/>.h
         *
         * This file was auto-generated from WSDL
-        * by the Apache Axis2 Java version: #axisVersion# #today#
+        * by the Apache Axis2/Java version: #axisVersion# #today#
         */
         <xsl:for-each select="property">
           <xsl:if test="@ours">
@@ -117,16 +117,32 @@
             const axutil_env_t *env);
         </xsl:if>
 
-        axiom_node_t* AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_serialize(
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-            const axutil_env_t *env,
-            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent);
+        <xsl:if test="@simple">
+            axis2_status_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_deserialize_from_string(
+                            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                                            const axutil_env_t *env,
+                                            axis2_char_t *node_value);
+        </xsl:if>
 
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_deserialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env, axiom_node_t* parent);
+
+        axiom_node_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_serialize(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env,
+            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent, int tag_closed);
+
+
+        <xsl:if test="@simple">
+            axis2_char_t* AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_serialize_to_string(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env);
+        </xsl:if>
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
