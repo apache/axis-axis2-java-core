@@ -246,7 +246,28 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
-				</executions>
+                    <execution>
+						<id>fault-module-package</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+								<property name="aar.tmp.dir" location="${basedir}/target/tmp"/>
+                                <mkdir dir="${aar.tmp.dir}/META-INF"/>
+                                <copy file="${basedir}/resources/smtpfault-module.xml" tofile="${aar.tmp.dir}/META-INF/module.xml"/>
+                                <copy todir="${aar.tmp.dir}">
+                                    <fileset dir="${basedir}/target/classes">
+                                        <include name="**/*SMTPFaultHandler.class"/>
+                                    </fileset>
+                                </copy>
+                                <jar destfile="${basedir}/target/smtpfault.mar" basedir="${aar.tmp.dir}"/>
+                                <delete dir="${aar.tmp.dir}"/>
+                            </tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+                </executions>
 			</plugin>
 		</plugins>
 	</build>
