@@ -22,11 +22,14 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 
+import javax.xml.ws.handler.MessageContext.Scope;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * The <tt>MEPContext</tt> is the version of the MessageContext
@@ -352,21 +355,20 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
      */
     public Map<String, Object> getApplicationScopedProperties() {
         Map<String, Object> tempMap = new HashMap<String, Object>();
-        // better performance:
         if (!scopes.containsValue(Scope.APPLICATION)) {
             return tempMap;
         }
-        for(Iterator it = requestMC.getProperties().keySet().iterator(); it.hasNext();) {
-            String key = (String)it.next();
-            if ((getScope(key).equals(Scope.APPLICATION) && (requestMC.getProperties().containsKey(key)))) {
-                tempMap.put(key, get(key));
+        for(Iterator it = requestMC.getProperties().entrySet().iterator(); it.hasNext();) {
+            Entry entry = (Entry)it.next();
+            if (getScope((String)entry.getKey()).equals(Scope.APPLICATION)) {
+                tempMap.put((String)entry.getKey(), entry.getValue());
             }
         }
         if (responseMC != null) {
-            for(Iterator it = responseMC.getProperties().keySet().iterator(); it.hasNext();) {
-                String key = (String)it.next();
-                if ((getScope(key).equals(Scope.APPLICATION) && (responseMC.getProperties().containsKey(key)))) {
-                    tempMap.put(key, get(key));
+            for(Iterator it = responseMC.getProperties().entrySet().iterator(); it.hasNext();) {
+                Entry entry = (Entry)it.next();
+                if (getScope((String)entry.getKey()).equals(Scope.APPLICATION)) {
+                    tempMap.put((String)entry.getKey(), entry.getValue());
                 }
             }
         }

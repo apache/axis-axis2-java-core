@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -96,17 +97,28 @@ public class ApplicationContextMigratorUtil {
         ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
         if (sd != null) {
             ConfigurationContext configCtx = sd.getAxisConfigContext();
-            List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>)configCtx.getProperty(contextMigratorListID);
-            synchronized(migratorList){
-                if (migratorList != null) {
-                    ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
-                    while (itr.hasNext()) {
-                        ApplicationContextMigrator cpm = itr.next();
-                        if (log.isDebugEnabled()) {
-                            log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesToMessageContext");
-                        }
-                        cpm.migratePropertiesToMessageContext(new ApplicationPropertyMapReader(requestContext, messageContext.getMEPContext()), messageContext);
+            List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configCtx.getProperty(contextMigratorListID);
+            if (migratorList != null) {
+                
+                // Create copy to avoid using shared list
+                List listCPM = null;
+                
+                // synchronize on non-null migratorList
+                synchronized(migratorList){
+                     listCPM = new ArrayList(migratorList);
+                }
+                
+                ListIterator<ApplicationContextMigrator> itr = listCPM.listIterator();   // Iterate over non-shared list
+                while (itr.hasNext()) {
+                    ApplicationContextMigrator cpm = itr.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesToMessageContext");
                     }
+                    
+                    // TODO: Synchronizing here is expensive too.
+                    // If a cpm requires synchronization, it should provide it inside of its migratePropertiesFromMessageContext implementation.
+                    
+                    cpm.migratePropertiesToMessageContext(new ApplicationPropertyMapReader(requestContext, messageContext.getMEPContext()), messageContext);
                 }
             }
         }
@@ -130,16 +142,27 @@ public class ApplicationContextMigratorUtil {
             List<ApplicationContextMigrator> migratorList =
                     (List<ApplicationContextMigrator>)configCtx.getProperty(contextMigratorListID);
 
-            synchronized(migratorList){
-                if (migratorList != null) {
-                    ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
-                    while (itr.hasNext()) {
-                        ApplicationContextMigrator cpm = itr.next();
-                        if (log.isDebugEnabled()) {
-                            log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesFromMessageContext");
-                        }
-                        cpm.migratePropertiesFromMessageContext(new ApplicationPropertyMapWriter(responseContext, messageContext.getMEPContext()), messageContext);
+            if (migratorList != null) {
+                
+                // Create copy to avoid using shared list
+                List listCPM = null;
+                
+                // synchronize on non-null migratorList
+                synchronized(migratorList){
+                     listCPM = new ArrayList(migratorList);
+                }
+            
+                ListIterator<ApplicationContextMigrator> itr = listCPM.listIterator();   // Iterate over non-shared list
+                while (itr.hasNext()) {
+                    ApplicationContextMigrator cpm = itr.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesFromMessageContext");
                     }
+
+                    // TODO: Synchronizing here is expensive too.
+                    // If a cpm requires synchronization, it should provide it inside of its migratePropertiesFromMessageContext implementation.
+
+                    cpm.migratePropertiesFromMessageContext(new ApplicationPropertyMapWriter(responseContext, messageContext.getMEPContext()), messageContext);
                 }
             }
         }
