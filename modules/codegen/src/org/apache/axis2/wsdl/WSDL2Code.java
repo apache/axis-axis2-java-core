@@ -40,7 +40,7 @@ public class WSDL2Code {
 
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg1"));
-        for (int i = 2; i <= 36; i++) {
+        for (int i = 2; i <= 37; i++) {
             System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
         }
         System.exit(0);
