@@ -858,7 +858,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 Definition innerDefinition = wsdlImport.getDefinition();
-                if(stack.contains(innerDefinition)){
+                if(!stack.contains(innerDefinition)){
                     // find the binding recursively
                     portType = getPortType(portTypeQName, innerDefinition, stack);
                     if (portType != null) {
