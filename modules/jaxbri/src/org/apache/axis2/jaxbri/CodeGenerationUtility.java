@@ -99,7 +99,7 @@ public class CodeGenerationUtility {
                 XmlSchema schema = (XmlSchema)schemas.get(i);
                 InputSource inputSource =
                         new InputSource(new StringReader(getSchemaAsString(schema)));
-                inputSource.setSystemId(baseURI);
+                inputSource.setSystemId(schema.getTargetNamespace());
                 xmlObjectsVector.add(inputSource);
             }
 
@@ -114,7 +114,7 @@ public class CodeGenerationUtility {
                         if(schema.getTargetNamespace().equals(publicId)){
                             InputSource inputSource =
                                     new InputSource(new StringReader(getSchemaAsString(schema)));
-                            inputSource.setSystemId(baseURI);
+                            inputSource.setSystemId(schema.getTargetNamespace());
                             return inputSource;
                         }
                     }
