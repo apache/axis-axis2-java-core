@@ -5,7 +5,6 @@
     <xsl:template match="/classes">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
-        <xsl:variable name="axis2_capsname">ADB_<xsl:value-of select="@caps-name"/></xsl:variable>
        /**
         * <xsl:value-of select="$axis2_name"/>.c
         *
@@ -30,7 +29,6 @@
         <xsl:variable name="name">_<xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="istype"><xsl:value-of select="@type"/></xsl:variable>
-        <xsl:variable name="axis2_capsname">ADB_<xsl:value-of select="@caps-name"/></xsl:variable>
 
         <xsl:variable name="originalName"><xsl:value-of select="@originalName"/></xsl:variable>
         <xsl:variable name="nsuri"><xsl:value-of select="@nsuri"/></xsl:variable>
@@ -170,20 +168,6 @@
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="capspropertyType">
-                 <xsl:choose>
-                   <xsl:when test="@isarray">AXUTIL_ARRAY_LIST</xsl:when>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                 </xsl:choose>
-              </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
@@ -195,19 +179,6 @@
                     axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
                 </xsl:choose></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                 </xsl:choose>
-              </xsl:variable>
-              <xsl:variable name="nativeCapspropertyType"><!--these are used in arrays to take the native type-->
-                 <xsl:choose>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
@@ -372,7 +343,6 @@
                 </xsl:variable>
                 <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
-                <xsl:variable name="CapsCName"><xsl:value-of select="@caps-cname"></xsl:value-of></xsl:variable>
   
                 <!-- here only simple type possible -->
                 <xsl:choose>
@@ -636,20 +606,6 @@
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="capspropertyType">
-                 <xsl:choose>
-                   <xsl:when test="@isarray">AXUTIL_ARRAY_LIST</xsl:when>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                 </xsl:choose>
-              </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
@@ -663,22 +619,8 @@
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="nativeCapspropertyType"><!--these are used in arrays to take the native type-->
-                 <xsl:choose>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                 </xsl:choose>
-              </xsl:variable>
               <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
               <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
-              <xsl:variable name="CapsCName"><xsl:value-of select="@caps-cname"></xsl:value-of></xsl:variable>
 
               <xsl:variable name="attriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
@@ -1496,20 +1438,6 @@
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
-                  <xsl:variable name="capspropertyType">
-                     <xsl:choose>
-                       <xsl:when test="@isarray">AXUTIL_ARRAY_LIST</xsl:when>
-                       <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                       <xsl:when test="@ours"><xsl:choose>
-                        <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                        ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                        <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                        <xsl:otherwise>
-                        AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                    </xsl:choose></xsl:when>
-                       <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                     </xsl:choose>
-                  </xsl:variable>
                   <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                      <xsl:choose>
                        <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
@@ -1521,19 +1449,6 @@
                         axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
                     </xsl:choose></xsl:when>
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:variable>
-                  <xsl:variable name="nativeCapspropertyType"><!--these are used in arrays to take the native type-->
-                     <xsl:choose>
-                       <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                       <xsl:when test="@ours"><xsl:choose>
-                        <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                        ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                        <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                        <xsl:otherwise>
-                        AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                    </xsl:choose></xsl:when>
-                       <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
                      </xsl:choose>
                   </xsl:variable>
                   <xsl:variable name="propertyName"><xsl:value-of select="@originalName"></xsl:value-of></xsl:variable>
@@ -1787,20 +1702,6 @@
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="capspropertyType">
-                 <xsl:choose>
-                   <xsl:when test="@isarray">AXUTIL_ARRAY_LIST</xsl:when>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                 </xsl:choose>
-              </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
@@ -1812,19 +1713,6 @@
                     axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
                 </xsl:choose></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                 </xsl:choose>
-              </xsl:variable>
-              <xsl:variable name="nativeCapspropertyType"><!--these are used in arrays to take the native type-->
-                 <xsl:choose>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="propertyName"><xsl:value-of select="@originalName"></xsl:value-of></xsl:variable>
@@ -2024,20 +1912,6 @@
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="capspropertyType">
-                 <xsl:choose>
-                   <xsl:when test="@isarray">AXUTIL_ARRAY_LIST</xsl:when>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
-                 </xsl:choose>
-              </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
@@ -2049,19 +1923,6 @@
                     axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
                 </xsl:choose></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                 </xsl:choose>
-              </xsl:variable>
-              <xsl:variable name="nativeCapspropertyType"><!--these are used in arrays to take the native type-->
-                 <xsl:choose>
-                   <xsl:when test="not(@type)">AXIOM_NODE</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    ADB_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">AXUTIL_<xsl:value-of select="@caps-type"/></xsl:when>
-                    <xsl:otherwise>
-                    AXIS2_<xsl:value-of select="@caps-type"/></xsl:otherwise>
-                </xsl:choose></xsl:when>
-                   <xsl:otherwise><xsl:value-of select="@caps-type"/></xsl:otherwise> <!-- this will not be used -->
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="propertyName"><xsl:value-of select="@originalName"></xsl:value-of></xsl:variable>
