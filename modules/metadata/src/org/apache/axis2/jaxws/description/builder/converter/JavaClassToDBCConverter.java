@@ -43,8 +43,11 @@ import org.apache.axis2.jaxws.description.builder.WebFaultAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceProviderAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JavaClassToDBCConverter {
+    private static final Log log = LogFactory.getLog(JavaClassToDBCConverter.class);
 
     private Class serviceClass;
 
@@ -85,10 +88,9 @@ public class JavaClassToDBCConverter {
                     }
                 }
                 catch (ClassNotFoundException e) {
-                    // TODO: (JLB) Make this an error log?
-                    System.out
-                            .println("Class not found exception caught for class: " + seiClassName);
-                    e.printStackTrace();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Class not found exception caught for class: " + seiClassName, e);
+                    }
                 }
             }
         }
