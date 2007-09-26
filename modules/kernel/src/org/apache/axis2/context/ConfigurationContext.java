@@ -88,6 +88,10 @@ public class ConfigurationContext extends AbstractContext {
     private String cachedServicePath = null;
     protected List contextListeners;
 
+    /**
+     * Constructor
+     * @param axisConfiguration - AxisConfiguration for which to create a context
+     */
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
@@ -105,6 +109,11 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Initializes the ClusterManager for this ConfigurationContext
+     * 
+     * @throws AxisFault
+     */
     public void initCluster() throws AxisFault {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
         if (clusterManager != null) {
@@ -278,7 +287,7 @@ public class ConfigurationContext extends AbstractContext {
     /**
      * Registers a OperationContext with a given message ID.
      * If the given message id already has a registered operation context,
-     * no change is made and the methid resturns false.
+     * no change is made and the method returns false.
      *
      * @param messageID
      * @param mepContext
@@ -336,6 +345,11 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Adds the given ServiceGroupContext into the SOAP session table
+     * 
+     * @param serviceGroupContext ServiceGroup Context to add
+     */
     public void addServiceGroupContextIntoSoapSessionTable(
             ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
@@ -346,6 +360,10 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
+    /**
+     * Adds the given ServiceGroupContext into the Application Scope table
+     * @param serviceGroupContext The Service Group Context to add
+     */
     public void addServiceGroupContextIntoApplicationScopeTable
             (ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContexts == null) {
@@ -369,6 +387,10 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Returns the AxisConfiguration
+     * @return Returns AxisConfiguration
+     */
     public AxisConfiguration getAxisConfiguration() {
         return axisConfiguration;
     }
@@ -391,6 +413,14 @@ public class ConfigurationContext extends AbstractContext {
         return opCtx;
     }
 
+    /**
+     * Finds the OperationContext given the Operation name, Service Name, and ServiceGroupName
+     * 
+     * @param operationName - OperationName to find
+     * @param serviceName - ServiceName to find
+     * @param serviceGroupName - ServiceGroupName to find
+     * @return Returns OperationContext <code>OperationContext<code>
+     */
     public OperationContext findOperationContext(String operationName, String serviceName,
                                                  String serviceGroupName) {
         if (operationName == null) {
@@ -469,7 +499,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Allows users to resolve the path relative to the root diretory.
+     * Allows users to resolve the path relative to the root directory.
      *
      * @param path
      * @return
@@ -483,6 +513,14 @@ public class ConfigurationContext extends AbstractContext {
         return null;
     }
 
+    /**
+     * Retrieve the ServiceGroupContext from the SOAP session table
+     * 
+     * @param serviceGroupContextId Service Group Context ID to search on
+     * @param msgContext Message Context to search on
+     * @return Returns a ServiceGroupContext
+     * @throws AxisFault if ServiceGroupContext cannot be found
+     */
     public ServiceGroupContext getServiceGroupContextFromSoapSessionTable(
             String serviceGroupContextId,
             MessageContext msgContext) throws AxisFault {
@@ -575,6 +613,8 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
+     * Set the AxisConfiguration to the specified configuration
+     * 
      * @param configuration
      */
     public void setAxisConfiguration(AxisConfiguration configuration) {
@@ -629,10 +669,20 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Retrieve the ListenerManager
+     * 
+     * @return Returns the ListenerManager
+     */
     public ListenerManager getListenerManager() {
         return listenerManager;
     }
 
+    /**
+     * Set the TransportManager to the given ListenerManager
+     * 
+     * @param listenerManager The ListenerManager for which to set the TransportManager
+     */
     public void setTransportManager(ListenerManager listenerManager) {
         this.listenerManager = listenerManager;
     }
@@ -651,6 +701,9 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Called during shutdown to clean up all Contexts
+     */
     public void cleanupContexts() {
         if ((applicationSessionServiceGroupContexts != null) &&
             (applicationSessionServiceGroupContexts.size() > 0)) {
@@ -674,6 +727,12 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     * Invoked during shutdown to stop the ListenerManager and 
+     * perform configuration cleanup
+     * 
+     * @throws AxisFault
+     */
     public void terminate() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.stop();
@@ -706,6 +765,11 @@ public class ConfigurationContext extends AbstractContext {
         dir.delete();
     }
 
+    /**
+     * Retrieves the ServiceContext path
+     * 
+     * @return path to the ServiceContext
+     */
     public String getServiceContextPath() {
         if (cachedServicePath == null) {
             cachedServicePath = internalGetServiceContextPath();
@@ -729,6 +793,10 @@ public class ConfigurationContext extends AbstractContext {
         return path;
     }
 
+    /**
+     * Retrieves the ServicePath
+     * @return The path to the Service
+     */
     public String getServicePath() {
         if (servicePath == null || servicePath.trim().length() == 0) {
             throw new IllegalArgumentException("service path cannot be null or empty");
@@ -736,14 +804,26 @@ public class ConfigurationContext extends AbstractContext {
         return servicePath.trim();
     }
 
+    /**
+     * Sets the ServicePath to the given string
+     * @param servicePath The service path for which to set
+     */
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
     }
 
+    /**
+     * Retrieves the ContextRoot
+     * @return The ContextRoot
+     */
     public String getContextRoot() {
         return contextRoot;
     }
 
+    /**
+     * Sets the context root to the given string
+     * @param contextRoot The context root for which to set
+     */
     public void setContextRoot(String contextRoot) {
         if (contextRoot != null) {
             this.contextRoot = contextRoot.trim();  // Trim before storing away for good hygiene
@@ -765,6 +845,10 @@ public class ConfigurationContext extends AbstractContext {
         return serviceGroupContextTimoutInterval;
     }
 
+    /**
+     * Removes the given ServiceGroup from the ServiceGroup context
+     * @param serviceGroup
+     */
     public void removeServiceGroupContext(AxisServiceGroup serviceGroup) {
         if (serviceGroup != null) {
             Object obj = applicationSessionServiceGroupContexts.get(
@@ -787,6 +871,9 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.context.AbstractContext#getRootContext()
+     */
     public ConfigurationContext getRootContext() {
         return this;
     }
