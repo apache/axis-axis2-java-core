@@ -989,59 +989,77 @@ class ServiceDescriptionImpl
 
     private void validateImplementation(DescriptionBuilderComposite seic) {
         /*
-           *	Verify that an impl class implements all the methods of the SEI. We
-           *  have to verify this because an impl class is not required to actually use
-           *  the 'implements' clause. So, if it doesn't, the Java compiler won't
-           *	catch it. Don't need to worry about chaining because only one EndpointInterface
-           *  can be specified, and the SEI cannot specify an EndpointInterface, so the Java
-           *	compiler will take care of everything else.
-           */
+         *  Verify that an impl class implements all the methods of the SEI. We have to verify this 
+         *  because an impl class is not required to actually use the 'implements' clause. So, if 
+         *  it doesn't, the Java compiler won't catch it. Don't need to worry about chaining 
+         *  because only one EndpointInterface can be specified, and the SEI cannot specify an 
+         *  EndpointInterface, so the Java compiler will take care of everything else.
+         *  
+         *  Note, however, that we do need to take overloaded methods into a consideration.  The
+         *  same method name can be specified for multiple methods, but they can have different
+         *  parameters.  Note that methods which differ only in the return type or the exceptions
+         *  thrown are not overloaded (and therefore would cause a compile error).
+         */
 
-        HashMap<String, MethodDescriptionComposite> compositeHashMap = 
-            new HashMap<String, MethodDescriptionComposite>();
-        Iterator<MethodDescriptionComposite> compIterator =
-                composite.getMethodDescriptionsList().iterator();
-        while (compIterator.hasNext()) {
-            MethodDescriptionComposite mdc = compIterator.next();
-            compositeHashMap.put(mdc.getMethodName(), mdc);
-        }
+        List<MethodDescriptionComposite> implMethods = composite.getMethodDescriptionsList();
         // Add methods declared in the implementation's superclass
-        addSuperClassMethods(compositeHashMap, composite);
+        addSuperClassMethods(implMethods, composite);
 
-        HashMap<String, MethodDescriptionComposite> seiMethodHashMap = 
-            new HashMap<String, MethodDescriptionComposite>();
-        Iterator<MethodDescriptionComposite> seiMethodIterator =
-                seic.getMethodDescriptionsList().iterator();
-        while (seiMethodIterator.hasNext()) {
-            MethodDescriptionComposite mdc = seiMethodIterator.next();
-            seiMethodHashMap.put(mdc.getMethodName(), mdc);
-        }
+        List<MethodDescriptionComposite> seiMethods = seic.getMethodDescriptionsList();
         // Add any methods declared in superinterfaces of the SEI
-        addSuperClassMethods(seiMethodHashMap, seic);
+        addSuperClassMethods(seiMethods, seic);
 
         // Make sure all the methods in the SEI (including any inherited from superinterfaces) are
-        // implemented by the bean (including inherited methods on the bean).
-        Iterator<MethodDescriptionComposite> verifySEIIterator =
-                seiMethodHashMap.values().iterator();
+        // implemented by the bean (including inherited methods on the bean), taking into
+        // account overloaded methods.
+        Iterator<MethodDescriptionComposite> verifySEIIterator = seiMethods.iterator();
         while (verifySEIIterator.hasNext()) {
-            MethodDescriptionComposite mdc = verifySEIIterator.next();
-            // TODO: This does not take into consideration overloaded java methods!
-            MethodDescriptionComposite implMDC = compositeHashMap.get(mdc.getMethodName());
+            MethodDescriptionComposite seiMDC = verifySEIIterator.next();
             
-            if (implMDC == null) {
-                // TODO: RAS/NLS
-                throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
-                                + composite.getClassName() + "; missing method name: " +
-                                mdc.getMethodName() + "; endpointInterface: " +
-                                seic.getClassName());
-            } else {
-                //At least we found it, now make sure that signatures match up
+            // Make sure the implementation implements this SEI method.  Since we have to account
+            // for method overloading, we look for ALL methods with the same name in the 
+            // implementation, then from that collection of methods, we look for one that has the 
+            // same parameters.  If we find one with the same parameters, then we check the return
+            // and exceptions.  Note that in Java, overloaded methods are ones that have the same
+            // name but different parameters; a difference in the return type or thrown exceptions
+            // does not constitute overloading and is a compile error.
+            Iterator<MethodDescriptionComposite> implMDCIterator = implMethods.iterator();
+            boolean methodImplFound = false;
+            while (implMDCIterator.hasNext()) {
+                MethodDescriptionComposite implMDC = implMDCIterator.next();
                 
-                //Check for exception and signature matching
-                validateMethodExceptions(mdc, implMDC, seic.getClassName());
-                validateMethodReturnValue(mdc, implMDC, seic.getClassName());
-                validateMethodParameters(mdc, implMDC, seic.getClassName());
+                if (seiMDC.getMethodName().equals(implMDC.getMethodName())) {
+                    // The method names match, so now check the parameters
+                    try {
+                        validateMethodParameters(seiMDC, implMDC, seic.getClassName());
+                        methodImplFound = true;
+                    }
+                    catch (Exception ex) {
+                        // The parameters didn't match, so we'll check the next 
+                        // implemntation method on the next iteration of the inner loop.
+                    }
+                    
+                    // If the name and the parameters matched, then we've found the method
+                    // implementation, even if it was overloaded. Now check the return value and
+                    // thrown exceptions.  Note these will methods throw exceptions if validation fails.
+                    // If all the validation passes, we can break out of the inner loop since we 
+                    // found the implementation for this sei method.
+                    if (methodImplFound) {
+                        validateMethodExceptions(seiMDC, implMDC, seic.getClassName());
+                        validateMethodReturnValue(seiMDC, implMDC, seic.getClassName());
+                        break;
+                    }
+                }
+            }
+            
+            if (!methodImplFound) {
+                // We didn't find the implementation for this SEI method, so throw a validation
+                // exception.
+                throw ExceptionFactory.makeWebServiceException(
+                    "Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
+                    + composite.getClassName() + "; missing method name: " +
+                    seiMDC.getMethodName() + "; endpointInterface: " +
+                    seic.getClassName());
             }
         }
     }
@@ -1201,24 +1219,23 @@ class ServiceDescriptionImpl
     }
 
     /**
-     * Adds any methods declared in superclasses to the HashMap.  The hierachy starting with the DBC
+     * Adds any methods declared in superclasses to the List.  The hierachy starting with the DBC
      * will be walked up recursively, adding methods from each parent DBC encountered.
      * <p/>
      * Note that this can be used for either classes or interfaces.
      *
-     * @param methodMap
-     * @param dbc
+     * @param methodList The current collection of methods, including overloaded ones
+     * @param dbc The composite to be checked for methods to be added to the collection
      */
-    private void addSuperClassMethods(HashMap methodMap, DescriptionBuilderComposite dbc) {
+    private void addSuperClassMethods(List<MethodDescriptionComposite> methodList, DescriptionBuilderComposite dbc) {
         DescriptionBuilderComposite superDBC = dbcMap.get(dbc.getSuperClassName());
         if (superDBC != null) {
-            Iterator<MethodDescriptionComposite> mIter =
-                    superDBC.getMethodDescriptionsList().iterator();
+            Iterator<MethodDescriptionComposite> mIter = superDBC.getMethodDescriptionsList().iterator();
             while (mIter.hasNext()) {
                 MethodDescriptionComposite mdc = mIter.next();
-                methodMap.put(mdc.getMethodName(), mdc);
+                methodList.add(mdc);
             }
-            addSuperClassMethods(methodMap, superDBC);
+            addSuperClassMethods(methodList, superDBC);
         }
     }
 
