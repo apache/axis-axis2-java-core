@@ -524,7 +524,7 @@
                                     <xsl:when test="(@restrictionBaseType)">
                                        <xsl:choose>
                                         <xsl:when test="(@patternFacet)">
-                                            if (java.lang.String.valueOf(param).matches("<xsl:value-of select="$patternFacet"/>")) {
+                                            if (org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).matches("<xsl:value-of select="$patternFacet"/>")) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
@@ -532,7 +532,7 @@
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@lenFacet)">
-                                            if ( java.lang.String.valueOf(param).length() == <xsl:value-of select="@lenFacet"/> ) {
+                                            if (org.apache.axis2.databinding.utils.ConverterUtil.convertToString(param).length() == <xsl:value-of select="@lenFacet"/> ) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
