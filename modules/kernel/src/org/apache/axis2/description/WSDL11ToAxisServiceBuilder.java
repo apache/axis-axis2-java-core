@@ -2136,19 +2136,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
 
-                } else if (AddressingConstants.Final.WSAW_ANONYMOUS
-                        .equals(unknown.getElementType())) {
-                    if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
-                        AxisOperation axisOperation = (AxisOperation) description;
-                        if (unknown.getElement().getFirstChild() != null
-                            && unknown.getElement().getFirstChild()
-                                .getNodeType() == Node.TEXT_NODE) {
-                            String anonymousValue = unknown.getElement()
-                                    .getFirstChild().getNodeValue();
-                            AddressingHelper.setAnonymousParameterValue(
-                                    axisOperation, anonymousValue);
-                        }
-                    }
                 }    else if (wsdl4jExtensibilityElement.getElementType() != null &&
                         wsdl4jExtensibilityElement.getElementType().getNamespaceURI().equals(
                                 org.apache.axis2.namespace.Constants.FORMAT_BINDING)) {

@@ -55,15 +55,15 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
                 // Check if the wsa:MessageID is required or not.
                 checkMessageIDHeader(msgContext);
             }
-
-            // Check that if anonymous flag is in effect that the replyto and faultto are valid
-            //checkAnonymous(msgContext);
         }
 
         if (JavaUtils.isFalseExplicitly(flag)) {
             // Check that if wsaddressing=required that addressing headers were found inbound
             checkUsingAddressing(msgContext);
         }
+        
+        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
+        checkWSAMInvocationPattern(msgContext);
 
         return InvocationResponse.CONTINUE;
     }
@@ -95,38 +95,40 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
      * Check that if a wsaw:Anonymous value was set on the AxisOperation that the values in the
      * ReplyTo+FaultTo are valid and fault if not.
      */
-    private void checkAnonymous(MessageContext msgContext) throws AxisFault {
-        String anonymous =
-                AddressingHelper.getAnonymousParameterValue(msgContext.getAxisOperation());
+    private void checkWSAMInvocationPattern(MessageContext msgContext) throws AxisFault {
+        String value =
+                AddressingHelper.getInvocationPatternParameterValue(msgContext.getAxisOperation());
         if (log.isTraceEnabled()) {
-            log.trace("checkAnonymous: Anonymous=" + anonymous);
+            log.trace("checkAnonymous: value=" + value);
         }
-        if ("required".equals(anonymous)) {
-            if (AddressingHelper.isReplyRedirected(msgContext)) {
-                EndpointReference anonEPR =
-                        new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
-                msgContext.setReplyTo(anonEPR);
-                msgContext.setFaultTo(anonEPR);
-                AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext,
-                                                                                 AddressingConstants.WSA_REPLY_TO);
-            }
-            if (AddressingHelper.isFaultRedirected(msgContext)) {
-                EndpointReference anonEPR =
-                        new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
-                msgContext.setReplyTo(anonEPR);
-                msgContext.setFaultTo(anonEPR);
-                AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext,
-                                                                                 AddressingConstants.WSA_FAULT_TO);
-            }
-        } else if ("prohibited".equals(anonymous)) {
-            if (!AddressingHelper.isReplyRedirected(msgContext)) {
-                AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext,
-                                                                                    AddressingConstants.WSA_REPLY_TO);
-            }
-            if (!AddressingHelper.isFaultRedirected(msgContext)) {
-                AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext,
-                                                                                    AddressingConstants.WSA_FAULT_TO);
-            }
+        if(!AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH.equals(value)){
+        	if (WSAM_INVOCATION_PATTERN_SYNCHRONOUS.equals(value)) {
+        		if (AddressingHelper.isReplyRedirected(msgContext)) {
+        			EndpointReference anonEPR =
+        				new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
+        			msgContext.setReplyTo(anonEPR);
+        			msgContext.setFaultTo(anonEPR);
+        			AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext,
+        					AddressingConstants.WSA_REPLY_TO);
+        		}
+        		if (AddressingHelper.isFaultRedirected(msgContext)) {
+        			EndpointReference anonEPR =
+        				new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
+        			msgContext.setReplyTo(anonEPR);
+        			msgContext.setFaultTo(anonEPR);
+        			AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext,
+        					AddressingConstants.WSA_FAULT_TO);
+        		}
+        	} else if (WSAM_INVOCATION_PATTERN_ASYNCHRONOUS.equals(value)) {
+        		if (!AddressingHelper.isReplyRedirected(msgContext)) {
+        			AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext,
+        					AddressingConstants.WSA_REPLY_TO);
+        		}
+        		if (!AddressingHelper.isFaultRedirected(msgContext)) {
+        			AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext,
+        					AddressingConstants.WSA_FAULT_TO);
+        		}
+        	}
         }
     }
 
