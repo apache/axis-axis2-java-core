@@ -19,6 +19,11 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPHeader;
@@ -31,22 +36,33 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public abstract class AddressingInHandler extends AbstractHandler implements AddressingConstants {
 
     protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
+    
+	public static final String DISABLE_REF_PARAMETER_EXTRACT = "disableRefParamExtract";
+    
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
-
+    private boolean disableRefparamExtract = false;
+    	  	 
+    public void init(HandlerDescription handlerdesc) {
+    	super.init(handlerdesc);
+    	disableRefparamExtract = JavaUtils.isTrueExplicitly(Utils.getParameterValue(handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT)));
+    	if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+    		log.debug("AddressingInHandler.init disableRefparamExtract="+disableRefparamExtract);
+    	}
+    }
+    
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
         if (msgContext.isPropertyTrue(IS_ADDR_INFO_ALREADY_PROCESSED)) {
@@ -128,22 +144,23 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)addressingHeadersIt.next();
             // TODO - Don't do role processing here!
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
-                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
+            	String localName = soapHeaderBlock.getLocalName();
+            	if (WSA_ACTION.equals(localName)) {
                     ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames,
                                                          duplicateHeaderNames);
-                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_TO.equals(localName)) {
                     ignoreTo =
                             checkDuplicateHeaders(WSA_TO, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_MESSAGE_ID.equals(localName)) {
                     ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames,
                                                             duplicateHeaderNames);
-                } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_REPLY_TO.equals(localName)) {
                     ignoreReplyTo = checkDuplicateHeaders(WSA_REPLY_TO, checkedHeaderNames,
                                                           duplicateHeaderNames);
-                } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_FAULT_TO.equals(localName)) {
                     ignoreFaultTo = checkDuplicateHeaders(WSA_FAULT_TO, checkedHeaderNames,
                                                           duplicateHeaderNames);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_FROM.equals(localName)) {
                     ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames,
                                                        duplicateHeaderNames);
                 }
@@ -155,21 +172,22 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         while (addressingHeadersIt2.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)addressingHeadersIt2.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
-                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
+            	String localName = soapHeaderBlock.getLocalName();
+                if (WSA_ACTION.equals(localName) && !ignoreAction) {
                     extractActionInformation(soapHeaderBlock, messageContext);
-                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
+                } else if (WSA_TO.equals(localName) && !ignoreTo) {
                     extractToEPRInformation(soapHeaderBlock, messageContextOptions, header,
                                             namespace);
                 } else
-                if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
+                if (WSA_MESSAGE_ID.equals(localName) && !ignoreMessageID) {
                     extractMessageIDInformation(soapHeaderBlock, messageContext);
-                } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
+                } else if (WSA_REPLY_TO.equals(localName) && !ignoreReplyTo) {
                     extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
-                } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
+                } else if (WSA_FAULT_TO.equals(localName) && !ignoreFaultTo) {
                     extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
-                } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
+                } else if (WSA_RELATES_TO.equals(localName)) {
                     extractRelatesToInformation(soapHeaderBlock, messageContextOptions);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
+                } else if (WSA_FROM.equals(localName) && !ignoreFrom) {
                     extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
                 }
             }
@@ -323,7 +341,9 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         // check for reference parameters
-        extractToEprReferenceParameters(epr, header, namespace);
+        if(!disableRefparamExtract){
+        	extractToEprReferenceParameters(epr, header, namespace);
+        }
         soapHeaderBlock.setProcessed();
 
         if (log.isTraceEnabled()) {
