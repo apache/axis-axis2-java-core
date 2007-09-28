@@ -843,7 +843,7 @@
                     prefix = parentQName.getPrefix();
                     namespace = parentQName.getNamespaceURI();
 
-                    if (namespace != null) {
+                    if ((namespace != null) &amp;&amp; (namespace.trim().length() > 0)) {
                         java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
                         if (writerPrefix != null) {
                             xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
