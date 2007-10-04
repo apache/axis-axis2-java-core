@@ -41,6 +41,7 @@
                java method -->
         /**
          * Auto generated method signature
+         * <xsl:value-of select="@comment"/>
          <!--  select only the body parameters  -->
          <xsl:choose>
             <xsl:when test="$isbackcompatible = 'true'">

@@ -40,6 +40,8 @@
                java method -->
         /**
          * Auto generated method signature
+         * <xsl:value-of select="@comment"/>
+         
          <xsl:choose>
             <xsl:when test="$isbackcompatible = 'true'">
                 <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>

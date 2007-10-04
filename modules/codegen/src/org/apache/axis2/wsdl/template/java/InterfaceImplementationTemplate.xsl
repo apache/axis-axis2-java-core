@@ -231,6 +231,7 @@
                 <xsl:if test="$isSync='1'">
                     /**
                      * Auto generated method signature
+                     * <xsl:value-of select="@comment"/>
                      * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@name"/>
                     <xsl:for-each select="input/param[@type!='']">
                      * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
@@ -568,6 +569,7 @@
             <xsl:if test="$isAsync='1'">
                 /**
                 * Auto generated method signature for Asynchronous Invocations
+                * <xsl:value-of select="@comment"/>
                 * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@name"/>
                 <xsl:for-each select="input/param[@type!='']">
                     * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
@@ -873,6 +875,10 @@
             <!-- Start of in only mep-->
             <xsl:if test="$mep='10' or $mep='11'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <!-- for the in only mep there is no notion of sync or async. And there is no return type also -->
+                /**
+                  * Auto generated method signature
+                  * <xsl:value-of select="@comment"/>
+                  */
                 public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
                  <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                     <xsl:choose>

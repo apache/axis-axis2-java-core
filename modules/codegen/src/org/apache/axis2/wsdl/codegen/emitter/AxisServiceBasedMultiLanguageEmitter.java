@@ -2164,6 +2164,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
                 WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
 
+        // add documentation for this operation
+        String comment = "";
+        if (axisOperation.getDocumentation() != null){
+            comment = axisOperation.getDocumentation();
+        }
+        addAttribute(doc, "comment", comment, methodElement);
+
         String messageExchangePattern = axisOperation.getMessageExchangePattern();
         
         //Jaxws Specific
