@@ -29,13 +29,11 @@
             <xs:element name="last" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
-
     <xs:simpleType name="simpleType">
         <xs:restriction base="xs:string">
             <xs:pattern value="[A-Z]*"></xs:pattern>
         </xs:restriction>
     </xs:simpleType>
-
     <xs:simpleType name="baseType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="s1"></xs:enumeration>
@@ -44,7 +42,6 @@
             <xs:enumeration value="s4"></xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
-
     <xs:element name="fullName">
         <xs:complexType>
             <xs:simpleContent>
@@ -56,19 +53,36 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-
     <xs:complexType name="ExtendedComplexType">
         <xs:complexContent>
             <xs:extension base="tns:type">
-                  <xs:sequence>
-                      <xs:element name="parentElement1" type="xs:string"></xs:element>
-                      <xs:element name="parentElement2" type="xs:string"></xs:element>
-                  </xs:sequence>
+                <xs:sequence>
+                    <xs:element name="parentElement1" type="xs:string"></xs:element>
+                    <xs:element name="parentElement2" type="xs:string"></xs:element>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
     <xs:element name="TestComplexElement" type="tns:ExtendedComplexType">
-
     </xs:element>
+
+    <xs:complexType name="P2apiAgPatAppt">
+        <xs:complexContent>
+            <xs:extension base="tns:P2apiDataRptGrp">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="aG_MAX_APPT_DETL_ROW" type="xs:int"/>
+                    <xs:element minOccurs="0" name="apptLst" nillable="true" type="xs:anyType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="P2apiDataRptGrp">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="sORT_ASCENDING" type="xs:int"/>
+            <xs:element minOccurs="0" name="sORT_DESCENDING" type="xs:int"/>
+            <xs:element minOccurs="0" name="SORT_ASCENDING" type="xs:int"/>
+            <xs:element minOccurs="0" name="SORT_DESCENDING" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
 </schema>

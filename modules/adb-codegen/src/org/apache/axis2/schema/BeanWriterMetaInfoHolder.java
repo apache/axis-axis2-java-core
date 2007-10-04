@@ -61,6 +61,7 @@ public class BeanWriterMetaInfoHolder {
     protected String minInclusiveFacet = null;
 
     protected Map memberTypes = new HashMap();
+    protected Map xmlNameJavaNameMap = new HashMap();
     protected List memberTypesKeys = new ArrayList();
 
     protected QName itemTypeQName;
@@ -862,6 +863,18 @@ public class BeanWriterMetaInfoHolder {
 
     public void setHasParticleType(boolean hasParticleType) {
         this.hasParticleType = hasParticleType;
+    }
+
+    public void addXmlNameJavaNameMapping(String xmlName,String javaName){
+        this.xmlNameJavaNameMap.put(xmlName,javaName);
+    }
+
+    public boolean isJavaNameMappingAvailable(String xmlName){
+        return this.xmlNameJavaNameMap.containsKey(xmlName);
+    }
+
+    public String getJavaName(String xmlName){
+        return (String) this.xmlNameJavaNameMap.get(xmlName);
     }
 
 }
