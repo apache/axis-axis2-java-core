@@ -81,6 +81,9 @@
                     </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
+         <xsl:for-each select="fault/param[@type!='']">
+             * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+         </xsl:for-each>
          */
 
         <xsl:choose>

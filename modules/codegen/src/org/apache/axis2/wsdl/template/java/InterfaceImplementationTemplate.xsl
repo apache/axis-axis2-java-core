@@ -236,6 +236,9 @@
                     <xsl:for-each select="input/param[@type!='']">
                      * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
                     </xsl:text></xsl:for-each>
+                    <xsl:for-each select="fault/param[@type!='']">
+                     * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+                    </xsl:for-each>
                      */
 
                     <xsl:choose>
@@ -878,6 +881,11 @@
                 /**
                   * Auto generated method signature
                   * <xsl:value-of select="@comment"/>
+                 <xsl:if test="$mep='11'">
+                   <xsl:for-each select="fault/param[@type!='']">
+                     * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+                    </xsl:for-each>
+                  </xsl:if>
                   */
                 public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
                  <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>

@@ -2167,7 +2167,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // add documentation for this operation
         String comment = "";
         if (axisOperation.getDocumentation() != null){
-            comment = axisOperation.getDocumentation();
+            comment = axisOperation.getDocumentation().trim();
         }
         addAttribute(doc, "comment", comment, methodElement);
 
@@ -2794,6 +2794,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
 
                 //as for the name of a fault, we generate an exception
+                String faultComment = "";
+                if (msg.getDocumentation() != null){
+                    faultComment = msg.getDocumentation().trim();
+                }
+                addAttribute(doc, "comment", faultComment, paramElement);
                 addAttribute(doc, "name",
                         (String) fullyQualifiedFaultClassNameMap.get(msg.getName()),
                         paramElement);
