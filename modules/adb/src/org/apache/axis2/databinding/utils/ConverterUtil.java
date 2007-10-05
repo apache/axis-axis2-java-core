@@ -96,8 +96,7 @@ public class ConverterUtil {
     public static String convertToString(Date value) {
         // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
         // we have to serialize it with the GMT timezone
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
         return simpleDateFormat.format(value);
     }
 
