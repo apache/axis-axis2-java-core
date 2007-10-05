@@ -1370,7 +1370,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         while (faultKeyIterator.hasNext()) {
             Fault fault = (Fault) faults.get(faultKeyIterator.next());
             AxisMessage axisFaultMessage = new AxisMessage();
-
+            addDocumentation(axisFaultMessage,fault.getDocumentationElement());
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 axisFaultMessage
