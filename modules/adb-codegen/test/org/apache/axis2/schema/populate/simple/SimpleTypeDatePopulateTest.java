@@ -31,9 +31,12 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
                 "2002-02-28Z"
     } ;
     private String xmlString[] = {
-            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dateParam>",
-            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</dateParam>",
-            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</dateParam>"
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDate(values[0])) +"</dateParam>",
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDate(values[1]))+"</dateParam>",
+            "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDate(values[2]))+"</dateParam>"
     };
 
     protected void setUp() throws Exception {
@@ -44,8 +47,7 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     // force others to implement this method
     public void testPopulate() throws Exception {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
         Date date = null;
 
         for (int i = 0; i < values.length; i++) {

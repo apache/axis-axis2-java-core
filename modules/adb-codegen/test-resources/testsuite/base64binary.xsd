@@ -45,4 +45,14 @@
         <xs:element name="TestHexBinary" type="xmime:hexBinary"></xs:element>
         <xs:element name="ByteArray" nillable="true" type="xs:base64Binary"/>
 
+        <xs:element name="TestBase64MultiElement">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="param1" type="xs:base64Binary"/>
+                    <xs:element name="param2" type="xs:string"/>
+                    <xs:element name="param3" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+
 </xs:schema>
