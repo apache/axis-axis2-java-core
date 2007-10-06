@@ -65,7 +65,7 @@
                     throws org.apache.axis2.AxisFault {
 
                 final javax.xml.stream.XMLStreamReader xmlReader = param.newXMLStreamReader();
-                while (!xmlReader.isEndElement()) {
+                while (!xmlReader.isStartElement()) {
                     try {
                         xmlReader.next();
                     } catch (javax.xml.stream.XMLStreamException e) {
@@ -78,7 +78,8 @@
                     public void serialize(java.io.OutputStream outputStream, org.apache.axiom.om.OMOutputFormat omOutputFormat)
                             throws javax.xml.stream.XMLStreamException {
                         try {
-                            param.save(outputStream);
+                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
+                            param.save(outputStream,xmlOptions.setSaveNoXmlDecl());
                         } catch (java.io.IOException e) {
                             throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
                         }
@@ -87,7 +88,8 @@
                     public void serialize(java.io.Writer writer, org.apache.axiom.om.OMOutputFormat omOutputFormat)
                             throws javax.xml.stream.XMLStreamException {
                         try {
-                            param.save(writer);
+                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
+                            param.save(writer,xmlOptions.setSaveNoXmlDecl());
                         } catch (java.io.IOException e) {
                             throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
                         }
@@ -98,7 +100,8 @@
                         org.apache.axiom.om.impl.MTOMXMLStreamWriter mtomxmlStreamWriter =
                                                         (org.apache.axiom.om.impl.MTOMXMLStreamWriter) xmlStreamWriter;
                         try {
-                            param.save(mtomxmlStreamWriter.getOutputStream());
+                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
+                            param.save(mtomxmlStreamWriter.getOutputStream(),xmlOptions.setSaveNoXmlDecl());
                             mtomxmlStreamWriter.getOutputStream().flush();
                         } catch (java.io.IOException e) {
                             throw new javax.xml.stream.XMLStreamException("Problem with saving document", e);

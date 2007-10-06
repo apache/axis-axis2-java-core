@@ -691,13 +691,20 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "name", xmlName, property);
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
 
-            String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
-            // in a restriction if this element already there and array status have changed
-            // then we have to generate a new  name for this
-            if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
-                    (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
+            String javaName;
+            if (metainf.isJavaNameMappingAvailable(xmlName)) {
+                javaName = metainf.getJavaName(xmlName);
+            } else {
                 javaName = makeUniqueJavaClassName(propertyNames, xmlName);
+                // in a restriction if this element already there and array status have changed
+                // then we have to generate a new  name for this
+                if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
+                        (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
+                    javaName = makeUniqueJavaClassName(propertyNames, xmlName);
+                }
+                metainf.addXmlNameJavaNameMapping(xmlName,javaName);
             }
+
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
 
             if (parentMetaInf != null && metainf.isRestriction() && missingQNames.contains(name)) {

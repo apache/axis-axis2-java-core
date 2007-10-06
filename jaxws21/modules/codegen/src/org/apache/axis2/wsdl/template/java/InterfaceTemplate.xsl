@@ -60,10 +60,14 @@
          <xsl:if test="$isSync='1'">
 
         /**
-                * Auto generated method signature
+          * Auto generated method signature
+          * <xsl:value-of select="@comment"/>
                 <xsl:for-each select="input/param[@type!='']">
                     * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
                 </xsl:text></xsl:for-each>
+             <xsl:for-each select="fault/param[@type!='']">
+             * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+             </xsl:for-each>
          */
 
          <xsl:choose>
@@ -144,6 +148,7 @@
         <xsl:if test="$isAsync='1'">
          /**
             * Auto generated method signature for Asynchronous Invocations
+            * <xsl:value-of select="@comment"/>
             <xsl:for-each select="input/param[@type!='']">
                 * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
             </xsl:text></xsl:for-each>
@@ -183,7 +188,15 @@
         <!-- Code for in-only mep -->
        <xsl:if test="@mep='10' or @mep='11'">
        <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-
+       /**
+         * Auto generated method signature for Asynchronous Invocations
+         * <xsl:value-of select="@comment"/>
+           <xsl:if test="$mep='11'">
+               <xsl:for-each select="fault/param[@type!='']">
+                 * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+               </xsl:for-each>
+           </xsl:if>
+         */
         public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
          <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
          <xsl:choose>

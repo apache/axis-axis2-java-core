@@ -858,7 +858,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 Definition innerDefinition = wsdlImport.getDefinition();
-                if(stack.contains(innerDefinition)){
+                if(!stack.contains(innerDefinition)){
                     // find the binding recursively
                     portType = getPortType(portTypeQName, innerDefinition, stack);
                     if (portType != null) {
@@ -1370,7 +1370,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         while (faultKeyIterator.hasNext()) {
             Fault fault = (Fault) faults.get(faultKeyIterator.next());
             AxisMessage axisFaultMessage = new AxisMessage();
-
+            addDocumentation(axisFaultMessage,fault.getDocumentationElement());
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 axisFaultMessage
@@ -2136,19 +2136,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
 
-                } else if (AddressingConstants.Final.WSAW_ANONYMOUS
-                        .equals(unknown.getElementType())) {
-                    if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
-                        AxisOperation axisOperation = (AxisOperation) description;
-                        if (unknown.getElement().getFirstChild() != null
-                            && unknown.getElement().getFirstChild()
-                                .getNodeType() == Node.TEXT_NODE) {
-                            String anonymousValue = unknown.getElement()
-                                    .getFirstChild().getNodeValue();
-                            AddressingHelper.setAnonymousParameterValue(
-                                    axisOperation, anonymousValue);
-                        }
-                    }
                 }    else if (wsdl4jExtensibilityElement.getElementType() != null &&
                         wsdl4jExtensibilityElement.getElementType().getNamespaceURI().equals(
                                 org.apache.axis2.namespace.Constants.FORMAT_BINDING)) {

@@ -41,6 +41,7 @@
                java method -->
         /**
          * Auto generated method signature
+         * <xsl:value-of select="@comment"/>
          <!--  select only the body parameters  -->
          <xsl:choose>
             <xsl:when test="$isbackcompatible = 'true'">
@@ -82,6 +83,9 @@
                     </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>
+         <xsl:for-each select="fault/param[@type!='']">
+             * @throws <xsl:value-of select="@name"/> : <xsl:value-of select="@comment"/>
+         </xsl:for-each>
          */
         <xsl:choose>
             <xsl:when test="$isbackcompatible = 'true'">

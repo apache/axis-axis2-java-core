@@ -107,20 +107,23 @@ public class AddressingHelper {
      *
      * @param axisOperation
      */
-    public static String getAnonymousParameterValue(AxisOperation axisOperation) {
+    public static String getInvocationPatternParameterValue(AxisOperation axisOperation) {
         String value = "";
         if (axisOperation != null) {
             value = Utils.getParameterValue(
-                    axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
+                    axisOperation.getParameter(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME));
+            if(value !=null){
+            	value = value.trim();
+            }
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("getAnonymousParameterValue: value: '" + value + "'");
             }
         }
 
-        if (value == null || "".equals(value.trim())) {
-            value = "optional";
+        if (value == null || "".equals(value)) {
+            value = AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH;
         }
-        return value.trim();
+        return value;
     }
 
     /**
@@ -131,25 +134,25 @@ public class AddressingHelper {
      * @param axisOperation
      * @param value
      */
-    public static void setAnonymousParameterValue(AxisOperation axisOperation, String value) {
+    public static void setInvocationPatternParameterValue(AxisOperation axisOperation, String value) {
         if (value == null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("setAnonymousParameterValue: value passed in is null. return");
+                log.debug("setInvocationPatternParameterValue: value passed in is null. return");
             }
             return;
         }
 
         Parameter param =
-                axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
+                axisOperation.getParameter(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
         // If an existing parameter exists
         if (param != null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("setAnonymousParameterValue: Parameter already exists");
+                log.debug("setInvocationPatternParameterValue: Parameter already exists");
             }
             // and is not locked
             if (!param.isLocked()) {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: " +
+                    log.debug("setInvocationPatternParameterValue: Parameter not locked. Setting value: " +
                             value);
                 }
                 // set the value
@@ -158,15 +161,15 @@ public class AddressingHelper {
         } else {
             // otherwise, if no Parameter exists
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("setAnonymousParameterValue: Parameter does not exist");
+                log.debug("setInvocationPatternParameterValue: Parameter does not exist");
             }
             // Create new Parameter with correct name/value
             param = new Parameter();
-            param.setName(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
+            param.setName(AddressingConstants.WSAM_INVOCATION_PATTERN_PARAMETER_NAME);
             param.setValue(value);
             try {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("setAnonymousParameterValue: Adding parameter with value: " + value);
+                    log.debug("setInvocationPatternParameterValue: Adding parameter with value: " + value);
                 }
                 // and add it to the AxisOperation object
                 axisOperation.addParameter(param);
@@ -176,7 +179,7 @@ public class AddressingHelper {
                 // if statement.
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug(
-                            "setAnonymousParameterValue: addParameter failed: " + af.getMessage());
+                            "setInvocationPatternParameterValue: addParameter failed: " + af.getMessage());
                 }
             }
         }

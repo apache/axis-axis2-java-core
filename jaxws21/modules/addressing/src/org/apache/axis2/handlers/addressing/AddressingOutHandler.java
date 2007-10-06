@@ -113,6 +113,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         private boolean replaceHeaders;  // determines whether we replace the existing headers or not, if they present
         private boolean includeOptionalHeaders;
 
+        private ArrayList existingWSAHeaders = null;
+        
         public WSAHeaderWriter(MessageContext mc, boolean isSubmissionNamespace, boolean addMU,
                                boolean replace, boolean includeOptional) {
             if (log.isDebugEnabled()) {
@@ -138,6 +140,20 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             addressingNamespaceObject =
                     factory.createOMNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
+            // if there is no soap header in the envelope being processed, add one.
+            if (header == null) {
+            	header = factory.createSOAPHeader(envelope);
+            }else{
+            	ArrayList addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
+            	if(addressingHeaders!=null && !addressingHeaders.isEmpty()){
+            		existingWSAHeaders = new ArrayList();
+            		for(Iterator iter=addressingHeaders.iterator();iter.hasNext();){
+            			OMElement oe = (OMElement)iter.next();
+            			existingWSAHeaders.add(oe.getLocalName());
+            		}
+            	}
+            }
+            
             isFinalAddressingNamespace = !isSubmissionNamespace;
             addMustUnderstandAttribute = addMU;
             replaceHeaders = replace;
@@ -475,8 +491,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          *         true - if new headers can't be added.
          */
         private boolean isAddressingHeaderAlreadyAvailable(String name, boolean multipleHeaders) {
-            QName qname = new QName(addressingNamespaceObject.getNamespaceURI(), name,
-                                    addressingNamespaceObject.getPrefix());
+        	QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
             boolean status = false;
 
             if (multipleHeaders) {
@@ -488,16 +503,17 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                 }
             } else {
-                OMElement addressingHeader = header.getFirstChildWithName(qname);
-
-                if (addressingHeader != null && replaceHeaders) {
+            	 boolean exists = didAddressingHeaderExist(name);
+            	  	  	 
+            	 if (exists && replaceHeaders) {
+            	 	  	                         OMElement addressingHeader = header.getFirstChildWithName(qname);
                     if (log.isTraceEnabled()) {
                         log.trace("isAddressingHeaderAlreadyAvailable: Removing existing header:" +
                                 addressingHeader.getLocalName());
                     }
                     addressingHeader.detach();
                 } else {
-                    status = addressingHeader != null;
+                    status = exists;
                 }
             }
 
@@ -505,6 +521,20 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 log.trace("isAddressingHeaderAlreadyAvailable: name=" + name + " status=" + status);
             }
             return status;
+        }
+        
+        private boolean didAddressingHeaderExist(String headerName){
+        	if (log.isTraceEnabled()) {
+        		log.trace("didAddressingHeaderExist: headerName=" + headerName);
+        	}
+        	boolean result = false;
+        	if(existingWSAHeaders != null){
+        		result = existingWSAHeaders.contains(headerName);
+        		if (log.isTraceEnabled()) {
+        			log.trace("didAddressingHeaderExist: existingWSAHeaders=" + existingWSAHeaders+" result="+result);
+        		}
+        	}
+        	return result;
         }
 
         /**

@@ -131,6 +131,23 @@
 							<goal>run</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>build-repo</id>
+						<phase>test-compile</phase>
+						<configuration>
+							<tasks>
+								<copy toDir="target/test-classes/">
+									<fileset dir="test-resources/">
+										<include name="**/*.properties"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					
 				</executions>
 				<dependencies>
 					<!--<dependency>
@@ -169,9 +186,6 @@
 					<includes>
 						<include>**/*Tests.java</include>
 					</includes>
-					<excludes>
-						<exclude>**/AnnotationServiceImplDescriptionTests.java</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -320,7 +320,8 @@
 				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
 				<copy file="../../modules/mex-mar/target/mex-${version}.mar" tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
 				<copy file="../../modules/scripting/target/axis2-scripting-${version}.mar" tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
-			
+				<copy file="../../modules/kernel/target/smtpfault.mar" tofile="target/tmp-repository/modules/smtpfault.mar"/>
+
 				<!-- generate modules.list -->			        
 				<echo file="target/tmp-repository/modules/modules.list" append="false">
 #

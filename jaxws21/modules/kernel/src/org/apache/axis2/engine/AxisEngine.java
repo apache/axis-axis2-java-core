@@ -158,13 +158,19 @@ public class AxisEngine {
                                 "The incoming MessageContext is removed, " +
                                 "and the OperationContext is marked as incomplete");
                 }
-                String mepURI  = msgContext.getAxisOperation().getMessageExchangePattern();
-                if (WSDL2Constants.MEP_URI_OUT_IN.equals(mepURI)) {
-                    OperationContext opCtx = msgContext.getOperationContext();
-                    if (opCtx != null) {
-                        opCtx.removeMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                    }
-                }
+				AxisOperation axisOp = msgContext.getAxisOperation();
+                if(axisOp!=null){
+					String mepURI  = axisOp.getMessageExchangePattern();
+					if (WSDL2Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+						OperationContext opCtx = msgContext.getOperationContext();
+						if (opCtx != null) {
+							opCtx.removeMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+						}
+					}
+				}
+				else{
+					log.debug("Could not clean up op ctx for " + msgContext);
+				}
                 return pi;
             } else {
                 String errorMsg =

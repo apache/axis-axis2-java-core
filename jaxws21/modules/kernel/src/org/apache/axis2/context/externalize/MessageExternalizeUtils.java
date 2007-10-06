@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.util;
+package org.apache.axis2.context.externalize;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -46,7 +46,7 @@ import java.io.OutputStream;
  * 
  * Prolog :=
  *   NAME      (UTF) 
- *   VERSION   (INT)
+ *   REVISION  (INT)
  *   ACTIVE    (BOOL)
  *     [OPTIMIZED (BOOL)]  
  *        [OPTIMIZED_CONTENT_TYPE (UTF)]    <--- If OPTIMIZED=TRUE
@@ -63,12 +63,21 @@ import java.io.OutputStream;
  *   
  * </tt>
  */
-public class MessageExternalizeUtils {
+public class MessageExternalizeUtils  implements ExternalizeConstants {
     static final Log log = LogFactory.getLog(MessageExternalizeUtils.class);
+
+    /*
+     * @serial Tracks the revision level of a class to identify changes to the
+     * class definition that are compatible to serialization/externalization.
+     * If a class definition changes, then the serialization/externalization
+     * of the class is affected.
+     * Refer to the writeExternal() and readExternal() methods.
+     */
+    // supported revision levels, add a new level to manage compatible changes
+    private static final int REVISION_2 = 2;
+    // current revision level of this object
+    private static final int revisionID = REVISION_2;
     
-    // Change the version if the syntax of the externalized message is changed.
-    // Or if major changes are made to the underlying Axiom code.
-    static final int VERSION = 1;
     
     /**
      * Private Constructor.
@@ -88,16 +97,18 @@ public class MessageExternalizeUtils {
                                      MessageContext mc,
                                      String correlationIDString,
                                      OMOutputFormat outputFormat) throws IOException {
-
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":writeExternal(): start");
+        }
         SOAPEnvelope envelope = mc.getEnvelope();
         if (envelope == null) {
             // Case: No envelope
             out.writeUTF("NULL_ENVELOPE");
-            out.writeInt(VERSION);
-            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT); // Not Active
+            out.writeInt(revisionID);
+            out.writeBoolean(EMPTY_OBJECT); // Not Active
             out.writeInt(0);  // EndBlocks
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(correlationIDString + ":writeExternal(): msg  is Empty");
+            if (log.isDebugEnabled()) {
+                log.debug(correlationIDString + ":writeExternal(): end: msg is Empty");
             }
             return;
         }
@@ -105,8 +116,8 @@ public class MessageExternalizeUtils {
         // Write Prolog
         String msgClass = envelope.getClass().getName();
         out.writeUTF(msgClass);
-        out.writeInt(VERSION);
-        out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+        out.writeInt(revisionID);
+        out.writeBoolean(ACTIVE_OBJECT);
         if (outputFormat.isOptimized()) {
             out.writeBoolean(true);
             // Write out the contentType.
@@ -116,8 +127,8 @@ public class MessageExternalizeUtils {
         }
         out.writeUTF(outputFormat.getCharSetEncoding());
         out.writeUTF(envelope.getNamespace().getNamespaceURI());
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-            log.trace(correlationIDString + ":writeExternal(): " + 
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":writeExternal(): " + 
                       "optimized=[" + outputFormat.isOptimized() + "]  " +
                       "optimizedContentType " + outputFormat.getContentType() + "]  " +
                       "charSetEnc=[" + outputFormat.getCharSetEncoding() + "]  " +
@@ -139,6 +150,8 @@ public class MessageExternalizeUtils {
             
         } catch (IOException e) {
             throw e;
+        } catch (Throwable t) {
+            throw AxisFault.makeFault(t);
         } finally {
             bos.flush();
             bos.close();
@@ -149,6 +162,9 @@ public class MessageExternalizeUtils {
             out.writeInt(-1);
         } else {
             out.writeInt(0);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":writeExternal(): end");
         }
     }
     
@@ -162,29 +178,31 @@ public class MessageExternalizeUtils {
      */
     public static SOAPEnvelope readExternal(ObjectInput in,
                                             MessageContext mc,
-                                            String correlationIDString) throws IOException {
+                                            String correlationIDString) throws IOException, ClassNotFoundException {
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":readExternal(): start");
+        }
         SOAPEnvelope envelope = null;
         
         // Read Prolog
         // Read the class name and object state
         String name = in.readUTF();
-        int version = in.readInt();
+        int revision = in.readInt();
         
-        if (version != VERSION) {
-            throw new AxisFault("The version of the persisted message " + version + 
-                                " does not match the expected version " + VERSION +
-                                " Processing cannot continue.");
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":readExternal(): name= " + name  +
+                      " revision= " + revision);
         }
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-            log.trace(correlationIDString + ":readExternal(): name= " + name  +
-                      " version= " + VERSION);
+        // make sure the object data is in a revision level we can handle
+        if (revision != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
         
         
         boolean gotMsg = in.readBoolean();
-        if (gotMsg != ObjectStateUtils.ACTIVE_OBJECT) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                log.trace(correlationIDString + ":readExternal(): " +
+        if (gotMsg != ACTIVE_OBJECT) {
+            if (log.isDebugEnabled()) {
+                log.debug(correlationIDString + ":readExternal(): end:" +
                                 "no message present");
             }
             in.readInt(); // Read end of data blocks
@@ -199,8 +217,8 @@ public class MessageExternalizeUtils {
         }
         String charSetEnc = in.readUTF();
         String namespaceURI = in.readUTF();
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-            log.trace(correlationIDString + ":readExternal(): " +
+        if (log.isDebugEnabled()) {
+            log.debug(correlationIDString + ":readExternal(): " +
                       "optimized=[" + optimized + "]  " +
                       "optimizedContentType=[" + optimizedContentType + "]  " +
                       "charSetEnc=[" + charSetEnc + "]  " +
@@ -218,15 +236,11 @@ public class MessageExternalizeUtils {
                                                       optimizedContentType,
                                                       isSOAP);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                // TODO Why do we need to free the inputStream ?
-                // build the OM in order to free the input stream
                 envelope.buildWithAttachments();
             } else {
                 XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(mis, charSetEnc);
                 builder = new StAXSOAPModelBuilder(xmlreader, namespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-                // TODO Why do we need to free the inputStream ?
-                // build the OM in order to free the input stream
                 envelope.build();
             }
         } catch (Exception ex) {
@@ -243,6 +257,9 @@ public class MessageExternalizeUtils {
             // Close the message input stream.  This will ensure that the
             // underlying stream is advanced past the message.
             mis.close();
+            if (log.isDebugEnabled()) {
+                log.debug(correlationIDString + ":readExternal(): end");
+            }
         }
         return envelope;
     }
@@ -252,10 +269,10 @@ public class MessageExternalizeUtils {
      */
     private static class MessageOutputStream extends OutputStream {
         ObjectOutput out;
-        boolean isTrace;
+        boolean isDebug;
         MessageOutputStream(ObjectOutput out) {
             this.out = out;
-            isTrace = log.isTraceEnabled();
+            isDebug = log.isDebugEnabled();
         }
         
          
@@ -272,10 +289,8 @@ public class MessageExternalizeUtils {
          */
         public void write(byte[] b, int off, int len) throws IOException {
             if (len > 0) {
-                if (isTrace) {
-                    log.trace("Write data chunk with len=" + len);
-                    log.trace("Chunk = " + new String(b, off, len));
-                    System.out.println("Chunk = " + new String(b, off, len));
+                if (isDebug) {
+                    log.debug("Write data chunk with len=" + len);
                 }
                 // Write out the length and the data chunk
                 out.writeInt(len);
@@ -289,10 +304,8 @@ public class MessageExternalizeUtils {
          */
         public void write(byte[] b) throws IOException {
             if (b != null &&  b.length > 0) {
-                if (isTrace) {
-                    log.trace("Write data chunk with size=" + b.length);
-                    log.trace("Chunk = " + new String(b));
-                    System.out.println("Chunk = " + new String(b));
+                if (isDebug) {
+                    log.debug("Write data chunk with size=" + b.length);
                 }
                 // Write out the length and the data chunk
                 out.writeInt(b.length);
@@ -305,8 +318,8 @@ public class MessageExternalizeUtils {
          * Writes a single byte chunk of data to the ObjectOutput
          */
         public void write(int b) throws IOException {
-            if (isTrace) {
-                log.trace("Write one byte data chunk");
+            if (isDebug) {
+                log.debug("Write one byte data chunk");
             }
             // Write out the length and the data chunk
             out.writeInt(1);
@@ -322,7 +335,7 @@ public class MessageExternalizeUtils {
     private static class MessageInputStream extends InputStream {
         
         ObjectInput in;
-        boolean isTrace;
+        boolean isDebug;
         int chunkAvail = 0;
         boolean isEOD = false;
         
@@ -332,7 +345,7 @@ public class MessageExternalizeUtils {
          */
         MessageInputStream(ObjectInput in) {
             this.in = in;
-            isTrace = true; // TODO log.isTraceEnabled();
+            isDebug = log.isDebugEnabled();
         }
 
          
@@ -340,17 +353,20 @@ public class MessageExternalizeUtils {
          * Read a single logical byte
          */
         public int read() throws IOException {
-            if (isTrace) {
-                log.trace("invoking read()");
+            if (isDebug) {
+                log.debug("invoking read()");
             }
             // Determine how many bytes are left in the current data chunk
             updateChunkAvail();
+            int ret = 0;
             if (isEOD) {
-                return -1;
+                ret = -1;
             } else {
                 chunkAvail--;
-                return in.readByte();
+                ret = in.readByte();
             }
+            log.debug("returning " + ret);
+            return ret;
         }
 
          
@@ -358,8 +374,14 @@ public class MessageExternalizeUtils {
          * Read an array of logical bytes
          */
         public int read(byte[] b, int off, int len) throws IOException {
-            if (isTrace) {
-                log.trace("invoking read with off=" + off + " and len=" + len);
+            if (isDebug) {
+                log.debug("invoking read with off=" + off + " and len=" + len);
+            }
+            if (isEOD) {
+                if (isDebug) {
+                    log.debug("EOD returning -1");
+                }
+                return -1;
             }
             int bytesRead = 0;
             while ((len >0 && !isEOD)) {
@@ -379,6 +401,9 @@ public class MessageExternalizeUtils {
                     bytesRead += br;
                 }
             }
+            if (isDebug) {
+                log.debug("bytes read = " + bytesRead);
+            }
             return bytesRead;
         }
 
@@ -388,8 +413,8 @@ public class MessageExternalizeUtils {
         }
         
         public void close() throws IOException {
-            if (isTrace) {
-                log.trace("start close");
+            if (isDebug) {
+                log.debug("start close");
             }
             // Keep reading chunks until EOD
             if (!isEOD) {
@@ -398,8 +423,8 @@ public class MessageExternalizeUtils {
                     read(tempBuffer);
                 }
             }
-            if (isTrace) {
-                log.trace("end close");
+            if (isDebug) {
+                log.debug("end close");
             }
         }
         
@@ -414,12 +439,12 @@ public class MessageExternalizeUtils {
             // read the size of the next datablock
             if (chunkAvail == 0 && !isEOD) {
                 chunkAvail = in.readInt();
-                if (isTrace) {
-                    log.trace("Read chunk of size=" + chunkAvail);
+                if (isDebug) {
+                    log.debug("New DataBlock with size=" + chunkAvail);
                 }
                 if (chunkAvail <= 0) {
-                    if (isTrace) {
-                        log.trace("End of data");
+                    if (isDebug) {
+                        log.debug("End of data");
                     }
                     isEOD = true;
                     chunkAvail = 0;

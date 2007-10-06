@@ -23,12 +23,16 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -41,7 +45,8 @@ import java.util.Iterator;
 /**
  * Class ParameterIncludeImpl
  */
-public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
+public class ParameterIncludeImpl 
+    implements ParameterInclude, Externalizable, SafeSerializable {
 
     /*
      * setup for logging
@@ -69,9 +74,9 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
 
     /**
@@ -204,7 +209,8 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -221,7 +227,7 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
         //---------------------------------------------------------
         // collection of parameters
         //---------------------------------------------------------
-        ObjectStateUtils.writeHashMap(out, parameters, "ParameterIncludeImpl.parameters");
+        out.writeMap(parameters);
 
     }
 
@@ -237,7 +243,8 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // trace point
         if (log.isTraceEnabled()) {
             log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
@@ -252,35 +259,22 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
 
         //---------------------------------------------------------
         // collection of parameters
         //---------------------------------------------------------
-
-        HashMap tmp = ObjectStateUtils.readHashMap(in, "ParameterIncludeImpl.parameters");
-
-        if (tmp != null) {
-            if (parameters != null) {
-                parameters.putAll(tmp);
-            } else {
-                if (log.isTraceEnabled()) {
-                    log.trace(myClassName +
-                            ":readExternal():  WARNING: parameters doesnot have a defined HashMap ");
-                }
-            }
-        }
+        in.readMap(parameters);
 
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
-
     }
 
 }

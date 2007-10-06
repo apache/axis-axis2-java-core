@@ -812,6 +812,17 @@ public class AxisConfiguration extends AxisDescription {
         return transportsOut;
     }
 
+    /**
+     * This method needs to remain for a few Axis2 releases to support
+     * legacy apps still using it.
+     * 
+     * @param qname
+     * @deprecated Use {@link #isEngaged(String)}
+     */
+    public boolean isEngaged(QName qname) {
+        return isEngaged(qname.getLocalPart());
+    }
+    
     public boolean isEngaged(String moduleId) {
         AxisModule module = getModule(moduleId);
         if (module == null) {

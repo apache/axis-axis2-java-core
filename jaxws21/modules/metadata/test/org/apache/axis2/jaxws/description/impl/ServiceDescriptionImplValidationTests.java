@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 
 import javax.xml.ws.WebServiceException;
@@ -38,6 +39,9 @@ public class ServiceDescriptionImplValidationTests extends TestCase {
         MethodDescriptionComposite seiMDC = new MethodDescriptionComposite();
         seiMDC.setMethodName("seiMethod");
         seiComposite.addMethodDescriptionComposite(seiMDC);
+        WebServiceAnnot seiWebServiceAnnot = WebServiceAnnot.createWebServiceAnnotImpl();
+        seiWebServiceAnnot.setName(null);
+        seiComposite.setWebServiceAnnot(seiWebServiceAnnot);
 
         DescriptionBuilderComposite implComposite = new DescriptionBuilderComposite();
         implComposite.setClassName("org.apache.axis2.jaxws.description.impl.MyImpl");
@@ -62,6 +66,75 @@ public class ServiceDescriptionImplValidationTests extends TestCase {
         }
         catch (WebServiceException ex) {
             // Expected path
+        }
+        catch (Exception ex) {
+            fail("Caught wrong type of exception " + ex.toString());
+        }
+
+
+    }
+
+    public void testValidateOverloadedImplMethodsVsSEI() {
+        
+        // Tests that overloaded methods validate correctly.  Note that the methods are 
+        // intentionally added to the implementation and sei in a different order so that they
+        // don't coincidently pass validation just because they are in the same order in both
+        // collections.
+        //   seiMethod()
+        //   seiMethod(String)
+        
+        // Build up the SEI
+        DescriptionBuilderComposite seiComposite = new DescriptionBuilderComposite();
+        seiComposite.setClassName("org.apache.axis2.jaxws.description.impl.MySEI");
+
+        MethodDescriptionComposite seiMDC = new MethodDescriptionComposite();
+        seiMDC.setMethodName("seiMethod");
+        seiComposite.addMethodDescriptionComposite(seiMDC);
+        
+        MethodDescriptionComposite seiMDC2 = new MethodDescriptionComposite();
+        seiMDC2.setMethodName("seiMethod");
+        ParameterDescriptionComposite seiPDC = new ParameterDescriptionComposite();
+        seiPDC.setParameterType("java.lang.String");
+        seiMDC2.addParameterDescriptionComposite(seiPDC);
+        seiComposite.addMethodDescriptionComposite(seiMDC2);
+        
+        WebServiceAnnot seiWebServiceAnnot = WebServiceAnnot.createWebServiceAnnotImpl();
+        seiWebServiceAnnot.setName(null);
+        seiComposite.setWebServiceAnnot(seiWebServiceAnnot);
+
+        // Build up the Impl, but put the overloaded MDCs on in a different order than the SEI 
+        // so they don't just happen to pass validation
+        DescriptionBuilderComposite implComposite = new DescriptionBuilderComposite();
+        implComposite.setClassName("org.apache.axis2.jaxws.description.impl.MyImpl");
+
+        MethodDescriptionComposite implMDC = new MethodDescriptionComposite();
+        implMDC.setMethodName("seiMethod");
+        ParameterDescriptionComposite implPDC = new ParameterDescriptionComposite();
+        implPDC.setParameterType("java.lang.String");
+        implMDC.addParameterDescriptionComposite(implPDC);
+        implComposite.addMethodDescriptionComposite(implMDC);
+
+        MethodDescriptionComposite implMDC2 = new MethodDescriptionComposite();
+        implMDC2.setMethodName("seiMethod");
+        implComposite.addMethodDescriptionComposite(implMDC2);
+        
+        WebServiceAnnot webServiceAnnot = WebServiceAnnot.createWebServiceAnnotImpl();
+        webServiceAnnot.setName(null);
+        webServiceAnnot.setEndpointInterface("org.apache.axis2.jaxws.description.impl.MySEI");
+        implComposite.setWebServiceAnnot(webServiceAnnot);
+        implComposite.setIsInterface(false);
+
+        HashMap<String, DescriptionBuilderComposite> dbcList =
+                new HashMap<String, DescriptionBuilderComposite>();
+        dbcList.put(seiComposite.getClassName(), seiComposite);
+        dbcList.put(implComposite.getClassName(), implComposite);
+
+        try {
+            ServiceDescriptionImpl serviceDescImpl =
+                    new ServiceDescriptionImpl(dbcList, implComposite);
+        }
+        catch (WebServiceException ex) {
+            fail("Should NOT have caught exception for validation errors: " + ex);
         }
         catch (Exception ex) {
             fail("Caught wrong type of exception " + ex.toString());

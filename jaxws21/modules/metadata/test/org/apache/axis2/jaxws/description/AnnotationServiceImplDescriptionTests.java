@@ -25,6 +25,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
+import org.apache.ws.axis2.tests.EchoPort;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -69,8 +70,6 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointInterfaceDescription endpointIntfDesc =
                 endpointDesc[0].getEndpointInterfaceDescription();
         assertNotNull(endpointIntfDesc);
-        // TODO: (JLB) Remove code
-//        assertEquals(EchoPort.class, endpointIntfDesc.getSEIClass());
 
         OperationDescription[] operations =
                 endpointIntfDesc.getOperationForJavaMethod("badMethodName");
@@ -144,8 +143,6 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointInterfaceDescription endpointIntfDesc =
                 endpointDesc[0].getEndpointInterfaceDescription();
         assertNotNull(endpointIntfDesc);
-        // TODO: (JLB) Remove code
-//        assertEquals(endpointIntfDesc.getSEIClass(), DocLitWrappedProxy.class);
 
         // Test for overloaded methods
         // SEI defines two Java methods with this name

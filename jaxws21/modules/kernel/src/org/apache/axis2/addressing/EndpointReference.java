@@ -30,16 +30,20 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,11 +55,16 @@ import java.util.Map;
  * Since the models for this in Submission and Final versions are different, lets make this to comply with
  * WS-A Final version. So any information found with WS-A submission will be "pumped" in to this model.
  */
-public class EndpointReference implements Serializable {
+public class EndpointReference implements Externalizable, SafeSerializable {
 
     private static final long serialVersionUID = 5278892171162372439L;
 
     private static final Log log = LogFactory.getLog(EndpointReference.class);
+    
+    //  supported revision levels, add a new level to manage compatible changes
+    private static final int REVISION_2 = 2;
+    // current revision level of this object
+    private static final int revisionID = REVISION_2;
 
     private static final String myClassName = "EndpointReference";
 
@@ -84,6 +93,12 @@ public class EndpointReference implements Serializable {
     private ArrayList extensibleElements;
     private ArrayList attributes;
 
+    /**
+     * No-Arg Constructor
+     * Required for Externalizable objects
+     */
+    public EndpointReference() {}
+ 
 
     /**
      * @param address
@@ -561,14 +576,21 @@ public class EndpointReference implements Serializable {
      * OMElements/Attributes, we need to actually serialize the OM structures
      * (at least in some cases.)
      */
-    private void writeObject(java.io.ObjectOutputStream out)
+    public void writeExternal(java.io.ObjectOutput o)
             throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
+        
+        // revision ID
+        out.writeInt(revisionID);
+        
+        // Correlation ID
         String logCorrelationIDString = getLogCorrelationIDString();
 
         // String object id
-        ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString
-                + ".logCorrelationIDString");
+        out.writeObject(logCorrelationIDString);
 
+        // Write out the content as xml
+        out.writeUTF("start xml"); // write marker
         OMElement om =
                 EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(),
                                              this,
@@ -594,7 +616,8 @@ public class EndpointReference implements Serializable {
         }
 
         out.writeInt(baos.size());
-        out.write(baos.toByteArray());
+        out.write(baos.toByteArray());  
+        out.writeUTF("end xml"); // write marker
 
         if (log.isDebugEnabled()) {
             byte[] buffer = baos.toByteArray();
@@ -610,12 +633,23 @@ public class EndpointReference implements Serializable {
     /**
      * Read the EPR to the specified InputStream.
      */
-    private void readObject(java.io.ObjectInputStream in)
+    public void readExternal(java.io.ObjectInput inObject)
             throws IOException, ClassNotFoundException {
-
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
+        
+        // revision ID
+        int revID = in.readInt();
+        
+        // make sure the object data is in a revision level we can handle
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
+        }
+        
         // String object id
-        logCorrelationIDString = ObjectStateUtils.readString(in, "EndpointReference.logCorrelationIDString");
+        logCorrelationIDString = (String) in.readObject();
 
+        // Read xml content
+        in.readUTF(); // read marker
         int numBytes = in.readInt();
 
         byte[] serBytes = new byte[numBytes];
@@ -655,6 +689,7 @@ public class EndpointReference implements Serializable {
 
             throw ioe;
         }
+        in.readUTF(); // read marker
 
         ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
 

@@ -19,7 +19,6 @@
 
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPFactory;
@@ -30,6 +29,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.externalize.ActivateUtils;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -47,12 +47,12 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -61,6 +61,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 public class MessageContextSaveATest extends TestCase {
     protected static final Log log = LogFactory.getLog(MessageContextSaveATest.class);
@@ -685,7 +687,7 @@ public class MessageContextSaveATest extends TestCase {
                 ArrayList orig_execChain = simpleMsg.getExecutionChain();
 
                 comparesOk =
-                        ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
+                        ActivateUtils.isEquivalent(restored_execChain, orig_execChain, false);
                 log.debug(title + "execution chain equivalency [" + comparesOk + "]");
                 assertTrue(comparesOk);
 
@@ -834,7 +836,7 @@ public class MessageContextSaveATest extends TestCase {
                 ArrayList orig_execChain = simpleMsg.getExecutionChain();
 
                 comparesOk =
-                        ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
+                    ActivateUtils.isEquivalent(restored_execChain, orig_execChain, false);
                 log.debug(title + "execution chain equivalency [" + comparesOk + "]");
                 assertTrue(comparesOk);
 
@@ -1241,7 +1243,7 @@ public class MessageContextSaveATest extends TestCase {
                         ArrayList restored_execChain = msgContext2.getExecutionChain();
                         ArrayList orig_execChain = msgContext.getExecutionChain();
 
-                        comparesOk = ObjectStateUtils
+                        comparesOk = ActivateUtils
                                 .isEquivalent(restored_execChain, orig_execChain, false);
                         log.debug(title + "execution chain equivalency [" + comparesOk + "]");
                         assertTrue(comparesOk);

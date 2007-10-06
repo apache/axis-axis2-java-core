@@ -103,7 +103,10 @@ public interface AddressingConstants {
     static final String DISABLE_OUTBOUND_ADDRESSING_VALIDATION =
             "disableAddressingOutboundValidation";
 
-    static final String WSAW_ANONYMOUS_PARAMETER_NAME = "wsawAnonymous";
+    static final String WSAM_INVOCATION_PATTERN_PARAMETER_NAME = "wsamInvocationPattern";
+    static final String WSAM_INVOCATION_PATTERN_SYNCHRONOUS = "synchronous";
+    static final String WSAM_INVOCATION_PATTERN_ASYNCHRONOUS = "asynchronous";
+    static final String WSAM_INVOCATION_PATTERN_BOTH = "both";
 
     // ======================== Common Faults ==============================
     static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";

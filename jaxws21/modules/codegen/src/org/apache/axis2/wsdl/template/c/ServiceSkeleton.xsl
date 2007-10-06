@@ -191,7 +191,7 @@
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
-                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
+                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
                                adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
                                adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                                    </xsl:when>

@@ -53,7 +53,7 @@
     </xs:element>
 
     <xs:element name="TestAttributeReferenceElement" type="tns:TestAttributeReferenceType"/>
-    <xs:attribute   name="TestAttribute1" type="xs:string"/>
+    <xs:attribute name="TestAttribute1" type="xs:string"/>
     <xs:complexType name="TestAttributeReferenceType">
         <xs:sequence>
             <xs:element name="param1" type="xs:string"/>
@@ -61,5 +61,19 @@
         </xs:sequence>
         <xs:attribute use="optional" ref="tns:TestAttribute1"/>
     </xs:complexType>
+
+    <xs:attribute name="Type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="String|Base64"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+    <xs:element name="TestTypeElement">
+        <xs:complexType>
+            <xs:attribute ref="tns:Type"/>
+        </xs:complexType>
+    </xs:element>
 
 </xs:schema>

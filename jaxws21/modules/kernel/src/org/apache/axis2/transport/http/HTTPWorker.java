@@ -98,7 +98,8 @@ public class HTTPWorker implements Worker {
                             Iterator i = services.values().iterator();
                             while (i.hasNext()) {
                                 AxisService service = (AxisService) i.next();
-                                InputStream stream = service.getClassLoader().getResourceAsStream("META-INF/" + file);
+                                InputStream stream = service.getClassLoader().
+                                getResourceAsStream("META-INF/" + file);
                                 if (stream != null) {
                                     OutputStream out = response.getOutputStream();
                                     response.setContentType("text/xml");
@@ -300,20 +301,23 @@ public class HTTPWorker implements Worker {
         
         // Finalize response
         RequestResponseTransport requestResponseTransportControl =
-            (RequestResponseTransport) msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            (RequestResponseTransport) msgContext.
+            getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
 
-        if (TransportUtils.isResponseWritten(msgContext)) {
-            if ((requestResponseTransportControl != null) 
-                    && 
-                    (requestResponseTransportControl.getStatus().equals(RequestResponseTransport.RequestResponseTransportStatus.SIGNALLED))) {
-                    response.setStatus(HttpStatus.SC_OK);
-            } 
+        if (TransportUtils.isResponseWritten(msgContext) ||
+            ((requestResponseTransportControl != null) &&
+             requestResponseTransportControl.getStatus().equals(
+                RequestResponseTransport.RequestResponseTransportStatus.SIGNALLED))) {
+            // The response is written or signalled.  The current status is used (probably SC_OK).
         } else {
+            // The response may be ack'd, mark the status as accepted.
             response.setStatus(HttpStatus.SC_ACCEPTED);
         }
     }
 
-    private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, String serviceName, AxisHttpResponse response) throws IOException {
+    private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, 
+                                        String serviceName, AxisHttpResponse response) 
+    throws IOException {
         String wsdlName = uri.substring(uri.lastIndexOf("=") + 1);
 
         HashMap services = configurationContext.getAxisConfiguration().getServices();

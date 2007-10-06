@@ -22,12 +22,16 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.externalize.ActivateUtils;
+import org.apache.axis2.context.externalize.ExternalizeConstants;
+import org.apache.axis2.context.externalize.SafeObjectInputStream;
+import org.apache.axis2.context.externalize.SafeObjectOutputStream;
+import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.MetaDataEntry;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +43,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ServiceGroupContext extends AbstractContext implements Externalizable {
+public class ServiceGroupContext extends AbstractContext 
+    implements Externalizable, SafeSerializable {
 
     /*
      * setup for logging
@@ -67,9 +72,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
-    private static final int REVISION_1 = 1;
+    private static final int REVISION_2 = 2;
     // current revision level of this object
-    private static final int revisionID = REVISION_1;
+    private static final int revisionID = REVISION_2;
 
 
     private transient AxisServiceGroup axisServiceGroup;
@@ -267,7 +272,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * @param out The stream to write the object contents to
      * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeExternal(ObjectOutput o) throws IOException {
+        SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -291,38 +297,22 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             // generate an ID to use when this object is restored
             id = UUIDGenerator.getUUID();
         }
-
-        ObjectStateUtils.writeString(out, id, "ServiceGroupContext.id");
+        out.writeObject(id);
 
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        Map tmpMap = getProperties();
-
-        HashMap tmpHashMap = null;
-
-        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
-            tmpHashMap = new HashMap(tmpMap);
-        }
-
-        ObjectStateUtils.writeHashMap(out, tmpHashMap, "ServiceGroupContext.properties");
+        out.writeMap(getProperties());
 
         //---------------------------------------------------------
         // AxisServiceGroup
         //---------------------------------------------------------
-
-        String axisServGrpMarker = "ServiceGroupContext.axisServiceGroup";
-        ObjectStateUtils.writeString(out, axisServGrpMarker, axisServGrpMarker);
-
-        if (axisServiceGroup == null) {
-            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        } else {
-            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+        metaAxisServiceGroup = null;
+        if (axisServiceGroup != null) {
             metaAxisServiceGroup = new MetaDataEntry(axisServiceGroup.getClass().getName(),
                                                      axisServiceGroup.getServiceGroupName());
-            ObjectStateUtils.writeObject(out, metaAxisServiceGroup,
-                                         "ServiceGroupContext.metaAxisServiceGroup");
         }
+        out.writeObject(metaAxisServiceGroup);
 
         //---------------------------------------------------------
         // parent 
@@ -348,7 +338,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
+        SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references 
         // to be reconciled with the current engine setup
@@ -368,12 +359,12 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1) {
-            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        if (revID != REVISION_2) {
+            throw new ClassNotFoundException(ExternalizeConstants.UNSUPPORTED_REVID);
         }
 
         //---------------------------------------------------------
@@ -382,19 +373,12 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         long time = in.readLong();
         setLastTouchedTime(time);
-
-        id = ObjectStateUtils.readString(in, "ServiceGroupContext.id");
+        id = (String) in.readObject();
 
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-
-        HashMap tmpHashMap = ObjectStateUtils.readHashMap(in, "ServiceGroupContext.properties");
-
-        properties = new HashMap();
-        if (tmpHashMap != null) {
-            setProperties(tmpHashMap);
-        }
+        properties = in.readHashMap();
 
         //---------------------------------------------------------
         // AxisServiceGroup
@@ -402,17 +386,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         // axisServiceGroup is not usable until the meta data has been reconciled
         axisServiceGroup = null;
-
-        ObjectStateUtils.readString(in, "ServiceGroupContext.axisServiceGroup");
-
-        boolean metaAxisServiceGrpIsActive = in.readBoolean();
-
-        if (metaAxisServiceGrpIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
-            metaAxisServiceGroup = (MetaDataEntry) ObjectStateUtils
-                    .readObject(in, "ServiceGroupContext.metaAxisServiceGroup");
-        } else {
-            metaAxisServiceGroup = null;
-        }
+        metaAxisServiceGroup = (MetaDataEntry) in.readObject();
 
         //---------------------------------------------------------
         // parent 
@@ -457,9 +431,10 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         // We previously saved metaAxisServiceGroup; restore it
         if (metaAxisServiceGroup != null) {
-            axisServiceGroup = ObjectStateUtils.findServiceGroup(axisConfig,
-                                                                 metaAxisServiceGroup.getClassName(),
-                                                                 metaAxisServiceGroup.getQNameAsString());
+            axisServiceGroup = 
+                ActivateUtils.findServiceGroup(axisConfig,
+                                               metaAxisServiceGroup.getClassName(),
+                                               metaAxisServiceGroup.getQNameAsString());
         } else {
             axisServiceGroup = null;
         }

@@ -180,6 +180,13 @@ public class CodeGenerationUtility {
 
             String xsdConfigFile = (String)cgconfig.getProperties().get(XMLBeansExtension.XSDCONFIG_OPTION);
 
+            //-Ejavaversion switch to XmlOptions to generate 1.5 compliant code
+            XmlOptions xmlOptions	=	new XmlOptions();
+            xmlOptions.setEntityResolver(er);
+            //test if javaversion property in CodeGenConfig
+            if(null!=cgconfig.getProperty("javaversion")){
+            	xmlOptions.put(XmlOptions.GENERATE_JAVA_VERSION,cgconfig.getProperty("javaversion"));
+            }
             sts = XmlBeans.compileXmlBeans(
                     // set the STS name; defaults to null, which makes the generated class
                     // include a unique (but random) STS name
@@ -190,7 +197,7 @@ public class CodeGenerationUtility {
                                            xsdConfigFile),
                     XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig),
-                    new XmlOptions().setEntityResolver(er));
+                    xmlOptions);
 
             // prune the generated schema type system and add the list of base64 types
             cgconfig.putProperty(Constants.BASE_64_PROPERTY_KEY,

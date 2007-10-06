@@ -25,7 +25,7 @@
     <!-- ############################   xmlbeans template   ##############################  -->
     <xsl:template match="databinders[@dbtype='xmlbeans']">
         //Create the desired XmlObject and provide it as the test object
-        public  org.apache.xmlbeans.XmlObject getTestObject(java.lang.Class type) throws Exception{
+        public  org.apache.xmlbeans.XmlObject getTestObject(java.lang.Class type) throws java.lang.Exception{
         java.lang.reflect.Method creatorMethod = null;
                 if (org.apache.xmlbeans.XmlObject.class.isAssignableFrom(type)){
                     Class[] declaredClasses = type.getDeclaredClasses();
@@ -41,7 +41,7 @@
                 if (creatorMethod!=null){
                     return  (org.apache.xmlbeans.XmlObject)creatorMethod.invoke(null,null);
                 }else{
-                    throw new Exception("Creator not found!");
+                    throw new java.lang.Exception("Creator not found!");
                 }
 
         }
@@ -87,14 +87,14 @@
     <!-- ############################   jaxme template   ##############################  -->
     <xsl:template match="databinders[@dbtype='jaxme']">
         //Create the desired Object and provide it as the test object
-        public  java.lang.Object getTestObject(java.lang.Class type) throws Exception{
+        public  java.lang.Object getTestObject(java.lang.Class type) throws java.lang.Exception{
             Class factoryClazz = org.apache.axis2.util.Loader.loadClass(type.getPackage().getName() + ".ObjectFactory"); 
             Object factory = factoryClazz.newInstance();   
             java.lang.reflect.Method creatorMethod = factoryClazz.getMethod("newInstance", new Class[]{ Class.class });
             if (creatorMethod != null) {
                 return creatorMethod.invoke(factory, null);
             } else {
-                throw new Exception("newInstance method not found!");
+                throw new java.lang.Exception("newInstance method not found!");
             }
         }
 
@@ -103,7 +103,7 @@
     <!-- ############################   ADB template   ###################################  -->
     <xsl:template match="databinders[@dbtype='adb']">
         //Create an ADBBean and provide it as the test object
-        public org.apache.axis2.databinding.ADBBean getTestObject(java.lang.Class type) throws Exception{
+        public org.apache.axis2.databinding.ADBBean getTestObject(java.lang.Class type) throws java.lang.Exception{
            return (org.apache.axis2.databinding.ADBBean) type.newInstance();
         }
 
@@ -164,7 +164,7 @@
     <!-- ############################   jaxme template   ##############################  -->
     <xsl:template match="databinders[@dbtype='jibx']">
         // create the desired object and provide it as the test object
-        public java.lang.Object getTestObject(java.lang.Class type) throws Exception {
+        public java.lang.Object getTestObject(java.lang.Class type) throws java.lang.Exception {
             return type.newInstance();
         }
 
@@ -173,7 +173,7 @@
     <!-- ############################   Jaxbri template   ###################################  -->
     <xsl:template match="databinders[@dbtype='jaxbri']">
         //Create an object and provide it as the test object
-        public Object getTestObject(java.lang.Class type) throws Exception{
+        public Object getTestObject(java.lang.Class type) throws java.lang.Exception{
            return type.newInstance();
         }
     </xsl:template>

@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.types.*;
+import org.apache.axis2.databinding.ADBException;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
@@ -98,6 +99,36 @@ public class Base64BinaryTest extends TestCase {
             TestHexBinary result = TestHexBinary.Factory.parse(xmlReader);
             assertEquals(result.getTestHexBinary().getHexBinary().toString(),testString);
             assertEquals(result.getTestHexBinary().getContentType().getContentType_type0(),"test content type");
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testBase64MultiElement(){
+
+        TestBase64MultiElement testBase64MultiElement = new TestBase64MultiElement();
+        String testString = "testing base 64 elements";
+        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(testString.getBytes()));
+        testBase64MultiElement.setParam1(dataHandler);
+        testBase64MultiElement.setParam2("test string");
+        testBase64MultiElement.setParam3(5);
+
+        try {
+            OMElement omElement = testBase64MultiElement.getOMElement(TestBase64MultiElement.MY_QNAME,
+                    OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestBase64MultiElement result = TestBase64MultiElement.Factory.parse(xmlReader);
+            DataHandler resultDataHandler = result.getParam1();
+            byte[] buffer = new byte[128];
+            int length = resultDataHandler.getInputStream().read(buffer);
+            String resultString = new String(buffer,0,length);
+            assertEquals(testString,resultString);
+        } catch (ADBException e) {
+            fail();
         } catch (XMLStreamException e) {
             fail();
         } catch (Exception e) {

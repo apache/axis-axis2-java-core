@@ -191,7 +191,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -292,7 +292,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -375,7 +375,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
