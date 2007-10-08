@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -94,11 +95,25 @@ public class CodeGenerationEngine {
 
             if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(configuration.getWSDLVersion())) {
-                WSDL20ToAxisServiceBuilder builder = new WSDL20ToAxisServiceBuilder(wsdlUri,
-                                                                                    configuration.getServiceName(),
-                                                                                    configuration.getPortName());
-                builder.setCodegen(true);
-                configuration.addAxisService(builder.populateService());
+
+                WSDL20ToAxisServiceBuilder builder;
+
+                // jibx currently does not support multiservice
+                if ((configuration.getServiceName() != null) || (configuration.getDatabindingType().equals("jibx"))) {
+                    builder = new WSDL20ToAxisServiceBuilder(
+                            wsdlUri,
+                            configuration.getServiceName(),
+                            configuration.getPortName(),
+                            configuration.isAllPorts());
+                    builder.setCodegen(true);
+                    configuration.addAxisService(builder.populateService());
+                } else {
+                    builder = new WSDL20ToAllAxisServicesBuilder(wsdlUri, configuration.getPortName());
+                    builder.setCodegen(true);
+                    builder.setAllPorts(configuration.isAllPorts());
+                    configuration.setAxisServices(
+                            ((WSDL20ToAllAxisServicesBuilder)builder).populateAllServices());
+                }
 
             } else {
                 //It'll be WSDL 1.1
