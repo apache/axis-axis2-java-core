@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.description;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -33,12 +34,12 @@ import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
 import org.apache.woden.XMLElement;
 import org.apache.woden.internal.DOMWSDLFactory;
+import org.apache.woden.internal.wsdl20.BindingFaultImpl;
+import org.apache.woden.internal.wsdl20.BindingOperationImpl;
 import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
-import org.apache.woden.internal.wsdl20.BindingFaultImpl;
-import org.apache.woden.internal.wsdl20.BindingOperationImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.BindingFault;
@@ -67,10 +68,11 @@ import org.apache.woden.wsdl20.extensions.soap.SOAPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPHeaderBlock;
 import org.apache.woden.wsdl20.extensions.soap.SOAPModule;
+import org.apache.woden.wsdl20.extensions.soap.SOAPBindingExtensions;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
-import org.apache.woden.wsdl20.xml.TypesElement;
-import org.apache.woden.wsdl20.xml.DocumentationElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
+import org.apache.woden.wsdl20.xml.DocumentationElement;
+import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.woden.xml.XMLAttr;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
@@ -85,14 +87,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Comparator;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
@@ -111,7 +111,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private NamespaceMap stringBasedNamespaceMap;
 
     private boolean setupComplete = false;
+
     private Service wsdlService;
+
+    private boolean isAllPorts;
 
 //    As bindings are processed add it to this array so that we dont process the same binding twice
     private Map processedBindings;
@@ -149,6 +152,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         setPolicyRegistryFromService(axisService);
     }
 
+    public WSDL20ToAxisServiceBuilder(String wsdlUri,
+                                      String name, String interfaceName, boolean isAllPorts) throws WSDLException {
+        this(wsdlUri, name, interfaceName);
+        this.isAllPorts = isAllPorts;
+    }
+
     public WSDL20ToAxisServiceBuilder(String wsdlUri, QName serviceName) {
         super(null, serviceName);
         this.wsdlURI = wsdlUri;
@@ -157,6 +166,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public WSDL20ToAxisServiceBuilder(String wsdlUri, AxisService service) {
         super(null, service);
         this.wsdlURI = wsdlUri;
+    }
+
+    public boolean isAllPorts() {
+        return isAllPorts;
+    }
+
+    public void setAllPorts(boolean allPorts) {
+        isAllPorts = allPorts;
     }
 
     public AxisService populateService() throws AxisFault {
@@ -240,6 +257,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         processedBindings = new HashMap();
         Endpoint endpoint = null;
 
+        // If the interface name is not null thats means that this is a call from the codegen engine
+        // and we need to populate a single endpoint. Hence find the endpoint and populate it.
+        // If that was not the case then we need to check whether the call is from the codegen
+        // engine with thw allports check false. If its so no need to populate all endpoints, we
+        // select an enspoint accrding to the following criteria.
+        // 1. Find the first SOAP 1.2 endpoint
+        // 2. Find the first SOAP 1.1 endpoint
+        // 3. Use the first endpoint
         if (this.interfaceName != null) {
             for (int i = 0; i < endpoints.length; ++i) {
                 if (this.interfaceName.equals(endpoints[i].getName().toString())) {
@@ -253,7 +278,37 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             axisService
-                    .addEndpoint(endpoint.getName().toString(), processEndpoint(endpoint, serviceInterface));
+                    .addEndpoint(endpoint.getName().toString(),
+                                 processEndpoint(endpoint, serviceInterface));
+        } else if (this.isCodegen && !this.isAllPorts) {
+            Endpoint soap11Endpoint = null;
+            for (int i = 0; i < endpoints.length; ++i) {
+                Binding binding = endpoints[i].getBinding();
+                if (WSDL2Constants.URI_WSDL2_SOAP.equals(binding.getType().toString())) {
+                    SOAPBindingExtensions soapBindingExtensions;
+                    try {
+                        soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
+                                .getComponentExtensionsForNamespace(
+                                        new URI(WSDL2Constants.URI_WSDL2_SOAP));
+                    } catch (URISyntaxException e) {
+                        throw new AxisFault("Soap Binding Extention not found");
+                    }
+                    if (!WSDL2Constants.SOAP_VERSION_1_1
+                            .equals(soapBindingExtensions.getSoapVersion())) {
+                        endpoint = endpoints[i];
+                        break;  // found it.  Stop looking
+                    } else if (soap11Endpoint == null){
+                        soap11Endpoint = endpoints[i];
+                    }
+                }
+            }
+            if (endpoint == null) {
+                endpoint = endpoints[0];
+            }
+
+            axisService
+                    .addEndpoint(endpoint.getName().toString(),
+                                 processEndpoint(endpoint, serviceInterface));
         } else {
             for (int i = 0; i < endpoints.length; i++) {
                 axisService
@@ -439,7 +494,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 return (-1 * ((Comparable)o1).compareTo(o2));
             }
         });
-        SOAPBindingExtensionsImpl soapBindingExtensions;
+        SOAPBindingExtensions soapBindingExtensions;
         try {
             soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
                     .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
