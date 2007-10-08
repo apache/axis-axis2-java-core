@@ -769,7 +769,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 if (port != null) {
                     // i.e we have find a correct port
-                    if (!this.isAllPorts) {
+                    // this is only use full in codegen time.
+                    if (this.isCodegen && !this.isAllPorts) {
                         // if user has not set all option
                         // we have to generate code only for that option.
                         this.portName = port.getName();
