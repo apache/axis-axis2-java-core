@@ -19,9 +19,10 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -36,19 +37,39 @@ import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.wsdl.extensions.mime.MIMEMultipartRelated;
-import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.http.HTTPOperation;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -67,7 +88,15 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.Vector;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
@@ -150,9 +179,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * constructor taking in the service name and the port name
      *
-     * @param in
-     * @param serviceName
-     * @param portName
+     * @param in - InputStream for the WSDL
+     * @param serviceName - The service Name
+     * @param portName - The port name
      */
     public WSDL11ToAxisServiceBuilder(InputStream in, QName serviceName,
                                       String portName) {
@@ -161,9 +190,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * @param def
-     * @param serviceName
-     * @param portName
+     * @param def - The WSDL4J Definition object
+     * @param serviceName - The service Name
+     * @param portName - The port name
      */
     public WSDL11ToAxisServiceBuilder(Definition def, QName serviceName,
                                       String portName) {
@@ -174,9 +203,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * @param def
-     * @param serviceName
-     * @param portName
+     * @param def - The WSDL4J Definition object
+     * @param serviceName - The service Name
+     * @param portName - The port name
+     * @param isAllPorts - boolean representing whether to generate code for all ports or not
      */
     public WSDL11ToAxisServiceBuilder(Definition def,
                                       QName serviceName,
