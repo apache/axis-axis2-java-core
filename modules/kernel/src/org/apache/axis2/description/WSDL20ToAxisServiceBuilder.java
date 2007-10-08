@@ -20,9 +20,6 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -57,7 +54,6 @@ import org.apache.woden.wsdl20.InterfaceFaultReference;
 import org.apache.woden.wsdl20.InterfaceMessageReference;
 import org.apache.woden.wsdl20.InterfaceOperation;
 import org.apache.woden.wsdl20.Service;
-import org.apache.woden.wsdl20.WSDLComponent;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
@@ -103,10 +99,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     protected Description description;
 
     private String wsdlURI;
-
-    // FIXME @author Chathura THis shoud be a URI. Find whats used by
-    // woden.
-    private static String RPC = "rpc";
 
     protected String interfaceName;
 
@@ -274,10 +266,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             endpoint = endpoints[0];
         }
 
-        axisService.setEndpointName(endpoint.getName().toString());
-        axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
-        axisService.setEndpointURL(endpoint.getAddress().toString());
-
+        if (endpoint != null) {
+            axisService.setEndpointName(endpoint.getName().toString());
+            axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
+            axisService.setEndpointURL(endpoint.getAddress().toString());
+        }
     }
 
     private void processService() throws AxisFault {
@@ -301,7 +294,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
            wsdlService = services[0];
         }
 
-        axisService.setName(wsdlService.getName().getLocalPart().toString());
+        axisService.setName(wsdlService.getName().getLocalPart());
         Interface serviceInterface = wsdlService.getInterface();
         axisService.addParameter(new Parameter(WSDL2Constants.INTERFACE_LOCAL_NAME, serviceInterface.getName().getLocalPart()));
         processInterface(serviceInterface);
@@ -323,7 +316,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisEndpoint.setBinding(processBinding(endpoint.getBinding(), serviceInterface));
         }
 
-        SOAPEndpointExtensions soapEndpointExtensions = null;
+        SOAPEndpointExtensions soapEndpointExtensions;
         try {
             soapEndpointExtensions = (SOAPEndpointExtensions) endpoint
                     .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
@@ -355,7 +348,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * information here allows WSDL20ToAllAxisServicesBuilder to only do this
      * work 1 time per WSDL, instead of for each endpoint on each wsdlService.
      *
-     * @throws AxisFault
+     * @throws AxisFault - Thrown in case the necessary resources are not available in the WSDL
+     * @throws WSDLException - Thrown in case Woden throws an exception
      */
     protected void setup() throws AxisFault, WSDLException {
         if (setupComplete) { // already setup, just do nothing and return
@@ -364,8 +358,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         try {
             if (description == null) {
 
-                Description description = null;
-                DescriptionElement descriptionElement = null;
+                Description description;
+                DescriptionElement descriptionElement;
                 if (wsdlURI != null && !"".equals(wsdlURI)) {
                     description = readInTheWSDLFile(wsdlURI);
                     descriptionElement = description.toElement();
@@ -445,7 +439,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 return (-1 * ((Comparable)o1).compareTo(o2));
             }
         });
-        SOAPBindingExtensionsImpl soapBindingExtensions = null;
+        SOAPBindingExtensionsImpl soapBindingExtensions;
         try {
             soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
                     .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
@@ -498,7 +492,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setParent(axisBinding);
 
             addDocumentation(axisBindingFault, interfaceFault.toElement());
-            SOAPBindingFaultExtensions soapBindingFaultExtensions = null;
+            SOAPBindingFaultExtensions soapBindingFaultExtensions;
 
             try {
                 soapBindingFaultExtensions = (SOAPBindingFaultExtensions) bindingFault
@@ -542,7 +536,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setParent(axisBinding);
             axisBindingOperation.setName(axisOperation.getName());
             addDocumentation(axisBindingOperation, bindingOperation.toElement());
-            SOAPBindingOperationExtensions soapBindingOperationExtensions = null;
+            SOAPBindingOperationExtensions soapBindingOperationExtensions;
             try {
                 soapBindingOperationExtensions = ((SOAPBindingOperationExtensions)
                         bindingOperation.getComponentExtensionsForNamespace(
@@ -552,7 +546,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             URI soapAction = soapBindingOperationExtensions.getSoapAction();
-            if (soapAction != null && !"\"\"".equals(soapAction)) {
+            if (soapAction != null && !"\"\"".equals(soapAction.toString())) {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION,
                                                  soapAction.toString());
             }
@@ -600,7 +594,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setDirection(axisMessage.getDirection());
 
 
-                SOAPBindingMessageReferenceExtensions soapBindingMessageReferenceExtensions = null;
+                SOAPBindingMessageReferenceExtensions soapBindingMessageReferenceExtensions;
                 try {
                     soapBindingMessageReferenceExtensions =
                             (SOAPBindingMessageReferenceExtensions) bindingMessageReference
@@ -638,7 +632,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessageFault.setName(bindingFaultReference.getInterfaceFaultReference()
                         .getInterfaceFault().getName().getLocalPart());
 
-                SOAPBindingFaultReferenceExtensions soapBindingFaultReferenceExtensions = null;
+                SOAPBindingFaultReferenceExtensions soapBindingFaultReferenceExtensions;
                 try {
                     soapBindingFaultReferenceExtensions =
                             (SOAPBindingFaultReferenceExtensions) bindingFaultReference
@@ -674,7 +668,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         });
         // Capture all the binding specific properties
 
-        HTTPBindingExtensionsImpl httpBindingExtensions = null;
+        HTTPBindingExtensionsImpl httpBindingExtensions;
         try {
             httpBindingExtensions = (HTTPBindingExtensionsImpl) binding
                     .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
@@ -702,7 +696,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setParent(axisBinding);
 
             addDocumentation(axisBindingFault, interfaceFault.toElement());
-            HTTPBindingFaultExtensions httpBindingFaultExtensions = null;
+            HTTPBindingFaultExtensions httpBindingFaultExtensions;
 
             try {
                 httpBindingFaultExtensions = (HTTPBindingFaultExtensions) bindingFault
@@ -739,7 +733,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setName(axisOperation.getName());
 
             addDocumentation(axisBindingOperation, bindingOperation.toElement());
-            HTTPBindingOperationExtensions httpBindingOperationExtensions = null;
+            HTTPBindingOperationExtensions httpBindingOperationExtensions;
             try {
                 httpBindingOperationExtensions = ((HTTPBindingOperationExtensions)
                         bindingOperation.getComponentExtensionsForNamespace(
@@ -797,7 +791,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setDirection(axisMessage.getDirection());
 
                 addDocumentation(axisBindingMessage, bindingMessageReference.toElement());
-                HTTPBindingMessageReferenceExtensions httpBindingMessageReferenceExtensions = null;
+                HTTPBindingMessageReferenceExtensions httpBindingMessageReferenceExtensions;
                 try {
                     httpBindingMessageReferenceExtensions =
                             (HTTPBindingMessageReferenceExtensions) bindingMessageReference
@@ -910,7 +904,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
         if (interfaceOperationExtensions != null) {
-            Parameter parameter = new Parameter(WSDL2Constants.ATTR_WSDLX_SAFE, new Boolean(
+            Parameter parameter = new Parameter(WSDL2Constants.ATTR_WSDLX_SAFE, Boolean.valueOf(
                     interfaceOperationExtensions.isSafety()));
             axisOperation.addParameter(parameter);
         }
@@ -1025,8 +1019,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         // This turns on WSDL validation which is set off by default.
 //        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
-        Description description1 = reader.readWSDL(wsdlURI);
-        return description1;
+        return reader.readWSDL(wsdlURI);
     }
 
     /**
@@ -1114,7 +1107,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void addDocumentation(AxisDescription axisDescription, DocumentableElement element) {
         DocumentationElement[] documentationElements = element.getDocumentationElements();
         String documentation = "";
-        StringBuffer x;
         for (int i = 0; i < documentationElements.length; i++) {
             DocumentationElement documentationElement = documentationElements[i];
             XMLElement contentElement = documentationElement.getContent();
