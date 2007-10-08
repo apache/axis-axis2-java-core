@@ -212,6 +212,9 @@ public class ConverterUtil {
 
 
     public static int convertToInt(String s) {
+        if ((s == null) || s.equals("")){
+            return Integer.MIN_VALUE;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -219,6 +222,9 @@ public class ConverterUtil {
     }
 
     public static BigDecimal convertToBigDecimal(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -226,6 +232,9 @@ public class ConverterUtil {
     }
 
     public static double convertToDouble(String s) {
+        if ((s == null) || s.equals("")){
+            return Double.NaN;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -238,6 +247,9 @@ public class ConverterUtil {
     }
 
     public static BigDecimal convertToDecimal(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -245,6 +257,9 @@ public class ConverterUtil {
     }
 
     public static float convertToFloat(String s) {
+        if ((s == null) || s.equals("")){
+            return Float.NaN;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -261,6 +276,9 @@ public class ConverterUtil {
     }
 
     public static long convertToLong(String s) {
+        if ((s == null) || s.equals("")){
+            return Long.MIN_VALUE;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -268,6 +286,9 @@ public class ConverterUtil {
     }
 
     public static short convertToShort(String s) {
+        if ((s == null) || s.equals("")){
+            return Short.MIN_VALUE;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -303,36 +324,60 @@ public class ConverterUtil {
     }
 
     public static YearMonth convertToGYearMonth(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new YearMonth(s);
     }
 
     public static MonthDay convertToGMonthDay(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new MonthDay(s);
     }
 
     public static Year convertToGYear(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Year(s);
     }
 
     public static Month convertToGMonth(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Month(s);
     }
 
     public static Day convertToGDay(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Day(s);
     }
 
     public static Duration convertToDuration(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Duration(s);
     }
 
 
     public static HexBinary convertToHexBinary(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new HexBinary(s);
     }
 
     public static javax.activation.DataHandler convertToBase64Binary(String s) {
         // reusing the byteArrayDataSource from the Axiom classes
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
                 Base64.decode(s)
         );
@@ -352,6 +397,9 @@ public class ConverterUtil {
     public static Date convertToDate(String source) {
 
         // the lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
+        if ((source == null) || source.equals("")){
+            return null;
+        }
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = null;
         boolean bc = false;
@@ -397,19 +445,31 @@ public class ConverterUtil {
     }
 
     public static Time convertToTime(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Time(s);
     }
 
     public static Token convertToToken(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Token(s);
     }
 
 
     public static NormalizedString convertToNormalizedString(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new NormalizedString(s);
     }
 
     public static UnsignedLong convertToUnsignedLong(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -417,6 +477,9 @@ public class ConverterUtil {
     }
 
     public static UnsignedInt convertToUnsignedInt(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -424,6 +487,9 @@ public class ConverterUtil {
     }
 
     public static UnsignedShort convertToUnsignedShort(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -431,6 +497,9 @@ public class ConverterUtil {
     }
 
     public static UnsignedByte convertToUnsignedByte(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -438,6 +507,9 @@ public class ConverterUtil {
     }
 
     public static NonNegativeInteger convertToNonNegativeInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -445,6 +517,9 @@ public class ConverterUtil {
     }
 
     public static NegativeInteger convertToNegativeInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -452,6 +527,9 @@ public class ConverterUtil {
     }
 
     public static PositiveInteger convertToPositiveInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -459,6 +537,9 @@ public class ConverterUtil {
     }
 
     public static NonPositiveInteger convertToNonPositiveInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -466,14 +547,23 @@ public class ConverterUtil {
     }
 
     public static Name convertToName(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Name(s);
     }
 
     public static NCName convertToNCName(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new NCName(s);
     }
 
     public static Id convertToID(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Id(s);
     }
 
@@ -482,14 +572,23 @@ public class ConverterUtil {
     }
 
     public static Language convertToLanguage(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Language(s);
     }
 
     public static NMToken convertToNMTOKEN(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new NMToken(s);
     }
 
     public static NMTokens convertToNMTOKENS(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new NMTokens(s);
     }
 
@@ -499,26 +598,44 @@ public class ConverterUtil {
     }
 
     public static Entity convertToENTITY(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Entity(s);
     }
 
     public static Entities convertToENTITIES(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new Entities(s);
     }
 
     public static IDRef convertToIDREF(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new IDRef(s);
     }
 
     public static IDRefs convertToIDREFS(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return new IDRefs(s);
     }
 
     public static URI convertToURI(String s){
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         return convertToAnyURI(s);
     }
 
     public static URI convertToAnyURI(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         try {
             return new URI(s);
         } catch (URI.MalformedURIException e) {
@@ -528,6 +645,9 @@ public class ConverterUtil {
     }
 
     public static BigInteger convertToInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -535,6 +655,9 @@ public class ConverterUtil {
     }
 
     public static BigInteger convertToBigInteger(String s) {
+        if ((s == null) || s.equals("")){
+            return null;
+        }
         if (s.startsWith("+")) {
             s = s.substring(1);
         }
@@ -542,6 +665,9 @@ public class ConverterUtil {
     }
 
     public static byte convertToByte(String s) {
+        if ((s == null) || s.equals("")){
+            return Byte.MIN_VALUE;
+        }
         return Byte.parseByte(s);
     }
 
@@ -553,6 +679,9 @@ public class ConverterUtil {
      */
     public static Calendar convertToDateTime(String source) {
 
+        if ((source == null) || source.equals("")){
+            return null;
+        }
         // the lexical representation of the date time as follows
         // '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
         SimpleDateFormat simpleDateFormat = null;
