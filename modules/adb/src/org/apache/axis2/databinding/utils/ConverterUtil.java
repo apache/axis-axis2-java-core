@@ -1193,14 +1193,14 @@ public class ConverterUtil {
                 attributeValue = prefix + ":" + attributeValue;
             }
             serializeAnyType("QName", attributeValue, xmlStreamWriter);
-        } else if (value instanceof UnsignedLong) {
-            serializeAnyType("unsignedLong", convertToString((UnsignedLong) value), xmlStreamWriter);
-        } else if (value instanceof UnsignedInt) {
-            serializeAnyType("unsignedInt", convertToString((UnsignedInt) value), xmlStreamWriter);
-        } else if (value instanceof UnsignedShort) {
-            serializeAnyType("unsignedShort", convertToString((UnsignedShort) value), xmlStreamWriter);
         } else if (value instanceof UnsignedByte) {
             serializeAnyType("unsignedByte", convertToString((UnsignedByte) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedLong) {
+            serializeAnyType("unsignedLong", convertToString((UnsignedLong) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedShort) {
+            serializeAnyType("unsignedShort", convertToString((UnsignedShort) value), xmlStreamWriter);
+        } else if (value instanceof UnsignedInt) {
+            serializeAnyType("unsignedInt", convertToString((UnsignedInt) value), xmlStreamWriter);
         } else if (value instanceof PositiveInteger) {
             serializeAnyType("positiveInteger", convertToString((PositiveInteger) value), xmlStreamWriter);
         } else if (value instanceof NegativeInteger) {
