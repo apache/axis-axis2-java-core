@@ -1099,25 +1099,16 @@ public class ConverterUtil {
     public static Object getObjectForClass(Class clazz, String value) {
         //first see whether this class has a constructor that can
         //take the string as an argument.
-        boolean continueFlag = false;
         try {
             Constructor stringConstructor = clazz.getConstructor(new Class[] { String.class });
             return stringConstructor.newInstance(new Object[] { value });
         } catch (NoSuchMethodException e) {
             //oops - no such constructors - continue with the
             //parse method
-            continueFlag = true;
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
-                                           clazz.getName()),
-                    e);
-        }
-
-        if (!continueFlag) {
-            throw new ObjectConversionException(
-                    ADBMessages.getMessage("converter.cannotConvert",
-                                           clazz.getName()));
+                                           clazz.getName()), e);
         }
 
         try {
