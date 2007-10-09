@@ -295,6 +295,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
         } catch (AxisFault axisFault) {
             log.error(axisFault.getMessage(), axisFault);
+            throw axisFault;
         }
     }
 
