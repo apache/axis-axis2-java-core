@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -198,14 +199,21 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
 
     private MethodMarshaller getMethodMarshaller(Protocol protocol,
-                                                 OperationDescription operationDesc) {
+                                                 OperationDescription operationDesc,
+                                                 MessageContext mc) {
         javax.jws.soap.SOAPBinding.Style styleOnSEI =
                 endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
         javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
         if (styleOnMethod != null && styleOnSEI != styleOnMethod) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
         }
-        return MethodMarshallerFactory.getMarshaller(operationDesc, false);
+        
+        // check for a stored classloader to be used as the cache key
+        ClassLoader cl = null;
+        if(mc != null) {
+            cl = (ClassLoader) mc.getProperty(Constants.CACHE_CLASSLOADER);
+        }
+        return MethodMarshallerFactory.getMarshaller(operationDesc, false, cl);
     }
 
     protected Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
@@ -230,7 +238,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         // the "style" and "use" of the WSDL.
         Protocol requestProtocol = request.getMessage().getProtocol();
         MethodMarshaller methodMarshaller =
-                getMethodMarshaller(requestProtocol, request.getOperationDescription());
+                getMethodMarshaller(requestProtocol, request.getOperationDescription(),
+                                    request);
         
         // The MethodMarshaller will return the input parameters that are needed to 
         // invoke the target method.
@@ -257,7 +266,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         // Create the appropriate response message, using the protocol from the
         // request message.
-        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription());
+        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription(),
+                                                          request);
         Message m = null;
         if (method.getReturnType().getName().equals("void")) {
             m = marshaller.marshalResponse(null, params, operationDesc, p); 
@@ -291,7 +301,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
     
     public MessageContext createFaultResponse(MessageContext request, Protocol p, Throwable t) {
-        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription());
+        
+        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription(),
+                                                          request);
         
         Message m = marshaller.marshalFaultResponse(t, request.getOperationDescription(), p);
         

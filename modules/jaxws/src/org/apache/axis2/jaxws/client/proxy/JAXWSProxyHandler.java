@@ -318,7 +318,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         OperationDescription operationDesc =
                 endpointDesc.getEndpointInterfaceDescription().getOperation(method);
 
-        Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true)
+        Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true, null)
                 .marshalRequest(args, operationDesc);
 
         if (log.isDebugEnabled()) {
@@ -363,9 +363,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 Throwable t = getFaultResponse(responseContext, operationDesc);
                 throw t;
             }
-
+            ClassLoader cl = (ClassLoader) responseContext.getProperty(Constants.CACHE_CLASSLOADER);
             Object object =
-                    MethodMarshallerFactory.getMarshaller(operationDesc, true)
+                    MethodMarshallerFactory.getMarshaller(operationDesc, true, cl)
                                        .demarshalResponse(responseMsg, args, operationDesc);
             if (log.isDebugEnabled()) {
                 log.debug("The response was processed and the return value created successfully.");
@@ -388,7 +388,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
             opDesc = opDesc.getSyncOperation();
         }
         if (msg != null && msg.isFault()) {
-            Object object = MethodMarshallerFactory.getMarshaller(opDesc, true)
+            ClassLoader cl = (ClassLoader) msgCtx.getProperty(Constants.CACHE_CLASSLOADER);
+            Object object = MethodMarshallerFactory.getMarshaller(opDesc, true, cl)
                     .demarshalFaultResponse(msg, opDesc);
             if (log.isDebugEnabled() && object != null) {
                 log.debug("A fault was found and processed.");

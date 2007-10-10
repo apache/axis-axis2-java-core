@@ -99,12 +99,16 @@ public class JAXBBlockContext {
     public TreeSet<String> getContextPackages() {
         return contextPackages;
     }
+    
+    public JAXBContext getJAXBContext() throws JAXBException {
+        return getJAXBContext(null);
+    }
 
     /**
      * @return get the JAXBContext
      * @throws JAXBException
      */
-    public JAXBContext getJAXBContext() throws JAXBException {
+    public JAXBContext getJAXBContext(ClassLoader cl) throws JAXBException {
         if (jaxbContext == null) {
             if (log.isDebugEnabled()) {
                 log.debug(
@@ -113,7 +117,7 @@ public class JAXBBlockContext {
             Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
                     new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
             jaxbContext =
-                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey);
+                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl);
             constructionType = constructType.value;
         } else {
             if (log.isDebugEnabled()) {

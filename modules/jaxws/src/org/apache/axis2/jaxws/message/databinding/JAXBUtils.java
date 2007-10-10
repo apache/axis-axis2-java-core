@@ -89,7 +89,7 @@ public class JAXBUtils {
         BY_CLASS_ARRAY, BY_CONTEXT_PATH, UNKNOWN}
 
     ;
-
+    
     /**
      * Get a JAXBContext for the class
      *
@@ -99,8 +99,30 @@ public class JAXBUtils {
      * @deprecated
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
+        return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(), 
+                              contextPackages.toString(), null);
+    }
+
+    /**
+     * Get a JAXBContext for the class
+     *
+     * @param contextPackage Set<Package>
+     * @param cacheKey ClassLoader
+     * @return JAXBContext
+     * @throws JAXBException
+     * @deprecated
+     */
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, ClassLoader 
+                                             cacheKey) throws JAXBException {
         return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(),
-                              contextPackages.toString());
+                              contextPackages.toString(), cacheKey);
+    }
+    
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, 
+                                             Holder<CONSTRUCTION_TYPE> constructionType,
+                                             String key)
+        throws JAXBException {
+        return getJAXBContext(contextPackages, constructionType, key, null);
     }
 
     /**
@@ -108,11 +130,14 @@ public class JAXBUtils {
      *
      * @param contextPackage  Set<Package>
      * @param contructionType (output value that indicates how the context was constructed)
+     * @param cacheKey ClassLoader
      * @return JAXBContext
      * @throws JAXBException
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages,
-                                             Holder<CONSTRUCTION_TYPE> constructionType, String key)
+                                             Holder<CONSTRUCTION_TYPE> constructionType, 
+                                             String key,
+                                             ClassLoader cacheKey)
             throws JAXBException {
         // JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if (log.isDebugEnabled()) {
@@ -121,11 +146,25 @@ public class JAXBUtils {
                 log.debug(pkg);
             }
         }
-        // The JAXBContexts are keyed by ClassLoader and the set of Strings
+        
+         // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = getContextClassLoader();
 
         // Get the innerMap 
-        Map<String, JAXBContextValue> innerMap = jaxbMap.get(cl);
+        Map<String, JAXBContextValue> innerMap = null;
+        if(cacheKey != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Using supplied classloader to retrieve JAXBContext: " + 
+                        cacheKey);
+            }
+            innerMap = jaxbMap.get(cacheKey);
+        }else {
+            if(log.isDebugEnabled()) {
+                log.debug("Using classloader from Thread to retrieve JAXBContext: " + 
+                        cl);
+            }
+            innerMap = jaxbMap.get(cl);
+        }
         if (innerMap == null) {
             adjustPoolSize(jaxbMap);
             innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
