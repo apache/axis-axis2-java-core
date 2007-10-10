@@ -26,8 +26,9 @@ package org.apache.axis2.jaxws.description.builder;
 public class FieldDescriptionComposite implements TMFAnnotationComposite {
 
     //Method reflective information
-    private String fieldName;        //field name
-    private String modifierType;    //field modifier
+    private String fieldName;       // field name
+    private String modifierType;    // field modifier
+    private String fieldClassName;  // fully qualified field class name
 	
 	// indicates whether the field was annotated with @XmlList or not
 	private boolean isListType = false;
@@ -68,6 +69,11 @@ public class FieldDescriptionComposite implements TMFAnnotationComposite {
     public String getModifierType() {
         return modifierType;
     }
+    
+    /** @return Returns the fieldClassName. */
+    public String getFieldClassName() {
+        return fieldClassName;
+    }
 
     /** @return Returns the webServiceRefAnnot. */
     public WebServiceRefAnnot getWebServiceRefAnnot() {
@@ -101,6 +107,10 @@ public class FieldDescriptionComposite implements TMFAnnotationComposite {
 	public boolean isListType() {
 		return isListType;
 	}
+     
+    public void setFieldClassName(String fieldClassName) {
+        this.fieldClassName = fieldClassName;
+    }
 	
     /**
      * Convenience method for unit testing. We will print all of the
