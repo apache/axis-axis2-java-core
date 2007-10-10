@@ -207,8 +207,6 @@ public class EndpointController {
 
         try {
             // Get the service instance.  This will run the @PostConstruct code.
-           // EndpointLifecycleManager elm = createEndpointlifecycleManager();
-           // Object serviceInstance = elm.createServiceInstance(request, serviceEndpoint);
             ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
                 FactoryRegistry.getFactory(ServiceInstanceFactory.class);
             Object serviceInstance = instanceFactory.createServiceInstance(request, serviceEndpoint);
