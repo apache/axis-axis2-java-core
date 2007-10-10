@@ -207,8 +207,11 @@ public class EndpointController {
 
         try {
             // Get the service instance.  This will run the @PostConstruct code.
-            EndpointLifecycleManager elm = createEndpointlifecycleManager();
-            Object serviceInstance = elm.createServiceInstance(request, serviceEndpoint);
+           // EndpointLifecycleManager elm = createEndpointlifecycleManager();
+           // Object serviceInstance = elm.createServiceInstance(request, serviceEndpoint);
+            ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
+                FactoryRegistry.getFactory(ServiceInstanceFactory.class);
+            Object serviceInstance = instanceFactory.createServiceInstance(request, serviceEndpoint);
 
             // The application handlers and dispatcher invoke will 
             // modify/destroy parts of the message.  Make sure to save
@@ -228,7 +231,7 @@ public class EndpointController {
                     log.debug("JAX-WS inbound handler chain invocation complete.");
                 }
                 // Set the dispatcher.
-                EndpointDispatcher dispatcher = getEndpointDispatcher(serviceEndpoint, serviceInstance);
+                EndpointDispatcher dispatcher = getEndpointDispatcher(request, serviceEndpoint, serviceInstance);
                 eic.setEndpointDispatcher(dispatcher);
                 return true;
             } else { // the inbound handler chain must have had a problem, and we've reversed directions
@@ -292,9 +295,15 @@ public class EndpointController {
       */
     protected EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
             throws Exception {
+            return getEndpointDispatcher(null, serviceImplClass, serviceInstance);
+    }
+    
+    protected EndpointDispatcher getEndpointDispatcher(MessageContext mc, Class serviceImplClass, 
+                                                       Object serviceInstance) 
+        throws Exception {
         EndpointDispatcherFactory factory = 
             (EndpointDispatcherFactory)FactoryRegistry.getFactory(EndpointDispatcherFactory.class);        
-        return factory.createEndpointDispatcher(serviceImplClass, serviceInstance);       
+        return factory.createEndpointDispatcher(mc, serviceImplClass, serviceInstance);   
     }
 
     private String getServiceImplClassName(MessageContext mc) {
