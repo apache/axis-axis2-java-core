@@ -71,14 +71,10 @@ public class ProviderDispatcher extends JavaDispatcher {
 
     private static Log log = LogFactory.getLog(ProviderDispatcher.class);
 
-    private BlockFactory blockFactory = null;
-    private Class providerType = null;
+    private BlockFactory _blockFactory = null;  // Cache the block factory
+    private Class _providerType = null;        // Cache the provider type
     private Provider providerInstance = null;
-    private Service.Mode providerServiceMode = null;
     private Message message = null;
-    private Protocol messageProtocol;
-
-    private EndpointDescription endpointDesc;
 
     /**
      * Constructor
@@ -104,6 +100,7 @@ public class ProviderDispatcher extends JavaDispatcher {
         Object param = createRequestParameters(request);
 
         if (log.isDebugEnabled()) {
+            Class providerType = getProviderType();
             final Object input = providerType.cast(param);
             log.debug("Invoking Provider<" + providerType.getName() + ">");
             if (input != null) {
@@ -125,9 +122,6 @@ public class ProviderDispatcher extends JavaDispatcher {
             fault = ClassUtils.getRootCause(e);
             faultThrown = true;
         }
-
-        // TODO (NLG): Need to find a better way to sync this across both Dispatchers.
-        endpointDesc = request.getEndpointDescription();
         
         // Create the response MessageContext
         MessageContext responseMsgCtx = null;
@@ -153,6 +147,7 @@ public class ProviderDispatcher extends JavaDispatcher {
         Object param = createRequestParameters(request);
 
         if (log.isDebugEnabled()) {
+            Class providerType = getProviderType();
             final Object input = providerType.cast(param);
             log.debug("Invoking Provider<" + providerType.getName() + ">");
             if (input != null) {
@@ -190,6 +185,7 @@ public class ProviderDispatcher extends JavaDispatcher {
         Object param = createRequestParameters(request);
 
         if (log.isDebugEnabled()) {
+            Class providerType = getProviderType();
             final Object input = providerType.cast(param);
             log.debug("Invoking Provider<" + providerType.getName() + ">");
             if (input != null) {
@@ -219,7 +215,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     public Object createRequestParameters(MessageContext request) {
         // First we need to know what kind of Provider instance we're going
         // to be invoking against
-        providerType = getProviderType();
+        Class providerType = getProviderType();
 
         // REVIEW: This assumes there is only one endpoint description on the service.  Is that always the case?
         EndpointDescription endpointDesc = request.getEndpointDescription();
@@ -240,12 +236,12 @@ public class ProviderDispatcher extends JavaDispatcher {
             }
 
             // Save off the protocol info so we can use it when creating the response message.
-            messageProtocol = message.getProtocol();
+            Protocol messageProtocol = message.getProtocol();
             // Determine what type blocks we want to create (String, Source, etc) based on Provider Type
             BlockFactory factory = createBlockFactory(providerType);
 
 
-            providerServiceMode = endpointDesc.getServiceMode();
+            Service.Mode providerServiceMode = endpointDesc.getServiceMode();
 
             if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
                 if (providerType.equals(SOAPMessage.class)) {
@@ -289,33 +285,64 @@ public class ProviderDispatcher extends JavaDispatcher {
     }
     
     public MessageContext createResponse(MessageContext request, Object[] input, Object output) {
+        if (log.isDebugEnabled()) {
+            log.debug("Start createResponse");
+        }
         Message m;
+        EndpointDescription endpointDesc = null;
         try {
-            m = createMessageFromValue(output);
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
+            endpointDesc = request.getEndpointDescription();
+            Service.Mode mode = endpointDesc.getServiceMode();
+            m = createMessageFromValue(output, request.getMessage().getProtocol(), mode);
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Throwable caught");
+                log.debug("Throwable=" + t);
+            }
+            throw ExceptionFactory.makeWebServiceException(t);
         }
 
-        // Enable MTOM if indicated by the binding
-        String bindingType = endpointDesc.getBindingType();
-        if (bindingType != null) {
-            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                m.setMTOMEnabled(true);
+        if (log.isDebugEnabled()) {
+            log.debug("Response message is created.");
+        }
+        
+        MessageContext response = null;
+        try {
+            // Enable MTOM if indicated by the binding
+            String bindingType = endpointDesc.getBindingType();
+            if (bindingType != null) {
+                if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                        || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                    m.setMTOMEnabled(true);
+                }
+            }
+
+            response = MessageContextUtils.createResponseMessageContext(request);
+            response.setMessage(m);
+        } catch (RuntimeException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Throwable caught creating Response MessageContext");
+                log.debug("Throwable=" + e);
+            }
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("End createResponse");
             }
         }
-
-        MessageContext response = MessageContextUtils.createResponseMessageContext(request);
-        response.setMessage(m);
         
         return response;
     }
     
     public MessageContext createFaultResponse(MessageContext request, Throwable fault) {
+        if (log.isDebugEnabled()) {
+            log.debug("Create XMLFault for createFaultResponse");
+        }
         Message m;
         try {
+            EndpointDescription endpointDesc = request.getEndpointDescription();
+            Service.Mode mode = endpointDesc.getServiceMode();
             XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(fault);
-            m = createMessageFromValue(xmlFault);
+            m = createMessageFromValue(xmlFault, request.getMessage().getProtocol(), mode);
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -369,37 +396,52 @@ public class ProviderDispatcher extends JavaDispatcher {
     /*
     * Create a Message object out of the value object that was returned.
     */
-    private Message createMessageFromValue(Object value) throws Exception {
+    private Message createMessageFromValue(Object value, Protocol protocol, 
+                                           Service.Mode mode) throws Exception {
         MessageFactory msgFactory =
                 (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
         Message message = null;
 
         if (value != null) {
+            Class providerType = getProviderType();
             BlockFactory factory = createBlockFactory(providerType);
 
             if (value instanceof XMLFault) {
-                message = msgFactory.create(messageProtocol);
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating message from XMLFault");
+                }
+                message = msgFactory.create(protocol);
                 message.setXMLFault((XMLFault)value);
-            } else if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
+            } else if (mode != null && mode == Service.Mode.MESSAGE) {
                 // For MESSAGE mode, work with the entire message, Headers and Body
                 // This is based on logic in org.apache.axis2.jaxws.client.XMLDispatch.createMessageFromBundle()
                 if (value instanceof SOAPMessage) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Creating message from SOAPMessage");
+                    }
                     message = msgFactory.createFrom((SOAPMessage)value);
                 } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Creating message using " + factory);
+                    }
                     Block block = factory.createFrom(value, null, null);
-                    message = msgFactory.createFrom(block, null, messageProtocol);
+                    message = msgFactory.createFrom(block, null, protocol);
                 }
             } else {
                 // PAYLOAD mode deals only with the body of the message.
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating message (payload) using " + factory);
+                }
                 Block block = factory.createFrom(value, null, null);
-                message = msgFactory.create(messageProtocol);
+                message = msgFactory.create(protocol);
                 message.setBodyBlock(block);
             }
         }
 
-        if (message == null)
+        if (message == null) {
             // If we didn't create a message above (because there was no value), create one here
-            message = msgFactory.create(messageProtocol);
+            message = msgFactory.create(protocol);
+        }
 
 
         return message;
@@ -441,6 +483,9 @@ public class ProviderDispatcher extends JavaDispatcher {
      */
     private Class<?> getProviderType() {
 
+        if (_providerType != null) {
+            return _providerType;
+        }
         Class providerType = null;
 
         Type[] giTypes = serviceImplClass.getGenericInterfaces();
@@ -462,6 +507,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                 providerType = (Class)paramType.getActualTypeArguments()[0];
             }
         }
+        _providerType = providerType;
         return providerType;
     }
 
@@ -496,24 +542,25 @@ public class ProviderDispatcher extends JavaDispatcher {
     * Given a target class type for a payload, load the appropriate BlockFactory.
     */
     private BlockFactory createBlockFactory(Class type) {
-        if (blockFactory != null)
-            return blockFactory;
+        if (_blockFactory != null) {
+            return _blockFactory;
+        }
 
         if (type.equals(String.class)) {
-            blockFactory = (XMLStringBlockFactory)FactoryRegistry.getFactory(
+            _blockFactory = (XMLStringBlockFactory)FactoryRegistry.getFactory(
                     XMLStringBlockFactory.class);
         } else if (type.equals(Source.class)) {
-            blockFactory = (SourceBlockFactory)FactoryRegistry.getFactory(
+            _blockFactory = (SourceBlockFactory)FactoryRegistry.getFactory(
                     SourceBlockFactory.class);
         } else if (type.equals(SOAPMessage.class)) {
-            blockFactory = (SOAPEnvelopeBlockFactory)FactoryRegistry.getFactory(
+            _blockFactory = (SOAPEnvelopeBlockFactory)FactoryRegistry.getFactory(
                     SOAPEnvelopeBlockFactory.class);
         } else {
-            ExceptionFactory.makeWebServiceException("Unable to find BlockFactory " +
+            throw ExceptionFactory.makeWebServiceException("Unable to find BlockFactory " +
                     "for type: " + type.getClass().getName());
         }
 
-        return blockFactory;
+        return _blockFactory;
     }
     
     protected Method getJavaMethod() {

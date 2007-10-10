@@ -143,7 +143,7 @@ public class DebugObjectInput implements ObjectInput, ObjectStreamConstants {
         trace("start readObject()");
         Object value = oi.readObject();
         
-        trace("end readObject()="+ value);
+        trace("end readObject()="+ valueName(value));
         return value;
     }
 
@@ -195,4 +195,13 @@ public class DebugObjectInput implements ObjectInput, ObjectStreamConstants {
         }
     }
     
+    private String valueName(Object obj) {
+        if (obj == null) {
+            return "null";
+        } else if (obj instanceof String) {
+            return (String) obj;
+        } else {
+            return "Object of class = " + obj.getClass().getName();
+        }
+    }
 }

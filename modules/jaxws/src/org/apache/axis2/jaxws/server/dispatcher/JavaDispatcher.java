@@ -99,79 +99,86 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         }
         
         public Object call() throws Exception {
-            if (log.isDebugEnabled()) {
-                log.debug("Invoking target endpoint via the async worker.");
-            }
-            
-            // Set the proper class loader so that we can properly marshall the
-            // outbound response.
-            ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader(classLoader);
-                if (log.isDebugEnabled()) {
-                    log.debug("Context ClassLoader set to:" + classLoader);
-                }
-            }
-            
-            // We have the method that is going to be invoked and the parameter data to invoke it 
-            // with, so just invoke the operation.
-            Object output = null;
-            boolean faultThrown = false;
-            Throwable fault = null;
             try {
-                output = invokeTargetOperation(method, params);
-            } 
-            catch (Exception e) {
-                fault = ClassUtils.getRootCause(e);
-                faultThrown = true;
-            }
-            
-            // If this is a one way invocation, we are done and just need to return.
-            if (eic.isOneWay()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Invocation pattern was one way, work complete.");
-                    return null;
+                    log.debug("Invoking target endpoint via the async worker.");
                 }
-            }
-            
-            // Create the response MessageContext
-            MessageContext request = eic.getRequestMessageContext();
-            MessageContext response = null;
-            if (faultThrown) {
-                // If a fault was thrown, we need to create a slightly different
-                // MessageContext, than in the response path.
-                response = createFaultResponse(request, fault);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Async invocation of the endpoint was successful.  Creating response message.");
+                
+                // Set the proper class loader so that we can properly marshall the
+                // outbound response.
+                ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
+                if (classLoader != null) {
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Context ClassLoader set to:" + classLoader);
+                    }
                 }
-                response = createResponse(request, params, output);
+                
+                // We have the method that is going to be invoked and the parameter data to invoke it 
+                // with, so just invoke the operation.
+                Object output = null;
+                boolean faultThrown = false;
+                Throwable fault = null;
+                try {
+                    output = invokeTargetOperation(method, params);
+                } 
+                catch (Exception e) {
+                    fault = ClassUtils.getRootCause(e);
+                    faultThrown = true;
+                }
+                
+                // If this is a one way invocation, we are done and just need to return.
+                if (eic.isOneWay()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Invocation pattern was one way, work complete.");
+                        return null;
+                    }
+                }
+                
+                // Create the response MessageContext
+                MessageContext request = eic.getRequestMessageContext();
+                MessageContext response = null;
+                if (faultThrown) {
+                    // If a fault was thrown, we need to create a slightly different
+                    // MessageContext, than in the response path.
+                    response = createFaultResponse(request, fault);
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Async invocation of the endpoint was successful.  Creating response message.");
+                    }
+                    response = createResponse(request, params, output);
+                }
+
+                EndpointInvocationContext eic = null;
+                if (request.getInvocationContext() != null) {
+                    eic = (EndpointInvocationContext) request.getInvocationContext();
+                    eic.setResponseMessageContext(response);                
+                }
+                
+                EndpointCallback callback = eic.getCallback();
+                boolean handleFault = response.getMessage().isFault();
+                if (!handleFault) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("No fault detected in response message, sending back application response.");
+                    }
+                    callback.handleResponse(eic);
+                }
+                else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("A fault was detected.  Sending back a fault response.");
+                    }
+                    callback.handleFaultResponse(eic);
+                }
+                
+                // Set the thread's ClassLoader back to what it originally was.
+                Thread.currentThread().setContextClassLoader(currentLoader);
+                
+            } catch (Throwable e) {
+                // Exceptions are swallowed, there is no reason to rethrow them
+                log.error("AN UNEXPECTED ERROR OCCURRED IN THE ASYNC WORKER THREAD");
+                log.error("Exception is:" + e);
             }
 
-            EndpointInvocationContext eic = null;
-            if (request.getInvocationContext() != null) {
-                eic = (EndpointInvocationContext) request.getInvocationContext();
-                eic.setResponseMessageContext(response);                
-            }
-            
-            EndpointCallback callback = eic.getCallback();
-            boolean handleFault = response.getMessage().isFault();
-            if (!handleFault) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No fault detected in response message, sending back application response.");
-                }
-                callback.handleResponse(eic);
-            }
-            else {
-                if (log.isDebugEnabled()) {
-                    log.debug("A fault was detected.  Sending back a fault response.");
-                }
-                callback.handleFaultResponse(eic);
-            }
-            
-            // Set the thread's ClassLoader back to what it originally was.
-            Thread.currentThread().setContextClassLoader(currentLoader);
-            
             return null;
         }
     }

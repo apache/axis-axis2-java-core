@@ -131,7 +131,7 @@ public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOut
     }
 
     public void writeObject(Object obj) throws IOException {
-        trace ("start writeObject(v) v=" + obj);
+        trace ("start writeObject(v) v=" + valueName(obj));
         out.writeObject(obj);
         trace ("end writeObject(v)");
     }
@@ -151,6 +151,16 @@ public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOut
     public void trace(String str) {
         if (isDebug) {
             log.debug(str);
+        }
+    }
+    
+    private String valueName(Object obj) {
+        if (obj == null) {
+            return "null";
+        } else if (obj instanceof String) {
+            return (String) obj;
+        } else {
+            return "Object of class = " + obj.getClass().getName();
         }
     }
 }

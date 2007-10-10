@@ -322,6 +322,9 @@ public abstract class BlockImpl implements Block {
 
     public void outputTo(XMLStreamWriter writer, boolean consume)
             throws XMLStreamException, WebServiceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Start outputTo");
+        }
         if (consumed) {
             // In some scenarios, the message is written out after the service instance is invoked.
             // In these situations, it is preferable to simply ignore this block.
@@ -333,15 +336,27 @@ public abstract class BlockImpl implements Block {
         }
         if (omElement != null) {
             if (consume) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Write using OMElement.serializeAndConsume");
+                }
                 omElement.serializeAndConsume(writer);
             } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Write Using OMElement.serialize");
+                }
                 omElement.serialize(writer);
             }
         } else if (busObject != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Write business object");
+            }
             busObject = _getBOFromBO(busObject, busContext, consume);
             _outputFromBO(busObject, busContext, writer);
         }
         setConsumed(consume);
+        if (log.isDebugEnabled()) {
+            log.debug("End outputTo");
+        }
         return;
     }
 
