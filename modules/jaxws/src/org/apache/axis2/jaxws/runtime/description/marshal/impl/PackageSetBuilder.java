@@ -119,7 +119,7 @@ public class PackageSetBuilder {
                         Set<String> pkgSet = sr.readPackagesFromSchema(wsdlDefinition);
                         set.addAll(pkgSet);
                     } catch (SchemaReaderException e) {
-                        ExceptionFactory.makeWebServiceException(e);
+                        throw ExceptionFactory.makeWebServiceException(e);
                     }
                 }
             }
@@ -454,7 +454,10 @@ public class PackageSetBuilder {
                             }
                         });
             } catch (PrivilegedActionException e) {
-                ExceptionFactory.makeWebServiceException(e.getException());
+                // Swallow and continue
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception getting wsdlLocation: " +e.getException());
+                }
             }
         }
 

@@ -206,7 +206,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
     	    if(log.isDebugEnabled()){
     	        log.debug("No URL's found in URL ClassLoader");
     	    }
-    	    ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
+    	    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
     	}
 
         for (URL url : urlList) {

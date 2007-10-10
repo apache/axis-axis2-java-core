@@ -446,7 +446,7 @@ public class EndpointController {
                     Message msg = mf.createFrom(xmlreader, protocol);
                     requestMsgContext.setMessage(msg);
                 } catch (Throwable e) {
-                    ExceptionFactory.makeWebServiceException(e);
+                    throw ExceptionFactory.makeWebServiceException(e);
                 }
             }
         }

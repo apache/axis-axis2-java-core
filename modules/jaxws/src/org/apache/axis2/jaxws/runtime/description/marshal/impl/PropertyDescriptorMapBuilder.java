@@ -193,7 +193,7 @@ public class PropertyDescriptorMapBuilder {
                         XMLRootElementUtil.createPropertyDescriptorMap(cls);
                 map.put(cls, pdMap);
             } catch (Throwable t) {
-                ExceptionFactory.makeWebServiceException(t);
+                throw ExceptionFactory.makeWebServiceException(t);
             }
         }
     }

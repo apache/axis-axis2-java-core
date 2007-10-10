@@ -591,7 +591,7 @@ public class XMLFaultUtils {
                 try {
                     converter.toSAAJ(blocks[i].getOMElement(), detail);
                 } catch (XMLStreamException xse) {
-                    ExceptionFactory.makeWebServiceException(xse);
+                    throw ExceptionFactory.makeWebServiceException(xse);
                 }
             }
 

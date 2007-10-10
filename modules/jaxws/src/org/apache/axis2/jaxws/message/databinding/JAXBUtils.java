@@ -850,7 +850,7 @@ public class JAXBUtils {
             if (e.getException() instanceof JAXBException) {
                 throw (JAXBException)e.getException();
             } else if (e.getException() instanceof RuntimeException) {
-                ExceptionFactory.makeWebServiceException(e.getException());
+                throw ExceptionFactory.makeWebServiceException(e.getException());
             }
         }
 
