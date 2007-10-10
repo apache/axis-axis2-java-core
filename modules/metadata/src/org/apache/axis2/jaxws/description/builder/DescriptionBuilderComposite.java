@@ -25,8 +25,10 @@ package org.apache.axis2.jaxws.description.builder;
 import javax.wsdl.Definition;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAnnotationComposite {
     /*
@@ -42,6 +44,8 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         fieldDescriptions = new ArrayList<FieldDescriptionComposite>();
         webServiceRefAnnotList = new ArrayList<WebServiceRefAnnot>();
         interfacesList = new ArrayList<String>();
+        genericAnnotationInstances = new ArrayList<CustomAnnotationInstance>();
+        genericAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
     }
 
     //Class type within the module
@@ -75,6 +79,13 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
     private List<MethodDescriptionComposite> methodDescriptions;
     private List<FieldDescriptionComposite> fieldDescriptions;
+    
+    // we can keep these in a singular list b/c for a given type-level annotation
+    // there can only one instance of the annotation
+    private List<CustomAnnotationInstance> genericAnnotationInstances;
+    
+    // a map that stores all the type-targetted GenericAnnotationProcessor instances
+    private Map<String, CustomAnnotationProcessor> genericAnnotationProcessors;
 
     private WsdlGenerator wsdlGenerator;
     private ClassLoader classLoader;
@@ -317,6 +328,22 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
     public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
         addWebServiceRefAnnot(webServiceRefAnnot);
+    }
+    
+    public void addCustomAnnotationProcessor(CustomAnnotationProcessor processor) {
+        genericAnnotationProcessors.put(processor.getAnnotationInstanceClassName(), processor);
+    }
+    
+    public Map<String, CustomAnnotationProcessor> getCustomAnnotationProcessors() {
+        return genericAnnotationProcessors;
+    }
+    
+    public void addCustomAnnotationInstance(CustomAnnotationInstance annotation) {
+        genericAnnotationInstances.add(annotation);
+    }
+    
+    public List<CustomAnnotationInstance> getCustomAnnotationInstances() {
+        return genericAnnotationInstances;
     }
 
     /** @param wsdlDefinition The wsdlDefinition to set. */
