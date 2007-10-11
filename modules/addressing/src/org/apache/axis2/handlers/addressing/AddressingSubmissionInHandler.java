@@ -48,46 +48,37 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
         // TODO : Chinthaka
     }
 
-    protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader,
+    protected void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
                                             MessageContext messageContext) throws AxisFault {
-        if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
+        if (!alreadyFoundAddrHeader[TO_FLAG]) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
         }
 
-        if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
+        if (!alreadyFoundAddrHeader[ACTION_FLAG]) {
             AddressingFaultsHelper
                     .triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         }
 
-        if (alreadyFoundAddrHeader.contains(WSA_REPLY_TO) ||
-                alreadyFoundAddrHeader.contains(WSA_FAULT_TO)) {
+        if (alreadyFoundAddrHeader[REPLYTO_FLAG] ||
+                alreadyFoundAddrHeader[FAULTO_FLAG]) {
 
-            if (!alreadyFoundAddrHeader.contains(WSA_MESSAGE_ID)) {
+            if (!alreadyFoundAddrHeader[MESSAGEID_FLAG]) {
                 AddressingFaultsHelper
                         .triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
             }
         }
     }
 
-    protected void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) {
+    protected void setDefaults(boolean[] alreadyFoundAddrHeader, MessageContext messageContext) {
         //The none URI is not defined in the 2004/08 spec, but it is used here anyway
         //as a flag to indicate the correct semantics to apply, i.e. in the 2004/08 spec
         //the absence of a ReplyTo header indicates that a response is NOT required.
-        if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
-            Options messageContextOptions = messageContext.getOptions();
-            EndpointReference epr = messageContextOptions.getReplyTo();
-
-            if (epr == null) {
-                epr = new EndpointReference("");
-                messageContextOptions.setReplyTo(epr);
-            }
-
+        if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
+        	messageContext.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
             if (log.isTraceEnabled()) {
                 log.trace(
                         "setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
             }
-
-            epr.setAddress(Final.WSA_NONE_URI);
         }
     }
 }
