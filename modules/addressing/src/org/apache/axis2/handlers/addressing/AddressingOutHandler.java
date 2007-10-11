@@ -150,8 +150,6 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
             addressingNamespace =
                     (isSubmissionNamespace ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE);
-            addressingNamespaceObject =
-                    factory.createOMNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
             // if there is no soap header in the envelope being processed, add one.
             if (header == null) {
@@ -179,7 +177,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             // we have tested at the start of this whether messageInformationHeaders are null or not.
             // So rather than declaring addressing namespace in each and every addressing header, lets
             // define that in the Header itself.
-            envelope.declareNamespace(addressingNamespaceObject);
+        	addressingNamespaceObject = header.declareNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
             // processing WSA To
             processToEPR();
