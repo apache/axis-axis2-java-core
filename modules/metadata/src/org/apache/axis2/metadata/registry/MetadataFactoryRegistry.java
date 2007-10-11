@@ -40,7 +40,6 @@ public class MetadataFactoryRegistry {
     
     private final static Map<Class,Object> table;
         static {
-                log.debug("DUSTIN CONFIG FILE LOC: " + configurationFileLoc);
                 table = new Hashtable<Class,Object>();
                 table.put(ResourceFinderFactory.class, new ResourceFinderFactory());
                 table.put(ClientConfigurationFactory.class, new ClientConfigurationFactory());
