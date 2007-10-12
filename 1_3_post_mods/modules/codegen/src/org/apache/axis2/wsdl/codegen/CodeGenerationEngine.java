@@ -22,8 +22,8 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -37,20 +37,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.wsdl.xml.WSDLLocator;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +134,7 @@ public class CodeGenerationEngine {
                                              configuration.getServiceName());
                 }
 
-                WSDL11ToAxisServiceBuilder builder = null;
+                WSDL11ToAxisServiceBuilder builder;
                 // jibx currently does not support multiservice
                 if ((serviceQname != null) || (configuration.getDatabindingType().equals("jibx"))) {
                     builder = new WSDL11ToAxisServiceBuilder(
