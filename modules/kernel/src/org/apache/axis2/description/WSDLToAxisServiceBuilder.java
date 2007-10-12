@@ -194,10 +194,24 @@ public abstract class WSDLToAxisServiceBuilder {
         return "ns" + nsCount++;
     }
 
+    /**
+     * Gets the URI associated with the base document
+     * for the WSDL definition.  Note that this URI
+     * is for the base document, not the imports.
+     * 
+     * @return The URI as a String
+     */
     public String getBaseUri() {
         return baseUri;
     }
 
+    /**
+     * Sets the URI associated with the base document
+     * for the WSDL definition.  Note that this URI
+     * is for the base document, not the imports.
+     * 
+     * @param baseUri  The URI as a String
+     */
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
     }

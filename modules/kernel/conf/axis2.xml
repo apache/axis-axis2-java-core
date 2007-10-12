@@ -31,6 +31,12 @@
     <parameter name="attachmentDIR"></parameter>
     <parameter name="sizeThreshold">4000</parameter-->
 
+    <!--Uncomment if you want to enable the reduction of the in-memory cache of WSDL definitions -->
+    <!--In some server environments, the available memory heap is limited and can fill up under load -->
+    <!--Since in-memory copies of WSDL definitions can be large, some steps can be taken-->
+    <!--to reduce the memory needed for the cached WSDL definitions. -->
+    <!--parameter name="reduceWSDLMemoryCache">true</parameter-->
+                                                       
     <!--This will give out the timout of the configuration contexts, in milliseconds-->
     <parameter name="ConfigContextTimeoutInterval">30000</parameter>
 

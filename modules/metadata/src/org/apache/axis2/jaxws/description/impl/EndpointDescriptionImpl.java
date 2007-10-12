@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -380,12 +382,31 @@ class EndpointDescriptionImpl
                 //We have a wsdl composite, so set these values for the generated wsdl
                 wsdlCompositeParameter.setValue(wsdlComposite);
                 wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
-                wsdlDefParameter.setValue(
-                        getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
+
+                Definition def =
+                        getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getGeneratedWsdlWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
+
             } else if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
                 //No wsdl composite because wsdl already exists
+
                 wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
+
+                Definition def = getServiceDescriptionImpl().getWSDLWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
+
             } else {
                 //There is no wsdl composite and there is NOT a wsdl definition
                 wsdlLocationParameter.setValue(null);
@@ -412,8 +433,15 @@ class EndpointDescriptionImpl
             wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
             if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
                 wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper()
-                    .getDefinition());
+
+                Definition def = getServiceDescriptionImpl().getWSDLWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
             }
             // No WSDL supplied and we do not generate for non-SOAP 1.1/HTTP
             // endpoints
@@ -790,15 +818,15 @@ class EndpointDescriptionImpl
             // Note that the axis service builder takes only the localpart of the port qname.
             // TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
 
-            WSDLWrapper wrapper = getServiceDescriptionImpl().getWSDLWrapper();
+            Definition def = getServiceDescriptionImpl().getWSDLWrapper().getUnwrappedDefinition();
+
             WSDL11ToAxisServiceBuilder serviceBuilder =
-                    new WSDL11ToAxisServiceBuilder(
-                            wrapper.getDefinition(),
+                    new WSDL11ToAxisServiceBuilder(def,
                             getServiceDescription().getServiceQName(),
                             getPortQName().getLocalPart());
 
             //TODO: Temporary, please change the following log.info to log.debug
-            log.info("Building AxisService from wsdl: " + wrapper.getWSDLLocation());
+            log.info("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());
             
             if (getServiceDescriptionImpl().isDBCMap()) {
                 //this.class.getClass().getClassLoader();

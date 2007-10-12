@@ -35,7 +35,15 @@ import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
 import org.apache.axis2.deployment.resolver.WarBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.WarFileBasedURIResolver;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
@@ -52,6 +60,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -212,8 +222,12 @@ public class ArchiveReader implements DeploymentConstants {
                         new AARFileBasedURIResolver(serviceArchiveFile));
                 if (axisServiceBuilder instanceof WSDL11ToAllAxisServicesBuilder) {
 
-                    ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).setCustomWSLD4JResolver(
+                    ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).setCustomWSDLResolver(
                             new AARBasedWSDLLocator(baseURI, serviceArchiveFile, in));
+
+                    ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).setDocumentBaseUri(
+                            serviceArchiveFile.getCanonicalFile().toURI().toString());
+
                 } else if (axisServiceBuilder instanceof WSDL20ToAllAxisServicesBuilder) {
                     // trying to use the jar scheme as the base URI. I think this can be used to handle
                     // wsdl 1.1 as well without using a custom URI resolver. Need to look at it later.
@@ -224,6 +238,11 @@ public class ArchiveReader implements DeploymentConstants {
                 if (serviceArchiveFile != null) {
                     axisServiceBuilder.setBaseUri(
                             serviceArchiveFile.getParentFile().toURI().toString());
+
+                    if (axisServiceBuilder instanceof WSDL11ToAllAxisServicesBuilder) {
+                        ((WSDL11ToAllAxisServicesBuilder) axisServiceBuilder).setDocumentBaseUri(
+                                serviceArchiveFile.getCanonicalFile().toURI().toString());
+                    }
                 }
             }
             if (axisServiceBuilder instanceof WSDL11ToAllAxisServicesBuilder) {
@@ -235,6 +254,11 @@ public class ArchiveReader implements DeploymentConstants {
             log.info("Trouble processing wsdl file :" + axisFault.getMessage());
             if (log.isDebugEnabled()) {
                 log.debug(axisFault);
+            }
+        } catch (IOException ioex) {
+            log.info("Trouble processing wsdl file :" + ioex.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug(ioex);
             }
         }
         return null;
@@ -326,6 +350,7 @@ public class ArchiveReader implements DeploymentConstants {
                                     equals(documentElementNS.getNamespaceURI())) {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(
                                         new ByteArrayInputStream(out.toByteArray()));
+                                ((WSDL11ToAxisServiceBuilder) wsdlToAxisServiceBuilder).setDocumentBaseUri(entryName);
                             } else {
                                 throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
@@ -384,7 +409,7 @@ public class ArchiveReader implements DeploymentConstants {
                     equals(documentElementNS.getNamespaceURI())) {
                 wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(
                         new ByteArrayInputStream(out.toByteArray()));
-                wsdlToAxisServiceBuilder.setCustomWSLD4JResolver(new WarBasedWSDLLocator(wsdlUrl,
+                wsdlToAxisServiceBuilder.setCustomWSDLResolver(new WarBasedWSDLLocator(wsdlUrl,
                                                                                          loader,
                                                                                          new ByteArrayInputStream(
                                                                                                  out.toByteArray())));
@@ -423,6 +448,8 @@ public class ArchiveReader implements DeploymentConstants {
                             equals(documentElementNS.getNamespaceURI())) {
                         in2 = new FileInputStream(file1);
                         wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(in2);
+                        ((WSDL11ToAxisServiceBuilder) wsdlToAxisServiceBuilder).setDocumentBaseUri(file1.toURI()
+                                                                                                        .toString());
                     } else {
                         throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                     }

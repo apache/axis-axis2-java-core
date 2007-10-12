@@ -268,6 +268,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String MM7_PART_CID = "MM7PartCID";
 
 
+        public static final String REDUCE_WSDL_MEMORY_CACHE = "reduceWSDLMemoryCache";
+        public static final String REDUCE_WSDL_MEMORY_TYPE  = "reduceWSDLMemoryType";
+
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD_DELETE = "DELETE";
         public static final String HTTP_METHOD_PUT = "PUT";

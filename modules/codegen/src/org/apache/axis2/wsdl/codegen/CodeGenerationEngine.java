@@ -46,6 +46,9 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -293,7 +296,15 @@ public class CodeGenerationEngine {
         Document doc;
         try {
             doc = XMLUtils.newDocument(uri);
-            return reader.readWSDL(getBaseURI(uri), doc);
+
+            // Set the URI of the base document for the Definition.
+            // This identifies the origin of the Definition
+            // Note that this is the URI of the base document, not the imports.
+            Definition def = reader.readWSDL(getBaseURI(uri), doc);
+            def.setDocumentBaseURI(getURI(uri));
+
+            return def;
+
         } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
                                     "Parser Configuration Error",
@@ -350,5 +361,17 @@ public class CodeGenerationEngine {
         }
         String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
         return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+    }
+
+    /**
+     * calculates the URI 
+     * needs improvement
+     *
+     * @param currentURI
+     */
+    private String getURI(String currentURI) throws URISyntaxException, IOException {
+
+        File file = new File(currentURI);
+        return file.getCanonicalFile().toURI().toString();
     }
 }

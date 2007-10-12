@@ -61,6 +61,7 @@ public class DescriptionTestUtils {
             WSDLFactory factory = WSDLFactory.newInstance();
             WSDLReader reader = factory.newWSDLReader();
             wsdlDefinition = reader.readWSDL(wsdlURL.toString());
+            wsdlDefinition.setDocumentBaseURI(wsdlURL.toString());
         }
         catch (Exception e) {
             System.out.println(

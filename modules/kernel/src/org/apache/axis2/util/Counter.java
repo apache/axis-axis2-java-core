@@ -22,12 +22,32 @@ package org.apache.axis2.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-// Counter uses java.util.concurrent.atomic.AtomicLong if present,
-// else falls back to the backport version
+/**
+ * This class provides a simple zero-based counter with synchronized access.
+ */
 public class Counter {
+
     private long value = 0L;
 
     public synchronized long incrementAndGet() {
         return ++value;
     }
+
+    public synchronized long decrementAndGet() {
+        if (value > 0L) {
+            return --value;
+        }
+        else {
+            return value;
+        }
+    }
+
+    public synchronized void reset() {
+        value = 0L;
+    }
+
+    public synchronized long get() {
+        return value;
+    }
+
 }

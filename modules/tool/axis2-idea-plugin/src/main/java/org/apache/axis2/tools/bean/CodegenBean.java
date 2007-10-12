@@ -287,6 +287,7 @@ public class CodegenBean {
         WSDL11ToAxisServiceBuilder builder =
                 new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 
+        builder.setDocumentBaseUri(url.toString());
         builder.setBaseUri(getBaseUri(wsdlURI));
         builder.setCodegen(true);
         return builder.populateService();
@@ -407,6 +408,9 @@ public class CodegenBean {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         wsdlDefinition = reader.readWSDL(WSDLFileName) ;
+        if (wsdlDefinition != null) {
+            wsdlDefinition.setDocumentBaseURI(WSDLFileName);
+        }
 
     }
 

@@ -65,4 +65,6 @@ public interface WSDLWrapper {
     public String getTargetNamespace();
 
     public Definition getDefinition();
+
+    public Definition getUnwrappedDefinition();
 }

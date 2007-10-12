@@ -1626,6 +1626,9 @@ public class AxisService extends AxisDescription {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setFeature("javax.wsdl.importDocuments", true);
             Definition wsdlDefinition = reader.readWSDL(getBaseURI(wsdlURL.toString()), doc);
+            if (wsdlDefinition != null) {
+                wsdlDefinition.setDocumentBaseURI(getDocumentURI(wsdlURL.toString()));
+            }
             return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -1650,6 +1653,15 @@ public class AxisService extends AxisDescription {
             }
             String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
             return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static String getDocumentURI(String currentURI)  {
+        try {
+            File file = new File(currentURI);
+            return file.getCanonicalFile().toURI().toString();
         } catch (IOException e) {
             return null;
         }

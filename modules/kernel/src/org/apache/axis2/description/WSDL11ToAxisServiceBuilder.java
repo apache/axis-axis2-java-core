@@ -31,6 +31,7 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
@@ -129,8 +130,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private static final String BINDING_OPERATION_OUTPUT = "Binding.Operation.Output";
 
     protected Definition wsdl4jDefinition = null;
+    protected String     wsdlBaseDocumentURI = null;
 
-    private WSDLLocator customWSLD4JResolver;
+    private WSDLLocator customWSDLResolver;
 
     public static final String RPC_STYLE = "rpc";
 
@@ -233,31 +235,65 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * sets a custem WSDL4J locator
-     *
-     * @param customWSLD4JResolver
+     * @deprecated
+     * @see setCustomWSDLResolver
      */
-    public void setCustomWSLD4JResolver(WSDLLocator customWSLD4JResolver) {
-        this.customWSLD4JResolver = customWSLD4JResolver;
+    public void setCustomWSLD4JResolver(WSDLLocator customResolver) {
+        setCustomWSDLResolver(customResolver);
+    }
+
+
+    /**
+     * sets a custom WSDL locator
+     *
+     * @param customWSDLResolver
+     */
+    public void setCustomWSDLResolver(WSDLLocator customResolver) {
+        this.customWSDLResolver = customResolver;
+        setDocumentBaseUri(this.customWSDLResolver.getBaseURI());
+    }
+
+
+    /**
+     * Sets the URI to the base document associated with the WSDL definition.
+     * This identifies the origin of the Definition and allows the 
+     * Definition to be reloaded.  Note that this is the URI of the base
+     * document, not the imports.
+     *
+     * @param baseUri
+     */
+    public void setDocumentBaseUri(String baseUri) {
+        if (wsdl4jDefinition != null) {
+            wsdl4jDefinition.setDocumentBaseURI(baseUri);
+        }
+        wsdlBaseDocumentURI = baseUri;
     }
 
     /**
-     * populates a given service This is the only publicly accessible method in
-     * this class
+     * Gets the URI to the base document associated with the WSDL definition.
+     * This identifies the origin of the Definition and allows the 
+     * Definition to be reloaded.  Note that this is the URI of the base
+     * document, not the imports.
+     *
+     */
+    public String getDocumentBaseUri() {
+        return wsdlBaseDocumentURI;
+    }
+
+
+
+
+    /**
+     * Populates a given service. 
      *
      * @throws AxisFault
      */
     public AxisService populateService() throws AxisFault {
         try {
             setup();
-            // Setting wsdl4jdefintion to axisService , so if some one want
-            // to play with it he can do that by getting the parameter
-            Parameter wsdlDefinitionParameter = new Parameter();
-            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
-            wsdlDefinitionParameter.setValue(wsdl4jDefinition);
-            axisService.addParameter(wsdlDefinitionParameter);
-            axisService.setWsdlFound(true);
-            axisService.setCustomWsdl(true);
+
+            // NOTE: set the axisService with the Parameter for the WSDL 
+            // Definition after the rest of the work
 
             if (wsdl4jDefinition == null) {
                 return null;
@@ -309,6 +345,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             populateEndpoints(binding, wsdl4jService, portType);
             processPoliciesInDefintion(wsdl4jDefinition);
             axisService.getPolicyInclude().setPolicyRegistry(registry);
+
+
+            // Setting wsdl4jdefintion to the axisService parameter include list, 
+            // so if someone needs to use the definition directly, 
+            // he can do that by getting the parameter 
+            Parameter wsdlDefinitionParameter = new Parameter();
+            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
+
+            if (!(wsdl4jDefinition instanceof WSDLDefinitionWrapper)) {
+                WSDLDefinitionWrapper wrapper = new WSDLDefinitionWrapper(wsdl4jDefinition);
+                wsdlDefinitionParameter.setValue(wrapper);
+            } else {
+                wsdlDefinitionParameter.setValue(wsdl4jDefinition);
+            }
+
+            axisService.addParameter(wsdlDefinitionParameter);
+            axisService.setWsdlFound(true);
+            axisService.setCustomWsdl(true);
+
+
             return axisService;
 
         } catch (WSDLException e) {
@@ -2071,9 +2127,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);
 
+        Definition def;
         // if the custem resolver is present then use it
-        if (customWSLD4JResolver != null) {
-            return reader.readWSDL(customWSLD4JResolver);
+        if (customWSDLResolver != null) {
+            // make sure the wsdl definition has the URI for the base document set
+            def = reader.readWSDL(customWSDLResolver);
+            def.setDocumentBaseURI(customWSDLResolver.getBaseURI());
+            return def;
         } else {
             Document doc;
             try {
@@ -2089,7 +2149,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error",
                                         e);
             }
-            return reader.readWSDL(getBaseUri(), doc);
+            def = reader.readWSDL(getBaseUri(), doc);
+            def.setDocumentBaseURI(getDocumentBaseUri());
+            return def;
         }
     }
 
