@@ -147,12 +147,22 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         namespaceMap.put(prefix, axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
+        // axis2.xml indicated no HTTP binding?
         boolean disableREST = false;
         Parameter disableRESTParameter =
                 axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
         if (disableRESTParameter != null &&
                 JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
             disableREST = true;
+        }
+        
+        // axis2.xml indicated no SOAP 1.2 binding?
+        boolean disableSOAP12 = false;
+        Parameter disableSOAP12Parameter =
+        axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+        if (disableSOAP12Parameter != null &&
+                JavaUtils.isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+            disableSOAP12 = true;
         }
 
         // adding documentation element
@@ -189,12 +199,14 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
         generateMessages(fac, ele);
         generatePortType(fac, ele);
         generateSOAP11Binding(fac, ele);
-        generateSOAP12Binding(fac, ele);
+        if (!disableSOAP12) {
+            generateSOAP12Binding(fac, ele);
+        }
         if (!disableREST) {
             generateHTTPBinding(fac, ele);
         }
 
-        generateService(fac, ele, disableREST);
+        generateService(fac, ele, disableREST, disableSOAP12);
         addPoliciesToDefinitionElement(policiesInDefinitions.values()
                 .iterator(), definition);
 
@@ -439,15 +451,18 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
      * @param fac the active OMFactory
      * @param defintions the WSDL &lt;definitions&gt; element under which to put the service
      * @param disableREST if false, generate REST binding, if true, don't
+     * @param disableSOAP12 if false, generate SOAP 1.2 binding, if true, don't
      * @throws Exception if there's a problem
      */
-    public void generateService(OMFactory fac, OMElement defintions, boolean disableREST)
+    public void generateService(OMFactory fac, OMElement defintions, boolean disableREST, boolean disableSOAP12)
             throws Exception {
         OMElement service = fac.createOMElement(SERVICE_LOCAL_NAME, wsdl);
         defintions.addChild(service);
         service.addAttribute(ATTRIBUTE_NAME, axisService.getName(), null);
         generateSOAP11Ports(fac, service);
-        generateSOAP12Ports(fac, service);
+        if (!disableSOAP12) {
+            generateSOAP12Ports(fac, service);
+        }
 
         addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
                 .getPolicyInclude(), service);

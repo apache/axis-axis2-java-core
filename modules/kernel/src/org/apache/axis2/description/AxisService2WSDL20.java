@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -184,6 +185,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         // Add the interface element
         descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, omFactory, interfaceName));
 
+        // axis2.xml indicated no HTTP binding?
         boolean disableREST = false;
         Parameter disableRESTParameter =
                 axisService.getParameter(Constants.Configuration.DISABLE_REST);
@@ -192,6 +194,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             disableREST = true;
         }
 
+        // axis2.xml indicated no SOAP 1.2 binding?
+        boolean disableSOAP12 = false;
+        Parameter disableSOAP12Parameter =
+        axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+        if (disableSOAP12Parameter != null &&
+                JavaUtils.isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+            disableSOAP12 = true;
+        }        
+        
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
         Set bindings = new HashSet();
@@ -212,11 +223,22 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
                 AxisBinding axisBinding = axisEndpoint.getBinding();
                 String type = axisBinding.getType();
+                
+                // If HTTP binding is disabled, do not add.
                 if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
                     if (disableREST) {
                         continue;
                     }
                 }
+                
+                // If SOAP 1.2 binding is disabled, do not add.
+                String propertySOAPVersion = (String)axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+                if (propertySOAPVersion != null) {
+                    if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                        continue;
+                    }
+                }
+                
                 bindings.add(axisBinding);
                 for (int i = 0; i < eprs.length; i++) {
                     String epr = eprs[i];
@@ -260,9 +282,11 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
+            if (!disableSOAP12) {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
+            }
             if (!disableREST) {
                 descriptionElement.addChild(
                         WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
@@ -271,7 +295,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST, eprs));
+                                                                           axisService, disableREST, disableSOAP12, eprs));
         }
 
         return descriptionElement;
