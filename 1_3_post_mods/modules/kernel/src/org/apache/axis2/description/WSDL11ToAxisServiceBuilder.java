@@ -23,6 +23,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
