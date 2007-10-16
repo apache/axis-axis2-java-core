@@ -160,5 +160,26 @@
 
     <xsd:element name="PersonElement" type="tns:Person"/>
 
+    <xsd:element name="SMSElement">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="EndDate" type="tns:WSTypeDate" nillable="true"/>
+                <xsd:element name="SMS_Provider" type="tns:WSTypeChar3" nillable="true"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="WSTypeDate">
+        <xsd:restriction base="xsd:date">
+            <xsd:pattern value='[0-9]{4}-[0-9]{2}-[0-9]{2}'/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="WSTypeChar3">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
 
 </xsd:schema>
