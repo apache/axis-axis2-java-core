@@ -74,8 +74,8 @@ public class WSDL11Writer {
             if (axisService != null) {
                 Map baseURIwsdlNameMap = new HashMap();
                 // add the initial definition to the map
-                baseURIwsdlNameMap.put(definition.getDocumentBaseURI(),axisService.getName());
-                writeWSDL(definition, axisService.getName(), changedMap, baseURIwsdlNameMap);
+                baseURIwsdlNameMap.put(definition.getDocumentBaseURI(),axisService.getName() + ".wsdl");
+                writeWSDL(definition, axisService.getName() + ".wsdl", changedMap, baseURIwsdlNameMap);
             }
         } catch (Exception e) {
             throw new RuntimeException("WSDL writing failed!", e);
@@ -83,7 +83,7 @@ public class WSDL11Writer {
     }
 
     private void writeWSDL(Definition definition,
-                           String serviceName,
+                           String fileName,
                            Map changedMap,
                            Map baseURIwsdlNameMap) throws Exception {
         // first process the imports and save them.
@@ -102,18 +102,28 @@ public class WSDL11Writer {
                     // we have to process this wsdl file only if it has not been processed earlier
                     if (!baseURIwsdlNameMap.containsKey(wsdlLocation)) {
                         wsdlName = wsdlLocation.substring(wsdlLocation.lastIndexOf('/') + 1);
+                        if (!wsdlName.endsWith(".wsdl") && !wsdlName.endsWith(".xsd")){
+                           // this seems to be an online wsdl so we generate a dummy name
+                           if (wsdlName.indexOf("xsd") > -1){
+                               wsdlName = "xsd" + count++ + ".xsd";
+                           } else {
+                               wsdlName = "wsdl" + count++ + ".wsdl";
+                           }
+                        }
 
                         //trim the wsdl part
-                        wsdlName = wsdlName.substring(0, wsdlName.indexOf(".wsdl"));
                         while (baseURIwsdlNameMap.containsValue(wsdlName)) {
-                            wsdlName = wsdlName + count++;
+                            // import file name can either be xsd or wsdl
+                            String fileNamePart = wsdlName.substring(0,wsdlName.lastIndexOf("."));
+                            String extension = wsdlName.substring(wsdlName.lastIndexOf("."));
+                            wsdlName = fileNamePart + count++ + extension;
                         }
                         baseURIwsdlNameMap.put(wsdlLocation, wsdlName);
                         Definition innerDefinition = wsdlImport.getDefinition();
                         writeWSDL(innerDefinition, wsdlName, changedMap, baseURIwsdlNameMap);
                     }
 
-                    wsdlImport.setLocationURI(baseURIwsdlNameMap.get(wsdlLocation) + ".wsdl");
+                    wsdlImport.setLocationURI((String)baseURIwsdlNameMap.get(wsdlLocation));
                 }
             }
         }
@@ -122,7 +132,7 @@ public class WSDL11Writer {
         // finally save the file
         WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
         File outputFile = FileWriter.createClassFile(baseFolder,
-                                                     null, serviceName, ".wsdl");
+                                                     null, fileName, null);
         FileOutputStream out = new FileOutputStream(outputFile);
 
         // we have a catch here
@@ -142,7 +152,7 @@ public class WSDL11Writer {
            Service service;
            for (Iterator iter = servicesList.iterator();iter.hasNext();){
                service = (Service) iter.next();
-               if (!service.getQName().getLocalPart().equals(serviceName)){
+               if (!service.getQName().getLocalPart().equals(fileName)){
                    definition.removeService(service.getQName());
                    removedServices.add(service);
                }

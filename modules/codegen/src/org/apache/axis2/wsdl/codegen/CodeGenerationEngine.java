@@ -364,7 +364,7 @@ public class CodeGenerationEngine {
     }
 
     /**
-     * calculates the URI 
+     * calculates the URI
      * needs improvement
      *
      * @param currentURI
@@ -372,6 +372,11 @@ public class CodeGenerationEngine {
     private String getURI(String currentURI) throws URISyntaxException, IOException {
 
         File file = new File(currentURI);
-        return file.getCanonicalFile().toURI().toString();
+        if (file.exists()){
+            return file.getCanonicalFile().toURI().toString();
+        } else {
+            return currentURI;
+        }
+
     }
 }
