@@ -1969,10 +1969,11 @@ public class AxisService extends AxisDescription {
         Map changedScheamLocations = null;
         if (!this.schemaLocationsAdjusted) {
             Hashtable nameTable = new Hashtable();
+            Hashtable sourceURIToNewLocationMap = new Hashtable();
             //calculate unique names for the schemas
-            calcualteSchemaNames(schema, nameTable);
+            calcualteSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
             //adjust the schema locations as per the calculated names
-            changedScheamLocations = adjustSchemaNames(schema, nameTable);
+            changedScheamLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
             //reverse the nametable so that there is a mapping from the
             //name to the schemaObject
             setSchemaMappingTable(swapMappingTable(nameTable));
@@ -1987,7 +1988,7 @@ public class AxisService extends AxisDescription {
      *
      * @param schemas
      */
-    private void calcualteSchemaNames(List schemas, Hashtable nameTable) {
+    private void calcualteSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
@@ -1999,13 +2000,11 @@ public class AxisService extends AxisDescription {
                 if (item instanceof XmlSchemaExternal) {
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
-                    if (s != null && nameTable.get(s) == null) {
+                    if (s != null && sourceURIToNewLocationMap.get(s.getSourceURI()) == null) {
                         //insert the name into the table
-                        insertIntoNameTable(nameTable, s);
+                        insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
                         //recursively call the same procedure
-                        calcualteSchemaNames(Arrays.asList(
-                                new XmlSchema[]{s}),
-                                             nameTable);
+                        calcualteSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
                     }
                 }
             }
@@ -2018,36 +2017,47 @@ public class AxisService extends AxisDescription {
      * @param nameTable
      * @param s
      */
-    private void insertIntoNameTable(Hashtable nameTable, XmlSchema s) {
+    private void insertIntoNameTable(Hashtable nameTable, XmlSchema s, Hashtable sourceURIToNewLocationMap) {
         String sourceURI = s.getSourceURI();
-        sourceURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
-        //remove the .xsd extention
-        sourceURI = sourceURI.substring(0,sourceURI.indexOf("."));
-        // make it unique
-        while(nameTable.containsValue(sourceURI)){
-            sourceURI = sourceURI + count++;
+        String newURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
+        if (newURI.endsWith(".xsd")) {
+            //remove the .xsd extention
+            newURI = newURI.substring(0, newURI.lastIndexOf("."));
+        } else {
+            newURI = "xsd" + count++;
         }
 
-        nameTable.put(s,
-                      (sourceURI)
-                      + (customSchemaNameSuffix != null ?
-                         customSchemaNameSuffix :
-                         ""));
+        newURI = customSchemaNameSuffix != null? newURI + customSchemaNameSuffix: newURI;
+        // make it unique
+        while(nameTable.containsValue(newURI)){
+            newURI = newURI + count++;
+        }
+
+        nameTable.put(s, newURI);
+        sourceURIToNewLocationMap.put(sourceURI,newURI);
     }
 
     /**
      * Run 2  - adjust the names
      */
-    private Map adjustSchemaNames(List schemas, Hashtable nameTable) {
+    private Map adjustSchemaNames(List schemas,
+                                  Hashtable nameTable,
+                                  Hashtable sourceURIToNewLocationMap) {
         Hashtable importedSchemas = new Hashtable();
         //process the schemas in the main schema list
         for (int i = 0; i < schemas.size(); i++) {
-            adjustSchemaName((XmlSchema) schemas.get(i), nameTable, importedSchemas);
+            adjustSchemaName((XmlSchema) schemas.get(i),
+                    nameTable,
+                    importedSchemas,
+                    sourceURIToNewLocationMap);
         }
         //process all the rest in the name table
         Enumeration nameTableKeys = nameTable.keys();
         while (nameTableKeys.hasMoreElements()) {
-            adjustSchemaName((XmlSchema) nameTableKeys.nextElement(), nameTable, importedSchemas);
+            adjustSchemaName((XmlSchema) nameTableKeys.nextElement(),
+                    nameTable,
+                    importedSchemas,
+                    sourceURIToNewLocationMap);
 
         }
         return importedSchemas;
@@ -2059,15 +2069,21 @@ public class AxisService extends AxisDescription {
      * @param parentSchema
      * @param nameTable
      */
-    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable,
-                                  Hashtable importedScheams) {
+    private void adjustSchemaName(XmlSchema parentSchema,
+                                  Hashtable nameTable,
+                                  Hashtable importedScheams,
+                                  Hashtable sourceURIToNewLocationMap) {
         XmlSchemaObjectCollection includes = parentSchema.getIncludes();
         for (int j = 0; j < includes.getCount(); j++) {
             Object item = includes.getItem(j);
             if (item instanceof XmlSchemaExternal) {
                 XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
                 XmlSchema s = xmlSchemaExternal.getSchema();
-                adjustSchemaLocation(s, xmlSchemaExternal, nameTable, importedScheams);
+                adjustSchemaLocation(s,
+                        xmlSchemaExternal,
+                        nameTable,
+                        importedScheams,
+                        sourceURIToNewLocationMap);
             }
         }
 
@@ -2080,27 +2096,21 @@ public class AxisService extends AxisDescription {
      * @param xmlSchemaExternal
      * @param nameTable
      */
-    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal,
-                                      Hashtable nameTable, Hashtable importedScheams) {
+    private void adjustSchemaLocation(XmlSchema s,
+                                      XmlSchemaExternal xmlSchemaExternal,
+                                      Hashtable nameTable,
+                                      Hashtable importedScheams,
+                                      Hashtable sourceURIToNewLocationMap) {
         if (s != null) {
-            String schemaLocation = xmlSchemaExternal.getSchemaLocation();
-            if (importedScheams.get(schemaLocation) != null) {
-                xmlSchemaExternal.setSchemaLocation(
-                        (String) importedScheams.get(xmlSchemaExternal.getSchemaLocation()));
-            } else {
-                String newscheamlocation = customSchemaNamePrefix == null ?
-                                           //use the default mode
-                                           (getName() +
-                                            "?xsd=" +
-                                            nameTable.get(s)) :
-                                                              //custom prefix is present - add the custom prefix
-                                                              (customSchemaNamePrefix +
-                                                               nameTable.get(s));
-                xmlSchemaExternal.setSchemaLocation(
-                        newscheamlocation);
-                importedScheams.put(schemaLocation, newscheamlocation);
-            }
 
+            String newscheamlocation = customSchemaNamePrefix == null ?
+                    //use the default mode
+                    (getName() + "?xsd=" + sourceURIToNewLocationMap.get(s.getSourceURI())) :
+                    //custom prefix is present - add the custom prefix
+                    (customSchemaNamePrefix + sourceURIToNewLocationMap.get(s.getSourceURI()));
+            String schemaLocation = xmlSchemaExternal.getSchemaLocation();
+            xmlSchemaExternal.setSchemaLocation(newscheamlocation);
+            importedScheams.put(schemaLocation, newscheamlocation);
         }
     }
 
