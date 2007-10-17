@@ -28,6 +28,8 @@ import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
@@ -96,6 +98,7 @@ import java.util.TreeMap;
 
 public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
+    protected static final Log log = LogFactory.getLog(WSDL20ToAxisServiceBuilder.class);
     protected Description description;
 
     private String wsdlURI;
@@ -1074,6 +1077,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         // This turns on WSDL validation which is set off by default.
 //        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
+        
+//      Log when and from where the WSDL is loaded.
+        if (log.isDebugEnabled()) {
+            log.debug("Reading 2.0 WSDL with wsdl uri = " + wsdlURI);
+            log.debug("  the stack at this point is: " + stackToString());
+        }
         return reader.readWSDL(wsdlURI);
     }
 

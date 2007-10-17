@@ -2149,6 +2149,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error",
                                         e);
             }
+            
+            // Log when and from where the WSDL is loaded.
+            if (log.isDebugEnabled()) {
+                log.debug("Reading 1.1 WSDL with base uri = " + getBaseUri());
+                log.debug("  the document base uri = " + getDocumentBaseUri());
+                log.debug("  the stack at this point is: " + stackToString());
+            }
             def = reader.readWSDL(getBaseUri(), doc);
             def.setDocumentBaseURI(getDocumentBaseUri());
             return def;
