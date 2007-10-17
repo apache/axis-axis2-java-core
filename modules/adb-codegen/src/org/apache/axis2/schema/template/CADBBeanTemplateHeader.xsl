@@ -155,13 +155,13 @@
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env, axiom_node_t* parent);
 
+        <xsl:if test="@simple">
         /**
          * Serialize to a String from the adb objects
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @return serialized string
          */
-        <xsl:if test="@simple">
             axis2_char_t* AXIS2_CALL
             <xsl:value-of select="$axis2_name"/>_serialize_to_string(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,

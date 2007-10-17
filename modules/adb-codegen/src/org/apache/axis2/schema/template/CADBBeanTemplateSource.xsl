@@ -511,7 +511,7 @@
             </xsl:if>-->
             <xsl:variable name="element_qname_var_requred">
                   <xsl:for-each select="property">
-                    <xsl:if test="not(@attribute) and @isarray">
+                    <xsl:if test="(not(@attribute) and @isarray) or not(../@ordered)">
                         yes
                     </xsl:if>
                   </xsl:for-each>
@@ -2548,7 +2548,7 @@
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
                 if(<xsl:value-of select="$attriName"/> == NULL)
                 {
-                    return (<xsl:value-of select="$nativePropertyType"/>)NULL;
+                    return (<xsl:value-of select="$nativePropertyType"/>)0;
                 }
                 ret_val = (<xsl:value-of select="$PropertyTypeArrayParam"/>)axutil_array_list_get(<xsl:value-of select="$attriName"/>, env, i);
                 <xsl:choose>
