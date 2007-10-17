@@ -713,6 +713,7 @@ public class JavaBeanWriter implements BeanWriter {
                 javaClassNameForElement = metainf.getClassNameForQName(name);
             }
 
+
             if (javaClassNameForElement == null) {
                 javaClassNameForElement = getDefaultClassName();
                 log.warn(SchemaCompilerMessages
@@ -728,6 +729,15 @@ public class JavaBeanWriter implements BeanWriter {
 
             if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
+            }
+
+             // add the default value
+            if (metainf.isDefaultValueAvailable(name)){
+                QName schemaQName = metainf.getSchemaQNameForQName(name);
+                if (baseTypeMap.containsKey(schemaQName)){
+                    XSLTUtils.addAttribute(model, "defaultValue",
+                            metainf.getDefaultValueForQName(name), property);
+                }
             }
 
             //in the case the original element is an array but the derived one is not.

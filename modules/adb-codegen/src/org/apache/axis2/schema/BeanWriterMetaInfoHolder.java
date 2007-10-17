@@ -64,6 +64,8 @@ public class BeanWriterMetaInfoHolder {
     protected Map xmlNameJavaNameMap = new HashMap();
     protected List memberTypesKeys = new ArrayList();
 
+    protected Map elementQNameToDefulatValueMap = new HashMap();
+
     protected QName itemTypeQName;
     protected String itemTypeClassName;
     protected boolean isUnion;
@@ -312,6 +314,34 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
+     * this method registers the defult value agaist the element qname.
+     * @param qname
+     * @param value
+     */
+    public void registerDefaultValue(QName qname,String value){
+        this.elementQNameToDefulatValueMap.put(qname,value);
+    }
+
+    /**
+     *
+     * @param qname
+     * @return is a default value available for this qname
+     */
+    public boolean isDefaultValueAvailable(QName qname){
+        return this.elementQNameToDefulatValueMap.containsKey(qname);
+    }
+
+    /**
+     * gets the default value for qname
+     * @param qname
+     * @return default value for this qname
+     */
+
+    public String getDefaultValueForQName(QName qname){
+        return (String) this.elementQNameToDefulatValueMap.get(qname);
+    }
+
+    /**
      * Gets the schema name for the given QName.
      *
      * @param eltQName
@@ -466,6 +496,7 @@ public class BeanWriterMetaInfoHolder {
         this.qNameMaxOccursCountMap.clear();
         this.qNameMinOccursCountMap.clear();
         this.qNameOrderMap.clear();
+        this.elementQNameToDefulatValueMap.clear();
     }
 
     /**

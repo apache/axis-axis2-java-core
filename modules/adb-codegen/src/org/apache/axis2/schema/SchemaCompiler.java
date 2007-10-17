@@ -421,6 +421,12 @@ public class SchemaCompiler {
                         qName,
                         className);
             }
+
+            // register the default value if present
+            if (xsElt.getDefaultValue() != null){
+                metainf.registerDefaultValue(xsElt.getQName(),xsElt.getDefaultValue());
+            }
+
             if (isBinary(xsElt)) {
                 metainf.addtStatus(xsElt.getQName(),
                             SchemaConstants.BINARY_TYPE);
@@ -1613,6 +1619,10 @@ public class SchemaCompiler {
                     att.addMetaInfo(
                             SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                             className);
+                    // set the default value
+                    if (att.getDefaultValue() != null){
+                        metainf.registerDefaultValue(att.getQName(),att.getDefaultValue());
+                    }
                     // after
                 } else {
                     XmlSchemaType type = getType(parentSchema, schemaTypeName);
@@ -2022,6 +2032,11 @@ public class SchemaCompiler {
                         if (innerChoiceElementList.contains(referencedQName)){
                             metainfHolder.addtStatus(referencedQName,SchemaConstants.INNER_CHOICE_ELEMENT);
                         }
+                        // register the default value as well
+                        if (elt.getDefaultValue() != null){
+                           metainfHolder.registerDefaultValue(referencedQName,elt.getDefaultValue());
+                        }
+
                     }
                 }
 
