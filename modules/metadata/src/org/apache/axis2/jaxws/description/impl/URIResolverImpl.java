@@ -56,8 +56,9 @@ public class URIResolverImpl implements URIResolver {
 
     public InputSource resolveEntity(String namespace, String schemaLocation,
                                      String baseUri) {
-        //TODO: Temporary, please change the following log.info to log.debug
-        log.info("resolveEntity: ["+ namespace + "]["+ schemaLocation + "][ " + baseUri+ "]");
+        if (log.isDebugEnabled()) {
+            log.debug("resolveEntity: ["+ namespace + "]["+ schemaLocation + "][ " + baseUri+ "]");
+        }
         
         InputStream is = null;
         URI pathURI = null;
@@ -180,8 +181,11 @@ public class URIResolverImpl implements URIResolver {
         // imported XSDs that have been read.  If this value is null, then circular XSDs will 
         // cause infinite recursive reads.
         returnInputSource.setSystemId(pathURIStr != null ? pathURIStr : schemaLocation);
-        //TODO: Temporary, please change the following log.info to log.debug
-        log.info("returnInputSource :" + returnInputSource.getSystemId());
+        
+        if (log.isDebugEnabled()) {
+            log.debug("returnInputSource :" + returnInputSource.getSystemId());    
+        }
+        
         return returnInputSource;
     }
 

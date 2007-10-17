@@ -825,8 +825,9 @@ class EndpointDescriptionImpl
                             getServiceDescription().getServiceQName(),
                             getPortQName().getLocalPart());
 
-            //TODO: Temporary, please change the following log.info to log.debug
-            log.info("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());
+            if (log.isDebugEnabled()) {
+                log.debug("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());    
+            }
             
             if (getServiceDescriptionImpl().isDBCMap()) {
                 //this.class.getClass().getClassLoader();
