@@ -166,6 +166,14 @@
                 <xsd:element name="EndDate" type="tns:WSTypeDate" nillable="true"/>
                 <xsd:element name="SMS_Provider" type="tns:WSTypeChar3" nillable="true"/>
             </xsd:sequence>
+            <xsd:attribute name="MultipleRestriction">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="String"/>
+                        <xsd:pattern value="Base64"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
 
@@ -180,6 +188,8 @@
             <xsd:maxLength value="3"/>
         </xsd:restriction>
     </xsd:simpleType>
+
+
 
 
 </xsd:schema>
