@@ -332,6 +332,17 @@ public class CodeGenerationEngine {
             Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
+            // TODO REVIEW FOR JAVA 6
+            // In Java 5, if you passed an array string such as "[Lcom.mypackage.MyClass;" to
+            // loadClass, the class would indeed be loaded.  
+            // In JDK6, a ClassNotFoundException is thrown. 
+            // The work-around is to use code Class.forName instead.
+            // Example:
+            // try {
+            //       classLoader.loadClass(name);
+            //  } catch (ClassNotFoundException e) {
+            //       Class.forName(name, false, loader);
+            //  }
             log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
             return null;
         } catch (InstantiationException e) {
