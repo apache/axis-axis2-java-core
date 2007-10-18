@@ -179,9 +179,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
-            <artifactId>woden</artifactId>
+            <artifactId>woden-api</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-impl-dom</artifactId>
+        </dependency>
         <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean</artifactId>
