@@ -140,25 +140,19 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             envelope = mc.getEnvelope();
             factory = (SOAPFactory)envelope.getOMFactory();
 
-            header = envelope.getHeader();
-
-            // if there is no soap header in the envelope being processed, add one.
-            if (header == null) {
-                header = factory.createSOAPHeader(envelope);
-            }
-
             messageContextOptions = messageContext.getOptions();
 
             addressingNamespace =
                     (isSubmissionNamespace ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE);
 
+            header = envelope.getHeader();
             // if there is no soap header in the envelope being processed, add one.
             if (header == null) {
             	header = factory.createSOAPHeader(envelope);
             }else{
             	ArrayList addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
             	if(addressingHeaders!=null && !addressingHeaders.isEmpty()){
-            		existingWSAHeaders = new ArrayList();
+            		existingWSAHeaders = new ArrayList(addressingHeaders.size());
             		for(Iterator iter=addressingHeaders.iterator();iter.hasNext();){
             			OMElement oe = (OMElement)iter.next();
             			existingWSAHeaders.add(oe.getLocalName());
