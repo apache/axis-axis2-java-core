@@ -188,6 +188,8 @@ public class WSDLSerializationUtil {
                                                    WSDL2Constants.URI_WSDL2_SOAP));
         binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_VERSION, wsoap,
                                                    WSDL2Constants.SOAP_VERSION_1_1));
+        binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_PROTOCOL, wsoap,
+                                                           WSDL2Constants.HTTP_PROTOCAL));
         generateDefaultSOAPBindingOperations(axisService, fac, binding, wsdl, tns, wsoap);
         return binding;
     }
@@ -215,6 +217,8 @@ public class WSDLSerializationUtil {
                                                    WSDL2Constants.URI_WSDL2_SOAP));
         binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_VERSION, wsoap,
                                                    WSDL2Constants.SOAP_VERSION_1_2));
+        binding.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_PROTOCOL, wsoap,
+                                                           WSDL2Constants.HTTP_PROTOCAL));
         generateDefaultSOAPBindingOperations(axisService, fac, binding, wsdl, tns, wsoap);
         return binding;
     }
