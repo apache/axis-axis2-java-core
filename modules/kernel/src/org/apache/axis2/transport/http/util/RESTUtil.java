@@ -155,7 +155,7 @@ public class RESTUtil {
         }
     }
 
-    public static String getConstantFromHTTPLocation(String httpLocation) {
+    public static String getConstantFromHTTPLocation(String httpLocation, String httpMethod) {
         if (httpLocation.charAt(0) != '?') {
             httpLocation = "/" + httpLocation;
         }
@@ -163,7 +163,7 @@ public class RESTUtil {
         if (index > -1) {
             httpLocation = httpLocation.substring(0, index);
         }
-        return httpLocation;
+        return httpMethod + httpLocation;
     }
 
 }

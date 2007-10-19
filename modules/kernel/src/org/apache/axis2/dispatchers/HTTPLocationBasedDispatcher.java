@@ -21,13 +21,14 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.engine.AbstractDispatcher;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,8 +56,10 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             String uri = messageContext.getTo().getAddress();
             String httpLocation = parseRequestURL(uri, messageContext
                     .getConfigurationContext().getServiceContextPath());
+            String httpMethod = (String) messageContext.getProperty(HTTPConstants.HTTP_METHOD);
 
             if (httpLocation != null) {
+                httpLocation = httpMethod + httpLocation;
                 AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
                         .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
                 // Here we check whether the request was dispatched to the correct endpoint. If it
