@@ -61,7 +61,7 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Templates templateCache;
 
-    private List namesList;
+    private Map packageNameToClassNamesMap;
 
     private static int count = 0;
 
@@ -311,7 +311,7 @@ public class JavaBeanWriter implements BeanWriter {
             this.rootDir = rootDir;
         }
 
-        namesList = new ArrayList();
+        this.packageNameToClassNamesMap = new HashMap();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
 
@@ -330,7 +330,12 @@ public class JavaBeanWriter implements BeanWriter {
         String packageName = getPackage(namespaceURI);
 
         String originalName = qName.getLocalPart();
-        String className = makeUniqueJavaClassName(this.namesList, originalName);
+
+        if (!this.packageNameToClassNamesMap.containsKey(packageName)){
+            this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+        }
+        String className =
+                makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
 
         String packagePrefix = null;
 
@@ -1138,7 +1143,11 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         while (listOfNames.contains(javaName.toLowerCase())) {
-            javaName = javaName + count++;
+            if (!listOfNames.contains((javaName + "E").toLowerCase())){
+                javaName = javaName + "E";
+            } else {
+                javaName = javaName + count++;
+            }
         }
 
         listOfNames.add(javaName.toLowerCase());
