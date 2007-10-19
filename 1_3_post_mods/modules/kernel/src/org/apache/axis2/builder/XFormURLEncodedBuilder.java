@@ -307,7 +307,10 @@ public class XFormURLEncodedBuilder implements Builder {
     }
 
     private SOAPFactory getSOAPFactory(String nsURI) throws AxisFault {
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+        if (nsURI == null) {
+            return OMAbstractFactory.getSOAP12Factory();
+        }
+        else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
             return OMAbstractFactory.getSOAP12Factory();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
             return OMAbstractFactory.getSOAP11Factory();
