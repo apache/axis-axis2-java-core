@@ -875,7 +875,7 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    array[i] = Boolean.getBoolean(o.toString());
+                    array[i] = Boolean.parseBoolean(o.toString());
                 }
             }
             returnArray = array;
