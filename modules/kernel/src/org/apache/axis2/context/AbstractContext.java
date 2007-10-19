@@ -103,6 +103,28 @@ public abstract class AbstractContext {
     }
 
     /**
+     * Retrieves an object given a key. Only searches at this level
+     * i.e. getLocalProperty on MessageContext does not look in
+     * the OperationContext properties map if a local result is not
+     * found.
+     *
+     * @param key - if not found, will return null
+     * @return Returns the property.
+     */
+    public Object getLocalProperty(String key) {
+        Object obj = properties == null ? null : properties.get(key);
+        if ((obj == null) && (parent != null)) {
+            // This is getLocalProperty() don't search the hierarchy.
+        } else {
+
+            // Assume that a property is which is read may be updated.
+            // i.e. The object pointed to by 'value' may be modified after it is read
+            addPropertyDifference(key);
+        }
+        return obj;
+    }
+    
+    /**
      * Retrieves an object given a key. The retrieved property will not be replicated to
      * other nodes in the clustered scenario.
      *

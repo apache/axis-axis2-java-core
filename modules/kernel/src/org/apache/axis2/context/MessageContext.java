@@ -861,6 +861,33 @@ public class MessageContext extends AbstractContext
 
     /**
      * Retrieves a property value. The order of search is as follows: search in
+     * my own options and then look locally. Does not search up the hierarchy.
+     *
+     * @param name name of the property to search for
+     * @return the value of the property, or null if the property is not found
+     */
+    public Object getLocalProperty(String name) {
+        if (LoggingControl.debugLoggingAllowed) {
+            checkActivateWarning("getProperty");
+        }
+
+        // search in my own options
+        Object obj = super.getLocalProperty(name);
+        if (obj != null) {
+            return obj;
+        }
+
+        obj = options.getProperty(name);
+        if (obj != null) {
+            return obj;
+        }
+
+        // tough
+        return null;
+    }
+    
+    /**
+     * Retrieves a property value. The order of search is as follows: search in
      * my own options and then look in my context hierarchy. Since its possible
      * that the entire hierarchy is not present, I will start at whatever level
      * has been set and start there.
