@@ -23,6 +23,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -60,6 +61,7 @@ import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtens
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
+import org.apache.woden.wsdl20.extensions.soap.SOAPBindingExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultReferenceExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingMessageReferenceExtensions;
@@ -67,7 +69,6 @@ import org.apache.woden.wsdl20.extensions.soap.SOAPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPHeaderBlock;
 import org.apache.woden.wsdl20.extensions.soap.SOAPModule;
-import org.apache.woden.wsdl20.extensions.soap.SOAPBindingExtensions;
 import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
@@ -621,7 +622,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String httpLocationTemplete = httpLocation.getOriginalLocation();
                 axisBindingOperation
                         .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
-                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
+                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete, HTTPConstants.HEADER_POST);
 
             }
 
@@ -730,8 +731,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault("HTTP Binding Extention not found");
         }
 
+        String httpMethodDefault = httpBindingExtensions.getHttpMethodDefault();
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD,
-                                httpBindingExtensions.getHttpMethodDefault());
+                                httpMethodDefault);
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                                 httpBindingExtensions.getHttpQueryParameterSeparatorDefault());
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING,
@@ -800,6 +802,23 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                              httpBindingOperationExtensions.getHttpFaultSerialization());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
                                              httpBindingOperationExtensions.getHttpInputSerialization());
+            String httpMethod = httpBindingOperationExtensions.
+                    getHttpMethod();
+            if (httpMethod == null) {
+                if (httpMethodDefault != null) {
+                    httpMethod = httpMethodDefault;
+                } else {
+                    Boolean safeParameter =
+                            (Boolean) axisOperation.getParameterValue(WSDL2Constants.ATTR_WSDLX_SAFE);
+                    if (safeParameter != null && safeParameter.booleanValue()){
+                        httpMethod = HTTPConstants.HEADER_GET;
+                    } else {
+                        httpMethod = HTTPConstants.HEADER_POST;
+                    }
+                }
+            }
+            axisBindingOperation
+                    .setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpMethod);
             HTTPLocation httpLocation = httpBindingOperationExtensions.getHttpLocation();
 
             // If httpLocation is not null we should extract a constant part from it and add its value and the
@@ -810,7 +829,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String httpLocationTemplete = httpLocation.getOriginalLocation();
                 axisBindingOperation
                         .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
-                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
+                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete, httpMethod);
 
             }
 
@@ -819,9 +838,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,
                                              httpBindingOperationExtensions.
                                                      isHttpLocationIgnoreUncited());
-            axisBindingOperation
-                    .setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBindingOperationExtensions.
-                            getHttpMethod());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,
                                              httpBindingOperationExtensions.getHttpOutputSerialization());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
