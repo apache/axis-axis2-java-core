@@ -48,14 +48,14 @@
              <xsl:when test="@type">
               /**
                * This type was generated from the piece of schema that had
-               * name = <xsl:value-of select="@originalName"/>
-               * Namespace URI = <xsl:value-of select="@nsuri"/>
-               * Namespace Prefix = <xsl:value-of select="@nsprefix"/>
+               * name = <xsl:value-of select="$originalName"/>
+               * Namespace URI = <xsl:value-of select="$nsuri"/>
+               * Namespace Prefix = <xsl:value-of select="$nsprefix"/>
                */
              </xsl:when>
              <xsl:otherwise>
               /**
-               * implmentation of the <xsl:value-of select="@originalName"/>|<xsl:value-of select="@nsuri"/> element
+               * implmentation of the <xsl:value-of select="$originalName"/><xsl:if test="$nsuri">|<xsl:value-of select="$nsuri"/></xsl:if> element
                */
              </xsl:otherwise>
           </xsl:choose>
@@ -73,13 +73,7 @@
                      <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                      <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                      <xsl:when test="@ours">
-                         <xsl:choose>
-                         <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                            adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                             <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                         <xsl:otherwise>
-                            axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                         </xsl:choose>
+                            adb_<xsl:value-of select="@type"/>_t*
                     </xsl:when>
                      <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                    </xsl:choose>
@@ -125,10 +119,20 @@
             </xsl:for-each>
 
             <xsl:if test="not(@type)">
-              qname =  axutil_qname_create (env,
-                        "<xsl:value-of select="@originalName"/>",
-                        "<xsl:value-of select="@nsuri"/>",
-                        "<xsl:value-of select="@nsprefix"/>");
+              <xsl:choose>
+                <xsl:when test="$nsuri and $nsuri != ''">
+                  qname =  axutil_qname_create (env,
+                        "<xsl:value-of select="$originalName"/>",
+                        "<xsl:value-of select="$nsuri"/>",
+                        "<xsl:value-of select="$nsprefix"/>");
+                </xsl:when>
+                <xsl:otherwise>
+                  qname =  axutil_qname_create (env,
+                        "<xsl:value-of select="$originalName"/>",
+                        NULL,
+                        NULL);
+                </xsl:otherwise>
+              </xsl:choose>
 
               <xsl:value-of select="$name"/>->qname = qname;
             </xsl:if>
@@ -158,26 +162,18 @@
                  <xsl:choose>
                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                    </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                   </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -318,26 +314,18 @@
                    <xsl:choose>
                      <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                      <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                     <xsl:when test="@ours"><xsl:choose>
-                      <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                      adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                      <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                      <xsl:otherwise>
-                      axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                  </xsl:choose></xsl:when>
+                     <xsl:when test="@ours">
+                     adb_<xsl:value-of select="@type"/>_t*
+                     </xsl:when>
                      <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                    </xsl:choose>
                 </xsl:variable>
                 <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                    <xsl:choose>
                      <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                     <xsl:when test="@ours"><xsl:choose>
-                      <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                      adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                      <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                      <xsl:otherwise>
-                      axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                  </xsl:choose></xsl:when>
+                     <xsl:when test="@ours">
+                      adb_<xsl:value-of select="@type"/>_t*
+                     </xsl:when>
                      <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                    </xsl:choose>
                 </xsl:variable>
@@ -517,8 +505,9 @@
                   </xsl:for-each>
             </xsl:variable>
             <xsl:if test="contains($element_qname_var_requred, 'yes')">
-                 axutil_qname_t *element_qname = NULL;
+                 <!-- TODO axutil_qname_t *element_qname = NULL; -->
             </xsl:if>
+            axutil_qname_t *element_qname = NULL; 
             <xsl:for-each select="property">
              <xsl:if test="position()=1">
                axiom_node_t *first_node = NULL;
@@ -535,6 +524,7 @@
             </xsl:if>
             AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
 
+            <xsl:if test="$nsuri and $nsuri != ''">
             <xsl:for-each select="property">
               <xsl:if test="position()=1"> <!-- check for at least one element exists -->
                 ns1 = axiom_namespace_create (env,
@@ -542,6 +532,7 @@
                                          "<xsl:value-of select="$nsprefix"/>");
               </xsl:if>
             </xsl:for-each>
+            </xsl:if>
             <xsl:if test="property">
               if ( NULL == parent )
               {
@@ -609,26 +600,18 @@
                  <xsl:choose>
                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                   </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                   </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -649,9 +632,17 @@
               </xsl:variable>
               <xsl:choose>
                 <xsl:when test="@attribute">
-                  qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
+                  <xsl:choose>
+                    <xsl:when test="@nsuri and @nsuri != ''">
+                      qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
-                                                                   <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
+                                                                   <xsl:when test="$nsuri and $nsuri != '' and @nsuri=$nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
+                    </xsl:when>
+                    <xsl:otherwise>
+                      qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
+                    </xsl:otherwise>
+                  </xsl:choose>
+
                   parent_attri = axiom_element_get_attribute( parent_element, env, qname);
                   if( parent_attri != NULL)
                   {
@@ -815,9 +806,16 @@
                                {
                                   current_element = (axiom_element_t *)axiom_node_get_data_element( current_node, env);
                                   qname = axiom_element_get_qname( current_element, env, current_node);
+                                <xsl:choose>
+                                  <xsl:when test="@nsuri and @nsuri != ''">
                                   element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>", "<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
                                                                    <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                  element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
+                                  </xsl:otherwise>
+                                </xsl:choose>
                                   if ( axutil_qname_equals( element_qname, env, qname))
                                   {
                                        /** found the requried element */
@@ -1086,9 +1084,16 @@
                         <xsl:otherwise> <!-- when it is all the way an array -->
                            <xsl:choose>
                              <xsl:when test="../@ordered or not($anon or $istype)"> <!-- all the elements should follow this -->
-                               element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
+                                <xsl:choose>
+                                  <xsl:when test="@nsuri and @nsuri != ''">
+                                    element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
                                                                    <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
+                                  </xsl:otherwise>
+                                </xsl:choose>
                                for ( i = 0, sequence_broken = 0, tmp_node = current_node = <xsl:choose>
                                              <xsl:when test="position()=1">first_node</xsl:when>
                                              <xsl:otherwise>axiom_node_get_next_sibling( current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; current_node = axiom_node_get_next_sibling( current_node, env))
@@ -1249,10 +1254,16 @@
 
                              </xsl:when>
                              <xsl:otherwise> <!-- otherwse for "../@ordered or not($anon or $istype)" -->
-                                 element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
+                                <xsl:choose>
+                                  <xsl:when test="@nsuri and @nsuri != ''">
+                                    element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>","<xsl:choose>
                                                                    <xsl:when test="@prefix!=''"><xsl:value-of select="@prefix"/></xsl:when>
                                                                    <xsl:when test="@nsuri=../@nsuri"><xsl:value-of select="../@nsprefix"/></xsl:when></xsl:choose>");
-
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    element_qname = axutil_qname_create( env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
+                                  </xsl:otherwise>
+                                </xsl:choose>
                                /**
                                  * because elements are not ordered we should surf all the sibling to pick the right one
                                  */
@@ -1422,26 +1433,18 @@
                      <xsl:choose>
                        <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                        <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                       <xsl:when test="@ours"><xsl:choose>
-                        <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                        adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                        <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                        <xsl:otherwise>
-                        axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                    </xsl:choose></xsl:when>
+                       <xsl:when test="@ours">
+                        adb_<xsl:value-of select="@type"/>_t*
+                        </xsl:when>
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
                   <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                      <xsl:choose>
                        <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                       <xsl:when test="@ours"><xsl:choose>
-                        <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                        adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                        <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                        <xsl:otherwise>
-                        axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                    </xsl:choose></xsl:when>
+                       <xsl:when test="@ours">
+                        adb_<xsl:value-of select="@type"/>_t*
+                        </xsl:when>
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
@@ -1563,20 +1566,20 @@
             axiom_data_source_t *data_source = NULL;
             axutil_stream_t *stream = NULL;
             axis2_char_t *text_value;
-            <xsl:for-each select="property/@attribute">
-             <xsl:if test="position()=1">
+             <xsl:for-each select="property/@attribute">
+              <xsl:if test="position()=1">
                axiom_namespace_t *ns1 = NULL;
-             </xsl:if>
-            </xsl:for-each>
+              </xsl:if>
+             </xsl:for-each>
            </xsl:when>
 
            <!-- non simple types -->
            <xsl:otherwise>
-            <xsl:for-each select="property">
+             <xsl:for-each select="property">
               <xsl:if test="position()=1"> <!-- check for at least one element exists -->
                 axiom_namespace_t *ns1 = NULL;
               </xsl:if>
-            </xsl:for-each>
+             </xsl:for-each>
             <xsl:for-each select="property/@isarray">
              <xsl:if test="position()=1">
                long i = 0;
@@ -1632,7 +1635,7 @@
             </xsl:if>
             AXIS2_ENV_CHECK(env, NULL);
 
-            
+            <xsl:if test="$nsuri and $nsuri != ''"> 
             <xsl:for-each select="property">
               <xsl:if test="position()=1"> <!-- check for at least one element exists -->
                 ns1 = axiom_namespace_create (env,
@@ -1640,6 +1643,7 @@
                                          "<xsl:value-of select="$nsprefix"/>");
                </xsl:if>
             </xsl:for-each>
+            </xsl:if>
             <xsl:if test="not(@type)">
               <xsl:for-each select="property">
                <xsl:if test="position()=1">
@@ -1687,9 +1691,17 @@
             <xsl:for-each select="property/@attribute">
              <xsl:if test="position()=1">
                 parent_element = (axiom_element_t *)axiom_node_get_data_element( parent, env);
-                ns1 = axiom_namespace_create (env,
+                <xsl:choose>
+                  <xsl:when test="$nsuri and $nsuri != ''">
+                    ns1 = axiom_namespace_create (env,
                                          "<xsl:value-of select="$nsuri"/>",
                                          "<xsl:value-of select="$nsprefix"/>");
+                  </xsl:when>
+                  <xsl:otherwise>
+                    ns1 = NULL;
+                  </xsl:otherwise>
+                </xsl:choose>
+
              </xsl:if>
             </xsl:for-each>
             
@@ -1704,26 +1716,18 @@
                  <xsl:choose>
                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                    </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                    </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -1916,26 +1920,18 @@
                  <xsl:choose>
                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                    </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                   <xsl:when test="@ours">
+                    adb_<xsl:value-of select="@type"/>_t*
+                    </xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -2085,10 +2081,10 @@
                      {
                         <xsl:choose>
                             <xsl:when test="@ours">
-                         start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>";
+                         start_input_str = "&lt;<xsl:if test="$nsprefix and $nsprefix != ''"><xsl:value-of select="$nsprefix"/>:</xsl:if><xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>";
                             </xsl:when>
                             <xsl:otherwise>
-                         start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
+                         start_input_str = "&lt;<xsl:if test="$nsprefix and $nsprefix != ''"><xsl:value-of select="$nsprefix"/>:</xsl:if><xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
                             </xsl:otherwise>
                         </xsl:choose>
                          start_input_str_len = axutil_strlen(start_input_str);
@@ -2110,14 +2106,14 @@
                     <xsl:if test="not(@isarray)">
                         <xsl:choose>
                             <xsl:when test="@ours">
-                        start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>";
+                        start_input_str = "&lt;<xsl:if test="$nsprefix and $nsprefix != ''"><xsl:value-of select="$nsprefix"/>:</xsl:if><xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>";
                             </xsl:when>
                             <xsl:otherwise>
-                        start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
+                        start_input_str = "&lt;<xsl:if test="$nsprefix and $nsprefix != ''"><xsl:value-of select="$nsprefix"/>:</xsl:if><xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
                             </xsl:otherwise>
                         </xsl:choose>
                         start_input_str_len = axutil_strlen(start_input_str);
-                        end_input_str = "&lt;/<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
+                        end_input_str = "&lt;/<xsl:if test="$nsprefix and $nsprefix != ''"><xsl:value-of select="$nsprefix"/>:</xsl:if><xsl:value-of select="$propertyName"/>&gt;";
                         end_input_str_len = axutil_strlen(end_input_str);
                     </xsl:if>
 
@@ -2398,13 +2394,9 @@
                <xsl:choose>
                     <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                     <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                    <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose></xsl:when>
+                    <xsl:when test="@ours">
+                     adb_<xsl:value-of select="@type"/>_t*
+                     </xsl:when>
                     <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                </xsl:choose>
             </xsl:variable>
@@ -2415,16 +2407,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">
-                    <xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                     adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">
-                     axutil_<xsl:value-of select="@type"/>_t*
-                    </xsl:when>
-                    <xsl:otherwise>
-                     axis2_<xsl:value-of select="@type"/>_t*
-                    </xsl:otherwise>
-                    </xsl:choose>
+                    adb_<xsl:value-of select="@type"/>_t*
                    </xsl:when>
                    <xsl:otherwise>
                     <xsl:value-of select="@type"/>
@@ -2438,16 +2421,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">
-                    <xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                     adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">
-                     axutil_<xsl:value-of select="@type"/>_t*
-                    </xsl:when>
-                    <xsl:otherwise>
-                     axis2_<xsl:value-of select="@type"/>_t*
-                    </xsl:otherwise>
-                    </xsl:choose>
+                    adb_<xsl:value-of select="@type"/>_t*
                    </xsl:when>
                    <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">
                     <xsl:value-of select="@type"/><xsl:text>*</xsl:text>
