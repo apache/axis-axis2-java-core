@@ -29,6 +29,8 @@ import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.i18n.ADBMessages;
 import org.apache.axis2.databinding.types.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -41,6 +43,7 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -57,8 +60,16 @@ import java.util.TimeZone;
  * simpletype 4. Object list -> array
  */
 public class ConverterUtil {
+
+    private static Log log = LogFactory.getLog(ConverterUtil.class);
+
     private static final String POSITIVE_INFINITY = "INF";
     private static final String NEGATIVE_INFINITY = "-INF";
+
+    public static final String SYSTEM_PROPERTY_ADB_CONVERTERUTIL = "adb.converterutil";
+
+    private static boolean isCustomClassPresent;
+    private static Class customClass;
 
     /* String conversion methods */
     public static String convertToString(int i) {
@@ -94,18 +105,51 @@ public class ConverterUtil {
     }
 
     public static String convertToString(Date value) {
-        // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
-        // we have to serialize it with the GMT timezone
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
-        return simpleDateFormat.format(value);
+        if (isCustomClassPresent) {
+            // this means user has define a seperate converter util class
+            return invokeToStringMethod(value,Date.class);
+        } else {
+            // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
+            // we have to serialize it with the GMT timezone
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+            // this does not create the semicolen need so add that.
+            String dateString = simpleDateFormat.format(value);
+            // append semicolen
+            dateString = dateString.substring(0, dateString.length() - 2) +
+                    ":" + dateString.substring(dateString.length() - 2);
+
+            return dateString;
+        }
+    }
+
+    private static String invokeToStringMethod(Object value, Class type) {
+
+        try {
+            Method method = customClass.getMethod("convertToString", new Class[]{type});
+            String result = (String) method.invoke(null,new Object[]{value});
+            return result;
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("can not find the method convertToString("
+                    + type.getName() + ") in converter util class " + customClass.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("can not access the method convertToString("
+                    + type.getName() + ") in converter util class " + customClass.getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("can not invocate the method convertToString("
+                    + type.getName() + ") in converter util class " + customClass.getName(), e);
+        }
     }
 
     public static String convertToString(Calendar value) {
-        // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-        // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
-        return zulu.format(value.getTime());
+        if (isCustomClassPresent) {
+            return invokeToStringMethod(value,Calendar.class);
+        } else {
+            // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
+            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+            // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
+            return zulu.format(value.getTime());
+        }
     }
 
     public static String convertToString(Day o) {
@@ -420,7 +464,9 @@ public class ConverterUtil {
                     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
                     // this is a specific time format string
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddz");
+                    // have to add the GMT part to process the message
+                    source = source.substring(0, 10) + "GMT" + restpart;
                 } else {
                     throw new RuntimeException("In valid string sufix");
                 }
@@ -731,7 +777,7 @@ public class ConverterUtil {
                             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                         } else if (rest.startsWith("+") || rest.startsWith("-")) {
                             // this is given in a general time zione
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
                             source = source.substring(0, 19) + "GMT" + rest;
                         } else {
                             throw new NumberFormatException("in valid time zone attribute");
@@ -1328,6 +1374,20 @@ public class ConverterUtil {
             }
         }
         return returnObject;
+    }
+
+    static {
+        isCustomClassPresent = (System.getProperty(SYSTEM_PROPERTY_ADB_CONVERTERUTIL) != null);
+        if (isCustomClassPresent){
+            String className = System.getProperty(SYSTEM_PROPERTY_ADB_CONVERTERUTIL);
+            try {
+                customClass = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                log.error("Can not load the converter util class "
+                        + className + " using default org.apache.axis2.databinding.utils.ConverterUtil class");
+                isCustomClassPresent = false;
+            }
+        }
     }
 
 }
