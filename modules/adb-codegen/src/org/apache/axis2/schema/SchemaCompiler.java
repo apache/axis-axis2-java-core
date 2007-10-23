@@ -36,6 +36,13 @@ import java.util.*;
  */
 public class SchemaCompiler {
 
+    public static final int COMPONENT_TYPE = 1;
+    public static final int COMPONENT_ELEMENT = 2;
+    public static final int COMPONENT_ATTRIBUTE = 3;
+    public static final int COMPONENT_ATTRIBUTE_GROUP = 4;
+    public static final int COMPONENT_GROUP = 5;
+
+
     private static final Log log = LogFactory.getLog(SchemaCompiler.class);
 
     private CompilerOptions options;
@@ -619,14 +626,19 @@ public class SchemaCompiler {
             }
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
-            XmlSchemaElement referencedElement = getReferencedElement(parentSchema, xsElt.getRefName());
+            XmlSchema resolvedSchema = getParentSchema(parentSchema,xsElt.getRefName(),COMPONENT_ELEMENT);
+            if (resolvedSchema == null){
+                throw new SchemaCompilationException("can not find the element " + xsElt.getRefName()
+                 + " from the parent schema " + parentSchema.getTargetNamespace());
+            }
+            XmlSchemaElement referencedElement = resolvedSchema.getElementByName(xsElt.getRefName());
             if (referencedElement == null) {
                 throw new SchemaCompilationException(
                         SchemaCompilerMessages.getMessage("schema.referencedElementNotFound", xsElt.getRefName().toString()));
             }
 
             //if the element is referenced, then it should be one of the outer (global) ones
-            processElement(referencedElement, parentSchema);
+            processElement(referencedElement, resolvedSchema);
 
             //no outer check required here. If the element is having a ref, then it is definitely
             //not an outer element since the top level elements are not supposed to have refs
@@ -647,7 +659,7 @@ public class SchemaCompiler {
                 //processed. But in this case we need it to be a seperate class since this
                 //complextype has to be added as an attribute in a class.
                 //generate a name for this type
-                QName generatedTypeName = generateTypeQName(referenceEltQName, parentSchema);
+                QName generatedTypeName = generateTypeQName(referenceEltQName, resolvedSchema);
                 XmlSchemaType referenceSchemaType = referencedElement.getSchemaType();
 
 
@@ -661,13 +673,8 @@ public class SchemaCompiler {
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
                     String javaclassName = writeComplexType((XmlSchemaComplexType) referenceSchemaType,
-                            (BeanWriterMetaInfoHolder) processedAnonymousComplexTypesMap.get(referencedElement)
-                    );
-                    //remove the reference from the anon list since we named the type
-                    // DEEPAL :- We can not remove the entry from the hashtable ,
-                    // this will fail if there are two reference for the same type
+                            (BeanWriterMetaInfoHolder) processedAnonymousComplexTypesMap.get(referencedElement));
 
-                    //processedAnonymousComplexTypesMap.remove(referencedElement);
 
                     processedTypemap.put(generatedTypeName, javaclassName);
                     this.processedElementRefMap.put(referenceEltQName, javaclassName);
@@ -683,12 +690,15 @@ public class SchemaCompiler {
             //this specifically happens with xsd:anyType.
             QName schemaTypeName = xsElt.getSchemaTypeName();
 
-            XmlSchema currentParentSchema = resolveParentSchema(schemaTypeName, parentSchema);
-            XmlSchemaType typeByName = getType(currentParentSchema, schemaTypeName);
+            XmlSchema resolvedSchema = getParentSchema(parentSchema,schemaTypeName,COMPONENT_TYPE);
+            XmlSchemaType typeByName = null;
+            if (resolvedSchema != null){
+               typeByName = resolvedSchema.getTypeByName(schemaTypeName);
+            }
 
             if (typeByName != null) {
                 //this type is found in the schema so we can process it
-                processSchema(xsElt, typeByName, currentParentSchema);
+                processSchema(xsElt, typeByName, resolvedSchema);
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
@@ -722,34 +732,6 @@ public class SchemaCompiler {
             }
         }
 
-    }
-
-    /**
-     * resolve the parent schema for the given schema type name
-     *
-     * @param schemaTypeName
-     * @param currentSchema
-     */
-    private XmlSchema resolveParentSchema(QName schemaTypeName, XmlSchema currentSchema)
-            throws SchemaCompilationException {
-        String targetNamespace = schemaTypeName.getNamespaceURI();
-
-        // if the current schema has the same namespace we use it
-        if ((currentSchema.getTargetNamespace() != null) &&
-                currentSchema.getTargetNamespace().equals(targetNamespace)){
-            return currentSchema;
-        }
-        Object loadedSchema = loadedSchemaMap.get(targetNamespace);
-        if (loadedSchema != null) {
-            return (XmlSchema) loadedSchema;
-        } else if (availableSchemaMap.containsKey(targetNamespace)) {
-            //compile the referenced Schema first and then pass it
-            XmlSchema schema = (XmlSchema) availableSchemaMap.get(targetNamespace);
-            compile(schema);
-            return schema;
-        } else {
-            return currentSchema;
-        }
     }
 
     /**
@@ -863,12 +845,23 @@ public class SchemaCompiler {
      * @param schemaType
      * @throws SchemaCompilationException
      */
-    private void processSchema(XmlSchemaElement xsElt, XmlSchemaType schemaType, XmlSchema parentSchema) throws SchemaCompilationException {
+    private void processSchema(XmlSchemaElement xsElt,
+                               XmlSchemaType schemaType,
+                               XmlSchema parentSchema) throws SchemaCompilationException {
         if (schemaType instanceof XmlSchemaComplexType) {
             //write classes for complex types
             XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
             if (complexType.getName() != null) {
-                processNamedComplexSchemaType(complexType, parentSchema);
+                // here complex type may be in another shcema so we have to find the
+                // correct parent schema.
+                XmlSchema resolvedSchema = getParentSchema(parentSchema,complexType.getQName(),COMPONENT_TYPE);
+                if (resolvedSchema == null){
+                    throw new SchemaCompilationException("can not find the parent schema for the" +
+                            "complex type " + complexType.getQName() + " from the parent schema " +
+                    parentSchema.getTargetNamespace());
+                } else {
+                   processNamedComplexSchemaType(complexType, resolvedSchema);
+                }
             } else {
                 processAnonymousComplexSchemaType(xsElt, complexType, parentSchema);
             }
@@ -1023,52 +1016,24 @@ public class SchemaCompiler {
 
         QName attributeGroupRefName = attributeGroupRef.getRefName();
         if (attributeGroupRefName != null){
-           parentSchema = resolveParentSchema(attributeGroupRefName,parentSchema);
-           XmlSchemaAttributeGroup xmlSchemaAttributeGroup = getXmlSchemaAttributeGroup(attributeGroupRefName,
-                                                                                        parentSchema);
-           if (xmlSchemaAttributeGroup != null){
-               processAttributes(xmlSchemaAttributeGroup.getAttributes(),metaInfHolder,parentSchema);
-           } else {
-               throw new SchemaCompilationException("Can not find an attribute group for group reference "
-                       + attributeGroupRefName.getLocalPart());
-           }
+           XmlSchema resolvedSchema = getParentSchema(parentSchema,attributeGroupRefName,COMPONENT_ATTRIBUTE_GROUP);
+            if (resolvedSchema == null) {
+                throw new SchemaCompilationException("can not find the attribute group reference name " +
+                        attributeGroupRefName + " from the parent schema " + parentSchema.getTargetNamespace());
+            } else {
+                XmlSchemaAttributeGroup xmlSchemaAttributeGroup =
+                        (XmlSchemaAttributeGroup) resolvedSchema.getAttributeGroups().getItem(attributeGroupRefName);
+                if (xmlSchemaAttributeGroup != null) {
+                    processAttributes(xmlSchemaAttributeGroup.getAttributes(), metaInfHolder, resolvedSchema);
+                } else {
+                    throw new SchemaCompilationException("Can not find an attribute group for group reference "
+                            + attributeGroupRefName.getLocalPart());
+                }
+            }
+
         } else {
             throw new SchemaCompilationException("No group refernce has given");
         }
-
-    }
-
-    private XmlSchemaAttributeGroup getXmlSchemaAttributeGroup(QName attributeGroupQName,
-                                                               XmlSchema parentSchema){
-        XmlSchemaAttributeGroup xmlSchemaAttributeGroup =
-                (XmlSchemaAttributeGroup) parentSchema.getAttributeGroups().getItem(attributeGroupQName);
-        if (xmlSchemaAttributeGroup == null){
-            // i.e this attribute can be in a included or imported schema
-            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) parentSchema.getAttributeGroups().getItem(attributeGroupQName);
-            if (xmlSchemaAttributeGroup == null) {
-                // try to find in an import or an include
-                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object = null;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) schema1.getAttributeGroups().getItem(attributeGroupQName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaAttributeGroup = (XmlSchemaAttributeGroup) schema1.getAttributeGroups().getItem(attributeGroupQName);
-                        }
-                        if (xmlSchemaAttributeGroup != null){
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return xmlSchemaAttributeGroup;
     }
 
     /**
@@ -1099,26 +1064,32 @@ public class SchemaCompiler {
 
             // to handle extension we need to attach the extended items to the base type
             // and create a new type
-            XmlSchemaComplexContentExtension extension = (XmlSchemaComplexContentExtension)
-                    content;
+            XmlSchemaComplexContentExtension extension = (XmlSchemaComplexContentExtension)content;
 
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(extension.getBaseTypeName())) {
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type = getType(parentSchema, extension.getBaseTypeName());
-                if (type instanceof XmlSchemaComplexType) {
-                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                    if (complexType.getName() != null) {
-                        processNamedComplexSchemaType(complexType, parentSchema);
-                    } else {
-                        //this is not possible. The extension should always
-                        //have a name
-                        throw new SchemaCompilationException("Unnamed complex type used in extension");//Internationlize this
+                XmlSchema resolvedSchema = getParentSchema(parentSchema, extension.getBaseTypeName(), COMPONENT_TYPE);
+                if (resolvedSchema == null) {
+                    throw new SchemaCompilationException("can not find the compley type " + extension.getBaseTypeName()
+                            + " from the parent type " + parentSchema.getTargetNamespace());
+                } else {
+                    XmlSchemaType type = resolvedSchema.getTypeByName(extension.getBaseTypeName());
+                    if (type instanceof XmlSchemaComplexType) {
+                        XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                        if (complexType.getName() != null) {
+                            processNamedComplexSchemaType(complexType, resolvedSchema);
+                        } else {
+                            //this is not possible. The extension should always
+                            //have a name
+                            throw new SchemaCompilationException("Unnamed complex type used in extension");//Internationlize this
+                        }
+                    } else if (type instanceof XmlSchemaSimpleType) {
+                        //process simple type
+                        processSimpleSchemaType((XmlSchemaSimpleType) type, null, resolvedSchema, null);
                     }
-                } else if (type instanceof XmlSchemaSimpleType) {
-                    //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
+
             }
 
             // before actually processing this node, we need to recurse through the base types and add their
@@ -1166,19 +1137,24 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(restriction.getBaseTypeName())) {
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type = getType(parentSchema, restriction.getBaseTypeName());
-                if (type instanceof XmlSchemaComplexType) {
-                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                    if (complexType.getName() != null) {
-                        processNamedComplexSchemaType(complexType, parentSchema);
-                    } else {
-                        //this is not possible. The restriction should always
-                        //have a name
-                        throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+                XmlSchema resolvedSchema = getParentSchema(parentSchema, restriction.getBaseTypeName(), COMPONENT_TYPE);
+                if (resolvedSchema == null) {
+                    throw new SchemaCompilationException("can not find the complex type " + restriction.getBaseTypeName()
+                            + " from the parent type " + parentSchema.getTargetNamespace());
+                } else {
+                    XmlSchemaType type = resolvedSchema.getTypeByName(restriction.getBaseTypeName());
+                    if (type instanceof XmlSchemaComplexType) {
+                        XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                        if (complexType.getName() != null) {
+                            processNamedComplexSchemaType(complexType, resolvedSchema);
+                        } else {
+                            //this is not possible. The restriction should always
+                            //have a name
+                            throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+                        }
+                    } else if (type instanceof XmlSchemaSimpleType) {
+                        throw new SchemaCompilationException("Not a valid restriction, complex content restriction base type cannot be a simple type.");
                     }
-                } else if (type instanceof XmlSchemaSimpleType) {
-
-                    throw new SchemaCompilationException("Not a valid restriction, complex content restriction base type cannot be a simple type.");
                 }
             }
 
@@ -1226,86 +1202,86 @@ public class SchemaCompiler {
                                        XmlSchema parentSchema)
             throws SchemaCompilationException {
 
-        XmlSchemaType type;
-        type = parentSchema.getTypeByName(baseTypeName);
-        if (type == null) {
-            type = getType(parentSchema, baseTypeName);
-        }
+        XmlSchema resolvedSchema = getParentSchema(parentSchema,baseTypeName,COMPONENT_TYPE);
+        if (resolvedSchema == null) {
+            throw new SchemaCompilationException("can not find type " + baseTypeName
+                    + " from the parent schema " + parentSchema.getTargetNamespace());
+        } else {
+            XmlSchemaType type = resolvedSchema.getTypeByName(baseTypeName);
+            BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
+                    processedTypeMetaInfoMap.get(baseTypeName);
 
 
-        BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
-                processedTypeMetaInfoMap.get(baseTypeName);
+            if (baseMetaInfoHolder != null) {
 
+                // see whether this type is also extended from some other type first
+                // if so proceed to set their parents as well.
+                if (type instanceof XmlSchemaComplexType) {
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                    if (complexType.getContentModel() != null) {
+                        XmlSchemaContentModel content = complexType.getContentModel();
+                        if (content instanceof XmlSchemaComplexContent) {
+                            XmlSchemaComplexContent complexContent =
+                                    (XmlSchemaComplexContent) content;
+                            if (complexContent.getContent() instanceof XmlSchemaComplexContentExtension) {
+                                XmlSchemaComplexContentExtension extension =
+                                        (XmlSchemaComplexContentExtension) complexContent.getContent();
+                                //recursively call the copyMetaInfoHierarchy method
+                                copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                        extension.getBaseTypeName(),
+                                        resolvedSchema);
 
-        if (baseMetaInfoHolder != null) {
+                            } else if (complexContent.getContent() instanceof XmlSchemaComplexContentRestriction) {
 
-            // see whether this type is also extended from some other type first
-            // if so proceed to set their parents as well.
-            if (type instanceof XmlSchemaComplexType) {
-                XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                if (complexType.getContentModel() != null) {
-                    XmlSchemaContentModel content = complexType.getContentModel();
-                    if (content instanceof XmlSchemaComplexContent) {
-                        XmlSchemaComplexContent complexContent =
-                                (XmlSchemaComplexContent) content;
-                        if (complexContent.getContent() instanceof XmlSchemaComplexContentExtension) {
-                            XmlSchemaComplexContentExtension extension =
-                                    (XmlSchemaComplexContentExtension) complexContent.getContent();
-                            //recursively call the copyMetaInfoHierarchy method
-                            copyMetaInfoHierarchy(baseMetaInfoHolder,
-                                    extension.getBaseTypeName(),
-                                    parentSchema);
+                                XmlSchemaComplexContentRestriction restriction =
+                                        (XmlSchemaComplexContentRestriction) complexContent.getContent();
+                                //recursively call the copyMetaInfoHierarchy method
+                                copyMetaInfoHierarchy(baseMetaInfoHolder,
+                                        restriction.getBaseTypeName(),
+                                        resolvedSchema);
 
-                        } else if (complexContent.getContent() instanceof XmlSchemaComplexContentRestriction) {
+                            } else {
+                                throw new SchemaCompilationException(
+                                        SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
+                            }
 
-                            XmlSchemaComplexContentRestriction restriction =
-                                    (XmlSchemaComplexContentRestriction) complexContent.getContent();
-                            //recursively call the copyMetaInfoHierarchy method
-                            copyMetaInfoHierarchy(baseMetaInfoHolder,
-                                    restriction.getBaseTypeName(),
-                                    parentSchema);
-
+                        } else if (content instanceof XmlSchemaSimpleContent) {
+                            throw new SchemaCompilationException(
+                                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror", "Simple Content"));
                         } else {
                             throw new SchemaCompilationException(
                                     SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                         }
-
-                    } else if (content instanceof XmlSchemaSimpleContent) {
-                        throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror", "Simple Content"));
-                    } else {
-                        throw new SchemaCompilationException(
-                                SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                     }
-                }
-                //Do the actual parent setting
-                metaInfHolder.setAsParent(baseMetaInfoHolder);
+                    //Do the actual parent setting
+                    metaInfHolder.setAsParent(baseMetaInfoHolder);
 
-            } else if (type instanceof XmlSchemaSimpleType) {
+                } else if (type instanceof XmlSchemaSimpleType) {
 
-                // we have to copy the uion data if the parent simple type restriction
-                // is an union
-                // this union attribute is copied from the child to parent to genrate the parent
-                // code as union
-                if (baseMetaInfoHolder.isUnion()) {
-                    metaInfHolder.setUnion(true);
-                    Map memberTypes = baseMetaInfoHolder.getMemberTypes();
-                    Object qname;
-                    for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
-                        qname = iter.next();
-                        metaInfHolder.addMemberType((QName) qname, (String) memberTypes.get(qname));
+                    // we have to copy the uion data if the parent simple type restriction
+                    // is an union
+                    // this union attribute is copied from the child to parent to genrate the parent
+                    // code as union
+                    if (baseMetaInfoHolder.isUnion()) {
+                        metaInfHolder.setUnion(true);
+                        Map memberTypes = baseMetaInfoHolder.getMemberTypes();
+                        Object qname;
+                        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
+                            qname = iter.next();
+                            metaInfHolder.addMemberType((QName) qname, (String) memberTypes.get(qname));
+                        }
                     }
+
+                    // we have to copy the list type data to parent if it is a list
+                    if (baseMetaInfoHolder.isList()) {
+                        metaInfHolder.setList(true);
+                        metaInfHolder.setItemTypeQName(baseMetaInfoHolder.getItemTypeQName());
+                        metaInfHolder.setItemTypeClassName(baseMetaInfoHolder.getItemTypeClassName());
+                    }
+                    metaInfHolder.setAsParent(baseMetaInfoHolder);
                 }
 
-                // we have to copy the list type data to parent if it is a list
-                if (baseMetaInfoHolder.isList()) {
-                    metaInfHolder.setList(true);
-                    metaInfHolder.setItemTypeQName(baseMetaInfoHolder.getItemTypeQName());
-                    metaInfHolder.setItemTypeClassName(baseMetaInfoHolder.getItemTypeClassName());
-                }
-                metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
-
         }
     }
 
@@ -1324,20 +1300,27 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(extension.getBaseTypeName())) {
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type = getType(parentSchema, extension.getBaseTypeName());
-                if (type instanceof XmlSchemaComplexType) {
-                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                    if (complexType.getName() != null) {
-                        processNamedComplexSchemaType(complexType, parentSchema);
-                    } else {
-                        //this is not possible. The extension should always
-                        //have a name
-                        throw new SchemaCompilationException("Unnamed complex type used in extension");//Internationlize this
+                XmlSchema resolvedSchema = getParentSchema(parentSchema, extension.getBaseTypeName(), COMPONENT_TYPE);
+                if (resolvedSchema == null) {
+                    throw new SchemaCompilationException("can not find type " + extension.getBaseTypeName()
+                            + " from the parent schema " + parentSchema.getTargetNamespace());
+                } else {
+                    XmlSchemaType type = resolvedSchema.getTypeByName(extension.getBaseTypeName());
+                    if (type instanceof XmlSchemaComplexType) {
+                        XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                        if (complexType.getName() != null) {
+                            processNamedComplexSchemaType(complexType, resolvedSchema);
+                        } else {
+                            //this is not possible. The extension should always
+                            //have a name
+                            throw new SchemaCompilationException("Unnamed complex type used in extension");//Internationlize this
+                        }
+                    } else if (type instanceof XmlSchemaSimpleType) {
+                        //process simple type
+                        processSimpleSchemaType((XmlSchemaSimpleType) type, null, resolvedSchema, null);
                     }
-                } else if (type instanceof XmlSchemaSimpleType) {
-                    //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
+
             }
 
             //process extension base type
@@ -1366,20 +1349,28 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(restriction.getBaseTypeName())) {
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type = getType(parentSchema, restriction.getBaseTypeName());
-                if (type instanceof XmlSchemaComplexType) {
-                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                    if (complexType.getName() != null) {
-                        processNamedComplexSchemaType(complexType, parentSchema);
-                    } else {
-                        //this is not possible. The extension should always
-                        //have a name
-                        throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+                XmlSchema resolvedSchema = getParentSchema(parentSchema, restriction.getBaseTypeName(), COMPONENT_TYPE);
+                if (resolvedSchema == null) {
+                    throw new SchemaCompilationException("can not find type " + restriction.getBaseTypeName()
+                            + " from the parent schema " + parentSchema.getTargetNamespace());
+                } else {
+                    XmlSchemaType type = resolvedSchema.getTypeByName(restriction.getBaseTypeName());
+
+                    if (type instanceof XmlSchemaComplexType) {
+                        XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                        if (complexType.getName() != null) {
+                            processNamedComplexSchemaType(complexType, resolvedSchema);
+                        } else {
+                            //this is not possible. The extension should always
+                            //have a name
+                            throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+                        }
+                    } else if (type instanceof XmlSchemaSimpleType) {
+                        //process simple type
+                        processSimpleSchemaType((XmlSchemaSimpleType) type, null, resolvedSchema, null);
                     }
-                } else if (type instanceof XmlSchemaSimpleType) {
-                    //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
+
             }
             //process restriction base type
             processSimpleRestrictionBaseType(restriction.getBaseTypeName(),
@@ -1423,25 +1414,30 @@ public class SchemaCompiler {
             // we have already process when it comes to this place
         } else if (processedTypemap.containsKey(extBaseType)) {
             //set the extension base class name
-
-            XmlSchemaType type = getType(parentSchema, extBaseType);
-            if (type instanceof XmlSchemaSimpleType) {
-                metaInfHolder.setSimple(true);
-                metaInfHolder.setExtension(true);
-                metaInfHolder.setExtensionClassName(className);
-
-                copyMetaInfoHierarchy(metaInfHolder, extBaseType, parentSchema);
-            } else if (type instanceof XmlSchemaComplexType) {
-                XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
-                if (complexType.getContentModel() == null) {
-                    // do not set as a simple type since we want to
-                    // print the element names
+            XmlSchema resolvedSchema = getParentSchema(parentSchema,extBaseType,COMPONENT_TYPE);
+            if (resolvedSchema == null) {
+                throw new SchemaCompilationException("can not find the type " + extBaseType
+                        + " from the parent schema " + parentSchema.getTargetNamespace());
+            } else {
+                XmlSchemaType type = resolvedSchema.getTypeByName(extBaseType);
+                if (type instanceof XmlSchemaSimpleType) {
+                    metaInfHolder.setSimple(true);
                     metaInfHolder.setExtension(true);
                     metaInfHolder.setExtensionClassName(className);
-                    copyMetaInfoHierarchy(metaInfHolder, extBaseType, parentSchema);
-                }
 
+                    copyMetaInfoHierarchy(metaInfHolder, extBaseType, resolvedSchema);
+                } else if (type instanceof XmlSchemaComplexType) {
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                    if (complexType.getContentModel() == null) {
+                        // do not set as a simple type since we want to
+                        // print the element names
+                        metaInfHolder.setExtension(true);
+                        metaInfHolder.setExtensionClassName(className);
+                        copyMetaInfoHierarchy(metaInfHolder, extBaseType, resolvedSchema);
+                    }
+                }
             }
+
         } else {
             metaInfHolder.setSimple(true);
         }
@@ -1632,26 +1628,32 @@ public class SchemaCompiler {
                     }
                     // after
                 } else {
-                    XmlSchemaType type = getType(parentSchema, schemaTypeName);
-                    if (type instanceof XmlSchemaSimpleType) {
-                        XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
+                    XmlSchema resolvedSchema = getParentSchema(parentSchema,schemaTypeName,COMPONENT_TYPE);
+                    if (resolvedSchema == null) {
+                        throw new SchemaCompilationException("can not find the type " + schemaTypeName +
+                                " from the parent schema " + parentSchema.getTargetNamespace());
+                    } else {
+                        XmlSchemaType type = resolvedSchema.getTypeByName(schemaTypeName);
+                        if (type instanceof XmlSchemaSimpleType) {
+                            XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
 
-                        if (simpleType != null) {
-                            if (!isAlreadyProcessed(schemaTypeName)) {
-                                //process simple type
-                                processSimpleSchemaType(simpleType, null, parentSchema, null);
+                            if (simpleType != null) {
+                                if (!isAlreadyProcessed(schemaTypeName)) {
+                                    //process simple type
+                                    processSimpleSchemaType(simpleType, null, resolvedSchema, null);
+                                }
+                                metainf.registerMapping(att.getQName(),
+                                        schemaTypeName,
+                                        processedTypemap.get(schemaTypeName).toString(),
+                                        SchemaConstants.ATTRIBUTE_TYPE);
+                                // add optional attribute status if set
+                                String use = att.getUse().getValue();
+                                if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
+                                    metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                                }
                             }
-                            metainf.registerMapping(att.getQName(),
-                                    schemaTypeName,
-                                    processedTypemap.get(schemaTypeName).toString(),
-                                    SchemaConstants.ATTRIBUTE_TYPE);
-                            // add optional attribute status if set
-                            String use = att.getUse().getValue();
-                            if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
-                                metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                            }
+
                         }
-
                     }
                 }
             } else {
@@ -1659,15 +1661,21 @@ public class SchemaCompiler {
             }
 
         } else if (att.getRefName() != null) {
-            XmlSchema currentParentSchema = resolveParentSchema(att.getRefName(), parentSchema);
-            XmlSchemaAttribute xmlSchemaAttribute = getXmlSchemaAttribute(att.getRefName(),currentParentSchema);
 
-            if (xmlSchemaAttribute != null) {
-                // call recursively to process the schema
-                processAttribute(xmlSchemaAttribute, metainf, currentParentSchema);
+            XmlSchema resolvedSchema = getParentSchema(parentSchema,att.getRefName(),COMPONENT_ATTRIBUTE);
+            if (resolvedSchema == null){
+                throw new SchemaCompilationException("can not find the attribute " + att.getRefName() +
+                " from the parent schema " + parentSchema.getTargetNamespace());
             } else {
-                throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
-                        att.getRefName());
+                XmlSchemaAttribute xmlSchemaAttribute =
+                        (XmlSchemaAttribute) resolvedSchema.getAttributes().getItem(att.getRefName());
+                if (xmlSchemaAttribute != null) {
+                    // call recursively to process the schema
+                    processAttribute(xmlSchemaAttribute, metainf, resolvedSchema);
+                } else {
+                    throw new SchemaCompilationException("Attribute QName reference refer to an invalid attribute " +
+                            att.getRefName());
+                }
             }
 
         } else {
@@ -1676,11 +1684,19 @@ public class SchemaCompiler {
             QName attributeQName = att.getQName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
+                XmlSchema resolvedSchema = parentSchema;
                 if (attributeSimpleType == null) {
                     // try to get the schema for using qname
                     QName attributeSchemaQname = att.getSchemaTypeName();
                     if (attributeSchemaQname != null) {
-                        attributeSimpleType = (XmlSchemaSimpleType) getType(parentSchema, attributeSchemaQname);
+                        resolvedSchema = getParentSchema(parentSchema,attributeSchemaQname,COMPONENT_TYPE);
+                        if (resolvedSchema == null){
+                            throw new SchemaCompilationException("can not find the type " + attributeSchemaQname
+                              + " from the parent schema " + parentSchema.getTargetNamespace());
+                        } else {
+                            attributeSimpleType = (XmlSchemaSimpleType)
+                                    resolvedSchema.getTypeByName(attributeSchemaQname);
+                        }
                     }
                 }
 
@@ -1698,7 +1714,7 @@ public class SchemaCompiler {
                     }
                     if (!isAlreadyProcessed(schemaTypeQName)){
                         // we have to process only if it has not processed
-                        processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
+                        processSimpleSchemaType(attributeSimpleType, null, resolvedSchema, schemaTypeQName);
                     }
                     metainf.registerMapping(att.getQName(),
                             schemaTypeQName,
@@ -1722,39 +1738,6 @@ public class SchemaCompiler {
         }
     }
 
-    private XmlSchemaAttribute getXmlSchemaAttribute(QName attributeQName,
-                                                     XmlSchema parentSchema){
-        XmlSchemaAttribute xmlSchemaAttribute =
-                (XmlSchemaAttribute) parentSchema.getAttributes().getItem(attributeQName);
-        if (xmlSchemaAttribute == null){
-            // i.e this attribute can be in a included or imported schema
-            xmlSchemaAttribute = (XmlSchemaAttribute) parentSchema.getAttributes().getItem(attributeQName);
-            if (xmlSchemaAttribute == null) {
-                // try to find in an import or an include
-                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object = null;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaAttribute = (XmlSchemaAttribute) schema1.getAttributes().getItem(attributeQName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaAttribute = (XmlSchemaAttribute) schema1.getAttributes().getItem(attributeQName);
-                        }
-                        if (xmlSchemaAttribute != null){
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return xmlSchemaAttribute;
-    }
-
     /**
      * Process a particle- A particle may be a sequence,all or a choice
      * @param parentElementQName - this can either be parent element QName or parent Complex type qname
@@ -1772,7 +1755,6 @@ public class SchemaCompiler {
             XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
 
             XmlSchemaObjectCollection items = xmlSchemaSequence.getItems();
-            //TODO: support parentElementQName null instances. i.e for extensions
             if ((xmlSchemaSequence.getMaxOccurs() > 1) && (parentElementQName != null)) {
                 // we have to process many sequence types
                 BeanWriterMetaInfoHolder beanWriterMetaInfoHolder = new BeanWriterMetaInfoHolder();
@@ -1847,12 +1829,14 @@ public class SchemaCompiler {
             if (groupQName != null) {
                 if (!processedTypemap.containsKey(groupQName)) {
                     // processe the schema here
-                    XmlSchema resolvedParentSchema = resolveParentSchema(groupQName, parentSchema);
-                    XmlSchemaGroup xmlSchemaGroup = getGroup(groupQName, resolvedParentSchema);
-                    if (xmlSchemaGroup != null) {
-                        processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                    XmlSchema resolvedParentSchema = getParentSchema(parentSchema,groupQName,COMPONENT_GROUP);
+                    if (resolvedParentSchema == null){
+                        throw new SchemaCompilationException("can not find the group " + groupQName
+                         + " from the parent schema " + parentSchema.getTargetNamespace());
                     } else {
-                        throw new SchemaCompilationException("Refered Group " + groupQName.getLocalPart() + " can not be found ");
+                        XmlSchemaGroup xmlSchemaGroup = (XmlSchemaGroup)
+                                resolvedParentSchema.getGroups().getItem(groupQName);
+                        processGroup(xmlSchemaGroup, groupQName, resolvedParentSchema);
                     }
                 }
             } else {
@@ -1985,14 +1969,17 @@ public class SchemaCompiler {
                 if (groupQName != null){
                     if (!processedTypemap.containsKey(groupQName)){
                         // processe the schema here
-                        XmlSchema resolvedParentSchema = resolveParentSchema(groupQName,parentSchema);
-                        XmlSchemaGroup xmlSchemaGroup = getGroup(groupQName,resolvedParentSchema);
-                        if (xmlSchemaGroup != null){
-                            processGroup(xmlSchemaGroup, groupQName, parentSchema);
+                        XmlSchema resolvedParentSchema = getParentSchema(parentSchema,groupQName,COMPONENT_GROUP);
+                        if (resolvedParentSchema == null){
+                            throw new SchemaCompilationException("Can not find the group with the qname" +
+                                    groupQName + " from the parent schema " + parentSchema.getTargetNamespace());
                         } else {
-                            throw new SchemaCompilationException("Refered Group "+ groupQName.getLocalPart() + " can not be found ");
+                            XmlSchemaGroup xmlSchemaGroup =
+                                    (XmlSchemaGroup) resolvedParentSchema.getGroups().getItem(groupQName);
+                            if (xmlSchemaGroup != null){
+                                processGroup(xmlSchemaGroup, groupQName, resolvedParentSchema);
+                            }
                         }
-
                     }
 
                     Boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1 ? Boolean.TRUE : Boolean.FALSE;
@@ -2054,25 +2041,31 @@ public class SchemaCompiler {
                     if (clazzName == null) {
                         clazzName = findClassName(referencedQName, arrayStatus);
                     }
-                    XmlSchemaElement refElement = getReferencedElement(parentSchema, referencedQName);
-
-                    // register the mapping if we found the referenced element
-                    // else throw an exception
-                    if (refElement != null) {
-                        metainfHolder.registerMapping(referencedQName,
-                                refElement.getSchemaTypeName()
-                                , clazzName,
-                                arrayStatus ?
-                                        SchemaConstants.ARRAY_TYPE :
-                                        SchemaConstants.ELEMENT_TYPE);
+                    XmlSchema resolvedParentSchema = getParentSchema(parentSchema,referencedQName,COMPONENT_ELEMENT);
+                    if (resolvedParentSchema == null) {
+                        throw new SchemaCompilationException("Can not find the element " + referencedQName +
+                                " from the parent schema " + parentSchema.getTargetNamespace());
                     } else {
-                        if (referencedQName.equals(SchemaConstants.XSD_SCHEMA)) {
+                        XmlSchemaElement refElement = resolvedParentSchema.getElementByName(referencedQName);
+
+                        // register the mapping if we found the referenced element
+                        // else throw an exception
+                        if (refElement != null) {
                             metainfHolder.registerMapping(referencedQName,
-                                    null,
-                                    writer.getDefaultClassName(),
-                                    SchemaConstants.ANY_TYPE);
+                                    refElement.getSchemaTypeName()
+                                    , clazzName,
+                                    arrayStatus ?
+                                            SchemaConstants.ARRAY_TYPE :
+                                            SchemaConstants.ELEMENT_TYPE);
                         } else {
-                            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound", referencedQName.toString()));
+                            if (referencedQName.equals(SchemaConstants.XSD_SCHEMA)) {
+                                metainfHolder.registerMapping(referencedQName,
+                                        null,
+                                        writer.getDefaultClassName(),
+                                        SchemaConstants.ANY_TYPE);
+                            } else {
+                                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound", referencedQName.toString()));
+                            }
                         }
                     }
                 }
@@ -2212,39 +2205,6 @@ public class SchemaCompiler {
         metainfHolder.setOrdered(order);
     }
 
-    private XmlSchemaGroup getGroup(QName groupQName,
-                          XmlSchema parentSchema){
-         XmlSchemaGroup xmlSchemaGroup =
-                (XmlSchemaGroup) parentSchema.getGroups().getItem(groupQName);
-        if (xmlSchemaGroup == null){
-            // i.e this attribute can be in a included or imported schema
-            xmlSchemaGroup = (XmlSchemaGroup) parentSchema.getGroups().getItem(groupQName);
-            if (xmlSchemaGroup == null) {
-                // try to find in an import or an include
-                XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-                if (includes != null) {
-                    Iterator includesIter = includes.getIterator();
-                    Object object = null;
-                    while (includesIter.hasNext()) {
-                        object = includesIter.next();
-                        if (object instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) object).getSchema();
-                            xmlSchemaGroup = (XmlSchemaGroup) schema1.getGroups().getItem(groupQName);
-                        }
-                        if (object instanceof XmlSchemaInclude) {
-                            XmlSchema schema1 = ((XmlSchemaInclude) object).getSchema();
-                            xmlSchemaGroup = (XmlSchemaGroup) schema1.getGroups().getItem(groupQName);
-                        }
-                        if (xmlSchemaGroup != null){
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return xmlSchemaGroup;
-    }
-
     /**
      *
      * @param xmlSchemaGroup
@@ -2283,113 +2243,6 @@ public class SchemaCompiler {
                 }
             }
         }
-    }
-
-    private XmlSchemaType getType(XmlSchema schema, QName schemaTypeName) throws SchemaCompilationException {
-        // first check with the current parent schema
-        XmlSchemaType typeByName = schema.getTypeByName(schemaTypeName);
-        if (typeByName == null) {
-            // try to resolve schema using the target names space
-            schema = resolveParentSchema(schemaTypeName, schema);
-            typeByName = schema.getTypeByName(schemaTypeName);
-            if (typeByName == null) {
-                // The referenced element seems to come from an imported
-                // schema.
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator tempIterator = includes.getIterator();
-                    while (tempIterator.hasNext()) {
-                        Object o = tempIterator.next();
-                        XmlSchema inclSchema = null;
-                        if (o instanceof XmlSchemaImport) {
-                            inclSchema = ((XmlSchemaImport) o).getSchema();
-                            if (inclSchema == null) {
-                                inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
-                            }
-                        }
-                        if (o instanceof XmlSchemaInclude) {
-                            inclSchema = ((XmlSchemaInclude) o).getSchema();
-                        }
-                        // get the element from the included schema
-                        if (inclSchema != null) {
-                            typeByName = inclSchema.getTypeByName(schemaTypeName);
-                        }
-                        if (typeByName != null) {
-                            // we found the referenced element an can break the loop
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return typeByName;
-    }
-
-    private XmlSchemaElement getReferencedElement(XmlSchema parentSchema, QName referencedQName)
-            throws SchemaCompilationException {
-        XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
-        if (refElement == null){
-            XmlSchema schema = resolveParentSchema(referencedQName, parentSchema);
-            refElement = schema.getElementByName(referencedQName);
-            if (refElement == null) {
-                // The referenced element seems to come from an imported
-                // schema.
-                refElement = getReferenceElementFromSchema(schema, referencedQName);
-            }
-        }
-
-        return refElement;
-    }
-
-    private XmlSchemaElement getReferenceElementFromSchema(
-            XmlSchema schema,
-            QName referencedQName) {
-        XmlSchemaElement refElement = null;
-        XmlSchemaObjectCollection includes = schema.getIncludes();
-        if (includes != null) {
-            Iterator tempIterator = includes.getIterator();
-            while (tempIterator.hasNext()) {
-                Object o = tempIterator.next();
-                XmlSchema inclSchema = null;
-
-                if (o instanceof XmlSchemaInclude) {
-                    inclSchema = ((XmlSchemaInclude) o).getSchema();
-                    if (inclSchema != null) {
-                        // first check in the scheam
-                        refElement = inclSchema.getElementByName(referencedQName);
-                        if (refElement == null) {
-                            // try to find the element in an inner schema
-                            refElement = getReferenceElementFromSchema(inclSchema, referencedQName);
-                        }
-                        if (refElement != null) {
-                            // we have found the element so exit from while loop;
-                            break;
-                        }
-                    }
-                }
-
-                if (o instanceof XmlSchemaImport) {
-                    inclSchema = ((XmlSchemaImport) o).getSchema();
-                    if (inclSchema == null) {
-                        inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
-                    }
-                    if (inclSchema != null) {
-                        // first check in the scheam
-                        refElement = inclSchema.getElementByName(referencedQName);
-                        if (refElement == null) {
-                            // try to find the element in an inner schema
-                            refElement = getReferenceElementFromSchema(inclSchema, referencedQName);
-                        }
-                        if (refElement != null) {
-                            // we have found the element so exit from while loop;
-                            break;
-                        }
-                    }
-                }
-
-            }
-        }
-        return refElement;
     }
 
     /**
@@ -2518,15 +2371,22 @@ public class SchemaCompiler {
                     //recurse
                     // this must be a xmlschema bug
                     // it should return the schematype for restriction.getBaseType():
-                    XmlSchemaType restrictionBaseType = getType(parentSchema, baseTypeName);
-                    if (restrictionBaseType instanceof XmlSchemaSimpleType) {
-                        if ((restrictionBaseType != null) && (!isAlreadyProcessed(baseTypeName))) {
-                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema, null);
+                    XmlSchema resolvedSchema = getParentSchema(parentSchema, baseTypeName, COMPONENT_TYPE);
+                    if (resolvedSchema == null) {
+                        throw new SchemaCompilationException("can not find the type " + baseTypeName +
+                                " from the parent schema " + parentSchema.getTargetNamespace());
+                    } else {
+                        XmlSchemaType restrictionBaseType = resolvedSchema.getTypeByName(baseTypeName);
+                        if (restrictionBaseType instanceof XmlSchemaSimpleType) {
+                            if ((restrictionBaseType != null) && (!isAlreadyProcessed(baseTypeName))) {
+                                processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType,
+                                        null, resolvedSchema, null);
+                            }
+                            // process restriction
+                            processSimpleRestrictionBaseType(parentSimpleTypeQname,
+                                    restriction.getBaseTypeName(), metaInfHolder, resolvedSchema);
                         }
-                        // process restriction
-                        processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     }
-
 
                 }
             } else if (content instanceof XmlSchemaSimpleTypeUnion) {
@@ -2539,15 +2399,21 @@ public class SchemaCompiler {
                         if (baseSchemaTypeMap.containsKey(qname)) {
                             metaInfHolder.addMemberType(qname, (String) baseSchemaTypeMap.get(qname));
                         } else {
-                            XmlSchemaType type = getType(parentSchema, qname);
-                            if (type instanceof XmlSchemaSimpleType) {
-                                XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
-                                if (!isAlreadyProcessed(qname)) {
-                                    processSimpleSchemaType(memberSimpleType, null, parentSchema, null);
-                                }
-                                metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
+                            XmlSchema resolvedSchema = getParentSchema(parentSchema, qname, COMPONENT_TYPE);
+                            if (resolvedSchema == null) {
+                                throw new SchemaCompilationException("can not find the type " + qname +
+                                        " from the parent schema " + parentSchema.getTargetNamespace());
                             } else {
-                                throw new SchemaCompilationException("Unions can not have complex types as a member type");
+                                XmlSchemaType type = resolvedSchema.getTypeByName(qname);
+                                if (type instanceof XmlSchemaSimpleType) {
+                                    XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
+                                    if (!isAlreadyProcessed(qname)) {
+                                        processSimpleSchemaType(memberSimpleType, null, resolvedSchema, null);
+                                    }
+                                    metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
+                                } else {
+                                    throw new SchemaCompilationException("Unions can not have complex types as a member type");
+                                }
                             }
                         }
                     }
@@ -2583,9 +2449,15 @@ public class SchemaCompiler {
 
                 if (itemTypeQName != null) {
                     if (!isAlreadyProcessed(itemTypeQName)) {
-                        XmlSchemaType simpleSchemaType = getType(parentSchema, itemTypeQName);
-                        if (simpleSchemaType instanceof XmlSchemaSimpleType) {
-                            processSimpleSchemaType((XmlSchemaSimpleType) simpleSchemaType, null, parentSchema, null);
+                        XmlSchema resolvedSchema = getParentSchema(parentSchema, itemTypeQName, COMPONENT_TYPE);
+                        if (resolvedSchema == null) {
+                            throw new SchemaCompilationException("can not find the type " + itemTypeQName +
+                                    " from the parent type " + parentSchema.getTargetNamespace());
+                        } else {
+                            XmlSchemaType simpleSchemaType = resolvedSchema.getTypeByName(itemTypeQName);
+                            if (simpleSchemaType instanceof XmlSchemaSimpleType) {
+                                processSimpleSchemaType((XmlSchemaSimpleType) simpleSchemaType, null, resolvedSchema, null);
+                            }
                         }
                     }
                 } else {
@@ -2645,5 +2517,132 @@ public class SchemaCompiler {
         }
         mapTypeCount.put(localName, new Integer(count+1));
         return ("_type" + count);
+    }
+
+    /**
+     * returns the parent schema of the componet having QName compoentTypeQName.
+     * withe the componet type.
+     * @param parentSchema - parent schema of the given componet
+     * @param componentQName - qname of the componet, of which we want to get the parent schema
+     * @param componetType - type of the componet. this can either be type,element,attribute or attribute group
+     * @return parent schema.
+     */
+
+    private XmlSchema getParentSchema(XmlSchema parentSchema,
+                                      QName componentQName,
+                                      int componetType) throws SchemaCompilationException {
+        // if the componet do not have a propernamesapce or
+        // it is equals to the xsd scheam namesapce
+        // we do not have to do any thing.
+        if ((componentQName == null) ||
+              (componentQName.getNamespaceURI() == null) ||
+                Constants.URI_2001_SCHEMA_XSD.equals(componentQName.getNamespaceURI())){
+            return parentSchema;
+        }
+
+        List visitedSchemas = new ArrayList();
+        visitedSchemas.add(parentSchema);
+        XmlSchema newParentSchema = getParentSchemaFromIncludes(parentSchema,
+                componentQName,componetType,visitedSchemas);
+        if (newParentSchema == null){
+            String targetNamespace = componentQName.getNamespaceURI();
+            if (loadedSchemaMap.containsKey(targetNamespace)){
+                XmlSchema tempSchema = (XmlSchema) loadedSchemaMap.get(targetNamespace);
+                if (isComponetExists(tempSchema,componentQName,componetType)){
+                    newParentSchema = tempSchema;
+                }
+            } else if (availableSchemaMap.containsKey(targetNamespace)){
+                XmlSchema tempSchema = (XmlSchema) availableSchemaMap.get(targetNamespace);
+                if (isComponetExists(tempSchema,componentQName,componetType)){
+                    compile(tempSchema);
+                    newParentSchema = tempSchema;
+                }
+            }
+        }
+        return newParentSchema;
+    }
+
+    private XmlSchema getParentSchemaFromIncludes(XmlSchema parentSchema,
+                                                  QName componentQName,
+                                                  int componetType,
+                                                  List visitedSchemas) throws SchemaCompilationException {
+
+        XmlSchema newParentSchema = null;
+        if (isComponetExists(parentSchema, componentQName, componetType)) {
+            newParentSchema = parentSchema;
+        } else {
+            // this componet must either be in a import or and include
+            XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+            if (includes != null) {
+                Object externalComponet = null;
+                XmlSchema externalSchema = null;
+                for (Iterator iter = includes.getIterator(); iter.hasNext();) {
+                    externalComponet = iter.next();
+                    if (externalComponet instanceof XmlSchemaExternal) {
+                        externalSchema = ((XmlSchemaExternal) externalComponet).getSchema();
+
+                        // if this is an inline import without a schema location
+                        // xmlschema does not load the schema.
+                        // so we try to figure out it either from the available schemas
+                        // or from the laded schemas.
+                        if ((externalSchema == null) && externalComponet instanceof XmlSchemaImport){
+                            XmlSchemaImport xmlSchemaImport = (XmlSchemaImport) externalComponet;
+                            String importNamespce = xmlSchemaImport.getNamespace();
+                            if ((importNamespce != null) && !importNamespce.equals(Constants.URI_2001_SCHEMA_XSD)) {
+                                if (loadedSchemaMap.containsKey(importNamespce)) {
+                                    externalSchema = (XmlSchema) loadedSchemaMap.get(importNamespce);
+                                } else if (availableSchemaMap.containsKey(importNamespce)) {
+                                    XmlSchema tempSchema = (XmlSchema) availableSchemaMap.get(importNamespce);
+                                    compile(tempSchema);
+                                    externalSchema = tempSchema;
+                                }
+                            }
+                        }
+                        if (externalSchema != null) {
+                            // find the componet in the new external schema.
+                            if (!visitedSchemas.contains(externalSchema)){
+                                visitedSchemas.add(externalSchema);
+                                newParentSchema = getParentSchemaFromIncludes(externalSchema,
+                                        componentQName, componetType, visitedSchemas);
+                            }
+                        }
+                        if (newParentSchema != null) {
+                            // i.e we have found the schema
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return newParentSchema;
+    }
+
+    private boolean isComponetExists(XmlSchema schema,
+                                     QName componentQName,
+                                     int componetType) {
+        boolean isExists = false;
+        switch (componetType) {
+            case COMPONENT_TYPE : {
+                isExists = (schema.getTypeByName(componentQName) != null);
+                break;
+            }
+            case COMPONENT_ELEMENT : {
+                isExists = (schema.getElementByName(componentQName) != null);
+                break;
+            }
+            case COMPONENT_ATTRIBUTE : {
+                isExists = (schema.getAttributes().getItem(componentQName) != null);
+                break;
+            }
+            case COMPONENT_ATTRIBUTE_GROUP : {
+                isExists = (schema.getAttributeGroups().getItem(componentQName) != null);
+                break;
+            }
+            case COMPONENT_GROUP : {
+                isExists = (schema.getGroups().getItem(componentQName) != null);
+                break;
+            }
+        }
+       return isExists;
     }
 }
