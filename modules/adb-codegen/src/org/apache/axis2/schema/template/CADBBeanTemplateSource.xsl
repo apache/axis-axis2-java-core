@@ -286,17 +286,6 @@
             return AXIS2_SUCCESS;
         }
 
-        <xsl:if test="not(@type)">  <!-- this would only generate for elements -->
-           axutil_qname_t* AXIS2_CALL
-           <xsl:value-of select="$axis2_name"/>_get_qname (
-                   <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                   const axutil_env_t *env)
-           {
-               AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-
-               return <xsl:value-of select="$name"/>-> qname;
-           }
-        </xsl:if>
 
         <xsl:if test="@simple">
             axis2_status_t AXIS2_CALL

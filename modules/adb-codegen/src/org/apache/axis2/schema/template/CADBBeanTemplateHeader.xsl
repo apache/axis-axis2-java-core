@@ -124,18 +124,6 @@
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
 
-        /**
-         * Getter for the qname of the element or the type referred in the header
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
-         * @param env pointer to environment struct
-         * @return the qname of the element or the type
-         */
-        <xsl:if test="not(@type)">
-        axutil_qname_t* AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_get_qname (
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-            const axutil_env_t *env);
-        </xsl:if>
 
         <xsl:if test="@simple">
             /**
@@ -271,7 +259,7 @@
          */
         <xsl:value-of select="$nativePropertyType"/> AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text>_</xsl:text><xsl:value-of select="$name"/>,
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env, int i);
 
         /**

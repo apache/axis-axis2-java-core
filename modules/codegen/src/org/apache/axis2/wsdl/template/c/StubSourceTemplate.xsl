@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
+    
     <xsl:template match="/class">
       <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>
       <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
