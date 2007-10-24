@@ -30,8 +30,14 @@ import java.util.concurrent.Executors;
  */
 public class JAXWSExecutorFactory implements ExecutorFactory {
 
-	public Executor getExecutorInstance() {
-		return Executors.newFixedThreadPool(3, new JAXWSThreadFactory());
-	}
+    public Executor getExecutorInstance() {
+        return Executors.newFixedThreadPool(3, new JAXWSThreadFactory());
+    }
+
+    public Executor getExecutorInstance(int executorType) {
+        return getExecutorInstance();
+    }
+        
+	
 
 }

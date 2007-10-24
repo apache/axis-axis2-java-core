@@ -33,9 +33,11 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
+import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -129,17 +131,32 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             log.debug("JavaBeanDispatcher about to invoke using OperationDesc: "
                     + operationDesc.toString());
         }
-
-        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
-        AsyncInvocationWorker worker = new AsyncInvocationWorker(target, methodInputParams, cl, eic);
+        AsyncInvocationWorker worker = new AsyncInvocationWorker(target, 
+                                                                 methodInputParams, 
+                                                                 cl, eic);
         FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
-        executor.execute(task);
         
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) 
+            request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  " +
+                                "Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
+
+        executor.execute(task);     
         return;
     }
 
@@ -162,14 +179,25 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             log.debug("JavaBeanDispatcher about to invoke using OperationDesc: "
                     + operationDesc.toString());
         }
-        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
         AsyncInvocationWorker worker = new AsyncInvocationWorker(target, methodInputParams, cl, eic);
         FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
+        
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
         executor.execute(task);
         
         return;

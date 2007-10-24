@@ -36,8 +36,10 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
+import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -159,7 +161,18 @@ public class ProviderDispatcher extends JavaDispatcher {
         }
 
         ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
         
         Method m = getJavaMethod();
         Object[] params = new Object[] {param};
@@ -197,7 +210,18 @@ public class ProviderDispatcher extends JavaDispatcher {
         }
 
         ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
         
         Method m = getJavaMethod();
         Object[] params = new Object[] {param};

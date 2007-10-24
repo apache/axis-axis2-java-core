@@ -359,7 +359,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private Executor getDefaultExecutor() {
     	ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
     			ExecutorFactory.class);
-    	return executorFactory.getExecutorInstance();
+        return executorFactory.getExecutorInstance(ExecutorFactory.CLIENT_EXECUTOR);
     }
 
     private boolean isValidServiceName() {

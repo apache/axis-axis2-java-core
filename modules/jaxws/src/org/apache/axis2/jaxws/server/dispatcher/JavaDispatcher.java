@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -107,7 +108,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 // Set the proper class loader so that we can properly marshall the
                 // outbound response.
                 ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-                if (classLoader != null) {
+                if (classLoader != null && (classLoader != currentLoader)) {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     if (log.isDebugEnabled()) {
                         log.debug("Context ClassLoader set to:" + classLoader);
@@ -131,8 +132,8 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 if (eic.isOneWay()) {
                     if (log.isDebugEnabled()) {
                         log.debug("Invocation pattern was one way, work complete.");
-                        return null;
                     }
+                    return null;
                 }
                 
                 // Create the response MessageContext
@@ -173,10 +174,15 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 // Set the thread's ClassLoader back to what it originally was.
                 Thread.currentThread().setContextClassLoader(currentLoader);
                 
+                // Clean up the cached attachments from the request and the response.
+                TransportUtils.deleteAttachments(eic.getRequestMessageContext().getAxisMessageContext());
+                TransportUtils.deleteAttachments(eic.getResponseMessageContext().getAxisMessageContext());                
             } catch (Throwable e) {
                 // Exceptions are swallowed, there is no reason to rethrow them
-                log.error("AN UNEXPECTED ERROR OCCURRED IN THE ASYNC WORKER THREAD");
-                log.error("Exception is:" + e);
+                if (log.isDebugEnabled()) {
+                    log.debug("AN UNEXPECTED ERROR OCCURRED IN THE ASYNC WORKER THREAD");
+                    log.debug("Exception is:" + e, e);
+                }
             }
 
             return null;

@@ -30,6 +30,20 @@ import java.util.concurrent.Executor;
  */
 public interface ExecutorFactory {
 
-	public Executor getExecutorInstance();
+        public static final int CLIENT_EXECUTOR = 0;
+        public static final int SERVER_EXECUTOR = 1;
+    
+        /**
+         * 
+         * @return
+         */
+        public Executor getExecutorInstance();
+        
+        /**
+         * 
+         * @param executorType
+         * @return
+         */
+        public Executor getExecutorInstance(int executorType);
 	
 }
