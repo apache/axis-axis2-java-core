@@ -2106,7 +2106,8 @@
                         end_input_str_len = axutil_strlen(end_input_str);
                     </xsl:if>
 
-                    <xsl:choose>
+
+                      <xsl:choose>
                         <xsl:when test="@ours">
                             <xsl:if test="$anon or $istype"> <!-- As this shows, elements are not writing their tags here from stream.
                                                                  It is done using axiom above..-->
@@ -2133,7 +2134,6 @@
                             </xsl:if>
                         </xsl:when>
 
-
                         <!-- add int s -->
                         <xsl:when test="$nativePropertyType='int'">
                            <xsl:choose>
@@ -2144,9 +2144,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <xsl:when test="$nativePropertyType='unsigned int'">
@@ -2158,9 +2162,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add char s -->
@@ -2173,9 +2181,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <xsl:when test="$nativePropertyType='unsigned char'">
@@ -2187,9 +2199,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <xsl:when test="$nativePropertyType='axis2_byte_t'">
@@ -2201,9 +2217,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add short s -->
@@ -2216,9 +2236,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <xsl:when test="$nativePropertyType='unsigned short'">
@@ -2230,9 +2254,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%hu", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
 
@@ -2247,9 +2275,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%d", (int)<xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add long s -->
@@ -2262,9 +2294,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%lu", (int)<xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add float s -->
@@ -2277,9 +2313,13 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%f", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add double s -->
@@ -2292,15 +2332,21 @@
                                sprintf ( text_value_<xsl:value-of select="$position"/>, "%f", <xsl:value-of select="$attriName"/> );
                              </xsl:otherwise>
                            </xsl:choose>
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add axis2_char_t s -->
                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                            text_value_<xsl:value-of select="$position"/> = <xsl:value-of select="$attriName"/>;
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                             
                            text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
                            if (text_value_<xsl:value-of select="$position"/>_temp)
@@ -2312,31 +2358,45 @@
                            {
                                axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            }
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add axis2_uri_t s -->
                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            text_value_<xsl:value-of select="$position"/> = axutil_uri_to_string(<xsl:value-of select="$attriName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add axis2_qname_t s -->
                         <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                            text_value_<xsl:value-of select="$position"/> = axutil_qname_to_string(<xsl:value-of select="$attriName"/>, env);
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                           <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                            strcpy( text_value_<xsl:value-of select="$position"/>, (<xsl:value-of select="$attriName"/>)?"true":"false" );
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!-- add nodes -->
@@ -2347,22 +2407,29 @@
 
                         <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                           text_value_<xsl:value-of select="$position"/> = axutil_date_time_serialize_date_time( <xsl:value-of select="$attriName"/>, env);
-                          axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           <xsl:if test="$anon or $istype">
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <xsl:when test="$propertyType='axutil_base64_binary_t*'">
                           text_value_<xsl:value-of select="$position"/> =axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$attriName"/>, env);
-                          axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           <xsl:if test="$anon or $istype">
+                           axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
+                           <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           </xsl:if>
                         </xsl:when>
 
                         <!--TODO: This should be extended for all the types that should be freed.. -->
                         <xsl:otherwise>
                           /** This is an unknown type or a primitive. handle this manually for unknown type */
-                          text_value_<xsl:value-of select="$position"/> = NULL;
                         </xsl:otherwise>
                       </xsl:choose>
 
