@@ -339,7 +339,7 @@ public class EndpointController {
             //rather than just Exception.
         } catch (Throwable cnf) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr4", className));
+                    "EndpointControllerErr4", className), cnf);
         }
     }
 
@@ -362,7 +362,8 @@ public class EndpointController {
             );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
+                log.debug("PrivilegedActionException thrown from AccessController: " + e);
+                log.debug("Real Cause is " + e.getException().getCause());
             }
             throw (ClassNotFoundException)e.getException();
         }
