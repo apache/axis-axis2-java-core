@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -77,6 +78,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     private Class _providerType = null;        // Cache the provider type
     private Provider providerInstance = null;
     private Message message = null;
+    private EndpointDescription endpointDesc = null;
 
     /**
      * Constructor
@@ -96,6 +98,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             log.debug("Preparing to invoke javax.xml.ws.Provider based endpoint");
             log.debug("Invocation pattern: two way, sync");
         }
+
+        initialize(request);
 
         providerInstance = getProviderInstance();
 
@@ -144,6 +148,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             log.debug("Invocation pattern: one way");
         }
         
+        initialize(request);
+
         providerInstance = getProviderInstance();
 
         Object param = createRequestParameters(request);
@@ -193,6 +199,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             log.debug("Invocation pattern: two way, async");
         }
         
+        initialize(request);
+
         providerInstance = getProviderInstance();
 
         Object param = createRequestParameters(request);
@@ -599,5 +607,25 @@ public class ProviderDispatcher extends JavaDispatcher {
         
         return m;
     }
+    
+    private void initialize(MessageContext mc) {
+    	
+        mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
+
+        endpointDesc = mc.getEndpointDescription();
+        String bindingType = endpointDesc.getBindingType();
+
+        if (bindingType != null) {
+            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                mc.getMessage().setMTOMEnabled(true);
+            }
+        }
+        
+        //Set SOAP Operation Related properties in SOAPMessageContext.
+
+        ContextUtils.addWSDLProperties_provider(mc);    
+        }
+
 
 }

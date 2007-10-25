@@ -230,5 +230,49 @@ public class ContextUtils {
             }
         }
     }
+    
+    public static void addWSDLProperties_provider(MessageContext jaxwsMessageContext) {
+        org.apache.axis2.context.MessageContext msgContext =
+                jaxwsMessageContext.getAxisMessageContext();
+        ServiceContext serviceContext = msgContext.getServiceContext();
+        SOAPMessageContext soapMessageContext = null;
+        if (serviceContext != null) {
+            WebServiceContext wsc =
+                    (WebServiceContext)serviceContext.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
+            if (wsc != null) {
+                soapMessageContext = (SOAPMessageContext)wsc.getMessageContext();
+            }
+        }
+
+        String op = jaxwsMessageContext.getOperationName().getLocalPart();    	
+        
+        if (op != null && soapMessageContext != null) {
+            soapMessageContext
+                    .put(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, op);
+            soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_OPERATION,
+                                        Scope.APPLICATION);
+            if (log.isDebugEnabled()) {
+                log.debug("WSDL_OPERATION :" + op);
+            }
+
+            //EndpointInterfaceDescription eid = op.getEndpointInterfaceDescription();
+            EndpointDescription ed = jaxwsMessageContext.getEndpointDescription();
+            
+            if (ed != null) {
+                    soapMessageContext
+                            .put(javax.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName());
+                    soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_PORT,
+                                                Scope.APPLICATION);
+                    if (log.isDebugEnabled()) {
+                        log.debug("WSDL_PORT :" + ed.getPortQName());
+                    }
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to read WSDL operation, port and interface properties");
+            }
+        }
+    }
+
 
 }
