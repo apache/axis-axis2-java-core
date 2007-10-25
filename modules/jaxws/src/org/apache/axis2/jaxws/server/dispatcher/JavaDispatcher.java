@@ -23,10 +23,12 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.jaxws.utility.FailureLogger;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 /**
@@ -60,15 +62,29 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         return serviceImplClass;
     }
     
-    protected Object invokeTargetOperation(Method method, Object[] params) throws Exception {
+    protected Object invokeTargetOperation(Method method, Object[] params) throws Throwable {
         Object output = null;
         try {
             output = method.invoke(serviceInstance, params);
-        } catch (Exception t) {
+        } catch (Throwable t) {
+            Throwable rootT = null;
+            if (t instanceof InvocationTargetException) {
+                rootT = ((InvocationTargetException) t).getTargetException();
+            }
+            
+            // Minimal Logging to aid servicability.
+            // Only the error and the stack is logged.
+            FailureLogger.logError((rootT != null) ? rootT : t, 
+                                   false);  
+            
+            // Full logging if debug is enabled.
             if (log.isDebugEnabled()) {
                 log.debug("Exception invoking a method of " + serviceImplClass.toString()
                         + " of instance " + serviceInstance.toString());
                 log.debug("Exception type thrown: " + t.getClass().getName());
+                if (rootT != null) {
+                    log.debug("Root Exception type thrown: " + rootT.getClass().getName());
+                }
                 log.debug("Method = " + method.toGenericString());
                 for (int i = 0; i < params.length; i++) {
                     String value =
