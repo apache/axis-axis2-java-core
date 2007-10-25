@@ -59,6 +59,7 @@ public class MessageContext {
     private Message message;
     private Mode mode;
     private boolean isOutbound;  // Outbound or inbound message context
+    private boolean isServer = false; // Indicate if server role, default is false
     
     // TODO:  flag to set whether we delegate property setting up to the
     // axis2 message context object or keep it local
@@ -333,6 +334,21 @@ public class MessageContext {
      */
     public void setOutbound(boolean isOutbound) {
         this.isOutbound = isOutbound;
+    }
+
+    /**
+     * @return true if server role
+     */
+    public boolean isServer() {
+        return isServer;
+    }
+
+    /**
+     * Indicate if server role
+     * @param isServer
+     */
+    public void setServer(boolean isServer) {
+        this.isServer = isServer;
     }
 
 }
