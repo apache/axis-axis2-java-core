@@ -72,12 +72,12 @@ public class CTypeInfo extends Constants {
                                  "axutil_base64_binary_t*");
 
         CTypeInfo.addTypemapping(XSD_HEXBIN,
-                                 "void*");
+                                 "axiom_node_t*");
 
         // These are the g* types (gYearMonth, etc) which map to Axis types
         // These types are mapped to an integer
         CTypeInfo.addTypemapping(XSD_YEARMONTH,
-                                 "int");
+                                 "axutil_date_time_t*");
         CTypeInfo.addTypemapping(XSD_YEAR,
                                  "int");
         CTypeInfo.addTypemapping(XSD_MONTH,
@@ -85,7 +85,7 @@ public class CTypeInfo extends Constants {
         CTypeInfo.addTypemapping(XSD_DAY,
                                  "int");
         CTypeInfo.addTypemapping(XSD_MONTHDAY,
-                                 "int");
+                                 "axutil_date_time_t*");
 
         // xsd:token
         CTypeInfo.addTypemapping(XSD_TOKEN, "axis2_char_t*");
@@ -108,7 +108,7 @@ public class CTypeInfo extends Constants {
 
         // a xsd:unsignedByte
         CTypeInfo.addTypemapping(XSD_UNSIGNEDBYTE,
-                                 "unsigned char");
+                                 "axis2_byte_t");
 
         // a xsd:nonNegativeInteger
         CTypeInfo.addTypemapping(XSD_NONNEGATIVEINTEGER,
@@ -124,43 +124,40 @@ public class CTypeInfo extends Constants {
 
         // a xsd:nonPositiveInteger
         CTypeInfo.addTypemapping(XSD_NONPOSITIVEINTEGER,
-                                 "int");
+                                 "unsigned int");
 
         // a xsd:Name
-        CTypeInfo.addTypemapping(XSD_NAME, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_NAME, "axis2_char_t*");
 
         // a xsd:NCName
-        CTypeInfo.addTypemapping(XSD_NCNAME, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_NCNAME, "axis2_char_t*");
 
         // a xsd:ID
-        CTypeInfo.addTypemapping(XSD_ID, "axiom_node_t*");
-
-        // a xsd:lang
-        CTypeInfo.addTypemapping(XSD_LANG, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_ID, "axis2_char_t*");
 
         // a xsd:language
         CTypeInfo.addTypemapping(XSD_LANGUAGE, "axis2_char_t*");
 
         // a xsd:NmToken
-        CTypeInfo.addTypemapping(XSD_NMTOKEN, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_NMTOKEN, "axis2_char_t*");
 
         // a xsd:NmTokens
-        CTypeInfo.addTypemapping(XSD_NMTOKENS, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_NMTOKENS, "axis2_char_t*");
 
         // a xsd:NOTATION
         CTypeInfo.addTypemapping(XSD_NOTATION, "axiom_node_t*");
 
         // a xsd:XSD_ENTITY
-        CTypeInfo.addTypemapping(XSD_ENTITY, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_ENTITY, "axis2_char_t*");
 
         // a xsd:XSD_ENTITIES
-        CTypeInfo.addTypemapping(XSD_ENTITIES, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_ENTITIES, "axis2_char_t*");
 
         // a xsd:XSD_IDREF
-        CTypeInfo.addTypemapping(XSD_IDREF, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_IDREF, "axis2_char_t*");
 
         // a xsd:XSD_XSD_IDREFS
-        CTypeInfo.addTypemapping(XSD_IDREFS, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_IDREFS, "axis2_char_t*");
 
         // a xsd:Duration
         CTypeInfo.addTypemapping(XSD_DURATION, "axutil_duration_t*");
