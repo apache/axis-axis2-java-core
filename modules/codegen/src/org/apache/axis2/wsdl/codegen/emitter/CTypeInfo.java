@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The java type map. uses a static map for caching Most code from Axis 1 Codebase* Most code
- * JavaTypeMap
+ * The C type map. uses a static map for caching Most code from Axis 1 Codebase* Most code
+ * CTypeMap
  */
 public class CTypeInfo extends Constants {
 
@@ -54,26 +54,20 @@ public class CTypeInfo extends Constants {
         CTypeInfo.addTypemapping(XSD_ANY, "axiom_node_t*");
         CTypeInfo.addTypemapping(XSD_DECIMAL, "double");
 
-        //anytype is mapped to the OMElement instead of the java.lang.Object
         CTypeInfo.addTypemapping(XSD_ANYTYPE,
                                  "axiom_node_t*");
 
-        //Qname maps to  jax rpc QName class
         CTypeInfo.addTypemapping(XSD_QNAME,
                                  "axutil_qname_t*");
 
-        //xsd Date is mapped to the java.util.date!
         CTypeInfo.addTypemapping(XSD_DATE,
                                  "axutil_date_time_t*");
 
-        // Mapping for xsd:time.  Map to Axis type Time
         CTypeInfo.addTypemapping(XSD_TIME,
                                  "axutil_date_time_t*");
         CTypeInfo.addTypemapping(XSD_DATETIME,
                                  "axutil_date_time_t*");
 
-        //as for the base 64 encoded binary stuff we map it to a javax.
-        // activation.Datahandler object
         CTypeInfo.addTypemapping(XSD_BASE64,
                                  "axutil_base64_binary_t*");
 
@@ -81,6 +75,7 @@ public class CTypeInfo extends Constants {
                                  "void*");
 
         // These are the g* types (gYearMonth, etc) which map to Axis types
+        // These types are mapped to an integer
         CTypeInfo.addTypemapping(XSD_YEARMONTH,
                                  "int");
         CTypeInfo.addTypemapping(XSD_YEAR,
@@ -140,8 +135,8 @@ public class CTypeInfo extends Constants {
         // a xsd:ID
         CTypeInfo.addTypemapping(XSD_ID, "axiom_node_t*");
 
-        // a xml:lang
-        // addTypemapping(XML_LANG,Language.class.getName());
+        // a xsd:lang
+        CTypeInfo.addTypemapping(XSD_LANG, "axiom_node_t*");
 
         // a xsd:language
         CTypeInfo.addTypemapping(XSD_LANGUAGE, "axis2_char_t*");
