@@ -124,20 +124,21 @@
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
 
-
         <xsl:if test="@simple">
             /**
              * Deserialize the content from a string to adb objects
              * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
              * @param env pointer to environment struct
              * @param node_value to deserialize
+             * @param parent parent node which contain the simple type
              * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
              */
             axis2_status_t AXIS2_CALL
             <xsl:value-of select="$axis2_name"/>_deserialize_from_string(
                             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                                             const axutil_env_t *env,
-                                            axis2_char_t *node_value);
+                                            axis2_char_t *node_value,
+                                            axiom_node_t *parent);
         </xsl:if>
 
         /**
@@ -151,6 +152,18 @@
         <xsl:value-of select="$axis2_name"/>_deserialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env, axiom_node_t* parent);
+
+       /**
+         * Declare namespace in the parent node (Pass either the parent element or the stream and set the other NULL)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param parent_element The parent element if it is an element, NULL otherwise
+         * @param stream if parent is not an element and is a stream, pass the stream, NULL otherwise
+         */
+       void AXIS2_CALL
+       <xsl:value-of select="$axis2_name"/>_declare_parent_namespaces(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env, axiom_element_t *parent_element, axutil_stream_t *stream);
 
         <xsl:if test="@simple">
         /**
@@ -170,7 +183,6 @@
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param <xsl:value-of select="$name"/>_om_node node to serialize from
-         * @param has_parent is the element has a parent
          * @param tag_closed whether the parent tag is closed or not
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
@@ -178,7 +190,7 @@
         <xsl:value-of select="$axis2_name"/>_serialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
-            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent, int tag_closed);
+            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int tag_closed);
 
 
         <xsl:for-each select="property">
