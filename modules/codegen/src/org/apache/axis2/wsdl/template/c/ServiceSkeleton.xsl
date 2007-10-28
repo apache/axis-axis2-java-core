@@ -176,7 +176,14 @@
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
                         <xsl:when test="@ours">
                         adb_<xsl:value-of select="@type"/>_create( env);
-                        adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
+                        if( AXIS2_FAILURE == adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node ))
+                        {
+                            adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
+                      
+                            AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="@type"/>_deserialize: "
+                                        "This should be due to an invalid XML");
+                            return <xsl:value-of select="$method-prefix"/>_on_fault( svc_skeleton, env, NULL);      
+                        }
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
                         </xsl:choose>
@@ -191,7 +198,7 @@
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
-                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
+                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_TRUE);
                                adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
                                adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                                    </xsl:when>

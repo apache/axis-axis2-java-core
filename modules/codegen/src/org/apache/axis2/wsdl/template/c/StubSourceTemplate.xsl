@@ -178,6 +178,7 @@
             const axis2_char_t *soap_action = NULL;
             axutil_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
+            axis2_bool_t is_soap_act_set = AXIS2_TRUE;
             <xsl:if test="$style='doc'">
             axutil_string_t *soap_act = NULL;
             </xsl:if>    
@@ -192,7 +193,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -212,8 +213,9 @@
             }
             svc_client = axis2_stub_get_svc_client(stub, env );
             soap_action = axis2_options_get_action( options, env );
-            if ( NULL == soap_action )
+            if (NULL == soap_action)
             {
+              is_soap_act_set = AXIS2_FALSE;
               soap_action = "<xsl:value-of select="$soapAction"/>";
               <xsl:if test="$style='doc'">
               soap_act = axutil_string_create(env, "<xsl:value-of select="$soapAction"/>");
@@ -232,7 +234,14 @@
                                         "<xsl:value-of select="@namespace"/>",
                                         NULL);
             ret_node =  axis2_svc_client_send_receive_with_op_qname( svc_client, env, op_qname, payload);
-
+ 
+            if (!is_soap_act_set)
+            {
+              <xsl:if test="$style='doc'">
+              axis2_options_set_soap_action(options, env, NULL);    
+              </xsl:if>
+              axis2_options_set_action( options, env, NULL);
+            }
 
             <xsl:choose>
                 <xsl:when test="$outputtype=''">
@@ -284,6 +293,7 @@
             const axis2_char_t *soap_action = NULL;
             axiom_node_t *payload = NULL;
 
+            axis2_bool_t is_soap_act_set = AXIS2_TRUE;
             <xsl:if test="$style='doc'">
             axutil_string_t *soap_act = NULL;
             </xsl:if>
@@ -293,7 +303,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -304,30 +314,31 @@
 
 
             options = axis2_stub_get_options( stub, env);
-            if ( NULL == options )
+            if (NULL == options)
             {
               AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "options is null in stub: Error code:"
                       " %d :: %s", env->error->error_number,
                       AXIS2_ERROR_GET_MESSAGE(env->error));
               return;
             }
-            svc_client = axis2_stub_get_svc_client (stub, env );
-            soap_action =axis2_options_get_action ( options, env );
-            if ( NULL == soap_action )
+            svc_client = axis2_stub_get_svc_client (stub, env);
+            soap_action =axis2_options_get_action (options, env);
+            if (NULL == soap_action)
             {
+              is_soap_act_set = AXIS2_FALSE;
               soap_action = "<xsl:value-of select="$soapAction"/>";
               <xsl:if test="$style='doc'">
               soap_act = axutil_string_create(env, "<xsl:value-of select="$soapAction"/>");
               axis2_options_set_soap_action(options, env, soap_act);
               </xsl:if>
-              axis2_options_set_action( options, env, soap_action );
+              axis2_options_set_action( options, env, soap_action);
             }
             <xsl:choose>
              <xsl:when test="$soapVersion='1.2'">
-            axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP12);
              </xsl:when>
              <xsl:otherwise>
-            axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP11);
              </xsl:otherwise>
             </xsl:choose>
 
@@ -339,6 +350,14 @@
 
             /* Send request */
             axis2_svc_client_send_receive_non_blocking(svc_client, env, payload, callback);
+            
+            if (!is_soap_act_set)
+            {
+              <xsl:if test="$style='doc'">
+              axis2_options_set_soap_action(options, env, NULL);
+              </xsl:if>
+              axis2_options_set_action(options, env, NULL);
+            }
          }
 
          </xsl:if>  <!--close for  test="$isASync='1'-->
@@ -376,7 +395,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE, AXIS2_TRUE);
+                            payload = adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="@name"/>, env, NULL, AXIS2_TRUE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;

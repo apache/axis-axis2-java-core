@@ -33,9 +33,18 @@
             <parameter name="ServiceClass">
                         <xsl:value-of select="@servicename"/>
             </parameter>
+            <description>
+              <xsl:value-of select="@servicename"/> Service
+            </description>
 			<xsl:for-each select="method">
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
+            <xsl:if test="@soapaction">
+              <parameter>
+                <xsl:attribute name="name"><xsl:text>wsamapping</xsl:text></xsl:attribute>
+                <xsl:value-of select="@soapaction"/>
+              </parameter>
+            </xsl:if>
 				</operation>
 			</xsl:for-each>
         </service>
