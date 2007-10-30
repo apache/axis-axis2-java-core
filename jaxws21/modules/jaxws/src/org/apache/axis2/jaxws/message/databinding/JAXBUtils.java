@@ -51,14 +51,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * JAXB Utilites to pool JAXBContext and related objects. Currently the JAXBContext is pooled by
- * Class name.  We may change this to create and pool by package name.
+ * JAXB Utilites to pool JAXBContext and related objects. 
  */
 public class JAXBUtils {
 
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
 
-    // Create a concurrent map to get the JAXBObject: keys are ClassLoader and Set<String>.
+    // Create a concurrent map to get the JAXBObject: keys are ClassLoader and String (package names).
     private static Map<ClassLoader, Map<String, JAXBContextValue>> jaxbMap =
             new ConcurrentHashMap<ClassLoader, Map<String, JAXBContextValue>>();
 
@@ -78,7 +77,8 @@ public class JAXBUtils {
     // In that case, consider pooling Unmarshaller objects.
     // Different threads may reuse one Unmarshaller instance, 
     // as long as you don't use one instance from two threads at the same time. 
-
+    // ENABLE_ADV_POOLING is false...which means they are obtained from the JAXBContext instead of
+    // from the pool.
     private static boolean ENABLE_ADV_POOLING = false;
 
     // The maps are freed up when a LOAD FACTOR is hit
@@ -89,7 +89,7 @@ public class JAXBUtils {
         BY_CLASS_ARRAY, BY_CONTEXT_PATH, UNKNOWN}
 
     ;
-
+    
     /**
      * Get a JAXBContext for the class
      *
@@ -99,20 +99,51 @@ public class JAXBUtils {
      * @deprecated
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
+        return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(), 
+                              contextPackages.toString(), null);
+    }
+
+    /**
+     * Get a JAXBContext for the class
+     * 
+     * Note: The contextPackage object is used by multiple threads.  It should be considered immutable
+     * and not altered by this method.
+     *
+     * @param contextPackage Set<Package>
+     * @param cacheKey ClassLoader
+     * @return JAXBContext
+     * @throws JAXBException
+     * @deprecated
+     */
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, ClassLoader 
+                                             cacheKey) throws JAXBException {
         return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(),
-                              contextPackages.toString());
+                              contextPackages.toString(), cacheKey);
+    }
+    
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, 
+                                             Holder<CONSTRUCTION_TYPE> constructionType,
+                                             String key)
+        throws JAXBException {
+        return getJAXBContext(contextPackages, constructionType, key, null);
     }
 
     /**
      * Get a JAXBContext for the class
      *
-     * @param contextPackage  Set<Package>
+     * Note: The contextPackage object is used by multiple threads.  It should be considered immutable
+     * and not altered by this method.
+     * 
+     * @param contextPackage  Set<Package> 
      * @param contructionType (output value that indicates how the context was constructed)
+     * @param cacheKey ClassLoader
      * @return JAXBContext
      * @throws JAXBException
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages,
-                                             Holder<CONSTRUCTION_TYPE> constructionType, String key)
+                                             Holder<CONSTRUCTION_TYPE> constructionType, 
+                                             String key,
+                                             ClassLoader cacheKey)
             throws JAXBException {
         // JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if (log.isDebugEnabled()) {
@@ -121,11 +152,25 @@ public class JAXBUtils {
                 log.debug(pkg);
             }
         }
-        // The JAXBContexts are keyed by ClassLoader and the set of Strings
+        
+         // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = getContextClassLoader();
 
         // Get the innerMap 
-        Map<String, JAXBContextValue> innerMap = jaxbMap.get(cl);
+        Map<String, JAXBContextValue> innerMap = null;
+        if(cacheKey != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Using supplied classloader to retrieve JAXBContext: " + 
+                        cacheKey);
+            }
+            innerMap = jaxbMap.get(cacheKey);
+        }else {
+            if(log.isDebugEnabled()) {
+                log.debug("Using classloader from Thread to retrieve JAXBContext: " + 
+                        cl);
+            }
+            innerMap = jaxbMap.get(cl);
+        }
         if (innerMap == null) {
             adjustPoolSize(jaxbMap);
             innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
@@ -140,21 +185,26 @@ public class JAXBUtils {
         if (contextValue == null) {
             adjustPoolSize(innerMap);
 
-            // A pooled context was not found, so create one and put it in the map.
-            synchronized(contextPackages) {
-               // synchronized on contextPackages because this method may prune the contextPackages
-               contextValue = createJAXBContextValue(contextPackages, cl);
-            }
-            // Put the new context in the map keyed by both the original and current list of packages
+            // Create a copy of the contextPackages.  This new TreeSet will
+            // contain only the valid contextPackages.
+            // Note: The original contextPackage set is accessed by multiple 
+            // threads and should not be altered.
+            
+            TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
+            contextValue = createJAXBContextValue(validContextPackages, cl);
+            
+            // Put the new context in the map keyed by both the original and valid list of packages
+            String validPackagesKey = validContextPackages.toString();
             innerMap.put(key, contextValue);
-            innerMap.put(contextPackages.toString(), contextValue);
+            innerMap.put(validPackagesKey, contextValue);
             if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [created] for " + contextPackages.toString());
+                log.debug("JAXBContext [created] for " + key);
+                log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
             }
 
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [from pool] for " + contextPackages.toString());
+                log.debug("JAXBContext [from pool] for " + key);
             }
         }
         constructionType.value = contextValue.constructionType;
@@ -850,7 +900,7 @@ public class JAXBUtils {
             if (e.getException() instanceof JAXBException) {
                 throw (JAXBException)e.getException();
             } else if (e.getException() instanceof RuntimeException) {
-                ExceptionFactory.makeWebServiceException(e.getException());
+                throw ExceptionFactory.makeWebServiceException(e.getException());
             }
         }
 

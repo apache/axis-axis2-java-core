@@ -20,9 +20,18 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import junit.framework.TestCase;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 
+import javax.jws.WebService;
 import javax.jws.WebParam.Mode;
+
+import java.lang.annotation.ElementType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import junit.framework.TestCase;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file. These tests
@@ -199,5 +208,135 @@ public class DescriptionBuilderTests extends TestCase {
         assertEquals("Unable to convert string to parameterTypeClass",
                      pdc.getParameterTypeClass().getName(), "int");
     }
+    
+    public void testGenericAnnotationInstancesAndProcessor() {
+        TestProcessor annotationProcessor = new TestProcessor();
+        annotationProcessor.setAnnotationInstanceClassName(CustomAnnotation.class.getName());
+        DescriptionBuilderComposite dbc = new DescriptionBuilderComposite();
+        dbc.addCustomAnnotationProcessor(annotationProcessor);
+        Map<String, CustomAnnotationProcessor> processors = dbc.getCustomAnnotationProcessors();
+        assertNotNull(processors);
+        assertNotNull(processors.values());
+        assertEquals(processors.values().size(), 1);
+        CustomAnnotationProcessor instance = processors.get(CustomAnnotation.class.getName());
+        assertNotNull(instance);
+        assertEquals(instance.getClass().getName(), TestProcessor.class.getName());
+        assertEquals(instance.getAnnotationInstanceClassName(), CustomAnnotation.class.getName());
+        CustomAnnotation annotation = new CustomAnnotation();
+        annotation.setAnnotationClassName(Custom.class.getName());
+        annotation.setTarget(ElementType.TYPE);
+        annotation.addParameterData("name", annotation.getClass().getSimpleName());
+        dbc.addCustomAnnotationInstance(annotation);
+        List<CustomAnnotationInstance> gaiList = dbc.getCustomAnnotationInstances();
+        assertNotNull(gaiList);
+        assertEquals(1, gaiList.size());
+        CustomAnnotationInstance gai = gaiList.get(0);
+        assertNotNull(gai);
+        assertEquals(gai.getClass().getName(), CustomAnnotation.class.getName());
+        assertEquals(gai.getAnnotationClassName(), Custom.class.getName());
+        assertEquals(gai.getTarget(), ElementType.TYPE);
+        assertEquals(gai.getParameterData("name"), gai.getClass().getSimpleName());
+        IllegalArgumentException ex = null;
+        try {
+            gai.getParameterData("unknown");
+        }
+        catch(IllegalArgumentException iae) {
+            ex = iae;
+        }
+        assertNotNull(ex);
+        try {
+            gai.addParameterData("unknown", null);
+        }
+        catch(IllegalArgumentException iae) {
+            ex = iae;
+        }
+        assertNotNull(ex);
+    }
+    
+    class TestProcessor implements CustomAnnotationProcessor {
+        
+        private String annotationInstanceClassName;
 
+        public String getAnnotationInstanceClassName() {
+            return annotationInstanceClassName;
+        }
+        
+        public void setAnnotationInstanceClassName(String annotationInstanceClassName) {
+            this.annotationInstanceClassName = annotationInstanceClassName;
+        }
+
+        public void processTypeLevelAnnotation(EndpointDescription ed, CustomAnnotationInstance annotation) {
+            // do nothing, testing purproses only
+        }
+        
+    }
+    
+    class CustomAnnotation implements CustomAnnotationInstance {
+
+        private Map<String, Object> dataMap = new HashMap<String, Object>();
+        
+        private ElementType elementType;
+        
+        List<String> knownParamNames;
+        
+        private String annotationClassName;
+        
+        CustomAnnotation(List<String> knownParamNames) {
+            this.knownParamNames = knownParamNames;
+        }
+        
+        CustomAnnotation() {
+            knownParamNames = new ArrayList<String>();
+            knownParamNames.add("name");
+        }
+        
+        public void setAnnotationClassName(String annotationClassName) {
+            this.annotationClassName = annotationClassName;
+        }
+        
+        public String getAnnotationClassName() {
+            return annotationClassName;
+        }
+        
+        public void addParameterData(String paramName, Object value) throws IllegalArgumentException {
+            checkParamName(paramName);
+            dataMap.put(paramName, value);
+        }
+
+        public Object getParameterData(String paramName) throws IllegalArgumentException {
+            checkParamName(paramName);
+            return dataMap.get(paramName);
+        }
+        
+        public void setTarget(ElementType elementType) {
+            this.elementType = elementType;
+        }
+
+        public ElementType getTarget() {
+            return elementType;
+        }
+        
+        private void checkParamName(String paramName) throws IllegalArgumentException {
+            if(knownParamNames != null 
+                    && 
+                    !knownParamNames.isEmpty() 
+                    && 
+                    !knownParamNames.contains(paramName)) {
+                throw new IllegalArgumentException("The parameter " + paramName +
+                                " is an unknown parameter for the CustomAnnotation type.");
+            }
+        }
+    }
+    
+    @interface Custom {
+        String name() default "";
+    }
+
+    @WebService
+    @Custom
+    class AnnotatedService {
+        public String echo(String echoString) {
+            return echoString;
+        }
+    }
 }

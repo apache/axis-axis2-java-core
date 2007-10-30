@@ -213,6 +213,17 @@ public class MultiParentClassLoader extends URLClassLoader {
                     return resolveClass(clazz, resolve);
                 } catch (ClassNotFoundException ignored) {
                     // this parent didn't have the class; try the next one
+                    //  TODO REVIEW FOR JAVA 6
+                    // In Java 5, if you passed an array string such as "[Lcom.mypackage.MyClass;" to
+                    // loadClass, the class would indeed be loaded.  
+                    // In JDK6, a ClassNotFoundException is thrown. 
+                    // The work-around is to use code Class.forName instead.
+                    // Example:
+                    // try {
+                    //       classLoader.loadClass(name);
+                    //  } catch (ClassNotFoundException e) {
+                    //       Class.forName(name, false, loader);
+                    //  }
                 }
             }
         }

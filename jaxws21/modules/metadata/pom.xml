@@ -140,6 +140,9 @@
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
 									</fileset>
+									<fileset dir="test">
+										<include name="org/apache/axis2/jaxws/description/HandlerConfigFile.xml"/>
+									</fileset>
 								</copy>
 							</tasks>
 						</configuration>

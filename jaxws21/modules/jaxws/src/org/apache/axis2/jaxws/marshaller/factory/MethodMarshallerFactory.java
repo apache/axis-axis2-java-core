@@ -90,19 +90,24 @@ public class MethodMarshallerFactory {
         }
         return null;
     }
-
+    
     public static MethodMarshaller getMarshaller(OperationDescription op, boolean isClient) {
+        return getMarshaller(op, isClient, null);
+    }
+
+    public static MethodMarshaller getMarshaller(OperationDescription op, boolean isClient,
+                                                 ClassLoader cl) {
 
         MethodMarshaller marshaller = null;
         if (isClient) {
             if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
-                marshaller = createDocLitMethodMarshaller(op, isClient);
+                marshaller = createDocLitMethodMarshaller(op, isClient, cl);
             } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
                 marshaller = createRPCLitMethodMarshaller(isClient);
             }
         } else { // SERVER
             if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
-                marshaller = createDocLitMethodMarshaller(op, isClient);
+                marshaller = createDocLitMethodMarshaller(op, isClient, cl);
             } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
                 marshaller = createRPCLitMethodMarshaller(isClient);
             }
@@ -111,11 +116,12 @@ public class MethodMarshallerFactory {
     }
 
     private static MethodMarshaller createDocLitMethodMarshaller(OperationDescription op,
-                                                                 boolean isClient) {
+                                                                 boolean isClient,
+                                                                 ClassLoader cl) {
         SOAPBinding.ParameterStyle parameterStyle = null;
         SUBTYPE subType = SUBTYPE.NORMAL;
         if (isDocLitBare(op)) {
-            if (isDocLitBareMinimal(op)) {
+            if (isDocLitBareMinimal(op, cl)) {
                 subType = SUBTYPE.MINIMAL;
             }
             parameterStyle = SOAPBinding.ParameterStyle.BARE;
@@ -190,15 +196,15 @@ public class MethodMarshallerFactory {
      * @param op
      * @return
      */
-    protected static boolean isDocLitBareMinimal(OperationDescription op) {
-        return isDocLitBare(op) && !isContextPathConstruction(op);
+    protected static boolean isDocLitBareMinimal(OperationDescription op, ClassLoader cl) {
+        return isDocLitBare(op) && !isContextPathConstruction(op, cl);
     }
 
     /**
      * @param op
      * @return true if JAXBContext constructed using CONTEXT PATH
      */
-    private static boolean isContextPathConstruction(OperationDescription op) {
+    private static boolean isContextPathConstruction(OperationDescription op, ClassLoader cl) {
         ServiceDescription serviceDesc = op.getEndpointInterfaceDescription()
                 .getEndpointDescription().getServiceDescription();
         MarshalServiceRuntimeDescription marshalDesc =
@@ -207,7 +213,7 @@ public class MethodMarshallerFactory {
         Holder<JAXBUtils.CONSTRUCTION_TYPE> holder = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
         try {
             JAXBContext context = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), holder,
-                                                           marshalDesc.getPackagesKey());
+                                                           marshalDesc.getPackagesKey(), cl);
         } catch (JAXBException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }

@@ -78,6 +78,10 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             // Dynamically discover if StAXSource is available
             staxSource = forName("javax.xml.transform.stax.StAXSource");
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("StAXSource is not present in the JDK.  " +
+                                "This is acceptable.  Processing continues");
+            }
         }
         try {
             // Woodstox does not work with StAXSource
@@ -106,6 +110,9 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
                 (busObject.getClass().equals(staxSource)) ||
                 busObject instanceof JAXBSource) {
             // Okay, these are supported Source objects
+            if (log.isDebugEnabled()) {
+                log.debug("data object is a " + busObject.getClass().getName());
+            }
         } else {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
@@ -199,9 +206,19 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 
     /** Creates an XMLStreamReader from a Source using a slow but proven algorithm. */
     private XMLStreamReader _slow_getReaderFromSource(Source src) throws XMLStreamException {
+        if (log.isDebugEnabled()) {
+            log.debug("Start _slow_getReaderFromSource");
+        }
         byte[] bytes = (byte[]) ConvertUtils.convert(src, byte[].class);
+        if (log.isDebugEnabled()) {
+            log.debug("Successfully converted to ByteArray");
+        }
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        return StAXUtils.createXMLStreamReader(bais);
+        XMLStreamReader reader = StAXUtils.createXMLStreamReader(bais);
+        if (log.isDebugEnabled()) {
+            log.debug("End _slow_getReaderFromSource =" + reader);
+        }
+        return reader;
     }
 
     @Override
@@ -209,8 +226,17 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             throws XMLStreamException, WebServiceException {
         // There is no fast way to output the Source to a writer, so get the reader
         // and pass use the default reader->writer.
+        if (log.isDebugEnabled()) {
+            log.debug("Start _outputFromBO");
+        }
         XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
+        if (log.isDebugEnabled()) {
+            log.debug("Obtained reader=" + reader);
+        }
         _outputFromReader(reader, writer);
+        if (log.isDebugEnabled()) {
+            log.debug("End _outputReaderFromBO");
+        }
         // REVIEW Should we call close() on the Source ?
     }
 
@@ -339,11 +365,19 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 
 
     public byte[] getXMLBytes(String encoding) throws UnsupportedEncodingException {
+        if (log.isDebugEnabled()) {
+            log.debug("Start getXMLBytes");
+        }
+        byte[] bytes = null;
         try {
-            return (byte[]) 
+            bytes = (byte[]) 
                 ConvertUtils.convert(getBusinessObject(false), byte[].class);
         } catch (XMLStreamException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+        if (log.isDebugEnabled()) {
+            log.debug("End getXMLBytes");
+        }
+        return bytes;
     }
 }

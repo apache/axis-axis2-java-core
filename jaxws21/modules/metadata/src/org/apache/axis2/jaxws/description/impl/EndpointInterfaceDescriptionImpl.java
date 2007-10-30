@@ -283,7 +283,7 @@ class EndpointInterfaceDescriptionImpl
                 if (!Modifier.isPublic(method.getModifiers())) {
                     // JSR-181 says methods must be public (p14)
                     // TODO NLS
-                    ExceptionFactory.makeWebServiceException("SEI methods must be public");
+                    throw ExceptionFactory.makeWebServiceException("SEI methods must be public");
                 }
                 // TODO: other validation per JSR-181
             }

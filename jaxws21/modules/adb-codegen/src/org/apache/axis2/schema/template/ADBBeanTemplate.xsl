@@ -262,7 +262,17 @@
                         */
 
                         <xsl:if test="not(@inherited)">
-                            protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+                            <xsl:choose>
+                                <xsl:when test="@defaultValue">
+                                    protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> =
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of
+                                        select="@defaultValue"/>");
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                         </xsl:if>
                         <xsl:if test="enumFacet">
                             private static java.util.HashMap _table_ = new java.util.HashMap();

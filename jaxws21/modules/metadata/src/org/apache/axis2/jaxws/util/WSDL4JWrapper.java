@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 import org.apache.axis2.metadata.resource.ResourceFinder;
+import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,8 +64,11 @@ import java.util.jar.JarFile;
 
 public class WSDL4JWrapper implements WSDLWrapper {
     private static final Log log = LogFactory.getLog(WSDL4JWrapper.class);
-    private Definition wsdlDefinition = null;
+
+    private WSDLDefinitionWrapper wsdlDefinition = null;
+
     private URL wsdlURL;
+    private String wsdlExplicitURL;
 
     public WSDL4JWrapper(URL wsdlURL) throws FileNotFoundException, UnknownHostException,
             ConnectException, IOException, WSDLException {
@@ -153,23 +157,8 @@ public class WSDL4JWrapper implements WSDLWrapper {
             if(is != null) {
                 is.close();
             }
-            final String explicitWsdl = urlCon.getURL().toString();
-            try {
-                wsdlDefinition = (Definition)AccessController.doPrivileged(
-                        new PrivilegedExceptionAction() {
-                            public Object run() throws WSDLException {
-                                WSDLReader reader = getWSDLReader();
-                                return reader.readWSDL(explicitWsdl);
-                            }
-                        }
-                );
-            } catch (PrivilegedActionException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception thrown from AccessController: " + e);
-                }
-                throw ExceptionFactory.makeWebServiceException(e.getException());
-            }
-
+            this.wsdlExplicitURL = urlCon.getURL().toString();
+            getDefinition();
         } catch (FileNotFoundException ex) {
             throw ex;
         } catch (UnknownHostException ex) {
@@ -206,7 +195,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
     	    if(log.isDebugEnabled()){
     	        log.debug("No URL's found in URL ClassLoader");
     	    }
-    	    ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
+    	    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("WSDL4JWrapperErr1"));
     	}
 
         for (URL url : urlList) {
@@ -272,18 +261,99 @@ public class WSDL4JWrapper implements WSDLWrapper {
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException {
         super();
         this.wsdlURL = wsdlURL;
-        this.wsdlDefinition = wsdlDefinition;
-
+        if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
+            this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL);
+        } else {
+            this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
+        }
     }
+
+
+    public WSDL4JWrapper(Definition wsdlDefinition) throws WSDLException {
+        super();
+        if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
+            this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition);
+        } else {
+            this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
+        }
+
+        if (this.wsdlDefinition != null) {
+            String baseURI = wsdlDefinition.getDocumentBaseURI();
+            try {
+                wsdlURL = new URL(baseURI);
+            } catch (Exception ex) {
+                // just absorb the error
+            }
+        }
+    }
+
     //TODO: Perform validations for each method to check for null parameters on QName.
 
+    /*
+     * Returns a wrapped WSDL4J wSDL definition
+     */
     public Definition getDefinition() {
+        if (wsdlDefinition == null) {
+            Definition def = loadDefinition();
+            if (def != null) {
+                wsdlDefinition = new WSDLDefinitionWrapper(def);
+            }
+        }
         return wsdlDefinition;
     }
 
+    /*
+     * Returns an unwrapped WSDL4J wSDL definition
+     */
+    public Definition getUnwrappedDefinition() {
+        Definition def;
+        if (wsdlDefinition == null) {
+            def = loadDefinition();
+        } else if (wsdlDefinition instanceof WSDLDefinitionWrapper) {
+            def = wsdlDefinition.getUnwrappedDefinition();
+        } else {
+            def = wsdlDefinition;
+        }
+        return def;
+    }
+
+
+    /*
+     * Load a WSDL4J WSDL definition from a URL
+     */
+    public Definition loadDefinition() {
+
+        Definition def = null;
+
+        if (wsdlExplicitURL != null) {
+            try {
+                def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                    public Object run() throws WSDLException {
+                        WSDLReader reader = getWSDLReader();
+                        return reader.readWSDL(wsdlExplicitURL);
+                    }
+                });
+            } catch (PrivilegedActionException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception thrown from AccessController: " + e);
+                }
+                throw ExceptionFactory.makeWebServiceException(e.getException());
+            }
+        }
+
+
+        if (log.isDebugEnabled()) {
+            if (def != null) {
+                log.debug("loadDefinition() returning a NON-NULL definition");
+            } else {
+                log.debug("loadDefinition() returning a NULL definition");
+            }
+        }
+
+        return def;
+    }
 
     public Binding getFirstPortBinding(QName serviceQname) {
-        // TODO Auto-generated method stub
         Service service = getService(serviceQname);
         if (service == null) {
             return null;
@@ -326,7 +396,6 @@ public class WSDL4JWrapper implements WSDLWrapper {
     }
 
     public ArrayList getPortBinding(QName serviceQname) {
-        // TODO Auto-generated method stub
         Map map = this.getService(serviceQname).getPorts();
         if (map == null || map.isEmpty()) {
             return null;
@@ -375,16 +444,19 @@ public class WSDL4JWrapper implements WSDLWrapper {
     }
 
     public Service getService(QName serviceQname) {
-        // TODO Auto-generated method stub
         if (serviceQname == null) {
             return null;
         }
-        return wsdlDefinition.getService(serviceQname);
 
+        Definition def = getDefinition();
+        if (def != null) {
+            return def.getService(serviceQname);
+        } else {
+            return null;
+        }
     }
 
     public String getSOAPAction(QName serviceQname) {
-        // TODO Auto-generated method stub
         Binding binding = getFirstPortBinding(serviceQname);
         if (binding == null) {
             return null;
@@ -405,7 +477,6 @@ public class WSDL4JWrapper implements WSDLWrapper {
     }
 
     public String getSOAPAction(QName serviceQname, QName portQname) {
-        // TODO Auto-generated method stub
         Port port = getPort(serviceQname, portQname);
         if (port == null) {
             return null;
@@ -461,7 +532,6 @@ public class WSDL4JWrapper implements WSDLWrapper {
     }
 
     public URL getWSDLLocation() {
-        // TODO Auto-generated method stub
         return this.wsdlURL;
     }
 
@@ -472,8 +542,12 @@ public class WSDL4JWrapper implements WSDLWrapper {
     }
 
     public String getTargetNamespace() {
-        // TODO Auto-generated method stub
-        return wsdlDefinition.getTargetNamespace();
+        Definition def = getDefinition();
+        if (def != null) {
+            return def.getTargetNamespace();
+        } else {
+            return null;
+        }
     }
     
     /**

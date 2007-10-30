@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     private String values[]={
                 "2002-10-10Z",
-                "2000-12-31Z",
+                "2000-12-31+05:30",
                 "2002-02-28Z"
     } ;
     private String xmlString[] = {
@@ -47,12 +47,11 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     // force others to implement this method
     public void testPopulate() throws Exception {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
         Date date = null;
 
         for (int i = 0; i < values.length; i++) {
             date = ConverterUtil.convertToDate(values[i]);
-            checkValue(xmlString[i],simpleDateFormat.format(date));
+            checkValue(xmlString[i],ConverterUtil.convertToString(date));
         }
     }
 

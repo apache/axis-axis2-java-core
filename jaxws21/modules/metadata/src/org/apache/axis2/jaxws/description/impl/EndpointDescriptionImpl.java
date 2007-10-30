@@ -20,7 +20,10 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +71,8 @@ import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationInstance;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
@@ -80,7 +85,7 @@ import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -183,6 +188,10 @@ class EndpointDescriptionImpl
     // and Sec 1.4 "SOAP Transport and Transfer Bindings" pg 119
     public static final String BindingType_DEFAULT =
             javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
+    
+    private List<CustomAnnotationInstance> customAnnotations;
+    
+    private Map<String, CustomAnnotationProcessor> customAnnotationProcessors;
 
     // Supports WebServiceFeatureAnnotations
     private ServerFramework framework = new ServerFramework();
@@ -203,6 +212,7 @@ class EndpointDescriptionImpl
 
     EndpointDescriptionImpl(Class theClass, QName portName, boolean dynamicPort,
                             ServiceDescriptionImpl parent) {
+        
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
         this.parentServiceDescription = parent;
@@ -274,6 +284,11 @@ class EndpointDescriptionImpl
      *                 don't use an SEI
      */
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
+        
+        // initialize CustomAnnotationIntance list and CustomAnnotationProcessor map
+        customAnnotations = new ArrayList<CustomAnnotationInstance>();
+        customAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
+        
 
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
@@ -294,6 +309,11 @@ class EndpointDescriptionImpl
         else
             webServiceProviderAnnotation = composite.getWebServiceProviderAnnot();
 
+        
+        // now get the custom annotation and process information from the DBC
+        customAnnotations.addAll(composite.getCustomAnnotationInstances());
+        customAnnotationProcessors.putAll(composite.getCustomAnnotationProcessors());
+        
         // REVIEW: Maybe this should be an error if the name has already been set and it doesn't match
         // Note that on the client side, the service QN should be set; on the server side it will not be.
         if (DescriptionUtils.isEmpty(getServiceDescription().getServiceQName())) {
@@ -382,12 +402,31 @@ class EndpointDescriptionImpl
                 //We have a wsdl composite, so set these values for the generated wsdl
                 wsdlCompositeParameter.setValue(wsdlComposite);
                 wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
-                wsdlDefParameter.setValue(
-                        getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
+
+                Definition def =
+                        getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getGeneratedWsdlWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
+
             } else if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
                 //No wsdl composite because wsdl already exists
+
                 wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
+
+                Definition def = getServiceDescriptionImpl().getWSDLWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
+
             } else {
                 //There is no wsdl composite and there is NOT a wsdl definition
                 wsdlLocationParameter.setValue(null);
@@ -414,8 +453,15 @@ class EndpointDescriptionImpl
             wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
             if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
                 wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-                wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper()
-                    .getDefinition());
+
+                Definition def = getServiceDescriptionImpl().getWSDLWrapper().getDefinition();
+                URL wsdlUrl = getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation();
+                if (def instanceof WSDLDefinitionWrapper) {
+                    wsdlDefParameter.setValue(def);
+                } else {
+                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    wsdlDefParameter.setValue(wrap);
+                }
             }
             // No WSDL supplied and we do not generate for non-SOAP 1.1/HTTP
             // endpoints
@@ -430,6 +476,25 @@ class EndpointDescriptionImpl
             } catch (Exception e) {
                 throw ExceptionFactory
                     .makeWebServiceException("EndpointDescription: Unable to add parameters to AxisService");
+            }
+        }
+        
+        // Before we leave we need to drive the CustomAnnotationProcessors if 
+        // there were any CustomAnnotationInstance objects registered
+        Iterator<CustomAnnotationInstance> annotationIter = customAnnotations.iterator();
+        while(annotationIter.hasNext()) {
+            CustomAnnotationInstance annotation = annotationIter.next();
+            if(log.isDebugEnabled()) {
+                log.debug("Checking for CustomAnnotationProcessor for CustomAnnotationInstance " +
+                                "class: " + annotation.getClass().getName());
+            }
+            CustomAnnotationProcessor processor = customAnnotationProcessors.get(annotation.getClass().getName());
+            if(processor != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Found CustomAnnotationProcessor: " + processor.getClass().getName() + 
+                              " for CustomAnnotationInstance: " + annotation.getClass().getName());
+                }
+                processor.processTypeLevelAnnotation(this, annotation);
             }
         }
     }
@@ -775,15 +840,16 @@ class EndpointDescriptionImpl
             // Note that the axis service builder takes only the localpart of the port qname.
             // TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
 
-            WSDLWrapper wrapper = getServiceDescriptionImpl().getWSDLWrapper();
+            Definition def = getServiceDescriptionImpl().getWSDLWrapper().getUnwrappedDefinition();
+
             WSDL11ToAxisServiceBuilder serviceBuilder =
-                    new WSDL11ToAxisServiceBuilder(
-                            wrapper.getDefinition(),
+                    new WSDL11ToAxisServiceBuilder(def,
                             getServiceDescription().getServiceQName(),
                             getPortQName().getLocalPart());
 
-            //TODO: Temporary, please change the following log.info to log.debug
-            log.info("Building AxisService from wsdl: " + wrapper.getWSDLLocation());
+            if (log.isDebugEnabled()) {
+                log.debug("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());    
+            }
             
             if (getServiceDescriptionImpl().isDBCMap()) {
                 //this.class.getClass().getClassLoader();
@@ -1707,6 +1773,15 @@ class EndpointDescriptionImpl
             }
         }
         return wsdlComposite;
+    }
+    
+    List<CustomAnnotationInstance> getCustomAnnotationInstances() {
+        return customAnnotations;
+    }
+    
+    CustomAnnotationProcessor getCustomAnnotationProcessor(String annotationInstanceClassName) {
+        return customAnnotationProcessors != null ? 
+                customAnnotationProcessors.get(annotationInstanceClassName) : null;
     }
 
     public String toString() {

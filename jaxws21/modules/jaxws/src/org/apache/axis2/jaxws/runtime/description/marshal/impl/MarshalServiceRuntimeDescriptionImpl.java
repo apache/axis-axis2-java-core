@@ -111,7 +111,7 @@ public class MarshalServiceRuntimeDescriptionImpl implements
         try {
             pdMap = XMLRootElementUtil.createPropertyDescriptorMap(cls);
         } catch (Throwable t) {
-            ExceptionFactory.makeWebServiceException(t);
+            throw ExceptionFactory.makeWebServiceException(t);
         }
         return pdMap;
     }

@@ -41,6 +41,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +59,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
         if (msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES)) {
-            if (log.isTraceEnabled()) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(msgContext.getLogIDString() +
                         " Addressing is disabled. Not adding WS-Addressing headers.");
             }
@@ -67,7 +68,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
         // Determine the addressin namespace in effect.
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("Addressing version string from messageContext=" +
                     addressingVersionFromCurrentMsgCtxt);
         }
@@ -117,7 +118,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         
         public WSAHeaderWriter(MessageContext mc, boolean isSubmissionNamespace, boolean addMU,
                                boolean replace, boolean includeOptional) {
-            if (log.isDebugEnabled()) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("WSAHeaderWriter: isFinal=" + isSubmissionNamespace + " addMU=" + addMU +
                         " replace=" + replace + " includeOptional=" + includeOptional);
             }
@@ -126,27 +127,19 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             envelope = mc.getEnvelope();
             factory = (SOAPFactory)envelope.getOMFactory();
 
-            header = envelope.getHeader();
-
-            // if there is no soap header in the envelope being processed, add one.
-            if (header == null) {
-                header = factory.createSOAPHeader(envelope);
-            }
-
             messageContextOptions = messageContext.getOptions();
 
             addressingNamespace =
                     (isSubmissionNamespace ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE);
-            addressingNamespaceObject =
-                    factory.createOMNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
+            header = envelope.getHeader();
             // if there is no soap header in the envelope being processed, add one.
             if (header == null) {
             	header = factory.createSOAPHeader(envelope);
             }else{
             	ArrayList addressingHeaders = header.getHeaderBlocksWithNSURI(addressingNamespace);
             	if(addressingHeaders!=null && !addressingHeaders.isEmpty()){
-            		existingWSAHeaders = new ArrayList();
+            		existingWSAHeaders = new ArrayList(addressingHeaders.size());
             		for(Iterator iter=addressingHeaders.iterator();iter.hasNext();){
             			OMElement oe = (OMElement)iter.next();
             			existingWSAHeaders.add(oe.getLocalName());
@@ -166,7 +159,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             // we have tested at the start of this whether messageInformationHeaders are null or not.
             // So rather than declaring addressing namespace in each and every addressing header, lets
             // define that in the Header itself.
-            envelope.declareNamespace(addressingNamespaceObject);
+        	addressingNamespaceObject = header.declareNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
             // processing WSA To
             processToEPR();
@@ -201,29 +194,23 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             String messageID = messageContextOptions.getMessageId();
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
-                OMElement oe = processStringInfo(messageID, WSA_MESSAGE_ID);
-                ArrayList attributes = (ArrayList)messageContext.getProperty(
+            	ArrayList attributes = (ArrayList)messageContext.getProperty(
                         AddressingConstants.MESSAGEID_ATTRIBUTES);
-                if (attributes != null && !attributes.isEmpty()) {
-                    Iterator attrIterator = attributes.iterator();
-                    while (attrIterator.hasNext()) {
-                        AttributeHelper.importOMAttribute((OMAttribute)attrIterator.next(), oe);
-                    }
-                }
+                createSOAPHeaderBlock(messageID, WSA_MESSAGE_ID, attributes);
             }
         }
 
         private void processWSAAction() throws AxisFault {
             String action = messageContextOptions.getAction();
 
-            if (log.isTraceEnabled()) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(messageContext.getLogIDString() +
                         " processWSAAction: action from messageContext: " + action);
             }
-            if (action == null || "".equals(action)) {
+            if (action == null || action.length()==0) {
                 if (messageContext.getAxisOperation() != null) {
                     action = messageContext.getAxisOperation().getOutputAction();
-                    if (log.isTraceEnabled()) {
+                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(messageContext.getLogIDString() +
                                 " processWSAAction: action from AxisOperation: " + action);
                     }
@@ -231,25 +218,30 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             }
 
             // Use the correct fault action for the selected namespace
-            if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action))
-            {
-                action = isFinalAddressingNamespace ? Final.WSA_FAULT_ACTION :
-                        Submission.WSA_FAULT_ACTION;
-                messageContextOptions.setAction(action);
-            } else if (!isFinalAddressingNamespace && Final.WSA_SOAP_FAULT_ACTION.equals(action)) {
-                action = Submission.WSA_FAULT_ACTION;
-                messageContextOptions.setAction(action);
+            if(isFinalAddressingNamespace){
+            	if(Submission.WSA_FAULT_ACTION.equals(action)){
+            		action = Final.WSA_FAULT_ACTION;
+            		messageContextOptions.setAction(action);
+            	}
+            }else{
+            	if(Final.WSA_FAULT_ACTION.equals(action)){
+            		action = Submission.WSA_FAULT_ACTION;
+            		messageContextOptions.setAction(action);
+            	}else if(Final.WSA_SOAP_FAULT_ACTION.equals(action)){
+                    action = Submission.WSA_FAULT_ACTION;
+                    messageContextOptions.setAction(action);
+            	}
             }
 
             // If we need to add a wsa:Action header
             if (!isAddressingHeaderAlreadyAvailable(WSA_ACTION, false)) {
-                if (log.isTraceEnabled()) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(messageContext.getLogIDString() +
                             " processWSAAction: No existing wsa:Action header found");
                 }
                 // If we don't have an action to add,
-                if (action == null || "".equals(action)) {
-                    if (log.isTraceEnabled()) {
+                if (action == null || action.length()==0) {
+                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(messageContext.getLogIDString() +
                                 " processWSAAction: No action to add to header");
                     }
@@ -260,21 +252,14 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                         throw new AxisFault(AddressingMessages.getMessage("outboundNoAction"));
                     }
                 } else {
-                    if (log.isTraceEnabled()) {
+                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(messageContext.getLogIDString() +
                                 " processWSAAction: Adding action to header: " + action);
                     }
                     // Otherwise just add the header
-                    OMElement oe = processStringInfo(action, WSA_ACTION);
                     ArrayList attributes = (ArrayList)messageContext.getProperty(
                             AddressingConstants.ACTION_ATTRIBUTES);
-                    if (attributes != null && !attributes.isEmpty()) {
-                        Iterator attrIterator = attributes.iterator();
-                        while (attrIterator.hasNext()) {
-                            AttributeHelper
-                                    .importOMAttribute((OMAttribute)attrIterator.next(), oe);
-                        }
-                    }
+                    createSOAPHeaderBlock(action, WSA_ACTION, attributes);
                 }
             }
         }
@@ -308,36 +293,24 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
                 if (relatesTo != null) {
                     for (int i = 0, length = relatesTo.length; i < length; i++) {
-                        OMElement relatesToHeader = processStringInfo(relatesTo[i].getValue(),
-                                                                      WSA_RELATES_TO);
+                        OMElement relatesToHeader = createSOAPHeaderBlock(relatesTo[i].getValue(),
+                        		WSA_RELATES_TO, relatesTo[i].getExtensibilityAttributes());
                         String relationshipType = relatesTo[i].getRelationshipType();
-
                         if (relatesToHeader != null) {
-                            if (relatesTo[i].getExtensibilityAttributes() != null) {
-                                Iterator attributes =
-                                        relatesTo[i].getExtensibilityAttributes().iterator();
-                                while (attributes.hasNext()) {
-                                    OMAttribute oma = (OMAttribute)attributes.next();
-                                    AttributeHelper.importOMAttribute(oma, relatesToHeader);
-                                }
+                        	
+                        	if(!includeOptionalHeaders){
+                        		if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
+                                        Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
+                                                .equals(relationshipType)) {
+                        			relationshipType = null;
+                        		}
+                        	}
+                        	
+                            if(relationshipType != null){
+	                            relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
+	                                                         relationshipType,
+	                                                         null);
                             }
-
-                            if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
-                                    Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
-                                            .equals(relationshipType)) {
-                                if (includeOptionalHeaders) {
-                                    relationshipType = isFinalAddressingNamespace ?
-                                            Final.WSA_DEFAULT_RELATIONSHIP_TYPE :
-                                            Submission.WSA_DEFAULT_RELATIONSHIP_TYPE;
-                                    relatesTo[i].setRelationshipType(relationshipType);
-                                } else {
-                                    continue; //Omit the relationship type
-                                }
-                            }
-
-                            relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                                                         relationshipType,
-                                                         null);
                         }
                     }
                 }
@@ -378,10 +351,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         private void processToEPR() {
             EndpointReference epr = messageContextOptions.getTo();
             if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, false)) {
-                Map referenceParameters = epr.getAllReferenceParameters();
                 String address = epr.getAddress();
-
-                if (!"".equals(address) && address != null) {
+                if (address != null && address.length()!=0) {
                     if (!includeOptionalHeaders && isFinalAddressingNamespace &&
                             (Final.WSA_ANONYMOUS_URL.equals(address) ||
                                     //Don't use epr.hasAnonymousAddress() here as it may
@@ -389,30 +360,27 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     { //recognize none WS-Addressing anonymous values.
                         return; //Omit the header.
                     }
-
-                    SOAPHeaderBlock toHeaderBlock =
-                            header.addHeaderBlock(WSA_TO, addressingNamespaceObject);
-                    toHeaderBlock.setText(address);
-                    if (epr.getAddressAttributes() != null) {
-                        Iterator addressAttributes = epr.getAddressAttributes().iterator();
-                        while (addressAttributes.hasNext()) {
-                            OMAttribute attr = (OMAttribute)addressAttributes.next();
-                            AttributeHelper.importOMAttribute(attr, toHeaderBlock);
-                        }
-                    }
+                    createSOAPHeaderBlock(address, WSA_TO, epr.getAddressAttributes());
                 }
-                processToEPRReferenceInformation(referenceParameters, header);
+                processToEPRReferenceInformation(epr.getAllReferenceParameters(), header);
             }
         }
 
-        private OMElement processStringInfo(String value, String headerName) {
-            if (log.isTraceEnabled()) {
-                log.trace("processStringInfo: value=" + value + " headerName=" + headerName);
+        private OMElement createSOAPHeaderBlock(String value, String headerName, ArrayList attributes) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace("createSOAPHeaderBlock: value=" + value + " headerName=" + headerName);
             }
-            if (!"".equals(value) && value != null) {
+            if (value != null && value.length()!=0) {
                 SOAPHeaderBlock soapHeaderBlock =
                         header.addHeaderBlock(headerName, addressingNamespaceObject);
                 soapHeaderBlock.addChild(factory.createOMText(value));
+                if (attributes != null && !attributes.isEmpty()) {
+                    Iterator attrIterator = attributes.iterator();
+                    while (attrIterator.hasNext()) {
+                        AttributeHelper
+                                .importOMAttribute((OMAttribute)attrIterator.next(), soapHeaderBlock);
+                    }
+                }
                 return soapHeaderBlock;
             }
             return null;
@@ -423,7 +391,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             String anonymous = isFinalAddressingNamespace ?
                     Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
-            if (log.isTraceEnabled()) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace("addToSOAPHeader: epr=" + epr + " headerName=" + headerName);
             }
 
@@ -491,46 +459,46 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          *         true - if new headers can't be added.
          */
         private boolean isAddressingHeaderAlreadyAvailable(String name, boolean multipleHeaders) {
-        	QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
-            boolean status = false;
+        	boolean status = false;
 
-            if (multipleHeaders) {
-                if (replaceHeaders) {
-                    Iterator iterator = header.getChildrenWithName(qname);
-                    while (iterator.hasNext()) {
-                        OMElement addressingHeader = (OMElement)iterator.next();
-                        addressingHeader.detach();
-                    }
-                }
-            } else {
-            	 boolean exists = didAddressingHeaderExist(name);
-            	  	  	 
-            	 if (exists && replaceHeaders) {
-            	 	  	                         OMElement addressingHeader = header.getFirstChildWithName(qname);
-                    if (log.isTraceEnabled()) {
-                        log.trace("isAddressingHeaderAlreadyAvailable: Removing existing header:" +
-                                addressingHeader.getLocalName());
-                    }
-                    addressingHeader.detach();
-                } else {
-                    status = exists;
-                }
-            }
+        	if (multipleHeaders) {
+        		if (replaceHeaders) {
+        			QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
+        			Iterator iterator = header.getChildrenWithName(qname);
+        			while (iterator.hasNext()) {
+        				OMElement addressingHeader = (OMElement)iterator.next();
+        				addressingHeader.detach();
+        			}
+        		}
+        	} else {
+        		boolean exists = didAddressingHeaderExist(name);
+        		if (exists && replaceHeaders) {
+        			QName qname = new QName(addressingNamespace, name, WSA_DEFAULT_PREFIX);
+        			OMElement addressingHeader = header.getFirstChildWithName(qname);
+        			if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        				log.trace("isAddressingHeaderAlreadyAvailable: Removing existing header:" +
+        						addressingHeader.getLocalName());
+        			}
+        			addressingHeader.detach();
+        		} else {
+        			status = exists;
+        		}
+        	}
 
-            if (log.isTraceEnabled()) {
-                log.trace("isAddressingHeaderAlreadyAvailable: name=" + name + " status=" + status);
-            }
-            return status;
+        	if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        		log.trace("isAddressingHeaderAlreadyAvailable: name=" + name + " status=" + status);
+        	}
+        	return status;
         }
-        
+
         private boolean didAddressingHeaderExist(String headerName){
-        	if (log.isTraceEnabled()) {
+        	if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
         		log.trace("didAddressingHeaderExist: headerName=" + headerName);
         	}
         	boolean result = false;
         	if(existingWSAHeaders != null){
         		result = existingWSAHeaders.contains(headerName);
-        		if (log.isTraceEnabled()) {
+        		if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
         			log.trace("didAddressingHeaderExist: existingWSAHeaders=" + existingWSAHeaders+" result="+result);
         		}
         	}
@@ -548,7 +516,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 for (int i = 0, size = headers.size(); i < size; i++) {
                     SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)headers.get(i);
                     soapHeaderBlock.setMustUnderstand(true);
-                    if (log.isTraceEnabled()) {
+                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(
                                 "processMustUnderstandProperty: Setting mustUnderstand=true on: " +
                                         soapHeaderBlock.getLocalName());

@@ -19,16 +19,30 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationInstance;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 public class DescriptionFactoryImplTests extends TestCase {
@@ -119,6 +133,51 @@ public class DescriptionFactoryImplTests extends TestCase {
         }                          
     }
     
+    public void testCustomAnnotationSupport() {
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(AnnotatedService.class);
+        HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+        DescriptionBuilderComposite dbc = dbcMap.get(AnnotatedService.class.getName());
+        assertNotNull(dbc);
+        SampleAnnotation sampleAnnotation = new SampleAnnotation();
+        sampleAnnotation.setAnnotationClassName(Custom.class.getName());
+        dbc.addCustomAnnotationInstance(sampleAnnotation);
+        SampleAnnotationProcessor saProcessor = new SampleAnnotationProcessor();
+        saProcessor.setAnnotationInstanceClassName(sampleAnnotation.getClass().getName());
+        dbc.addCustomAnnotationProcessor(saProcessor);
+        WebServiceAnnot webService = dbc.getWebServiceAnnot();
+        assertNotNull(webService);
+        String pn = webService.portName();
+        String tns = webService.targetNamespace();
+        assertNotNull(pn);
+        assertNotNull(tns);
+        QName portQName = new QName(tns, pn);
+        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+        assertNotNull(sdList);
+        assertEquals(sdList.size(), 1);
+        ServiceDescription sd = sdList.get(0);
+        assertNotNull(sd);
+        EndpointDescription ed = sd.getEndpointDescription(portQName);
+        assertNotNull(ed);
+        // for testing purposes we want to make a cast b/c some of the methods
+        // we are accessing are protected in EndpointDescriptionImpl
+        if(ed instanceof EndpointDescriptionImpl) {
+            EndpointDescriptionImpl edImpl = (EndpointDescriptionImpl) ed;
+            List<CustomAnnotationInstance> customAnnotationList = edImpl.getCustomAnnotationInstances();
+            assertNotNull(customAnnotationList);
+            assertEquals(customAnnotationList.size(), 1);
+            CustomAnnotationInstance annotationInstance = customAnnotationList.get(0);
+            assertNotNull(annotationInstance);
+            assertEquals(annotationInstance.getClass().getName(), SampleAnnotation.class.getName());
+            CustomAnnotationProcessor processor = edImpl.getCustomAnnotationProcessor(annotationInstance.getClass().getName());
+            assertNotNull(processor);
+            AxisService axisService = ed.getAxisService();
+            assertNotNull(axisService);
+            String name = (String) axisService.getParameterValue(SampleAnnotation.class.getName());
+            assertNotNull(name);
+            assertEquals(SampleAnnotationProcessor.class.getName(), name);
+        }
+    }
+    
     private void resetClientConfigFactory() throws Exception {
         Field field = DescriptionFactoryImpl.class.getDeclaredField("clientConfigFactory");
         field.setAccessible(true);
@@ -148,4 +207,101 @@ public class DescriptionFactoryImplTests extends TestCase {
         }
         
     }
+    
+    class SampleAnnotation implements CustomAnnotationInstance {
+
+        private Map<String, Object> dataMap = new HashMap<String, Object>();
+        
+        private ElementType elementType;
+        
+        List<String> knownParamNames;
+        
+        private String annotationClassName;
+        
+        SampleAnnotation(List<String> knownParamNames) {
+            this.knownParamNames = knownParamNames;
+        }
+        
+        public void setAnnotationClassName(String annotationClassName) {
+            this.annotationClassName = annotationClassName;
+        }
+        
+        public String getAnnotationClassName() {
+            return annotationClassName;
+        }
+        
+        SampleAnnotation() {
+            knownParamNames = new ArrayList<String>();
+            knownParamNames.add("name");
+        }
+        
+        public void addParameterData(String paramName, Object value) throws IllegalArgumentException {
+            checkParamName(paramName);
+            dataMap.put(paramName, value);
+        }
+
+        public Object getParameterData(String paramName) throws IllegalArgumentException {
+            checkParamName(paramName);
+            return dataMap.get(paramName);
+        }
+        
+        public void setTarget(ElementType elementType) {
+            this.elementType = elementType;
+        }
+
+        public ElementType getTarget() {
+            return elementType;
+        }
+        
+        private void checkParamName(String paramName) throws IllegalArgumentException {
+            if(knownParamNames != null 
+                    && 
+                    !knownParamNames.isEmpty() 
+                    && 
+                    !knownParamNames.contains(paramName)) {
+                throw new IllegalArgumentException("The parameter " + paramName +
+                                " is an unknown parameter for the CustomAnnotation type.");
+            }
+        }
+    }
+
+    class SampleAnnotationProcessor implements CustomAnnotationProcessor {
+        
+        private String annotationInstanceClassName;
+
+        public String getAnnotationInstanceClassName() {
+            return annotationInstanceClassName;
+        }
+        
+        public void setAnnotationInstanceClassName(String annotationInstanceClassName) {
+            this.annotationInstanceClassName = annotationInstanceClassName;
+        }
+
+        public void processTypeLevelAnnotation(EndpointDescription ed, CustomAnnotationInstance annotation) {
+                AxisService axisService = ed.getAxisService();
+                if(axisService != null) {
+                    try {
+                        axisService.addParameter(SampleAnnotation.class.getName(), 
+                                                 SampleAnnotationProcessor.class.getName());
+                    }
+                    catch(AxisFault af) {
+                        // nothing here
+                    }
+                }
+        }
+        
+    }
+
+    @interface Custom {
+        String name() default "";
+    }
+
+    @WebService(targetNamespace="http://org.apache.example", serviceName="AnnotatedService", portName="AnnotatedPort")
+    @Custom(name="AnnotatedService")
+    class AnnotatedService {
+        public String echo(String echoString) {
+            return echoString;
+        }
+    }
+    
 }

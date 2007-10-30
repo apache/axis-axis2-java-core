@@ -19,9 +19,10 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -30,25 +31,46 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.wsdl.extensions.mime.MIMEMultipartRelated;
-import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.http.HTTPOperation;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -67,7 +89,15 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.Vector;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
@@ -100,8 +130,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private static final String BINDING_OPERATION_OUTPUT = "Binding.Operation.Output";
 
     protected Definition wsdl4jDefinition = null;
+    protected String     wsdlBaseDocumentURI = null;
 
-    private WSDLLocator customWSLD4JResolver;
+    private WSDLLocator customWSDLResolver;
 
     public static final String RPC_STYLE = "rpc";
 
@@ -150,9 +181,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * constructor taking in the service name and the port name
      *
-     * @param in
-     * @param serviceName
-     * @param portName
+     * @param in - InputStream for the WSDL
+     * @param serviceName - The service Name
+     * @param portName - The port name
      */
     public WSDL11ToAxisServiceBuilder(InputStream in, QName serviceName,
                                       String portName) {
@@ -161,9 +192,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * @param def
-     * @param serviceName
-     * @param portName
+     * @param def - The WSDL4J Definition object
+     * @param serviceName - The service Name
+     * @param portName - The port name
      */
     public WSDL11ToAxisServiceBuilder(Definition def, QName serviceName,
                                       String portName) {
@@ -174,9 +205,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * @param def
-     * @param serviceName
-     * @param portName
+     * @param def - The WSDL4J Definition object
+     * @param serviceName - The service Name
+     * @param portName - The port name
+     * @param isAllPorts - boolean representing whether to generate code for all ports or not
      */
     public WSDL11ToAxisServiceBuilder(Definition def,
                                       QName serviceName,
@@ -203,31 +235,65 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * sets a custem WSDL4J locator
-     *
-     * @param customWSLD4JResolver
+     * @deprecated
+     * @see setCustomWSDLResolver
      */
-    public void setCustomWSLD4JResolver(WSDLLocator customWSLD4JResolver) {
-        this.customWSLD4JResolver = customWSLD4JResolver;
+    public void setCustomWSLD4JResolver(WSDLLocator customResolver) {
+        setCustomWSDLResolver(customResolver);
+    }
+
+
+    /**
+     * sets a custom WSDL locator
+     *
+     * @param customWSDLResolver
+     */
+    public void setCustomWSDLResolver(WSDLLocator customResolver) {
+        this.customWSDLResolver = customResolver;
+        setDocumentBaseUri(this.customWSDLResolver.getBaseURI());
+    }
+
+
+    /**
+     * Sets the URI to the base document associated with the WSDL definition.
+     * This identifies the origin of the Definition and allows the 
+     * Definition to be reloaded.  Note that this is the URI of the base
+     * document, not the imports.
+     *
+     * @param baseUri
+     */
+    public void setDocumentBaseUri(String baseUri) {
+        if (wsdl4jDefinition != null) {
+            wsdl4jDefinition.setDocumentBaseURI(baseUri);
+        }
+        wsdlBaseDocumentURI = baseUri;
     }
 
     /**
-     * populates a given service This is the only publicly accessible method in
-     * this class
+     * Gets the URI to the base document associated with the WSDL definition.
+     * This identifies the origin of the Definition and allows the 
+     * Definition to be reloaded.  Note that this is the URI of the base
+     * document, not the imports.
+     *
+     */
+    public String getDocumentBaseUri() {
+        return wsdlBaseDocumentURI;
+    }
+
+
+
+
+    /**
+     * Populates a given service. 
      *
      * @throws AxisFault
      */
     public AxisService populateService() throws AxisFault {
         try {
             setup();
-            // Setting wsdl4jdefintion to axisService , so if some one want
-            // to play with it he can do that by getting the parameter
-            Parameter wsdlDefinitionParameter = new Parameter();
-            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
-            wsdlDefinitionParameter.setValue(wsdl4jDefinition);
-            axisService.addParameter(wsdlDefinitionParameter);
-            axisService.setWsdlFound(true);
-            axisService.setCustomWsdl(true);
+
+            // NOTE: set the axisService with the Parameter for the WSDL 
+            // Definition after the rest of the work
 
             if (wsdl4jDefinition == null) {
                 return null;
@@ -279,6 +345,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             populateEndpoints(binding, wsdl4jService, portType);
             processPoliciesInDefintion(wsdl4jDefinition);
             axisService.getPolicyInclude().setPolicyRegistry(registry);
+
+
+            // Setting wsdl4jdefintion to the axisService parameter include list, 
+            // so if someone needs to use the definition directly, 
+            // he can do that by getting the parameter 
+            Parameter wsdlDefinitionParameter = new Parameter();
+            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
+
+            if (!(wsdl4jDefinition instanceof WSDLDefinitionWrapper)) {
+                WSDLDefinitionWrapper wrapper = new WSDLDefinitionWrapper(wsdl4jDefinition);
+                wsdlDefinitionParameter.setValue(wrapper);
+            } else {
+                wsdlDefinitionParameter.setValue(wsdl4jDefinition);
+            }
+
+            axisService.addParameter(wsdlDefinitionParameter);
+            axisService.setWsdlFound(true);
+            axisService.setCustomWsdl(true);
+
+
             return axisService;
 
         } catch (WSDLException e) {
@@ -502,8 +588,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             httpLocation =
                     (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+            String httpMethod =
+                    (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_METHOD);
+            if (httpMethod == null || "".equals(httpMethod)) {
+                httpMethod = HTTPConstants.HEADER_POST;
+            }
             if (httpLocation != null) {
-                httpLocationMap.put(RESTUtil.getConstantFromHTTPLocation(httpLocation),
+                httpLocationMap.put(RESTUtil.getConstantFromHTTPLocation(httpLocation, httpMethod),
                                     axisBindingOperation.getAxisOperation());
             }
 
@@ -769,7 +860,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 if (port != null) {
                     // i.e we have find a correct port
-                    if (!this.isAllPorts) {
+                    // this is only use full in codegen time.
+                    if (this.isCodegen && !this.isAllPorts) {
                         // if user has not set all option
                         // we have to generate code only for that option.
                         this.portName = port.getName();
@@ -2040,9 +2132,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);
 
+        Definition def;
         // if the custem resolver is present then use it
-        if (customWSLD4JResolver != null) {
-            return reader.readWSDL(customWSLD4JResolver);
+        if (customWSDLResolver != null) {
+            // make sure the wsdl definition has the URI for the base document set
+            def = reader.readWSDL(customWSDLResolver);
+            def.setDocumentBaseURI(customWSDLResolver.getBaseURI());
+            return def;
         } else {
             Document doc;
             try {
@@ -2058,7 +2154,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error",
                                         e);
             }
-            return reader.readWSDL(getBaseUri(), doc);
+            
+            // Log when and from where the WSDL is loaded.
+            if (log.isDebugEnabled()) {
+                log.debug("Reading 1.1 WSDL with base uri = " + getBaseUri());
+                log.debug("  the document base uri = " + getDocumentBaseUri());
+                log.debug("  the stack at this point is: " + stackToString());
+            }
+            def = reader.readWSDL(getBaseUri(), doc);
+            def.setDocumentBaseURI(getDocumentBaseUri());
+            return def;
         }
     }
 

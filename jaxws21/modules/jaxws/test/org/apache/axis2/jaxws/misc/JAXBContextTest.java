@@ -85,8 +85,9 @@ public class JAXBContextTest extends TestCase {
         assertTrue(jaxbContext1.toString().equals(jaxbContext1.toString()));
         assertTrue(context3.contains("org.test.addnumbers"));
         assertTrue(context3.contains("org.test.anytype")); 
-        // TODO FIXME - does not work under m2/surefire
-//        assertTrue(!context3.contains("my.grandma.loves.jaxws"));  // invalid package should be silently removed
+        // The invalid package should now be retained...this is due
+        // a minor semantic change to avoid this side effect.
+        assertTrue(context3.contains("my.grandma.loves.jaxws"));  
         
         // Repeat with a subset of packages
         TreeSet<String> context4 = new TreeSet<String>();

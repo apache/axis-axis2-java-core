@@ -300,7 +300,7 @@ public class DescriptionUtils {
         }
         catch (IOException e) {
             // report this since it was a valid URL but the openStream caused a problem
-            ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
                                                                          configFile, className,
                                                                          e.toString()));
         }
@@ -324,13 +324,13 @@ public class DescriptionUtils {
                 configStream = classLoader.getResourceAsStream(resolvedPath);
             }
             catch (URISyntaxException e) {
-                ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
                                                                              configFile, className,
                                                                              e.toString()));
             }
         }
         if (configStream == null) {
-            ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS",
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS",
                                                                          configFile, className));
         } else {
             if (log.isDebugEnabled()) {

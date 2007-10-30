@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
+
     <xsl:template match="/class">
         <xsl:variable name="interfaceName"><xsl:value-of select="@interfaceName"/></xsl:variable>
         <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
@@ -42,10 +43,11 @@
         /* function prototypes - for header file*/
         /**
          * <xsl:value-of select="$method-prefix"/>_create
-         * create and return the stub with services populated
-         * params - env : environment ( mandatory)
-         *        - client_home : Axis2/C home ( mandatory )
-         *        - endpoint_uri : service endpoint uri( optional ) - if NULL default picked from wsdl used
+         * Create and return the stub with services populated
+         * @param env Environment ( mandatory)
+         * @param client_home Axis2/C home ( mandatory )
+         * @param endpoint_uri Service endpoint uri( optional ) - if NULL default picked from WSDL used
+         * @return Newly created stub object
          */
         axis2_stub_t*
         <xsl:value-of select="$method-prefix"/>_create (const axutil_env_t *env,
@@ -54,22 +56,20 @@
         /**
          * <xsl:value-of select="$method-prefix"/>_populate_services
          * populate the svc in stub with the service and operations
+         * @param stub The stub
+         * @param env environment ( mandatory)
          */
         void <xsl:value-of select="$method-prefix"/>_populate_services( axis2_stub_t *stub, const axutil_env_t *env);
         /**
          * <xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl
-         * return the endpoint URI picked from wsdl
+         * Return the endpoint URI picked from WSDL
+         * @param env environment ( mandatory)
+         * @return The endpoint picked from WSDL
          */
         axis2_char_t *<xsl:value-of select="$method-prefix"/>_get_endpoint_uri_from_wsdl ( const axutil_env_t *env );
 
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
-        /**
-         * auto generated function declaration
-         * for "<xsl:value-of select="@qname"/>" operation.
-         <!--  select only the body parameters  -->
-         <xsl:for-each select="input/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
-         */
 
         <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
         <xsl:variable name="outputtype">
@@ -78,6 +78,20 @@
                 <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        /**
+         * Auto generated function declaration
+         * for "<xsl:value-of select="@qname"/>" operation.
+         * @param stub The stub
+         * @param env environment ( mandatory)
+         <!--  select only the body parameters  -->
+         <xsl:for-each select="input/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
+         * return 
+           <xsl:choose>
+           <xsl:when test="$outputtype=''">axis2_status_t</xsl:when>
+           <xsl:when test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:when>
+           </xsl:choose>
+         */
+
         <xsl:choose>
         <xsl:when test="$outputtype=''">axis2_status_t</xsl:when>
         <xsl:when test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:when>
@@ -96,8 +110,10 @@
         <xsl:if test="$isAsync='1'">
         <xsl:for-each select="method">
         /**
-         * auto generated function declaration
+         * Auto generated function declaration
          * for "<xsl:value-of select="@qname"/>" operation.
+         * @param stub The stub
+         * @param env environment ( mandatory)
          <!--  select only the body parameters  -->
          <xsl:for-each select="input/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
          * @param on_complete callback to handle on complete

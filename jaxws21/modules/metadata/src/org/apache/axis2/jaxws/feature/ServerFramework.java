@@ -24,6 +24,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -35,11 +36,12 @@ public class ServerFramework {
     
     public ServerFramework() {
     	super();
-        configuratorMap = new IdentityHashMap<String, ServerConfigurator>();
-        annotationMap = new IdentityHashMap<String, Annotation>();
+        configuratorMap = new HashMap<String, ServerConfigurator>();
+        annotationMap = new HashMap<String, Annotation>();
     }
     
     public void addConfigurator(String id, ServerConfigurator configurator) {
+    	System.out.println("[" + id + "], " + configurator.toString());
         configuratorMap.put(id, configurator);
     }
     
@@ -50,7 +52,13 @@ public class ServerFramework {
         WebServiceFeatureAnnotation wsfAnnotation =
         	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
         
-        return configuratorMap.containsKey(wsfAnnotation != null ? wsfAnnotation.id() : null);
+        String id = null;
+        if (wsfAnnotation != null)
+        	id = wsfAnnotation.id();
+        
+        System.out.println("[" + id + "]");
+        
+        return configuratorMap.containsKey(id);
     }
     
     public void addAnnotation(Annotation annotation) {

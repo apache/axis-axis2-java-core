@@ -65,46 +65,36 @@ public class AddressingFinalInHandler extends AddressingInHandler {
     }
 
     /** @see AddressingValidationHandler#checkMessageIDHeader */
-    protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader,
+    protected void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
                                             MessageContext messageContext) throws AxisFault {
         //Unable to validate the wsa:MessageID header here as we do not yet know which MEP
         //is in effect.
 
-        if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
+        if (!alreadyFoundAddrHeader[ACTION_FLAG]) {
             AddressingFaultsHelper
                     .triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         }
     }
 
-    protected void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) {
+    protected void setDefaults(boolean[] alreadyFoundAddrHeader, MessageContext messageContext) {
         //According to the WS-Addressing spec, we should default the wsa:To header to the
         //anonymous URI. Doing that, however, might prevent a different value from being
         //used instead, such as the transport URL. Therefore, we only apply the default
         //on the inbound response side of a synchronous request-response exchange.
-        if (!alreadyFoundAddrHeader.contains(WSA_TO) && !messageContext.isServerSide()) {
-            Options messageContextOptions = messageContext.getOptions();
+        if (!alreadyFoundAddrHeader[TO_FLAG] && !messageContext.isServerSide()) {
             if (log.isTraceEnabled()) {
                 log.trace(messageContext.getLogIDString() +
                         " setDefaults: Setting WS-Addressing default value for the To property.");
             }
-            messageContextOptions.setTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
+            messageContext.setTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
         }
 
-        if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
-            Options messageContextOptions = messageContext.getOptions();
-            EndpointReference epr = messageContextOptions.getReplyTo();
-
-            if (epr == null) {
-                epr = new EndpointReference("");
-                messageContextOptions.setReplyTo(epr);
-            }
-
+        if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
+        	messageContext.setReplyTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
             if (log.isTraceEnabled()) {
                 log.trace(messageContext.getLogIDString() +
                         " setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
             }
-
-            epr.setAddress(Final.WSA_ANONYMOUS_URL);
         }
     }
 }

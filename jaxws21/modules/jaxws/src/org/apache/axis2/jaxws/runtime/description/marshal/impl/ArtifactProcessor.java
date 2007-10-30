@@ -181,7 +181,7 @@ class ArtifactProcessor {
                         faultBeanLocalName = aDesc.getXmlRootElementName();
                     }
                 } catch (Throwable t) {
-                    ExceptionFactory.makeWebServiceException(t);
+                    throw ExceptionFactory.makeWebServiceException(t);
                 }
             }
         }
@@ -204,7 +204,7 @@ class ArtifactProcessor {
                         faultBeanNamespace = aDesc.getXmlRootElementNamespace();
                     }
                 } catch (Throwable t) {
-                    ExceptionFactory.makeWebServiceException(t);
+                   throw ExceptionFactory.makeWebServiceException(t);
                 }
             }
         }

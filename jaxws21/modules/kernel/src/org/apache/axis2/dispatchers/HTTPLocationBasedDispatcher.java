@@ -21,13 +21,14 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.engine.AbstractDispatcher;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,15 +56,35 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             String uri = messageContext.getTo().getAddress();
             String httpLocation = parseRequestURL(uri, messageContext
                     .getConfigurationContext().getServiceContextPath());
+            String httpMethod = (String) messageContext.getProperty(HTTPConstants.HTTP_METHOD);
 
             if (httpLocation != null) {
+                httpLocation = httpMethod + httpLocation;
                 AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
                         .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+                // Here we check whether the request was dispatched to the correct endpoint. If it
+                // was we can dispatch the operation using the HTTPLocationDispatcher table of that
+                // specific endpoint. In most cases we wont be able to do this. So as a last resort
+                // iterate through the endpoint map and try to dispatch the operation.
                 if (axisEndpoint != null) {
                     Map httpLocationTable = (Map) axisEndpoint.getBinding()
                             .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
                     if (httpLocationTable != null) {
                         return getOperationFromHTTPLocation(httpLocation, httpLocationTable);
+                    }
+                } else {
+                    Map endpoints = axisService.getEndpoints();
+                    if (endpoints != null) {
+                        Iterator iterator = endpoints.values().iterator();
+                        while (iterator.hasNext()) {
+                            AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+                            Map httpLocationTable = (Map) endpoint.getBinding()
+                                    .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
+                            if (httpLocationTable != null) {
+                                return getOperationFromHTTPLocation(httpLocation,
+                                                                    httpLocationTable);
+                            }
+                        }
                     }
                 }
             } else {
@@ -118,6 +139,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
      * Given the requestPath that the request came to his method returns the corresponding axisOperation
      *
      * @param requestPath - Part of the request url which is the part after the service name
+     * @param httpLocationTable - The httpLocationTable stored in the relavant binding
      * @return AxisOperation - The corresponding AxisOperation
      */
     private AxisOperation getOperationFromHTTPLocation(String requestPath, Map httpLocationTable) {

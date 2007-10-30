@@ -33,8 +33,11 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
+import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -128,17 +131,32 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             log.debug("JavaBeanDispatcher about to invoke using OperationDesc: "
                     + operationDesc.toString());
         }
-
-        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
-        AsyncInvocationWorker worker = new AsyncInvocationWorker(target, methodInputParams, cl, eic);
+        AsyncInvocationWorker worker = new AsyncInvocationWorker(target, 
+                                                                 methodInputParams, 
+                                                                 cl, eic);
         FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
-        executor.execute(task);
         
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) 
+            request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  " +
+                                "Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
+
+        executor.execute(task);     
         return;
     }
 
@@ -161,14 +179,25 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             log.debug("JavaBeanDispatcher about to invoke using OperationDesc: "
                     + operationDesc.toString());
         }
-        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
-        Executor executor = ef.getExecutorInstance();
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
         AsyncInvocationWorker worker = new AsyncInvocationWorker(target, methodInputParams, cl, eic);
         FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
+        
+        ExecutorFactory ef = (ExecutorFactory) FactoryRegistry.getFactory(ExecutorFactory.class);
+        Executor executor = ef.getExecutorInstance(ExecutorFactory.SERVER_EXECUTOR);
+        // If the property has been set to disable thread switching, then we can 
+        // do so by using a SingleThreadedExecutor instance to continue processing
+        // work on the existing thread.
+        Boolean disable = (Boolean) request.getProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH);
+        if (disable != null && disable.booleanValue()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server side thread switch disabled.  Setting Executor to the SingleThreadedExecutor.");
+            }
+            executor = new SingleThreadedExecutor();
+        }
         executor.execute(task);
         
         return;
@@ -198,14 +227,21 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
 
     private MethodMarshaller getMethodMarshaller(Protocol protocol,
-                                                 OperationDescription operationDesc) {
+                                                 OperationDescription operationDesc,
+                                                 MessageContext mc) {
         javax.jws.soap.SOAPBinding.Style styleOnSEI =
                 endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
         javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
         if (styleOnMethod != null && styleOnSEI != styleOnMethod) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
         }
-        return MethodMarshallerFactory.getMarshaller(operationDesc, false);
+        
+        // check for a stored classloader to be used as the cache key
+        ClassLoader cl = null;
+        if(mc != null) {
+            cl = (ClassLoader) mc.getProperty(Constants.CACHE_CLASSLOADER);
+        }
+        return MethodMarshallerFactory.getMarshaller(operationDesc, false, cl);
     }
 
     protected Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
@@ -230,7 +266,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         // the "style" and "use" of the WSDL.
         Protocol requestProtocol = request.getMessage().getProtocol();
         MethodMarshaller methodMarshaller =
-                getMethodMarshaller(requestProtocol, request.getOperationDescription());
+                getMethodMarshaller(requestProtocol, request.getOperationDescription(),
+                                    request);
         
         // The MethodMarshaller will return the input parameters that are needed to 
         // invoke the target method.
@@ -257,7 +294,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         // Create the appropriate response message, using the protocol from the
         // request message.
-        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription());
+        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription(),
+                                                          request);
         Message m = null;
         if (method.getReturnType().getName().equals("void")) {
             m = marshaller.marshalResponse(null, params, operationDesc, p); 
@@ -291,7 +329,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
     
     public MessageContext createFaultResponse(MessageContext request, Protocol p, Throwable t) {
-        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription());
+        
+        MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription(),
+                                                          request);
         
         Message m = marshaller.marshalFaultResponse(t, request.getOperationDescription(), p);
         

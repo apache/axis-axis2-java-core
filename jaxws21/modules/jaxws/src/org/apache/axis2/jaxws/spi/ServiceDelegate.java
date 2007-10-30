@@ -542,9 +542,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor() {
-        ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
-                ExecutorFactory.class);
-        return executorFactory.getExecutorInstance();
+    	ExecutorFactory executorFactory = (ExecutorFactory) FactoryRegistry.getFactory(
+    			ExecutorFactory.class);
+        return executorFactory.getExecutorInstance(ExecutorFactory.CLIENT_EXECUTOR);
     }
 
     private boolean isValidServiceName() {

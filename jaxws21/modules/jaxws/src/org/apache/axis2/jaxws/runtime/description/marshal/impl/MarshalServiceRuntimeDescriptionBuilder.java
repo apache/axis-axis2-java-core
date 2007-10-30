@@ -68,7 +68,7 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         try {
             artifactProcessor.build();
         } catch (Throwable t) {
-            ExceptionFactory.makeWebServiceException(t);
+            throw ExceptionFactory.makeWebServiceException(t);
         }
         marshalDesc.setRequestWrapperMap(artifactProcessor.getRequestWrapperMap());
         marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());

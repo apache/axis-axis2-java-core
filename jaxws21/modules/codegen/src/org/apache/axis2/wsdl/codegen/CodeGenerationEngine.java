@@ -22,6 +22,7 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
@@ -36,13 +37,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.wsdl.xml.WSDLLocator;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -94,11 +93,25 @@ public class CodeGenerationEngine {
 
             if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(configuration.getWSDLVersion())) {
-                WSDL20ToAxisServiceBuilder builder = new WSDL20ToAxisServiceBuilder(wsdlUri,
-                                                                                    configuration.getServiceName(),
-                                                                                    configuration.getPortName());
-                builder.setCodegen(true);
-                configuration.addAxisService(builder.populateService());
+
+                WSDL20ToAxisServiceBuilder builder;
+
+                // jibx currently does not support multiservice
+                if ((configuration.getServiceName() != null) || (configuration.getDatabindingType().equals("jibx"))) {
+                    builder = new WSDL20ToAxisServiceBuilder(
+                            wsdlUri,
+                            configuration.getServiceName(),
+                            configuration.getPortName(),
+                            configuration.isAllPorts());
+                    builder.setCodegen(true);
+                    configuration.addAxisService(builder.populateService());
+                } else {
+                    builder = new WSDL20ToAllAxisServicesBuilder(wsdlUri, configuration.getPortName());
+                    builder.setCodegen(true);
+                    builder.setAllPorts(configuration.isAllPorts());
+                    configuration.setAxisServices(
+                            ((WSDL20ToAllAxisServicesBuilder)builder).populateAllServices());
+                }
 
             } else {
                 //It'll be WSDL 1.1
@@ -124,7 +137,7 @@ public class CodeGenerationEngine {
                                              configuration.getServiceName());
                 }
 
-                WSDL11ToAxisServiceBuilder builder = null;
+                WSDL11ToAxisServiceBuilder builder;
                 // jibx currently does not support multiservice
                 if ((serviceQname != null) || (configuration.getDatabindingType().equals("jibx"))) {
                     builder = new WSDL11ToAxisServiceBuilder(
@@ -283,7 +296,15 @@ public class CodeGenerationEngine {
         Document doc;
         try {
             doc = XMLUtils.newDocument(uri);
-            return reader.readWSDL(getBaseURI(uri), doc);
+
+            // Set the URI of the base document for the Definition.
+            // This identifies the origin of the Definition
+            // Note that this is the URI of the base document, not the imports.
+            Definition def = reader.readWSDL(getBaseURI(uri), doc);
+            def.setDocumentBaseURI(getURI(uri));
+
+            return def;
+
         } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
                                     "Parser Configuration Error",
@@ -311,6 +332,17 @@ public class CodeGenerationEngine {
             Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
+            // TODO REVIEW FOR JAVA 6
+            // In Java 5, if you passed an array string such as "[Lcom.mypackage.MyClass;" to
+            // loadClass, the class would indeed be loaded.  
+            // In JDK6, a ClassNotFoundException is thrown. 
+            // The work-around is to use code Class.forName instead.
+            // Example:
+            // try {
+            //       classLoader.loadClass(name);
+            //  } catch (ClassNotFoundException e) {
+            //       Class.forName(name, false, loader);
+            //  }
             log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
             return null;
         } catch (InstantiationException e) {
@@ -340,5 +372,22 @@ public class CodeGenerationEngine {
         }
         String uriFragment = currentURI.substring(0, currentURI.lastIndexOf("/"));
         return uriFragment + (uriFragment.endsWith("/") ? "" : "/");
+    }
+
+    /**
+     * calculates the URI
+     * needs improvement
+     *
+     * @param currentURI
+     */
+    private String getURI(String currentURI) throws URISyntaxException, IOException {
+
+        File file = new File(currentURI);
+        if (file.exists()){
+            return file.getCanonicalFile().toURI().toString();
+        } else {
+            return currentURI;
+        }
+
     }
 }

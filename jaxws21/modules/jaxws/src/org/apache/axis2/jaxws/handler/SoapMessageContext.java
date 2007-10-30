@@ -63,13 +63,13 @@ public class SoapMessageContext extends BaseMessageContext implements
             if(log.isDebugEnabled()){
                 log.debug("Invalid QName, QName cannot be null");
             }
-            ExceptionFactory.makeWebServiceException(Messages.getMessage(""));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(""));
         }
         if(jaxbcontext == null){
             if(log.isDebugEnabled()){
                 log.debug("Invalid JAXBContext, JAXBContext cannot be null");
             }
-            ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAPMessageContextErr2"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAPMessageContextErr2"));
         }
 
         if(flag == false){
@@ -97,7 +97,7 @@ public class SoapMessageContext extends BaseMessageContext implements
                     }
 
                 }catch(XMLStreamException e){
-                    ExceptionFactory.makeWebServiceException(e);
+                    throw ExceptionFactory.makeWebServiceException(e);
                 }
             }
         }

@@ -71,12 +71,21 @@
           </xsl:if>
         </xsl:for-each>
         <!--include special headers-->
-        <xsl:if test="property/@type='axutil_date_time_t*'">
-          #include &lt;axutil_date_time.h&gt;
-        </xsl:if>
-        <xsl:if test="property/@type='axutil_base64_binary_t*'">
-          #include &lt;axutil_base64_binary.h&gt;
-        </xsl:if>
+        <xsl:for-each select="property[@type='axutil_date_time_t*']">
+          <xsl:if test="position()=1">
+            #include &lt;axutil_date_time.h&gt;
+          </xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="property[@type='axutil_base64_binary_t*']">
+          <xsl:if test="position()=1">
+            #include &lt;axutil_base64_binary.h&gt;
+          </xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="property[@type='axutil_duration_t*']">
+          <xsl:if test="position()=1">
+            #include &lt;axutil_duration.h&gt;
+          </xsl:if>
+        </xsl:for-each>
 
         #include &lt;stdio.h&gt;
         #include &lt;axiom.h&gt;
@@ -106,7 +115,7 @@
 
         /**
          * Free <xsl:value-of select="$axis2_name"/>_t object
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object to free
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object to free
          * @param env pointer to environment struct
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
@@ -115,37 +124,26 @@
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
 
-        /**
-         * Getter for the qname of the element or the type referred in the header
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
-         * @param env pointer to environment struct
-         * @return the qname of the element or the type
-         */
-        <xsl:if test="not(@type)">
-        axutil_qname_t* AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_get_qname (
-            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-            const axutil_env_t *env);
-        </xsl:if>
-
         <xsl:if test="@simple">
             /**
              * Deserialize the content from a string to adb objects
-             * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+             * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
              * @param env pointer to environment struct
              * @param node_value to deserialize
+             * @param parent parent node which contain the simple type
              * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
              */
             axis2_status_t AXIS2_CALL
             <xsl:value-of select="$axis2_name"/>_deserialize_from_string(
-                            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                                             const axutil_env_t *env,
-                                            axis2_char_t *node_value);
+                                            axis2_char_t *node_value,
+                                            axiom_node_t *parent);
         </xsl:if>
 
         /**
          * Deserialize an XML to adb objects
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param parent to deserialize
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
@@ -155,25 +153,36 @@
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env, axiom_node_t* parent);
 
+       /**
+         * Declare namespace in the parent node (Pass either the parent element or the stream and set the other NULL)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param parent_element The parent element if it is an element, NULL otherwise
+         * @param stream if parent is not an element and is a stream, pass the stream, NULL otherwise
+         */
+       void AXIS2_CALL
+       <xsl:value-of select="$axis2_name"/>_declare_parent_namespaces(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env, axiom_element_t *parent_element, axutil_stream_t *stream);
+
+        <xsl:if test="@simple">
         /**
          * Serialize to a String from the adb objects
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @return serialized string
          */
-        <xsl:if test="@simple">
             axis2_char_t* AXIS2_CALL
             <xsl:value-of select="$axis2_name"/>_serialize_to_string(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
         </xsl:if>
 
         /**
          * Serialize to an XML from the adb objects
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param <xsl:value-of select="$name"/>_om_node node to serialize from
-         * @param has_parent is the element has a parent
          * @param tag_closed whether the parent tag is closed or not
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
@@ -181,7 +190,7 @@
         <xsl:value-of select="$axis2_name"/>_serialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
-            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent, int tag_closed);
+            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int tag_closed);
 
 
         <xsl:for-each select="property">
@@ -189,14 +198,7 @@
             <xsl:choose>
                 <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                <xsl:when test="@ours"><xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-                </xsl:choose>
-                </xsl:when>
+                <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
             </xsl:choose>
             </xsl:variable>
@@ -206,52 +208,27 @@
             <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
                <xsl:choose>
                  <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                 <xsl:when test="@ours"><xsl:choose>
-                  <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                  adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                  <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                  <xsl:otherwise>
-                  axis2_<xsl:value-of select="@type"/>_t*</xsl:otherwise>
-              </xsl:choose></xsl:when>
+                 <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
                  <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                </xsl:choose>
             </xsl:variable>
               <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                   <xsl:when test="@ours">
-                    <xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                     adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">
-                     axutil_<xsl:value-of select="@type"/>_t*
-                    </xsl:when>
-                    <xsl:otherwise>
-                     axis2_<xsl:value-of select="@type"/>_t*
-                    </xsl:otherwise>
-                    </xsl:choose>
-                   </xsl:when>
-                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">
-                    <xsl:value-of select="@type"/><xsl:text>*</xsl:text>
-                   </xsl:when>
-                   <xsl:otherwise>
-                    <xsl:value-of select="@type"/>
-                   </xsl:otherwise>
+                   <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
             <xsl:variable name="paramComment">
                 <xsl:choose>
-                    <xsl:when test="@isarray">
-                        <xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$nativePropertyType"/>
-                    </xsl:otherwise>
+                    <xsl:when test="@isarray"><xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$nativePropertyType"/></xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
         /**
          * Getter for <xsl:value-of select="$propertyName"/>.
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @return <xsl:value-of select="$paramComment"/>
          */
@@ -262,7 +239,7 @@
 
         /**
          * Setter for <xsl:value-of select="$propertyName"/>.
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param param_<xsl:value-of select="$CName"/><xsl:text> </xsl:text> <xsl:value-of select="$paramComment"/>
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
@@ -276,7 +253,7 @@
         <xsl:if test="@isarray">
         /**
          * Resetter for <xsl:value-of select="$propertyName"/>
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
@@ -287,19 +264,19 @@
 
         /**
          * Get ith element of <xsl:value-of select="$propertyName"/>.
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param i index of the item to return
          * @return ith <xsl:value-of select="$nativePropertyType"/> of the array
          */
         <xsl:value-of select="$nativePropertyType"/> AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text>_</xsl:text><xsl:value-of select="$name"/>,
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env, int i);
 
         /**
          * Add to <xsl:value-of select="$propertyName"/>.
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param <xsl:text>param_</xsl:text> <xsl:value-of select="$CName"/> element to add <xsl:value-of select="$nativePropertyType"/> to the array
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
@@ -312,7 +289,7 @@
 
         /**
          * Get the size of the <xsl:value-of select="$propertyName"/> array.
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:value-of select="$axis2_name"/>_t object
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct.
          * @return the size of the <xsl:value-of select="$propertyName"/> array.
          */

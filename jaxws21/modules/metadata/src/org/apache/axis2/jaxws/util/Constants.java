@@ -41,4 +41,8 @@ public class Constants {
     public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
 
     public static final String INVOCATION_PATTERN = "org.apache.axis2.jaxws.invocation.pattern";
+    
+    public static final String METADATA_REGISTRY_CONFIG_FILE = 
+        "META-INF/services/org.apache.axis2.metadata.registry.MetadataFactoryRegistry";
+    
 }

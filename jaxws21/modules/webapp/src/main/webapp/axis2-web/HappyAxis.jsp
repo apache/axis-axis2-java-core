@@ -373,6 +373,8 @@
     }
     
     public String getFormatedSystemProperty(String systemProperty){
+        if (systemProperty == null)
+            return "";
     	return  systemProperty.replaceAll(":", ": ");
     }
 %>

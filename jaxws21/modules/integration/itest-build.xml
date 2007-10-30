@@ -18,36 +18,114 @@
   ~ under the License.
   -->
 <project name="itest" default="build-repos" basedir=".">
+
+	<target name="generate-test-sources" unless="test.skip">
+		<!-- Set a property that can be picked up from the ant build.xml's -->
+
+		<echo>${maven.test.path}</echo>
+		<!-- copy the mars so that they are available on the test classpath -->
+		<copy file="../addressing/target/addressing-${addressing_version}.mar" tofile="target/test-classes/modules/addressing-${addressing_version}.mar" />
+
+		<property name="axis2.home" value="${basedir}/target" />
+		<property name="maven.junit.jvmargs" value="" />
+		<path id="maven.dependency.classpath">
+			<path refid="maven.compile.classpath" />
+		</path>
+		<!-- compiling some custom wsdl files -->
+		<property name="wsdl.source.dir" value="test-resources/wsdl" />
+		<property name="wsdl.output.base.dir" value="target/wsdl" />
+		<!-- make the dirs -->
+		<mkdir dir="${wsdl.output.base.dir}" />
+
+		<echo>Compiling ComplexDataTypes.wsdl</echo>
+		<mkdir dir="${wsdl.output.base.dir}/complexdatatype" />
+
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.runtime.classpath" />
+			<classpath location="${compiled.classes.dir}" />
+			<arg line="-ap -o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl" />
+		</java>
+		<javac fork="true" destdir="target/classes" debug="on">
+			<classpath refid="maven.runtime.classpath" />
+			<classpath location="${compiled.classes.dir}" />
+			<src path="target/wsdl/complexdatatype" />
+		</javac>
+
+		<echo>Compiling DocumentUnwrappingTest.wsdl</echo>
+		<mkdir dir="${wsdl.output.base.dir}/documentunwrapping" />
+
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.runtime.classpath" />
+			<classpath location="${compiled.classes.dir}" />
+			<arg line="-ap -o target/wsdl/documentunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/DocumentUnwrappingTest.wsdl" />
+		</java>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/documentunwrapping" />
+
+		<echo>Compiling RPCUnwrappingTest.wsdl</echo>
+		<mkdir dir="${wsdl.output.base.dir}/rpcunwrapping" />
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+
+			<classpath refid="maven.runtime.classpath" />
+			<classpath location="${compiled.classes.dir}" />
+			<arg line="-ap -o target/wsdl/rpcunwrapping -ss -sd -ssi -u  -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl" />
+		</java>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/rpcunwrapping" />
+
+		<echo>Compiling ComplexDataTypesDocLitBare.wsdl</echo>
+		<mkdir dir="${wsdl.output.base.dir}/complexdatatypebare" />
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.runtime.classpath" />
+			<classpath location="${compiled.classes.dir}" />
+			<arg line="-o target/wsdl/complexdatatypebare -s -uri test-resources/ComplexDataTypesDocLitBare/ComplexDataTypesDocLitBare.wsdl" />
+		</java>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/complexdatatypebare" />
+		<copy toDir="target/classes" failonerror="false">
+			<fileset dir="target/wsdl/complexdatatypebare/build/classes">
+				<include name="**/*.class" />
+			</fileset>
+		</copy>
+
+		<!-- compile the schema for XMLbeans -->
+		<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true">
+			<classpath refid="maven.runtime.classpath" />
+			<arg line="-src target/xmlbeans-src -d target/classes test-resources/xsd/type-test.xsd" />
+		</java>
+
+		<ant antfile="itest-build.xml" inheritall="true" inheritrefs="true" dir="." target="rpc-wsdl-codegen" />
+
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB" />
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleC" />
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceB" />
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceC" />
+	</target>
+
 	<target name="rpc-wsdl-codegen">
 		<echo>Running codegen RPC WSDLs - take 1</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -o target/rpc-test1 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+			<classpath refid="maven.dependency.classpath" />
+			<arg line="-ap -o target/rpc-test1 -uri test-resources/rpc/test-rpc-2.wsdl -uw" />
 		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test1"
-							 target="jar.client"/>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test1" target="jar.client" />
 
 		<echo>Running codegen RPC WSDLs - take 2</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -o target/rpc-test2 -uri test-resources/rpc/test-rpc-3.wsdl -uw"/>
+			<classpath refid="maven.dependency.classpath" />
+			<arg line="-ap -o target/rpc-test2 -uri test-resources/rpc/test-rpc-3.wsdl -uw" />
 		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test2"
-							 target="jar.client"/>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test2" target="jar.client" />
 
 
 		<echo>Running codegen RPC WSDLs - take 3</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
+			<classpath refid="maven.dependency.classpath" />
+			<arg line="-ap -o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw" />
 		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3"
-							 target="jar.client"/>
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3" target="jar.client" />
 
 		<echo>Running codegen RPC WSDLs - take 4</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd"/>
+			<classpath refid="maven.dependency.classpath" />
+			<arg line="-ap -o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd" />
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
 							 target="jar.server"/>
@@ -78,7 +156,7 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test1"
 									 target="jar.client"/>
-		
+
 		<echo>Running codegen for Enterprise WSDL - take 2</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
@@ -102,7 +180,7 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 									 target="jar.server"/>
-		
+
 		<echo>Running codegen for eBaySvc WSDL</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
@@ -110,7 +188,7 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvc"
 									 target="jar.server"/>
-		
+
 		<echo>Running codegen for eBaySvc WSDL Back word compatibiliy</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
@@ -118,7 +196,7 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcB"
 									 target="jar.server"/>
-		
+
 		<echo>Running codegen for eBaySvc WSDL with un wrapping </echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
@@ -128,7 +206,7 @@
 									 target="jar.server"/>
 	</target>
 
-	<target name="build-repos">
+	<target name="build-repos" unless="test.skip">
 		<mkdir dir="target/test-resources/samples/modules"/>
 		<mkdir dir="target/test-resources/samples/conf"/>
 		<mkdir dir="target/test-resources/repository-client/modules"/>
@@ -146,7 +224,7 @@
 		<mkdir dir="target/test-resources/local"/>
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
 		    	                  tofile="target/test-resources/local/addressing.mar"/>
-				
+
 		<!-- Create Chunked enabled Repository -->
 		<mkdir dir="target/test-resources/chunking-enabledRepository"/>
 		<mkdir dir="target/test-resources/chunking-enabledRepository/conf"/>
@@ -243,28 +321,28 @@
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	          	        	      tofile="target/test-resources/SwA-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
-        
-        <mkdir dir="target/sample/groovy"/>
-        <mkdir dir="target/sample/groovy/lib"/>
-        <mkdir dir="target/sample/groovy/META-INF"/>
-        <mkdir dir="target/sample/groovy/sample"/>
-        <mkdir dir="target/sample/groovy/sample/groovy"/>
 
-        <copy file="../samples/deprecated/groovy/src/sample/groovy/GroovyRcv.groovy"
+		<mkdir dir="target/sample/groovy"/>
+		<mkdir dir="target/sample/groovy/lib"/>
+		<mkdir dir="target/sample/groovy/META-INF"/>
+		<mkdir dir="target/sample/groovy/sample"/>
+		<mkdir dir="target/sample/groovy/sample/groovy"/>
+
+		<copy file="../samples/deprecated/groovy/src/sample/groovy/GroovyRcv.groovy"
                   tofile="target/sample/groovy/GroovyRcv.groovy"/>
-        
-        <javac fork="true" destdir="target/classes" debug="on">
-            <classpath refid="maven.dependency.classpath"/>
-            <src path="../samples/deprecated/groovy/src/sample/groovy"/>
-        </javac>
-        <copy file="target/classes/sample/groovy/GroovyReceiver.class"
-                  tofile="target/sample/groovy/sample/groovy/GroovyReceiver.class"/>
-        <delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
 
-        <copy file="../samples/deprecated/groovy/src/sample/groovy/META-INF/services.xml"
+		<javac fork="true" destdir="target/classes" debug="on">
+			<classpath refid="maven.dependency.classpath"/>
+			<src path="../samples/deprecated/groovy/src/sample/groovy"/>
+		</javac>
+		<copy file="target/classes/sample/groovy/GroovyReceiver.class"
+                  tofile="target/sample/groovy/sample/groovy/GroovyReceiver.class"/>
+		<delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
+
+		<copy file="../samples/deprecated/groovy/src/sample/groovy/META-INF/services.xml"
                   tofile="target/sample/groovy/META-INF/services.xml"/>
 
-	    <copy todir="target/sample/groovy/lib/" flatten="true">
+		<copy todir="target/sample/groovy/lib/" flatten="true">
 			<fileset dir="${maven.repo.local}/groovy/" includes="**/groovy-all-${groovy.all.version}.jar"/>
 		</copy>
 
@@ -274,10 +352,10 @@
 		<mkdir dir="target/groovyRepo/services"/>
 		<mkdir dir="target/groovyRepo/modules"/>
 
-        <jar destfile="target/groovyRepo/services/groovyService.aar">
-            <fileset dir="target/sample/groovy">
-            </fileset>
-        </jar>
+		<jar destfile="target/groovyRepo/services/groovyService.aar">
+			<fileset dir="target/sample/groovy">
+			</fileset>
+		</jar>
 
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	                  tofile="target/groovyRepo/modules/addressing-${addressing_version}.mar"/>
@@ -330,11 +408,11 @@
 	<target name="build-soap12-services">
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
-		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
-		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
-		                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
 	</target>
 </project>

@@ -22,13 +22,23 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
 import javax.wsdl.Definition;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAnnotationComposite {
+
+    private static final Log log = LogFactory.getLog(DescriptionBuilderComposite.class);
+
     /*
       * This structure contains the full reflected class, as well as, the
       * possible annotations found for this class...the class description
@@ -42,6 +52,8 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         fieldDescriptions = new ArrayList<FieldDescriptionComposite>();
         webServiceRefAnnotList = new ArrayList<WebServiceRefAnnot>();
         interfacesList = new ArrayList<String>();
+        genericAnnotationInstances = new ArrayList<CustomAnnotationInstance>();
+        genericAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
     }
 
     //Class type within the module
@@ -53,6 +65,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     //Note: a WSDL is not necessary
     private Definition wsdlDefinition = null;
     private URL wsdlURL = null;
+    private WSDL4JWrapper wsdlWrapper = null;
 
     // Class-level annotations
     private WebServiceAnnot webServiceAnnot;
@@ -75,6 +88,13 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
     private List<MethodDescriptionComposite> methodDescriptions;
     private List<FieldDescriptionComposite> fieldDescriptions;
+    
+    // we can keep these in a singular list b/c for a given type-level annotation
+    // there can only one instance of the annotation
+    private List<CustomAnnotationInstance> genericAnnotationInstances;
+    
+    // a map that stores all the type-targetted GenericAnnotationProcessor instances
+    private Map<String, CustomAnnotationProcessor> genericAnnotationProcessors;
 
     private WsdlGenerator wsdlGenerator;
     private ClassLoader classLoader;
@@ -166,6 +186,13 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
     /** @return Returns the wsdlDefinition */
     public Definition getWsdlDefinition() {
+        if (wsdlDefinition != null) {
+            return wsdlDefinition;
+        } else if (wsdlWrapper != null) {
+            wsdlDefinition = wsdlWrapper.getDefinition();
+        } else {
+            wsdlDefinition = createWsdlDefinition(wsdlURL);
+        }
         return wsdlDefinition;
     }
 
@@ -318,10 +345,62 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
         addWebServiceRefAnnot(webServiceRefAnnot);
     }
+    
+    public void addCustomAnnotationProcessor(CustomAnnotationProcessor processor) {
+        genericAnnotationProcessors.put(processor.getAnnotationInstanceClassName(), processor);
+    }
+    
+    public Map<String, CustomAnnotationProcessor> getCustomAnnotationProcessors() {
+        return genericAnnotationProcessors;
+    }
+    
+    public void addCustomAnnotationInstance(CustomAnnotationInstance annotation) {
+        genericAnnotationInstances.add(annotation);
+    }
+    
+    public List<CustomAnnotationInstance> getCustomAnnotationInstances() {
+        return genericAnnotationInstances;
+    }
 
-    /** @param wsdlDefinition The wsdlDefinition to set. */
-    public void setWsdlDefinition(Definition wsdlDefinition) {
-        this.wsdlDefinition = wsdlDefinition;
+
+    /**
+     * @param wsdlDefinition The wsdlDefinition to set.
+     */
+    public void setWsdlDefinition(Definition wsdlDef) {
+
+        Definition def = null;
+
+        if (wsdlDef != null) {
+            if (wsdlDef instanceof WSDL4JWrapper) {
+                wsdlWrapper = (WSDL4JWrapper) wsdlDef;
+
+                def = wsdlWrapper.getDefinition();
+            } else {
+                try {
+                    wsdlWrapper = new WSDL4JWrapper(wsdlDef);
+                    def = wsdlWrapper.getDefinition();
+                } catch (Exception ex) {
+                    // absorb
+                }
+            }
+
+            if (def != null) {
+                String wsdlDefinitionBaseURI = def.getDocumentBaseURI();
+
+                if ((wsdlDefinitionBaseURI != null) && (wsdlURL == null)) {
+                    try {
+                        wsdlURL = new URL(wsdlDefinitionBaseURI);
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("DescriptionBuilderComposite:setWsdlDefinition(): "
+                                    +"Caught exception creating WSDL URL :" 
+                                    + wsdlDefinitionBaseURI + "; exception: " 
+                                    +e.toString(),e); 
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /** @param wsdlURL The wsdlURL to set. */
@@ -488,5 +567,35 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 		}
 		return sb.toString();
 	}
-	
+
+
+    /**
+     * Create a wsdl definition from the supplied 
+     * location.
+     * 
+     * @param _wsdlURL The URL where the wsdl is located
+     * @return The WSDL Definition or NULL
+     */
+    private Definition createWsdlDefinition(URL _wsdlURL) {
+        if (_wsdlURL == null) {
+            return null;
+        }
+
+        Definition wsdlDef = null;
+        try {
+            wsdlWrapper = new WSDL4JWrapper(_wsdlURL);
+            if (wsdlWrapper != null) {
+                wsdlDef = wsdlWrapper.getDefinition();
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("DescriptionBuilderComposite:createWsdlDefinition("
+                        + _wsdlURL.toString()
+                        + "): Caught exception trying to create WSDL Definition: "
+                        +e, e); 
+            }
+        }
+
+        return wsdlDef;
+    }
 }

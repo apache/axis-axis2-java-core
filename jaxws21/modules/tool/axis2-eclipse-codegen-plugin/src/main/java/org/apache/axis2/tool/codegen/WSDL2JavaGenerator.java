@@ -201,6 +201,10 @@ public class WSDL2JavaGenerator {
 			
 			WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 					
+                        // Set the URI of the base document for the Definition.
+                        // Note that this is the URI of the base document, not the imports.
+                        builder.setDocumentBaseUri(url.toString());
+
 			builder.setBaseUri(getBaseUri(wsdlURI));
 			builder.setCodegen(true);
 			return builder.populateService();

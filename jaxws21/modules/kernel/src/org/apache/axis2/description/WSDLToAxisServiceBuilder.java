@@ -194,10 +194,24 @@ public abstract class WSDLToAxisServiceBuilder {
         return "ns" + nsCount++;
     }
 
+    /**
+     * Gets the URI associated with the base document
+     * for the WSDL definition.  Note that this URI
+     * is for the base document, not the imports.
+     * 
+     * @return The URI as a String
+     */
     public String getBaseUri() {
         return baseUri;
     }
 
+    /**
+     * Sets the URI associated with the base document
+     * for the WSDL definition.  Note that this URI
+     * is for the base document, not the imports.
+     * 
+     * @param baseUri  The URI as a String
+     */
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
     }
@@ -216,5 +230,69 @@ public abstract class WSDLToAxisServiceBuilder {
 
     public void setServiceName(QName serviceName) {
         this.serviceName = serviceName;
+    }
+    
+    /**
+     * Get a string containing the stack of the current location
+     *
+     * @return String
+     */
+    protected static String stackToString() {
+        return stackToString(new RuntimeException());
+    }
+
+    /**
+     * Get a string containing the stack of the specified exception
+     *
+     * @param e
+     * @return
+     */
+    protected static String stackToString(Throwable e) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
+        java.io.PrintWriter pw = new java.io.PrintWriter(bw);
+        e.printStackTrace(pw);
+        pw.close();
+        String text = sw.getBuffer().toString();
+        // Jump past the throwable
+        text = text.substring(text.indexOf("at"));
+        text = replace(text, "at ", "DEBUG_FRAME = ");
+        return text;
+    }
+    
+    /**
+     * replace: Like String.replace except that the old new items are strings.
+     *
+     * @param name string
+     * @param oldT old text to replace
+     * @param newT new text to use
+     * @return replacement string
+     */
+    protected static final String replace(String name,
+                                       String oldT, String newT) {
+
+        if (name == null) return "";
+
+        // Create a string buffer that is twice initial length.
+        // This is a good starting point.
+        StringBuffer sb = new StringBuffer(name.length() * 2);
+
+        int len = oldT.length();
+        try {
+            int start = 0;
+            int i = name.indexOf(oldT, start);
+
+            while (i >= 0) {
+                sb.append(name.substring(start, i));
+                sb.append(newT);
+                start = i + len;
+                i = name.indexOf(oldT, start);
+            }
+            if (start < name.length())
+                sb.append(name.substring(start));
+        } catch (NullPointerException e) {
+        }
+
+        return new String(sb);
     }
 }

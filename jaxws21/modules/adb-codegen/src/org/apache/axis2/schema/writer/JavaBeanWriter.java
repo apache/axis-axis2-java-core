@@ -61,7 +61,7 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Templates templateCache;
 
-    private List namesList;
+    private Map packageNameToClassNamesMap;
 
     private static int count = 0;
 
@@ -311,7 +311,7 @@ public class JavaBeanWriter implements BeanWriter {
             this.rootDir = rootDir;
         }
 
-        namesList = new ArrayList();
+        this.packageNameToClassNamesMap = new HashMap();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
 
@@ -330,7 +330,12 @@ public class JavaBeanWriter implements BeanWriter {
         String packageName = getPackage(namespaceURI);
 
         String originalName = qName.getLocalPart();
-        String className = makeUniqueJavaClassName(this.namesList, originalName);
+
+        if (!this.packageNameToClassNamesMap.containsKey(packageName)){
+            this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+        }
+        String className =
+                makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
 
         String packagePrefix = null;
 
@@ -713,6 +718,7 @@ public class JavaBeanWriter implements BeanWriter {
                 javaClassNameForElement = metainf.getClassNameForQName(name);
             }
 
+
             if (javaClassNameForElement == null) {
                 javaClassNameForElement = getDefaultClassName();
                 log.warn(SchemaCompilerMessages
@@ -728,6 +734,15 @@ public class JavaBeanWriter implements BeanWriter {
 
             if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
+            }
+
+             // add the default value
+            if (metainf.isDefaultValueAvailable(name)){
+                QName schemaQName = metainf.getSchemaQNameForQName(name);
+                if (baseTypeMap.containsKey(schemaQName)){
+                    XSLTUtils.addAttribute(model, "defaultValue",
+                            metainf.getDefaultValueForQName(name), property);
+                }
             }
 
             //in the case the original element is an array but the derived one is not.
@@ -1128,7 +1143,11 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         while (listOfNames.contains(javaName.toLowerCase())) {
-            javaName = javaName + count++;
+            if (!listOfNames.contains((javaName + "E").toLowerCase())){
+                javaName = javaName + "E";
+            } else {
+                javaName = javaName + count++;
+            }
         }
 
         listOfNames.add(javaName.toLowerCase());

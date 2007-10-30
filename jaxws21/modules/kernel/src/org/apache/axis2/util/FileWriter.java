@@ -57,7 +57,7 @@ public class FileWriter {
             }
         }
 
-        if (!fileName.endsWith(extension)) {
+        if ((extension != null) && !fileName.endsWith(extension)) {
             fileName = fileName + extension;
         }
 

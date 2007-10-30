@@ -338,10 +338,12 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 String wsdlLocation =  "META-INF/service.wsdl";
                 InputStream wsdlStream =
                         serviceClassLoader.getResourceAsStream(wsdlLocation);
+                URL wsdlURL = serviceClassLoader.getResource(metainf + "/service.wsdl");
                 if (wsdlStream == null) {
                     wsdlLocation =  "META-INF/" + serviceName + ".wsdl";
                     wsdlStream = serviceClassLoader
                             .getResourceAsStream(wsdlLocation);
+                    wsdlURL = serviceClassLoader.getResource(wsdlLocation);
                 }
                 if (wsdlStream != null) {
                     WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
@@ -352,6 +354,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
                         wsdl2AxisServiceBuilder.setCustomResolver(
                                 new AARFileBasedURIResolver(file));
+                    }
+                    if (wsdlURL != null) {
+                        wsdl2AxisServiceBuilder.setDocumentBaseUri(wsdlURL.toString());
                     }
                     axisService = wsdl2AxisServiceBuilder.populateService();
                     axisService.setWsdlFound(true);
@@ -381,10 +386,13 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     String wsdlLocation =  "META-INF/service.wsdl";
                     InputStream wsdlStream =
                             serviceClassLoader.getResourceAsStream(wsdlLocation);
+                    URL wsdlURL = serviceClassLoader.getResource(wsdlLocation);
                     if (wsdlStream == null) {
                         wsdlLocation =  "META-INF/" + serviceName + ".wsdl";
                         wsdlStream = serviceClassLoader
                                 .getResourceAsStream(wsdlLocation);
+                        wsdlURL =
+                                serviceClassLoader.getResource(wsdlLocation);
                     }
                     if (wsdlStream != null) {
                         WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
@@ -395,6 +403,9 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                         new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
                             wsdl2AxisServiceBuilder.setCustomResolver(
                                     new AARFileBasedURIResolver(file));
+                        }
+                        if (wsdlURL != null) {
+                            wsdl2AxisServiceBuilder.setDocumentBaseUri(wsdlURL.toString());
                         }
                         axisService = wsdl2AxisServiceBuilder.populateService();
                         axisService.setWsdlFound(true);

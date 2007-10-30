@@ -25,14 +25,23 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamConstants;
@@ -44,7 +53,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
@@ -184,6 +195,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         // Add the interface element
         descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, omFactory, interfaceName));
 
+        // axis2.xml indicated no HTTP binding?
         boolean disableREST = false;
         Parameter disableRESTParameter =
                 axisService.getParameter(Constants.Configuration.DISABLE_REST);
@@ -192,6 +204,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             disableREST = true;
         }
 
+        // axis2.xml indicated no SOAP 1.2 binding?
+        boolean disableSOAP12 = false;
+        Parameter disableSOAP12Parameter =
+        axisService.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+        if (disableSOAP12Parameter != null &&
+                JavaUtils.isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+            disableSOAP12 = true;
+        }        
+        
         // Check whether the axisService has any endpoints. If they exists serialize them else
         // generate default endpoint elements.
         Set bindings = new HashSet();
@@ -212,11 +233,22 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
                 AxisBinding axisBinding = axisEndpoint.getBinding();
                 String type = axisBinding.getType();
+                
+                // If HTTP binding is disabled, do not add.
                 if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
                     if (disableREST) {
                         continue;
                     }
                 }
+                
+                // If SOAP 1.2 binding is disabled, do not add.
+                String propertySOAPVersion = (String)axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+                if (propertySOAPVersion != null) {
+                    if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                        continue;
+                    }
+                }
+                
                 bindings.add(axisBinding);
                 for (int i = 0; i < eprs.length; i++) {
                     String epr = eprs[i];
@@ -260,9 +292,11 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
+            if (!disableSOAP12) {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
                                                                 tns));
+            }
             if (!disableREST) {
                 descriptionElement.addChild(
                         WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
@@ -271,7 +305,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST, eprs));
+                                                                           axisService, disableREST, disableSOAP12, eprs));
         }
 
         return descriptionElement;
@@ -288,7 +322,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @return The generated interface element
      */
     private OMElement getInterfaceElement(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
-                                          OMFactory fac, String interfaceName) {
+                                          OMFactory fac, String interfaceName)
+            throws URISyntaxException, AxisFault {
 
         OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, wsdl);
         interfaceElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
@@ -320,7 +355,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     interfaceElement.addChild(faultElement);
                 }
             }
-
+                     
         }
         for (i = 0; i < interfaceOperations.size(); i++) {
             interfaceElement.addChild((OMNode) interfaceOperations.get(i));
@@ -364,7 +399,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     public OMElement generateInterfaceOperationElement(AxisOperation axisOperation,
                                                        OMNamespace wsdl,
                                                        OMNamespace tns,
-                                                       OMNamespace wsdlx) {
+                                                       OMNamespace wsdlx) throws
+            URISyntaxException, AxisFault {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
                 omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
@@ -373,6 +409,13 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                                       null,
                                                                       axisOperation.getName().getLocalPart()));
         URI[] opStyle = (URI[]) axisOperation.getParameterValue(WSDL2Constants.OPERATION_STYLE);
+        if (opStyle == null) {
+            opStyle = checkStyle(axisOperation);
+            Parameter opStyleParameter = new Parameter();
+            opStyleParameter.setName(WSDL2Constants.OPERATION_STYLE);
+            opStyleParameter.setValue(opStyle);
+            axisOperation.addParameter(opStyleParameter);
+        }
         if (opStyle != null && opStyle.length > 0) {
             String style = opStyle[0].toString();
             for (int i = 1; i < opStyle.length; i++) {
@@ -435,5 +478,170 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 
     public void setEPRs(String[] eprs) {
         this.eprs = eprs;
+    }
+
+    /**
+     * This function checks the schema and returns the WSDL 2.0 styles that it conform to.
+     * It checks for RPC, IRI and Multipart styles.
+     * For full details on the rules please refer http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626/#styles
+     * @param axisOperation - The axisOperation that needs to be checked
+     * @return String [] - An array of styles that the operation adheres to.
+     */
+    private URI [] checkStyle(AxisOperation axisOperation) throws URISyntaxException {
+        boolean isRPC = true;
+        boolean isMultipart = true;
+        boolean isIRI = true;
+        ArrayList styles = new ArrayList(3);
+
+        String mep = axisOperation.getMessageExchangePattern();
+        if (!(WSDL2Constants.MEP_URI_IN_ONLY.equals(mep) ||
+                WSDL2Constants.MEP_URI_IN_OUT.equals(mep))) {
+            isRPC = false;
+        }
+
+        QName inMessageElementQname;
+        Map inMessageElementDetails = new HashMap();
+        AxisMessage inMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_IN);
+        if (inMessage != null) {
+            QName qName = inMessage.getElementQName();
+            if (qName == null || Constants.XSD_ANY.equals(qName)) {
+                return new URI [0];
+            }
+            XmlSchemaElement schemaElement = inMessage.getSchemaElement();
+            if (schemaElement != null) {
+                if (!axisOperation.getName().getLocalPart().equals(schemaElement.getName())) {
+                    return new URI [0];
+                }
+                inMessageElementQname = schemaElement.getQName();
+                XmlSchemaType type = schemaElement.getSchemaType();
+                if (type != null && type instanceof XmlSchemaComplexType){
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                    XmlSchemaParticle particle = complexType.getParticle();
+                    if (particle != null && particle instanceof XmlSchemaSequence){
+                        XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+                        XmlSchemaObjectCollection schemaObjectCollection = xmlSchemaSequence.getItems();
+                        if (schemaObjectCollection != null) {
+                            Iterator iterator = schemaObjectCollection.getIterator();
+                            while (iterator.hasNext()) {
+                                Object next = iterator.next();
+                                if (!(next instanceof XmlSchemaElement)) {
+                                    return new URI [0];
+                                }
+                                XmlSchemaElement innerElement = (XmlSchemaElement) next;
+                                if (innerElement.getRefName() != null) {
+                                    return new URI [0];
+                                }
+                                if (innerElement.getMinOccurs() != 1 || innerElement.getMaxOccurs() != 1) {
+                                    isMultipart = false;
+                                }
+                                XmlSchemaType schemaType = innerElement.getSchemaType();
+                                QName innerElementQName = innerElement.getSchemaTypeName();
+                                if (schemaType instanceof XmlSchemaSimpleType) {
+                                    if (Constants.XSD_QNAME.equals(innerElementQName) ||
+                                            Constants.XSD_NOTATION.equals(innerElementQName) ||
+                                            Constants.XSD_HEXBIN.equals(innerElementQName) ||
+                                            Constants.XSD_BASE64.equals(innerElementQName)) {
+                                            isIRI = false;
+                                    }
+                                } else {
+                                    isIRI = false;
+                                }
+                                if (Constants.XSD_ANY.equals(innerElementQName) && iterator.hasNext()) {
+                                    isRPC = false;
+                                }
+                                String name = innerElement.getName();
+                                if (inMessageElementDetails.get(name) != null) {
+                                    isRPC = false;
+                                    isMultipart = false;
+                                }
+                                inMessageElementDetails.put(name, innerElementQName);
+                            }
+                        }
+                    } else {
+                        return new URI [0];
+                    }
+                } else {
+                        return new URI [0];
+                    }
+            } else {
+                return new URI [0];
+            }
+        } else {
+            return new URI [0];
+        }
+        if (isRPC && !WSDL2Constants.MEP_URI_IN_ONLY.equals(mep)) {
+            AxisMessage outMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_OUT);
+            QName qName = outMessage.getElementQName();
+            if (qName == null && Constants.XSD_ANY.equals(qName)) {
+                isRPC = false;
+            }
+            XmlSchemaElement schemaElement = outMessage.getSchemaElement();
+            if (schemaElement != null) {
+                if (!(axisOperation.getName().getLocalPart() + Java2WSDLConstants.RESPONSE)
+                        .equals(schemaElement.getName())) {
+                    isRPC = false;
+                }
+                if (!schemaElement.getQName().getNamespaceURI()
+                        .equals(inMessageElementQname.getNamespaceURI())) {
+                    isRPC = false;
+                }
+                XmlSchemaType type = schemaElement.getSchemaType();
+                if (type != null && type instanceof XmlSchemaComplexType) {
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                    XmlSchemaParticle particle = complexType.getParticle();
+                    if (particle != null && particle instanceof XmlSchemaSequence) {
+                        XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+                        XmlSchemaObjectCollection schemaObjectCollection =
+                                xmlSchemaSequence.getItems();
+                        if (schemaObjectCollection != null) {
+                            Iterator iterator = schemaObjectCollection.getIterator();
+                            Map outMessageElementDetails = new HashMap();
+                            while (iterator.hasNext()) {
+                                Object next = iterator.next();
+                                if (!(next instanceof XmlSchemaElement)) {
+                                    isRPC = false;
+                                }
+                                XmlSchemaElement innerElement = (XmlSchemaElement) next;
+                                QName schemaTypeName = innerElement.getSchemaTypeName();
+                                String name = innerElement.getName();
+                                if (innerElement.getRefName() != null) {
+                                    isRPC = false;
+                                }
+                                if (outMessageElementDetails.get(name) != null) {
+                                    isRPC = false;
+                                }
+                                QName inMessageElementType =
+                                        (QName) inMessageElementDetails.get(name);
+                                if (inMessageElementType != null &&
+                                        inMessageElementType != schemaTypeName) {
+                                    isRPC = false;
+                                }
+                                outMessageElementDetails.put(name, schemaTypeName);
+                            }
+                        }
+                    } else {
+                        isRPC = false;
+                    }
+                } else {
+                    isRPC = false;
+                }
+            } else {
+                isRPC = false;
+            }
+        }
+        int count = 0;
+        if (isRPC) {
+            styles.add(new URI(WSDL2Constants.STYLE_RPC));
+            count ++;
+        }
+        if (isIRI) {
+            styles.add(new URI(WSDL2Constants.STYLE_IRI));
+            count ++;
+        }
+        if (isMultipart) {
+            styles.add(new URI(WSDL2Constants.STYLE_MULTIPART));
+            count ++;
+        }
+        return (URI[]) styles.toArray(new URI[count]);
     }
 }

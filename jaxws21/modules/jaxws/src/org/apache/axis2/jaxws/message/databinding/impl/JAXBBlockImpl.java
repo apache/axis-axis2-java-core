@@ -23,6 +23,7 @@ import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
@@ -33,6 +34,7 @@ import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,9 +104,17 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         throws XMLStreamException, WebServiceException {
         // Get the JAXBBlockContext. All of the necessry information is recorded on it
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
+        
+        // retrieve the stored classloader if it is present
+        MessageContext msgContext = getParent() != null ? getParent().getMessageContext() : null;
+        ClassLoader cl = null;
+        if(msgContext != null) {
+            cl = (ClassLoader) msgContext.getProperty(Constants.CACHE_CLASSLOADER);
+        }
         try {
             // TODO Re-evaluate Unmarshall construction w/ MTOM
-            Unmarshaller u = JAXBUtils.getJAXBUnmarshaller(ctx.getJAXBContext());
+            
+            Unmarshaller u = JAXBUtils.getJAXBUnmarshaller(ctx.getJAXBContext(cl));
 
             if (DEBUG_ENABLED) {
                 log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
@@ -131,7 +141,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             }
 
             // Successfully unmarshalled the object
-            JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(), u);
+            JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(cl), u);
             
             // Don't close the reader.  The reader is owned by the caller, and it
             // may contain other xml instance data (other than this JAXB object)
@@ -140,7 +150,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
                 try {
-                    log.debug("JAXBContext for unmarshal failure:" + ctx.getJAXBContext());
+                    log.debug("JAXBContext for unmarshal failure:" + ctx.getJAXBContext(cl));
                 } catch (Exception e) {
                 }
             }
@@ -183,10 +193,17 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
         throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
+        
+        // retrieve the stored classloader if it is present
+        MessageContext msgContext = getParent() != null ? getParent().getMessageContext() : null;
+        ClassLoader cl = null;
+        if(msgContext != null) {
+            cl = (ClassLoader) msgContext.getProperty(Constants.CACHE_CLASSLOADER);
+        }
         try {
             // Very easy, use the Context to get the Marshaller.
             // Use the marshaller to write the object.
-            Marshaller m = JAXBUtils.getJAXBMarshaller(ctx.getJAXBContext());
+            Marshaller m = JAXBUtils.getJAXBMarshaller(ctx.getJAXBContext(cl));
 
 
             if (DEBUG_ENABLED) {
@@ -213,11 +230,11 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             }
 
             // Successfully marshalled the data
-            JAXBUtils.releaseJAXBMarshaller(ctx.getJAXBContext(), m);
+            JAXBUtils.releaseJAXBMarshaller(ctx.getJAXBContext(cl), m);
         } catch (JAXBException je) {
             if (DEBUG_ENABLED) {
                 try {
-                    log.debug("JAXBContext for marshal failure:" + ctx.getJAXBContext());
+                    log.debug("JAXBContext for marshal failure:" + ctx.getJAXBContext(cl));
                 } catch (Exception e) {
                 }
             }
@@ -232,10 +249,18 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param jbc
      * @throws WebServiceException
      */
-    private static QName getQName(Object jaxb, JAXBBlockContext ctx) throws JAXBException {
-        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(ctx.getJAXBContext());
+    private static QName getQName(Object jaxb, JAXBBlockContext ctx, Message msg) throws JAXBException {
+        
+        // retrieve the stored classloader if it is present
+        MessageContext msgContext = msg != null ? msg.getMessageContext() : null;
+        ClassLoader cl = null;
+        if(msgContext != null) {
+            cl = (ClassLoader) msgContext.getProperty(Constants.CACHE_CLASSLOADER);
+        }
+        
+        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(ctx.getJAXBContext(cl));
         QName qName = jbi.getElementName(jaxb);
-        JAXBUtils.releaseJAXBIntrospector(ctx.getJAXBContext(), jbi);
+        JAXBUtils.releaseJAXBIntrospector(ctx.getJAXBContext(cl), jbi);
         return qName;
     }
 

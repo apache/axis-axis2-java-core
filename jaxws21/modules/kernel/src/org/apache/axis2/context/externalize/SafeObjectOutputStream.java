@@ -332,7 +332,7 @@ public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutpu
                        boolean isSafe) throws IOException {
         
         if (isDebug) {
-            log.debug("Writing object:" + obj);
+            log.debug("Writing object:" + valueName(obj));
         }
         
         // Shortcut for null objects
@@ -431,7 +431,8 @@ public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutpu
                        boolean isSafe2) throws IOException {
         
         if (isDebug) {
-            log.debug("Writing key=" + obj1 + " value="+obj2);
+            log.debug("Writing key=" + valueName(obj1) + 
+                      " value="+valueName(obj2));
         }
         // Shortcut for non-serializable objects
         if ((!isSafe1 && !isSerializable(obj1)) ||
@@ -505,7 +506,7 @@ public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutpu
                        boolean isSafe) throws IOException {
         
         if (isDebug) {
-            log.debug("Writing obj=" + obj);
+            log.debug("Writing obj=" + valueName(obj));
         }
         // Shortcut for non-serializable objects
         if (!isSafe && !isSerializable(obj)) {
@@ -692,6 +693,15 @@ public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutpu
         }
     }
     
+    private String valueName(Object obj) {
+        if (obj == null) {
+            return "null";
+        } else if (obj instanceof String) {
+            return (String) obj;
+        } else {
+            return "Object of class = " + obj.getClass().getName();
+        }
+    }
     /**
      * MyBAOS is a ByteArrayOutputStream with a few additions.
      *

@@ -200,7 +200,7 @@ public class SafeObjectInputStream implements ObjectInput, ObjectStreamConstants
                 }
                 // Put the key and value in the map
                 if (isDebug) {
-                    log.debug("Read key=" + key + " value="+value);
+                    log.debug("Read key=" + valueName(key) + " value="+valueName(value));
                 }
                 map.put(key, value);
             } catch (ClassNotFoundException e) {
@@ -273,9 +273,9 @@ public class SafeObjectInputStream implements ObjectInput, ObjectStreamConstants
                     tempOIS.close();
                     bais.close();
                 }
-                // Put the key and value in the map
+                // Put the key and value in the list
                 if (isDebug) {
-                    log.debug("Read value="+value);
+                    log.debug("Read value="+valueName(value));
                 }
                 list.add(value);
             } catch (IOException e) {
@@ -341,10 +341,20 @@ public class SafeObjectInputStream implements ObjectInput, ObjectStreamConstants
         }
         
         if (isDebug) {
-            log.debug("Read object=" + obj);
+            log.debug("Read object=" + valueName(obj));
         }
         return obj;   
         
+    }
+    
+    private String valueName(Object obj) {
+        if (obj == null) {
+            return "null";
+        } else if (obj instanceof String) {
+            return (String) obj;
+        } else {
+            return "Object of class = " + obj.getClass().getName();
+        }
     }
     
     /**

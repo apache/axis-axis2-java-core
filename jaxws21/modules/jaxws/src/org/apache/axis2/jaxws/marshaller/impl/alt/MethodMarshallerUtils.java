@@ -907,6 +907,7 @@ public class MethodMarshallerUtils {
             NoSuchMethodException {
 
         Throwable exception = null;
+        
         // Get the fault from the message and get the detail blocks (probably one)
         XMLFault xmlfault = message.getXMLFault();
         Block[] detailBlocks = xmlfault.getDetailBlocks();
@@ -924,15 +925,19 @@ public class MethodMarshallerUtils {
                  i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
                 FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
-                QName tryQName = new QName(faultBeanDesc.getFaultBeanNamespace(),
-                                           faultBeanDesc.getFaultBeanLocalName());
-                if (log.isErrorEnabled()) {
-                    log.debug("  FaultDescription qname is (" + tryQName +
-                            ") and detail element qname is (" + elementQName + ")");
-                }
-                if (elementQName.equals(tryQName)) {
-                    faultDesc = fd;
-                }
+
+				if (faultBeanDesc != null) {
+					QName tryQName = new QName(faultBeanDesc.getFaultBeanNamespace(),
+							faultBeanDesc.getFaultBeanLocalName());
+					if (log.isErrorEnabled()) {
+						log.debug("  FaultDescription qname is (" + tryQName +
+								") and detail element qname is (" + elementQName + ")");
+					}
+
+					if (elementQName.equals(tryQName)) {
+						faultDesc = fd;
+					}
+				}
             }
         }
 
@@ -942,9 +947,11 @@ public class MethodMarshallerUtils {
                  i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
                 FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
-                String tryName = faultBeanDesc.getFaultBeanLocalName();
-                if (elementQName.getLocalPart().equals(tryName)) {
-                    faultDesc = fd;
+                if (faultBeanDesc != null) {
+                	String tryName = faultBeanDesc.getFaultBeanLocalName();
+                	if (elementQName.getLocalPart().equals(tryName)) {
+                		faultDesc = fd;
+                	}
                 }
             }
         }

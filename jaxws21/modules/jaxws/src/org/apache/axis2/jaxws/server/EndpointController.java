@@ -210,8 +210,9 @@ public class EndpointController {
 
         try {
             // Get the service instance.  This will run the @PostConstruct code.
-            EndpointLifecycleManager elm = createEndpointlifecycleManager();
-            Object serviceInstance = elm.createServiceInstance(request, serviceEndpoint);
+            ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
+                FactoryRegistry.getFactory(ServiceInstanceFactory.class);
+            Object serviceInstance = instanceFactory.createServiceInstance(request, serviceEndpoint);
 
             // The application handlers and dispatcher invoke will 
             // modify/destroy parts of the message.  Make sure to save
@@ -231,7 +232,7 @@ public class EndpointController {
                     log.debug("JAX-WS inbound handler chain invocation complete.");
                 }
                 // Set the dispatcher.
-                EndpointDispatcher dispatcher = getEndpointDispatcher(serviceEndpoint, serviceInstance);
+                EndpointDispatcher dispatcher = getEndpointDispatcher(request, serviceEndpoint, serviceInstance);
                 eic.setEndpointDispatcher(dispatcher);
                 return true;
             } else { // the inbound handler chain must have had a problem, and we've reversed directions
@@ -295,9 +296,15 @@ public class EndpointController {
       */
     protected EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance)
             throws Exception {
+            return getEndpointDispatcher(null, serviceImplClass, serviceInstance);
+    }
+    
+    protected EndpointDispatcher getEndpointDispatcher(MessageContext mc, Class serviceImplClass, 
+                                                       Object serviceInstance) 
+        throws Exception {
         EndpointDispatcherFactory factory = 
             (EndpointDispatcherFactory)FactoryRegistry.getFactory(EndpointDispatcherFactory.class);        
-        return factory.createEndpointDispatcher(serviceImplClass, serviceInstance);       
+        return factory.createEndpointDispatcher(mc, serviceImplClass, serviceInstance);   
     }
 
     private String getServiceImplClassName(MessageContext mc) {
@@ -335,7 +342,7 @@ public class EndpointController {
             //rather than just Exception.
         } catch (Throwable cnf) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr4", className));
+                    "EndpointControllerErr4", className), cnf);
         }
     }
 
@@ -358,7 +365,8 @@ public class EndpointController {
             );
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
+                log.debug("PrivilegedActionException thrown from AccessController: " + e);
+                log.debug("Real Cause is " + e.getException().getCause());
             }
             throw (ClassNotFoundException)e.getException();
         }
@@ -464,7 +472,7 @@ public class EndpointController {
                     Message msg = mf.createFrom(xmlreader, protocol);
                     requestMsgContext.setMessage(msg);
                 } catch (Throwable e) {
-                    ExceptionFactory.makeWebServiceException(e);
+                    throw ExceptionFactory.makeWebServiceException(e);
                 }
             }
         }

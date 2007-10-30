@@ -97,6 +97,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             EndpointController endpointCtlr = new EndpointController();
 
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
+            requestMsgCtx.setServer(true);
             requestMsgCtx.setMEPContext(new MEPContext(requestMsgCtx));
             
             // The adapters need to be installed on the new request Message Context
