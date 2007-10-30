@@ -856,7 +856,7 @@ public class SchemaCompiler {
                 // correct parent schema.
                 XmlSchema resolvedSchema = getParentSchema(parentSchema,complexType.getQName(),COMPONENT_TYPE);
                 if (resolvedSchema == null){
-                    throw new SchemaCompilationException("can not find the parent schema for the" +
+                    throw new SchemaCompilationException("can not find the parent schema for the " +
                             "complex type " + complexType.getQName() + " from the parent schema " +
                     parentSchema.getTargetNamespace());
                 } else {

@@ -1,3 +1,4 @@
+
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -22,6 +23,8 @@
     <xsl:key name="paramsOut" match="//databinders/param[@direction='out']" use="@type"/>
     <xsl:key name="innerParams" match="//databinders/param[@direction='in']/param" use="@partname"/>
     <xsl:key name="innerOutParams" match="//databinders/param[@direction='out']/param" use="@partname"/>
+    <xsl:key name="outOperationName" match="//databinders/param[@direction='out']" use="@opname"/>
+    <xsl:key name="inOperationName" match="//databinders/param[@direction='in']" use="@opname"/>
     <!--<xsl:key name="paramsType" match="//databinders/param[@direction='in']" use="@type"/>-->
 
     <!-- #################################################################################  -->
@@ -219,7 +222,8 @@
                              </xsl:if>
                         </xsl:for-each>
 
-                        <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1])">
+                        <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1]) or
+                                  generate-id($outputElement) = generate-id(key('outOperationName', $opname)[1])">
                             <xsl:if test="string-length(normalize-space($outputElementComplexType)) > 0">
 
                                 private <xsl:value-of select="$outputElementComplexType"/> get<xsl:value-of select="$opname"/>(
@@ -301,7 +305,8 @@
                         }
                      </xsl:if>
                 </xsl:for-each>
-                <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1])">
+                <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1]) or
+                    generate-id($inputElement) = generate-id(key('inOperationName', $opname)[1])">
                     <xsl:if test="string-length(normalize-space($inputElementComplexType)) > 0">
                         private <xsl:value-of select="$inputElementComplexType"/> get<xsl:value-of select="$opname"/>(
                         <xsl:value-of select="$inputElementType"/> wrappedType){
@@ -354,7 +359,8 @@
                      </xsl:if>
                 </xsl:for-each>
 
-            <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1])">
+            <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1]) or
+                    generate-id($outputElement) = generate-id(key('outOperationName', $opname)[1])">
                 <xsl:if test="string-length(normalize-space($outputElementComplexType)) > 0">
                     <!-- in server side we do not want to unwrap the output type -->
                     <!--

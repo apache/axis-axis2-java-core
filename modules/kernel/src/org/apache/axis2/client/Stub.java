@@ -197,9 +197,18 @@ public abstract class Stub {
                 envelop.getHeader().addHeaderBlock(omElementToadd.getLocalName(),omElementToadd.getNamespace());
         soapHeaderBlock.setMustUnderstand(mustUnderstand);
         OMNode omNode = null;
+
+        // add child elements
         for (Iterator iter = omElementToadd.getChildren(); iter.hasNext();){
              omNode = (OMNode) iter.next();
              soapHeaderBlock.addChild(omNode);
+        }
+
+        OMAttribute omatribute = null;
+        // add attributes
+        for (Iterator iter = omElementToadd.getAllAttributes(); iter.hasNext();){
+             omatribute = (OMAttribute) iter.next();
+             soapHeaderBlock.addAttribute(omatribute);
         }
 
     }

@@ -2890,6 +2890,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
 
+            //added the unwapparameters attribute this is use full to unwrap if paramerters are
+            //zero
+            if (!this.codeGenConfiguration.isParametersWrapped()){
+                addAttribute(doc, "unwrappParameters", "true", mainParameter);
+            }
+
             // this message has been unwrapped - find the correct references of the
             // the message by looking at the unwrapped details object and attach the
             // needed parameters inside main parameter element
