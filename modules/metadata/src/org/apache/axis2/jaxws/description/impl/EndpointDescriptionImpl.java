@@ -145,6 +145,7 @@ class EndpointDescriptionImpl
     //ANNOTATION: @HandlerChain
     private HandlerChain handlerChainAnnotation;
     private HandlerChainsType handlerChainsType;
+    private InputStream handlerChainSource;
 
     // Information common to both WebService and WebServiceProvider annotations
     private String annotation_WsdlLocation;
@@ -275,12 +276,22 @@ class EndpointDescriptionImpl
         this.parentServiceDescription = parent;
         this.serviceImplName = serviceImplName;
         this.implOrSEIClass = null;
+        
 
         composite = getServiceDescriptionImpl().getDescriptionBuilderComposite();
         if (composite == null) {
             throw ExceptionFactory.makeWebServiceException(
                     "EndpointDescription.EndpointDescription: parents DBC is null");
         }
+        
+        if(composite.getHandlerChainAnnot() != null && composite.getHandlerChainSource() != null) {
+        	throw ExceptionFactory.makeWebServiceException(
+            Messages.getMessage("handlerSourceFail", composite.getClassName()));
+        }
+        
+        handlerChainSource = composite.getHandlerChainSource();
+        
+        handlerChainsType = composite.getHandlerChainsType();
 
         //Set the base level of annotation that we are processing...currently
         // a 'WebService' or a 'WebServiceProvider'
@@ -1345,6 +1356,13 @@ class EndpointDescriptionImpl
                 } else {
                     handlerChainsType = DescriptionUtils.loadHandlerChains(is);
                 }
+            }
+            else if(handlerChainSource != null) {
+            	
+            	if(log.isDebugEnabled()) {
+            		log.debug("Loading handlers from provided source");
+            	}
+            	handlerChainsType = DescriptionUtils.loadHandlerChains(handlerChainSource);
             }
         }
         return handlerChainsType;
