@@ -1366,8 +1366,8 @@
 
                                             <xsl:if test="not(@primitive)">
                                                 <xsl:choose>
-                                                    <xsl:when test="$propertyType='java.lang.String[]'">
-                                                        xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>[i]);
+                                                    <xsl:when test="@binary">
+                                                        xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>[i]);
                                                     </xsl:when>
                                                     <xsl:otherwise>
                                                         xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
