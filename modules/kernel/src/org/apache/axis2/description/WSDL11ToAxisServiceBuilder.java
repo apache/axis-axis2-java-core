@@ -89,17 +89,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
+
+    public static final int COMPONENT_PORT_TYPE = 1;
+    public static final int COMPONENT_MESSAGE = 2;
+    public static final int COMPONENT_BINDING = 3;
 
     protected static final Log log = LogFactory
             .getLog(WSDL11ToAxisServiceBuilder.class);
@@ -303,11 +299,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition.getTargetNamespace());
             axisService.setNameSpacesMap(new NamespaceMap(wsdl4jDefinition.getNamespaces()));
 
+            //TODO : find the service also in imported wsdls
             Service wsdl4jService = findService(wsdl4jDefinition);
+
             Binding binding = findBinding(wsdl4jDefinition, wsdl4jService);
-
-
-            PortType portType = getPortType(binding.getPortType().getQName(), wsdl4jDefinition);
+            Definition bindingWSDL = getParentDefinition(wsdl4jDefinition,
+                    binding.getQName(), COMPONENT_BINDING, new HashSet());
+            Definition portTypeWSDL = getParentDefinition(bindingWSDL,
+                    binding.getPortType().getQName(), COMPONENT_PORT_TYPE, new HashSet());
+            PortType portType = portTypeWSDL.getPortType(binding.getPortType().getQName());
 
 
             if (portType == null) {
@@ -318,14 +318,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // (if its present)
             Element[] schemaElements = generateWrapperSchema(schemaMap, binding, portType);
 
-            // we might have modified the schemas by now so the addition should
-            // happen here
-//            Types wsdl4jTypes = wsdl4jDefinition.getTypes();
-//            if (null != wsdl4jTypes) {
-//                this.copyExtensibleElements(wsdl4jTypes
-//                        .getExtensibilityElements(), wsdl4jDefinition,
-//                                                     axisService, TYPES);
-//            }
             processTypes(wsdl4jDefinition, axisService);
 
             // add the newly created schemas
@@ -342,7 +334,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             addDocumentation(axisService, documentationElement);
 
             axisService.setName(wsdl4jService.getQName().getLocalPart());
-            populateEndpoints(binding, wsdl4jService, portType);
+            populateEndpoints(binding, bindingWSDL,wsdl4jService, portType, portTypeWSDL);
             processPoliciesInDefintion(wsdl4jDefinition);
             axisService.getPolicyInclude().setPolicyRegistry(registry);
 
@@ -378,12 +370,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private void processTypes(Definition wsdlDefinition, AxisService axisService)
             throws AxisFault {
-        processTypes(wsdlDefinition, axisService, new Stack());
+        processTypes(wsdlDefinition, axisService, new HashSet());
     }
 
-    private void processTypes(Definition wsdlDefinition, AxisService axisService, Stack stack)
+    private void processTypes(Definition wsdlDefinition,
+                              AxisService axisService,
+                              Set visitedWSDLs)
             throws AxisFault {
-        stack.push(wsdlDefinition);
+        visitedWSDLs.add(wsdlDefinition.getDocumentBaseURI());
         // process all the types in all the wsdls
         Types types = wsdlDefinition.getTypes();
         if (types != null) {
@@ -403,12 +397,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 wsdlImport = (Import) valuesIter.next();
                 // process the types recuresiveilt
                 Definition innerDefinition = wsdlImport.getDefinition();
-                if(!stack.contains(innerDefinition)){
-                    processTypes(innerDefinition, axisService, stack);
+                if(!visitedWSDLs.contains(innerDefinition.getDocumentBaseURI())){
+                    processTypes(innerDefinition, axisService, visitedWSDLs);
                 }
             }
         }
-        stack.pop();
     }
 
     private void addDocumentation(AxisDescription axisDescription, Element documentationElement) {
@@ -427,8 +420,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws AxisFault
      */
     private void populateEndpoints(Binding binding,
+                                   Definition bindingWSDL,
                                    Service wsdl4jService,
-                                   PortType portType) throws AxisFault {
+                                   PortType portType,
+                                   Definition portTypeWSDL) throws AxisFault {
 
         Map wsdl4jPorts = wsdl4jService.getPorts();
         QName bindingName = binding.getQName();
@@ -441,28 +436,33 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // process the port type for this binding
         // although we support multiports they must be belongs to same port type and should have the
         // same soap style
-        populatePortType(portType);
+        populatePortType(portType, portTypeWSDL);
 
         Binding currentBinding;
+        Definition currentBindingWSDL = null;
 
         for (Iterator iterator = wsdl4jPorts.values().iterator(); iterator.hasNext();) {
             port = (Port) iterator.next();
             // if the user has picked a port then we have to process only that port
             if ((this.portName == null) || (this.portName.equals(port.getName()))) {
                 // we process the port only if it has the same port type as the selected binding
-                currentBinding = getBinding(port.getBinding().getQName(), wsdl4jDefinition);
+                currentBindingWSDL = getParentDefinition(wsdl4jDefinition,
+                        port.getBinding().getQName(), COMPONENT_BINDING, new HashSet());
+                currentBinding = currentBindingWSDL.getBinding(port.getBinding().getQName());
 
                 if (currentBinding.getPortType().getQName().equals(binding.getPortType().getQName())) {
                     axisEndpoint = new AxisEndpoint();
                     axisEndpoint.setName(port.getName());
 
                     if (axisService.getEndpointName() == null &&
-                        bindingName.equals(port.getBinding().getQName())) {
-                        populateEndpoint(axisEndpoint, port, true);
+                            bindingName.equals(port.getBinding().getQName())) {
+                        populateEndpoint(axisEndpoint, port, currentBinding,
+                                bindingWSDL, portType, portTypeWSDL, true);
                         axisService.setEndpointName(axisEndpoint.getName());
                         axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
                     } else {
-                        populateEndpoint(axisEndpoint, port, false);
+                        populateEndpoint(axisEndpoint, port, currentBinding,
+                                bindingWSDL, portType, portTypeWSDL, false);
                     }
 
                     axisEndpoint.setParent(axisService);
@@ -483,15 +483,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param isSetMessageQNames
      * @throws AxisFault
      */
-    private void populateEndpoint(AxisEndpoint axisEndpoint, Port wsdl4jPort,
+    private void populateEndpoint(AxisEndpoint axisEndpoint,
+                                  Port wsdl4jPort,
+                                  Binding wsdl4jBinding,
+                                  Definition bindingWSDL,
+                                  PortType portType,
+                                  Definition portTypeWSDL,
                                   boolean isSetMessageQNames)
             throws AxisFault {
 
         copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdl4jDefinition,
                                axisEndpoint, BINDING);
-
-
-        Binding wsdl4jBinding = getBinding(wsdl4jPort.getBinding().getQName(), wsdl4jDefinition);
 
         addDocumentation(axisEndpoint, wsdl4jPort.getDocumentationElement());
         if (processedBindings.containsKey(wsdl4jBinding.getQName())) {
@@ -503,13 +505,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBinding.setParent(axisEndpoint);
             axisEndpoint.setBinding(axisBinding);
             axisBinding.setParent(axisEndpoint);
-            populateBinding(axisBinding, wsdl4jBinding, isSetMessageQNames);
+            populateBinding(axisBinding,
+                    wsdl4jBinding,
+                    bindingWSDL,
+                    portType,
+                    portTypeWSDL,
+                    isSetMessageQNames);
             processedBindings.put(wsdl4jBinding.getQName(), axisBinding);
         }
 
     }
 
-    private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
+    private void populatePortType(PortType wsdl4jPortType,
+                                  Definition portTypeWSDL) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
         // Added to use in ?wsdl2 as the interface name
@@ -528,7 +536,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (Iterator iterator = wsdl4jOperations.iterator(); iterator.hasNext();) {
             wsdl4jOperation = (Operation) iterator.next();
 
-            axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, wsdl4jDefinition);
+            axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, portTypeWSDL);
             addDocumentation(axisOperation, wsdl4jOperation.getDocumentationElement());
             axisOperation.setParent(axisService);
             axisService.addChild(axisOperation);
@@ -542,11 +550,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     }
 
-    private void populateBinding(AxisBinding axisBinding, Binding wsdl4jBinding,
+    private void populateBinding(AxisBinding axisBinding,
+                                 Binding wsdl4jBinding,
+                                 Definition bindingWSDL,
+                                 PortType portType,
+                                 Definition portTypeWSDL,
                                  boolean isSetMessageQNames)
             throws AxisFault {
 
-        copyExtensibleElements(wsdl4jBinding.getExtensibilityElements(), wsdl4jDefinition,
+        copyExtensibleElements(wsdl4jBinding.getExtensibilityElements(), bindingWSDL,
                                axisBinding, BINDING);
 
         List wsdl4jBidingOperations = wsdl4jBinding.getBindingOperations();
@@ -566,20 +578,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         Map httpLocationMap = new TreeMap();
         String httpLocation = null;
 
-        PortType portType = getPortType(wsdl4jBinding.getPortType().getQName(), wsdl4jDefinition);
-
-        String targetNamespace = wsdl4jDefinition.getTargetNamespace();
-
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
 
             axisBindingOperation = new AxisBindingOperation();
             wsdl4jBindingOperation = (BindingOperation) iterator.next();
             wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
 
-            axisBindingOperation.setName(new QName(targetNamespace, wsdl4jBindingOperation.getName()));
+            axisBindingOperation.setName(new QName(bindingWSDL.getTargetNamespace(), wsdl4jBindingOperation.getName()));
             addDocumentation(axisBindingOperation, wsdl4jBindingOperation.getDocumentationElement());
 
-            axisOperation = axisService.getOperation(new QName(targetNamespace, wsdl4jOperation.getName()));
+            axisOperation = axisService.getOperation(new QName(portTypeWSDL.getTargetNamespace(), wsdl4jOperation.getName()));
             axisBindingOperation.setAxisOperation(axisOperation);
 
             // process ExtensibilityElements of the wsdl4jBinding
@@ -728,12 +736,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             return; // can't continue without wsdl
         }
 
-        // process the imports
-//        WSDL4JImportedWSDLHelper.processImports(wsdl4jDefinition, new ArrayList());
 
         // setup the schemaMap
         this.schemaMap = new HashMap();
-        populateSchemaMap(wsdl4jDefinition, new Stack());
+        populateSchemaMap(wsdl4jDefinition, new HashSet());
 
         setPolicyRegistryFromService(axisService);
 
@@ -749,8 +755,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param definition
      */
 
-    private void populateSchemaMap(Definition definition, Stack stack) {
-        stack.push(definition);
+    private void populateSchemaMap(Definition definition, Set visitedWSDLs) {
+        visitedWSDLs.add(definition.getDocumentBaseURI());
+        // first process the types in the given wsdl
         Types types = definition.getTypes();
         Object extensibilityElement;
         if (types != null) {
@@ -773,12 +780,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 Definition innerDefinition = wsdlImport.getDefinition();
-                if(!stack.contains(innerDefinition)) {
-                    populateSchemaMap(innerDefinition, stack);
+                if(!visitedWSDLs.contains(innerDefinition.getDocumentBaseURI())) {
+                    populateSchemaMap(innerDefinition, visitedWSDLs);
                 }
             }
         }
-        stack.pop();
     }
 
 
@@ -875,150 +881,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (port != null) {
             copyExtensibleElements(port.getExtensibilityElements(), dif,
                                    axisService, PORT);
-//            binding = dif.getBinding(port.getBinding().getQName());
-            binding = getBinding(port.getBinding().getQName(), dif);
+            Definition parentDefinition = getParentDefinition(dif,
+                    port.getBinding().getQName(), COMPONENT_BINDING, new HashSet());
+            binding = parentDefinition.getBinding(port.getBinding().getQName());
             if (binding == null) {
                 binding = port.getBinding();
             }
         }
 
-        return binding;
-    }
-
-    /**
-     * find the message from imported wsdls
-     *
-     * @param messageQName
-     * @param definition
-     * @return message
-     */
-    private Message getMessage(QName messageQName, Definition definition) {
-        Message message = null;
-        // this can be in a imported wsdl
-        Iterator iter = definition.getImports().values().iterator();
-        Vector values = null;
-        Import wsdlImport = null;
-        for (; iter.hasNext();) {
-            values = (Vector) iter.next();
-            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
-                wsdlImport = (Import) valuesIter.next();
-                // find the binding recursively
-                message = getMessage(messageQName, wsdlImport.getDefinition());
-                if (message != null) {
-                    break;
-                }
-            }
-            if (message != null) {
-                break;
-            }
-        }
-
-        if (message == null) {
-            message = definition.getMessage(messageQName);
-        }
-        return message;
-    }
-
-    /**
-     * get the port type form all the imported documents
-     *
-     * @param portTypeQName
-     * @param definition
-     * @return portType
-     */
-
-    private PortType getPortType(QName portTypeQName, Definition definition) {
-        return getPortType(portTypeQName, definition, new Stack());
-    }
-
-    /**
-     * get the port type form all the imported documents
-     *
-     * @param portTypeQName
-     * @param definition
-     * @return portType
-     */
-
-    private PortType getPortType(QName portTypeQName, Definition definition, Stack stack) {
-        stack.push(definition);
-        PortType portType = null;
-        Iterator iter = definition.getImports().values().iterator();
-        Vector values = null;
-        Import wsdlImport = null;
-        for (; iter.hasNext();) {
-            values = (Vector) iter.next();
-            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
-                wsdlImport = (Import) valuesIter.next();
-                Definition innerDefinition = wsdlImport.getDefinition();
-                if(!stack.contains(innerDefinition)){
-                    // find the binding recursively
-                    portType = getPortType(portTypeQName, innerDefinition, stack);
-                    if (portType != null) {
-                        break;
-                    }
-                }
-            }
-            if (portType != null) {
-                break;
-            }
-        }
-
-        if (portType == null) {
-            // this can be in a imported wsdl
-            portType = definition.getPortType(portTypeQName);
-        }
-        stack.pop();
-        return portType;
-    }
-
-    private Binding getBinding(QName bindingQName, Definition definition) {
-        ArrayList list = new ArrayList();
-        Binding binding = getBinding(bindingQName, definition, list);
-        if (binding == null) {
-            for(int i=0;i<list.size();i++){
-                Binding binding2 = definition.getBinding(bindingQName);
-                if(binding2 != null && binding2.getPortType() != null){
-                    binding = binding2;
-                    break;
-                }
-            }
-        }
-        return binding;
-    }
-
-    /**
-     * first find the binding in the given definition
-     * if not found serch in the imported doucuments
-     *
-     * @param bindingQName
-     * @param definition
-     * @return binding
-     */
-
-    private Binding getBinding(QName bindingQName, Definition definition, ArrayList list) {
-        list.add(definition);
-        Binding binding = null;
-        //first try to find a binding in the upper inmport
-        Iterator iter = definition.getImports().values().iterator();
-        Vector values = null;
-        Import wsdlImport = null;
-        for (; iter.hasNext();) {
-            values = (Vector) iter.next();
-            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
-                wsdlImport = (Import) valuesIter.next();
-                Definition innerDefinition = wsdlImport.getDefinition();
-                if(!list.contains(innerDefinition)) {
-                    // find the binding recursively
-                    binding = getBinding(bindingQName, innerDefinition, list);
-                    if (binding != null) {
-                        break;
-                    }
-                }
-            }
-            if (binding != null) {
-                break;
-            }
-        }
         return binding;
     }
 
@@ -2154,7 +2024,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error",
                                         e);
             }
-            
+
             // Log when and from where the WSDL is loaded.
             if (log.isDebugEnabled()) {
                 log.debug("Reading 1.1 WSDL with base uri = " + getBaseUri());
@@ -2733,7 +2603,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param definition
      */
     private void processPoliciesInDefintion(Definition definition) {
-        processPoliciesInDefintion(definition, new Stack());
+        processPoliciesInDefintion(definition, new HashSet());
     }
 
     /**
@@ -2741,8 +2611,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @param definition
      */
-    private void processPoliciesInDefintion(Definition definition, Stack stack) {
-        stack.push(definition);
+    private void processPoliciesInDefintion(Definition definition, Set visitedWSDLs) {
+        visitedWSDLs.add(definition.getDocumentBaseURI());
         List extElements = definition.getExtensibilityElements();
         ExtensibilityElement extElement;
         UnknownExtensibilityElement unknown = null;
@@ -2775,12 +2645,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 wsdlImport = (Import) valuesIter.next();
                 Definition innerDefinition = wsdlImport.getDefinition();
                 // find the binding recursively
-                if(!stack.contains(innerDefinition)) {
-                    processPoliciesInDefintion(innerDefinition, stack);
+                if(!visitedWSDLs.contains(innerDefinition.getDocumentBaseURI())) {
+                    processPoliciesInDefintion(innerDefinition, visitedWSDLs);
                 }
             }
         }
-        stack.pop();
     }
 
 
@@ -2858,5 +2727,72 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         }
         return null;
+    }
+
+    /**
+     * returns the wsld defintion for the given component.
+     * @param definition
+     * @param qname
+     * @param componentType
+     * @param visitedWSDLs
+     * @return definition containing the component.
+     */
+    private Definition getParentDefinition(Definition definition,
+                                           QName qname,
+                                           int componentType,
+                                           Set visitedWSDLs){
+        visitedWSDLs.add(definition.getDocumentBaseURI());
+        Definition newParentDefinition = null;
+        // first find through imports
+        Iterator iter = definition.getImports().values().iterator();
+        Vector values = null;
+        Import wsdlImport = null;
+        for (; iter.hasNext();) {
+            values = (Vector) iter.next();
+            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
+                wsdlImport = (Import) valuesIter.next();
+                Definition innerDefinition = wsdlImport.getDefinition();
+                if (!visitedWSDLs.contains(innerDefinition.getDocumentBaseURI())){
+                    newParentDefinition = getParentDefinition(innerDefinition,qname,componentType,visitedWSDLs);
+                    if (newParentDefinition != null){
+                        break;
+                    }
+                }
+            }
+            if (newParentDefinition != null) {
+                break;
+            }
+        }
+
+        // if it not available in imports we check for the current definition.
+        if (newParentDefinition == null) {
+            // this can be in a imported wsdl
+            if (isComponetAvailable(definition, qname, componentType)) {
+                newParentDefinition = definition;
+            }
+        }
+
+        return newParentDefinition;
+    }
+
+    private boolean isComponetAvailable(Definition definition,
+                                        QName qname,
+                                        int componentType){
+        boolean isAvailable = false;
+        switch (componentType){
+            case COMPONENT_BINDING : {
+                isAvailable = (definition.getBinding(qname) != null);
+                break;
+            }
+            case COMPONENT_PORT_TYPE : {
+                isAvailable = (definition.getPortType(qname) != null);
+                break;
+            }
+            case COMPONENT_MESSAGE : {
+                isAvailable = (definition.getMessage(qname) != null);
+                break;
+            }
+        }
+        return isAvailable;
     }
 }
