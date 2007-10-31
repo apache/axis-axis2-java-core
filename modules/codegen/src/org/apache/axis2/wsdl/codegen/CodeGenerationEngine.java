@@ -292,33 +292,8 @@ public class CodeGenerationEngine {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);
-
-        Document doc;
-        try {
-            doc = XMLUtils.newDocument(uri);
-
-            // Set the URI of the base document for the Definition.
-            // This identifies the origin of the Definition
-            // Note that this is the URI of the base document, not the imports.
-            Definition def = reader.readWSDL(getBaseURI(uri), doc);
-            def.setDocumentBaseURI(getURI(uri));
-
-            return def;
-
-        } catch (ParserConfigurationException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR,
-                                    "Parser Configuration Error",
-                                    e);
-        } catch (SAXException e) {
-            throw new WSDLException(WSDLException.PARSER_ERROR,
-                                    "Parser SAX Error",
-                                    e);
-
-        } catch (IOException e) {
-            throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
-        } catch (URISyntaxException e) {
-            throw new WSDLException(WSDLException.OTHER_ERROR, "URI Syntax Error", e);
-        }
+        return reader.readWSDL(uri);
+        
     }
 
 

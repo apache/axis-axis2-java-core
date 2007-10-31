@@ -21,6 +21,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
@@ -348,10 +349,15 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Element methodElement;
         String portTypeName = makeCClassName(axisService.getName());
 
-        Iterator operations = axisService.getOperations();
+        Iterator bindingOperations = this.axisBinding.getChildren();
         boolean opsFound = false;
-        while (operations.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation)operations.next();
+        AxisOperation axisOperation = null;
+        AxisBindingOperation axisBindingOperation = null;
+
+        while (bindingOperations.hasNext()) {
+
+            axisBindingOperation = (AxisBindingOperation) bindingOperations.next();
+            axisOperation = axisBindingOperation.getAxisOperation();
 
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
@@ -410,9 +416,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 }
 
                 methodElement.appendChild(
-                        getInputElement(doc, axisOperation, soapHeaderInputParameterList));
+                        getInputElement(doc, axisBindingOperation, soapHeaderInputParameterList));
                 methodElement.appendChild(
-                        getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                        getOutputElement(doc, axisBindingOperation, soapHeaderOutputParameterList));
                 methodElement.appendChild(getFaultElement(doc, axisOperation));
 
                 rootElement.appendChild(methodElement);
@@ -469,10 +475,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
                     methodElement.appendChild(getInputElement(doc,
-                                                              axisOperation,
+                                                              axisBindingOperation,
                                                               soapHeaderInputParameterList));
                     methodElement.appendChild(getOutputElement(doc,
-                                                               axisOperation,
+                                                               axisBindingOperation,
                                                                soapHeaderOutputParameterList));
                     methodElement.appendChild(getFaultElement(doc,
                                                               axisOperation));
