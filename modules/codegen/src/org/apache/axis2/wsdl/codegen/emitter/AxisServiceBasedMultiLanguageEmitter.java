@@ -2207,7 +2207,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "usdbimpl", "false", methodElement);
         }
 
-        addSOAPAction(doc, methodElement, axisOperation.getName());
+        addSOAPAction(doc, methodElement, bindingOperation.getName());
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
