@@ -65,7 +65,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
-        if (msgContext.isPropertyTrue(IS_ADDR_INFO_ALREADY_PROCESSED)) {
+        if (JavaUtils.isTrueExplicitly(msgContext.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED), false)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(
                         "Another handler has processed the addressing headers. Nothing to do here.");
@@ -109,9 +109,9 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                 log.debug(addressingVersion +
                         " Headers present in the SOAP message. Starting to process ...");
             }
-
-            extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
-            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
+            if(extractAddressingInformation(header, msgContext, addressingHeaders, namespace)){
+            	msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
+            }
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
@@ -124,7 +124,8 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     
     protected static final int TO_FLAG = 1, FROM_FLAG = 2, REPLYTO_FLAG = 3,
 	FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
-    protected Options extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
+    /** @return true if addressing information was found */
+    protected boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
                                                    ArrayList addressingHeaders, String namespace)
             throws AxisFault {
 
@@ -181,6 +182,14 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         		}
         	}
         }
+        
+        if (actionBlock == null && toBlock == null && messageIDBlock == null
+				&& replyToBlock == null && faultToBlock == null
+				&& fromBlock == null && relatesToHeaders == null) {
+			// All of the headers must have had the none role so further
+			// processing should be skipped.
+			return false;
+		}
 
         if (actionBlock!=null && !ignoreHeaders[ACTION_FLAG]) {
             extractActionInformation(actionBlock, messageContext);
@@ -223,7 +232,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         // provide default values for headers that have not been found.
         setDefaults(checkedHeaderNames, messageContext);
 
-        return messageContextOptions;
+        return true;
     }
 
     protected abstract void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
