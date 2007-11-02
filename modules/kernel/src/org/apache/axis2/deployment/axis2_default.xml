@@ -168,6 +168,20 @@
     <!--<transportSender name="java"-->
                      <!--class="org.apache.axis2.transport.java.JavaTransportSender"/>-->
 
+
+    <!-- ================================================= -->
+    <!--  SOAP Role Configuration                          -->
+    <!-- ================================================= -->
+    <!-- Use the following pattern to configure this axis2
+         instance to act in particular roles. Note that in
+         the absence of any configuration, Axis2 will act 
+         only in the ultimate receiver role -->
+    <!--
+    <SOAPRoleConfiguration isUltimateReceiver="true">
+    	<role>http://my/custom/role</role>
+    </SOAPRoleConfiguration>
+	-->
+
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->

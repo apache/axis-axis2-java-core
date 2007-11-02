@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -48,7 +49,7 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
         String testfile = directory + "/" + versionDirectory + "/" + testName;
 
         MessageContext mc = new MessageContext();
-
+        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testfile);
         mc.setEnvelope(omBuilder.getSOAPEnvelope());
 

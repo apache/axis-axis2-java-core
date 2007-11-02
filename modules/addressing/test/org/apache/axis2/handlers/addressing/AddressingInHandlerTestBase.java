@@ -22,15 +22,20 @@ package org.apache.axis2.handlers.addressing;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +50,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     AddressingInHandler inHandler;
     String addressingNamespace;
     TestUtil testUtil = new TestUtil();
-    private String testFileName = "soapmessage.xml";
+    String testFileName = "soapmessage.xml";
 
     String versionDirectory;
 
@@ -72,12 +77,14 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                                                addressingNamespace);
     }
 
-    protected Options extractAddressingInformationFromHeaders() {
-        try {
+    protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer) throws Exception{
             String testfile = "valid-messages/" + versionDirectory + "/" + testFileName;
 
             MessageContext mc = new MessageContext();
-
+            mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+            if(rolePlayer != null){
+            	mc.getConfigurationContext().getAxisConfiguration().addParameter(Constants.SOAP_ROLE_PLAYER_PARAMETER, rolePlayer);
+            }
             basicExtractAddressingInformationFromHeaders(testfile, mc);
 
             Options options = mc.getOptions();
@@ -101,14 +108,6 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
             assertRelationships(options);
 
             return options;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
-
-        return null;
     }
 
     private void testExtractAddressingInformationFromHeadersInvalidCardinality(String headerName) {
@@ -116,6 +115,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 "/invalidCardinality" + headerName + "Message.xml";
         try {
             MessageContext mc = new MessageContext();
+            mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
             try {
                 basicExtractAddressingInformationFromHeaders(testfile, mc);
                 fail("An AxisFault should have been thrown due to 2 wsa:" + headerName +
@@ -171,6 +171,8 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 "omitted-header-messages/" + versionDirectory + "/" + testName + "Message.xml";
 
         MessageContext mc = new MessageContext();
+        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+        mc.setConfigurationContext(cc);
         basicExtractAddressingInformationFromHeaders(testfile, mc);
 
         return mc.getOptions();

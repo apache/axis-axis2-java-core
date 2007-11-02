@@ -19,6 +19,10 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -44,15 +48,23 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         secondRelationshipType = "axis2:some.custom.relationship";
     }
 
-    public void testExtractAddressingInformationFromHeaders() {
-        try {
-            Options options = extractAddressingInformationFromHeaders();
-            // Cannot check refparams in 2004/08 case as they can't be extracted until later
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
+    public void testExtractAddressingInformationFromHeaders() throws Exception{
+    	extractAddressingInformationFromHeaders(null);
+    	// Cannot check refparams in 2004/08 case as they can't be extracted until later
+    }
+    
+    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception{
+    	testFileName = "soapmessage.customrole.xml";
+    	extractAddressingInformationFromHeaders(new RolePlayer(){
+			public List getRoles() {
+				ArrayList al = new ArrayList();
+				al.add("http://my/custom/role");
+				return al;
+			}
+			public boolean isUltimateDestination() {
+				return false;
+			}
+    	});
     }
 
     public void testMessageWithOmittedAction() {

@@ -21,14 +21,19 @@ package org.apache.axis2.handlers.addressing;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP12Version;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.SOAPVersion;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
@@ -54,7 +59,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
     private boolean disableRefparamExtract = false;
-    	  	 
+        	  	 
     public void init(HandlerDescription handlerdesc) {
     	super.init(handlerdesc);
     	disableRefparamExtract = JavaUtils.isTrueExplicitly(Utils.getParameterValue(handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT)));
@@ -129,6 +134,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                                                    ArrayList addressingHeaders, String namespace)
             throws AxisFault {
 
+    	RolePlayer rolePlayer = (RolePlayer)messageContext.getConfigurationContext().getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
         Options messageContextOptions = messageContext.getOptions();
       
         ArrayList duplicateHeaderNames = new ArrayList(1); // Normally will not be used for more than 1 header
@@ -144,7 +150,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         // First pass just check for duplicates
         for(int i=0;i<addressingHeaders.size();i++){
         	SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeaders.get(i);
-        	if (messageContext.isSOAP11() || !SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
+        	if (isInRole(soapHeaderBlock, rolePlayer, messageContext.isSOAP11())) {
         		String localName = soapHeaderBlock.getLocalName();
         		if (WSA_ACTION.equals(localName)) {
         			actionBlock = soapHeaderBlock;
@@ -186,7 +192,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (actionBlock == null && toBlock == null && messageIDBlock == null
 				&& replyToBlock == null && faultToBlock == null
 				&& fromBlock == null && relatesToHeaders == null) {
-			// All of the headers must have had the none role so further
+			// All of the headers must have had the non local roles so further
 			// processing should be skipped.
 			return false;
 		}
@@ -235,6 +241,37 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         return true;
     }
 
+    // Copied from SOAPHeaderImpl.java - some reconciliation probably a good idea....
+    protected boolean isInRole(SOAPHeaderBlock soapHeaderBlock, RolePlayer rolePlayer, boolean isSOAP11){
+    	String role = soapHeaderBlock.getRole();
+
+    	// 1. If role is ultimatedest, go by what the rolePlayer says
+    	if (role == null || role.equals("") ||
+    			(!isSOAP11 &&
+    					role.equals(SOAP12Constants.SOAP_ROLE_ULTIMATE_RECEIVER))) {
+    		return (rolePlayer == null || rolePlayer.isUltimateDestination());
+    	}
+
+    	// 2. If role is next, always return true
+    	if (role.equals(soapHeaderBlock.getVersion().getNextRoleURI())) return true;
+
+    	// 3. If role is none, always return false
+    	if (!isSOAP11 && role.equals(SOAP12Constants.SOAP_ROLE_NONE)) {
+    		return false;
+    	}
+
+    	// 4. Return t/f depending on match
+    	List roles = (rolePlayer == null) ? null : rolePlayer.getRoles();
+    	if (roles != null) {
+    		for (int i=0;i<roles.size();i++) {
+    			String thisRole = (String) roles.get(i);
+    			if (thisRole.equals(role)) return true;
+    		}
+    	}
+
+    	return false;
+    }
+    
     protected abstract void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
     		MessageContext messageContext)
     throws AxisFault;

@@ -20,16 +20,19 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
@@ -52,7 +55,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
 
     public void testExtractAddressingInformationFromHeaders() {
         try {
-            Options options = extractAddressingInformationFromHeaders();
+            Options options = extractAddressingInformationFromHeaders(null);
 
             assertNotNull(options);
             assertNotNull(options.getTo());
@@ -71,6 +74,48 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
+    }
+    
+    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception{
+    	testFileName = "soapmessage.customrole.xml";
+    	Options options = extractAddressingInformationFromHeaders(new RolePlayer(){
+			public List getRoles() {
+				ArrayList al = new ArrayList();
+				al.add("http://my/custom/role");
+				return al;
+			}
+			public boolean isUltimateDestination() {
+				return false;
+			}
+    	});
+
+        assertNotNull(options);
+        assertNotNull(options.getTo());
+        assertEPRHasCorrectMetadata(options.getFrom());
+        assertEPRHasCorrectMetadata(options.getFaultTo());
+        assertEPRHasCorrectMetadata(options.getReplyTo());
+
+    }
+    
+    public void testExtractAddressingInformationFromHeadersCustomRoleSOAP12() throws Exception{
+    	testFileName = "soapmessage.customrole.soap12.xml";
+    	Options options = extractAddressingInformationFromHeaders(new RolePlayer(){
+			public List getRoles() {
+				ArrayList al = new ArrayList();
+				al.add("http://my/custom/role");
+				return al;
+			}
+			public boolean isUltimateDestination() {
+				return false;
+			}
+    	});
+
+        assertNotNull(options);
+        assertNotNull(options.getTo());
+        assertEPRHasCorrectMetadata(options.getFrom());
+        assertEPRHasCorrectMetadata(options.getFaultTo());
+        assertEPRHasCorrectMetadata(options.getReplyTo());
+
     }
 
     public void testMessageWithOmittedAction() {
@@ -187,9 +232,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
 
-    public void testDifferentSoapActionProcessing() {
+    public void testDifferentSoapActionProcessing() throws Exception{
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
+        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/differentAction");
@@ -199,16 +245,12 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (AxisFault af) {
             //Test passed.
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testSameSoapAction() {
+    public void testSameSoapAction() throws Exception{
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
+        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/action");
@@ -219,17 +261,12 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown while testing with a soapaction and ws-a action that are the same.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testEmptySoapAction() {
+    public void testEmptySoapAction() throws Exception{
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-
+        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         try {
             mc.setSoapAction("");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -239,17 +276,12 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown while testing with an empty soapaction.");
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
-        }
     }
 
-    public void testNullSoapAction() {
+    public void testNullSoapAction() throws Exception{
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-
+        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         try {
             mc.setSoapAction(null);
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -258,11 +290,6 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             af.printStackTrace();
             log.error(af.getMessage());
             fail("An unexpected AxisFault was thrown while testing with a null soapaction.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());
         }
     }
 

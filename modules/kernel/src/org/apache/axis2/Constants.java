@@ -250,6 +250,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String INBOUND_FAULT_OVERRIDE = "inboundFaultOverride";
 
+    /** SOAP Role Configuration */
+    public static final String SOAP_ROLE_CONFIGURATION_ELEMENT = "SOAPRoleConfiguration";
+    public static final String SOAP_ROLE_IS_ULTIMATE_RECEIVER_ATTRIBUTE = "isUltimateReceiver";
+    public static final String SOAP_ROLE_ELEMENT = "role";
+    public static final String SOAP_ROLE_PLAYER_PARAMETER = "rolePlayer";
+    
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
