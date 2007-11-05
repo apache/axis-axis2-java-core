@@ -313,7 +313,7 @@ public class AxisHttpService {
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
 
 		private CountDownLatch responseReadySignal = new CountDownLatch(1);
-        RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
+        RequestResponseTransportStatus status = RequestResponseTransportStatus.WAITING;
         AxisFault faultToBeThrownOut = null;
         private boolean responseWritten = false;
 
@@ -324,7 +324,6 @@ public class AxisHttpService {
         }
 
         public void awaitResponse() throws InterruptedException, AxisFault {
-            status = RequestResponseTransportStatus.WAITING;
             responseReadySignal.await();
 
             if (faultToBeThrownOut != null) {
