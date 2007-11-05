@@ -2000,6 +2000,7 @@ public class AxisService extends AxisDescription {
                 if (item instanceof XmlSchemaExternal) {
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
+
                     if (s != null && sourceURIToNewLocationMap.get(s.getSourceURI()) == null) {
                         //insert the name into the table
                         insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);

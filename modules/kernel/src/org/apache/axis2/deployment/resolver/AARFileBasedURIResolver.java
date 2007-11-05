@@ -80,7 +80,10 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                             out.write(buf, 0, read);
                         }
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-                        return new InputSource(in);
+                        InputSource inputSoruce = new InputSource(in);
+                        inputSoruce.setSystemId(lastImportLocation.getPath());
+                        inputSoruce.setPublicId(targetNamespace);
+                        return inputSoruce;
                     }
                 }
 

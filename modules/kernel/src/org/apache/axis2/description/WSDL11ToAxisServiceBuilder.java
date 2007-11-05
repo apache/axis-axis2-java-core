@@ -2001,6 +2001,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // switch off the verbose mode for all usecases
         reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);
+        reader.setFeature("javax.wsdl.importDocuments", true);
 
         Definition def;
         // if the custem resolver is present then use it
