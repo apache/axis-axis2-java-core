@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.converter.ConverterUtils;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -264,13 +265,7 @@ class OperationDescriptionImpl
             //                                              ROBUST_IN_ONLY
             //      Determine how these MEP's should be handled, if at all
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Unable to build AxisOperation for OperationDescrition; caught exception.",
-                          e);
-            }
-            // TODO: NLS & RAS
-            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation",
-                                                           e);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientAxisOprErr"),e);
         }
 
         newAxisOperation.setName(determineOperationQName(seiMethod));
@@ -379,14 +374,7 @@ class OperationDescriptionImpl
             //                                              ROBUST_IN_ONLY
             //      Determine how these MEP's should be handled, if at all
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Unable to build AxisOperation for OperationDescrition; caught exception.",
-                        e);
-            }
-            // TODO: NLS & RAS
-            throw ExceptionFactory
-                    .makeWebServiceException("Caught exception trying to create AxisOperation", e);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientAxisOprErr"), e);
         }
 
         newAxisOperation.setName(determineOperationQName(this.methodComposite));
@@ -499,17 +487,11 @@ class OperationDescriptionImpl
                                     + elementName + "; partTNS: " + partNamespace);
                         }
                         if (axisMessage == null) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException(
-                                    "Could not setup Doc/Lit/Bare operation because input message is null");
+                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createAxisOprErr1"));
                         } else if (DescriptionUtils.isEmpty(partNamespace)) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException(
-                                    "Could not setup Doc/Lit/Bare operation because part namespace is empty");
+                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createAxisOprErr2"));
                         } else if (DescriptionUtils.isEmpty(elementName)) {
-                            // TODO: RAS & NLS
-                            throw ExceptionFactory.makeWebServiceException(
-                                    "Could not setup Doc/Lit/Bare operation because name is empty");
+                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createAxisOprErr3"));
                         } else {
                             QName partQName = new QName(partNamespace, elementName);
                             if(log.isDebugEnabled()) {
@@ -565,9 +547,8 @@ class OperationDescriptionImpl
 
     void setSEIMethod(Method method) {
         if (seiMethod != null) {
-            // TODO: This is probably an error, but error processing logic is incorrect
-            throw new UnsupportedOperationException(
-                    "Can not set an SEI method once it has been set.");
+        	throw ExceptionFactory.makeWebServiceException(
+        			new UnsupportedOperationException(Messages.getMessage("seiMethodErr")));
         } else {
             seiMethod = method;
             webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
@@ -1593,8 +1574,7 @@ class OperationDescriptionImpl
             //        And this method is only used to parse out the JAX-WS Async parameter types to find
             //        AsyncHandler<T>.  The problem with the code that was removed is that a Type can not be
             //        instantiated, so we can't new up a Type inside the PDC.
-            throw new UnsupportedOperationException(
-                    "OperationDescriptionImpl.getParameterActualGenericType not supported for DBC");
+        	throw ExceptionFactory.makeWebServiceException(new UnsupportedOperationException(Messages.getMessage("genParamTypesErr")));
 //           Type [] type = new Type[parameterDescriptions.length];
 //           for (int i=0; i < parameterDescriptions.length; i++){
 //               type[i] = ((ParameterDescriptionImpl) parameterDescriptions[i]).getParameterActualGenericType();
@@ -2129,8 +2109,7 @@ class OperationDescriptionImpl
             try {
                 theAxisOperation.addParameter(headerQNParameter);
             } catch (AxisFault e) {
-                // TODO: RAS
-                log.warn("Unable to add Parameter for header QNames to AxisOperation " + theAxisOperation, e);
+                log.warn(Messages.getMessage("regMUHeadersErr",theAxisOperation.getClass().getName()), e);
             }
         }
     }

@@ -250,7 +250,6 @@ class ServiceDescriptionImpl
                             .makeWebServiceException(Messages.getMessage("addPortErr2"));
                 }
                 if (getWSDLWrapper() != null && isPortDeclared) {
-                    // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("addPortDup", portQName.toString()));
                 } else if (endpointDescription == null) {
@@ -280,15 +279,11 @@ class ServiceDescriptionImpl
                 if (!isPortDeclared ||
                         (endpointDescription != null && endpointDescription.isDynamicPort())) {
                     // This guards against the case where an addPort was done previously and now a getPort is done on it.
-                    // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                        "ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
-                        (portQName != null ? portQName.toString() : "not specified"));
+                    		Messages.getMessage("updateEPDescrErr1",(portQName != null ? portQName.toString() : "not specified")));
                 } else if (sei == null) {
-                    // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                        "ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " +
-                        (portQName != null ? portQName.toString() : "not specified"));
+                    		Messages.getMessage("updateEPDescrErr2",(portQName != null ? portQName.toString() : "not specified")));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
@@ -307,11 +302,9 @@ class ServiceDescriptionImpl
                     // Note that an EndpointDescritption created from an addPort (i.e. a dynamic port) can not do this.
                     endpointDescription.updateWithSEI(sei);
                 } else if (getEndpointSEI(portQName) != sei) {
-                    // TODO: RAS & NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can't do a getPort() specifiying a different SEI than the previous getPort().  PortQN: "
-                                    + portQName + "; current SEI: " + sei + "; previous SEI: " +
-                                    getEndpointSEI(portQName));
+                    		Messages.getMessage("updateEPDescrErr3",portQName.toString(),
+                    				sei.getName(),getEndpointSEI(portQName).getName()));
                 } else {
                     // All error check above passed, the EndpointDescription already exists and needs no updating
                 }
@@ -330,8 +323,7 @@ class ServiceDescriptionImpl
                     // The Dispatch should not have an SEI associated with it on the update call.
                     // REVIEW: Is this a valid check?
                     throw ExceptionFactory.makeWebServiceException(
-                            "ServiceDescription.updateEndpointDescription: Can not specify an SEI when creating a Dispatch. PortQN: " +
-                                    portQName);
+                    		Messages.getMessage("createDispatchFail3",portQName.toString()));
                 } else if (getWSDLWrapper() != null && isPortDeclared) {
                     // EndpointDescription doesn't exist and this is a declared Port, so create one
                     // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
@@ -675,11 +667,8 @@ class ServiceDescriptionImpl
             validateIntegrity();
         }
         catch (Exception ex) {
-            if (log.isDebugEnabled()) {
-                log.debug("Validation phase 1 failure: " + ex.toString(), ex);
-                log.debug("Failing composite: " + composite.toString());
-            }
-            throw ExceptionFactory.makeWebServiceException("Validation Exception " + ex, ex);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("dbclIntegrityErr",ex.toString(),composite.toString()), ex);
         }
     }
 
@@ -715,10 +704,8 @@ class ServiceDescriptionImpl
                 providerInterfaceValid = true;
                 //This is a provider based endpoint, make sure the annotation exists
                 if (composite.getWebServiceProviderAnnot() == null) {
-                    // TODO: RAS/NLS
                     throw ExceptionFactory.makeWebServiceException(
-                            "Validation error: This is a Provider based endpoint that does not contain a WebServiceProvider annotation.  Provider class: " +
-                                    composite.getClassName());
+                    		Messages.getMessage("validateIntegrityErr1",composite.getClassName()));
                 }
             }
         }
@@ -727,32 +714,24 @@ class ServiceDescriptionImpl
         //per JAXWS - Sec. 7.7
         if (composite.getWebServiceAnnot() != null &&
                 composite.getWebServiceProviderAnnot() != null) {
-            // TODO: RAS/NLS
             throw ExceptionFactory.makeWebServiceException(
-                    "Validation error: WebService annotation and WebServiceProvider annotation cannot coexist.  Implementation class: " +
-                            composite.getClassName());
+            		Messages.getMessage("validateIntegrityErr2",composite.getClassName()));
         }
 
         if (composite.getWebServiceProviderAnnot() != null) {
             if (!providerInterfaceValid) {
-                // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: This is a Provider that does not specify a valid Provider interface.   Implementation class: " +
-                                composite.getClassName());
+                		Messages.getMessage("validateIntegrityErr3",composite.getClassName()));
             }
             // There must be a public default constructor per JAXWS - Sec 5.1
             if (!validateDefaultConstructor()) {
-                // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: Provider must have a public default constructor.  Implementation class: " +
-                                composite.getClassName());
+                		Messages.getMessage("validateIntegrityErr4",composite.getClassName()));
             }
             // There must be an invoke method per JAXWS - Sec 5.1.1
             if (!validateInvokeMethod()) {
-                // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: Provider must have a public invoke method.  Implementation class: " +
-                                composite.getClassName());
+                		Messages.getMessage("validateIntegrityErr5",composite.getClassName()));
             }
 
             //If ServiceMode annotation specifies 'payload', then make sure that it is not typed with
@@ -762,10 +741,8 @@ class ServiceDescriptionImpl
         } else if (composite.getWebServiceAnnot() != null) {
 
             if (composite.getServiceModeAnnot() != null) {
-                // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: ServiceMode annotation can only be specified for WebServiceProvider.   Implementation class: " +
-                                composite.getClassName());
+                		Messages.getMessage("validateIntegrityErr6",composite.getClassName()));
             }
 
             //TODO: hmmm, will we ever actually validate an interface directly...don't think so
@@ -776,11 +753,9 @@ class ServiceDescriptionImpl
                 // TODO: Validate on the class that a finalize() method does not exist
                 if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().wsdlLocation())) {
                     if (composite.getWsdlDefinition() == null && composite.getWsdlURL() == null) {
-                        // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException(
-                                "Validation error: cannot find WSDL Definition specified by this WebService annotation. Implementation class: "
-                                        + composite.getClassName() + "; WSDL location: " +
-                                        composite.getWebServiceAnnot().wsdlLocation());
+                        		Messages.getMessage("validateIntegrityErr7",composite.getClassName(),
+                        				composite.getWebServiceAnnot().wsdlLocation()));
                     }
                 }
 
@@ -792,11 +767,9 @@ class ServiceDescriptionImpl
 
                     //Verify that we can find the SEI in the composite list
                     if (seic == null) {
-                        // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException(
-                                "Validation error: cannot find SEI specified by the WebService.endpointInterface.  Implementaiton class: "
-                                        + composite.getClassName() + "; EndpointInterface: " +
-                                        composite.getWebServiceAnnot().endpointInterface());
+                        		Messages.getMessage("validateIntegrityErr8",composite.getClassName(),
+                        				composite.getWebServiceAnnot().endpointInterface()));
                     }
 
                     // Verify that the only class annotations are WebService and HandlerChain
@@ -808,20 +781,16 @@ class ServiceDescriptionImpl
                             || composite.getWebServiceContextAnnot() != null
                             || !composite.getAllWebServiceRefAnnots().isEmpty()
                             ) {
-                        // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException(
-                                "Validation error: invalid annotations specified when WebService annotation specifies an endpoint interface.  Implemntation class:  "
-                                        + composite.getClassName());
+                        		Messages.getMessage("validateIntegrityErr9",composite.getClassName()));
                     }
 
                     //Verify that WebService annotation does not contain a name attribute
                     //(per JSR181 Sec. 3.1)
                     if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().name())) {
-                        // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException(
-                                "Validation error: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "
-                                        + composite.getClassName() + "; WebService.name: " +
-                                        composite.getWebServiceAnnot().name());
+                        		Messages.getMessage("validateIntegrityErr10",composite.getClassName(),
+                        				composite.getWebServiceAnnot().name()));
                     }
 
                     validateSEI(seic);
@@ -830,10 +799,8 @@ class ServiceDescriptionImpl
 
                     //Verify that this impl. class does not contain any @WebMethod annotations
                     if (webMethodAnnotationsExist()) {
-                        // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException(
-                                "Validation error: WebMethod annotations cannot exist on implentation when WebService.endpointInterface is set.  Implementation class: " +
-                                        composite.getClassName());
+                        		Messages.getMessage("validateIntegrityErr11",composite.getClassName()));
                     }
 
 
@@ -846,10 +813,8 @@ class ServiceDescriptionImpl
                     //
                 }
             } else { //this is an interface...we should not be processing interfaces here
-                // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException(
-                        "Validation error: Improper usage: cannot invoke this method with an interface.  Implementation class: "
-                                + composite.getClassName());
+                		Messages.getMessage("validateIntegrityErr12",composite.getClassName()));
             }
 
             // Verify that the SOAPBinding annotations are supported.
@@ -857,8 +822,8 @@ class ServiceDescriptionImpl
             //        (implicit SEI) or a WebServiceProvider
             if (composite.getSoapBindingAnnot() != null) {
                 if (composite.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
-                    throw ExceptionFactory.makeWebServiceException("Validation error: Unsupported SOAPBinding annotation value. The ENCODED setting is not supported for SOAPBinding.Use. Implementation class: " 
-                                +composite.getClassName());  
+                    throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("validateIntegrityErr13",composite.getClassName()));  
                 }
             }
             
@@ -901,11 +866,9 @@ class ServiceDescriptionImpl
                 String interfaceString = iter.next();
                 if (interfaceString.equals(MDQConstants.PROVIDER_SOAP)
                         || interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)) {
-
-                    throw ExceptionFactory
-                            .makeWebServiceException(
-                                    "Validation error: SOAPMessage and DataSource objects cannot be used when ServiceMode specifies PAYLOAD. Implementation class: "
-                                            + composite.getClassName());
+                	
+                    throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("validatePIsErr1",composite.getClassName()));
                 }
             }
 
@@ -939,11 +902,9 @@ class ServiceDescriptionImpl
                             .equals(SOAPBinding.SOAP12HTTP_BINDING)
                             && !bindingType
                             .equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))
-
-                        throw ExceptionFactory
-                                .makeWebServiceException(
-                                        "Validation error: SOAPMessage objects cannot be used with HTTP binding type. Implementation class: "
-                                                + composite.getClassName());
+                    	
+                        throw ExceptionFactory.makeWebServiceException(
+                        		Messages.getMessage("validatePIsErr2",composite.getClassName()));
 
                 } else if (interfaceString
                         .equals(MDQConstants.PROVIDER_DATASOURCE)) {
@@ -952,11 +913,9 @@ class ServiceDescriptionImpl
                     if (DescriptionUtils.isEmpty(bindingType)
                             || !bindingType
                             .equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING))
-
-                        throw ExceptionFactory
-                                .makeWebServiceException(
-                                        "Validation error: DataSource objects must be used with HTTP binding type. Implementation class: "
-                                                + composite.getClassName());
+                    	
+                        throw ExceptionFactory.makeWebServiceException(
+                        		Messages.getMessage("validatePIsErr3",composite.getClassName()));
                 }
             }
         }
@@ -1056,10 +1015,8 @@ class ServiceDescriptionImpl
                 // We didn't find the implementation for this SEI method, so throw a validation
                 // exception.
                 throw ExceptionFactory.makeWebServiceException(
-                    "Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
-                    + composite.getClassName() + "; missing method name: " +
-                    seiMDC.getMethodName() + "; endpointInterface: " +
-                    seic.getClassName());
+                		Messages.getMessage("validateImplErr",composite.getClassName(),
+                				seiMDC.getMethodName(),seic.getClassName()));
             }
         }
     }
@@ -1075,27 +1032,20 @@ class ServiceDescriptionImpl
             // There are no parameters on the SEI or the impl; all is well
         } else if ((seiPDCList == null || seiPDCList.isEmpty())
             && !(implPDCList == null || implPDCList.isEmpty())) {
-            String message = "Validation error: SEI indicates no parameters but implementation method specifies parameters: "
-                + implPDCList
-                + "; Implementation class: "
-                + composite.getClassName()
-                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodParamErr1",implPDCList.toString(),
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         } else if ((seiPDCList != null && !seiPDCList.isEmpty())
             && !(implPDCList != null && !implPDCList.isEmpty())) {
-            String message = "Validation error: SEI indicates parameters " + seiPDCList
-                + " but implementation method specifies no parameters; Implementation class: "
-                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
-                + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodParamErr2",seiPDCList.toString(),
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         } else if (seiPDCList.size() != implPDCList.size()) {
-            String message = "Validation error: The number of parameters on the SEI method ("
-                + seiPDCList.size()
-                + ") does not match the number of parameters on the implementation ( "
-                + implPDCList.size() + "); Implementation class: " + composite.getClassName()
-                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
-
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodParamErr3",
+            				new Integer(seiPDCList.size()).toString(),
+            				new Integer(implPDCList.size()).toString(),composite.getClassName(),
+            				seiMDC.getMethodName(),className));
         } else {
             // Make sure the order and type of parameters match
             // REVIEW: This checks for strict equality of the fully qualified
@@ -1136,24 +1086,17 @@ class ServiceDescriptionImpl
         if (seiReturnValue == null && implReturnValue == null) {
             // Neither specify a return value; all is well
         } else if (seiReturnValue == null && implReturnValue != null) {
-            String message = "Validation error: SEI indicates no return value but implementation method specifies return value: "
-                + implReturnValue
-                + "; Implementation class: "
-                + composite.getClassName()
-                + "; Method name: " + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodRVErr1",implReturnValue,
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         } else if (seiReturnValue != null && implReturnValue == null) {
-            String message = "Validation error: SEI indicates return value " + seiReturnValue
-                + " but implementation method specifies no return value; Implementation class: "
-                + composite.getClassName() + "; Method name: " + seiMDC.getMethodName()
-                + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodRVErr2",seiReturnValue,
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         } else if (!seiReturnValue.equals(implReturnValue)) {
-            String message = "Validation error: SEI return value " + seiReturnValue
-                + " does not match implementation method return value " + implReturnValue
-                + "; Implementation class: " + composite.getClassName() + "; Method name: "
-                + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
-            throw ExceptionFactory.makeWebServiceException(message);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodRVErr3",seiReturnValue,implReturnValue,
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         }
 
     }
@@ -1172,10 +1115,9 @@ class ServiceDescriptionImpl
                 return;
             } else {
                 // SEI delcares no checked exceptions, but the implementation has checked exceptions, which is an error
-                throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions than SEI method signature (0): Implementation class: "
-                    + composite.getClassName() 
-                    + "; method name: " + seiMDC.getMethodName() 
-                    + "; endpointInterface: " + className);
+                throw ExceptionFactory.makeWebServiceException(
+                		Messages.getMessage("validateMethodExceptionErr1",
+                				composite.getClassName(),seiMDC.getMethodName(),className));
             }
         } else if (implExceptions == null) {
             // Implementation throws fewer checked exceptions than SEI, which is OK.
@@ -1184,12 +1126,11 @@ class ServiceDescriptionImpl
         
         // Check the list length; An implementation can not declare more exceptions than the SEI
         if (seiExceptions.length < implExceptions.length) {
-            throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature has more checked exceptions ("
-                + implExceptions.length + ") than SEI method signature ("
-                + seiExceptions.length + "): Implementation class: "
-                + composite.getClassName() 
-                + "; method name: " + seiMDC.getMethodName() 
-                + "; endpointInterface: " + className);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("validateMethodExceptionErr2",
+            				new Integer(implExceptions.length).toString(),
+            				new Integer(seiExceptions.length).toString(),
+            				composite.getClassName(),seiMDC.getMethodName(),className));
         }
         
         // Make sure that each checked exception declared by the 
@@ -1206,12 +1147,10 @@ class ServiceDescriptionImpl
                     }
                 }
                 
-                if (!foundIt) {
-                    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation method signature throws exception " 
-                        + implException + "which is not declared on the SEI method signature: Implementation class: "
-                        + composite.getClassName() 
-                        + "; method name: " + seiMDC.getMethodName() 
-                        + "; endpointInterface: " + className);
+                if (!foundIt) {    	
+                    throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("validateMethodExceptionErr3",implException,
+                    				composite.getClassName(),seiMDC.getMethodName(),className));
                 }
             }
         }
@@ -1290,26 +1229,19 @@ class ServiceDescriptionImpl
         //TODO: Validate SEI superclasses -- hmmm, may be doing this below
         //
         if (seic.getWebServiceAnnot() == null) {
-            // TODO: RAS & NLS
             throw ExceptionFactory.makeWebServiceException(
-                    "Validation error: SEI does not contain a WebService annotation.  Implementation class: "
-                            + composite.getClassName() + "; SEI: " + seic.getClassName());
+            		Messages.getMessage("validateSEIErr1",composite.getClassName(),seic.getClassName()));
         }
         if (!seic.getWebServiceAnnot().endpointInterface().equals("")) {
-            // TODO: RAS & NLS
             throw ExceptionFactory.makeWebServiceException(
-                    "Validation error: SEI must not set a value for @WebService.endpointInterface.  Implementation class: "
-                            + composite.getClassName() + "; SEI: " + seic.getClassName()
-                            + "; Invalid endpointInterface value: " +
-                            seic.getWebServiceAnnot().endpointInterface());
+            		Messages.getMessage("validateSEIErr2",composite.getClassName(),
+            				seic.getClassName(),seic.getWebServiceAnnot().endpointInterface()));
         }
         // Verify that the SOAPBinding annotations are supported.
-        if (seic.getSoapBindingAnnot() != null) {
-        if (seic.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
-               throw ExceptionFactory.makeWebServiceException("Validation error: Unsupported SOAPBinding annotation value. The ENCODED setting is not supported for SOAPBinding.Use. Implementation class: " 
-                        +seic.getClassName());  
+        if (seic.getSoapBindingAnnot() != null &&
+        		seic.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("validateSEIErr3",seic.getClassName()));  
         }
-       }
 
         checkSEIAgainstWSDL();
 
@@ -1444,7 +1376,6 @@ class ServiceDescriptionImpl
 
                 String handlerFileName = handlerChainAnnotation.file();
 
-                // TODO RAS & NLS
                 if (log.isDebugEnabled()) {
                     if (composite != null) {
                         log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
@@ -1481,7 +1412,7 @@ class ServiceDescriptionImpl
                     handlerChainsType = (HandlerChainsType) o.getValue();
 
                 } catch (Exception e) {
-                    throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: getHandlerChain: thrown when attempting to unmarshall JAXB content");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr"),e);
                 }
             }
         }

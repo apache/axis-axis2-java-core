@@ -531,8 +531,7 @@ public class DescriptionUtils {
             try {
                 axisService.addParameter(headerQNParameter);
             } catch (AxisFault e) {
-                // TODO: RAS
-                log.warn("Unable to add Parameter for header QNames to AxisService " + axisService, e);
+                log.warn(Messages.getMessage("regHandlerHeadersErr",axisService.getName(),e.getMessage()));
             }
         }  
     }
