@@ -24,6 +24,7 @@ import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYP
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
@@ -60,9 +61,11 @@ import javax.xml.ws.soap.SOAPBinding;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1428,7 +1431,7 @@ class ServiceDescriptionImpl
         if (this.handlerChainAnnotation == null) {
                 if (serviceClass != null) {
                     handlerChainAnnotation =
-                            (HandlerChain) serviceClass.getAnnotation(HandlerChain.class);
+                            (HandlerChain) getAnnotation(serviceClass, HandlerChain.class);
             }
         }
 
@@ -1628,5 +1631,18 @@ class ServiceDescriptionImpl
         }
         return string.toString();
 
+    }
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cls.getAnnotation(annotation);
+            }
+        });
     }
 }

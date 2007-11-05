@@ -28,6 +28,7 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
@@ -73,10 +74,12 @@ import javax.xml.ws.WebFault;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -551,7 +554,8 @@ class OperationDescriptionImpl
         			new UnsupportedOperationException(Messages.getMessage("seiMethodErr")));
         } else {
             seiMethod = method;
-            webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
+            webMethodAnnotation = (WebMethod)
+                getAnnotation(seiMethod, WebMethod.class);
             parameterDescriptions = createParameterDescriptions();
             faultDescriptions = createFaultDescriptions();
         }
@@ -773,7 +777,7 @@ class OperationDescriptionImpl
             return null;
         }
 
-        WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
+        WebMethod wmAnnotation = (WebMethod) getAnnotation(javaMethod,WebMethod.class);
         // Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
         // if @WebMethod specifies and operation name, use that.  Otherwise
         // default is the Java method name
@@ -906,7 +910,8 @@ class OperationDescriptionImpl
     public RequestWrapper getAnnoRequestWrapper() {
         if (requestWrapperAnnotation == null) {
             if (!isDBC() && seiMethod != null) {
-                requestWrapperAnnotation = seiMethod.getAnnotation(RequestWrapper.class);
+                requestWrapperAnnotation = (RequestWrapper) 
+                    getAnnotation(seiMethod,RequestWrapper.class);
             } else if (isDBC() && methodComposite != null) {
                 requestWrapperAnnotation = methodComposite.getRequestWrapperAnnot();
             } else {
@@ -1012,7 +1017,8 @@ class OperationDescriptionImpl
     public ResponseWrapper getAnnoResponseWrapper() {
         if (responseWrapperAnnotation == null) {
             if (!isDBC() && seiMethod != null) {
-                responseWrapperAnnotation = seiMethod.getAnnotation(ResponseWrapper.class);
+                responseWrapperAnnotation = (ResponseWrapper)
+                    getAnnotation(seiMethod,ResponseWrapper.class);
             } else if (isDBC() && methodComposite != null) {
                 responseWrapperAnnotation = methodComposite.getResponseWrapperAnnot();
             } else {
@@ -1238,7 +1244,8 @@ class OperationDescriptionImpl
     public WebResult getAnnoWebResult() {
         if (webResultAnnotation == null) {
             if (!isDBC() && seiMethod != null) {
-                webResultAnnotation = seiMethod.getAnnotation(WebResult.class);
+                webResultAnnotation = (WebResult)
+                    getAnnotation(seiMethod,WebResult.class);
             } else if (methodComposite != null) {
                 webResultAnnotation = methodComposite.getWebResultAnnot();
             } else {
@@ -1380,7 +1387,8 @@ class OperationDescriptionImpl
         //       JSR-181 Sec 4.7 p. 28
         if (soapBindingAnnotation == null) {
             if (!isDBC() && seiMethod != null) {
-                soapBindingAnnotation = seiMethod.getAnnotation(SOAPBinding.class);
+                soapBindingAnnotation = (SOAPBinding)
+                    getAnnotation(seiMethod,SOAPBinding.class);
             } else if (isDBC() && methodComposite != null) {
                 soapBindingAnnotation = methodComposite.getSoapBindingAnnot();
             } else {
@@ -1458,7 +1466,7 @@ class OperationDescriptionImpl
                     onewayAnnotation = OneWayAnnot.createOneWayAnnotImpl();
                 }
             } else if (!isDBC() && seiMethod != null) {
-                onewayAnnotation = seiMethod.getAnnotation(Oneway.class);
+                onewayAnnotation = (Oneway) getAnnotation(seiMethod,Oneway.class);
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Unable to get OneWay annotation");
@@ -2113,5 +2121,17 @@ class OperationDescriptionImpl
             }
         }
     }
-
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
+    }
 }

@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -201,9 +202,9 @@ class EndpointDescriptionImpl
         // REVIEW: setting these should probably be done in the getters!  It needs to be done before we try to select a 
         //         port to use if one wasn't specified because we'll try to get to the annotations to get the PortType
         if (this.implOrSEIClass != null) {
-            webServiceAnnotation = (WebService)implOrSEIClass.getAnnotation(WebService.class);
+            webServiceAnnotation = (WebService)getAnnotation(implOrSEIClass,WebService.class);
             webServiceProviderAnnotation =
-                    (WebServiceProvider)implOrSEIClass.getAnnotation(WebServiceProvider.class);
+                    (WebServiceProvider)getAnnotation(implOrSEIClass,WebServiceProvider.class);
         }
         this.isDynamicPort = dynamicPort;
         if (DescriptionUtils.isEmpty(portName)) {
@@ -533,9 +534,9 @@ class EndpointDescriptionImpl
 
         if (!getServiceDescriptionImpl().isDBCMap()) {
 
-            webServiceAnnotation = (WebService)implOrSEIClass.getAnnotation(WebService.class);
+            webServiceAnnotation = (WebService)getAnnotation(implOrSEIClass,WebService.class);
             webServiceProviderAnnotation =
-                    (WebServiceProvider)implOrSEIClass.getAnnotation(WebServiceProvider.class);
+                    (WebServiceProvider)getAnnotation(implOrSEIClass,WebServiceProvider.class);
 
             if (webServiceAnnotation == null && webServiceProviderAnnotation == null)
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr6",implOrSEIClass.getName()));
@@ -1205,7 +1206,7 @@ class EndpointDescriptionImpl
             } else {
                 if (implOrSEIClass != null) {
                     serviceModeAnnotation =
-                            (ServiceMode)implOrSEIClass.getAnnotation(ServiceMode.class);
+                            (ServiceMode)getAnnotation(implOrSEIClass,ServiceMode.class);
                 }
             }
         }
@@ -1240,7 +1241,7 @@ class EndpointDescriptionImpl
             } else {
                 if (implOrSEIClass != null) {
                     bindingTypeAnnotation =
-                            (BindingType)implOrSEIClass.getAnnotation(BindingType.class);
+                            (BindingType)getAnnotation(implOrSEIClass,BindingType.class);
                 }
             }
         }
@@ -1348,7 +1349,7 @@ class EndpointDescriptionImpl
             } else {
                 if (implOrSEIClass != null) {
                     handlerChainAnnotation =
-                            (HandlerChain)implOrSEIClass.getAnnotation(HandlerChain.class);
+                            (HandlerChain)getAnnotation(implOrSEIClass,HandlerChain.class);
                 }
             }
         }
@@ -1736,6 +1737,20 @@ class EndpointDescriptionImpl
             return string.toString();
         }
         return string.toString();
+    }
+    
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cls.getAnnotation(annotation);
+            }
+        });
     }
 }
 

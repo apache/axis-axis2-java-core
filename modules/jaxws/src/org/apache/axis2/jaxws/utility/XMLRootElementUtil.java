@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -75,7 +77,8 @@ public class XMLRootElementUtil {
     public static QName getXmlRootElementQName(Class clazz) {
 
         // See if the object represents a root element
-        XmlRootElement root = (XmlRootElement)clazz.getAnnotation(XmlRootElement.class);
+        XmlRootElement root = (XmlRootElement)
+            getAnnotation(clazz,XmlRootElement.class);
         if (root == null) {
             return null;
         }
@@ -91,7 +94,8 @@ public class XMLRootElementUtil {
         // The namespace may need to be defaulted
         if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
             Package pkg = clazz.getPackage();
-            XmlSchema schema = (XmlSchema)pkg.getAnnotation(XmlSchema.class);
+            XmlSchema schema = (XmlSchema)
+                getAnnotation(pkg, XmlSchema.class);
             if (schema != null) {
                 namespace = schema.namespace();
             } else {
@@ -114,7 +118,7 @@ public class XMLRootElementUtil {
 			
 			f.setAccessible(true);
 			
-			XmlEnumValue xev = f.getAnnotation(XmlEnumValue.class);
+			XmlEnumValue xev = (XmlEnumValue) getAnnotation(f, XmlEnumValue.class);
 			if (xev == null){
 				value = f.getName();
 			} else {
@@ -296,7 +300,8 @@ public class XMLRootElementUtil {
      */
     private static String getXmlElementName(Class jaxbClass, Field field)
             throws NoSuchFieldException {
-        XmlElement xmlElement = field.getAnnotation(XmlElement.class);
+        XmlElement xmlElement = (XmlElement)
+            getAnnotation(field,XmlElement.class);
 
         // If XmlElement does not exist, default to using the field name
         if (xmlElement == null ||
@@ -307,5 +312,17 @@ public class XMLRootElementUtil {
 
     }
 
-
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
+    }
 }

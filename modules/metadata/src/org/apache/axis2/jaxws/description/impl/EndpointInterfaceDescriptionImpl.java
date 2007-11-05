@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -44,8 +45,11 @@ import javax.jws.soap.SOAPBinding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -548,7 +552,8 @@ class EndpointInterfaceDescriptionImpl
                 soapBindingAnnotation = dbc.getSoapBindingAnnot();
             } else {
                 if (seiClass != null) {
-                    soapBindingAnnotation = (SOAPBinding)seiClass.getAnnotation(SOAPBinding.class);
+                    soapBindingAnnotation = 
+                        (SOAPBinding)getAnnotation(seiClass,SOAPBinding.class);
                 }
             }
         }
@@ -919,7 +924,7 @@ class EndpointInterfaceDescriptionImpl
                 webServiceAnnotation = dbc.getWebServiceAnnot();
             } else {
                 if (seiClass != null) {
-                    webServiceAnnotation = (WebService)seiClass.getAnnotation(WebService.class);
+                    webServiceAnnotation = (WebService)getAnnotation(seiClass,WebService.class);
                 }
             }
         }
@@ -1012,5 +1017,17 @@ class EndpointInterfaceDescriptionImpl
         }
         return string.toString();
     }
-
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cls.getAnnotation(annotation);
+            }
+        });
+    }
 }
