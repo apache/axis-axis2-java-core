@@ -22,11 +22,17 @@ import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMConstants;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.llom.OMStAXWrapper;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.util.ElementHelper;
+import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.databinding.i18n.ADBMessages;
 import org.apache.axis2.databinding.types.*;
 import org.apache.commons.logging.Log;
@@ -38,6 +44,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamConstants;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -1201,6 +1208,8 @@ public class ConverterUtil {
             serializeAnyType("boolean", value.toString(), xmlStreamWriter);
         } else if (value instanceof URI) {
             serializeAnyType("anyURI", value.toString(), xmlStreamWriter);
+        } else if (value instanceof Byte) {
+            serializeAnyType("byte", value.toString(), xmlStreamWriter);
         } else if (value instanceof Date) {
             serializeAnyType("date", convertToString((Date) value), xmlStreamWriter);
         } else if (value instanceof Calendar) {
@@ -1217,6 +1226,10 @@ public class ConverterUtil {
             serializeAnyType("short", value.toString(), xmlStreamWriter);
         } else if (value instanceof BigDecimal) {
             serializeAnyType("decimal", value.toString(), xmlStreamWriter);
+        } else if (value instanceof DataHandler) {
+            addTypeAttribute(xmlStreamWriter,"base64Binary");
+            MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = (MTOMAwareXMLStreamWriter) xmlStreamWriter;
+            mtomAwareXMLStreamWriter.writeDataHandler((DataHandler)value);
         } else if (value instanceof QName) {
             QName qNameValue = (QName) value;
             String prefix = xmlStreamWriter.getPrefix(qNameValue.getNamespaceURI());
@@ -1265,6 +1278,11 @@ public class ConverterUtil {
                                          XMLStreamWriter xmlStreamWriter)
             throws XMLStreamException {
 
+        addTypeAttribute(xmlStreamWriter, type);
+        xmlStreamWriter.writeCharacters(value);
+    }
+
+    private static void addTypeAttribute(XMLStreamWriter xmlStreamWriter, String type) throws XMLStreamException {
         String prefix = xmlStreamWriter.getPrefix(Constants.XSI_NAMESPACE);
         if (prefix == null) {
             prefix = BeanUtil.getUniquePrefix();
@@ -1287,7 +1305,6 @@ public class ConverterUtil {
         }
 
         xmlStreamWriter.writeAttribute(Constants.XSI_NAMESPACE, "type", attributeValue);
-        xmlStreamWriter.writeCharacters(value);
     }
 
     public static Object getAnyTypeObject(XMLStreamReader xmlStreamReader) throws XMLStreamException {
@@ -1310,70 +1327,97 @@ public class ConverterUtil {
                 NamespaceContext namespaceContext = xmlStreamReader.getNamespaceContext();
                 xmlStreamReader.next();
 
-                String attribValue = xmlStreamReader.getText();
-                if (attribValue != null){
-                    if (attributeType.equals("string")) {
-                        returnObject = attribValue;
-                    } else if (attributeType.equals("int")) {
-                        returnObject = new Integer(attribValue);
-                    } else if (attributeType.equals("QName")) {
-                        String namespacePrefix = null;
-                        String localPart = null;
-                        if (attribValue.indexOf(":") > -1){
-                            namespacePrefix = attribValue.substring(0,attribValue.indexOf(":"));
-                            localPart = attribValue.substring(attribValue.indexOf(":") + 1);
-                            returnObject = new QName(namespaceContext.getNamespaceURI(namespacePrefix),localPart);
-                        }
-                    } else if ("boolean".equals(attributeType)) {
-                        returnObject = new Boolean(attribValue);
-                    } else if ("anyURI".equals(attributeType)) {
-                        try {
-                            returnObject = new URI(attribValue);
-                        } catch (URI.MalformedURIException e) {
-                            throw new XMLStreamException("Invalid URI");
-                        }
-                    } else if ("date".equals(attributeType)) {
-                        returnObject = ConverterUtil.convertToDate(attribValue);
-                    } else if ("dateTime".equals(attributeType)) {
-                        returnObject = ConverterUtil.convertToDateTime(attribValue);
-                    } else if ("time".equals(attributeType)) {
-                        returnObject = ConverterUtil.convertToTime(attribValue);
-                    } else if ("float".equals(attributeType)) {
-                        returnObject = new Float(attribValue);
-                    } else if ("long".equals(attributeType)) {
-                        returnObject = new Long(attribValue);
-                    } else if ("double".equals(attributeType)) {
-                        returnObject = new Double(attribValue);
-                    } else if ("decimal".equals(attributeType)) {
-                        returnObject = new BigDecimal(attribValue);
-                    } else if ("unsignedLong".equals(attributeType)) {
-                        returnObject = new UnsignedLong(attribValue);
-                    } else if ("unsignedInt".equals(attributeType)) {
-                        returnObject = new UnsignedInt(attribValue);
-                    } else if ("unsignedShort".equals(attributeType)) {
-                        returnObject = new UnsignedShort(attribValue);
-                    } else if ("unsignedByte".equals(attributeType)) {
-                        returnObject = new UnsignedByte(attribValue);
-                    } else if ("positiveInteger".equals(attributeType)) {
-                        returnObject = new PositiveInteger(attribValue);
-                    } else if ("negativeInteger".equals(attributeType)) {
-                        returnObject = new NegativeInteger(attribValue);
-                    } else if ("nonNegativeInteger".equals(attributeType)) {
-                        returnObject = new NonNegativeInteger(attribValue);
-                    } else if ("nonPositiveInteger".equals(attributeType)) {
-                        returnObject = new NonPositiveInteger(attribValue);
-                    } else {
-                        throw new ADBException("Unknown type ==> " + attributeType);
-                    }
+                if ("base64Binary".equals(attributeType)) {
+                    returnObject = getDataHandlerObject(xmlStreamReader);
                 } else {
-                    throw new ADBException("Attribute value is null");
+                    String attribValue = xmlStreamReader.getText();
+                    if (attribValue != null) {
+                        if (attributeType.equals("string")) {
+                            returnObject = attribValue;
+                        } else if (attributeType.equals("int")) {
+                            returnObject = new Integer(attribValue);
+                        } else if (attributeType.equals("QName")) {
+                            String namespacePrefix = null;
+                            String localPart = null;
+                            if (attribValue.indexOf(":") > -1) {
+                                namespacePrefix = attribValue.substring(0, attribValue.indexOf(":"));
+                                localPart = attribValue.substring(attribValue.indexOf(":") + 1);
+                                returnObject = new QName(namespaceContext.getNamespaceURI(namespacePrefix), localPart);
+                            }
+                        } else if ("boolean".equals(attributeType)) {
+                            returnObject = new Boolean(attribValue);
+                        } else if ("anyURI".equals(attributeType)) {
+                            try {
+                                returnObject = new URI(attribValue);
+                            } catch (URI.MalformedURIException e) {
+                                throw new XMLStreamException("Invalid URI");
+                            }
+                        } else if ("date".equals(attributeType)) {
+                            returnObject = ConverterUtil.convertToDate(attribValue);
+                        } else if ("dateTime".equals(attributeType)) {
+                            returnObject = ConverterUtil.convertToDateTime(attribValue);
+                        } else if ("time".equals(attributeType)) {
+                            returnObject = ConverterUtil.convertToTime(attribValue);
+                        } else if ("byte".equals(attributeType)) {
+                            returnObject = new Byte(attribValue);
+                        } else if ("short".equals(attributeType)) {
+                            returnObject = new Short(attribValue);
+                        } else if ("float".equals(attributeType)) {
+                            returnObject = new Float(attribValue);
+                        } else if ("long".equals(attributeType)) {
+                            returnObject = new Long(attribValue);
+                        } else if ("double".equals(attributeType)) {
+                            returnObject = new Double(attribValue);
+                        } else if ("decimal".equals(attributeType)) {
+                            returnObject = new BigDecimal(attribValue);
+                        } else if ("unsignedLong".equals(attributeType)) {
+                            returnObject = new UnsignedLong(attribValue);
+                        } else if ("unsignedInt".equals(attributeType)) {
+                            returnObject = new UnsignedInt(attribValue);
+                        } else if ("unsignedShort".equals(attributeType)) {
+                            returnObject = new UnsignedShort(attribValue);
+                        } else if ("unsignedByte".equals(attributeType)) {
+                            returnObject = new UnsignedByte(attribValue);
+                        } else if ("positiveInteger".equals(attributeType)) {
+                            returnObject = new PositiveInteger(attribValue);
+                        } else if ("negativeInteger".equals(attributeType)) {
+                            returnObject = new NegativeInteger(attribValue);
+                        } else if ("nonNegativeInteger".equals(attributeType)) {
+                            returnObject = new NonNegativeInteger(attribValue);
+                        } else if ("nonPositiveInteger".equals(attributeType)) {
+                            returnObject = new NonPositiveInteger(attribValue);
+                        } else {
+                            throw new ADBException("Unknown type ==> " + attributeType);
+                        }
+                    } else {
+                        throw new ADBException("Attribute value is null");
+                    }
                 }
-
             } else {
                 throw new ADBException("Any type element type has not been given");
             }
         }
         return returnObject;
+    }
+
+    private static Object getDataHandlerObject(XMLStreamReader reader) throws XMLStreamException {
+        Object dataHandler = null;
+        if (Boolean.TRUE.equals(reader.getProperty(OMConstants.IS_DATA_HANDLERS_AWARE))
+                && Boolean.TRUE.equals(reader.getProperty(OMConstants.IS_BINARY))) {
+            dataHandler = reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER);
+        } else {
+            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
+                    reader.getName().equals(new QName(MTOMConstants.XOP_NAMESPACE_URI, MTOMConstants.XOP_INCLUDE))) {
+                String id = ElementHelper.getContentID(reader, "UTF-8");
+                dataHandler = ((MTOMStAXSOAPModelBuilder) ((OMStAXWrapper) reader).getBuilder()).getDataHandler(id);
+                reader.next();
+            } else if (reader.hasText()) {
+                String content = reader.getText();
+                dataHandler = ConverterUtil.convertToBase64Binary(content);
+
+            }
+        }
+        return dataHandler;
     }
 
     static {
