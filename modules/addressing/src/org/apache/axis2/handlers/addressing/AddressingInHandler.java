@@ -440,7 +440,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         // check that soapAction==wsa:Action
         if (soapAction != null && !"".equals(soapAction) && messageContext.isServerSide()) {
             if (!soapAction.equals(wsaAction)) {
-                AddressingFaultsHelper.triggerActionMismatchFault(messageContext);
+                AddressingFaultsHelper.triggerActionMismatchFault(messageContext, soapAction, wsaAction);
             }
         } else {
             messageContextOptions.setAction(wsaAction);
