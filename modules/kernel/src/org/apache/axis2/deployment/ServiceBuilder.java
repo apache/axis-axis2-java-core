@@ -667,8 +667,18 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             String opname = op_name_att.getAttributeValue();
-            AxisOperation op_descrip;
-            op_descrip = service.getOperation(new QName(opname));
+            AxisOperation op_descrip = null;
+
+            // getting the namesapce from the attribute.
+            OMAttribute operationNamespace = operation.getAttribute(new QName(ATTRIBUTE_NAMESPACE));
+            if (operationNamespace != null){
+                String namespace = operationNamespace.getAttributeValue();
+                op_descrip = service.getOperation(new QName(namespace,opname));
+            }
+            if (op_descrip == null){
+                op_descrip = service.getOperation(new QName(opname));
+            }
+
             if(op_descrip==null){
                 op_descrip = service.getOperation(new QName(service.getTargetNamespace(),opname));
             }
