@@ -46,6 +46,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
     protected static final String C_SKEL_PREFIX = "axis2_skel_";
@@ -254,7 +256,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         /////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
 
 
@@ -398,7 +400,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                              methodElement);
 
 
-                addSOAPAction(doc, methodElement, axisOperation.getName());
+                addSOAPAction(doc, methodElement, axisBindingOperation.getName());
                 //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
                 //add header ops for output
@@ -453,7 +455,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                                  methodElement);
 
 
-                    addSOAPAction(doc, methodElement, axisOperation.getName());
+                    addSOAPAction(doc, methodElement, axisBindingOperation.getName());
                     addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
                     addHeaderOperations(soapHeaderOutputParameterList, axisBindingOperation, false);
 
