@@ -252,7 +252,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Sets the URI to the base document associated with the WSDL definition.
-     * This identifies the origin of the Definition and allows the 
+     * This identifies the origin of the Definition and allows the
      * Definition to be reloaded.  Note that this is the URI of the base
      * document, not the imports.
      *
@@ -267,7 +267,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Gets the URI to the base document associated with the WSDL definition.
-     * This identifies the origin of the Definition and allows the 
+     * This identifies the origin of the Definition and allows the
      * Definition to be reloaded.  Note that this is the URI of the base
      * document, not the imports.
      *
@@ -280,7 +280,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
 
     /**
-     * Populates a given service. 
+     * Populates a given service.
      *
      * @throws AxisFault
      */
@@ -288,7 +288,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         try {
             setup();
 
-            // NOTE: set the axisService with the Parameter for the WSDL 
+            // NOTE: set the axisService with the Parameter for the WSDL
             // Definition after the rest of the work
 
             if (wsdl4jDefinition == null) {
@@ -339,9 +339,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.getPolicyInclude().setPolicyRegistry(registry);
 
 
-            // Setting wsdl4jdefintion to the axisService parameter include list, 
-            // so if someone needs to use the definition directly, 
-            // he can do that by getting the parameter 
+            // Setting wsdl4jdefintion to the axisService parameter include list,
+            // so if someone needs to use the definition directly,
+            // he can do that by getting the parameter
             Parameter wsdlDefinitionParameter = new Parameter();
             wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
 
@@ -689,22 +689,33 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                  bindingFaults.hasNext();) {
 
                 BindingFault bindingFault = (BindingFault) bindingFaults.next();
-                Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault.getName());
-                Message wsdl4jFaultMessge = wsdl4jFault.getMessage();
+                if (bindingFault.getName() == null) {
+                    throw new AxisFault("Binding name is null for the binding fault in " +
+                            " binding operation ==> " + wsdl4jBindingOperation.getName());
+                } else {
+                    Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault.getName());
+                    if (wsdl4jFault == null){
+                        throw new AxisFault("Can not find the corresponding fault element in " +
+                                "wsdl operation " + wsdl4jOperation.getName() + " for the fault" +
+                                " name " + bindingFault.getName());
+                    } else {
+                        Message wsdl4jFaultMessge = wsdl4jFault.getMessage();
 
-                AxisMessage faultMessage = findFaultMessage(
-                        wsdl4jFaultMessge.getQName().getLocalPart(),
-                        axisOperation.getFaultMessages());
+                        AxisMessage faultMessage = findFaultMessage(
+                                wsdl4jFaultMessge.getQName().getLocalPart(),
+                                axisOperation.getFaultMessages());
 
-                AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
-                addDocumentation(axisBindingFaultMessage, wsdl4jFaultMessge.getDocumentationElement());
-                axisBindingFaultMessage.setFault(true);
-                axisBindingFaultMessage.setAxisMessage(faultMessage);
-                axisBindingFaultMessage.setParent(axisBindingOperation);
+                        AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
+                        addDocumentation(axisBindingFaultMessage, wsdl4jFaultMessge.getDocumentationElement());
+                        axisBindingFaultMessage.setFault(true);
+                        axisBindingFaultMessage.setAxisMessage(faultMessage);
+                        axisBindingFaultMessage.setParent(axisBindingOperation);
 
-                axisBindingOperation.addFault(axisBindingFaultMessage);
-                if (isSetMessageQNames) {
-                    addQNameReference(faultMessage, wsdl4jFault.getMessage());
+                        axisBindingOperation.addFault(axisBindingFaultMessage);
+                        if (isSetMessageQNames) {
+                            addQNameReference(faultMessage, wsdl4jFault.getMessage());
+                        }
+                    }
                 }
             }
 
@@ -744,7 +755,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         setPolicyRegistryFromService(axisService);
 
         setupComplete = true; // if any part of setup fails, don't mark
-        // setupComplete        
+        // setupComplete
     }
 
 
@@ -2684,11 +2695,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
 //    private void processPoliciesInDefinition() {
-//        
+//
 //        Object obj;
 //        for (Iterator iterator = wsdl4jDefinition.getExtensibilityElements().iterator(); iterator.hasNext();) {
 //            obj = iterator.next();
-//            
+//
 //            if (obj instanceof UnknownExtensibilityElement) {
 //                Element e = ((UnknownExtensibilityElement) obj).getElement();
 //                if (WSDLConstants.WSDL11Constants.POLICY.getNamespaceURI().equals(e.getNamespaceURI()) &&
