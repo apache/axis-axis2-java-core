@@ -254,7 +254,7 @@
                     }
                     ret_val = adb_<xsl:value-of select="output/param/@type"/>_create(env);
 
-                    adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, ret_node );
+                    adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, &amp;ret_node );
                     return ret_val;
                 </xsl:when>
                 <xsl:otherwise>

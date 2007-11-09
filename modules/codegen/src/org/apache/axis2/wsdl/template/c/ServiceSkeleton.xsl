@@ -176,7 +176,7 @@
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
                         <xsl:when test="@ours">
                         adb_<xsl:value-of select="@type"/>_create( env);
-                        if( AXIS2_FAILURE == adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node ))
+                        if( AXIS2_FAILURE == adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, &amp;content_node ))
                         {
                             adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                       
