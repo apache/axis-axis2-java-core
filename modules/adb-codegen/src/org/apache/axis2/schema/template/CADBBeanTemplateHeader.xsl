@@ -57,12 +57,17 @@
         #ifndef <xsl:value-of select="$caps_axis2_name"/>_H
         #define <xsl:value-of select="$caps_axis2_name"/>_H
 
-        /**
+       /**
         * <xsl:value-of select="$axis2_name"/>.h
         *
         * This file was auto-generated from WSDL
         * by the Apache Axis2/Java version: #axisVersion# #today#
         */
+
+       /**
+        *  <xsl:value-of select="$axis2_name"/> class
+        */
+        typedef struct <xsl:value-of select="$axis2_name"/><xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t;
 
         <xsl:for-each select="property">
           <xsl:if test="@ours">
@@ -99,10 +104,6 @@
         #endif
 
         #define AXIS2_DEFAULT_DIGIT_LIMIT 64
-       /**
-        *  <xsl:value-of select="$axis2_name"/> class
-        */
-        typedef struct <xsl:value-of select="$axis2_name"/><xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t;
 
         /**
          * Constructor for creating <xsl:value-of select="$axis2_name"/>_t
@@ -130,7 +131,7 @@
              * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
              * @param env pointer to environment struct
              * @param node_value to deserialize
-             * @param parent parent node which contain the simple type
+             * @param parent_element The parent element if it is an element, NULL otherwise
              * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
              */
             axis2_status_t AXIS2_CALL
@@ -145,19 +146,20 @@
          * Deserialize an XML to adb objects
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param parent to deserialize
+         * @param parent double pointer to the parent node to deserialize
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_deserialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-            const axutil_env_t *env, axiom_node_t* parent);
+            const axutil_env_t *env, axiom_node_t** parent);
+            
+            <!-- Here the double pointer is used to change the parent pointer - This can be happned when deserialize is called in a particle class -->
 
        /**
          * Declare namespace in the parent node (Pass either the parent element or the stream and set the other NULL)
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param parent_element The parent element if it is an element, NULL otherwise
          * @param stream if parent is not an element and is a stream, pass the stream, NULL otherwise
          */
        void AXIS2_CALL
@@ -295,6 +297,17 @@
          */
         int AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env);
+
+        /**
+         * Check whether the <xsl:value-of select="$propertyName"/> is a particle class (E.g. A group)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object.
+         * @param env pointer to environment struct.
+         * @return whether this is a particle class.
+         */
+        axis2_bool_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_is_particle(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
 

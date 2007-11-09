@@ -5,14 +5,14 @@
     <xsl:template match="/beans">
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
-       /**
+       /*
         * <xsl:value-of select="$axis2_name"/>.c
         *
         * This file was auto-generated from WSDL
         * by the Apache Axis2/Java version: #axisVersion# #today#
         */
 
-       /**
+       /*
         *  <xsl:value-of select="$axis2_name"/>
         */
         #include "<xsl:value-of select="$axis2_name"/>.h"
@@ -35,7 +35,10 @@
         <xsl:variable name="nsprefix"><xsl:value-of select="@nsprefix"/></xsl:variable>
         <xsl:variable name="anon"><xsl:value-of select="@anon"/></xsl:variable>
         <xsl:variable name="ordered"><xsl:value-of select="@anon"/></xsl:variable>
-       /**
+        <xsl:variable name="particleClass"><xsl:value-of select="@particleClass"/></xsl:variable> <!-- particle classes are used to represent schema groups -->
+        <xsl:variable name="hasParticleType"><xsl:value-of select="@hasParticleType"/></xsl:variable> <!-- particle classes are used to represent schema groups -->
+       
+       /*
         * <xsl:value-of select="$axis2_name"/>.h
         *
         * This file was auto-generated from WSDL
@@ -45,8 +48,8 @@
 
         #include "<xsl:value-of select="$axis2_name"/>.h"
           <xsl:choose>
-             <xsl:when test="@type">
-              /**
+             <xsl:when test="$istype">
+              /*
                * This type was generated from the piece of schema that had
                * name = <xsl:value-of select="$originalName"/>
                * Namespace URI = <xsl:value-of select="$nsuri"/>
@@ -54,7 +57,7 @@
                */
              </xsl:when>
              <xsl:otherwise>
-              /**
+              /*
                * implmentation of the <xsl:value-of select="$originalName"/><xsl:if test="$nsuri">|<xsl:value-of select="$nsuri"/></xsl:if> element
                */
              </xsl:otherwise>
@@ -63,7 +66,7 @@
 
         struct <xsl:value-of select="$axis2_name"/>
         {
-            <xsl:if test="not(@type)">
+            <xsl:if test="not($istype)">
                 axutil_qname_t* qname;
             </xsl:if>
 
@@ -92,7 +95,7 @@
             const axutil_env_t *env)
         {
             <xsl:value-of select="$axis2_name"/>_t *<xsl:value-of select="$name"/> = NULL;
-            <xsl:if test="not(@type)">
+            <xsl:if test="not($istype)">
               axutil_qname_t* qname = NULL;
             </xsl:if>
             AXIS2_ENV_CHECK(env, NULL);
@@ -111,14 +114,14 @@
             <xsl:for-each select="property">
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
                 <xsl:choose>
-                  <xsl:when test="@ours">
+                  <xsl:when test="@ours or @type='axis2_char_t*' or @type='axutil_qname_t*' or @type='axutil_duration_t*' or @type='axutil_uri_t*' or @type='axutil_date_time_t*' or @type='axutil_base64_binary_t*'">
                     <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>  = NULL;
                   </xsl:when>
                   <!-- todo for others -->
                 </xsl:choose>
             </xsl:for-each>
 
-            <xsl:if test="not(@type)">
+            <xsl:if test="not($istype)">
               <xsl:choose>
                 <xsl:when test="$nsuri and $nsuri != ''">
                   qname =  axutil_qname_create (env,
@@ -473,8 +476,10 @@
         <xsl:value-of select="$axis2_name"/>_deserialize(
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env,
-                axiom_node_t* parent)
+                axiom_node_t **dp_parent)
         {
+          axiom_node_t *parent = *dp_parent;
+          
           axis2_status_t status = AXIS2_SUCCESS;
           <xsl:if test="property/@attribute">
                axiom_attribute_t *parent_attri = NULL;
@@ -617,6 +622,9 @@
                         <!-- TODO: ADB specific error should be defined and set here -->
                         return AXIS2_FAILURE;
                     }
+                    </xsl:when>
+                    <xsl:when test="$particleClass">
+                         first_node = parent;
                     </xsl:when>
                     <xsl:otherwise>
                       <!-- for types, parent refers to the container element -->
@@ -926,7 +934,7 @@
                                       element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
 
                                       status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element,
-                                                                            env, current_node);
+                                                                            env, &amp;current_node);
                                       if(AXIS2_FAILURE == status)
                                       {
                                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
@@ -939,68 +947,53 @@
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                   text_value);
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                               text_value);
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                            status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if>
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if> 
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                   axutil_uri_parse_string(env, text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if> 
-
+                                      if(text_value != NULL)
+                                      {
+                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                             axutil_uri_parse_string(env, text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axutil_duration_t*'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if> 
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                   axutil_duration_create_from_string(env, text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if> 
-
+                                      if(text_value != NULL)
+                                      {
+                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                             axutil_duration_create_from_string(env, text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
                                             prefix_found = AXIS2_FALSE;
                                             for(cp = text_value; *cp; cp ++)
                                             {
@@ -1034,138 +1027,125 @@
                                                           cp, /* cp contain the localname */
                                                           axiom_namespace_get_uri(qname_ns, env),
                                                           axiom_namespace_get_prefix(qname_ns, env)));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                       }
+                                       <xsl:if test="not(@nillable)">
+                                         else
+                                         {
+                                             AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                             status = AXIS2_FAILURE;
+                                         }
+                                       </xsl:if>
 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                    (char)(*text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                             (char)(*text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                    atoi(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
-
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atoi(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
                                    </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_byte_t'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                    atoi(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atoi(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
 
                                    </xsl:when>
                                     <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-
-                                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                    atoi(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atoi(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if> 
 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='float'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                     atof(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atof(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if>
 
                                      </xsl:when>
                                     <xsl:when test="$nativePropertyType='double'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-                                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                     atof(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atof(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if>
 
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
-
-                                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                     atol(text_value));
-                                          <xsl:if test="not(@nillable)">
-                                            }
-                                          </xsl:if>
-
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   atol(text_value));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if>
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                       text_value = NULL; /** just to avoid warning */
@@ -1175,14 +1155,9 @@
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_bool_t'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
-                                         <xsl:choose>
-                                            <xsl:when test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
+                                      if(text_value != NULL)
+                                      {
+                                            if (!axutil_strcasecmp(text_value , "true"))
                                             {
                                                 status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                  AXIS2_TRUE);
@@ -1192,37 +1167,28 @@
                                                 status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                       AXIS2_FALSE);
                                             }
-                                            </xsl:when>
-                                             <xsl:otherwise>
-                                                if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
-                                                {
-                                                    status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                      AXIS2_TRUE);
-                                                }
-                                                else
-                                                {
-                                                    status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                      AXIS2_FALSE);
-                                                }
-                                             </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:when>
-                                    <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
-                                      text_value = axiom_element_get_text(current_element, env, current_node);
+                                      }
                                       <xsl:if test="not(@nillable)">
-                                      if(text_value == NULL)
+                                      else
                                       {
                                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
                                           status = AXIS2_FAILURE;
                                       }
-                                      else
-                                      {
                                       </xsl:if>
+                                    </xsl:when>
+                                    <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                                      text_value = axiom_element_get_text(current_element, env, current_node);
+                                      if(text_value != NULL)
+                                      {
                                           element = (void*)axutil_date_time_create(env);
                                           status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
                                                                           text_value);
                                           if(AXIS2_FAILURE ==  status)
                                           {
+                                              if(element != NULL)
+                                              {
+                                                  axutil_date_time_free(element, env);
+                                              }
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
                                                                   " %d :: %s", env->error->error_number,
                                                                   AXIS2_ERROR_GET_MESSAGE(env->error));
@@ -1230,36 +1196,45 @@
                                           }
                                           status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                        (<xsl:value-of select="$nativePropertyType"/>)element);
-                                      <xsl:if test="not(@nillable)">
                                       }
-                                      </xsl:if>
-                                    </xsl:when>
-                                    <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
-                                      text_value = axiom_element_get_text(current_element, env, current_node);
                                       <xsl:if test="not(@nillable)">
-                                      if(text_value == NULL)
+                                      else
                                       {
                                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
                                           status = AXIS2_FAILURE;
                                       }
+                                      </xsl:if>
+
+                                    </xsl:when>
+                                    <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
+                                      text_value = axiom_element_get_text(current_element, env, current_node);
+                                      if(text_value != NULL)
+                                      {
+                                          element = (void*)axutil_base64_binary_create(env);
+                                          status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
+                                                                          text_value);
+                                          if(AXIS2_FAILURE ==  status)
+                                          {
+                                              if(element != NULL)
+                                              {
+                                                 axutil_base64_binary_free((axutil_base64_binary_t*)element, env);
+                                              }
+                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
+                                                                  " %d :: %s", env->error->error_number,
+                                                                  AXIS2_ERROR_GET_MESSAGE(env->error));
+                                              return AXIS2_FAILURE;
+                                          }
+                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                       (<xsl:value-of select="$nativePropertyType"/>)element);
+                                      }
+                                      <xsl:if test="not(@nillable)">
                                       else
                                       {
-                                      </xsl:if>
-                                      element = (void*)axutil_base64_binary_create(env);
-                                      status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
-                                                                      text_value);
-                                      if(AXIS2_FAILURE ==  status)
-                                      {
-                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                              " %d :: %s", env->error->error_number,
-                                                              AXIS2_ERROR_GET_MESSAGE(env->error));
-                                          return AXIS2_FAILURE;
-                                      }
-                                      status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                   (<xsl:value-of select="$nativePropertyType"/>)element);
-                                      <xsl:if test="not(@nillable)">
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
                                       }
                                       </xsl:if>
+
                                     </xsl:when>
                                     <xsl:otherwise>
                                       <!-- TODO: add other types here -->
@@ -1324,7 +1299,7 @@
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
                                           
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                                 current_node);
+                                                                                 &amp;current_node);
                                           
                                           if(AXIS2_FAILURE ==  status)
                                           {
@@ -1337,99 +1312,209 @@
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)text_value);
+                                          if(text_value != NULL)
+                                          {
+                                              axutil_array_list_add_at(arr_list, env, i, (void*)text_value);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          prefix_found = AXIS2_FALSE;
-                                          for(cp = text_value; *cp; cp ++)
+                                          if(text_value != NULL)
                                           {
-                                              if(*cp == ':')
+                                              prefix_found = AXIS2_FALSE;
+                                              for(cp = text_value; *cp; cp ++)
                                               {
-                                                  *cp = '\0';
-                                                  cp ++;
-                                                  prefix_found  = AXIS2_TRUE;
-                                                  break;
+                                                  if(*cp == ':')
+                                                  {
+                                                      *cp = '\0';
+                                                      cp ++;
+                                                      prefix_found  = AXIS2_TRUE;
+                                                      break;
+                                                  }
                                               }
+                                              
+                                              if(prefix_found)
+                                              {
+                                                  /* node value contain  the prefix */
+                                                  qname_ns = axiom_element_find_namespace_uri(current_element, env, text_value, current_node);
+                                              }
+                                              else
+                                              {
+                                                  /* Then it is the default namespace */
+                                                  cp = text_value;
+                                                  qname_ns = axiom_element_get_default_namespace(current_element, env, current_node);
+                                              }
+                                              
+                                              <!-- we are done extracting info, just set the extracted value to the qname -->
+                                              
+                                              axutil_array_list_add_at(arr_list, env, i, (void*)
+                                                      axutil_qname_create(
+                                                            env, 
+                                                            cp, /* cp contain the localname */
+                                                            axiom_namespace_get_uri(qname_ns, env),
+                                                            axiom_namespace_get_prefix(qname_ns, env)));
                                           }
-                                          
-                                          if(prefix_found)
-                                          {
-                                              /* node value contain  the prefix */
-                                              qname_ns = axiom_element_find_namespace_uri(current_element, env, text_value, current_node);
-                                          }
+                                          <xsl:if test="not(@nillable)">
                                           else
                                           {
-                                              /* Then it is the default namespace */
-                                              cp = text_value;
-                                              qname_ns = axiom_element_get_default_namespace(current_element, env, current_node);
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
                                           }
-                                          
-                                          <!-- we are done extracting info, just set the extracted value to the qname -->
-                                          
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)
-                                                  axutil_qname_create(
-                                                        env, 
-                                                        cp, /* cp contain the localname */
-                                                        axiom_namespace_get_uri(qname_ns, env),
-                                                        axiom_namespace_get_prefix(qname_ns, env)));
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)axutil_uri_parse_string(env, text_value));
+                                          if(text_value != NULL)
+                                          {
+                                              axutil_array_list_add_at(arr_list, env, i, (void*)axutil_uri_parse_string(env, text_value));
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_duration_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)axutil_duration_create_from_string(env, text_value));
+                                          if(text_value != NULL)
+                                          {
+                                                axutil_array_list_add_at(arr_list, env, i, (void*)axutil_duration_create_from_string(env, text_value));
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, 64);
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)(*text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                               /* we keeps ints in arrays from their pointers */
+                                               element = AXIS2_MALLOC(env-> allocator, 64);
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)(*text_value);
+                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(int));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(int));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_byte_t'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(int));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(axis2_byte_t));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(short));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(short));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='float'">
-                                          /** we keeps float in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(float));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(float));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='double'">
-                                          /** we keeps float in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(double));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                               /* we keeps float in arrays from their pointers */
+                                               element = AXIS2_MALLOC(env-> allocator, sizeof(double));
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
+                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
-                                          /** we keeps long in arrays from their pointers */
-                                          text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(long));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps long in arrays from their pointers */
+                                              text_value = axiom_element_get_text(current_element, env, current_node);
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(long));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                           text_value = NULL; /** just to avoid warning */
@@ -1437,43 +1522,72 @@
                                           axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
-                                          text_value = axiom_element_get_text(current_element, env, current_node);
-                                          if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
+                                          if(text_value != NULL)
                                           {
-                                             axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
+                                               if (!axutil_strcasecmp (text_value , "true"))
+                                               {
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
+                                               }
+                                               else
+                                               {
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                               }
                                           }
+                                          <xsl:if test="not(@nillable)">
                                           else
                                           {
-                                             axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
                                           }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
-                                          element = (void*)axutil_date_time_create(env);
-                                          text_value = axiom_element_get_text(current_element, env, current_node);
-                                          status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
-                                                                          text_value);
-                                          if(AXIS2_FAILURE ==  status)
+                                          if(text_value != NULL)
                                           {
-                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                  " %d :: %s", env->error->error_number,
-                                                                  AXIS2_ERROR_GET_MESSAGE(env->error));
-                                              return AXIS2_FAILURE;
+                                              element = (void*)axutil_date_time_create(env);
+                                              text_value = axiom_element_get_text(current_element, env, current_node);
+                                              status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
+                                                                              text_value);
+                                              if(AXIS2_FAILURE ==  status)
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
+                                                                      " %d :: %s", env->error->error_number,
+                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
+                                                  return AXIS2_FAILURE;
+                                              }
+                                              axutil_array_list_add_at(arr_list, env, i, element);
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
-                                          element = (void*)axutil_base64_binary_create(env);
-                                          text_value = axiom_element_get_text(current_element, env, current_node);
-                                          status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
-                                                                          text_value);
-                                          if(AXIS2_FAILURE ==  status)
+                                          if(text_value != NULL)
                                           {
-                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                  " %d :: %s", env->error->error_number,
-                                                                  AXIS2_ERROR_GET_MESSAGE(env->error));
-                                              return AXIS2_FAILURE;
+                                              element = (void*)axutil_base64_binary_create(env);
+                                              text_value = axiom_element_get_text(current_element, env, current_node);
+                                              status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
+                                                                              text_value);
+                                              if(AXIS2_FAILURE ==  status)
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
+                                                                      " %d :: %s", env->error->error_number,
+                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
+                                                  return AXIS2_FAILURE;
+                                              }
+                                              axutil_array_list_add_at(arr_list, env, i, element);
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:otherwise>
                                           <!-- TODO: add other types here -->
@@ -1530,7 +1644,7 @@
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
                                           
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                                 current_node);
+                                                                                 &amp;current_node);
                                           if(AXIS2_FAILURE ==  status)
                                           {
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
@@ -1542,19 +1656,21 @@
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)text_value);
+                                          if(text_value != NULL)
+                                          {
+                                                axutil_array_list_add_at(arr_list, env, i, (void*)text_value);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          <xsl:if test="not(@nillable)">
-                                            if(text_value == NULL)
-                                            {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
-                                            }
-                                            else
-                                            {
-                                          </xsl:if>
+                                          if(text_value != NULL)
+                                          {
                                             prefix_found = AXIS2_FALSE;
                                             for(cp = text_value; *cp; cp ++)
                                             {
@@ -1587,63 +1703,152 @@
                                                           cp, /* cp contain the localname */
                                                           axiom_namespace_get_uri(qname_ns, env),
                                                           axiom_namespace_get_prefix(qname_ns, env)));
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)axutil_uri_parse_string(env, text_value));
+                                          if(text_value != NULL)
+                                          {
+                                                axutil_array_list_add_at(arr_list, env, i, (void*)axutil_uri_parse_string(env, text_value));
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_duration_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)axutil_duration_create_from_string(env, text_value));
+                                          if(text_value != NULL)
+                                          {
+                                                axutil_array_list_add_at(arr_list, env, i, (void*)axutil_duration_create_from_string(env, text_value));
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, 64);
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)(*text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /** we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, 64);
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)(*text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(int));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(int));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_byte_t'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(int));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps ints in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(int));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          /** we keeps ints in arrays from their pointers */
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(short));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                               /* we keeps ints in arrays from their pointers */
+                                               element = AXIS2_MALLOC(env-> allocator, sizeof(short));
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
+                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='float'">
-                                          /** we keeps float in arrays from their pointers */
+                                          /* we keeps float in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(float));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(float));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='double'">
-                                          /** we keeps float in arrays from their pointers */
+                                          /* we keeps float in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(double));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(double));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
-                                          /** we keeps long in arrays from their pointers */
+                                          /* we keeps long in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          element = AXIS2_MALLOC(env-> allocator, sizeof(long));
-                                          (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          if(text_value != NULL)
+                                          {
+                                               element = AXIS2_MALLOC(env-> allocator, sizeof(long));
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
+                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                           text_value = NULL; /** just to avoid warning */
@@ -1651,43 +1856,73 @@
                                           axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
-                                          text_value = axiom_element_get_text(current_element, env, current_node);
-                                          if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
+                                          if(text_value != NULL)
                                           {
-                                             axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
-                                          }
+                                              if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
+                                              {
+                                                 axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
+                                              }
+                                              else
+                                              {
+                                                 axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                              }
+                                          <xsl:if test="not(@nillable)">
                                           else
                                           {
-                                             axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
                                           }
+                                          </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
                                           element = (void*)axutil_date_time_create(env);
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
-                                                                          text_value);
-                                          if(AXIS2_FAILURE ==  status)
+                                          if(text_value != NULL)
                                           {
-                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                  " %d :: %s", env->error->error_number,
-                                                                  AXIS2_ERROR_GET_MESSAGE(env->error));
-                                              return AXIS2_FAILURE;
+                                              status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
+                                                                              text_value);
+                                              if(AXIS2_FAILURE ==  status)
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
+                                                                      " %d :: %s", env->error->error_number,
+                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
+                                                  return AXIS2_FAILURE;
+                                              }
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          </xsl:if>
+
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                                           element = (void*)axutil_base64_binary_create(env);
                                           text_value = axiom_element_get_text(current_element, env, current_node);
-                                          status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
-                                                                          text_value);
-                                          if(AXIS2_FAILURE ==  status)
+                                          if(text_value != NULL)
                                           {
-                                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                  " %d :: %s", env->error->error_number,
-                                                                  AXIS2_ERROR_GET_MESSAGE(env->error));
-                                              return AXIS2_FAILURE;
+                                              status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
+                                                                              text_value);
+                                              if(AXIS2_FAILURE ==  status)
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
+                                                                      " %d :: %s", env->error->error_number,
+                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
+                                                  return AXIS2_FAILURE;
+                                              }
+                                              axutil_array_list_add_at(arr_list, env, i, element);
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
+
+
                                         </xsl:when>
                                         <xsl:otherwise>
                                           <!-- TODO: add other types here -->
@@ -1716,8 +1951,28 @@
                  </xsl:choose> <!--- chooosing for element or attribute -->
               </xsl:for-each> <!-- closing for each property -->
 
+            <xsl:if test="$particleClass">
+                *dp_parent = current_node;
+            </xsl:if>
           return status;
        }
+
+          axis2_bool_t AXIS2_CALL
+          <xsl:value-of select="$axis2_name"/>_is_particle(
+                              <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                              const axutil_env_t *env)
+          {
+            <xsl:choose>
+              <xsl:when test="$particleClass">
+                 return AXIS2_TRUE;
+              </xsl:when>
+              <xsl:otherwise>
+                 return AXIS2_FALSE;
+              </xsl:otherwise>
+            </xsl:choose>
+          }
+
+
           void AXIS2_CALL
           <xsl:value-of select="$axis2_name"/>_declare_parent_namespaces(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
@@ -2527,27 +2782,28 @@
                         <xsl:when test="@ours">
                             <xsl:if test="$anon or $istype"> <!-- As this shows, elements are not writing their tags here from stream.
                                                                  It is done using axiom manipualation above..-->
-                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                            if(!adb_<xsl:value-of select="@type"/>_is_particle(<xsl:value-of select="$propertyInstanceName"/>, env))
+                            {
+                                axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                            }
                             </xsl:if>
                             
                             <xsl:variable name="element_closed">
                                 <xsl:choose>
-                                    <xsl:when test="../@type"> 
-                                        AXIS2_FALSE
-                                    </xsl:when>
-                                    <xsl:when test="$anon or $istype"> <!-- this mean the anonymous header is writing -->
-                                        AXIS2_FALSE
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        AXIS2_TRUE
-                                    </xsl:otherwise>
+                                    <xsl:when test="../@type">AXIS2_FALSE</xsl:when>
+                                    <!-- this mean the anonymous header is writing -->
+                                    <xsl:when test="$anon or $istype">AXIS2_FALSE</xsl:when>
+                                    <xsl:otherwise>AXIS2_TRUE</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:variable>
                             adb_<xsl:value-of select="@type"/>_serialize(<xsl:value-of select="$propertyInstanceName"/>, <!-- This will be either element (in array) or just the propery -->
                                                                                  env, current_node,
-                                                                                 <xsl:value-of select="$element_closed"/>);
+                                                                                 adb_<xsl:value-of select="@type"/>_is_particle(<xsl:value-of select="$propertyInstanceName"/>, env) || <xsl:value-of select="$element_closed"/>);
                             <xsl:if test="$anon or $istype">
-                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                            if(!adb_<xsl:value-of select="@type"/>_is_particle(<xsl:value-of select="$propertyInstanceName"/>, env))
+                            {
+                                axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                            }
                             </xsl:if>
                         </xsl:when>
 

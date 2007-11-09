@@ -427,6 +427,14 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "nillable", "yes", rootElt);
         }
 
+        if (metainf.isParticleClass()) {
+            XSLTUtils.addAttribute(model, "particleClass", "yes", rootElt);
+        }
+
+        if (metainf.isHasParticleType()){
+            XSLTUtils.addAttribute(model, "hasParticleType", "yes", rootElt);
+        }
+
         //populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
 
@@ -581,6 +589,15 @@ public class CStructWriter implements BeanWriter {
             //add an attribute that says the type is default
             if (isDefault(CClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "default", "yes", property);
+            }
+
+             // add the default value
+            if (metainf.isDefaultValueAvailable(name)){
+                QName schemaQName = metainf.getSchemaQNameForQName(name);
+                if (baseTypeMap.containsKey(schemaQName)){
+                    XSLTUtils.addAttribute(model, "defaultValue",
+                            metainf.getDefaultValueForQName(name), property);
+                }
             }
 
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
