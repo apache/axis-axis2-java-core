@@ -1590,10 +1590,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
         ArrayList parameters = new ArrayList();
 
-
-        for (Iterator operationsIterator = axisService.getOperations();
-             operationsIterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+        AxisOperation axisOperation = null;
+        AxisBindingOperation axisBindingOperation = null;
+        for (Iterator bindingOperationsIter = this.axisBinding.getChildren();
+             bindingOperationsIter.hasNext();) {
+            axisBindingOperation = (AxisBindingOperation) bindingOperationsIter.next();
+            axisOperation = axisBindingOperation.getAxisOperation();
 
             // Add the parameters to a map with their type as the key
             // this step is needed to remove repetitions
@@ -1633,7 +1635,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // process the header parameters
             Element newChild;
             List headerParameterQNameList = new ArrayList();
-            addHeaderOperations(headerParameterQNameList, axisOperation, true);
+            addHeaderOperations(headerParameterQNameList, axisBindingOperation, true);
             List parameterElementList = getParameterElementList(doc, headerParameterQNameList,
                     WSDLConstants.SOAP_HEADER);
 
@@ -1644,7 +1646,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             headerParameterQNameList.clear();
             parameterElementList.clear();
-            addHeaderOperations(headerParameterQNameList, axisOperation, false);
+            addHeaderOperations(headerParameterQNameList, axisBindingOperation, false);
             parameterElementList = getParameterElementList(doc, headerParameterQNameList,
                     WSDLConstants.SOAP_HEADER);
 
@@ -1711,9 +1713,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
         }
 
+        axisOperation = null;
         for (Iterator operationsIterator = axisService.getOperations();
              operationsIterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+             axisOperation = (AxisOperation) operationsIterator.next();
             details = axisOperation.getParameter(Constants.DATABINDING_OPERATION_DETAILS);
             if (details != null) {
                 rootElement.appendChild(doc.importNode((Element) details.getValue(), true));
@@ -2209,7 +2212,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addSOAPAction(doc, methodElement, bindingOperation.getName());
         addOutputAndFaultActions(doc, methodElement, axisOperation);
-        addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+        addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
         
 
@@ -2584,26 +2587,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * populate the header parameters
      *
      * @param soapHeaderParameterQNameList
-     * @param axisOperation
+     * @param bindingOperation
      * @param input
      */
     protected void addHeaderOperations(List soapHeaderParameterQNameList,
-                                       AxisOperation axisOperation,
+                                       AxisBindingOperation bindingOperation,
                                        boolean input) {
+
+        AxisOperation axisOperation = bindingOperation.getAxisOperation();
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input) {
             if (WSDLUtil.isInputPresentForMEP(MEP)) {
 
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
-                        WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(),
+                        WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
                         WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
             }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
-                        WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(),
+                        WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
                         WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
             }
         }

@@ -400,9 +400,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                 addSOAPAction(doc, methodElement, axisOperation.getName());
                 //add header ops for input
-                addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+                addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
                 //add header ops for output
-                addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+                addHeaderOperations(soapHeaderOutputParameterList, axisBindingOperation, false);
 
                 PolicyInclude policyInclude = axisOperation.getPolicyInclude();
                 Policy policy = policyInclude.getPolicy();
@@ -454,8 +454,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
                     addSOAPAction(doc, methodElement, axisOperation.getName());
-                    addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
-                    addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+                    addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
+                    addHeaderOperations(soapHeaderOutputParameterList, axisBindingOperation, false);
 
                     /*
                      * Setting the policy of the operation
