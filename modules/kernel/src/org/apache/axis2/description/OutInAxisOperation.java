@@ -199,8 +199,11 @@ class OutInAxisOperationClient extends OperationClient {
                     " can not be used with OutInAxisOperationClient , user either "
                     + "fireAndForget or sendRobust)");
         }
-        if (replyTo!=null && !replyTo.hasAnonymousAddress()){
-            useAsync = true;
+        String customReeplyTo = (String)options.getProperty(Options.CUSTOM_REPLYTO_ADDRESS);
+        if ( ! (Options.CUSTOM_REPLYTO_ADDRESS_TRUE.equals(customReeplyTo))) {
+            if (replyTo!=null && !replyTo.hasAnonymousAddress()){
+                useAsync = true;
+            }
         }
 
         if (useAsync || options.isUseSeparateListener()) {

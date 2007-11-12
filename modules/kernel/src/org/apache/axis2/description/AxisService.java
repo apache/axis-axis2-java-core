@@ -2001,7 +2001,7 @@ public class AxisService extends AxisDescription {
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
 
-                    if (s != null && sourceURIToNewLocationMap.get(s.getSourceURI()) == null) {
+                    if (s != null && getScheamLocationWithDot(sourceURIToNewLocationMap, s) == null) {
                         //insert the name into the table
                         insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
                         //recursively call the same procedure
@@ -2106,13 +2106,21 @@ public class AxisService extends AxisDescription {
 
             String newscheamlocation = customSchemaNamePrefix == null ?
                     //use the default mode
-                    (getName() + "?xsd=" + sourceURIToNewLocationMap.get(s.getSourceURI())) :
+                    (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
                     //custom prefix is present - add the custom prefix
-                    (customSchemaNamePrefix + sourceURIToNewLocationMap.get(s.getSourceURI()));
+                    (customSchemaNamePrefix + getScheamLocationWithDot(sourceURIToNewLocationMap, s));
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
             xmlSchemaExternal.setSchemaLocation(newscheamlocation);
             importedScheams.put(schemaLocation, newscheamlocation);
         }
+    }
+
+    private Object getScheamLocationWithDot(Hashtable sourceURIToNewLocationMap, XmlSchema s) {
+        String o = (String) sourceURIToNewLocationMap.get(s.getSourceURI());
+        if (o !=null && o.indexOf(".") <0){
+            return o + ".xsd";
+        }
+        return o;
     }
 
     /**
