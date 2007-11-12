@@ -77,8 +77,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     public void messageReceived(Serializable msg, Member sender) {
-        log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
-
         // If the system has not still been intialized, reject all incoming messages, except the
         // GetStateResponseCommand message
         if (configurationContext.
