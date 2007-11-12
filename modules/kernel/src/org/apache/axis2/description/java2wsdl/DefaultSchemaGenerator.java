@@ -387,9 +387,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     /**
-     * JAM convert first name of an attribute into UpperCase as an example if there is a instance
-     * variable called foo in a bean , then Jam give that as Foo so this method is to correct that
-     * error
+     * JAM converts the first letter of a field into uppercase, so field "foo" would end up
+     * called "Foo".  This method corrects that problem.
      *
      * @param wrongName
      * @return the right name, using english as the locale for case conversion
@@ -690,12 +689,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if ("javax.activation.DataHandler".equals(classType)) {
             return true;
         } else {
-            JClass supuerClass = clazz.getSuperclass();
-            if (supuerClass != null) {
-                return isDataHandler(supuerClass);
-            } else {
-                return false;
-            }
+            JClass superClass = clazz.getSuperclass();
+            return superClass != null && isDataHandler(superClass);
         }
     }
 
@@ -779,7 +774,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchema xmlSchema;
 
         if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
-            String targetNamespacePrefix = null;
+            String targetNamespacePrefix;
 
             if (targetNamespace.equals(schemaTargetNameSpace) &&
                     schema_namespace_prefix != null) {

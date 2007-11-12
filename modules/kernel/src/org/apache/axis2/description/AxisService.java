@@ -79,7 +79,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.SocketException;
 import java.net.URL;
-import java.net.URISyntaxException;
 import java.security.PrivilegedAction;
 import java.util.*;
 
@@ -1966,20 +1965,20 @@ public class AxisService extends AxisDescription {
 
         //populate the axis service with the necessary schema references
         ArrayList schema = this.schemaList;
-        Map changedScheamLocations = null;
+        Map changedSchemaLocations = null;
         if (!this.schemaLocationsAdjusted) {
             Hashtable nameTable = new Hashtable();
             Hashtable sourceURIToNewLocationMap = new Hashtable();
             //calculate unique names for the schemas
-            calcualteSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
+            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
             //adjust the schema locations as per the calculated names
-            changedScheamLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
+            changedSchemaLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
             //reverse the nametable so that there is a mapping from the
             //name to the schemaObject
             setSchemaMappingTable(swapMappingTable(nameTable));
             setSchemaLocationsAdjusted(true);
         }
-        return changedScheamLocations;
+        return changedSchemaLocations;
     }
 
 
@@ -1988,7 +1987,7 @@ public class AxisService extends AxisDescription {
      *
      * @param schemas
      */
-    private void calcualteSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
+    private void calculateSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
@@ -2005,7 +2004,7 @@ public class AxisService extends AxisDescription {
                         //insert the name into the table
                         insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
                         //recursively call the same procedure
-                        calcualteSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
+                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
                     }
                 }
             }

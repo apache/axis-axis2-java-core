@@ -30,7 +30,11 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,7 +55,8 @@ public class RepositoryListener implements DeploymentConstants {
      * then creates a WSInfoList to store information about available modules and services.
      *
      * @param deploymentEngine reference to engine registry for updates
-     * @param isClasspath true if this RepositoryListener should scan the classpath for Modules
+     * @param isClasspath      true if this RepositoryListener should scan the classpath for
+     *                         Modules
      */
     public RepositoryListener(DeploymentEngine deploymentEngine, boolean isClasspath) {
         this.deploymentEngine = deploymentEngine;
@@ -79,11 +84,13 @@ public class RepositoryListener implements DeploymentConstants {
                 }
                 if (!file.isDirectory()) {
                     if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() , WSInfo.TYPE_MODULE);
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer(),
+                                        WSInfo.TYPE_MODULE);
                     }
                 } else {
                     if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getModuleDeployer() ,WSInfo.TYPE_MODULE);
+                        addFileToDeploy(file, deploymentEngine.getModuleDeployer(),
+                                        WSInfo.TYPE_MODULE);
                     }
                 }
             }
@@ -115,15 +122,16 @@ public class RepositoryListener implements DeploymentConstants {
                     URL url = (URL)moduleURLs.nextElement();
                     String fileName = url.toString();
                     if (fileName.startsWith("jar")) {
-                        url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
+                        url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
                         fileName = url.toString();
-                         File f = new File(new URI(fileName));
-                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
                     } else if (fileName.startsWith("file")) {
-                        fileName = fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                        File f = new File(new URI(fileName));
-                        addFileToDeploy(f, deployer ,WSInfo.TYPE_MODULE);
-                    } 
+                        fileName =
+                                fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
+                    } else continue;
+
+                    log.debug("Deploying module from classpath at '" + fileName + "'");
+                    File f = new File(new URI(fileName));
+                    addFileToDeploy(f, deployer, WSInfo.TYPE_MODULE);
 
                 } catch (URISyntaxException e) {
                     log.info(e);
@@ -161,7 +169,7 @@ public class RepositoryListener implements DeploymentConstants {
         ClassLoader cl = deploymentEngine.getAxisConfig().getModuleClassLoader();
         while (cl != null) {
             if (cl instanceof URLClassLoader) {
-                URL[] urls = ((URLClassLoader) cl).getURLs();
+                URL[] urls = ((URLClassLoader)cl).getURLs();
                 for (int i = 0; (urls != null) && i < urls.length; i++) {
                     String path = urls[i].getPath();
                     //If it is a drive letter, adjust accordingly.
@@ -177,7 +185,7 @@ public class RepositoryListener implements DeploymentConstants {
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
-                            addFileToDeploy(file, deployer,WSInfo.TYPE_MODULE);
+                            addFileToDeploy(file, deployer, WSInfo.TYPE_MODULE);
                         }
                     }
                 }
@@ -199,7 +207,7 @@ public class RepositoryListener implements DeploymentConstants {
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
             String location = url.toString();
             if (location.startsWith("jar")) {
-                url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
+                url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
                 location = url.toString();
             }
             if (location.startsWith("file")) {
@@ -237,10 +245,10 @@ public class RepositoryListener implements DeploymentConstants {
         if (directoryToExtensionMappingMap.size() > 0) {
             Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
             while (keys.hasNext()) {
-                String s = (String) keys.next();
-                ArrayList list = (ArrayList) directoryToExtensionMappingMap.get(s);
+                String s = (String)keys.next();
+                ArrayList list = (ArrayList)directoryToExtensionMappingMap.get(s);
                 for (int i = 0; i < list.size(); i++) {
-                    String extension = (String) list.get(i);
+                    String extension = (String)list.get(i);
                     findFileForGivenDirectory(s, extension);
                 }
 
@@ -259,8 +267,8 @@ public class RepositoryListener implements DeploymentConstants {
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        if (!file.isDirectory() && extension.equals(
-                                DeploymentFileData.getFileExtension(file.getName()))) {
+                        if (!file.isDirectory() && extension
+                                .equals(DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
                                             deploymentEngine.getDeployerForExtension(extension),
                                             WSInfo.TYPE_CUSTOM);
@@ -323,7 +331,7 @@ public class RepositoryListener implements DeploymentConstants {
         update();
     }
 
-    public void addFileToDeploy(File file, Deployer deployer , int type) {
-        wsInfoList.addWSInfoItem(file, deployer ,type);
+    public void addFileToDeploy(File file, Deployer deployer, int type) {
+        wsInfoList.addWSInfoItem(file, deployer, type);
     }
 }

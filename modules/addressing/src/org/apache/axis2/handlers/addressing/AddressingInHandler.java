@@ -53,24 +53,26 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
     protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
-    
-	public static final String DISABLE_REF_PARAMETER_EXTRACT = "disableRefParamExtract";
-    
+
+    public static final String DISABLE_REF_PARAMETER_EXTRACT = "disableRefParamExtract";
+
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
     private boolean disableRefparamExtract = false;
-        	  	 
+
     public void init(HandlerDescription handlerdesc) {
-    	super.init(handlerdesc);
-    	disableRefparamExtract = JavaUtils.isTrueExplicitly(Utils.getParameterValue(handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT)));
-    	if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-    		log.debug("AddressingInHandler.init disableRefparamExtract="+disableRefparamExtract);
-    	}
+        super.init(handlerdesc);
+        disableRefparamExtract = JavaUtils.isTrueExplicitly(
+                Utils.getParameterValue(handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT)));
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug("AddressingInHandler.init disableRefparamExtract=" + disableRefparamExtract);
+        }
     }
-    
+
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
-        if (JavaUtils.isTrueExplicitly(msgContext.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED), false)) {
+        if (JavaUtils.isTrueExplicitly(msgContext.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED),
+                                       false)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(
                         "Another handler has processed the addressing headers. Nothing to do here.");
@@ -79,13 +81,13 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         // check whether someone has explicitly set which addressing handler should run.
-        String namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
+        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (namespace == null) {
             namespace = addressingNamespace;
         } else if (!namespace.equals(addressingNamespace)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("This addressing handler does not match the specified namespace, " +
-                        namespace);
+                          namespace);
             }
 
             return InvocationResponse.CONTINUE;
@@ -112,10 +114,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(addressingVersion +
-                        " Headers present in the SOAP message. Starting to process ...");
+                          " Headers present in the SOAP message. Starting to process ...");
             }
-            if(extractAddressingInformation(header, msgContext, addressingHeaders, namespace)){
-            	msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
+            if (extractAddressingInformation(header, msgContext, addressingHeaders, namespace)) {
+                msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
             }
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
@@ -126,110 +128,125 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
         return InvocationResponse.CONTINUE;
     }
-    
+
     protected static final int TO_FLAG = 1, FROM_FLAG = 2, REPLYTO_FLAG = 3,
-	FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
-    /** @return true if addressing information was found */
+            FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
+
+    /**
+     * Pull addressing headers out from the SOAP message.
+     *
+     * @param header the header of the SOAP message
+     * @param messageContext the active MessageContext
+     * @param addressingHeaders a place to put the extracted headers
+     * @param namespace the addressing namespace
+     * @return true if addressing information was found
+     * @throws AxisFault if an error occurs
+     */
     protected boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
                                                    ArrayList addressingHeaders, String namespace)
             throws AxisFault {
 
-    	RolePlayer rolePlayer = (RolePlayer)messageContext.getConfigurationContext().getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
+        RolePlayer rolePlayer = (RolePlayer) messageContext.getConfigurationContext()
+                .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
         Options messageContextOptions = messageContext.getOptions();
-      
+
         ArrayList duplicateHeaderNames = new ArrayList(1); // Normally will not be used for more than 1 header
 
         ArrayList relatesToHeaders = null;
-        SOAPHeaderBlock actionBlock = null, toBlock = null, messageIDBlock = null, replyToBlock = null, faultToBlock = null, fromBlock = null;
-        
+        SOAPHeaderBlock actionBlock = null, toBlock = null, messageIDBlock = null, replyToBlock =
+                null, faultToBlock = null, fromBlock = null;
+
         // Per the SOAP Binding spec "headers with an incorrect cardinality MUST NOT be used" So these variables
         // are used to keep track of invalid cardinality headers so they are not deserialised.
         boolean[] ignoreHeaders = new boolean[7];
         boolean[] checkedHeaderNames = new boolean[7];
-        
-        // First pass just check for duplicates
-        for(int i=0;i<addressingHeaders.size();i++){
-        	SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeaders.get(i);
-        	if (isInRole(soapHeaderBlock, rolePlayer, messageContext.isSOAP11())) {
-        		String localName = soapHeaderBlock.getLocalName();
-        		if (WSA_ACTION.equals(localName)) {
-        			actionBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_ACTION, ACTION_FLAG,
-        					checkedHeaderNames, ignoreHeaders,
-        					duplicateHeaderNames);
-        		} else if (WSA_TO.equals(localName)) {
-        			toBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_TO, TO_FLAG, checkedHeaderNames, ignoreHeaders, duplicateHeaderNames);
-        		} else if (WSA_MESSAGE_ID.equals(localName)) {
-        			messageIDBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_MESSAGE_ID, MESSAGEID_FLAG, 
-        					checkedHeaderNames, ignoreHeaders,
-        					duplicateHeaderNames);
-        		} else if (WSA_REPLY_TO.equals(localName)) {
-        			replyToBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_REPLY_TO, REPLYTO_FLAG,
-        					checkedHeaderNames, ignoreHeaders,
-        					duplicateHeaderNames);
-        		} else if (WSA_FAULT_TO.equals(localName)) {
-        			faultToBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_FAULT_TO,FAULTO_FLAG,
-        					checkedHeaderNames, ignoreHeaders,
-        					duplicateHeaderNames);
-        		} else if (WSA_FROM.equals(localName)) {
-        			fromBlock = soapHeaderBlock;
-        			checkDuplicateHeaders(WSA_FROM,FROM_FLAG,
-        					checkedHeaderNames, ignoreHeaders,
-        					duplicateHeaderNames);
-        		} else if(WSA_RELATES_TO.equals(localName)){
-        			if(relatesToHeaders == null){
-        				relatesToHeaders = new ArrayList(1);
-        			}
-        			relatesToHeaders.add(soapHeaderBlock);
-        		}
-        	}
-        }
-        
-        if (actionBlock == null && toBlock == null && messageIDBlock == null
-				&& replyToBlock == null && faultToBlock == null
-				&& fromBlock == null && relatesToHeaders == null) {
-			// All of the headers must have had the non local roles so further
-			// processing should be skipped.
-			return false;
-		}
 
-        if (actionBlock!=null && !ignoreHeaders[ACTION_FLAG]) {
+        // First pass just check for duplicates
+        for (int i = 0; i < addressingHeaders.size(); i++) {
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeaders.get(i);
+            if (isInRole(soapHeaderBlock, rolePlayer, messageContext.isSOAP11())) {
+                String localName = soapHeaderBlock.getLocalName();
+                if (WSA_ACTION.equals(localName)) {
+                    actionBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_ACTION, ACTION_FLAG,
+                                          checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_TO.equals(localName)) {
+                    toBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_TO, TO_FLAG, checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_MESSAGE_ID.equals(localName)) {
+                    messageIDBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_MESSAGE_ID, MESSAGEID_FLAG,
+                                          checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_REPLY_TO.equals(localName)) {
+                    replyToBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_REPLY_TO, REPLYTO_FLAG,
+                                          checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_FAULT_TO.equals(localName)) {
+                    faultToBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_FAULT_TO, FAULTO_FLAG,
+                                          checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_FROM.equals(localName)) {
+                    fromBlock = soapHeaderBlock;
+                    checkDuplicateHeaders(WSA_FROM, FROM_FLAG,
+                                          checkedHeaderNames, ignoreHeaders,
+                                          duplicateHeaderNames);
+                } else if (WSA_RELATES_TO.equals(localName)) {
+                    if (relatesToHeaders == null) {
+                        relatesToHeaders = new ArrayList(1);
+                    }
+                    relatesToHeaders.add(soapHeaderBlock);
+                }
+            }
+        }
+
+        if (actionBlock == null && toBlock == null && messageIDBlock == null
+            && replyToBlock == null && faultToBlock == null
+            && fromBlock == null && relatesToHeaders == null) {
+            // All of the headers must have had the non local roles so further
+            // processing should be skipped.
+            return false;
+        }
+
+        if (actionBlock != null && !ignoreHeaders[ACTION_FLAG]) {
             extractActionInformation(actionBlock, messageContext);
         }
-        if (toBlock != null &&!ignoreHeaders[TO_FLAG]) {
+        if (toBlock != null && !ignoreHeaders[TO_FLAG]) {
             extractToEPRInformation(toBlock,
                                     messageContextOptions,
                                     header,
                                     namespace);
-        } 
-        if (messageIDBlock!=null && !ignoreHeaders[MESSAGEID_FLAG]) {
+        }
+        if (messageIDBlock != null && !ignoreHeaders[MESSAGEID_FLAG]) {
             extractMessageIDInformation(messageIDBlock, messageContext);
-        } 
-        if (relatesToHeaders!=null) {
-        	for(int i=0;i<relatesToHeaders.size();i++){
-        		extractRelatesToInformation((SOAPHeaderBlock)relatesToHeaders.get(i), messageContextOptions);
-        	}
-        } 
-        if (replyToBlock!=null && !ignoreHeaders[REPLYTO_FLAG]) {
+        }
+        if (relatesToHeaders != null) {
+            for (int i = 0; i < relatesToHeaders.size(); i++) {
+                extractRelatesToInformation((SOAPHeaderBlock) relatesToHeaders.get(i),
+                                            messageContextOptions);
+            }
+        }
+        if (replyToBlock != null && !ignoreHeaders[REPLYTO_FLAG]) {
             extractReplyToEPRInformation(replyToBlock, namespace, messageContext);
         }
-        if (faultToBlock!=null && !ignoreHeaders[FAULTO_FLAG]) {
+        if (faultToBlock != null && !ignoreHeaders[FAULTO_FLAG]) {
             extractFaultToEPRInformation(faultToBlock, namespace, messageContext);
         }
-        if (fromBlock!=null && !ignoreHeaders[FROM_FLAG]) {
+        if (fromBlock != null && !ignoreHeaders[FROM_FLAG]) {
             extractFromEPRInformation(fromBlock, namespace, messageContext);
         }
-        
+
         // Now that all the valid wsa headers have been read, throw an exception if there was an invalid cardinality
         // This means that if for example there are multiple MessageIDs and a FaultTo, the FaultTo will be respected.
         if (!duplicateHeaderNames.isEmpty()) {
             // Simply choose the first problem header we came across as we can only fault for one of them.
             AddressingFaultsHelper.triggerInvalidCardinalityFault(messageContext,
-                                                                  (String) duplicateHeaderNames.get(0));
+                                                                  (String) duplicateHeaderNames
+                                                                          .get(0));
         }
 
         // check for the presence of madatory addressing headers
@@ -242,61 +259,63 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     }
 
     // Copied from SOAPHeaderImpl.java - some reconciliation probably a good idea....
-    protected boolean isInRole(SOAPHeaderBlock soapHeaderBlock, RolePlayer rolePlayer, boolean isSOAP11){
-    	String role = soapHeaderBlock.getRole();
+    protected boolean isInRole(SOAPHeaderBlock soapHeaderBlock,
+                               RolePlayer rolePlayer,
+                               boolean isSOAP11) {
+        String role = soapHeaderBlock.getRole();
 
-    	// 1. If role is ultimatedest, go by what the rolePlayer says
-    	if (role == null || role.equals("") ||
-    			(!isSOAP11 &&
-    					role.equals(SOAP12Constants.SOAP_ROLE_ULTIMATE_RECEIVER))) {
-    		return (rolePlayer == null || rolePlayer.isUltimateDestination());
-    	}
+        // 1. If role is ultimatedest, go by what the rolePlayer says
+        if (role == null || role.equals("") ||
+            (!isSOAP11 &&
+             role.equals(SOAP12Constants.SOAP_ROLE_ULTIMATE_RECEIVER))) {
+            return (rolePlayer == null || rolePlayer.isUltimateDestination());
+        }
 
-    	// 2. If role is next, always return true
-    	if (role.equals(soapHeaderBlock.getVersion().getNextRoleURI())) return true;
+        // 2. If role is next, always return true
+        if (role.equals(soapHeaderBlock.getVersion().getNextRoleURI())) return true;
 
-    	// 3. If role is none, always return false
-    	if (!isSOAP11 && role.equals(SOAP12Constants.SOAP_ROLE_NONE)) {
-    		return false;
-    	}
+        // 3. If role is none, always return false
+        if (!isSOAP11 && role.equals(SOAP12Constants.SOAP_ROLE_NONE)) {
+            return false;
+        }
 
-    	// 4. Return t/f depending on match
-    	List roles = (rolePlayer == null) ? null : rolePlayer.getRoles();
-    	if (roles != null) {
-    		for (int i=0;i<roles.size();i++) {
-    			String thisRole = (String) roles.get(i);
-    			if (thisRole.equals(role)) return true;
-    		}
-    	}
+        // 4. Return t/f depending on match
+        List roles = (rolePlayer == null) ? null : rolePlayer.getRoles();
+        if (roles != null) {
+            for (int i = 0; i < roles.size(); i++) {
+                String thisRole = (String) roles.get(i);
+                if (thisRole.equals(role)) return true;
+            }
+        }
 
-    	return false;
+        return false;
     }
-    
+
     protected abstract void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
-    		MessageContext messageContext)
-    throws AxisFault;
+                                                     MessageContext messageContext)
+            throws AxisFault;
 
     protected abstract void setDefaults(boolean[] alreadyFoundAddrHeader,
-    		MessageContext messageContext) throws AxisFault;
+                                        MessageContext messageContext) throws AxisFault;
 
 
     private void checkDuplicateHeaders(String addressingHeaderName, int headerFlag,
-    		boolean[] checkedHeaderNames, boolean[] ignoreHeaders,
-    		ArrayList duplicateHeaderNames) {//throws AxisFault {
-    	// If the header name has been seen before then we should return true and add it to the list
-    	// of duplicate header names. Otherwise it is the first time we've seen the header so add it
-    	// to the checked liat and return false. 
-    	ignoreHeaders[headerFlag] = checkedHeaderNames[headerFlag];
-    	if (ignoreHeaders[headerFlag]) {
-    		duplicateHeaderNames.add(addressingHeaderName);
-    	} else {
-    		checkedHeaderNames[headerFlag] = true;
-    	}
+                                       boolean[] checkedHeaderNames, boolean[] ignoreHeaders,
+                                       ArrayList duplicateHeaderNames) {//throws AxisFault {
+        // If the header name has been seen before then we should return true and add it to the list
+        // of duplicate header names. Otherwise it is the first time we've seen the header so add it
+        // to the checked liat and return false.
+        ignoreHeaders[headerFlag] = checkedHeaderNames[headerFlag];
+        if (ignoreHeaders[headerFlag]) {
+            duplicateHeaderNames.add(addressingHeaderName);
+        } else {
+            checkedHeaderNames[headerFlag] = true;
+        }
 
-    	if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-    		log.trace("checkDuplicateHeaders: addressingHeaderName=" + addressingHeaderName
-    				+ " isDuplicate=" + ignoreHeaders[headerFlag]);
-    	}
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace("checkDuplicateHeaders: addressingHeaderName=" + addressingHeaderName
+                      + " isDuplicate=" + ignoreHeaders[headerFlag]);
+        }
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR,
@@ -317,7 +336,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
         if (log.isTraceEnabled()) {
             log.trace("extractRelatesToInformation: Extracted Relationship. Value=" + address +
-                    " RelationshipType=" + relationshipTypeString);
+                      " RelationshipType=" + relationshipTypeString);
         }
 
         RelatesTo relatesTo = new RelatesTo(address, relationshipTypeString);
@@ -395,15 +414,15 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (addressAttributes != null && addressAttributes.hasNext()) {
             ArrayList attributes = new ArrayList();
             while (addressAttributes.hasNext()) {
-                OMAttribute attr = (OMAttribute)addressAttributes.next();
+                OMAttribute attr = (OMAttribute) addressAttributes.next();
                 attributes.add(attr);
             }
             epr.setAddressAttributes(attributes);
         }
 
         // check for reference parameters
-        if(!disableRefparamExtract){
-        	extractToEprReferenceParameters(epr, header, namespace);
+        if (!disableRefparamExtract) {
+            extractToEprReferenceParameters(epr, header, namespace);
         }
         soapHeaderBlock.setProcessed();
 
@@ -424,7 +443,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
         if (log.isTraceEnabled()) {
             log.trace("extractActionInformation: soapAction='" + soapAction + "' wsa:Action='" +
-                    wsaAction + "'");
+                      wsaAction + "'");
         }
 
         // Need to validate that the content of the wsa:Action header is not null or whitespace
@@ -469,10 +488,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     /**
      * Given the soap header block, this should extract the information within EPR.
      *
-     * @param headerBlock a SOAP header which is of type EndpointReference
-     * @param epr the EndpointReference to fill in with the extracted data
+     * @param headerBlock         a SOAP header which is of type EndpointReference
+     * @param epr                 the EndpointReference to fill in with the extracted data
      * @param addressingNamespace the WSA namespace URI
-     * @param messageContext the active MessageContext
+     * @param messageContext      the active MessageContext
      * @throws AxisFault if there is a problem
      */
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr,
@@ -496,7 +515,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (actionAttributes != null && actionAttributes.hasNext()) {
             ArrayList attributes = new ArrayList();
             while (actionAttributes.hasNext()) {
-                OMAttribute attr = (OMAttribute)actionAttributes.next();
+                OMAttribute attr = (OMAttribute) actionAttributes.next();
                 attributes.add(attr);
             }
             return attributes;
