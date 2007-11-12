@@ -77,6 +77,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     public void messageReceived(Serializable msg, Member sender) {
+        log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
 
         // If the system has not still been intialized, reject all incoming messages, except the
         // GetStateResponseCommand message
@@ -84,6 +85,8 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
             && !(msg instanceof GetStateResponseCommand) &&
             !(msg instanceof GetConfigurationResponseCommand)) {
+
+            log.warn("Received message before cluster initialization has been completed");
             return;
         }
         log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
@@ -95,6 +98,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
+        //TODO: Reject duplicates that can be received due to retransmissions
+        //TODO: ACK implosion?
+
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
             contextManager.process(ctxCmd);

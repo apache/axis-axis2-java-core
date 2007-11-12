@@ -66,6 +66,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                         methodElement,inMessage);
 
             }
+            replicateState(inMessage);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             if (cause != null) {
