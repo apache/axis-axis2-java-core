@@ -26,8 +26,6 @@ import java.nio.channels.Pipe;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.channels.spi.SelectorProvider;
-import java.nio.ByteBuffer;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.IOException;

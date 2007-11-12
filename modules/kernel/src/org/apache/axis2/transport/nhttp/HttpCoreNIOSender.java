@@ -44,7 +44,6 @@ import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -238,8 +237,8 @@ public class HttpCoreNIOSender extends AbstractHandler implements TransportSende
         if (headers != null && !headers.isEmpty()) {
             headers.remove(HTTP.CONN_DIRECTIVE);
             headers.remove(HTTP.TRANSFER_ENCODING);
-            headers.remove(HTTP.DATE_DIRECTIVE);
-            headers.remove(HTTP.SERVER_DIRECTIVE);
+            headers.remove(HTTP.DATE_HEADER);
+            headers.remove(HTTP.SERVER_HEADER);
             headers.remove(HTTP.CONTENT_TYPE);
             headers.remove(HTTP.CONTENT_LEN);
             headers.remove(HTTP.USER_AGENT);
@@ -314,7 +313,7 @@ public class HttpCoreNIOSender extends AbstractHandler implements TransportSende
 
         // if this is a dummy message to handle http 202 case with non-blocking IO
         // set the status code to 202 and the message body to an empty byte array (see below)
-        if (Utils.isExplicitlyTrue(msgContext, NhttpConstants.SC_ACCEPTED) &&
+        if (msgContext.isPropertyTrue(NhttpConstants.SC_ACCEPTED) &&
                 msgContext.getProperty(
                     //org.apache.sandesha2.Sandesha2Constants.MessageContextProperties.SEQUENCE_ID
                     "WSRMSequenceId") == null) {
@@ -337,7 +336,7 @@ public class HttpCoreNIOSender extends AbstractHandler implements TransportSende
 
         OutputStream out = worker.getOutputStream();
         try {
-            if (Utils.isExplicitlyTrue(msgContext, NhttpConstants.SC_ACCEPTED) &&
+            if (msgContext.isPropertyTrue(NhttpConstants.SC_ACCEPTED) &&
                 msgContext.getProperty(
                     //Sandesha2Constants.MessageContextProperties.SEQUENCE_ID
                     "WSRMSequenceId") == null) {

@@ -21,16 +21,16 @@ package org.apache.axis2.transport.http.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpVersion;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpExecutionContext;
 import org.apache.http.protocol.HttpProcessor;
 
 public class AxisHttpRequestImpl implements AxisHttpRequest {
@@ -65,8 +65,8 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
     }
     
     public void prepare() throws IOException, HttpException {
-        this.context.setAttribute(HttpExecutionContext.HTTP_CONNECTION, this.conn);
-        this.context.setAttribute(HttpExecutionContext.HTTP_REQUEST, this.request);
+        this.context.setAttribute(ExecutionContext.HTTP_CONNECTION, this.conn);
+        this.context.setAttribute(ExecutionContext.HTTP_REQUEST, this.request);
         
         this.httpproc.process(this.request, this.context);
     }
@@ -79,8 +79,8 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         return this.request.getRequestLine().getUri();
     }
 
-    public HttpVersion getHttpVersion() {
-        return this.request.getRequestLine().getHttpVersion();
+    public ProtocolVersion getProtocolVersion() {
+        return this.request.getRequestLine().getProtocolVersion();
     }
 
     public String getContentType() {
@@ -124,8 +124,12 @@ public class AxisHttpRequestImpl implements AxisHttpRequest {
         return this.request.getLastHeader(name);
     }
 
-    public Iterator headerIterator() {
+    public HeaderIterator headerIterator() {
         return this.request.headerIterator();
+    }
+
+    public HeaderIterator headerIterator(final String name) {
+        return this.request.headerIterator(name);
     }
 
     public void removeHeader(final Header header) {

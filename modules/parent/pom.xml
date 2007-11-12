@@ -107,7 +107,7 @@
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <groovy.all.version>1.0-jsr-06</groovy.all.version>
         <intellij.version>5.0</intellij.version>
-        <httpcore.version>4.0-alpha5</httpcore.version>
+        <httpcore.version>4.0-alpha6</httpcore.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.0</jaxb.api.version>
         <jaxbri.version>2.0.5</jaxbri.version>
