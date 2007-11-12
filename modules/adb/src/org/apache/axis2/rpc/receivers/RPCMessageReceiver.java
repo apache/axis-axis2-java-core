@@ -144,7 +144,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             }
             if (msg == null) {
                 msg = "Exception occurred while trying to invoke service method " +
-                        method.getName();
+                	(method != null ? method.getName() : "null");
             }
             if (cause instanceof AxisFault) {
                 log.debug(msg, cause);
@@ -156,7 +156,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             throw AxisFault.makeFault(e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                    method.getName();
+            	(method != null ? method.getName() : "null");
             log.error(msg, e);
             throw AxisFault.makeFault(e);
         }
