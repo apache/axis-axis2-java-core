@@ -528,7 +528,7 @@ public class SchemaCompiler {
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
         if (schemaType != null) {
-            processSchema(xsElt, schemaType, parentSchema);
+            processSchema(xsElt, schemaType, parentSchema, false);
             //at this time it is not wise to directly write the class for the element
             //so we push the complete element to an arraylist and let the process
             //pass through. We'll be iterating through the elements writing them
@@ -637,53 +637,21 @@ public class SchemaCompiler {
                         SchemaCompilerMessages.getMessage("schema.referencedElementNotFound", xsElt.getRefName().toString()));
             }
 
-            //if the element is referenced, then it should be one of the outer (global) ones
-            processElement(referencedElement, resolvedSchema);
-
-            //no outer check required here. If the element is having a ref, then it is definitely
-            //not an outer element since the top level elements are not supposed to have refs
-            //Also we are sure that it should have a type reference
-            QName referenceEltQName = referencedElement.getQName();
-            if (referencedElement.getSchemaTypeName() != null) {
-                // we have to only find the class name without arrary part
-                String javaClassName = findClassName(referencedElement.getSchemaTypeName(), false);
-                //if this element is referenced, there's no QName for this element
-                this.processedElementRefMap.put(referenceEltQName, javaClassName);
+            // here what we want is to set the schema type name for the element
+            if (referencedElement.getSchemaType() != null) {
+                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())){
+                    processSchema(referencedElement, referencedElement.getSchemaType(), resolvedSchema, true);
+                    // if this is an anonomous complex type we have to set this
+                    this.processedElementRefMap.put(referencedElement.getQName(),
+                            this.processedTypemap.get(referencedElement.getSchemaTypeName()));
+                }
+                String javaClassName = (String) this.processedTypemap.get(referencedElement.getSchemaTypeName());
                 referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                         javaClassName);
-                // set the element class name to be used in unwrapping
                 xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                                javaClassName);
-            } else {
-                //this referenced element has an anon type and that anon type has been already
-                //processed. But in this case we need it to be a seperate class since this
-                //complextype has to be added as an attribute in a class.
-                //generate a name for this type
-                QName generatedTypeName = generateTypeQName(referenceEltQName, resolvedSchema);
-                XmlSchemaType referenceSchemaType = referencedElement.getSchemaType();
-
-
-                if (referenceSchemaType instanceof XmlSchemaComplexType) {
-
-                    if (referencedElement.getSchemaTypeName() == null) {
-                        referencedElement.setSchemaTypeName(generatedTypeName);
-                    }
-
-                    //set a name
-                    referenceSchemaType.setName(generatedTypeName.getLocalPart());
-
-                    String javaclassName = writeComplexType((XmlSchemaComplexType) referenceSchemaType,
-                            (BeanWriterMetaInfoHolder) processedAnonymousComplexTypesMap.get(referencedElement));
-
-
-                    processedTypemap.put(generatedTypeName, javaclassName);
-                    this.processedElementRefMap.put(referenceEltQName, javaclassName);
-                    // set the class name to be used in unwrapping
-                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                                javaclassName);
-
-                }
+                        javaClassName);
             }
+
             // schema type name is present but not the schema type object
         } else if (xsElt.getSchemaTypeName() != null) {
             //There can be instances where the SchemaType is null but the schemaTypeName is not!
@@ -698,7 +666,7 @@ public class SchemaCompiler {
 
             if (typeByName != null) {
                 //this type is found in the schema so we can process it
-                processSchema(xsElt, typeByName, resolvedSchema);
+                processSchema(xsElt, typeByName, resolvedSchema, false);
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
@@ -847,11 +815,13 @@ public class SchemaCompiler {
      */
     private void processSchema(XmlSchemaElement xsElt,
                                XmlSchemaType schemaType,
-                               XmlSchema parentSchema) throws SchemaCompilationException {
+                               XmlSchema parentSchema,
+                               boolean isWriteAnonComplexType) throws SchemaCompilationException {
         if (schemaType instanceof XmlSchemaComplexType) {
             //write classes for complex types
             XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
-            if (complexType.getName() != null) {
+            // complex type name may not be null if we have set it
+            if (complexType.getName() != null && !this.changedComplexTypeSet.contains(schemaType)) {
                 // here complex type may be in another shcema so we have to find the
                 // correct parent schema.
                 XmlSchema resolvedSchema = getParentSchema(parentSchema,complexType.getQName(),COMPONENT_TYPE);
@@ -863,7 +833,7 @@ public class SchemaCompiler {
                    processNamedComplexSchemaType(complexType, resolvedSchema);
                 }
             } else {
-                processAnonymousComplexSchemaType(xsElt, complexType, parentSchema);
+                processAnonymousComplexSchemaType(xsElt, complexType, parentSchema, isWriteAnonComplexType);
             }
         } else if (schemaType instanceof XmlSchemaSimpleType) {
             //process simple type
@@ -880,13 +850,49 @@ public class SchemaCompiler {
      */
     private void processAnonymousComplexSchemaType(XmlSchemaElement elt,
                                                    XmlSchemaComplexType complexType,
-                                                   XmlSchema parentSchema)
+                                                   XmlSchema parentSchema,
+                                                   boolean isWriteAnonComplexType)
             throws SchemaCompilationException {
+
+        //here we have a problem when processing the circulare element
+        // references if we differ this processing
+        // generate a name to the complex type and register it here
+        QName generatedTypeName = null;
+        String javaClassName = null;
+        if (isWriteAnonComplexType) {
+
+            generatedTypeName = generateTypeQName(elt.getQName(), parentSchema);
+
+            if (elt.getSchemaTypeName() == null) {
+                elt.setSchemaTypeName(generatedTypeName);
+                this.changedElementSet.add(elt);
+            }
+
+            //set a name
+            complexType.setName(generatedTypeName.getLocalPart());
+            this.changedComplexTypeSet.add(complexType);
+
+            javaClassName = writer.makeFullyQualifiedClassName(generatedTypeName);
+            processedTypemap.put(generatedTypeName, javaClassName);
+            this.processedElementRefMap.put(elt.getQName(), javaClassName);
+            complexType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, javaClassName);
+        }
+
+
         BeanWriterMetaInfoHolder metaInfHolder = processComplexType(elt.getQName(),complexType, parentSchema);
+
+        // here the only difference is that we generate the class
+        // irrespective of where we need it or not
+        if (isWriteAnonComplexType) {
+            metaInfHolder.setOwnClassName(javaClassName);
+            metaInfHolder.setOwnQname(generatedTypeName);
+            writeComplexType(complexType, metaInfHolder);
+        }
 
         //since this is a special case (an unnamed complex type) we'll put the already processed
         //metainf holder in a special map to be used later
         this.processedAnonymousComplexTypesMap.put(elt, metaInfHolder);
+
     }
 
     /**

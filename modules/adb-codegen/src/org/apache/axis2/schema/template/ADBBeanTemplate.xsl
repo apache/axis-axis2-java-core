@@ -118,7 +118,7 @@
              */
             private void clearAllSettingTrackers() {
             <xsl:for-each select="property">
-                <xsl:if test="$choice">
+                <xsl:if test="not(@attribute)">
                    local<xsl:value-of select="@javaname"/>Tracker = false;
                 </xsl:if>
            </xsl:for-each>
