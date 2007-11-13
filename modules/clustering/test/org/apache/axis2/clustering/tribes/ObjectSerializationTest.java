@@ -16,28 +16,38 @@
 package org.apache.axis2.clustering.tribes;
 
 import junit.framework.TestCase;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import org.apache.axis2.clustering.control.AckCommand;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  *
  */
 public class ObjectSerializationTest extends TestCase {
 
-    public void testSerialization(){
+    public void testSerialization() {
         AckCommand ackCommand = new AckCommand("uuid");
         ackCommand.setMemberId("123456");
 
         AckCommand ackCommand2 = (AckCommand) copy(ackCommand);
-        assertFalse(ackCommand.equals(ackCommand2));
 
+        assertNotNull(ackCommand2);
+        assertFalse(ackCommand.equals(ackCommand2));
         assertEquals(ackCommand.getUniqueId(), ackCommand2.getUniqueId());
+    }
+
+    public void testSerialization2() {
+        TestDO testDO = new TestDO("name", "value");
+        TestDO testDO2 = (TestDO) copy(testDO);
+
+        assertNotNull(testDO2);
+        assertFalse(testDO.equals(testDO2));
+        assertEquals(testDO.getName(), testDO2.getName());
+        assertEquals(testDO.getValue(), testDO2.getValue());
     }
 
     /**
