@@ -80,7 +80,7 @@ public class SimpleTypeMapper {
         } else if (name.equals(INT)) {
             return new Integer(text);
         } else if (name.equals(BOOLEAN)) {
-            return Boolean.valueOf(text);
+            return new Boolean(ConverterUtil.convertToBoolean(text));
         } else if (name.equals(BYTE)) {
             return new Byte(text);
         } else if (name.equals(DOUBLE)) {
