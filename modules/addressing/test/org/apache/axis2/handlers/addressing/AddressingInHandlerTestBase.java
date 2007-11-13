@@ -72,7 +72,9 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
             throws Exception {
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testMessagePath);
         SOAPHeader header = ((SOAPEnvelope)omBuilder.getDocumentElement()).getHeader();
-        ArrayList addressingHeaderBlocks = header.getHeaderBlocksWithNSURI(addressingNamespace);
+        RolePlayer rolePlayer = (RolePlayer)mc.getConfigurationContext()
+                .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
+        Iterator addressingHeaderBlocks = header.getHeadersToProcess(rolePlayer, addressingNamespace);
         inHandler.extractAddressingInformation(header, mc, addressingHeaderBlocks,
                                                addressingNamespace);
     }
@@ -92,9 +94,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
             if (options == null) {
                 fail("Addressing Information Headers have not been retrieved properly");
             }
-            assertEquals("action header is not correct",
-                         options.getAction(),
-                         action);
+            assertEquals("action header is not correct", action, options.getAction());
             assertActionHasExtensibilityAttribute(mc);
             assertEquals("message id header is not correct",
                          options.getMessageId().trim(),
