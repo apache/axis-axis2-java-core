@@ -22,9 +22,15 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringCommand;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
-import org.apache.catalina.tribes.*;
+import org.apache.catalina.tribes.ByteMessage;
+import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class ChannelSender implements MessageSender {
 
@@ -39,16 +45,16 @@ public class ChannelSender implements MessageSender {
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
-        //TODO: Sometimes Tribes ncorrectly detects that a member has left a group
+        //TODO: Sometimes Tribes incorrectly detects that a member has left a group
         while (true) {
             if (channel.getMembers().length > 0) {
                 try {
                     long start = System.currentTimeMillis();
-                    channel.send(channel.getMembers(), msg, Channel.SEND_OPTIONS_USE_ACK);
+                    channel.send(channel.getMembers(), toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
                     timeToSend = System.currentTimeMillis() - start;
                     log.debug("Sent " + msg + " to group");
                     break;
-                } catch (ChannelException e) {
+                } catch (Exception e) {
                     String message = "Error sending command message : " + msg +
                                      ". Reason " + e.getMessage();
                     log.warn(message);
@@ -60,16 +66,25 @@ public class ChannelSender implements MessageSender {
         return timeToSend;
     }
 
+    private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(msg);
+        out.flush();
+        out.close();
+        return new ByteMessage(bos.toByteArray());
+    }
+
     public void sendToSelf(ClusteringCommand msg) throws ClusteringFault {
         if (channel == null) {
             return;
         }
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
-                         msg,
+                         toByteMessage(msg),
                          Channel.SEND_OPTIONS_USE_ACK);
             log.debug("Sent " + msg + " to self");
-        } catch (ChannelException e) {
+        } catch (Exception e) {
             throw new ClusteringFault(e);
         }
     }
@@ -79,11 +94,11 @@ public class ChannelSender implements MessageSender {
         try {
             if (member.isReady()) {
                 long start = System.currentTimeMillis();
-                channel.send(new Member[]{member}, cmd, Channel.SEND_OPTIONS_USE_ACK);
+                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_USE_ACK);
                 timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }
-        } catch (ChannelException e) {
+        } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();
             log.warn(message);
