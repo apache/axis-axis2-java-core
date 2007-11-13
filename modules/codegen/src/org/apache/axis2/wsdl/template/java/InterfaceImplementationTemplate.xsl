@@ -314,7 +314,7 @@
                     <xsl:for-each select="fault/param[@type!='']">
                         ,<xsl:value-of select="@name"/>
                     </xsl:for-each>{
-
+              org.apache.axis2.context.MessageContext _messageContext = null;
               try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
@@ -326,7 +326,7 @@
               </xsl:for-each>
 
               // create a message context
-              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+              _messageContext = new org.apache.axis2.context.MessageContext();
 
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
@@ -495,7 +495,7 @@
                                              _returnEnv.getBody().getFirstElement() ,
                                              <xsl:value-of select="$outputtype"/>.class,
                                               getEnvelopeNamespaces(_returnEnv));
-                                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+
                                <xsl:choose>
                                    <xsl:when test="$outputparamcount=1">
                                         return get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
@@ -568,7 +568,9 @@
             }else{
                 throw f;
             }
-        }
+            } finally {
+                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+            }
         }
             </xsl:if>
             <!-- Async method generation -->
@@ -625,7 +627,7 @@
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env=null;
-              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+              final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
                     <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                     <xsl:choose>
@@ -856,7 +858,11 @@
                             }
 
                             public void onComplete() {
-                                // Do nothing by default
+                                try {
+                                    _messageContext.getTransportOut().getSender().cleanup(_messageContext);
+                                } catch (org.apache.axis2.AxisFault axisFault) {
+                                    callback.receiveError<xsl:value-of select="@name"/>(axisFault);
+                                }
                             }
                 });
                         </xsl:otherwise>
@@ -926,6 +932,7 @@
                     </xsl:for-each>
                 </xsl:if>
                 {
+                org.apache.axis2.context.MessageContext _messageContext = null;
 
                 <xsl:if test="$mep='11'">try {</xsl:if>
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
@@ -939,7 +946,7 @@
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
-                org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+                 _messageContext = new org.apache.axis2.context.MessageContext();
 
                 <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                                     <xsl:choose>
@@ -1092,7 +1099,12 @@
                   }else{
                       throw f;
                   }
+              } finally {
+                _messageContext.getTransportOut().getSender().cleanup(_messageContext);
               }
+           </xsl:if>
+           <xsl:if test="not($mep='11')">
+              _messageContext.getTransportOut().getSender().cleanup(_messageContext); 
            </xsl:if>
              return;
            }
