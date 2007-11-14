@@ -73,6 +73,7 @@ public class SimpleTypeMapper {
     public static Object getSimpleTypeObject(Class parameter, OMElement value) {
         String name = parameter.getName();
         String text = value.getText();
+        
         if(name.equals(STRING)) {
             return text;
         } else  if (text == null || text.length() == 0) {

@@ -1307,7 +1307,8 @@ public class ConverterUtil {
         xmlStreamWriter.writeAttribute(Constants.XSI_NAMESPACE, "type", attributeValue);
     }
 
-    public static Object getAnyTypeObject(XMLStreamReader xmlStreamReader) throws XMLStreamException {
+    public static Object getAnyTypeObject(XMLStreamReader xmlStreamReader,
+                                          Class extensionMapperClass) throws XMLStreamException {
         Object returnObject = null;
 
         // make sure reader is at the first element.
@@ -1321,78 +1322,101 @@ public class ConverterUtil {
         } else {
             String attributeType = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "type");
             if (attributeType != null) {
+                String attributeTypePrefix = "";
                 if (attributeType.indexOf(":") > -1) {
+                    attributeTypePrefix = attributeType.substring(0,attributeType.indexOf(":"));
                     attributeType = attributeType.substring(attributeType.indexOf(":") + 1);
                 }
                 NamespaceContext namespaceContext = xmlStreamReader.getNamespaceContext();
-                xmlStreamReader.next();
+                String attributeNameSpace = namespaceContext.getNamespaceURI(attributeTypePrefix);
 
-                if ("base64Binary".equals(attributeType)) {
-                    returnObject = getDataHandlerObject(xmlStreamReader);
-                } else {
-                    String attribValue = xmlStreamReader.getText();
-                    if (attribValue != null) {
-                        if (attributeType.equals("string")) {
-                            returnObject = attribValue;
-                        } else if (attributeType.equals("int")) {
-                            returnObject = new Integer(attribValue);
-                        } else if (attributeType.equals("QName")) {
-                            String namespacePrefix = null;
-                            String localPart = null;
-                            if (attribValue.indexOf(":") > -1) {
-                                namespacePrefix = attribValue.substring(0, attribValue.indexOf(":"));
-                                localPart = attribValue.substring(attribValue.indexOf(":") + 1);
-                                returnObject = new QName(namespaceContext.getNamespaceURI(namespacePrefix), localPart);
-                            }
-                        } else if ("boolean".equals(attributeType)) {
-                            returnObject = new Boolean(attribValue);
-                        } else if ("anyURI".equals(attributeType)) {
-                            try {
-                                returnObject = new URI(attribValue);
-                            } catch (URI.MalformedURIException e) {
-                                throw new XMLStreamException("Invalid URI");
-                            }
-                        } else if ("date".equals(attributeType)) {
-                            returnObject = ConverterUtil.convertToDate(attribValue);
-                        } else if ("dateTime".equals(attributeType)) {
-                            returnObject = ConverterUtil.convertToDateTime(attribValue);
-                        } else if ("time".equals(attributeType)) {
-                            returnObject = ConverterUtil.convertToTime(attribValue);
-                        } else if ("byte".equals(attributeType)) {
-                            returnObject = new Byte(attribValue);
-                        } else if ("short".equals(attributeType)) {
-                            returnObject = new Short(attribValue);
-                        } else if ("float".equals(attributeType)) {
-                            returnObject = new Float(attribValue);
-                        } else if ("long".equals(attributeType)) {
-                            returnObject = new Long(attribValue);
-                        } else if ("double".equals(attributeType)) {
-                            returnObject = new Double(attribValue);
-                        } else if ("decimal".equals(attributeType)) {
-                            returnObject = new BigDecimal(attribValue);
-                        } else if ("unsignedLong".equals(attributeType)) {
-                            returnObject = new UnsignedLong(attribValue);
-                        } else if ("unsignedInt".equals(attributeType)) {
-                            returnObject = new UnsignedInt(attribValue);
-                        } else if ("unsignedShort".equals(attributeType)) {
-                            returnObject = new UnsignedShort(attribValue);
-                        } else if ("unsignedByte".equals(attributeType)) {
-                            returnObject = new UnsignedByte(attribValue);
-                        } else if ("positiveInteger".equals(attributeType)) {
-                            returnObject = new PositiveInteger(attribValue);
-                        } else if ("negativeInteger".equals(attributeType)) {
-                            returnObject = new NegativeInteger(attribValue);
-                        } else if ("nonNegativeInteger".equals(attributeType)) {
-                            returnObject = new NonNegativeInteger(attribValue);
-                        } else if ("nonPositiveInteger".equals(attributeType)) {
-                            returnObject = new NonPositiveInteger(attribValue);
-                        } else {
-                            throw new ADBException("Unknown type ==> " + attributeType);
-                        }
+                if (attributeNameSpace.equals(Constants.XSD_NAMESPACE)) {
+                    xmlStreamReader.next();
+                    if ("base64Binary".equals(attributeType)) {
+                        returnObject = getDataHandlerObject(xmlStreamReader);
                     } else {
-                        throw new ADBException("Attribute value is null");
+                        String attribValue = xmlStreamReader.getText();
+                        if (attribValue != null) {
+                            if (attributeType.equals("string")) {
+                                returnObject = attribValue;
+                            } else if (attributeType.equals("int")) {
+                                returnObject = new Integer(attribValue);
+                            } else if (attributeType.equals("QName")) {
+                                String namespacePrefix = null;
+                                String localPart = null;
+                                if (attribValue.indexOf(":") > -1) {
+                                    namespacePrefix = attribValue.substring(0, attribValue.indexOf(":"));
+                                    localPart = attribValue.substring(attribValue.indexOf(":") + 1);
+                                    returnObject = new QName(namespaceContext.getNamespaceURI(namespacePrefix), localPart);
+                                }
+                            } else if ("boolean".equals(attributeType)) {
+                                returnObject = new Boolean(attribValue);
+                            } else if ("anyURI".equals(attributeType)) {
+                                try {
+                                    returnObject = new URI(attribValue);
+                                } catch (URI.MalformedURIException e) {
+                                    throw new XMLStreamException("Invalid URI");
+                                }
+                            } else if ("date".equals(attributeType)) {
+                                returnObject = ConverterUtil.convertToDate(attribValue);
+                            } else if ("dateTime".equals(attributeType)) {
+                                returnObject = ConverterUtil.convertToDateTime(attribValue);
+                            } else if ("time".equals(attributeType)) {
+                                returnObject = ConverterUtil.convertToTime(attribValue);
+                            } else if ("byte".equals(attributeType)) {
+                                returnObject = new Byte(attribValue);
+                            } else if ("short".equals(attributeType)) {
+                                returnObject = new Short(attribValue);
+                            } else if ("float".equals(attributeType)) {
+                                returnObject = new Float(attribValue);
+                            } else if ("long".equals(attributeType)) {
+                                returnObject = new Long(attribValue);
+                            } else if ("double".equals(attributeType)) {
+                                returnObject = new Double(attribValue);
+                            } else if ("decimal".equals(attributeType)) {
+                                returnObject = new BigDecimal(attribValue);
+                            } else if ("unsignedLong".equals(attributeType)) {
+                                returnObject = new UnsignedLong(attribValue);
+                            } else if ("unsignedInt".equals(attributeType)) {
+                                returnObject = new UnsignedInt(attribValue);
+                            } else if ("unsignedShort".equals(attributeType)) {
+                                returnObject = new UnsignedShort(attribValue);
+                            } else if ("unsignedByte".equals(attributeType)) {
+                                returnObject = new UnsignedByte(attribValue);
+                            } else if ("positiveInteger".equals(attributeType)) {
+                                returnObject = new PositiveInteger(attribValue);
+                            } else if ("negativeInteger".equals(attributeType)) {
+                                returnObject = new NegativeInteger(attribValue);
+                            } else if ("nonNegativeInteger".equals(attributeType)) {
+                                returnObject = new NonNegativeInteger(attribValue);
+                            } else if ("nonPositiveInteger".equals(attributeType)) {
+                                returnObject = new NonPositiveInteger(attribValue);
+                            } else {
+                                throw new ADBException("Unknown type ==> " + attributeType);
+                            }
+                        } else {
+                            throw new ADBException("Attribute value is null");
+                        }
                     }
+                } else {
+                    try {
+                        Method getObjectMethod = extensionMapperClass.getMethod("getTypeObject",
+                                new Class[]{String.class, String.class, XMLStreamReader.class});
+                        returnObject = getObjectMethod.invoke(null,
+                                new Object[]{attributeNameSpace, attributeType, xmlStreamReader});
+                    } catch (NoSuchMethodException e) {
+                        throw new ADBException("Can not find the getTypeObject method in the " +
+                                "extension mapper class ", e);
+                    } catch (IllegalAccessException e) {
+                        throw new ADBException("Can not access the getTypeObject method in the " +
+                                "extension mapper class ", e);
+                    } catch (InvocationTargetException e) {
+                        throw new ADBException("Can not invoke the getTypeObject method in the " +
+                                "extension mapper class ", e);
+                    }
+
                 }
+
             } else {
                 throw new ADBException("Any type element type has not been given");
             }

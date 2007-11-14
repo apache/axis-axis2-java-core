@@ -28,7 +28,9 @@ import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.utils.Constants;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.util.StreamWrapper;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
@@ -308,6 +310,21 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
 
         public XMLStreamReader getPullParser(QName adbBeanQName) {
             return new ADBXMLStreamReaderImpl(adbBeanQName, propertyList.toArray(), null);
+        }
+
+        public void serialize(final QName parentQName,
+                              final OMFactory factory,
+                              MTOMAwareXMLStreamWriter xmlWriter)
+                throws XMLStreamException, ADBException {
+            serialize(parentQName,factory,xmlWriter,false);
+        }
+
+        public void serialize(final QName parentQName,
+                              final OMFactory factory,
+                              MTOMAwareXMLStreamWriter xmlWriter,
+                              boolean serializeType)
+                throws XMLStreamException, ADBException {
+            throw new UnsupportedOperationException("Un implemented method");
         }
     }
 
