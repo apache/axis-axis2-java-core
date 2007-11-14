@@ -1,6 +1,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
-           targetNamespace="http://www.w3.org/2005/05/xmlmime">
+           targetNamespace="http://adb.test/anyType"
+           xmlns:tns="http://adb.test/anyType"
+           elementFormDefault="qualified">
     <xs:element name="TestAnyTypeElement1" type="xs:anyType"/>
     <xs:element name="TestAnyTypeElement2" type="xs:anyType" nillable="true"/>
     <xs:element name="TestAnyTypeElement3">
@@ -59,5 +60,19 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:complexType name="TestComplexParent">
+        <xs:sequence>
+            <xs:element name="param1" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TestComplexChild">
+        <xs:complexContent>
+            <xs:extension base="tns:TestComplexParent">
+                <xs:sequence>
+                    <xs:element name="param2" type="xs:int"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>
 

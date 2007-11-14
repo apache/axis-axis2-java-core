@@ -16,7 +16,7 @@
 package org.apache.axis2.schema.anytype;
 
 import junit.framework.TestCase;
-import org.w3.www._2005._05.xmlmime.*;
+import test.adb.anytype.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
+
 
 
 public class AnyTypeTest extends TestCase {
@@ -354,6 +355,43 @@ public class AnyTypeTest extends TestCase {
         }
     }
 
+    public void testAnyTypeElement61(){
+        TestAnyTypeElement6 testAnyTypeElement6 = new TestAnyTypeElement6();
+
+        TestComplexParent[] testComplexParents = new TestComplexParent[2];
+        testComplexParents[0] = new TestComplexParent();
+        testComplexParents[0].setParam1("test param1");
+
+        TestComplexChild testComplexChild = new TestComplexChild();
+        testComplexChild.setParam1("test param1");
+        testComplexChild.setParam2(3);
+        testComplexParents[1] = testComplexChild;
+
+        testAnyTypeElement6.setParam1(testComplexParents);
+
+        try {
+            OMElement omElement = testAnyTypeElement6.getOMElement(
+                    TestAnyTypeElement6.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                    new ByteArrayInputStream(omElementString.getBytes()));
+            TestAnyTypeElement6 result = TestAnyTypeElement6.Factory.parse(xmlReader);
+            TestComplexParent resultParent = (TestComplexParent) result.getParam1()[0];
+            assertEquals(resultParent.getParam1(),"test param1");
+            TestComplexChild resultChild = (TestComplexChild) result.getParam1()[1];
+            assertEquals(resultChild.getParam1(), "test param1");
+            assertEquals(resultChild.getParam2(), 3);
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
     public void testAnyTypeElement7() {
         TestAnyTypeElement7 testAnyTypeElement;
 
@@ -385,6 +423,32 @@ public class AnyTypeTest extends TestCase {
             XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             TestAnyTypeElement7 result = TestAnyTypeElement7.Factory.parse(xmlReader);
             assertEquals(result.getParam1(),null);
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testAnyTypeElement71(){
+        TestAnyTypeElement7 testAnyTypeElement7 = new TestAnyTypeElement7();
+        TestComplexParent testComplexParent = new TestComplexParent();
+        testComplexParent.setParam1("test param1");
+        testAnyTypeElement7.setParam1(testComplexParent);
+
+        try {
+            OMElement omElement = testAnyTypeElement7.getOMElement(
+                    TestAnyTypeElement7.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                    new ByteArrayInputStream(omElementString.getBytes()));
+            TestAnyTypeElement7 result = TestAnyTypeElement7.Factory.parse(xmlReader);
+            TestComplexParent resultParent = (TestComplexParent) result.getParam1();
+            assertEquals(resultParent.getParam1(),"test param1");
+
         } catch (ADBException e) {
             fail();
         } catch (XMLStreamException e) {
