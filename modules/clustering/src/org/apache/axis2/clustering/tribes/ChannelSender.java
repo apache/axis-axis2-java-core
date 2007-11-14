@@ -28,9 +28,10 @@ import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.ObjectOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 
 public class ChannelSender implements MessageSender {
 
@@ -54,10 +55,15 @@ public class ChannelSender implements MessageSender {
                     timeToSend = System.currentTimeMillis() - start;
                     log.debug("Sent " + msg + " to group");
                     break;
+                } catch (NotSerializableException e) {
+                    String message = "Could not send command message " + msg +
+                                     " to group since it is not serializable.";
+                    log.error(message, e);
+                    throw new ClusteringFault(message, e);
                 } catch (Exception e) {
                     String message = "Error sending command message : " + msg +
                                      ". Reason " + e.getMessage();
-                    log.warn(message);
+                    log.warn(message, e);
                 }
             } else {
                 break;
@@ -98,10 +104,15 @@ public class ChannelSender implements MessageSender {
                 timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }
+        } catch (NotSerializableException e) {
+            String message = "Could not send command message to " + TribesUtil.getHost(member)  +
+                             " since it is not serializable.";
+            log.error(message, e);
+            throw new ClusteringFault(message, e);
         } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();
-            log.warn(message);
+            log.warn(message, e);
         }
         return timeToSend;
     }
