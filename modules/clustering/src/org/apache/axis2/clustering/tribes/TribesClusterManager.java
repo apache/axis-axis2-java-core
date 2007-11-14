@@ -46,6 +46,7 @@ import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
+import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -132,6 +133,12 @@ public class TribesClusterManager implements ClusterManager {
 
         controlCmdProcessor.setChannelSender(sender);
         channel = new GroupChannel();
+
+        String localIP = System.getProperty("local.ip.address"); //TODO: Use ClusteringConstants.LOCAL_IP_ADDRESS
+        if (localIP != null) {
+            ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
+            receiver.setAddress(localIP);
+        }
 
         // Set the domain for this Node
         Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
