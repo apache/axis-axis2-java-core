@@ -182,7 +182,7 @@
                       
                             AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="@type"/>_deserialize: "
                                         "This should be due to an invalid XML");
-                            return <xsl:value-of select="$method-prefix"/>_on_fault( svc_skeleton, env, NULL);      
+                            return NULL;      
                         }
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
@@ -194,7 +194,7 @@
                         AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> "
                                         " %d :: %s", env->error->error_number,
                                         AXIS2_ERROR_GET_MESSAGE(env->error));
-                        return <xsl:value-of select="$method-prefix"/>_on_fault( svc_skeleton, env, NULL);
+                        return NULL; 
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
