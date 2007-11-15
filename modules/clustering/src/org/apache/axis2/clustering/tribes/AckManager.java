@@ -59,6 +59,9 @@ public final class AckManager {
                                                 ChannelSender sender) throws ClusteringFault {
 
         boolean isAcknowledged = false;
+        if(messageUniqueId == null){
+            return true;
+        }
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
         if(ack == null){  // If the message is not found, treat it as ACKed
             return true;
