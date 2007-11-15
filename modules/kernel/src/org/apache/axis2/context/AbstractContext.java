@@ -153,15 +153,21 @@ public abstract class AbstractContext {
         addPropertyDifference(key);
     }
 
-    private synchronized void addPropertyDifference(String key) {
+    private void addPropertyDifference(String key) {
         ConfigurationContext cc = getRootContext();
-        if (cc == null) return;
-
+        if (cc == null) {
+            return;
+        }
         // Add the property differences only if Context replication is enabled,
         // and there are members in the cluster
         ClusterManager clusterManager = cc.getAxisConfiguration().getClusterManager();
-        if (clusterManager != null &&
-            clusterManager.getContextManager() != null) {
+        if (clusterManager == null ||
+            clusterManager.getContextManager() == null) {
+            return;
+        }
+        // Narrowed the synchronization so that we only wait
+        // if a property difference is added.
+        synchronized(this) {
             propertyDifferences.put(key, new PropertyDifference(key, false));
         }
     }
