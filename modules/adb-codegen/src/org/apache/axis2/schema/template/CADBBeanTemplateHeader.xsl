@@ -299,6 +299,7 @@
         <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
+        </xsl:if> <!-- closes isarray -->
 
         /**
          * Check whether the <xsl:value-of select="$propertyName"/> is a particle class (E.g. A group)
@@ -311,7 +312,7 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
 
-        </xsl:if>
+
        </xsl:for-each>
 
      #ifdef __cplusplus
