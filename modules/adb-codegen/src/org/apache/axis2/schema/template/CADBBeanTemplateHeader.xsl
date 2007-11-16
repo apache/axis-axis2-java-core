@@ -194,6 +194,17 @@
             const axutil_env_t *env,
             axiom_node_t* <xsl:value-of select="$name"/>_om_node, int tag_closed);
 
+        /**
+         * Check whether the <xsl:value-of select="$axis2_name"/> is a particle class (E.g. A group)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object.
+         * @param env pointer to environment struct.
+         * @return whether this is a particle class.
+         */
+        axis2_bool_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_is_particle(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env);
+
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
@@ -300,19 +311,6 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
         </xsl:if> <!-- closes isarray -->
-
-        /**
-         * Check whether the <xsl:value-of select="$propertyName"/> is a particle class (E.g. A group)
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object.
-         * @param env pointer to environment struct.
-         * @return whether this is a particle class.
-         */
-        axis2_bool_t AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_is_particle(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                    const axutil_env_t *env);
-
-
        </xsl:for-each>
 
      #ifdef __cplusplus
