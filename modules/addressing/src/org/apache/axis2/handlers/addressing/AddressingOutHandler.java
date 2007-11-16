@@ -447,13 +447,16 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          */
         private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent) {
             if (referenceInformation != null && parent != null) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace("processToEPRReferenceInformation: " + referenceInformation);
+                }
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    parent.addChild(
-                            ElementHelper.importOMElement(omElement, parent.getOMFactory()));
+                    OMElement newElement = ElementHelper.importOMElement(omElement, parent.getOMFactory());
+                    parent.addChild(newElement);
                     if (isFinalAddressingNamespace) {
-                        omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+                        newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                                addressingNamespaceObject);
                     }
