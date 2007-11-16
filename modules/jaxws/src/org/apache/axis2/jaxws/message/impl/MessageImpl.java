@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.message.impl;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -412,6 +413,12 @@ public class MessageImpl implements Message {
         return xmlPart.getHeaderBlock(namespace, localPart, context, blockFactory);
     }
     
+    public List<Block> getHeaderBlocks(String namespace, String localPart, 
+                                       Object context, BlockFactory blockFactory, 
+                                       RolePlayer rolePlayer) throws WebServiceException {
+        return xmlPart.getHeaderBlocks(namespace, localPart, context, blockFactory, rolePlayer);
+    }
+
     public int getNumBodyBlocks() throws WebServiceException {
         return xmlPart.getNumBodyBlocks();
     }

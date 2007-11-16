@@ -28,6 +28,8 @@
 	<types>
 		<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
 			elementFormDefault="qualified" targetNamespace="http://org/test/addnumbershandler">
+			<element name="myHeader" type="xsd:string" />
+			
 			<element name="addNumbersHandlerResponse">
 				<complexType>
 					<sequence>

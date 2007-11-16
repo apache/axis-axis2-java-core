@@ -41,6 +41,9 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import junit.framework.TestCase;
@@ -62,8 +65,14 @@ import org.test.addnumbershandler.AddNumbersHandlerResponse;
 public class AddNumbersHandlerTests extends TestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersHandlerService";
-
-
+    File requestFile = null;
+    
+    public void setUp() throws Exception {
+        String resourceDir = System.getProperty("basedir",".")+
+            File.separator+"test-resources"+File.separator+"xml";
+        requestFile = new File(resourceDir+File.separator+"addnumberstest.xml");
+        
+    }
     /**
      * Client app sends 10, 10 as params to sum.  No client-side handlers are configured
      * for this scenario.  The server-side AddNumbersLogicalHandler is instantiated with a
@@ -109,7 +118,8 @@ public class AddNumbersHandlerTests extends TestCase {
 
             Service myService = Service.create(serviceName);
             myService.addPort(portName, null, axisEndpoint);
-            Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
+            Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, 
+                                                                   Service.Mode.MESSAGE);
 
             // set handler chain for binding provider
             Binding binding = ((BindingProvider) myDispatch).getBinding();
@@ -540,19 +550,9 @@ public class AddNumbersHandlerTests extends TestCase {
     /**
      * Create a Source request to be used by Dispatch<Source>
      */
-    private Source createRequestSource() {
-
-        String reqString = null;
-
-        String ns = "http://org/test/addnumbershandler";
-        String operation = "addNumbersHandler";
-
-        reqString = "<" + operation + 
-                    " xmlns=\"" + ns + "\">" +
-                    "<arg0>10</arg0><arg1>10</arg1>" +
-                    "</" + operation + ">";
-
-        return new StreamSource(new StringReader(reqString));
+    private Source createRequestSource() throws IOException {
+        FileInputStream fis = new FileInputStream(requestFile);
+        return new StreamSource(fis);
     }
     
     public void testAddNumbersHandlerHandlerResolver() {

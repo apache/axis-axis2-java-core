@@ -24,7 +24,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.OMContainerEx;
 import org.apache.axiom.om.impl.llom.OMElementImpl;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -33,6 +33,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -58,7 +59,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * XMLSpineImpl
@@ -340,8 +345,11 @@ class XMLSpineImpl implements XMLSpine {
         // The block is supposed to represent a single element.  
         // But if it does not represent an element , the following will fail.
         QName qName = block.getQName();
+        OMNamespace ns = soapFactory.createOMNamespace(qName.getNamespaceURI(), 
+                                                       qName.getPrefix());
 
-        OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+        OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns, block, 
+                                                    soapFactory, false);
         if (om == null) {
             bElement.addChild(newOM);
         } else {
@@ -372,16 +380,22 @@ class XMLSpineImpl implements XMLSpine {
             // The block is supposed to represent a single element.  
             // But if it does not represent an element , the following will fail.
             QName qName = block.getQName();
+            OMNamespace ns = soapFactory.createOMNamespace(qName.getNamespaceURI(), 
+                                                           qName.getPrefix());
 
-            OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+            OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns,
+                                                        block, soapFactory, false);
             bElement.addChild(newOM);
         } else {
             // This needs to be fixed, but for now we will require that there must be an 
             // element...otherwise no block is added
             try {
                 QName qName = block.getQName();
+                OMNamespace ns = soapFactory.createOMNamespace(qName.getNamespaceURI(), 
+                                                               qName.getPrefix());
 
-                OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+                OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns,
+                                                            block, soapFactory, false);
                 bElement.addChild(newOM);
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
@@ -416,11 +430,45 @@ class XMLSpineImpl implements XMLSpine {
         return this._getBlockFromOMElement(om, context, blockFactory, false);
     }
 
+    public List<Block> getHeaderBlocks(String namespace, 
+                                       String localPart, 
+                                       Object context, 
+                                       BlockFactory blockFactory, 
+                                       RolePlayer rolePlayer) throws WebServiceException {
+        List<Block> blocks = new ArrayList<Block>();
+        
+        // Get the list of OMElements that have the same header name
+        SOAPHeader header = root.getHeader();
+        if (header == null) {
+            return blocks;
+        }
+        
+        // Get an iterator over the headers that have a acceptable role
+        Iterator it = null;
+        if (rolePlayer == null) {
+            it = header.getChildElements();
+        } else {
+            it = header.getHeadersToProcess(rolePlayer);
+        }
+        while (it.hasNext()) {
+            OMElement om = (OMElement) it.next();
+            // Create a block out of each header that matches 
+            // the requested namespace/localPart
+            if (om.getNamespace().getNamespaceURI().equals(namespace) &&
+                om.getLocalName().equals(localPart)) {
+                Block block = _getBlockFromOMElement(om, context, blockFactory, false);
+                blocks.add(block);
+            }
+        }
+        return blocks;
+    }
+
     public void setHeaderBlock(String namespace, String localPart, Block block)
             throws WebServiceException {
         block.setParent(getParent());
+        OMNamespace ns = soapFactory.createOMNamespace(namespace, null);
         OMElement newOM =
-                _createOMElementFromBlock(new QName(namespace, localPart), block, soapFactory);
+                _createOMElementFromBlock(localPart, ns, block, soapFactory, true);
         OMElement om = this._getChildOMElement(root.getHeader(), namespace, localPart);
         if (om == null) {
             if (root.getHeader() == null) {
@@ -481,6 +529,15 @@ class XMLSpineImpl implements XMLSpine {
                                          boolean setComplete) throws WebServiceException {
         try {
             QName qName = om.getQName();
+            OMNamespace ns = om.getNamespace();
+            
+            // Save the ROLE
+            // TODO Need to do the same for RELAY and MUSTUNDERSTAND
+            String role = null;
+            if (om instanceof SOAPHeaderBlock) {
+                role = ((SOAPHeaderBlock)om).getRole();
+            }
+            
             /* TODO We could gain performance if OMSourcedElement exposed a getDataSource method 
              if (om instanceof OMSourcedElementImpl &&
              ((OMSourcedElementImpl) om).getDataSource() instanceof Block) {
@@ -500,12 +557,16 @@ class XMLSpineImpl implements XMLSpine {
             // Create the block
             Block block = blockFactory.createFrom(om, context, qName);
             block.setParent(getParent());
+            if (om instanceof SOAPHeaderBlock) {
+                block.setProperty(SOAPHeaderBlock.ROLE_PROPERTY, role);
+            }
 
             // Get the business object to force a parse
             block.getBusinessObject(false);
 
             // Replace the OMElement with the OMSourcedElement that delegates to the block
-            OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+            OMElement newOM = _createOMElementFromBlock(qName.getLocalPart(), ns, block, soapFactory, 
+                                                            (om.getParent() instanceof SOAPHeader));
             om.insertSiblingBefore(newOM);
 
             // We want to set the om element and its parents to complete to 
@@ -556,9 +617,14 @@ class XMLSpineImpl implements XMLSpine {
         }
     }
 
-    private static OMElement _createOMElementFromBlock(QName qName, Block b,
-                                                       SOAPFactory soapFactory) {
-        return new OMSourcedElementImpl(qName, soapFactory, b);
+    private static OMElement _createOMElementFromBlock(String localName, OMNamespace ns, Block b,
+                                                       SOAPFactory soapFactory, boolean isHeaderBlock) {
+        if (isHeaderBlock) {
+            return soapFactory.createSOAPHeaderBlock(localName, ns, b);
+        } else {
+            return soapFactory.createOMElement(b, localName, ns);
+        }
+        
     }
 
     /**
@@ -673,7 +739,8 @@ class XMLSpineImpl implements XMLSpine {
      * Get the child om at the indicated index
      *
      * @param om
-     * @param index
+     * @param namespace,
+     * @param localPart
      * @return child om or null
      */
     private static OMElement _getChildOMElement(OMElement om, String namespace, 
@@ -688,5 +755,4 @@ class XMLSpineImpl implements XMLSpine {
         }
         return null;
     }
-
 }

@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.message;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 import javax.jws.soap.SOAPBinding.Style;
@@ -28,6 +29,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.util.List;
+
 
 /**
  * XMLPart
@@ -260,7 +264,9 @@ public interface XMLPart {
     public int getNumHeaderBlocks() throws WebServiceException;
 
     /**
-     * getHeaderBlock Get the header block with the specified name The BlockFactory and object context
+     * getHeaderBlock 
+     * Get the firstheader block with the specified name.
+     * The BlockFactory and object context
      * are passed in to help create the proper kind of block.
      *
      * @param namespace
@@ -273,6 +279,26 @@ public interface XMLPart {
     public Block getHeaderBlock(String namespace, String localPart,
                                 Object context,
                                 BlockFactory blockFactory)
+            throws WebServiceException;
+    
+    /**
+     * getHeaderBlock 
+     * Get the header blocks with the specified name
+     * The BlockFactory and object context
+     * are passed in to help create the proper kind of block.
+     *
+     * @param namespace uri of header
+     * @param localPart local name of header
+     * @param context context for blockFactory
+     * @param blockFactory  kind of factory (i.e. JAXB)
+     * @param RolePlayer determines acceptable roles (or null)
+     * @return List<Block>
+     * @throws WebServiceException
+     */
+    public List<Block> getHeaderBlocks(String namespace, String localPart,
+                                Object context,
+                                BlockFactory blockFactory,
+                                RolePlayer rolePlayer)
             throws WebServiceException;
 
     /**

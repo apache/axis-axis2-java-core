@@ -22,12 +22,16 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 /**
- * Characteristics of the "Element" value. * The Element value is ready for marshalling or is the
- * result of unmarshalling. * The Element value represents the element rendering.  Thus it is either
- * a JAXBElement or has the @XmlRootElement annotation.  (i.e. it is never a java.lang.String) * The
- * Element value is not a JAX-WS object. (i.e. it is not a holder or exception) Characteristis of
- * the "Type" value * It is the type value associated with the element value.  (Thus it is either
- * the element value or it is value of the JAXBElement * The type value is usually the object needed
+ * Characteristics of the "Element" value. 
+ * The Element value is ready for marshalling or is the
+ * result of unmarshalling. 
+ * The Element value represents the element rendering.  Thus it is either
+ * a JAXBElement or has the @XmlRootElement annotation.  (i.e. it is never a java.lang.String) 
+ * The Element value is not a JAX-WS object. (i.e. it is not a holder or exception) 
+ * Characteristics of the "Type" value 
+ * It is the type value associated with the element value.  (Thus it is either
+ * the element value or it is value of the JAXBElement 
+ * The type value is usually the object needed
  * for the method signature (i.e. String)
  * <p/>
  * Here is an example for illustration: <element name='e1'> <complexType>...</complexType>
