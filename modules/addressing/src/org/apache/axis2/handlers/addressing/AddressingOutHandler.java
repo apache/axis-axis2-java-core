@@ -454,12 +454,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
                     OMElement newElement = ElementHelper.importOMElement(omElement, parent.getOMFactory());
-                    parent.addChild(newElement);
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                                addressingNamespaceObject);
                     }
+                    parent.addChild(newElement);
                 }
             }
         }
