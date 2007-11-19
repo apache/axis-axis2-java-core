@@ -130,11 +130,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
                 if (descriptionValue != null) {
-                    StringWriter writer = new StringWriter();
-                    descriptionValue.build();
-                    descriptionValue.serialize(writer);
-                    writer.flush();
-                    service.setDocumentation(writer.toString());
+                    service.setDocumentation(descriptionValue);
                 } else {
                     service.setDocumentation(descriptionElement.getText());
                 }
@@ -383,8 +379,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                 processDataLocatorConfig(dataLocatorElement, service);
             }
 
-        } catch (XMLStreamException e) {
-            throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }

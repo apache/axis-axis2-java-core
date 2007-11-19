@@ -18,28 +18,27 @@
  */
 package org.apache.axis2.util;
 
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.SOAPModuleMessage;
-import org.apache.axis2.wsdl.HTTPHeaderMessage;
-import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMNode;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.SOAPModuleMessage;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
-import java.util.Map;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -455,19 +454,11 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
     }
 
     public static void addWSDLDocumentationElement(AxisDescription axisDescription, OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
-        String documentationString = axisDescription.getDocumentation();
+        OMNode documentationNode = axisDescription.getDocumentationNode();
         OMElement documentation;
-        if (documentationString != null && !"".equals(documentationString)) {
+        if (documentationNode != null) {
             documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
-            OMText omText;
-            if (documentationString.indexOf(CDATA_START) > -1) {
-                documentationString = documentationString.replaceFirst(CDATA_START_REGEX, "");
-                documentationString = documentationString.replaceFirst(CDATA_END_REGEX, "");
-                omText = omFactory.createOMText(documentationString, XMLStreamConstants.CDATA);
-            } else {
-            omText =  omFactory.createOMText(documentationString);
-            }
-            documentation.addChild(omText);
+            documentation.addChild(documentationNode);
             omElement.addChild(documentation);
         }
     }
