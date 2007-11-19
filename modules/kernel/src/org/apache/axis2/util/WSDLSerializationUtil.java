@@ -434,7 +434,7 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
     public static void addWSAWActionAttribute(OMElement element,
                                               String action ,
                                               OMNamespace wsaw) {
-        if (action == null || action.length() == 0) {
+        if (action == null || action.length() == 0 || "\\\"\\\"".equals(action)) {
             return;
         }
         element.addAttribute("Action", action, wsaw);
