@@ -142,21 +142,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         // Add the documentation element
-        String description;
-        OMElement documentationElement =
-                omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
-        if ((description = axisService.getDocumentation()) != null) {
-            OMText omText;
-            if (description.indexOf(WSDLSerializationUtil.CDATA_START) > -1) {
-                description = description.replaceFirst(WSDLSerializationUtil.CDATA_START_REGEX, "");
-                description = description.replaceFirst(WSDLSerializationUtil.CDATA_END_REGEX, "");
-                omText = omFactory.createOMText(description, XMLStreamConstants.CDATA);
-            } else {
-            omText =  omFactory.createOMText(description);
-            }
-            documentationElement.addChild(omText);
-            descriptionElement.addChild(documentationElement);
-        }
+        WSDLSerializationUtil.addWSDLDocumentationElement(axisService, descriptionElement, omFactory, wsdl);
 
         // Add types element
         OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);
