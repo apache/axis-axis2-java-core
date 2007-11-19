@@ -1304,7 +1304,8 @@ class EndpointDescriptionImpl
                 if(is == null) {
                     log.warn("Unable to load handlers from file: " + handlerFileName);                    
                 } else {
-                    handlerChainsType = DescriptionUtils.loadHandlerChains(is);
+                    handlerChainsType =
+                        DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
                 }
             }
             else if(handlerChainSource != null) {
@@ -1312,7 +1313,8 @@ class EndpointDescriptionImpl
             	if(log.isDebugEnabled()) {
             		log.debug("Loading handlers from provided source");
             	}
-            	handlerChainsType = DescriptionUtils.loadHandlerChains(handlerChainSource);
+            	handlerChainsType = DescriptionUtils.loadHandlerChains(handlerChainSource,
+                                                          this.getClass().getClassLoader());
             }
         }
         return handlerChainsType;

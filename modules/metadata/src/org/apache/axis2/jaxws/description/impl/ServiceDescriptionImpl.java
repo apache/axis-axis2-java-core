@@ -1402,20 +1402,12 @@ class ServiceDescriptionImpl
                                                                  className,
                                                                  classLoader);
 
-                try {
-
-                    // All the classes we need should be part of this package
-                    JAXBContext jc =
-                            JAXBContext.newInstance("org.apache.axis2.jaxws.description.xml.handler",
-                                                    this.getClass().getClassLoader());
-
-                    Unmarshaller u = jc.createUnmarshaller();
-
-                    JAXBElement<?> o = (JAXBElement<?>) u.unmarshal(is);
-                    handlerChainsType = (HandlerChainsType) o.getValue();
-
-                } catch (Exception e) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr"),e);
+                if(is == null) {
+                    log.warn("Unable to load handlers from file: " + handlerFileName);
+                }
+                else {
+                    handlerChainsType =
+                        DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
                 }
             }
         }
