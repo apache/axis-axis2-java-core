@@ -61,7 +61,7 @@
      <filter token="neethi.version" value="${neethi.version}" />
      <filter token="stax.api.version" value="${stax.api.version}" />
      <filter token="stax.impl.version" value="${stax.impl.version}" />
-     <filter token="xbean.version" value="${xbean.version}" />
+     <filter token="xmlbeans.version" value="${xmlbeans.version}" />
      <filter token="XmlSchema.version" value="${XmlSchema.version}" />
      <filter token="log4j.version" value="${log4j.version}" />
      <filter token="wsdl4j.version" value="${wsdl4j.version}" />
@@ -86,7 +86,7 @@
 		<include name="stax-api-${stax.api.version}.jar" />
 		<include name="wsdl4j-${wsdl4j.version}.jar" />
 		<include name="wstx-${stax.impl.version}.jar" />
-		<include name="xbean-${xbean.version}.jar" />
+		<include name="xmlbeans-${xmlbeans.version}.jar" />
 		<include name="XmlSchema-${XmlSchema.version}.jar" />
 		<include name="woden-${woden.version}.jar" />
 		<include name="commons-httpclient-${commons.httpclient.version}.jar" />

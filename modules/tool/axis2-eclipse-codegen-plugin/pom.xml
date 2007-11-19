@@ -200,9 +200,9 @@
 			<version>${wsdl4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>xmlbeans</groupId>
-			<artifactId>xbean</artifactId>
-			<version>${xbean.version}</version>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>${xmlbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.schema</groupId>
@@ -345,7 +345,7 @@
 								     <filter token="neethi.version" value="${neethi.version}" />
 								     <filter token="stax.api.version" value="${stax.api.version}" />
 								     <filter token="stax.impl.version" value="${stax.impl.version}" />
-								     <filter token="xbean.version" value="${xbean.version}" />
+								     <filter token="xmlbeans.version" value="${xmlbeans.version}" />
 								     <filter token="xmlschema.version" value="${xmlschema.version}" />
 								     <filter token="log4j.version" value="${log4j.version}" />
 								     <filter token="wsdl4j.version" value="${wsdl4j.version}" />

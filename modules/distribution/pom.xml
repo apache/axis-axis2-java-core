@@ -186,8 +186,8 @@
             <artifactId>woden-impl-dom</artifactId>
         </dependency>
         <dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean</artifactId>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.jaxme</groupId>

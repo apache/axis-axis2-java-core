@@ -307,10 +307,10 @@ public class WSDL2CodeMojo extends AbstractMojo {
                     new InheritedArtifact("org.apache.axis2", "axis2-adb")
             };
 
-    private static final InheritedArtifact[] xbeanArtifacts =
+    private static final InheritedArtifact[] xmlbeansArtifacts =
             {
                     new InheritedArtifact("org.apache.axis2", "axis2-xmlbeans"),
-                    new InheritedArtifact("xmlbeans", "xbean")
+                    new InheritedArtifact("org.apache.xmlbeans", "xmlbeans")
             };
 
     /** Fills the option map. This map is passed onto the code generation API to generate the code. */
@@ -676,7 +676,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
         if ("adb".equals(databindingName)) {
             list.addAll(Arrays.asList(adbArtifacts));
         } else if ("xmlbeans".equals(databindingName)) {
-            list.addAll(Arrays.asList(xbeanArtifacts));
+            list.addAll(Arrays.asList(xmlbeansArtifacts));
         }
 
         return (InheritedArtifact[])list.toArray(new InheritedArtifact[ list.size() ]);
