@@ -323,7 +323,7 @@ public class AddressingFaultsHelper {
                                                String faultSubcode, String faultReason)
             throws AxisFault {
         Map faultInformation =
-                (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+                (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
             faultInformation = new HashMap();
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
@@ -375,7 +375,7 @@ public class AddressingFaultsHelper {
 
     public static OMElement getDetailElementForAddressingFault(MessageContext messageContext,
                                                                OMNamespace addressingNamespaceObject) {
-        Map faultInfo = (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Map faultInfo = (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         OMElement problemDetail = null;
         if (faultInfo != null) {
             String faultyHeaderQName = (String)faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);

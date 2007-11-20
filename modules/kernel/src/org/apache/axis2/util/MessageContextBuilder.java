@@ -284,7 +284,7 @@ public class MessageContextBuilder {
         // there are some information  that the fault thrower wants to pass to the fault path.
         // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
         Object faultInfoForHeaders =
-                processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+                processingContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInfoForHeaders != null) {
             faultContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInfoForHeaders);
 
