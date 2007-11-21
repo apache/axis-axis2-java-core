@@ -1022,6 +1022,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             InterfaceFault interfaceFault = interfaceFaultReference.getInterfaceFault();
 
+            if (interfaceFault == null) {
+                throw new AxisFault("Interface Fault reference defined in operation " + opName + " cannot be found in interface");
+            }
+
             faultMessage.setElementQName(interfaceFault.getElementDeclaration().getName());
             faultMessage.setName(interfaceFault.getName().getLocalPart());
 
