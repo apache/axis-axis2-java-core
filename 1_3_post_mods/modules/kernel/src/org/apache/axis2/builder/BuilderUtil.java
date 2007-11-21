@@ -41,6 +41,7 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
@@ -639,12 +640,32 @@ public class BuilderUtil {
     public static Builder getBuilderFromSelector(String type, MessageContext msgContext)
             throws AxisFault {
 
-        Builder builder = msgContext.getConfigurationContext().getAxisConfiguration()
+        AxisConfiguration configuration =
+                msgContext.getConfigurationContext().getAxisConfiguration();
+        Builder builder = configuration
                 .getMessageBuilder(type);
         if (builder != null) {
+            // Check whether the request has a Accept header if so use that as the response
+            // message type.
+            // If thats not present,
             // Setting the received content-type as the messageType to make
             // sure that we respond using the received message serialisation
             // format.
+
+            Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            if (transportHeaders != null) {
+                String acceptHeader = (String) transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
+                if (acceptHeader != null) {
+                    String[] strings = acceptHeader.split(",");
+                    for (int i = 0; i < strings.length; i++) {
+                        if (configuration.getMessageFormatter(strings[i].trim()) != null) {
+                            type = strings[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
             msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
         }
         return builder;

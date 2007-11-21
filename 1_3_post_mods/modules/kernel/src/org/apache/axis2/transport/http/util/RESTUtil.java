@@ -72,8 +72,13 @@ public class RESTUtil {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         } finally {
-            msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                                   HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            String messageType =
+                    (String) msgContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
+            if (HTTPConstants.MEDIA_TYPE_X_WWW_FORM.equals(messageType) ||
+                    HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA.equals(messageType)) {
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                                       HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            }
         }
         return invokeAxisEngine(msgContext);
     }
@@ -113,8 +118,13 @@ public class RESTUtil {
         catch (IOException e) {
             throw AxisFault.makeFault(e);
         } finally {
-            msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                                   HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            String messageType =
+                    (String) msgContext.getProperty(Constants.Configuration.MESSAGE_TYPE);
+            if (HTTPConstants.MEDIA_TYPE_X_WWW_FORM.equals(messageType) ||
+                    HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA.equals(messageType)) {
+                msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                                       HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            }
         }
         return invokeAxisEngine(msgContext);
     }
