@@ -1018,6 +1018,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             InterfaceFault interfaceFault = interfaceFaultReference.getInterfaceFault();
 
+            if (interfaceFault == null) {
+                throw new AxisFault("Interface Fault reference defined in operation " + opName + " cannot be found in interface");
+            }
+
             faultMessage.setElementQName(interfaceFault.getElementDeclaration().getName());
             faultMessage.setName(interfaceFault.getName().getLocalPart());
 
@@ -1088,7 +1092,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         // This turns on WSDL validation which is set off by default.
-//        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
+        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
         return reader.readWSDL(wsdlURI);
     }
 
