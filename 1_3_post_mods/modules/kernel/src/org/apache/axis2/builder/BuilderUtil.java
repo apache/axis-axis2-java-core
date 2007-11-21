@@ -656,6 +656,10 @@ public class BuilderUtil {
             if (transportHeaders != null) {
                 String acceptHeader = (String) transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
                 if (acceptHeader != null) {
+                    int index = acceptHeader.indexOf(";");
+                    if (index > 0) {
+                        acceptHeader = acceptHeader.substring(0, index);
+                    }
                     String[] strings = acceptHeader.split(",");
                     for (int i = 0; i < strings.length; i++) {
                         if (configuration.getMessageFormatter(strings[i].trim()) != null) {
