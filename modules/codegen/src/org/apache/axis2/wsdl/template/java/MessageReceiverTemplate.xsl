@@ -29,7 +29,7 @@
 
 
     <!--Template for in out message receiver -->
-    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver']">
+    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInOutMessageReceiver']">
 
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
         <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
@@ -453,7 +453,7 @@
     </xsl:template>
 
     <!--Template for robust in message receiver -->
-    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractRobustInMessageReceiver']">
+    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractMessageReceiver']">
 
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonInterfaceName"/></xsl:variable>
         <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
