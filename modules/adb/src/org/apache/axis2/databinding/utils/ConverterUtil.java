@@ -45,6 +45,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -112,21 +115,63 @@ public class ConverterUtil {
     }
 
     public static String convertToString(Date value) {
+
         if (isCustomClassPresent) {
             // this means user has define a seperate converter util class
             return invokeToStringMethod(value,Date.class);
         } else {
             // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
-            // we have to serialize it with the GMT timezone
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
-            // this does not create the semicolen need so add that.
-            String dateString = simpleDateFormat.format(value);
-            // append semicolen
-            dateString = dateString.substring(0, dateString.length() - 2) +
-                    ":" + dateString.substring(dateString.length() - 2);
-
-            return dateString;
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.setTime(value);
+            if (!calendar.isSet(Calendar.ZONE_OFFSET)){
+                calendar.setTimeZone(TimeZone.getDefault());
+            }
+            StringBuffer dateString = new StringBuffer(16);
+            appendDate(dateString, calendar);
+            appendTimeZone(calendar, dateString);
+            return dateString.toString();
         }
+    }
+
+    public static void appendTimeZone(Calendar calendar, StringBuffer dateString) {
+        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET);
+        int timezoneOffSetInMinits = timezoneOffSet / 60000;
+        if (timezoneOffSetInMinits < 0){
+            dateString.append("-");
+            timezoneOffSetInMinits = timezoneOffSetInMinits * -1;
+        } else {
+            dateString.append("+");
+        }
+        int hours = timezoneOffSetInMinits / 60;
+        int minits = timezoneOffSetInMinits % 60;
+
+        if (hours < 10) {
+            dateString.append("0");
+        }
+        dateString.append(hours).append(":");
+
+        if (minits < 10){
+            dateString.append("0");
+        }
+
+        dateString.append(minits);
+    }
+
+    public static void appendDate(StringBuffer dateString, Calendar calendar) {
+        dateString.append(calendar.get(Calendar.YEAR)).append("-");
+
+        // xml date month is started from 1 and calendar month is
+        // started from 0. so have to add one
+        int month = calendar.get(Calendar.MONTH) + 1;
+        if (month < 10){
+            dateString.append("0");
+        }
+        dateString.append(month).append("-");
+        if (calendar.get(Calendar.DAY_OF_MONTH) < 10){
+            dateString.append("0");
+        }
+        dateString.append(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
     private static String invokeToStringMethod(Object value, Class type) {
@@ -152,11 +197,39 @@ public class ConverterUtil {
             return invokeToStringMethod(value,Calendar.class);
         } else {
             // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-            // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
-            return zulu.format(value.getTime());
+            if (!value.isSet(Calendar.ZONE_OFFSET)){
+                value.setTimeZone(TimeZone.getDefault());
+            }
+            StringBuffer dateString = new StringBuffer(28);
+            appendDate(dateString, value);
+            dateString.append("T");
+            //adding hours
+            appendTime(value, dateString);
+            appendTimeZone(value, dateString);
+            return dateString.toString();
         }
+    }
+
+    public static void appendTime(Calendar value, StringBuffer dateString) {
+        if (value.get(Calendar.HOUR_OF_DAY) < 10) {
+            dateString.append("0");
+        }
+        dateString.append(value.get(Calendar.HOUR_OF_DAY)).append(":");
+        if (value.get(Calendar.MINUTE) < 10) {
+            dateString.append("0");
+        }
+        dateString.append(value.get(Calendar.MINUTE)).append(":");
+        if (value.get(Calendar.SECOND) < 10) {
+            dateString.append("0");
+        }
+        dateString.append(value.get(Calendar.SECOND)).append(".");
+        if (value.get(Calendar.MILLISECOND) < 10) {
+            dateString.append("0");
+        }
+        if (value.get(Calendar.MILLISECOND) < 100) {
+            dateString.append("0");
+        }
+        dateString.append(value.get(Calendar.MILLISECOND));
     }
 
     public static String convertToString(Day o) {
@@ -448,32 +521,47 @@ public class ConverterUtil {
     public static Date convertToDate(String source) {
 
         // the lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
-        if ((source == null) || source.equals("")){
+        if ((source == null) || source.trim().equals("")) {
             return null;
         }
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = null;
+        source = source.trim();
         boolean bc = false;
         if (source.startsWith("-")) {
             source = source.substring(1);
             bc = true;
         }
 
-        if ((source != null) && (source.length() >= 10)) {
-            if (source.length() == 10) {
-                //i.e this stirng has only the compulsory part
-                simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            } else {
+        int year = 0;
+        int month = 0;
+        int day = 0;
+        int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
+
+        if (source.length() >= 10) {
+            //first 10 numbers must give the year
+            if ((source.charAt(4) != '-') || (source.charAt(7) != '-')){
+                throw new RuntimeException("invalid date format (" + source + ") wiht out - s at correct place ");
+            }
+            year = Integer.parseInt(source.substring(0,4));
+            month = Integer.parseInt(source.substring(5,7));
+            day = Integer.parseInt(source.substring(8,10));
+
+            if (source.length() > 10) {
                 String restpart = source.substring(10);
                 if (restpart.startsWith("Z")) {
                     // this is a gmt time zone value
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
-                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    timeZoneOffSet = 0;
                 } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
                     // this is a specific time format string
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddz");
-                    // have to add the GMT part to process the message
-                    source = source.substring(0, 10) + "GMT" + restpart;
+                    if (restpart.charAt(3) != ':'){
+                        throw new RuntimeException("invalid time zone format (" + source
+                                + ") without : at correct place");
+                    }
+                    int hours = Integer.parseInt(restpart.substring(1,3));
+                    int minits = Integer.parseInt(restpart.substring(4,6));
+                    timeZoneOffSet = ((hours * 60) + minits) * 60000;
+                    if (restpart.startsWith("-")){
+                        timeZoneOffSet = timeZoneOffSet * -1;
+                    }
                 } else {
                     throw new RuntimeException("In valid string sufix");
                 }
@@ -482,19 +570,20 @@ public class ConverterUtil {
             throw new RuntimeException("In valid string to parse");
         }
 
-        Date date;
-        try {
-            date = simpleDateFormat.parse(source);
-            if (bc) {
-                calendar.setTime(date);
-                calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                date = calendar.getTime();
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException("In valid string to parse");
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        //xml month stars from the 1 and calendar month is starts with 0
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+        calendar.getTimeInMillis();
+        if (bc){
+            calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
 
-        return date;
+        return calendar.getTime();
+
     }
 
     public static Time convertToTime(String s) {
@@ -732,74 +821,118 @@ public class ConverterUtil {
      */
     public static Calendar convertToDateTime(String source) {
 
-        if ((source == null) || source.equals("")){
+        if ((source == null) || source.trim().equals("")) {
             return null;
         }
+        source = source.trim();
         // the lexical representation of the date time as follows
         // '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-        SimpleDateFormat simpleDateFormat = null;
         Date date = null;
         Calendar calendar = Calendar.getInstance();
+        calendar.clear();
 
         if (source.startsWith("-")) {
             source = source.substring(1);
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
 
-        try {
-            if ((source != null) && (source.length() >= 19)) {
-                if (source.length() == 19) {
-                    // i.e. this does not have any additional assume this time in current local
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        int year = 0;
+        int month = 0;
+        int day = 0;
+        int hour = 0;
+        int minite = 0;
+        int second = 0;
+        int miliSecond = 0;
+        int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
 
-                } else {
-                    String rest = source.substring(19);
-                    if (rest.startsWith(".")) {
-                        // i.e this have the ('.'s+) part
-                        if (rest.endsWith("Z")) {
-                            // this is in gmt time zone
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
-                            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-                        } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
-                            // this is given in a general time zione
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSz");
-                            if (rest.lastIndexOf("+") > 0) {
-                                source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
-                                        rest.substring(rest.lastIndexOf("+"));
-                            } else if (rest.lastIndexOf("-") > 0) {
-                                source = source.substring(0, source.lastIndexOf("-")) + "GMT" +
-                                        rest.substring(rest.lastIndexOf("-"));
-                            }
+        if ((source != null) && (source.length() >= 19)) {
+            if ((source.charAt(4) != '-') ||
+                    (source.charAt(7) != '-') ||
+                    (source.charAt(10) != 'T') ||
+                    (source.charAt(13) != ':') ||
+                    (source.charAt(16) != ':')) {
+                throw new RuntimeException("invalid date format (" + source + ") wiht out - s at correct place ");
+            }
+            year = Integer.parseInt(source.substring(0, 4));
+            month = Integer.parseInt(source.substring(5, 7));
+            day = Integer.parseInt(source.substring(8, 10));
+            hour = Integer.parseInt(source.substring(11, 13));
+            minite = Integer.parseInt(source.substring(14, 16));
+            second = Integer.parseInt(source.substring(17, 19));
 
-                        } else {
-                            // i.e it does not have time zone
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+            if (source.length() > 19)  {
+                String rest = source.substring(19);
+                if (rest.startsWith(".")) {
+                    // i.e this have the ('.'s+) part
+                    if (rest.endsWith("Z")) {
+                        // this is in gmt time zone
+                        timeZoneOffSet = 0;
+                        miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("Z")));
+
+                    } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
+                        // this is given in a general time zione
+                        String timeOffSet = null;
+                        if (rest.lastIndexOf("+") > 0) {
+                            timeOffSet = rest.substring(rest.lastIndexOf("+") + 1);
+                            miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("+")));
+                            // we keep +1 or -1 to finally calculate the value
+                            timeZoneOffSet = 1;
+
+                        } else if (rest.lastIndexOf("-") > 0) {
+                            timeOffSet = rest.substring(rest.lastIndexOf("-") + 1);
+                            miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("-")));
+                            // we keep +1 or -1 to finally calculate the value
+                            timeZoneOffSet = -1;
                         }
+                        if (timeOffSet.charAt(2) != ':') {
+                            throw new RuntimeException("invalid time zone format (" + source
+                                    + ") without : at correct place");
+                        }
+                        int hours = Integer.parseInt(timeOffSet.substring(0, 2));
+                        int minits = Integer.parseInt(timeOffSet.substring(3, 5));
+                        timeZoneOffSet = ((hours * 60) + minits) * 60000 * timeZoneOffSet;
 
                     } else {
-                        if (rest.startsWith("Z")) {
-                            // this is in gmt time zone
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-                        } else if (rest.startsWith("+") || rest.startsWith("-")) {
-                            // this is given in a general time zione
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
-                            source = source.substring(0, 19) + "GMT" + rest;
-                        } else {
-                            throw new NumberFormatException("in valid time zone attribute");
+                        // i.e it does not have time zone
+                        miliSecond = Integer.parseInt(rest.substring(1));
+                    }
+
+                } else {
+                    if (rest.startsWith("Z")) {
+                        // this is in gmt time zone
+                        timeZoneOffSet = 0;
+                    } else if (rest.startsWith("+") || rest.startsWith("-")) {
+                        // this is given in a general time zione
+                        if (rest.charAt(3) != ':') {
+                            throw new RuntimeException("invalid time zone format (" + source
+                                    + ") without : at correct place");
                         }
+                        int hours = Integer.parseInt(rest.substring(1, 3));
+                        int minits = Integer.parseInt(rest.substring(4, 6));
+                        timeZoneOffSet = ((hours * 60) + minits) * 60000;
+                        if (rest.startsWith("-")) {
+                            timeZoneOffSet = timeZoneOffSet * -1;
+                        }
+                    } else {
+                        throw new NumberFormatException("in valid time zone attribute");
                     }
                 }
-                date = simpleDateFormat.parse(source);
-                calendar.setTime(date);
-
-            } else {
-                throw new NumberFormatException("date string can not be less than 19 charactors");
             }
-        } catch (ParseException e) {
-            throw new NumberFormatException(e.getMessage());
+            calendar.set(Calendar.YEAR, year);
+            // xml month is started from 1 and calendar month is started from 0
+            calendar.set(Calendar.MONTH, month - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minite);
+            calendar.set(Calendar.SECOND, second);
+            calendar.set(Calendar.MILLISECOND, miliSecond);
+            calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+
+        } else {
+            throw new NumberFormatException("date string can not be less than 19 charactors");
         }
+
         return calendar;
     }
 

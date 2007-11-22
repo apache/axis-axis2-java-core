@@ -19,6 +19,8 @@
 package org.apache.axis2.databinding.types;
 
 
+import org.apache.axis2.databinding.utils.ConverterUtil;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,17 +40,13 @@ public class Time implements java.io.Serializable {
      * a shared java.text.SimpleDateFormat instance used for parsing the basic component of the
      * timestamp
      */
-    private static SimpleDateFormat zulu =
-            new SimpleDateFormat("HH:mm:ss.SSSSSSSSS'Z'");
-
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
 
     /** Initializes with a Calender. Year, month and date are ignored. */
     public Time(Calendar value) {
         this._value = value;
-        _value.set(0, 0, 0);      // ignore year, month, date
+        this._value.clear(Calendar.YEAR);
+        this._value.clear(Calendar.MONTH);
+        this._value.clear(Calendar.DATE);
     }
 
     /** Converts a string formatted as HH:mm:ss[.SSS][+/-offset] */
@@ -74,7 +72,9 @@ public class Time implements java.io.Serializable {
      */
     public void setTime(Calendar date) {
         this._value = date;
-        _value.set(0, 0, 0);      // ignore year, month, date
+        this._value.clear(Calendar.YEAR);
+        this._value.clear(Calendar.MONTH);
+        this._value.clear(Calendar.DATE);
     }
 
     /**
@@ -84,55 +84,89 @@ public class Time implements java.io.Serializable {
      */
     public void setTime(Date date) {
         _value.setTime(date);
-        _value.set(0, 0, 0);      // ignore year, month, date
+        this._value.clear(Calendar.YEAR);
+        this._value.clear(Calendar.MONTH);
+        this._value.clear(Calendar.DATE);
     }
 
     /** Utility function that parses xsd:time strings and returns a Date object */
     private Calendar makeValue(String source) throws NumberFormatException {
 
         // cannonical form of the times is  hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
+        if ((source == null) || (source.trim().length() == 0)){
+            return null;
+        }
+
+        source = source.trim();
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = null;
-        Date date;
+        calendar.clear();
+        int hour = 0;
+        int minite = 0;
+        int second = 0;
+        int miliSecond = 0;
+        int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
 
-        if ((source != null) && (source.length() >= 8)) {
-            if (source.length() == 8) {
-                // i.e this does not have milisecond values or time zone value
-                simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-            } else {
+        if (source.length() >= 8) {
+            if ((source.charAt(2) != ':' )|| (source.charAt(5) != ':')){
+                throw new RuntimeException("Invalid time format (" + source + ") having : s in wrong places");
+            }
+            hour = Integer.parseInt(source.substring(0, 2));
+            minite = Integer.parseInt(source.substring(3, 5));
+            second = Integer.parseInt(source.substring(6, 8));
+            if (source.length() > 8) {
                 String rest = source.substring(8);
                 if (rest.startsWith(".")) {
                     // i.e this have the ('.'s+) part
                     if (rest.endsWith("Z")) {
                         // this is in gmt time zone
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSS'Z'");
-                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        timeZoneOffSet = 0;
+                        miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("Z")));
 
-                    } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
+                    } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
                         // this is given in a general time zione
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSSz");
+                        String timeOffSet = null;
                         if (rest.lastIndexOf("+") > 0) {
-                            source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
-                                    rest.substring(rest.lastIndexOf("+"));
+                            timeOffSet = rest.substring(rest.lastIndexOf("+") + 1);
+                            miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("+")));
+                            // we keep +1 or -1 to finally calculate the value
+                            timeZoneOffSet = 1;
+
                         } else if (rest.lastIndexOf("-") > 0) {
-                            source = source.substring(0, source.lastIndexOf("-")) + "GMT" +
-                                    rest.substring(rest.lastIndexOf("-"));
+                            timeOffSet = rest.substring(rest.lastIndexOf("-") + 1);
+                            miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("-")));
+                            // we keep +1 or -1 to finally calculate the value
+                            timeZoneOffSet = -1;
                         }
+                        if (timeOffSet.charAt(2) != ':') {
+                            throw new RuntimeException("invalid time zone format (" + source
+                                    + ") without : at correct place");
+                        }
+                        int hours = Integer.parseInt(timeOffSet.substring(0, 2));
+                        int minits = Integer.parseInt(timeOffSet.substring(3, 5));
+                        timeZoneOffSet = ((hours * 60) + minits) * 60000 * timeZoneOffSet;
+
                     } else {
                         // i.e it does not have time zone
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSSSS");
+                        miliSecond = Integer.parseInt(rest.substring(1));
                     }
 
                 } else {
                     if (rest.startsWith("Z")) {
                         // this is in gmt time zone
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss'Z'");
-                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        timeZoneOffSet = 0;
                     } else if (rest.startsWith("+") || rest.startsWith("-")) {
                         // this is given in a general time zione
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ssz");
-                        source = source.substring(0, 8) + "GMT" + rest;
+                        if (rest.charAt(3) != ':') {
+                            throw new RuntimeException("invalid time zone format (" + source
+                                    + ") without : at correct place");
+                        }
+                        int hours = Integer.parseInt(rest.substring(1, 3));
+                        int minits = Integer.parseInt(rest.substring(4, 6));
+                        timeZoneOffSet = ((hours * 60) + minits) * 60000;
+                        if (rest.startsWith("-")) {
+                            timeZoneOffSet = timeZoneOffSet * -1;
+                        }
                     } else {
                         throw new NumberFormatException("in valid time zone attribute");
                     }
@@ -142,13 +176,11 @@ public class Time implements java.io.Serializable {
             throw new RuntimeException("invalid message string");
         }
 
-        try {
-            date = simpleDateFormat.parse(source);
-            calendar.setTime(date);
-            calendar.set(0, 0, 0);
-        } catch (ParseException e) {
-            throw new RuntimeException("invalid message string");
-        }
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minite);
+        calendar.set(Calendar.SECOND, second);
+        calendar.set(Calendar.MILLISECOND, miliSecond);
+        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
 
         return calendar;
     }
@@ -168,9 +200,10 @@ public class Time implements java.io.Serializable {
         if (isFromString) {
             return originalString;
         } else {
-            synchronized (zulu) {
-                return zulu.format(_value.getTime());
-            }
+            StringBuffer timeString = new StringBuffer();
+            ConverterUtil.appendTime(_value,timeString);
+            ConverterUtil.appendTimeZone(_value,timeString);
+            return timeString.toString();
         }
 
     }
