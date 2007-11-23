@@ -157,7 +157,9 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public void setDocumentation(String documentation) {
-        this.documentation = omFactory.createOMText(documentation);
+        if (!"".equals(documentation)) {
+            this.documentation = omFactory.createOMText(documentation);
+        }
     }
 
     public void setParent(AxisDescription parent) {
