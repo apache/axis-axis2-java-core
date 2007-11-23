@@ -106,6 +106,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         OMNamespace wsoap;
         OMNamespace whttp;
         OMNamespace wsdlx;
+        OMNamespace wrpc;
 
         OMNamespace tns = omFactory
                 .createOMNamespace(axisService.getTargetNamespace(),
@@ -139,6 +140,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         } else {
             wsdlx = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_EXTENSIONS,
                                                         WSDL2Constants.WSDL_EXTENTION_PREFIX);
+        }
+        if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_RPC)) {
+            wrpc = omFactory
+                    .createOMNamespace(WSDL2Constants.URI_WSDL2_RPC,
+                                       WSDLSerializationUtil.getPrefix(
+                                               WSDL2Constants.URI_WSDL2_RPC, nameSpacesMap));
+        } else {
+            wrpc = descriptionElement.declareNamespace(WSDL2Constants.URI_WSDL2_RPC,
+                                                        WSDL2Constants.WSDL_RPC_PREFIX);
         }
 
         // Add the documentation element
@@ -178,7 +188,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         // Add the interface element
-        descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, omFactory, interfaceName));
+        descriptionElement.addChild(getInterfaceElement(wsdl, tns, wsdlx, wrpc, omFactory,
+                                                        interfaceName));
 
         boolean disableREST = false;
         Parameter disableRESTParameter =
@@ -284,7 +295,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @return The generated interface element
      */
     private OMElement getInterfaceElement(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
-                                          OMFactory fac, String interfaceName)
+                                          OMNamespace wrpc, OMFactory fac, String interfaceName)
             throws URISyntaxException, AxisFault {
 
         OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, wsdl);
@@ -299,7 +310,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             if (axisOperation.isControlOperation()) {
                 continue;
             }
-            interfaceOperations.add(i, generateInterfaceOperationElement(axisOperation, wsdl, tns, wsdlx));
+            interfaceOperations.add(i, generateInterfaceOperationElement(axisOperation, wsdl, tns,
+                                                                         wsdlx, wrpc));
             i++;
             Iterator faultsIterator = axisOperation.getFaultMessages().iterator();
             while (faultsIterator.hasNext()) {
@@ -361,7 +373,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     public OMElement generateInterfaceOperationElement(AxisOperation axisOperation,
                                                        OMNamespace wsdl,
                                                        OMNamespace tns,
-                                                       OMNamespace wsdlx) throws
+                                                       OMNamespace wsdlx,
+                                                       OMNamespace wrpc) throws
             URISyntaxException, AxisFault {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
@@ -386,6 +399,12 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             }
             axisOperationElement.addAttribute(
                     omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_STYLE, null, style));
+            if (style.indexOf(WSDL2Constants.STYLE_RPC) >= 0) {
+                axisOperationElement.addAttribute(
+                    omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_SIGNATURE, wrpc,
+                                                (String) axisOperation.getParameterValue(
+                                                        WSDL2Constants.ATTR_WRPC_SIGNATURE)));
+            }
         }
         axisOperationElement.addAttribute(omFactory.createOMAttribute(
                 WSDL2Constants.ATTRIBUTE_NAME_PATTERN, null, axisOperation.getMessageExchangePattern()));
@@ -449,7 +468,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @param axisOperation - The axisOperation that needs to be checked
      * @return String [] - An array of styles that the operation adheres to.
      */
-    private URI [] checkStyle(AxisOperation axisOperation) throws URISyntaxException {
+    private URI [] checkStyle(AxisOperation axisOperation) throws URISyntaxException, AxisFault {
         boolean isRPC = true;
         boolean isMultipart = true;
         boolean isIRI = true;
@@ -531,8 +550,10 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         } else {
             return new URI [0];
         }
+        AxisMessage outMessage = null;
+        Map outMessageElementDetails = new HashMap();                                    
         if (isRPC && !WSDL2Constants.MEP_URI_IN_ONLY.equals(mep)) {
-            AxisMessage outMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_OUT);
+            outMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_OUT);
             QName qName = outMessage.getElementQName();
             if (qName == null && Constants.XSD_ANY.equals(qName)) {
                 isRPC = false;
@@ -557,7 +578,6 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                 xmlSchemaSequence.getItems();
                         if (schemaObjectCollection != null) {
                             Iterator iterator = schemaObjectCollection.getIterator();
-                            Map outMessageElementDetails = new HashMap();
                             while (iterator.hasNext()) {
                                 Object next = iterator.next();
                                 if (!(next instanceof XmlSchemaElement)) {
@@ -594,6 +614,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         int count = 0;
         if (isRPC) {
             styles.add(new URI(WSDL2Constants.STYLE_RPC));
+            axisOperation.addParameter(WSDL2Constants.ATTR_WRPC_SIGNATURE, generateRPCSignature(inMessageElementDetails,  outMessageElementDetails));
             count ++;
         }
         if (isIRI) {
@@ -605,5 +626,30 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             count ++;
         }
         return (URI[]) styles.toArray(new URI[count]);
+    }
+
+    private String generateRPCSignature(Map inMessageElementDetails, Map outMessageElementDetails) {
+        String in = "";
+        String out = "";
+        String inOut = "";
+        Set inElementSet = inMessageElementDetails.keySet();
+        Set outElementSet = outMessageElementDetails.keySet();
+
+        Iterator inElementIterator = inElementSet.iterator();
+        while (inElementIterator.hasNext()) {
+            String inElementName = (String) inElementIterator.next();
+            if (outElementSet.contains(inElementName)) {
+                inOut = inOut + inElementName + " " + WSDL2Constants.RPC_INOUT + " ";
+                outElementSet.remove(inElementName);
+            } else {
+                in = in + inElementName + " " + WSDL2Constants.RPC_IN + " ";
+            }
+        }
+        Iterator outElementIterator = outElementSet.iterator();
+        while (outElementIterator.hasNext()) {
+            String outElementName = (String) outElementIterator.next();
+            out = out + outElementName + " " + WSDL2Constants.RPC_OUT + " ";
+        }
+        return in + out + inOut;
     }
 }
