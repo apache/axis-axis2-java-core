@@ -16,23 +16,26 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
 import java.util.Map;
 
 public abstract class AxisDescription implements ParameterInclude,
@@ -48,8 +51,10 @@ public abstract class AxisDescription implements ParameterInclude,
 
     protected Map engagedModules;
 
+    private OMFactory omFactory = OMAbstractFactory.getOMFactory();
+
     // Holds the documentation details for each element
-    private String documentation;
+    private OMNode documentation;
 
     // creating a logger instance
     private Log log = LogFactory.getLog(this.getClass());
@@ -137,11 +142,22 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public String getDocumentation() {
+        if (documentation != null) {
+            return documentation.toString();
+        }
+        return null;
+    }
+
+    public OMNode getDocumentationNode() {
         return documentation;
     }
 
-    public void setDocumentation(String documentation) {
+    public void setDocumentation(OMNode documentation) {
         this.documentation = documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = omFactory.createOMText(documentation);
     }
 
     public void setParent(AxisDescription parent) {
