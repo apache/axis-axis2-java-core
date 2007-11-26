@@ -2359,7 +2359,8 @@
                         <!-- add int s -->
                         <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5 + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5 + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                                                             <!-- here axutil_strlen(":=\"\"") + 1(for NULL terminator) = 5 -->
                            sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
@@ -2369,7 +2370,8 @@
                         <!-- add axis2_byte_t s -->
                         <xsl:when test="$nativePropertyType='axis2_byte_t'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix  &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2379,7 +2381,8 @@
                         <!-- add int s -->
                         <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2389,7 +2392,8 @@
                         <!-- add short s -->
                         <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2399,7 +2403,8 @@
                         <!-- add long s -->
                         <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2409,7 +2414,8 @@
                         <!-- add float s -->
                         <xsl:when test="$nativePropertyType='float'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%f\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2419,7 +2425,8 @@
                         <!-- add double s -->
                         <xsl:when test="$nativePropertyType='double'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
-                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT));
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%f\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2430,7 +2437,8 @@
                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(<xsl:value-of select="$propertyInstanceName"/>)));
+                                                             axutil_strlen(<xsl:value-of select="$propertyInstanceName"/>) + 
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(text_value, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
@@ -2442,7 +2450,8 @@
                            text_value = axutil_uri_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT) +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
@@ -2454,7 +2463,8 @@
                            text_value = axutil_duration_serialize_duration(<xsl:value-of select="$propertyInstanceName"/>, env);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
@@ -2490,7 +2500,8 @@
 
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
 
@@ -2505,7 +2516,8 @@
                            text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
@@ -2516,7 +2528,8 @@
                            text_value =  axutil_date_time_serialize_date_time(<xsl:value-of select="$propertyInstanceName"/>, env);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
@@ -2527,7 +2540,8 @@
                            text_value =  axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$propertyInstanceName"/>, env);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
@@ -2540,7 +2554,8 @@
                            text_value = adb_<xsl:value-of select="@type"/>_serialize_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, namespaces);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
-                                                             axutil_strlen(text_value)));
+                                                             axutil_strlen(text_value) + 
+                                                             axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>",  text_value);
                            axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
