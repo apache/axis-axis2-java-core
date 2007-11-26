@@ -120,10 +120,19 @@ public class Provider extends javax.xml.ws.spi.Provider {
         org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
         
         try {
-            ServiceName serviceName = EndpointReferenceHelper.getServiceNameMetadata(axis2EPR, addressingNamespace);
-            WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(axis2EPR, addressingNamespace);
+            ServiceName serviceName =
+            	EndpointReferenceHelper.getServiceNameMetadata(axis2EPR, addressingNamespace);
+            WSDLLocation wsdlLocation =
+            	EndpointReferenceHelper.getWSDLLocationMetadata(axis2EPR, addressingNamespace);
+            URL wsdlLocationURL = null;
             
-            serviceDelegate = new org.apache.axis2.jaxws.spi.ServiceDelegate(new URL(wsdlLocation.getURL()), serviceName.getName(), Service.class);
+            if (wsdlLocation.getLocation() != null)
+            	wsdlLocationURL = new URL(wsdlLocation.getLocation());
+            else
+            	wsdlLocationURL = new URL(axis2EPR.getAddress() + "?wsdl");
+            
+            serviceDelegate =
+            	new org.apache.axis2.jaxws.spi.ServiceDelegate(wsdlLocationURL, serviceName.getName(), Service.class);
         }
         catch (Exception e) {
             //TODO NLS enable.

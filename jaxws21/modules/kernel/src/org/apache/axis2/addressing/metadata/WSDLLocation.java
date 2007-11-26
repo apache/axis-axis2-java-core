@@ -46,10 +46,10 @@ public class WSDLLocation {
     public void setTargetNamespace(String targetNamespace) {
         this.targetNamespace = targetNamespace;
     }
-    public String getURL() {
+    public String getLocation() {
         return wsdlURL;
     }
-    public void setURL(String wsdlURL) {
+    public void setLocation(String wsdlURL) {
         this.wsdlURL = wsdlURL;
     }
     
