@@ -337,6 +337,9 @@ public class CStructWriter implements BeanWriter {
                     new QName(qName.getNamespaceURI(), className)
                     , modelHeader);
 
+            /////////////////////////////////////////////////////
+            // System.out.println(DOM2Writer.nodeToString(modelSource.getFirstChild()));
+            /////////////////////////////////////////////////////
 
         }
 
@@ -557,7 +560,7 @@ public class CStructWriter implements BeanWriter {
             name = qName[i];
             String xmlName = makeUniqueCStructName(new ArrayList(), name.getLocalPart());
 
-            XSLTUtils.addAttribute(model, "name", xmlName, property);
+            XSLTUtils.addAttribute(model, "name", name.getLocalPart(), property);
             XSLTUtils.addAttribute(model, "originalName", name.getLocalPart(), property);
 
 

@@ -27,7 +27,8 @@
         {
         #endif
 
-        #define AXIS2_DEFAULT_DIGIT_LIMIT 128
+        #define ADB_DEFAULT_DIGIT_LIMIT 64
+        #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
 
         /**
         *  <xsl:value-of select="$axis2_name"/> wrapped class classes ( structure for C )
@@ -103,7 +104,8 @@
         {
         #endif
 
-        #define AXIS2_DEFAULT_DIGIT_LIMIT 64
+        #define ADB_DEFAULT_DIGIT_LIMIT 64
+        #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
 
         /**
          * Constructor for creating <xsl:value-of select="$axis2_name"/>_t
@@ -157,27 +159,31 @@
             <!-- Here the double pointer is used to change the parent pointer - This can be happned when deserialize is called in a particle class -->
 
        /**
-         * Declare namespace in the parent node (Pass either the parent element or the stream and set the other NULL)
+         * Declare namespace in the most parent node 
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/><xsl:text> </xsl:text> <xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param stream if parent is not an element and is a stream, pass the stream, NULL otherwise
+         * @param parent_element parent element
+         * @param namespaces hash of namespace uri to prefix
+         * @param next_ns_index pointer to an int which contain the next namespace index
          */
        void AXIS2_CALL
        <xsl:value-of select="$axis2_name"/>_declare_parent_namespaces(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-                    const axutil_env_t *env, axiom_element_t *parent_element, axutil_stream_t *stream);
+                    const axutil_env_t *env, axiom_element_t *parent_element,
+                    axutil_hash_t *namespaces, int *next_ns_index);
 
         <xsl:if test="@simple">
         /**
          * Serialize to a String from the adb objects
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
+         * @param namespaces hash of namespace uri to prefix
          * @return serialized string
          */
             axis2_char_t* AXIS2_CALL
             <xsl:value-of select="$axis2_name"/>_serialize_to_string(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-                    const axutil_env_t *env);
+                    const axutil_env_t *env, axutil_hash_t *namespaces);
         </xsl:if>
 
         /**
@@ -185,25 +191,24 @@
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param <xsl:value-of select="$name"/>_om_node node to serialize from
+         * @param <xsl:value-of select="$name"/>_om_element parent element to serialize from
          * @param tag_closed whether the parent tag is closed or not
+         * @param namespaces hash of namespace uri to prefix
+         * @param next_ns_index an int which contain the next namespace index
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_serialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
-            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int tag_closed);
+            axiom_node_t* <xsl:value-of select="$name"/>_om_node, axiom_element_t *<xsl:value-of select="$name"/>_om_element, int tag_closed, axutil_hash_t *namespaces, int *next_ns_index);
 
         /**
          * Check whether the <xsl:value-of select="$axis2_name"/> is a particle class (E.g. A group)
-         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object.
-         * @param env pointer to environment struct.
          * @return whether this is a particle class.
          */
         axis2_bool_t AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_is_particle(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                    const axutil_env_t *env);
+        <xsl:value-of select="$axis2_name"/>_is_particle();
 
 
         <xsl:for-each select="property">
@@ -240,7 +245,7 @@
                 </xsl:choose>
             </xsl:variable>
         /**
-         * Getter for <xsl:value-of select="$propertyName"/>.
+         * Getter for <xsl:value-of select="$propertyName"/>. <xsl:if test="@isarray">Deprecated for array types, Use <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at instead</xsl:if>
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @return <xsl:value-of select="$paramComment"/>
@@ -251,19 +256,19 @@
             const axutil_env_t *env);
 
         /**
-         * Setter for <xsl:value-of select="$propertyName"/>.
+         * Setter for <xsl:value-of select="$propertyName"/>.<xsl:if test="@isarray">Deprecated for array types, Use <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at
+         * or <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/> instead.</xsl:if>
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param param_<xsl:value-of select="$CName"/><xsl:text> </xsl:text> <xsl:value-of select="$paramComment"/>
+         * @param arg_<xsl:value-of select="$CName"/><xsl:text> </xsl:text> <xsl:value-of select="$paramComment"/>
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env,
-            <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>);
+            <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>);
 
-        <xsl:if test="@isarray">
         /**
          * Resetter for <xsl:value-of select="$propertyName"/>
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
@@ -274,6 +279,35 @@
         <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
             const axutil_env_t *env);
+
+        
+        /**
+         * Check whether <xsl:value-of select="$propertyName"/> is nill
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return AXIS2_TRUE if the element is nil or AXIS2_FALSE otherwise
+         */
+        axis2_bool_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_is_<xsl:value-of select="$CName"/>_nil(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env);
+
+
+        <xsl:if test="@nillable or @optional">
+        /**
+         * Set <xsl:value-of select="$propertyName"/> to nill (currently the same as reset)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env);
+        </xsl:if>
+
+
+        <xsl:if test="@isarray">
 
         /**
          * Get ith element of <xsl:value-of select="$propertyName"/>.
@@ -288,17 +322,32 @@
                 const axutil_env_t *env, int i);
 
         /**
+         * Set ith element of <xsl:value-of select="$propertyName"/>.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param i index of the item to return
+         * @param <xsl:text>arg_</xsl:text> <xsl:value-of select="$CName"/> element to set <xsl:value-of select="$nativePropertyType"/> to the array
+         * @return ith <xsl:value-of select="$nativePropertyType"/> of the array
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i,
+                 <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>);
+
+
+        /**
          * Add to <xsl:value-of select="$propertyName"/>.
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param <xsl:text>param_</xsl:text> <xsl:value-of select="$CName"/> element to add <xsl:value-of select="$nativePropertyType"/> to the array
+         * @param <xsl:text>arg_</xsl:text> <xsl:value-of select="$CName"/> element to add <xsl:value-of select="$nativePropertyType"/> to the array
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env,
-                <xsl:value-of select="$nativePropertyType"/><xsl:text> param_</xsl:text> <xsl:value-of select="$CName"/>);
+                <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>);
 
         /**
          * Get the size of the <xsl:value-of select="$propertyName"/> array.
@@ -308,8 +357,36 @@
          */
         int AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
+
+        /**
+         * Check whether <xsl:value-of select="$propertyName"/> is nill at i
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct.
+         * @param i index of the item to return.
+         * @return AXIS2_TRUE if the element is nil or AXIS2_FALSE otherwise
+         */
+        axis2_bool_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_is_<xsl:value-of select="$CName"/>_nil_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i);
+        
+       
+        <xsl:if test="@nillable or @optional">
+        /**
+         * Set <xsl:value-of select="$propertyName"/> to nill at i
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> _<xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct.
+         * @param i index of the item to set.
+         * @return AXIS2_SUCCESS on success, or AXIS2_FAILURE otherwise.
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>, 
+                const axutil_env_t *env, int i);
+        </xsl:if>
+
         </xsl:if> <!-- closes isarray -->
        </xsl:for-each>
 
