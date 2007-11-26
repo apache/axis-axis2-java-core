@@ -110,7 +110,10 @@ public class SchemaConstants {
         public static final String PACKAGE = "p";
         public static final String MAPPER_PACKAGE = "mp";
         public static final String HELPER_MODE = "h";
+        // this option is used to set minOccurs =0 for all the elements
         public static final String OFF_STRICT_VALIDATION = "osv";
+        // this option is used to use Wrapper classes for primitives
+        public static final String USE_WRAPPER_CLASSES = "uwc";
 
     }
 

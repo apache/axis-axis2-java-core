@@ -46,6 +46,7 @@ public class CompilerOptions {
     private boolean generateAll = false;
 
     private boolean offStrictValidation = false;
+    private boolean isUseWrapperClasses = false;
 
     /**
      * Package for the mapper
@@ -195,5 +196,11 @@ public class CompilerOptions {
         this.offStrictValidation = offStrictValidation;
     }
 
+    public boolean isUseWrapperClasses() {
+        return isUseWrapperClasses;
+    }
 
+    public void setUseWrapperClasses(boolean useWrapperClasses) {
+        this.isUseWrapperClasses = useWrapperClasses;
+    }
 }

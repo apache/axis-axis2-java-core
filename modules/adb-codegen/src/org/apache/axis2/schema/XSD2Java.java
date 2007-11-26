@@ -83,6 +83,8 @@ public class XSD2Java {
             //there's no point in not writing the classes here.
              compilerOptions.setWriteOutput(true);
 
+//             compilerOptions.setUseWrapperClasses(true);
+
             SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
             compiler.compile(currentSchema);
     }

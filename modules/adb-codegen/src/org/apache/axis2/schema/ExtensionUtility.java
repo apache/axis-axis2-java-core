@@ -584,6 +584,10 @@ public class ExtensionUtility {
             options.setOffStrictValidation(true);
         }
 
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.USE_WRAPPER_CLASSES)){
+            options.setUseWrapperClasses(true);
+        }
+
         //set helper mode
         //this becomes effective only if the classes are unpacked
         if (!options.isWrapClasses()) {

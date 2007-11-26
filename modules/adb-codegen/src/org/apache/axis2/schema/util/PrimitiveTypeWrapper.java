@@ -47,6 +47,13 @@ public class PrimitiveTypeWrapper {
      * @param primitiveclassName
      */
     public static String getWrapper(String primitiveclassName){
-        return (String) primitiveTypeWrappersMap.get(primitiveclassName);
+        String returnClassName = null;
+        if (primitiveclassName.trim().endsWith("[]")) {
+            String className = primitiveclassName.substring(0, primitiveclassName.length() - 2);
+            returnClassName = primitiveTypeWrappersMap.get(className) + "[]";
+        } else {
+            returnClassName = (String) primitiveTypeWrappersMap.get(primitiveclassName);
+        }
+        return returnClassName;
     }
 }
