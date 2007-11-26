@@ -30,9 +30,12 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
             "2002-10-10T07:00:00Z"
     };
     private String xmlString[] = {
-            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dateTimeParam>",
-            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[1]+"</dateTimeParam>",
-            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+values[2]+"</dateTimeParam>"
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDateTime(values[0])) +"</dateTimeParam>",
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDateTime(values[1]))+"</dateTimeParam>",
+            "<dateTimeParam xmlns=\"http://soapinterop.org/xsd\">"+
+                    ConverterUtil.convertToString(ConverterUtil.convertToDateTime(values[2]))+"</dateTimeParam>"
     };
     // force others to implement this method
     public void testPopulate() throws Exception {
@@ -42,7 +45,7 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         for (int i = 0; i < values.length; i++) {
             calendar = ConverterUtil.convertToDateTime(values[i]);
-            checkValue(xmlString[i],simpleDateFormat.format(calendar.getTime()));
+            checkValue(xmlString[i],ConverterUtil.convertToString(calendar));
        }
     }
 
