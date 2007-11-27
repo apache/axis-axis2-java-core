@@ -533,8 +533,7 @@ public class ProviderDispatcher extends JavaDispatcher {
 
             if (interfaceName == javax.xml.ws.Provider.class) {
                 if (paramType.getActualTypeArguments().length > 1) {
-                    //TODO NLS
-                    throw ExceptionFactory.makeWebServiceException("Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("pTypeErr"));
                 }
                 providerType = (Class)paramType.getActualTypeArguments()[0];
             }
@@ -588,8 +587,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             _blockFactory = (SOAPEnvelopeBlockFactory)FactoryRegistry.getFactory(
                     SOAPEnvelopeBlockFactory.class);
         } else {
-            throw ExceptionFactory.makeWebServiceException("Unable to find BlockFactory " +
-                    "for type: " + type.getClass().getName());
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("bFactoryErr",type.getClass().getName()));
         }
 
         return _blockFactory;

@@ -122,15 +122,11 @@ public class HandlerChainProcessor {
                 // instanceof ProtocolHandler
                 protocolHandlers.add((SOAPHandler) handler);
             else if (Handler.class.isAssignableFrom(handler.getClass())) {
-                // TODO: NLS better error message
                 throw ExceptionFactory.makeWebServiceException(Messages
-                    .getMessage("handlerChainErr1", handler
-                            .getClass().getName()));
+                    .getMessage("handlerChainErr1", handler.getClass().getName()));
             } else {
-                // TODO: NLS better error message
                 throw ExceptionFactory.makeWebServiceException(Messages
-                    .getMessage("handlerChainErr2", handler
-                            .getClass().getName()));
+                    .getMessage("handlerChainErr2", handler.getClass().getName()));
             }
         }
         
@@ -543,7 +539,7 @@ public class HandlerChainProcessor {
                 mepCtx.setMessage(msg);
 
             } else {
-                throw ExceptionFactory.makeWebServiceException("We only support SOAP11 and SOAP12 for JAXWS handlers");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("cFaultMsgErr"));
             }
 
         } catch (Exception ex) {

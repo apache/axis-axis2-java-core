@@ -248,8 +248,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 
         OperationDescription opDesc = mc.getOperationDescription();
         if (opDesc == null) {
-            // TODO: NLS
-            throw ExceptionFactory.makeWebServiceException("Operation Description was not set");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr3"));
         }
 
         Method returnMethod = opDesc.getMethodFromServiceImpl(serviceImplClass);

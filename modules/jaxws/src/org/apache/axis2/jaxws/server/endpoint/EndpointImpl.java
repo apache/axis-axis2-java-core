@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.WorkerFactory;
@@ -60,7 +61,8 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     private void initialize() {
         if (implementor == null) {
-            throw ExceptionFactory.makeWebServiceException("The implementor object cannot be null");
+        	
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("initErr"));
         }
         
         // If we don't have the necessary metadata, let's go ahead and

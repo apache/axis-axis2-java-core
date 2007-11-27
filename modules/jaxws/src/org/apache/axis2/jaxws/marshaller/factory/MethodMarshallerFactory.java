@@ -22,6 +22,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMinimalMethodMarshaller;
@@ -32,6 +33,8 @@ import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBContext;
@@ -43,8 +46,9 @@ import javax.xml.ws.Holder;
  * SOAPBinding information
  */
 public class MethodMarshallerFactory {
-
-
+	
+	private static Log log = LogFactory.getLog(MethodMarshallerFactory.class);
+	
     private enum SUBTYPE {
         NORMAL, PLUS, MINIMAL }
 
@@ -243,13 +247,18 @@ public class MethodMarshallerFactory {
                     MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
             String requestWrapper = marshalDesc.getRequestWrapperClassName(op);
             if (!exists(requestWrapper)) {
-                // TODO DEBUG
+            	if(log.isDebugEnabled()){
+            		log.debug("Request wrapper class name is NULL.");
+            	}
                 return true;
             }
 
-            String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
+            //String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
+            String responseWrapper = marshalDesc.getResponseWrapperClassName(op);
             if (!exists(responseWrapper)) {
-                // TODO DEBUG
+            	if(log.isDebugEnabled()){
+            		log.debug("Response wrapper class name is NULL.");
+            	}
                 return true;
             }
             // TODO Do the same for the fault beans

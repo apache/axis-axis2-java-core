@@ -136,9 +136,9 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
             s = msg.getPayload();
             
             String st = getStringFromSourcePayload(msg.getPayload());
-            if (st.contains("<arg0>99</arg0>")) {
+            if (st.contains(">99</arg0>")) {
                 throw new ProtocolException("I don't like the value 99");
-            } else if (st.contains("<arg0>999</arg0>")) {
+            } else if (st.contains(">999</arg0>")) {
                 XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(new RuntimeException("I don't like the value 999"));
                 try {
                     javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);

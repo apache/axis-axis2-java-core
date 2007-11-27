@@ -225,10 +225,7 @@ public class MethodMarshallerUtils {
                     null, 
                     attachment);
         } else {
-            // TODO NLS and clean this up
-            throw ExceptionFactory.
-            makeWebServiceException("SWAREF and MTOM attachment parameters are not " +
-                        "supported in this style/use.");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("pdElementErr"));
         }
         return pde;
     }
@@ -344,10 +341,7 @@ public class MethodMarshallerUtils {
                         pdeList.add(pde);
                         swaIndex++;
                     } else {
-                        // TODO NLS and clean this up
-                        throw ExceptionFactory.makeWebServiceException("SWAREF and MTOM " +
-                                        "attachment parameters are not supported " +
-                                        "in this style/use.");
+                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("pdElementErr"));
                     }
                 }
             }
@@ -555,10 +549,7 @@ public class MethodMarshallerUtils {
                                            attachment.getContentID());
                     message.setDoingSWA(true);
                 } else {
-                    // TODO NLS and cleanup
-                    throw ExceptionFactory.
-                       makeWebServiceException("SWAREF and MTOM attachment parameters " +
-                                "are not supported in this style/use.");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("pdElementErr"));
                 }
             }
         }

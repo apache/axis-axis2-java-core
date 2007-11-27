@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
@@ -171,14 +172,12 @@ public class Utils {
             //       That means that overloading of wsdl operations is not supported (although that's not supported in 
             //       WSDL 1.1 anyway).
             if (ops == null || ops.length == 0) {
-                // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("No operation found.  WSDL Operation name: "
-                        + mc.getOperationName());
+                throw ExceptionFactory.makeWebServiceException(
+                		Messages.getMessage("oprDescrErr",mc.getOperationName().toString()));
             }
             if (ops.length > 1) {
-                // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("More than one operation found. Overloaded WSDL operations are not supported.  WSDL Operation name: "
-                        + mc.getOperationName());
+                throw ExceptionFactory.makeWebServiceException(
+                		Messages.getMessage("oprDescrErr1",mc.getOperationName().toString()));
             }
             op = ops[0];
             if (log.isDebugEnabled()) {

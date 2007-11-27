@@ -126,8 +126,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
       */
     public void injectOnClass(Object resource, Object instance, Class clazz)
             throws ResourceInjectionException {
-        throw new UnsupportedOperationException(
-                "WebServiceContext Injeciton on Class not yet supported");
+        throw new UnsupportedOperationException(Messages.getMessage("injectOnClsErr"));
 
     }
 

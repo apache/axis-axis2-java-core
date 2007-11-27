@@ -176,8 +176,7 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
             // Throw an exception for setting a role of "none"
             // Per JAXWS 2.0 Sec 10.1.1.1 SOAP Roles, page 116:
             if (set.contains(SOAPConstants.URI_SOAP_1_2_ROLE_NONE)) {
-                // TODO: RAS/NLS
-                throw ExceptionFactory.makeWebServiceException("The role of 'none' is not allowed.");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("roleValidatioErr"));
             }
         }
         
