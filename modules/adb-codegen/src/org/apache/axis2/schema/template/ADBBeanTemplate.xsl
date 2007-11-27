@@ -1694,6 +1694,20 @@
                             } else {
                                 xmlWriter.writeStartElement(localName);
                             }
+
+                            // add the type details if this is used in a simple type
+                               if (serializeType){
+                                   java.lang.String namespacePrefix = registerPrefix(xmlWriter,"<xsl:value-of select="$nsuri"/>");
+                                   if ((namespacePrefix != null) &amp;&amp; (namespacePrefix.trim().length() > 0)){
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
+                                           namespacePrefix+":<xsl:value-of select="$originalName"/>",
+                                           xmlWriter);
+                                   } else {
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
+                                           "<xsl:value-of select="$originalName"/>",
+                                           xmlWriter);
+                                   }
+                               }
                             <xsl:if test="not($primitive)">
                                           if (<xsl:value-of select="$varName"/>==null){
                                             <xsl:choose>

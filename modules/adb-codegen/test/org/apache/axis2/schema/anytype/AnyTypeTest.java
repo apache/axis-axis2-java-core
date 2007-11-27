@@ -619,5 +619,55 @@ public class AnyTypeTest extends TestCase {
             fail();
         }
     }
+
+    public void testTestElement(){
+        TestElement testElement = new TestElement();
+
+        DynamicProperty[] dynamicProperties = new DynamicProperty[3];
+        TestComplexParent testComplexParent = null;
+
+        dynamicProperties[0] = new DynamicProperty();
+        dynamicProperties[0].setName("test name");
+        dynamicProperties[0].setVal(new Integer(5));
+
+        dynamicProperties[1] = new DynamicProperty();
+        dynamicProperties[1].setName("test name");
+        testComplexParent = new TestComplexParent();
+        testComplexParent.setParam1("test complext type");
+        dynamicProperties[1].setVal(testComplexParent);
+
+        TestSimpleType testSimpleType = new TestSimpleType();
+        testSimpleType.setTestSimpleType("test simple string");
+        dynamicProperties[2] = new DynamicProperty();
+        dynamicProperties[2].setName("test name");
+        dynamicProperties[2].setVal(testSimpleType);
+
+
+        testElement.setParam1(dynamicProperties);
+
+        try {
+            OMElement omElement = testElement.getOMElement(
+                    TestElement.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                    new ByteArrayInputStream(omElementString.getBytes()));
+            TestElement result = TestElement.Factory.parse(xmlReader);
+            DynamicProperty[] resultProperties = result.getParam1();
+            assertEquals(resultProperties[0].getName(), "test name");
+            assertEquals(resultProperties[0].getVal(), new Integer(5));
+            assertEquals(resultProperties[1].getName(), "test name");
+            assertEquals(((TestComplexParent)resultProperties[1].getVal()).getParam1(), "test complext type");
+            assertEquals(resultProperties[2].getName(), "test name");
+            assertEquals(((TestSimpleType)resultProperties[2].getVal()).getTestSimpleType(),"test simple string");
+
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
 }
 

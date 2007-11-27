@@ -74,5 +74,27 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:simpleType name="TestSimpleType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="DynamicProperty">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="val" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="TestElement">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param1" type="tns:DynamicProperty" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
 </xs:schema>
 
