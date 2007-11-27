@@ -1464,11 +1464,10 @@ public class ConverterUtil {
                 String attributeNameSpace = namespaceContext.getNamespaceURI(attributeTypePrefix);
 
                 if (attributeNameSpace.equals(Constants.XSD_NAMESPACE)) {
-                    xmlStreamReader.next();
                     if ("base64Binary".equals(attributeType)) {
                         returnObject = getDataHandlerObject(xmlStreamReader);
                     } else {
-                        String attribValue = xmlStreamReader.getText();
+                        String attribValue = xmlStreamReader.getElementText();
                         if (attribValue != null) {
                             if (attributeType.equals("string")) {
                                 returnObject = attribValue;
