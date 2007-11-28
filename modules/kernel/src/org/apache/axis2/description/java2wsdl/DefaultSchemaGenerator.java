@@ -919,7 +919,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected String getSimpleName(JMethod method) {
-        return method.getSimpleName();
+       return Utils.getSimpleName(method);
     }
 
     protected String getSimpleName(JClass type) {
