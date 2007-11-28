@@ -41,23 +41,24 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaGroupBase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -652,22 +653,26 @@ public class BuilderUtil {
             // sure that we respond using the received message serialisation
             // format.
 
-            Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-            if (transportHeaders != null) {
-                String acceptHeader = (String) transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
-                if (acceptHeader != null) {
-                    int index = acceptHeader.indexOf(";");
-                    if (index > 0) {
-                        acceptHeader = acceptHeader.substring(0, index);
-                    }
-                    String[] strings = acceptHeader.split(",");
-                    for (int i = 0; i < strings.length; i++) {
-                        String accept = strings[i].trim();
-                        // We dont want dynamic content negotoatin to work on text.xml as its
-                        // ambiguos as to whether the user requests SOAP 1.1 or POX response
-                        if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) && configuration.getMessageFormatter(accept) != null) {
-                            type = strings[i];
-                            break;
+            Object contentNegotiation = configuration
+                    .getParameterValue(Constants.Configuration.ENABLE_HTTP_CONTENT_NEGOTIATION);
+            if (JavaUtils.isTrueExplicitly(contentNegotiation)) {
+                Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+                if (transportHeaders != null) {
+                    String acceptHeader = (String) transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
+                    if (acceptHeader != null) {
+                        int index = acceptHeader.indexOf(";");
+                        if (index > 0) {
+                            acceptHeader = acceptHeader.substring(0, index);
+                        }
+                        String[] strings = acceptHeader.split(",");
+                        for (int i = 0; i < strings.length; i++) {
+                            String accept = strings[i].trim();
+                            // We dont want dynamic content negotoatin to work on text.xml as its
+                            // ambiguos as to whether the user requests SOAP 1.1 or POX response
+                            if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) && configuration.getMessageFormatter(accept) != null) {
+                                type = strings[i];
+                                break;
+                            }
                         }
                     }
                 }

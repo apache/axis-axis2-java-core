@@ -258,6 +258,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
+        public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
 
         public static final String ARTIFACTS_TEMP_DIR = "artifactsDIR";

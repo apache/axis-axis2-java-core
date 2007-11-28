@@ -24,6 +24,10 @@
     <parameter name="hotupdate">false</parameter>
     <parameter name="enableMTOM">false</parameter>
 
+    <!--If turned on with use the Accept header of the request to determine the contentType of the
+    response-->
+    <parameter name="httpContentNegotiation">false</parameter>
+
     <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
     <!--that behaviour.-->
     <parameter name="sendStacktraceDetailsWithFaults">true</parameter>
