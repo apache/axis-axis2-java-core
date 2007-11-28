@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -145,15 +146,19 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public String getDocumentation() {
         if (documentation != null) {
-            StringWriter writer = new StringWriter();
-            documentation.build();
-            try {
-                documentation.serialize(writer);
-            } catch (XMLStreamException e) {
-                log.error(e);
+            if (documentation.getType() == OMNode.TEXT_NODE) {
+                return ((OMText)documentation).getText();
+            } else {
+                StringWriter writer = new StringWriter();
+                documentation.build();
+                try {
+                    documentation.serialize(writer);
+                } catch (XMLStreamException e) {
+                    log.error(e);
+                }
+                writer.flush();
+                return writer.toString();
             }
-            writer.flush();
-            return writer.toString();
         }
         return null;
     }
