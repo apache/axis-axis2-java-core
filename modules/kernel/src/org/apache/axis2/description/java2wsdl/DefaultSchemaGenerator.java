@@ -154,9 +154,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         for (int count = 0; count < getExtraClasses().size(); ++count) {
             jam_service_parms.includeClass((String) getExtraClasses().get(count));
         }
-        JamService service = factory.createService(jam_service_parms);
+        JamService jamService = factory.createService(jam_service_parms);
         QName extraSchemaTypeName;
-        JamClassIterator jClassIter = service.getClasses();
+        JamClassIterator jClassIter = jamService.getClasses();
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
             JClass jclass = (JClass) jClassIter.next();
@@ -177,6 +177,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         targetNamespace = tns;
                         schemaTargetNameSpace = tns;
                     }
+                    if(annotation.getValue(AnnotationConstants.NAME) != null) {
+                        String serviceName = (annotation.getValue(AnnotationConstants.NAME)).asString();
+                        service.setName(serviceName);
+                    }
+
                 }
                 methods = processMethods(jclass.getDeclaredMethods());
 
