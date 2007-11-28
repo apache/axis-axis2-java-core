@@ -31,6 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
+import javax.xml.stream.XMLStreamException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -143,7 +145,15 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public String getDocumentation() {
         if (documentation != null) {
-            return documentation.toString();
+            StringWriter writer = new StringWriter();
+            documentation.build();
+            try {
+                documentation.serialize(writer);
+            } catch (XMLStreamException e) {
+                log.error(e);
+            }
+            writer.flush();
+            return writer.toString();
         }
         return null;
     }
