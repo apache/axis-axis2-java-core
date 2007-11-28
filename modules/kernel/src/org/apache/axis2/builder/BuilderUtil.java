@@ -662,7 +662,10 @@ public class BuilderUtil {
                     }
                     String[] strings = acceptHeader.split(",");
                     for (int i = 0; i < strings.length; i++) {
-                        if (configuration.getMessageFormatter(strings[i].trim()) != null) {
+                        String accept = strings[i].trim();
+                        // We dont want dynamic content negotoatin to work on text.xml as its
+                        // ambiguos as to whether the user requests SOAP 1.1 or POX response
+                        if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) && configuration.getMessageFormatter(accept) != null) {
                             type = strings[i];
                             break;
                         }
