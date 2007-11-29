@@ -495,6 +495,11 @@
             AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
 
             <xsl:if test="property">
+              <!-- Wait until AXIOM_ELEMENT -->
+              while(parent &amp;&amp; axiom_node_get_node_type(parent, env) != AXIOM_ELEMENT)
+              {
+                  parent = axiom_node_get_next_sibling(parent, env);
+              }
               if (NULL == parent)
               {
                 /* This should be checked before everything */
@@ -508,6 +513,7 @@
               <xsl:if test="position()=1"> <!-- check for at least one element exists -->
                  <xsl:choose>
                     <xsl:when test="not($istype)">
+
                     current_element = (axiom_element_t *)axiom_node_get_data_element(parent, env);
                     qname = axiom_element_get_qname(current_element, env, parent);
                     if (axutil_qname_equals(qname, env, <xsl:value-of select="$name"/>-> qname))
@@ -828,6 +834,11 @@
                                <xsl:choose>
                                  <xsl:when test="position()=1">
                                    current_node = first_node;
+                                   <!-- Wait until AXIOM_ELEMENT -->
+                                   while(current_node &amp;&amp; axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
+                                   {
+                                       current_node = axiom_node_get_next_sibling(current_node, env);
+                                   }
                                    if(current_node != NULL)
                                    {
                                        current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
@@ -837,11 +848,20 @@
                                     /*
                                      * because elements are ordered this works fine
                                      */
+                                  
                                    <!-- current node should contain the ordered value -->
                                    if(current_node != NULL &amp;&amp; is_early_node_valid)
                                    {
                                        current_node = axiom_node_get_next_sibling(current_node, env);
-                                       current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
+                                       <!-- Wait until AXIOM_ELEMENT -->
+                                       while(current_node &amp;&amp; axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
+                                       {
+                                           current_node = axiom_node_get_next_sibling(current_node, env);
+                                       }
+                                       if(current_node != NULL)
+                                       {
+                                           current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
+                                       }
                                    }
                                    is_early_node_valid = AXIS2_FALSE;
                                  </xsl:otherwise>
@@ -865,6 +885,11 @@
                                for (current_node = first_node; current_node != NULL;
                                              current_node = axiom_node_get_next_sibling(current_node, env))
                                {
+                                  if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
+                                  {
+                                     continue;
+                                  }
+                                  
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
                                 <xsl:choose>
@@ -1230,6 +1255,10 @@
                                              <xsl:when test="position()=1">first_node</xsl:when>
                                              <xsl:otherwise>axiom_node_get_next_sibling(current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; current_node = axiom_node_get_next_sibling(current_node, env))
                                {
+                                  if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
+                                  {
+                                     continue;
+                                  }
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
@@ -1579,6 +1608,10 @@
                                  */
                                for (i = 0, current_node = first_node; current_node != NULL; current_node = axiom_node_get_next_sibling(current_node, env))
                                {
+                                  if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
+                                  {
+                                     continue;
+                                  }
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
