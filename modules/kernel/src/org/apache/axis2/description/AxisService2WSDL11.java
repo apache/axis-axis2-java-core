@@ -957,11 +957,17 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                 
                 OMNode firstChildElem = parentElement.getFirstElement();
                 
-                if (firstChildElem == null) {
-                    parentElement.addChild(child);
-                } else {
-                    firstChildElem.insertSiblingBefore(child);
-                }
+//                if (firstChildElem == null) {
+//                    parentElement.addChild(child);
+//                } else {
+//                    firstChildElem.insertSiblingBefore(child);
+//                }
+                // there is a problem with the OM insertSiblingBefore element with
+                // drops the already exists elements.
+                // since there is no any techical problem of adding policy elements after other
+                // children temporaliy fix this as it is.
+                // one OM fix this issue we can revert this change.
+                parentElement.addChild(child);
 
             } else if (policyElement instanceof PolicyReference) {
                 OMElement child = PolicyUtil
