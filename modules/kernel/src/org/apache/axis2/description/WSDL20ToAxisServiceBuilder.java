@@ -44,6 +44,7 @@ import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImp
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
 import org.apache.woden.schema.Schema;
+import org.apache.woden.types.NamespaceDeclaration;
 import org.apache.woden.wsdl20.Binding;
 import org.apache.woden.wsdl20.BindingFault;
 import org.apache.woden.wsdl20.BindingFaultReference;
@@ -90,6 +91,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -108,7 +110,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private String savedTargetNamespace;
 
-    private Map namespacemap;
+    private NamespaceDeclaration[] namespacemap;
 
     private List operationNames = new ArrayList();
 
@@ -145,7 +147,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
-        namespacemap = descriptionElement.getNamespaces();
+        namespacemap = descriptionElement.getDeclaredNamespaces();
         this.description = description;
         this.serviceName = null;
         if (name != null) {
@@ -443,17 +445,17 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 savedTargetNamespace = descriptionElement.getTargetNamespace().toString();
-                namespacemap = descriptionElement.getNamespaces();
+                namespacemap = descriptionElement.getDeclaredNamespaces();
                 this.description = description;
 
             }
             // Create the namespacemap
 
             stringBasedNamespaceMap = new NamespaceMap();
-            Iterator iterator = namespacemap.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = (String) iterator.next();
-                stringBasedNamespaceMap.put(key, (namespacemap.get(key)).toString());
+            for (int i = 0; i < namespacemap.length; i++) {
+                NamespaceDeclaration namespaceDeclaration = namespacemap[i];
+                stringBasedNamespaceMap.put(namespaceDeclaration.getPrefix(),
+                                            namespaceDeclaration.getNamespaceURI().toString());
             }
 
             setupComplete = true;
