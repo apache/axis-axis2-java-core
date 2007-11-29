@@ -1114,27 +1114,72 @@ public class AxisService extends AxisDescription {
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
+                        SOAPAddress soapAddress = (SOAPAddress) extensibilityEle;
+                        String exsistingAddress = soapAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((SOAPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((SOAPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     } else if (extensibilityEle instanceof SOAP12Address){
+                        SOAP12Address soapAddress = (SOAP12Address) extensibilityEle;
+                        String exsistingAddress = soapAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((SOAP12Address) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((SOAP12Address) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((SOAP12Address) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((SOAP12Address) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     } else if (extensibilityEle instanceof HTTPAddress){
+                        HTTPAddress httpAddress = (HTTPAddress) extensibilityEle;
+                        String exsistingAddress = httpAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((HTTPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((HTTPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((HTTPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((HTTPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     }
                     //TODO : change the Endpoint refrence addess as well.
                 }
             }
+        }
+    }
+
+    /**
+     * this method returns the new IP address corresponding to the
+     * already existing ip
+     * @param eprs
+     * @param epr
+     * @return corresponding Ip address
+     */
+    private String getLocationURI(String[] eprs, String epr) throws AxisFault {
+        String returnIP = null;
+        if (epr != null) {
+            if (epr.indexOf(":") > -1) {
+                String existingProtocol = epr.substring(0, epr.indexOf(":")).trim();
+                String eprProtocol;
+                for (int i = 0; i < eprs.length; i++) {
+                    eprProtocol = eprs[i].substring(0, eprs[i].indexOf(":")).trim();
+                    if (eprProtocol.equals(existingProtocol)) {
+                        returnIP = eprs[i];
+                        break;
+                    }
+                }
+                if (returnIP != null) {
+                    return returnIP;
+                } else {
+                    throw new AxisFault("Server does not have an epr for the wsdl epr==>" + epr);
+                }
+            } else {
+                throw new AxisFault("invalid epr is given epr ==> " + epr);
+            }
+        } else {
+            throw new AxisFault("No epr is given in the wsdl port");
         }
     }
 
