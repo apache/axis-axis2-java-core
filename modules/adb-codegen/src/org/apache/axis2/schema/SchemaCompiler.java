@@ -21,6 +21,8 @@ package org.apache.axis2.schema;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
+import org.apache.axis2.schema.util.PrimitiveTypeFinder;
+import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
@@ -545,6 +547,11 @@ public class SchemaCompiler {
 
                     // always store the class name in the element meta Info itself
                     // this details only needed by the unwrappig to set the complex type
+                    if (options.isUseWrapperClasses() &&
+                            PrimitiveTypeFinder.isPrimitive(className) &&
+                            ((xsElt.getMaxOccurs() == 0) || (xsElt.isNillable()))) {
+                          className = PrimitiveTypeWrapper.getWrapper(className);
+                    }
                     schemaType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
 
