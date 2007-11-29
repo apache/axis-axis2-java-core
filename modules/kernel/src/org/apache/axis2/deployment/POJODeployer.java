@@ -246,6 +246,24 @@ public class POJODeployer implements Deployer {
             Class pojoClass = Loader.loadClass(classLoader, className);
             axisService =
                     (AxisService) mthod.invoke(claxx, new Object[]{pojoClass});
+            if (axisService != null) {
+                Iterator operations = axisService.getOperations();
+                while (operations.hasNext()) {
+                    AxisOperation axisOperation = (AxisOperation) operations.next();
+                    if (axisOperation.getMessageReceiver() == null) {
+                        try {
+                            Class jaxwsMR = Loader.loadClass(
+                                    "org.apache.axis2.jaxws.server.JAXWSMessageReceiver");
+                            MessageReceiver jaxwsMRInstance =
+                                    (MessageReceiver) jaxwsMR.newInstance();
+                            axisOperation.setMessageReceiver(jaxwsMRInstance);
+                        } catch (Exception e) {
+                            log.debug("Error occurde while loading JAXWSMessageReceiver for "
+                                    + className );
+                        }
+                    }
+                }
+            }
             Utils.fillAxisService(axisService,
                                   configCtx.getAxisConfiguration(),
                                   new ArrayList(),
