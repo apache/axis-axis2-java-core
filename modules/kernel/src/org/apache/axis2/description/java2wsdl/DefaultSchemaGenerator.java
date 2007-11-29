@@ -164,7 +164,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 /**
                  * Schema genertaion done in two stage 1. Load all the methods and
                  * create type for methods parameters (if the parameters are Bean
-                 * then it will create Complex types for those , and if the
+                 * then it will create Complex types foer those , and if the
                  * parameters are simple type which decribe in SimpleTypeTable
                  * nothing will happen) 2. In the next stage for all the methods
                  * messages and port types will be creteated
