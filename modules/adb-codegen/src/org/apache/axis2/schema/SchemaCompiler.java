@@ -549,7 +549,7 @@ public class SchemaCompiler {
                     // this details only needed by the unwrappig to set the complex type
                     if (options.isUseWrapperClasses() &&
                             PrimitiveTypeFinder.isPrimitive(className) &&
-                            ((xsElt.getMaxOccurs() == 0) || (xsElt.isNillable()))) {
+                            ((xsElt.getMinOccurs() == 0) || (xsElt.isNillable()))) {
                           className = PrimitiveTypeWrapper.getWrapper(className);
                     }
                     schemaType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
