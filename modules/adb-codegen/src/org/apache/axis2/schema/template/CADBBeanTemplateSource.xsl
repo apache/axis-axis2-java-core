@@ -495,6 +495,8 @@
             AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
 
             <xsl:if test="property">
+              <!-- We are expected to have NULL elements in particle classes -->
+              <xsl:if test="not($particleClass)">
               <!-- Wait until AXIOM_ELEMENT -->
               while(parent &amp;&amp; axiom_node_get_node_type(parent, env) != AXIOM_ELEMENT)
               {
@@ -508,6 +510,7 @@
                             "NULL elemenet can not be passed to deserialize");
                 return AXIS2_FAILURE;
               }
+              </xsl:if>
             </xsl:if>
             <xsl:for-each select="property">
               <xsl:if test="position()=1"> <!-- check for at least one element exists -->
@@ -842,6 +845,7 @@
                                    if(current_node != NULL)
                                    {
                                        current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
+                                       qname = axiom_element_get_qname(current_element, env, current_node);
                                    }
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -861,13 +865,13 @@
                                        if(current_node != NULL)
                                        {
                                            current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
+                                           qname = axiom_element_get_qname(current_element, env, current_node);
                                        }
                                    }
                                    is_early_node_valid = AXIS2_FALSE;
                                  </xsl:otherwise>
                                </xsl:choose> <!-- close for position -1 -->
 
-                               qname = axiom_element_get_qname(current_element, env, current_node);
                                <xsl:choose>
                                  <xsl:when test="@nsuri and @nsuri != ''">
                                  element_qname = axutil_qname_create(env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>", NULL);
@@ -1227,7 +1231,7 @@
                                      return AXIS2_FAILURE;
                                  }
                               }
-                           <xsl:if test="not(@minOccurs=0) and not($particleClass)">
+                           <xsl:if test="not(@minOccurs=0)">
                               else
                               {
                                   if(element_qname)
