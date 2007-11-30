@@ -18,7 +18,7 @@
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="content-type" content=""/>
   <title>Axis2 Configuration Documents</title>
@@ -334,7 +334,7 @@ file. A very simple services.xml is shown below:</font></p>
 file if the .aar file contains only one service, or else the name of the
 service will be the name given by the name attribute.</p>
 
-<p><strong>scope</strong>: (Optional Attribute) The time period during which
+<p><a name="scope"/><strong>scope</strong>: (Optional Attribute) The time period during which
 runtime information of the deployed services will be available. Scope is of
 several types- "Application", "SOAPSession", "TransportSession", "Request".
 The default value (if you don't enter any value) will be "Request"</p>
