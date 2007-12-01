@@ -22,6 +22,7 @@
         #include &lt;axis2_svc_skeleton.h&gt;
         #include &lt;axutil_array_list.h&gt;
         #include &lt;stdio.h&gt;
+        #include &lt;axis2_svc.h&gt;
 
         /**
          * functions prototypes

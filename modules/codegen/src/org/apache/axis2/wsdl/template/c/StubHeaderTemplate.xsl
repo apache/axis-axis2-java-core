@@ -125,7 +125,7 @@
 
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
         <xsl:if test="$mep='12'">
-        void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_start( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
+        void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                         <xsl:variable name="inputtype">
                                                             <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                                         </xsl:variable>

@@ -264,7 +264,12 @@
                     }
                     ret_val = adb_<xsl:value-of select="output/param/@type"/>_create(env);
 
-                    adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, &amp;ret_node );
+                    if(adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, &amp;ret_node ) == AXIS2_FAILURE)
+                    {
+                        AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="output/param/@type"/>_deserialize: "
+                                                                "This should be due to an invalid XML");
+                        return NULL;
+                    }
                     return ret_val;
                 </xsl:when>
                 <xsl:otherwise>
